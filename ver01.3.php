@@ -738,7 +738,7 @@ header('Content-Type: text/html; charset=UTF-8');
                             <span class="ctrl-label">창살 두께</span>
                             <span class="ctrl-val"><span id="lblSlat">12</span> mm</span>
                         </div>
-                        <input type="range" id="txtSlat" min="8" max="25" step="1" value="12">
+                        <input type="range" id="txtSlat" min="6" max="35" step="1" value="12">
                     </div>
                 </div>
 
@@ -802,6 +802,7 @@ header('Content-Type: text/html; charset=UTF-8');
                         <select id="txtFinish" class="sb-select">
                             <option value="changhoji">창호지</option>
                             <option value="glass">유리</option>
+                            <option value="glass-changhoji">유리+창호지</option>
                             <option value="acrylic">아크릴</option>
                         </select>
 
