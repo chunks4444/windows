@@ -891,7 +891,7 @@ header('Content-Type: text/html; charset=UTF-8');
                             <div class="spec-val"><span id="spRows">0</span><span class="spec-unit">칸</span></div>
                         </div>
                         <div class="spec-card full">
-                            <div class="spec-lbl">중심선 간격 (먹줄)</div>
+                            <div class="spec-lbl">간격 먹줄[(내경 + 살두께) / 칸수]</div>
                             <div class="spec-val"><span id="spStep">0</span><span class="spec-unit">mm</span></div>
                         </div>
                         <div class="spec-card accent full">
@@ -899,7 +899,7 @@ header('Content-Type: text/html; charset=UTF-8');
                             <div class="spec-val"><span id="spEye">0</span><span class="spec-unit">mm</span></div>
                         </div>
                         <div class="spec-card accent-blue full">
-                            <div class="spec-lbl">사선 순치수 (살간격) — 전 칸 동일</div>
+                            <div class="spec-lbl">사선 순치수(간격) — 전 칸 동일</div>
                             <div class="spec-val"><span id="spDiagEye">0</span><span class="spec-unit">mm</span></div>
                         </div>
                         <div class="spec-card accent full">
@@ -1033,8 +1033,10 @@ function calculateGeometry() {
     const slatT = parseInt(txtSlat.value);
 
     // 내부 가로
-    const innerW_target =
-        reqW - (2 * frameW);
+    //const innerW_target = reqW - (2 * frameW);
+    const innerW_target = reqW - (2 * frameH);
+
+
 
     const cellSize =
         (innerW_target - (slatT * (cols - 1))) / cols;
@@ -1050,8 +1052,8 @@ function calculateGeometry() {
         innerW + (2 * frameW);
 
     // 내부 세로
-    const innerH_target =
-        reqH - (2 * frameH);
+    // const innerH_target = reqH - (2 * frameH);
+    const innerH_target = reqH - (2 * frameW);
 
     const rows =
         Math.max(
@@ -1350,8 +1352,8 @@ function draw() {
 
         for (let i = 1; i < geo.cols; i++) {
 
-            let cx =
-                geo.frameW +
+            cx =
+                geo.frameH +
                 (i * geo.cellSize) +
                 ((i - 0.5) * geo.slatV);
 
@@ -1523,7 +1525,7 @@ function draw() {
         ctx.fillRect(
             toCanvasX(0),
             toCanvasY(0),
-            geo.frameW * baseScale,
+            geo.frameH * baseScale,
             geo.outerH * baseScale
         );
 
@@ -1531,24 +1533,24 @@ function draw() {
         ctx.fillRect(
             toCanvasX(geo.outerW - geo.frameW),
             toCanvasY(0),
-            geo.frameW * baseScale,
+            geo.frameH * baseScale,
             geo.outerH * baseScale
         );
 
         // 상부 가로 울거미
         ctx.fillRect(
-            toCanvasX(geo.frameW),
+            toCanvasX(geo.frameH),
             toCanvasY(0),
             geo.innerW * baseScale,
-            geo.frameH * baseScale
+            geo.frameW * baseScale
         );
 
         // 하부 가로 울거미
         ctx.fillRect(
-            toCanvasX(geo.frameW),
-            toCanvasY(geo.outerH - geo.frameH),
+            toCanvasX(geo.frameH),
+            toCanvasY(geo.outerH - geo.frameW),
             geo.innerW * baseScale,
-            geo.frameH * baseScale
+            geo.frameW * baseScale
         );
     }
 
