@@ -126,33 +126,50 @@ header('Content-Type: text/html; charset=UTF-8');
         color: var(--teal);
     }
 
-    .drawing-name-input {
-        height: 26px;
-        border: 1px solid var(--border);
+    .hdr-title-badge {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--accent-bg);
+        border: 1px solid rgba(58, 140, 130, 0.25);
         border-radius: 20px;
-        background: var(--input-bg);
-        color: var(--text-2);
+        padding: 3px 12px 3px 8px;
+        cursor: text;
+        transition: border-color .15s;
+    }
+    .hdr-title-badge:focus-within {
+        border-color: var(--teal);
+    }
+    .hdr-title-badge.shake {
+        border-color: #e03030;
+        background: #fff0f0;
+        animation: titleShake .35s ease;
+    }
+    .hdr-title-badge.shake .badge-dot { background: #e03030; }
+    .hdr-title-badge.shake .drawing-name-input { color: #e03030; }
+    @keyframes titleShake {
+        0%,100% { transform: translateX(0); }
+        20%      { transform: translateX(-5px); }
+        40%      { transform: translateX(5px); }
+        60%      { transform: translateX(-4px); }
+        80%      { transform: translateX(3px); }
+    }
+
+    .drawing-name-input {
+        border: none;
+        background: transparent;
+        color: var(--teal);
         font-size: 11px;
         font-weight: 500;
         font-family: inherit;
-        padding: 0 12px;
+        padding: 0;
         outline: none;
-        width: 150px;
-        margin-left: 8px;
-        transition: border-color .15s, background .15s, width .2s;
+        width: 130px;
+        transition: width .2s;
         letter-spacing: -0.1px;
     }
-
-    .drawing-name-input:focus {
-        border-color: var(--teal);
-        background: #fff;
-        width: 210px;
-    }
-
-    .drawing-name-input::placeholder {
-        color: var(--text-3);
-        font-weight: 400;
-    }
+    .drawing-name-input:focus { width: 200px; }
+    .drawing-name-input::placeholder { color: rgba(58,140,130,0.45); font-weight: 400; }
 
     .drawing-dates {
         display: flex;
@@ -1060,6 +1077,59 @@ header('Content-Type: text/html; charset=UTF-8');
         border-color: var(--teal);
         box-shadow: 0 0 0 1px var(--teal);
     }
+
+    /* ── VERSION DROPDOWN ────────────────────── */
+    .ver-wrap { position: relative; margin-left: 8px; }
+    .ver-btn {
+        height: 26px;
+        padding: 0 10px;
+        border-radius: 20px;
+        border: 1px solid var(--border-md);
+        background: var(--input-bg);
+        color: var(--teal);
+        font-size: 11px;
+        font-weight: 700;
+        font-family: inherit;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        transition: border-color .15s, background .15s;
+        letter-spacing: -0.1px;
+    }
+    .ver-btn:hover { border-color: var(--teal); background: var(--accent-bg); }
+    .ver-dropdown {
+        display: none;
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 0;
+        background: var(--sidebar-bg);
+        border: 1px solid var(--border-md);
+        border-radius: var(--r-sm);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        min-width: 240px;
+        max-height: 300px;
+        overflow-y: auto;
+        z-index: 200;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border) transparent;
+    }
+    .ver-dropdown.open { display: block; }
+    .ver-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 12px;
+        cursor: pointer;
+        border-bottom: 1px solid var(--border);
+        transition: background .1s;
+    }
+    .ver-item:last-child { border-bottom: none; }
+    .ver-item:hover { background: var(--input-bg); }
+    .ver-item.active { background: var(--accent-bg); }
+    .ver-num { font-size: 11px; font-weight: 700; color: var(--teal); min-width: 30px; }
+    .ver-date { font-size: 11px; color: var(--text-3); }
+    .ver-empty { padding: 14px 12px; text-align: center; font-size: 12px; color: var(--text-3); }
     </style>
 </head>
 
@@ -1070,14 +1140,10 @@ header('Content-Type: text/html; charset=UTF-8');
     <!-- HEADER -->
     <header>
 
-        <div class="hdr-sep"></div>
-
-        <div class="hdr-badge">
+        <label class="hdr-title-badge" for="drawingName">
             <div class="badge-dot"></div>
-            <?= basename(__FILE__) ?>
-        </div>
-
-        <input type="text" class="drawing-name-input" id="drawingName" placeholder="도면 이름 입력…" maxlength="40">
+            <input type="text" class="drawing-name-input" id="drawingName" placeholder="도면 이름 입력…" maxlength="40">
+        </label>
 
         <div class="drawing-dates">
             <span class="drawing-date-item">작성일 <strong id="dateCreated">—</strong></span>
@@ -1085,21 +1151,33 @@ header('Content-Type: text/html; charset=UTF-8');
             <span class="drawing-date-item">수정일 <strong id="dateModified">—</strong></span>
         </div>
 
+        <div class="ver-wrap">
+            <button class="ver-btn" id="verBtn">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/>
+                </svg>
+                <span id="verLabel">—</span>
+            </button>
+            <div class="ver-dropdown" id="verDropdown">
+                <div id="verList"></div>
+            </div>
+        </div>
+
         <div class="hdr-actions">
 
 
 
-            <button class="hbtn " id="btnSavePNG">Download</button>
+            <button class="hbtn" id="btnSavePNG">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3v13M7 11l5 5 5-5"/>
+                    <path d="M5 20h14"/>
+                </svg>
+                <span>PNG</span>
+            </button>
             <button class="hbtn" id="btnSavePDF">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                    <!-- 문서 -->
-                    <path d="M6 3H14L19 8V21H6V3Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
-                    <!-- 접힌 모서리 -->
-                    <path d="M14 3V8H19" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
-                    <!-- PDF -->
-                    <text x="12" y="17" text-anchor="middle" font-size="5" font-weight="700" fill="currentColor">
-                        PDF
-                    </text>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3v13M7 11l5 5 5-5"/>
+                    <path d="M5 20h14"/>
                 </svg>
                 <span>PDF</span>
             </button>
@@ -1108,7 +1186,7 @@ header('Content-Type: text/html; charset=UTF-8');
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
                 </svg>
-                <span>AI 합성</span>
+                <span>Rendering</span>
             </button>
             <input type="file" id="aiFileUploader" accept="image/*" multiple style="display: none;">
 
@@ -1147,15 +1225,7 @@ header('Content-Type: text/html; charset=UTF-8');
 
             </button>
 
-            <!-- 마이페이지 -->
-            <button class="hbtn hbtn-dark">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2" />
-                    <path d="M4 20C4 16.5 7 14 12 14C17 14 20 16.5 20 20" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                </svg>
-                <span>마이페이지</span>
 
-            </button>
 
         </div>
     </header>
@@ -1507,7 +1577,7 @@ header('Content-Type: text/html; charset=UTF-8');
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
                     </svg>
-                    AI 합성 시작
+                    Rendering
                 </button>
             </div>
         </div>
@@ -1550,8 +1620,8 @@ header('Content-Type: text/html; charset=UTF-8');
         }
     ];
 
-    let selectedFrameColor = '#d8c3a5';
-    let selectedSlatColor  = '#222218';
+    let selectedFrameColor = '#28241e';
+    let selectedSlatColor  = '#28241e';
 
     // ── 나뭇결 패턴 ───────────────────────────────
     let vGrainPat = null;
@@ -1670,8 +1740,8 @@ header('Content-Type: text/html; charset=UTF-8');
         document.querySelectorAll('.color-popup').forEach(p => p.classList.remove('open'));
     });
 
-    const DEFAULT_FRAME_COLOR = '#dec898';
-    const DEFAULT_SLAT_COLOR  = '#222218';
+    const DEFAULT_FRAME_COLOR = '#28241e';
+    const DEFAULT_SLAT_COLOR  = '#28241e';
 
     selectedFrameColor = DEFAULT_FRAME_COLOR;
     selectedSlatColor  = DEFAULT_SLAT_COLOR;
@@ -1712,7 +1782,7 @@ header('Content-Type: text/html; charset=UTF-8');
     let isDragging = false;
     let startX, startY;
 
-    // 3. AI 합성 시작 함수 (버튼에 연결)
+    // 3. Rendering 함수 (버튼에 연결)
     // [스크립트 상단 등 최상위 레벨에 작성]
     function startAISynthesis() {
         console.log("버튼이 클릭되었습니다!"); // 확인용 로그
@@ -1726,7 +1796,7 @@ header('Content-Type: text/html; charset=UTF-8');
         const canvas = document.getElementById('doorCanvas');
         const designData = canvas.toDataURL('image/png');
 
-        alert("AI 합성을 시작합니다.");
+        alert("Rendering을 시작합니다.");
         // 여기에 이후 전송 로직 작성
     }
 
@@ -2609,8 +2679,10 @@ function draw() {
         return `${yy}.${mm}.${dd} ${hh}:${mi}`;
     }
 
-    const CREATED_KEY  = 'pmok_created';
-    const MODIFIED_KEY = 'pmok_modified';
+    const CREATED_KEY  = 'pmok_sabunteok_created';
+    const MODIFIED_KEY = 'pmok_sabunteok_modified';
+    const VERSIONS_KEY = 'pmok_sabunteok_versions';
+    const MAX_VERSIONS = 20;
 
     if (!localStorage.getItem(CREATED_KEY)) {
         localStorage.setItem(CREATED_KEY, Date.now());
@@ -2626,7 +2698,129 @@ function draw() {
         document.getElementById('dateModified').textContent = fmtDate(now);
     }
 
-    document.getElementById('btnSave').addEventListener('click', updateModified);
+    // ── 버전 시스템 ────────────────────────────────
+    let versions = [];
+    let currentVerIdx = -1;
+
+    function getParams() {
+        return {
+            name:      document.getElementById('drawingName').value,
+            W:         parseInt(txtW.value),
+            H:         parseInt(txtH.value),
+            cols:      parseInt(txtCols.value),
+            frame:     parseInt(txtFrame.value),
+            frameH:    parseInt(txtFrameH.value),
+            slat:      parseInt(txtSlat.value),
+            doorType:  txtDoorType.value,
+            doorCount: parseInt(txtDoorCount.value),
+            pungpanOn: document.getElementById('chkPungpan').checked,
+            pungpan:   parseInt(document.getElementById('txtPungpan').value) || 0,
+            finish:    document.getElementById('txtFinish').value,
+            grain:     document.getElementById('chkGrain').checked,
+            frameColor: selectedFrameColor,
+            slatColor:  selectedSlatColor,
+        };
+    }
+
+    function setSlider(rangeId, numId, val) {
+        document.getElementById(rangeId).value = val;
+        document.getElementById(numId).value   = val;
+    }
+
+    function applyParams(p) {
+        document.getElementById('drawingName').value = p.name || '';
+        setSlider('txtW',      'numW',      p.W);
+        setSlider('txtH',      'numH',      p.H);
+        setSlider('txtCols',   'numCols',   p.cols);
+        setSlider('txtFrame',  'numFrame',  p.frame);
+        setSlider('txtFrameH', 'numFrameH', p.frameH);
+        setSlider('txtSlat',   'numSlat',   p.slat);
+        txtDoorType.value  = p.doorType;
+        txtDoorCount.value = p.doorCount;
+        document.getElementById('chkPungpan').checked = p.pungpanOn;
+        setSlider('txtPungpan', 'numPungpan', p.pungpan);
+        document.getElementById('txtFinish').value  = p.finish;
+        document.getElementById('chkGrain').checked = p.grain;
+        grainOn = p.grain;
+        document.getElementById('pungpanCtrl').style.display = p.pungpanOn ? 'block' : 'none';
+        vGrainPat = null; hGrainPat = null;
+        frameColorPicker.selectColor(p.frameColor);
+        slatColorPicker.selectColor(p.slatColor);
+        updateDoorCountOptions();
+        draw();
+    }
+
+    function renderVerList() {
+        const list = document.getElementById('verList');
+        if (versions.length === 0) {
+            list.innerHTML = '<div class="ver-empty">저장된 버전이 없습니다</div>';
+            return;
+        }
+        list.innerHTML = '';
+        [...versions].reverse().forEach((ver, i) => {
+            const realIdx = versions.length - 1 - i;
+            const item = document.createElement('div');
+            item.className = 'ver-item' + (realIdx === currentVerIdx ? ' active' : '');
+            item.innerHTML = `<span class="ver-num">v${realIdx + 1}</span><span class="ver-date">${fmtDate(ver.savedAt)}</span>`;
+            item.addEventListener('click', () => {
+                currentVerIdx = realIdx;
+                applyParams(ver.params);
+                document.getElementById('verLabel').textContent = 'v' + (realIdx + 1);
+                renderVerList();
+                document.getElementById('verDropdown').classList.remove('open');
+            });
+            list.appendChild(item);
+        });
+    }
+
+    function loadVersions() {
+        try { versions = JSON.parse(localStorage.getItem(VERSIONS_KEY)) || []; } catch(e) { versions = []; }
+        if (versions.length > 0) {
+            currentVerIdx = versions.length - 1;
+            document.getElementById('verLabel').textContent = 'v' + (currentVerIdx + 1);
+        }
+        renderVerList();
+    }
+
+    function saveVersion() {
+        const badge = document.querySelector('.hdr-title-badge');
+        if (!document.getElementById('drawingName').value.trim()) {
+            badge.classList.remove('shake');
+            void badge.offsetWidth;
+            badge.classList.add('shake');
+            badge.addEventListener('animationend', () => badge.classList.remove('shake'), { once: true });
+            document.getElementById('drawingName').focus();
+            return;
+        }
+        versions.push({ savedAt: Date.now(), params: getParams() });
+        if (versions.length > MAX_VERSIONS) versions.shift();
+        localStorage.setItem(VERSIONS_KEY, JSON.stringify(versions));
+        currentVerIdx = versions.length - 1;
+        document.getElementById('verLabel').textContent = 'v' + (currentVerIdx + 1);
+        renderVerList();
+        updateModified();
+    }
+
+    document.getElementById('btnSave').addEventListener('click', saveVersion);
+
+    const verBtn      = document.getElementById('verBtn');
+    const verDropdown = document.getElementById('verDropdown');
+    verBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        verDropdown.classList.toggle('open');
+    });
+    document.addEventListener('click', () => verDropdown.classList.remove('open'));
+
+    loadVersions();
+
+    // ── 도면 이름 자동 저장 ────────────────────────
+    const NAME_KEY    = 'pmok_sabunteok_name';
+    const drawingNameEl = document.getElementById('drawingName');
+    const savedName = localStorage.getItem(NAME_KEY);
+    if (savedName) drawingNameEl.value = savedName;
+    drawingNameEl.addEventListener('input', () => {
+        localStorage.setItem(NAME_KEY, drawingNameEl.value);
+    });
 
     window.addEventListener('resize', resizeCanvasDebounced);
     resizeCanvas();
