@@ -88,7 +88,7 @@ $isIndex      = ($currentFile === 'index.php' || $_SERVER['PHP_SELF'] === '/');
                             <g transform="rotate(45 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
                             <g transform="rotate(135 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
                         </svg>
-                        사분턱
+                        격자교살
                     </a></li>
                     <li><a class="dropdown-item <?= $isSambuntok ? 'active' : '' ?> d-flex align-items-center gap-2"
                            href="/src/engine/sambuntok/sambuntok.php">
@@ -97,7 +97,7 @@ $isIndex      = ($currentFile === 'index.php' || $_SERVER['PHP_SELF'] === '/');
                             <g transform="rotate(60 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
                             <g transform="rotate(120 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
                         </svg>
-                        삼분턱
+                        세모솟을빗살
                     </a></li>
                 </ul>
             </li>
