@@ -106,7 +106,7 @@ $isIndex      = ($currentFile === 'index.php' || $_SERVER['PHP_SELF'] === '/');
             <li class="nav-item"><a href="#" class="nav-link">Joiner</a></li>
             <?php if ($isIndex): ?>
             <li class="nav-item"><a href="#" class="nav-link">Login</a></li>
-            <li class="nav-item"><a href="#" class="nav-link">Sign In</a></li>
+            <li class="nav-item"><a href="#" class="nav-link">Register</a></li>
             <?php else: ?>
             <li class="nav-item"><a href="#" class="nav-link">My page</a></li>
             <?php endif; ?>
