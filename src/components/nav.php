@@ -79,10 +79,25 @@ $isSambuntok  = (stripos($currentFile, 'sambuntok') !== false);
             <li class="nav-item dropdown">
                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Generator</a>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item <?= $isSabunteok ? 'active' : '' ?>"
-                           href="/src/engine/Sabunteok/Sabunteok.php">사분턱</a></li>
-                    <li><a class="dropdown-item <?= $isSambuntok ? 'active' : '' ?>"
-                           href="/src/engine/sambuntok/sambuntok.php">삼분턱</a></li>
+                    <li><a class="dropdown-item <?= $isSabunteok ? 'active' : '' ?> d-flex align-items-center gap-2"
+                           href="/src/engine/Sabunteok/Sabunteok.php">
+                        <svg width="27" height="27" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+                            <rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/>
+                            <rect fill="currentColor" x="148" y="317" width="384" height="46" rx="23"/>
+                            <g transform="rotate(45 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
+                            <g transform="rotate(135 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
+                        </svg>
+                        사분턱
+                    </a></li>
+                    <li><a class="dropdown-item <?= $isSambuntok ? 'active' : '' ?> d-flex align-items-center gap-2"
+                           href="/src/engine/sambuntok/sambuntok.php">
+                        <svg width="27" height="27" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+                            <rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/>
+                            <g transform="rotate(60 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
+                            <g transform="rotate(120 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
+                        </svg>
+                        삼분턱
+                    </a></li>
                 </ul>
             </li>
             <li class="nav-item"><a href="#" class="nav-link">Craft Process</a></li>
