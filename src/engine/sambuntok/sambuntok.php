@@ -1782,8 +1782,8 @@ function calculateGeometry() {
         const colStepR = (innerW + slatT) / cols;
         const rowHR    = colStepR * 2 / Math.sqrt(3);   // 회전 후 수직 피치
         const availH2  = outerH - 2 * frameH - effectivePungpanInput;
-        rows   = Math.max(2, Math.floor((availH2 + slatT) / rowHR) + 1);
-        innerH = (rows - 1) * rowHR - slatT;
+        rows   = Math.max(2, Math.floor(availH2 / rowHR) + 1);
+        innerH = (rows - 1) * rowHR;
         const actualPatternHR = frameH + innerH + frameH;
         const surplusR = (outerH - effectivePungpanInput) - actualPatternHR;
         effectivePungpanH = pungpanOn ? effectivePungpanInput + surplusR : 0;
@@ -2179,24 +2179,19 @@ function draw() {
             // clip: 상하 slatT/2(세로 정렬) + 좌우 slatT/2(수평 경계)
             ctx.save();
             ctx.beginPath();
-            // 좌우·상하 모두 slatPx/2 반살 → 프레임이 덮음
-            ctx.rect(iLeft - slatPxHalf, iTop - slatPxHalf,
-                     iW + slatPxHalf * 2, iH + slatPxHalf * 2);
+            // 좌우: slatPx/2 반살 / 상하: 클립으로 정확히 크롭
+            ctx.rect(iLeft - slatPxHalf, iTop, iW + slatPxHalf * 2, iH);
             ctx.clip();
 
-            // 첫열 중심 iLeft-slatPx/2, 마지막열 중심 iLeft+iW+slatPx/2
             const size    = (iW + slatPx) / (geo.cols * 1.5);
             const width   = size * Math.sqrt(3);
             const colStep = size * 1.5;
             const startX  = iLeft - slatPx / 2;
-            const startY_v = iTop - slatPx / 2;
 
             for (let x = startX - colStep, cIdx = 0; x < iLeft + iW + colStep; x += colStep, cIdx++) {
-                for (let y = startY_v - width; y < iTop + iH + width; y += width) {
+                for (let y = iTop - width; y < iTop + iH + width; y += width) {
                     const offY = (cIdx % 2 === 0) ? width / 2 : 0;
                     const cx = x, cy = y + offY;
-                    // slatPx/2 범위 밖 센터 건너뜀
-                    if (cy < iTop - slatPx / 2 || cy > iTop + iH + slatPx / 2) continue;
                     for (let i = 0; i < 6; i++) {
                         const angle = i * Math.PI / 3 + Math.PI / 2;
                         ctx.beginPath();
