@@ -124,6 +124,6 @@ header('Content-Type: text/html; charset=UTF-8');
         <a href="https://pyeongmok.com" class="footer-link">pyeongmok.com</a>
     </div>
 
-    <?php define('BOOTSTRAP_JS_LOADED', true); // nav.php에서 이미 로드 ?>
+
 </body>
 </html>
