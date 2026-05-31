@@ -21,9 +21,15 @@ header('Content-Type: text/html; charset=UTF-8');
         font-weight: 900;
     }
 
-    /* HERO */
+    /* HERO WRAPPER */
+    .home-wrapper {
+        min-height: calc(100vh - 68px);
+        display: flex;
+        flex-direction: column;
+    }
+
     .pm-hero {
-        height: calc(100vh - 68px);
+        flex: 1;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -31,7 +37,7 @@ header('Content-Type: text/html; charset=UTF-8');
 
     /* VALUES */
     .values-section {
-        padding: 80px 48px;
+        padding: 0 48px 40px;
     }
 
     .values-inner {
@@ -65,20 +71,20 @@ header('Content-Type: text/html; charset=UTF-8');
 
     .values-title {
         font-family: 'Noto Serif KR', serif;
-        font-size: 28px;
+        font-size: 13px;
         font-weight: 700;
         letter-spacing: -0.01em;
-        margin-bottom: 16px;
+        margin-bottom: 0;
     }
 
     .values-desc {
         font-family: 'Inter', sans-serif;
-        font-size: 14px;
-        font-weight: 500;
-        color: rgba(0,0,0,0.85);
-        line-height: 1.85;
+        font-size: 12px;
+        font-weight: 400;
+        color: rgba(0,0,0,0.55);
+        line-height: 1.7;
         word-break: keep-all;
-        margin: 0;
+        margin: 6px 0 0;
     }
 
     /* FOOTER */
@@ -116,7 +122,7 @@ header('Content-Type: text/html; charset=UTF-8');
     .values-grid .values-item {
         flex: 1;
         border-bottom: none;
-        padding: 52px 40px;
+        padding: 24px 40px;
     }
 
     .values-grid .values-item:first-child { padding-left: 0; }
@@ -127,14 +133,14 @@ header('Content-Type: text/html; charset=UTF-8');
     }
 
     @media (max-width: 768px) {
-        .values-section { padding: 60px 24px; }
+        .values-section { padding: 0 24px 32px; }
 
         .pm-symbols-row { gap: 24px; }
         .pm-symbols-row svg { width: 200px; height: 200px; }
 
         .values-grid { flex-direction: column; }
         .values-grid .values-item {
-            padding: 28px 0;
+            padding: 14px 0;
             border-right: none !important;
             border-bottom: 1px solid var(--border);
         }
@@ -143,9 +149,9 @@ header('Content-Type: text/html; charset=UTF-8');
     }
 
     @media (max-width: 480px) {
-        .values-section { padding: 40px 20px; }
+        .values-section { padding: 0 20px 24px; }
         .pm-symbols-row { gap: 16px; }
-        .pm-symbols-row svg { width: 140px; height: 140px; }
+        .pm-symbols-row svg { width: 160px; height: 160px; }
         .values-title { font-size: 18px; }
     }
     </style>
@@ -154,22 +160,24 @@ header('Content-Type: text/html; charset=UTF-8');
 
     <?php include __DIR__ . '/src/components/nav.php'; ?>
 
+    <div class="home-wrapper">
+
     <!-- HERO -->
     <section class="pm-hero">
         <div class="pm-symbols-row">
             <a href="/src/engine/sambuntok/sambuntok.php" class="pm-symbol-link">
-                <svg width="400" height="400" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
-                    <rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="23"/>
-                    <g transform="rotate(60 340 340)"><rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="23"/></g>
-                    <g transform="rotate(120 340 340)"><rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="23"/></g>
+                <svg width="270" height="270" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+                    <rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="0"/>
+                    <g transform="rotate(60 340 340)"><rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="0"/></g>
+                    <g transform="rotate(120 340 340)"><rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="0"/></g>
                 </svg>
             </a>
             <a href="/src/engine/Sabunteok/Sabunteok.php" class="pm-symbol-link">
-                <svg width="400" height="400" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
-                    <rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="23"/>
-                    <rect class="pm-symbol-bar" x="148" y="317" width="384" height="46" rx="23"/>
-                    <g transform="rotate(45 340 340)"><rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="23"/></g>
-                    <g transform="rotate(135 340 340)"><rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="23"/></g>
+                <svg width="270" height="270" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+                    <rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="0"/>
+                    <rect class="pm-symbol-bar" x="148" y="317" width="384" height="46" rx="0"/>
+                    <g transform="rotate(45 340 340)"><rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="0"/></g>
+                    <g transform="rotate(135 340 340)"><rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="0"/></g>
                 </svg>
             </a>
         </div>
@@ -206,6 +214,8 @@ header('Content-Type: text/html; charset=UTF-8');
             </div>
         </div>
     </section>
+
+    </div><!-- home-wrapper -->
 
     <!-- FOOTER -->
     <div class="border-top d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2 px-4 py-4">
