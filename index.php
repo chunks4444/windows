@@ -184,7 +184,9 @@ header('Content-Type: text/html; charset=UTF-8');
     </section>
     <style>
     .pm-symbol-link { display:inline-block; }
-    .pm-symbol-bar { fill:#2a2418; transition:fill .25s; }
+    .pm-symbol-link svg { transition: transform .5s cubic-bezier(.25,.46,.45,.94), fill .25s; }
+    .pm-symbol-link:hover svg { transform: rotate(45deg); }
+    .pm-symbol-bar { fill:#2a2418; }
     .pm-symbol-link:hover .pm-symbol-bar { fill:#cc2200; }
     .values-item { cursor:default; }
     .values-item .values-title { transition:color .2s; }

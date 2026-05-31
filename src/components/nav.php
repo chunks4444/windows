@@ -32,7 +32,7 @@ body { padding-top: 68px; }
 }
 .pm-navbar .nav-link {
     font-size: 12px;
-    font-weight: 400;
+    font-weight: 700;
     letter-spacing: 0.02em;
     color: #000 !important;
 }
@@ -48,8 +48,10 @@ body { padding-top: 68px; }
     font-weight: 400;
     padding: 10px 18px;
 }
-.pm-navbar .dropdown-item:hover { background: rgba(12,12,11,0.06); }
-.pm-navbar .dropdown-item.active { font-weight: 600; color: #b8894a; background: none; }
+.pm-navbar .dropdown-item svg { transition: transform .5s cubic-bezier(.25,.46,.45,.94); }
+.pm-navbar .dropdown-item:hover svg { transform: rotate(45deg); }
+.pm-navbar .dropdown-item:hover { background: rgba(12,12,11,0.04); color: #cc2200; }
+.pm-navbar .dropdown-item.active { font-weight: 600; color: #cc2200; background: none; }
 @media (max-width: 768px) {
     .pm-navbar { background: rgba(255,255,255,0.97); }
 }
@@ -75,8 +77,6 @@ $isIndex      = ($currentFile === 'index.php' || $_SERVER['PHP_SELF'] === '/');
     </button>
     <div class="collapse navbar-collapse justify-content-end" id="pmNavMenu">
         <ul class="navbar-nav gap-3">
-            <li class="nav-item"><a href="#" class="nav-link">Works</a></li>
-            <li class="nav-item"><a href="#" class="nav-link">Pattern Library</a></li>
             <li class="nav-item dropdown">
                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Generator</a>
                 <ul class="dropdown-menu">
@@ -101,6 +101,8 @@ $isIndex      = ($currentFile === 'index.php' || $_SERVER['PHP_SELF'] === '/');
                     </a></li>
                 </ul>
             </li>
+            <li class="nav-item"><a href="#" class="nav-link">Pattern Library</a></li>
+            <li class="nav-item"><a href="#" class="nav-link">Works</a></li>
             <?php if ($isIndex): ?>
             <li class="nav-item"><a href="#" class="nav-link">Login</a></li>
             <li class="nav-item"><a href="#" class="nav-link">Sign In</a></li>
