@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #fcfcfc; }
+        canvas { background-color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+    <canvas id="asanoHaCanvas" width="800" height="800"></canvas>
+
+    <script>
+        const canvas = document.getElementById('asanoHaCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // 모든 측면에 일관된 속성 적용
+        const thickness = 9; // 살 두께
+        const size = 70;      // 패턴 단위 크기
+        const color = '#8B4513';
+
+        ctx.lineWidth = thickness;
+        ctx.strokeStyle = color;
+        ctx.lineJoin = 'round'; // 교차점 연결 최적화
+        ctx.lineCap = 'round';  // 끝부분 처리
+
+        const height = size * Math.sqrt(3);
+
+        // 패턴을 캔버스 전체에 균일하게 배치
+        for (let j = -2; j < 15; j++) {
+            for (let i = -2; i < 15; i++) {
+                const x = i * height + (j % 2) * (height / 2);
+                const y = j * (size * 1.5);
+                
+                // 중심에서 6방향으로 뻗어나가는 모든 살의 일관성 유지
+                for (let angle = 0; angle < 360; angle += 60) {
+                    const rad = angle * Math.PI / 180;
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    ctx.lineTo(x + size * Math.cos(rad), y + size * Math.sin(rad));
+                    ctx.stroke();
+                }
+            }
+        }
+    </script>
+</body>
+</html>

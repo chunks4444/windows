@@ -9,7 +9,7 @@ header('Content-Type: text/html; charset=UTF-8');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>창호 설계 — 사분턱 V0.3</title>
+    <title>창호 설계 — 삼분턱 V0.1</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
     :root {
@@ -124,6 +124,55 @@ header('Content-Type: text/html; charset=UTF-8');
         font-size: 11px;
         font-weight: 500;
         color: var(--teal);
+    }
+
+    .drawing-name-input {
+        height: 26px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: var(--input-bg);
+        color: var(--text-2);
+        font-size: 11px;
+        font-weight: 500;
+        font-family: inherit;
+        padding: 0 12px;
+        outline: none;
+        width: 150px;
+        margin-left: 8px;
+        transition: border-color .15s, background .15s, width .2s;
+        letter-spacing: -0.1px;
+    }
+
+    .drawing-name-input:focus {
+        border-color: var(--teal);
+        background: #fff;
+        width: 210px;
+    }
+
+    .drawing-name-input::placeholder {
+        color: var(--text-3);
+        font-weight: 400;
+    }
+
+    .drawing-dates {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
+        margin-left: 10px;
+        font-size: 9.5px;
+        color: var(--text-3);
+        font-weight: 400;
+        white-space: nowrap;
+    }
+
+    .drawing-date-item strong {
+        color: var(--text-2);
+        font-weight: 500;
+    }
+
+    .drawing-date-sep {
+        opacity: 0.3;
     }
 
     .badge-dot {
@@ -270,11 +319,52 @@ header('Content-Type: text/html; charset=UTF-8');
         overflow-y: auto;
         flex-shrink: 0;
         overflow-x: hidden;
+        position: relative;
         transition: width 0.22s cubic-bezier(.4, 0, .2, 1),
             opacity 0.22s ease,
             border-color 0.22s ease;
         scrollbar-width: thin;
         scrollbar-color: var(--border) transparent;
+    }
+
+    .sidebar-col {
+        flex-shrink: 0;
+        width: 14px;
+        align-self: stretch;
+        background: var(--canvas-bg);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .sidebar-tab {
+        width: 14px;
+        height: 44px;
+        flex-shrink: 0;
+        background: var(--sidebar-bg);
+        border: 1px solid var(--border);
+        border-left: none;
+        border-radius: 0 6px 6px 0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        transition: background 0.15s;
+    }
+
+    .sidebar-tab:hover {
+        background: var(--input-bg);
+    }
+
+    .sidebar-tab svg {
+        transition: transform 0.22s ease;
+        flex-shrink: 0;
+        color: var(--text-3);
+    }
+
+    .sidebar-tab.collapsed svg {
+        transform: rotate(180deg);
     }
 
     .controls.collapsed {
@@ -816,39 +906,188 @@ header('Content-Type: text/html; charset=UTF-8');
     .rp-ai-btn:hover {
         background: #2F7169;
     }
+
+    /* ── 부재 목록 ───────────────────────────── */
+    .slat-group {
+        margin-bottom: 10px;
+    }
+    .slat-group:last-child { margin-bottom: 0; }
+
+    .slat-group-title {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        color: var(--text-3);
+        text-transform: uppercase;
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .slat-count-badge {
+        background: var(--accent-bg);
+        color: var(--teal);
+        border-radius: 20px;
+        padding: 1px 7px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0;
+        text-transform: none;
+    }
+
+    .slat-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 5px 8px;
+        background: var(--input-bg);
+        border: 1px solid var(--border);
+        border-radius: var(--r-xs);
+        margin-bottom: 3px;
+    }
+    .slat-row:last-child { margin-bottom: 0; }
+
+    .slat-len {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text-1);
+        letter-spacing: -0.3px;
+    }
+
+    .slat-len-unit {
+        font-size: 10px;
+        font-weight: 400;
+        color: var(--text-3);
+        margin-left: 1px;
+    }
+
+    .slat-cnt {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--teal);
+        background: var(--accent-bg);
+        border-radius: 20px;
+        padding: 1px 8px;
+    }
+
+    .diag-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3px;
+    }
+
+    /* ── 색상 드롭다운 ───────────────────────── */
+    .color-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+    }
+    .color-row:last-child { margin-bottom: 0; }
+
+    .color-label {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--text-2);
+    }
+
+    .color-picker-wrap {
+        position: relative;
+    }
+
+    .color-preview-btn {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        height: 24px;
+        padding: 0 7px 0 4px;
+        border: 1px solid var(--border-md);
+        border-radius: var(--r-xs);
+        background: var(--input-bg);
+        cursor: pointer;
+        font-size: 10px;
+        font-family: inherit;
+        color: var(--text-2);
+        font-weight: 500;
+        transition: border-color 0.12s;
+        white-space: nowrap;
+    }
+    .color-preview-btn:hover { border-color: var(--teal); }
+
+    .color-preview-dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 3px;
+        flex-shrink: 0;
+        border: 1px solid rgba(0,0,0,0.12);
+    }
+
+    .color-popup {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: calc(100% + 4px);
+        background: var(--sidebar-bg);
+        border: 1px solid var(--border-md);
+        border-radius: var(--r-sm);
+        padding: 8px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        z-index: 300;
+        grid-template-columns: repeat(3, 24px);
+        gap: 3px;
+    }
+    .color-popup.open { display: grid; }
+
+    .color-swatch {
+        width: 24px;
+        height: 18px;
+        border-radius: var(--r-xs);
+        border: 2px solid transparent;
+        cursor: pointer;
+        transition: transform 0.1s, border-color 0.15s;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        padding-bottom: 2px;
+        font-size: 8px;
+        color: rgba(255,255,255,0.85);
+        text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        font-weight: 600;
+    }
+    .color-swatch:hover { transform: scale(1.08); }
+    .color-swatch.selected {
+        border-color: var(--teal);
+        box-shadow: 0 0 0 1px var(--teal);
+    }
     </style>
 </head>
 
-<body>
+<body class="pm-generator">
+
+    <?php include __DIR__ . '/../../components/nav.php'; ?>
 
     <!-- HEADER -->
     <header>
-        <div class="hdr-brand">
-            <div class="brand-mark">🪵</div>
-            <div class="brand-text">
-                <div class="brand-title">워크그룹 평목</div>
-                <div class="brand-sub">사분턱 디자인 생성기</div>
-            </div>
-        </div>
 
         <div class="hdr-sep"></div>
 
         <div class="hdr-badge">
             <div class="badge-dot"></div>
-            사분턱 · 0.2 Ver
+            <?= basename(__FILE__) ?>
+        </div>
+
+        <input type="text" class="drawing-name-input" id="drawingName" placeholder="도면 이름 입력…" maxlength="40">
+
+        <div class="drawing-dates">
+            <span class="drawing-date-item">작성일 <strong id="dateCreated">—</strong></span>
+            <span class="drawing-date-sep">·</span>
+            <span class="drawing-date-item">수정일 <strong id="dateModified">—</strong></span>
         </div>
 
         <div class="hdr-actions">
 
-            <!-- 메뉴 -->
-            <button class="hbtn hbtn-ghost" id="btnToggleSidebar">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                    <rect y="1.5" width="14" height="1.5" rx="0.75" fill="currentColor" />
-                    <rect y="6.25" width="14" height="1.5" rx="0.75" fill="currentColor" />
-                    <rect y="11" width="14" height="1.5" rx="0.75" fill="currentColor" />
-                </svg>
-                <span>치수창</span>
-            </button>
+
 
             <button class="hbtn " id="btnSavePNG">Download</button>
             <button class="hbtn" id="btnSavePDF">
@@ -875,7 +1114,7 @@ header('Content-Type: text/html; charset=UTF-8');
 
 
             <!-- 저장 -->
-            <button class="hbtn hbtn-dark">
+            <button class="hbtn hbtn-dark" id="btnSave">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                     <path d="M5 4H17L20 7V20H5V4Z" stroke="currentColor" stroke-width="2" />
                     <path d="M8 4V10H16V4" stroke="currentColor" stroke-width="2" />
@@ -928,7 +1167,6 @@ header('Content-Type: text/html; charset=UTF-8');
         <div class="controls" id="sidebar">
             <div class="sb-inner">
                 <div class="sb-section">
-                    <div class="sb-section-title">문 형식</div>
 
                     <div class="door-row">
 
@@ -967,8 +1205,8 @@ header('Content-Type: text/html; charset=UTF-8');
                             <span class="ctrl-label">가로폭</span>
                         </div>
                         <div class="slider-row">
-                            <input type="range" id="txtW" min="400" max="1500" step="1" value="900">
-                            <input type="number" class="slider-num" id="numW" min="400" max="1500" step="1" value="900">
+                            <input type="range" id="txtW" min="400" max="1500" step="1" value="600">
+                            <input type="number" class="slider-num" id="numW" min="400" max="1500" step="1" value="600">
                         </div>
                     </div>
 
@@ -977,8 +1215,8 @@ header('Content-Type: text/html; charset=UTF-8');
                             <span class="ctrl-label">세로높이</span>
                         </div>
                         <div class="slider-row">
-                            <input type="range" id="txtH" min="800" max="2400" step="1" value="1800">
-                            <input type="number" class="slider-num" id="numH" min="800" max="2400" step="1" value="1800">
+                            <input type="range" id="txtH" min="400" max="2600" step="1" value="1707">
+                            <input type="number" class="slider-num" id="numH" min="400" max="2600" step="1" value="1707">
                         </div>
                     </div>
                 </div>
@@ -989,7 +1227,7 @@ header('Content-Type: text/html; charset=UTF-8');
 
                     <div class="ctrl">
                         <div class="ctrl-header">
-                            <span class="ctrl-label">가로 칸수</span>
+                            <span class="ctrl-label" id="lblCols">가로 칸수</span>
                         </div>
                         <div class="slider-row">
                             <input type="range" id="txtCols" min="2" max="30" step="1" value="4">
@@ -999,20 +1237,20 @@ header('Content-Type: text/html; charset=UTF-8');
 
                     <div class="ctrl">
                         <div class="ctrl-header">
-                            <span class="ctrl-label">세로울거미 두께</span>
+                            <span class="ctrl-label">좌우울거미 두께</span>
                         </div>
                         <div class="slider-row">
-                            <input type="range" id="txtFrame" min="35" max="150" step="1" value="45">
-                            <input type="number" class="slider-num" id="numFrame" min="35" max="150" step="1" value="45">
+                            <input type="range" id="txtFrame" min="20" max="150" step="1" value="60">
+                            <input type="number" class="slider-num" id="numFrame" min="20" max="150" step="1" value="60">
                         </div>
                     </div>
                     <div class="ctrl">
                         <div class="ctrl-header">
-                            <span class="ctrl-label">가로울거미 두께</span>
+                            <span class="ctrl-label">상하울거미 두께</span>
                         </div>
                         <div class="slider-row">
-                            <input type="range" id="txtFrameH" min="35" max="150" step="1" value="45">
-                            <input type="number" class="slider-num" id="numFrameH" min="35" max="150" step="1" value="45">
+                            <input type="range" id="txtFrameH" min="20" max="150" step="1" value="60">
+                            <input type="number" class="slider-num" id="numFrameH" min="20" max="150" step="1" value="60">
                         </div>
                     </div>                    
 
@@ -1021,15 +1259,14 @@ header('Content-Type: text/html; charset=UTF-8');
                             <span class="ctrl-label">창살 두께</span>
                         </div>
                         <div class="slider-row">
-                            <input type="range" id="txtSlat" min="8" max="25" step="1" value="12">
-                            <input type="number" class="slider-num" id="numSlat" min="8" max="25" step="1" value="12">
+                            <input type="range" id="txtSlat" min="8" max="35" step="1" value="12">
+                            <input type="number" class="slider-num" id="numSlat" min="8" max="35" step="1" value="12">
                         </div>
                     </div>
                 </div>
 
                 <!-- 풍판 -->
                 <div class="sb-section">
-                    <div class="sb-section-title">풍판</div>
                     <div class="toggle-row">
                         <span class="toggle-label">풍판 사용</span>
                         <label class="toggle-switch">
@@ -1047,7 +1284,59 @@ header('Content-Type: text/html; charset=UTF-8');
                         </div>
                     </div>
                 </div>
+                <!-- 마감 옵션 -->
+                <div class="sb-section">
+                    <div class="toggle-row" style="margin-bottom:10px;">
+                        <span class="toggle-label">패턴 세로 방향</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="chkRotate">
+                            <span class="toggle-track"></span>
+                        </label>
+                    </div>
+                    <div class="ctrl">
+                        <div class="ctrl-header">
+                            <span class="ctrl-label">내부 마감</span>
+                        </div>
+                        <select id="txtFinish" class="sb-select">
+                            <option value="changhoji">창호지</option>
+                            <option value="glass">유리</option>
+                            <option value="acrylic">아크릴</option>
+                        </select>
+                    </div>
+                </div>
 
+                <!-- 색상 -->
+                <div class="sb-section">
+                    <div class="toggle-row" style="margin-bottom:10px;">
+                        <span class="toggle-label">나뭇결 질감</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="chkGrain" checked>
+                            <span class="toggle-track"></span>
+                        </label>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+                        <div>
+                            <div class="color-label" style="margin-bottom:4px;">울거미</div>
+                            <div class="color-picker-wrap">
+                                <button class="color-preview-btn" id="framePreviewBtn" style="width:100%;">
+                                    <span class="color-preview-dot" id="framePreviewDot"></span>
+                                    <span id="framePreviewName">—</span>
+                                </button>
+                                <div class="color-popup" id="framePopup"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="color-label" style="margin-bottom:4px;">살</div>
+                            <div class="color-picker-wrap">
+                                <button class="color-preview-btn" id="slatPreviewBtn" style="width:100%;">
+                                    <span class="color-preview-dot" id="slatPreviewDot"></span>
+                                    <span id="slatPreviewName">—</span>
+                                </button>
+                                <div class="color-popup" id="slatPopup"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- 제작 시방서 -->
                 <div class="sb-section">
                     <div class="sb-section-title">제작 시방서</div>
@@ -1076,11 +1365,11 @@ header('Content-Type: text/html; charset=UTF-8');
                             <div class="spec-lbl">세로 칸수</div>
                             <div class="spec-val"><span id="spRows">0</span><span class="spec-unit">칸</span></div>
                         </div>
-                        <div class="spec-card">
+                        <div class="spec-card accent">
                             <div class="spec-lbl">간격 먹줄</div>
                             <div class="spec-val"><span id="spStep">0</span><span class="spec-unit">mm</span></div>
                         </div>
-                        <div class="spec-card">
+                        <div class="spec-card accent">
                             <div class="spec-lbl">풍판 높이</div>
                             <div class="spec-val"><span id="spPungpan">0</span><span class="spec-unit">mm</span></div>
                         </div>
@@ -1092,7 +1381,11 @@ header('Content-Type: text/html; charset=UTF-8');
                             <div class="spec-lbl">사선 간격</div>
                             <div class="spec-val"><span id="spDiagEye">0</span><span class="spec-unit">mm</span></div>
                         </div>
-                        <div class="spec-card accent full">
+                        <div class="spec-card accent">
+                            <div class="spec-lbl">상/하 울거미</div>
+                            <div class="spec-val"><span id="spFrameHTop">0</span><span class="spec-unit">mm</span></div>
+                        </div>
+                        <div class="spec-card accent">
                             <div class="spec-lbl">전체 문폭</div>
                             <div class="spec-val">
                                 <span id="spTotalDoorW">0</span>
@@ -1102,21 +1395,54 @@ header('Content-Type: text/html; charset=UTF-8');
                     </div>
                 </div>
 
-                <!-- 마감 옵션 -->
-                <div class="sb-section">
-                    <div class="sb-section-title">마감 옵션</div>
-                    <div class="ctrl">
-                        <div class="ctrl-header">
-                            <span class="ctrl-label">내부 마감</span>
-                        </div>
-                        <select id="txtFinish" class="sb-select">
-                            <option value="changhoji">창호지</option>
-                            <option value="glass">유리</option>
-                            <option value="acrylic">아크릴</option>
-                        </select>
 
+                <!-- 부재 목록 -->
+                <div class="sb-section">
+                    <div class="sb-section-title">부재 목록<small>(정치수에 살두께 곱하기 2)</small></div>
+
+                    <div class="slat-group">
+                        <div class="slat-group-title">울거미</div>
+                        <div class="diag-list">
+                            <div class="slat-row">
+                                <span class="slat-len" id="spFrVLen">—</span><span class="slat-len-unit">mm</span>
+                                <span class="slat-cnt">2개</span>
+                            </div>
+                            <div class="slat-row">
+                                <span class="slat-len" id="spFrHLen">—</span><span class="slat-len-unit">mm</span>
+                                <span class="slat-cnt" id="spFrHCnt">2개</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="slat-group" id="pungpanMaterialGroup" style="display:none;">
+                        <div class="slat-group-title">풍판 <span class="slat-count-badge">1개</span></div>
+                        <div class="slat-row">
+                            <span class="slat-len" id="spPpHLen">—</span><span class="slat-len-unit">mm</span>
+                            <span style="color:var(--text-3);font-size:11px;margin:0 3px;">×</span>
+                            <span class="slat-len" id="spPpVLen">—</span><span class="slat-len-unit">mm</span>
+                        </div>
+                    </div>
+
+                    <div class="slat-group">
+                        <div class="slat-group-title">가로살 · 세로살(내경에 살두께 곱하기 2)</div>
+                        <div class="diag-list">
+                            <div class="slat-row">
+                                <span class="slat-len" id="spHSlatLen">—</span><span class="slat-len-unit">mm</span>
+                                <span class="slat-cnt" id="spHSlatCnt">—</span>
+                            </div>
+                            <div class="slat-row">
+                                <span class="slat-len" id="spVSlatLen">—</span><span class="slat-len-unit">mm</span>
+                                <span class="slat-cnt" id="spVSlatCnt">—</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="slat-group">
+                        <div class="slat-group-title">사선살</div>
+                        <div id="spDiagList" class="diag-list"></div>
                     </div>
                 </div>
+
                 <!-- 안내 -->
                 <div class="sb-footer">
                     <strong>균등 분할.</strong><br>
@@ -1128,6 +1454,14 @@ header('Content-Type: text/html; charset=UTF-8');
         </div>
 
         <!-- CANVAS -->
+        <div class="sidebar-col">
+            <button class="sidebar-tab" id="btnSidebarTab" title="치수창 열기/닫기">
+                <svg width="6" height="10" viewBox="0 0 6 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="5,1 1,5 5,9"/>
+                </svg>
+            </button>
+        </div>
+
         <div class="canvas-area" id="canvasContainer">
             <div class="zoom-hint">휠: 확대/축소 &nbsp;·&nbsp; 드래그: 이동</div>
 
@@ -1190,6 +1524,170 @@ header('Content-Type: text/html; charset=UTF-8');
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
     let appBackgroundImage = null;
+
+    // ── 색상 그룹 ─────────────────────────────────
+    const colorGroups = [
+        {
+            label: '스테인',
+            colors: [
+                { code: '930-00', name: '투명',        hex: '#dec898' },
+                { code: '930-01', name: '노랑',        hex: '#f2aa00' },
+                { code: '930-02', name: '오렌지',      hex: '#e05218' },
+                { code: '930-04', name: '레드브라운',  hex: '#7a1e08' },
+                { code: '930-05', name: '황토브라운',  hex: '#906020' },
+                { code: '930-06', name: '밤색/브라운', hex: '#5a2e10' },
+                { code: '930-08', name: '녹색',        hex: '#2c7030' },
+                { code: '930-10', name: '흑단',        hex: '#222218' },
+                { code: '930-11', name: '회색',        hex: '#888885' },
+            ]
+        },
+        {
+            label: '천연오일',
+            colors: [
+                { code: 'NO-01', name: '자연',    hex: '#e2c98a' },
+                { code: 'NO-02', name: '소나무',  hex: '#c8952a' },
+                { code: 'NO-03', name: '참나무',  hex: '#a06828' },
+                { code: 'NO-04', name: '느티나무',hex: '#8c4e22' },
+                { code: 'NO-05', name: '호두',    hex: '#6a3518' },
+                { code: 'NO-06', name: '체리',    hex: '#7a2e18' },
+                { code: 'NO-07', name: '황칠',    hex: '#b8880a' },
+                { code: 'NO-08', name: '옻칠',    hex: '#1c0c06' },
+                { code: 'NO-09', name: '먹',      hex: '#28241e' },
+            ]
+        }
+    ];
+
+    let selectedFrameColor = '#d8c3a5';
+    let selectedSlatColor  = '#222218';
+
+    // ── 나뭇결 패턴 ───────────────────────────────
+    let vGrainPat = null;
+    let hGrainPat = null;
+    let grainOn   = true;
+    let rotateOn  = false;
+
+    function makeGrainTile(w, h, isVertical) {
+        const tc = document.createElement('canvas');
+        tc.width = w; tc.height = h;
+        const tx = tc.getContext('2d');
+        const dim = isVertical ? w : h;
+        let pos = 0;
+        while (pos < dim) {
+            pos += 5 + Math.random() * 18;
+            const alpha = 0.012 + Math.random() * 0.038;
+            tx.beginPath();
+            tx.strokeStyle = `rgba(40,18,4,${alpha})`;
+            tx.lineWidth = 0.3 + Math.random() * 1.0;
+            if (isVertical) {
+                tx.moveTo(pos, 0);
+                tx.lineTo(pos + (Math.random() - 0.5) * 8, h);
+            } else {
+                tx.moveTo(0, pos);
+                tx.lineTo(w, pos + (Math.random() - 0.5) * 8);
+            }
+            tx.stroke();
+        }
+        return tc;
+    }
+
+    function applyGrain(x, y, w, h, isVertical) {
+        if (!grainOn) return;
+        // ctx 준비된 후 첫 호출 시 패턴 생성 (lazy init)
+        if (!vGrainPat) {
+            vGrainPat = ctx.createPattern(makeGrainTile(400, 1200, true),  'repeat');
+            hGrainPat = ctx.createPattern(makeGrainTile(1200, 400, false), 'repeat');
+        }
+        ctx.save();
+        ctx.globalCompositeOperation = 'multiply';
+        ctx.fillStyle = isVertical ? vGrainPat : hGrainPat;
+        ctx.fillRect(x, y, w, h);
+        ctx.restore();
+    }
+
+    function lightenHex(hex, amount) {
+        const r = Math.min(255, parseInt(hex.slice(1, 3), 16) + amount);
+        const g = Math.min(255, parseInt(hex.slice(3, 5), 16) + amount);
+        const b = Math.min(255, parseInt(hex.slice(5, 7), 16) + amount);
+        return `rgb(${r},${g},${b})`;
+    }
+
+    function buildColorPopup(popupId, previewDotId, previewNameId, btnId, onSelect, defaultHex) {
+        const popup  = document.getElementById(popupId);
+        const dot    = document.getElementById(previewDotId);
+        const nameEl = document.getElementById(previewNameId);
+        const btn    = document.getElementById(btnId);
+
+        function updatePreview(color) {
+            dot.style.background = color.hex;
+            nameEl.textContent   = color.name;
+        }
+
+        const allColors = colorGroups.flatMap(g => g.colors);
+
+        colorGroups.forEach(group => {
+            // 그룹 레이블
+            const isFirst = group === colorGroups[0];
+            const lbl = document.createElement('div');
+            lbl.style.cssText = `grid-column:1/-1;font-size:9px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-3);padding:2px 0 1px;${isFirst ? '' : 'border-top:1px solid var(--border);margin-top:4px;'}`;
+            lbl.textContent = group.label;
+            popup.appendChild(lbl);
+
+            group.colors.forEach(color => {
+                const sw = document.createElement('div');
+                sw.className = 'color-swatch' + (color.hex === defaultHex ? ' selected' : '');
+                sw.style.background = color.hex;
+                sw.title = color.name;
+                sw.addEventListener('click', e => {
+                    e.stopPropagation();
+                    popup.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+                    sw.classList.add('selected');
+                    updatePreview(color);
+                    onSelect(color.hex);
+                    popup.classList.remove('open');
+                    draw();
+                });
+                popup.appendChild(sw);
+            });
+        });
+
+        const def = allColors.find(c => c.hex === defaultHex) || allColors[0];
+        updatePreview(def);
+
+        btn.addEventListener('click', e => {
+            e.stopPropagation();
+            document.querySelectorAll('.color-popup').forEach(p => {
+                if (p !== popup) p.classList.remove('open');
+            });
+            popup.classList.toggle('open');
+        });
+
+        function selectColor(hex) {
+            const color = allColors.find(c => c.hex === hex) || allColors[0];
+            popup.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+            const swatches = popup.querySelectorAll('.color-swatch');
+            const idx = allColors.indexOf(color);
+            if (swatches[idx]) swatches[idx].classList.add('selected');
+            updatePreview(color);
+            onSelect(color.hex);
+        }
+
+        return { selectColor };
+    }
+
+    document.addEventListener('click', () => {
+        document.querySelectorAll('.color-popup').forEach(p => p.classList.remove('open'));
+    });
+
+    const DEFAULT_FRAME_COLOR = '#dec898';
+    const DEFAULT_SLAT_COLOR  = '#222218';
+
+    selectedFrameColor = DEFAULT_FRAME_COLOR;
+    selectedSlatColor  = DEFAULT_SLAT_COLOR;
+
+    const frameColorPicker = buildColorPopup('framePopup', 'framePreviewDot', 'framePreviewName', 'framePreviewBtn',
+        hex => { selectedFrameColor = hex; }, selectedFrameColor);
+    const slatColorPicker  = buildColorPopup('slatPopup',  'slatPreviewDot',  'slatPreviewName',  'slatPreviewBtn',
+        hex => { selectedSlatColor  = hex; }, selectedSlatColor);
     const canvas = document.getElementById('doorCanvas');
     const ctx = canvas.getContext('2d');
     const container = document.getElementById('canvasContainer');
@@ -1206,7 +1704,6 @@ header('Content-Type: text/html; charset=UTF-8');
     const txtSlat = document.getElementById('txtSlat');
     const txtDoorType = document.getElementById('txtDoorType');
     const txtDoorCount = document.getElementById('txtDoorCount');
-    const btnToggleSidebar = document.getElementById('btnToggleSidebar');
     const btnSavePNG = document.getElementById('btnSavePNG');
     const btnSavePDF = document.getElementById('btnSavePDF');
     const btnAICompose = document.getElementById('btnAICompose');
@@ -1243,73 +1740,74 @@ header('Content-Type: text/html; charset=UTF-8');
 
 function calculateGeometry() {
 
-    const cols = parseInt(txtCols.value);
-
-    // 슬라이더값 = 외경 고정
+    const cols     = parseInt(txtCols.value);
     const outerW   = parseInt(txtW.value);
     const outerH   = parseInt(txtH.value);
     const pungpanH = parseInt(document.getElementById('txtPungpan').value) || 0;
-    const chk      = document.getElementById('chkPungpan');
-    const pungpanOn = chk.checked;
-
-    // 세로울거미 (좌·우)
-    const frameW = parseInt(txtFrame.value);
-    // 가로울거미 (상·하)
-    const frameH = parseInt(txtFrameH.value);
-
-    const slatT = parseInt(txtSlat.value);
-
-    // 내경 가로
-    const innerW = outerW - (2 * frameW);
-
-    // 가로: cols 균등 분할 → cellW 확정
-    const cellW = (innerW - (slatT * (cols - 1))) / cols;
-    const stepW = cellW + slatT;
-
-    // 풍판 ON이면 슬라이더값 사용, OFF면 0
+    const pungpanOn = document.getElementById('chkPungpan').checked;
+    const frameW   = parseInt(txtFrame.value);
+    const frameH   = parseInt(txtFrameH.value);
+    const slatT    = parseInt(txtSlat.value);
     const effectivePungpanInput = pungpanOn ? pungpanH : 0;
 
-    // 세로: 풍판 제외한 사용 가능 높이
-    const availH = outerH - (2 * frameH) - effectivePungpanInput;
-    const rows   = Math.max(1, Math.floor((availH + slatT) / stepW));
+    let innerW, innerH, stepX, rowH, rows;
+    let frameHTop, frameHBottom, frameWActual;
+    let effectivePungpanH, actualPungpanH;
 
-    // cellH = cellW (정사각형 유지)
-    const cellH = cellW;
+    if (!rotateOn) {
+        // ── 가로 방향 (기본): cols 가 WIDTH 등분 ────────────
+        innerW = outerW - 2 * frameW;
+        stepX  = innerW / cols;
+        rowH   = stepX * Math.sqrt(3) / 2;
+        const availH = outerH - 2 * frameH - effectivePungpanInput;
+        rows   = Math.max(2, Math.floor((availH + slatT) / rowH) + 1);
+        innerH = (rows - 1) * rowH - slatT;
+        const actualPatternH = frameH + innerH + frameH;
+        const surplus = (outerH - effectivePungpanInput) - actualPatternH;
+        effectivePungpanH = pungpanOn ? effectivePungpanInput + surplus : 0;
+        actualPungpanH    = effectivePungpanH;
+        const halfSurplus = pungpanOn ? 0 : surplus / 2;
+        frameHTop    = frameH + halfSurplus;
+        frameHBottom = pungpanOn ? frameH : frameH + (surplus - halfSurplus);
+        frameWActual = frameW;
 
-    // 실제 패턴이 차지하는 세로 내경 높이
-    const innerH = rows * cellW + (rows - 1) * slatT;
+    } else {
+        // ── 세로 방향 (90°): cols 는 WIDTH 기준 그대로 ──────
+        // 첫열 중심 = frameW - slatT/2, 마지막열 중심 = frameW + innerW + slatT/2
+        // → cols * colStep = innerW + slatT → size = (innerW+slatT)/(cols*1.5)
+        // → 수직 피치 rowHR = size*√3 = (innerW+slatT)*2/(cols*√3)
+        innerW = outerW - 2 * frameW;
+        stepX  = innerW / cols;
+        rowH   = stepX * Math.sqrt(3) / 2;
+        const colStepR = (innerW + slatT) / cols;
+        const rowHR    = colStepR * 2 / Math.sqrt(3);   // 회전 후 수직 피치
+        const availH2  = outerH - 2 * frameH - effectivePungpanInput;
+        rows   = Math.max(2, Math.floor((availH2 + slatT) / rowHR) + 1);
+        innerH = (rows - 1) * rowHR - slatT;
+        const actualPatternHR = frameH + innerH + frameH;
+        const surplusR = (outerH - effectivePungpanInput) - actualPatternHR;
+        effectivePungpanH = pungpanOn ? effectivePungpanInput + surplusR : 0;
+        actualPungpanH    = effectivePungpanH;
+        const halfSurplusR = pungpanOn ? 0 : surplusR / 2;
+        frameHTop    = frameH + halfSurplusR;
+        frameHBottom = pungpanOn ? frameH : frameH + (surplusR - halfSurplusR);
+        frameWActual = frameW;
+    }
 
-    // 실제 패턴 영역 높이 (상하 울거미 포함)
-    const actualPatternH = frameH + innerH + frameH;
-
-    // 남는 공간
-    const surplus = (outerH - effectivePungpanInput) - actualPatternH;
-
-    // 실제 풍판 높이 = 슬라이더값 + surplus 흡수 (풍판 ON일 때)
-    const effectivePungpanH = pungpanOn ? effectivePungpanInput + surplus : 0;
-    const actualPungpanH    = effectivePungpanH;
-
-    const actualFrameHBottom = pungpanOn
-        ? frameH
-        : frameH + surplus;
-
-    // 공용
-    const step  = stepW;
-    const stepH = cellH + slatT;
-    const cellSize = cellW;
-
-    const diagEye =
-        ((step * Math.sqrt(2)) - (slatT * 2)).toFixed(1);
-
-    const tenonDepth =
-        Math.round(slatT * 0.8);
+    const cellW      = stepX;
+    const cellH      = rowH;
+    const cellSize   = stepX;
+    const step       = stepX;
+    const stepH      = rowH + slatT;
+    const diagEye    = (stepX - slatT).toFixed(1);
+    const tenonDepth = slatT;
+    const actualPatternH = frameHTop + innerH + frameHBottom;
 
     const doorType  = txtDoorType.value;
     const doorCount = parseInt(txtDoorCount.value);
-    const overlap   = frameW * 0.55;
+    const overlap   = frameWActual * 0.55;
 
     let totalDoorWidth;
-
     if (doorType === 'slide') {
         if      (doorCount === 1) totalDoorWidth = outerW;
         else if (doorCount === 2) totalDoorWidth = (outerW * 2) - overlap;
@@ -1319,69 +1817,80 @@ function calculateGeometry() {
         totalDoorWidth = outerW * doorCount;
     }
 
-geo = {
-    cellSize,
-    cellW,
-    cellH,
+    geo = {
+        cellSize, cellW, cellH, stepX, rowH,
+        outerW, outerH,
+        frameW: frameWActual,
+        frameH,
+        frameHTop,
+        frameHBottom,
+        slatT, slatV: slatT, slatH: slatT,
+        step, stepH,
+        cols, rows, rowsInt: rows,
+        innerW, innerH,
+        actualPatternH, actualPungpanH, effectivePungpanH,
+        diagEye, tenonDepth, totalDoorWidth
+    };
 
-    outerW,
-    outerH,
-
-    frameW,
-    frameH,
-    frameHBottom: actualFrameHBottom,  // 하단 울거미 (남는 공간 흡수)
-
-    slatT,
-    slatV: slatT,
-    slatH: slatT,
-
-    step,
-    stepH,
-
-    cols,
-    rows,
-    rowsInt: rows,  // 이미 정수
-
-    innerW,
-    innerH,
-
-    actualPatternH,
-    actualPungpanH,
-    effectivePungpanH,
-
-    diagEye,
-    tenonDepth,
-    totalDoorWidth
-};
-
-    // 시방서 업데이트
+    // ── 시방서 업데이트 ────────────────────────────────
     document.getElementById('spOuterW').innerText = Math.round(outerW);
-    document.getElementById('spOuterH').innerText = Math.round(outerH);  // 외경 고정값
-
+    document.getElementById('spOuterH').innerText = Math.round(outerH);
     document.getElementById('spInnerW').innerText = Math.round(innerW);
     document.getElementById('spInnerH').innerText = Math.round(innerH);
-
     document.getElementById('spCounts').innerText = cols;
-    document.getElementById('spRows').innerText = Math.round(rows);
+    document.getElementById('spRows').innerText   = Math.round(rows);
+    document.getElementById('spStep').innerText   = step.toFixed(1);
+    document.getElementById('spPungpan').innerText  = Math.round(effectivePungpanH);
+    document.getElementById('spEye').innerText      = cellW.toFixed(1);
+    document.getElementById('spDiagEye').innerText  = diagEye;
+    document.getElementById('spFrameHTop').innerText = Math.round(frameHTop);
+    document.getElementById('spTotalDoorW').innerText = Math.round(totalDoorWidth);
 
-    document.getElementById('spStep').innerText = step.toFixed(1);
+    // ── 부재 목록 ──────────────────────────────────────
+    document.getElementById('spFrVLen').textContent = Math.round(outerH + 2 * slatT);
+    document.getElementById('spFrHLen').textContent = Math.round(outerW + 2 * slatT);
+    document.getElementById('spFrHCnt').textContent = pungpanOn ? '3개' : '2개';
 
-    document.getElementById('spPungpan').innerText = Math.round(effectivePungpanH);
+    const ppGroup = document.getElementById('pungpanMaterialGroup');
+    if (pungpanOn && effectivePungpanH > 0) {
+        ppGroup.style.display = '';
+        const ppPanelH = effectivePungpanH - frameH;
+        document.getElementById('spPpHLen').textContent = Math.round(innerW + 2 * slatT);
+        document.getElementById('spPpVLen').textContent = Math.round(ppPanelH + 2 * slatT);
+    } else {
+        ppGroup.style.display = 'none';
+    }
 
-    document.getElementById('spEye').innerText =
-        cellW.toFixed(1);
+    const hSlatCnt = Math.max(0, rows - 1);
+    const hSlatLen = Math.round(innerW + 2 * tenonDepth);
+    document.getElementById('spHSlatLen').textContent = hSlatLen;
+    document.getElementById('spHSlatCnt').textContent = hSlatCnt + '개';
+    document.getElementById('spVSlatLen').textContent = '—';
+    document.getElementById('spVSlatCnt').textContent = '없음';
 
-    document.getElementById('spDiagEye').innerText =
-        diagEye;
-
-    document.getElementById('spTotalDoorW').innerText =
-        Math.round(totalDoorWidth);
+    const diagListEl  = document.getElementById('spDiagList');
+    diagListEl.innerHTML = '';
+    const diagSlatLen = Math.round(stepX + 2 * slatT);
+    const diagSlatCnt = rows * cols * 2;
+    const diagEl = document.createElement('div');
+    diagEl.className = 'slat-row';
+    diagEl.innerHTML = `<span class="slat-len">${diagSlatLen}<span class="slat-len-unit">mm</span></span><span class="slat-cnt">${diagSlatCnt}개</span>`;
+    diagListEl.appendChild(diagEl);
 }
 
     function resizeCanvas() {
-        canvas.width = container.clientWidth;
-        canvas.height = container.clientHeight;
+        const w = container.clientWidth;
+        const h = container.clientHeight;
+        if (canvas.width === w && canvas.height === h) return;
+        canvas.width  = w;
+        canvas.height = h;
         draw();
+    }
+
+    let _resizeTimer;
+    function resizeCanvasDebounced() {
+        cancelAnimationFrame(_resizeTimer);
+        _resizeTimer = requestAnimationFrame(resizeCanvas);
     }
 
     // ── 다중 썸네일 관리 ─────────────────────────
@@ -1516,8 +2025,24 @@ function draw() {
     // 패턴 비율 체크: 셀 크기가 0 이하이거나 내경이 너무 작아 패턴 불가능할 때 레드
     const patternBroken = geo.cellW <= 0 || geo.cellH <= 0 || geo.innerW <= 0 || geo.innerH <= 0;
 
-    const Color_Slat_Fill  = patternBroken ? '#cc0000' : '#111111';
-    const Color_Tenon_Fill = patternBroken ? '#cc0000' : '#111111';
+    const Color_Slat_Fill  = patternBroken ? '#cc0000' : selectedSlatColor;
+    const Color_Tenon_Fill = patternBroken ? '#cc0000' : selectedSlatColor;
+
+    // ====== 내경 배경 (살 내부 화이트) ======
+    for (const d of renderOrder) {
+        let pOffX = 0;
+        if (doorType === 'swing') {
+            pOffX = d * (geo.outerW + gap);
+        } else if (doorType === 'slide') {
+            if      (doorCount === 2) pOffX = d === 0 ? 0 : geo.outerW - geo.frameW;
+            else if (doorCount === 3) pOffX = d === 0 ? 0 : d === 1 ? geo.outerW - geo.frameW : (geo.outerW * 2) - (geo.frameW * 2);
+            else if (doorCount === 4) pOffX = d === 0 ? 0 : d === 1 ? geo.outerW - geo.frameW : d === 2 ? (geo.outerW * 2) - geo.frameW : (geo.outerW * 3) - (geo.frameW * 2);
+        }
+        const tX = rx => offsetX + (pOffX + rx) * baseScale;
+        const tY = ry => offsetY + ry * baseScale;
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(tX(geo.frameW), tY(geo.frameHTop), geo.innerW * baseScale, geo.innerH * baseScale);
+    }
 
     // ====== 1차 루프: 패턴만 그리기 (세로살, 가로살, 사분턱) ======
     for (const d of renderOrder) {
@@ -1604,148 +2129,86 @@ function draw() {
         // 세로살
         // ====================================
 
-        // 내경 영역으로 클리핑 — innerH 기준
-        const clipH = geo.innerH;
-        ctx.save();
-        ctx.beginPath();
-        ctx.rect(
-            toCanvasX(geo.frameW),
-            toCanvasY(geo.frameH),
-            geo.innerW * baseScale,
-            clipH * baseScale
-        );
-        ctx.clip();
-
-        for (let i = 1; i < geo.cols; i++) {
-
-            // 내경 시작(frameW)에서 i번째 살 중심 위치
-            // = frameW + i*cellW + (i-0.5)*slatV
-            // = frameW + i*(cellW + slatV) - slatV/2
-            // = frameW + i*stepW - slatV/2
-            const cx    = geo.frameW + i * (geo.cellW + geo.slatV) - geo.slatV / 2;
-            const left  = cx - geo.slatV / 2;
-            const topY  = geo.frameH;
-            const botY  = geo.frameH + geo.innerH;
-
-            // 촉
-            ctx.fillStyle =
-                Color_Tenon_Fill;
-
-            ctx.fillRect(
-                toCanvasX(left),
-                toCanvasY(topY - geo.tenonDepth),
-                geo.slatV * baseScale,
-                geo.tenonDepth * baseScale
-            );
-
-            ctx.fillRect(
-                toCanvasX(left),
-                toCanvasY(botY),
-                geo.slatV * baseScale,
-                geo.tenonDepth * baseScale
-            );
-
-            // 몸통
-            ctx.fillStyle =
-                Color_Slat_Fill;
-
-            ctx.fillRect(
-                toCanvasX(left),
-                toCanvasY(topY),
-                geo.slatV * baseScale,
-                geo.innerH * baseScale
-            );
-
-            drawCenterLine(
-                toCanvasX(cx),
-                toCanvasY(topY - geo.tenonDepth),
-                toCanvasX(cx),
-                toCanvasY(botY + geo.tenonDepth)
-            );
-        }
-
         // ====================================
-        // 가로살
+        // 삼분턱 패턴
         // ====================================
 
-        for (let j = 1; j < geo.rowsInt; j++) {
+        const clipH      = geo.innerH;
+        const slatPxHalf = geo.slatT * baseScale / 2;
+        const iLeft      = toCanvasX(geo.frameW);
+        const iTop       = toCanvasY(geo.frameHTop);
+        const iW         = geo.innerW * baseScale;
+        const iH         = clipH * baseScale;
+        const slatPx     = geo.slatT * baseScale;
 
-            // j번째 가로살 중심
-            const ry    = geo.frameH + j * (geo.cellH + geo.slatH) - geo.slatH / 2;
-            const top   = ry - geo.slatH / 2;
-            const leftX  = geo.frameW;
-            const rightX = geo.frameW + geo.innerW;
+        ctx.strokeStyle = patternBroken ? '#cc0000' : selectedSlatColor;
+        ctx.lineWidth   = slatPx;
+        ctx.lineCap     = 'round';
 
-            // 촉
-            ctx.fillStyle =
-                Color_Tenon_Fill;
+        if (!rotateOn) {
+            // ── 가로 방향 (기본) ──────────────────────────
+            // clip: 상하 slatT/2 연장
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(iLeft, iTop - slatPxHalf, iW, iH + slatPxHalf * 2);
+            ctx.clip();
 
-            ctx.fillRect(
-                toCanvasX(leftX - geo.tenonDepth),
-                toCanvasY(top),
-                geo.tenonDepth * baseScale,
-                geo.slatH * baseScale
-            );
+            const size    = iW / (geo.cols * Math.sqrt(3));
+            const width   = size * Math.sqrt(3);
+            const rowStep = size * 1.5;
+            const startY  = iTop - slatPx / 2;
 
-            ctx.fillRect(
-                toCanvasX(rightX),
-                toCanvasY(top),
-                geo.tenonDepth * baseScale,
-                geo.slatH * baseScale
-            );
-
-            // 몸통
-            ctx.fillStyle =
-                Color_Slat_Fill;
-
-            ctx.fillRect(
-                toCanvasX(leftX),
-                toCanvasY(top),
-                geo.innerW * baseScale,
-                geo.slatH * baseScale
-            );
-
-            drawCenterLine(
-                toCanvasX(leftX - geo.tenonDepth),
-                toCanvasY(ry),
-                toCanvasX(rightX + geo.tenonDepth),
-                toCanvasY(ry)
-            );
-        }
-
-        // ====================================
-        // 사분턱
-        // ====================================
-
-        ctx.strokeStyle = patternBroken ? '#cc0000' : '#111111';
-
-        ctx.lineWidth =
-            ((geo.slatV + geo.slatH) / 2) * baseScale;
-
-        for (let row = 0; row < geo.rowsInt; row++) {
-
-            for (let col = 0; col < geo.cols; col++) {
-
-                // 각 셀의 좌상 코너 (mm)
-                const x = geo.frameW + col * (geo.cellW + geo.slatV);
-                const y = geo.frameH + row * (geo.cellH + geo.slatH);
-
-                // 좌상 → 우하
-                ctx.beginPath();
-                ctx.moveTo(toCanvasX(x),              toCanvasY(y));
-                ctx.lineTo(toCanvasX(x + geo.cellW),  toCanvasY(y + geo.cellH));
-                ctx.stroke();
-
-                // 우상 → 좌하
-                ctx.beginPath();
-                ctx.moveTo(toCanvasX(x + geo.cellW),  toCanvasY(y));
-                ctx.lineTo(toCanvasX(x),              toCanvasY(y + geo.cellH));
-                ctx.stroke();
+            for (let y = startY - rowStep, rIdx = 0; y < iTop + iH + rowStep; y += rowStep, rIdx++) {
+                for (let x = iLeft - width; x < iLeft + iW + width; x += width) {
+                    const offX = (rIdx % 2 === 0) ? width / 2 : 0;
+                    const cx = x + offX, cy = y;
+                    for (let i = 0; i < 6; i++) {
+                        ctx.beginPath();
+                        ctx.moveTo(cx, cy);
+                        ctx.lineTo(cx + size * Math.cos(i * Math.PI / 3),
+                                   cy + size * Math.sin(i * Math.PI / 3));
+                        ctx.stroke();
+                    }
+                }
             }
-        }
+            ctx.restore();
 
-        // 클리핑 해제
-        ctx.restore();
+        } else {
+            // ── 세로 방향 (90° 회전) ──────────────────────
+            // size = iW 기준 (가로 칸수 동일 적용)
+            // clip: 상하 slatT/2(세로 정렬) + 좌우 slatT/2(수평 경계)
+            ctx.save();
+            ctx.beginPath();
+            // 좌우·상하 모두 slatPx/2 반살 → 프레임이 덮음
+            ctx.rect(iLeft - slatPxHalf, iTop - slatPxHalf,
+                     iW + slatPxHalf * 2, iH + slatPxHalf * 2);
+            ctx.clip();
+
+            // 첫열 중심 iLeft-slatPx/2, 마지막열 중심 iLeft+iW+slatPx/2
+            const size    = (iW + slatPx) / (geo.cols * 1.5);
+            const width   = size * Math.sqrt(3);
+            const colStep = size * 1.5;
+            const startX  = iLeft - slatPx / 2;
+            const startY_v = iTop - slatPx / 2;
+
+            for (let x = startX - colStep, cIdx = 0; x < iLeft + iW + colStep; x += colStep, cIdx++) {
+                for (let y = startY_v - width; y < iTop + iH + width; y += width) {
+                    const offY = (cIdx % 2 === 0) ? width / 2 : 0;
+                    const cx = x, cy = y + offY;
+                    // slatPx/2 범위 밖 센터 건너뜀
+                    if (cy < iTop - slatPx / 2 || cy > iTop + iH + slatPx / 2) continue;
+                    for (let i = 0; i < 6; i++) {
+                        const angle = i * Math.PI / 3 + Math.PI / 2;
+                        ctx.beginPath();
+                        ctx.moveTo(cx, cy);
+                        ctx.lineTo(cx + size * Math.cos(angle),
+                                   cy + size * Math.sin(angle));
+                        ctx.stroke();
+                    }
+                }
+            }
+            ctx.restore();
+        }
 
     }   // ← 1차 루프 끝
 
@@ -1769,39 +2232,20 @@ function draw() {
         // 창호 실제 높이
         const actualH = geo.actualPatternH;
 
-        ctx.fillStyle = '#d8c3a5';
+        ctx.fillStyle = selectedFrameColor;
 
-        // 좌측 세로 울거미 — outerH 전체 높이
-        ctx.fillRect(
-            toCanvasX(0),
-            toCanvasY(0),
-            geo.frameW * baseScale,
-            geo.outerH * baseScale
-        );
-
-        // 우측 세로 울거미 — outerH 전체 높이
-        ctx.fillRect(
-            toCanvasX(geo.outerW - geo.frameW),
-            toCanvasY(0),
-            geo.frameW * baseScale,
-            geo.outerH * baseScale
-        );
-
+        // 좌측 세로 울거미
+        ctx.fillRect(toCanvasX(0), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale);
+        applyGrain(toCanvasX(0), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale, true);
         // 상부 가로 울거미
-        ctx.fillRect(
-            toCanvasX(geo.frameW),
-            toCanvasY(0),
-            geo.innerW * baseScale,
-            geo.frameH * baseScale
-        );
-
-        // 하단 울거미 (남는 공간 흡수 또는 고정)
-        ctx.fillRect(
-            toCanvasX(geo.frameW),
-            toCanvasY(geo.frameH + geo.innerH),
-            geo.innerW * baseScale,
-            geo.frameHBottom * baseScale
-        );
+        ctx.fillRect(toCanvasX(geo.frameW), toCanvasY(0), geo.innerW * baseScale, geo.frameHTop * baseScale);
+        applyGrain(toCanvasX(geo.frameW), toCanvasY(0), geo.innerW * baseScale, geo.frameHTop * baseScale, false);
+        // 하단 울거미
+        ctx.fillRect(toCanvasX(geo.frameW), toCanvasY(geo.frameHTop + geo.innerH), geo.innerW * baseScale, geo.frameHBottom * baseScale);
+        applyGrain(toCanvasX(geo.frameW), toCanvasY(geo.frameHTop + geo.innerH), geo.innerW * baseScale, geo.frameHBottom * baseScale, false);
+        // 우측 세로 울거미
+        ctx.fillRect(toCanvasX(geo.outerW - geo.frameW), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale);
+        applyGrain(toCanvasX(geo.outerW - geo.frameW), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale, true);
     }
 
     // ====================================
@@ -1833,7 +2277,7 @@ function draw() {
             const ppInnerW = geo.innerW;
             const ppInnerH = pungpanDrawH - geo.frameH;
 
-            ctx.fillStyle = '#e8d5b8';
+            ctx.fillStyle = lightenHex(selectedFrameColor, 40);
             ctx.fillRect(
                 toCX(ppInnerX),
                 toCY(pungpanY),
@@ -1841,7 +2285,7 @@ function draw() {
                 ppInnerH * baseScale
             );
 
-            ctx.fillStyle = '#d8c3a5';
+            ctx.fillStyle = selectedFrameColor;
 
             // 좌측 세로 울거미 (풍판 전체 높이)
             ctx.fillRect(
@@ -1884,54 +2328,6 @@ function draw() {
         ctx.restore();
     }
 
-    function clipLineToRect(x1, y1, x2, y2, rx1, ry1, rx2, ry2) {
-        let t0 = 0,
-            t1 = 1;
-        let dx = x2 - x1,
-            dy = y2 - y1;
-        let p = [-dx, dx, -dy, dy];
-        let q = [x1 - rx1, rx2 - x1, y1 - ry1, ry2 - y1];
-        for (let i = 0; i < 4; i++) {
-            if (p[i] === 0 && q[i] < 0) return null;
-            let r = q[i] / p[i];
-            if (p[i] < 0) {
-                if (r > t1) return null;
-                if (r > t0) t0 = r;
-            } else if (p[i] > 0) {
-                if (r < t0) return null;
-                if (r < t1) t1 = r;
-            }
-        }
-        return {
-            x1: x1 + t0 * dx,
-            y1: y1 + t0 * dy,
-            x2: x1 + t1 * dx,
-            y2: y1 + t1 * dy
-        };
-    }
-
-    function drawDimensionArrow(x1, y1, x2, y2) {
-        ctx.save();
-        ctx.strokeStyle = ctx.fillStyle;
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x2, y2);
-        ctx.stroke();
-        let angle = Math.atan2(y2 - y1, x2 - x1);
-        ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x1 + 6 * Math.cos(angle + Math.PI / 6), y1 + 6 * Math.sin(angle + Math.PI / 6));
-        ctx.lineTo(x1 + 6 * Math.cos(angle - Math.PI / 6), y1 + 6 * Math.sin(angle - Math.PI / 6));
-        ctx.fill();
-        ctx.beginPath();
-        ctx.moveTo(x2, y2);
-        ctx.lineTo(x2 - 6 * Math.cos(angle + Math.PI / 6), y2 - 6 * Math.sin(angle + Math.PI / 6));
-        ctx.lineTo(x2 - 6 * Math.cos(angle - Math.PI / 6), y2 - 6 * Math.sin(angle - Math.PI / 6));
-        ctx.fill();
-        ctx.restore();
-    }
-
     container.addEventListener('mousedown', function(e) {
         isDragging = true;
         startX = e.clientX - panX;
@@ -1957,10 +2353,22 @@ function draw() {
         passive: false
     });
 
-    btnToggleSidebar.addEventListener('click', function() {
+    const btnSidebarTab = document.getElementById('btnSidebarTab');
+
+    function toggleSidebar() {
         sidebar.classList.toggle('collapsed');
-        setTimeout(resizeCanvas, 250);
-    });
+        btnSidebarTab.classList.toggle('collapsed');
+
+        const duration = 270;
+        const start = performance.now();
+        function animateResize(now) {
+            resizeCanvas();
+            if (now - start < duration) requestAnimationFrame(animateResize);
+        }
+        requestAnimationFrame(animateResize);
+    }
+
+    btnSidebarTab.addEventListener('click', toggleSidebar);
     document.getElementById('btnZoomIn').addEventListener('click', () => {
         scaleFactor = Math.min(scaleFactor * 1.2, 20);
         draw();
@@ -1973,11 +2381,14 @@ function draw() {
         scaleFactor = 1.0;
         panX = 0;
         panY = 0;
+        frameColorPicker.selectColor(DEFAULT_FRAME_COLOR);
+        slatColorPicker.selectColor(DEFAULT_SLAT_COLOR);
         draw();
     });
     // ── 풍판 토글 ─────────────────────────────
     const chkPungpan   = document.getElementById('chkPungpan');
     const pungpanCtrl  = document.getElementById('pungpanCtrl');
+
 
     chkPungpan.addEventListener('change', () => {
         pungpanCtrl.style.display = chkPungpan.checked ? 'block' : 'none';
@@ -1993,15 +2404,17 @@ function draw() {
         draw();
     });
 
+    
+
     // ── 슬라이더 ↔ 인풋창 양방향 동기화 ──────────────────
 
     const syncPairs = [
-        { range: txtW,      num: document.getElementById('numW'),       min: 400,  max: 1500 },
-        { range: txtH,      num: document.getElementById('numH'),       min: 800,  max: 2400 },
+        { range: txtW,      num: document.getElementById('numW'),       min: 400,  max: 2600 },
+        { range: txtH,      num: document.getElementById('numH'),       min: 400,  max: 2600 },
         { range: txtCols,   num: document.getElementById('numCols'),    min: 2,    max: 30   },
-        { range: txtFrame,  num: document.getElementById('numFrame'),   min: 35,   max: 150  },
-        { range: txtFrameH, num: document.getElementById('numFrameH'),  min: 35,   max: 150  },
-        { range: txtSlat,   num: document.getElementById('numSlat'),    min: 8,    max: 25   },
+        { range: txtFrame,  num: document.getElementById('numFrame'),   min: 20,   max: 150  },
+        { range: txtFrameH, num: document.getElementById('numFrameH'),  min: 20,   max: 150  },
+        { range: txtSlat,   num: document.getElementById('numSlat'),    min: 8,    max: 35   },
         { range: document.getElementById('txtPungpan'), num: document.getElementById('numPungpan'), min: 0, max: 600 },
     ];
 
@@ -2031,15 +2444,67 @@ function draw() {
         });
     });
 
-    [txtDoorType, txtDoorCount].forEach(input =>
-        input.addEventListener('input', draw)
-    );
+    function updateDoorCountOptions() {
+        const isSwing = txtDoorType.value === 'swing';
+        Array.from(txtDoorCount.options).forEach(opt => {
+            const v = parseInt(opt.value);
+            opt.hidden = isSwing && v > 2;
+        });
+        if (isSwing && parseInt(txtDoorCount.value) > 2) {
+            txtDoorCount.value = '2';
+        }
+        draw();
+    }
 
-    window.addEventListener('resize', resizeCanvas);
+    txtDoorType.addEventListener('input', updateDoorCountOptions);
+    txtDoorCount.addEventListener('input', draw);
+    document.getElementById('chkGrain').addEventListener('change', e => {
+        grainOn = e.target.checked;
+        draw();
+    });
+    document.getElementById('chkRotate').addEventListener('change', e => {
+        rotateOn = e.target.checked;
+        draw();
+    });
+    updateDoorCountOptions();
+
+    // 작성일 / 수정일
+    function fmtDate(ts) {
+        const d = new Date(ts);
+        const yy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        const hh = String(d.getHours()).padStart(2, '0');
+        const mi = String(d.getMinutes()).padStart(2, '0');
+        return `${yy}.${mm}.${dd} ${hh}:${mi}`;
+    }
+
+    const CREATED_KEY  = 'pmok_created';
+    const MODIFIED_KEY = 'pmok_modified';
+
+    if (!localStorage.getItem(CREATED_KEY)) {
+        localStorage.setItem(CREATED_KEY, Date.now());
+    }
+    document.getElementById('dateCreated').textContent = fmtDate(Number(localStorage.getItem(CREATED_KEY)));
+
+    const savedModified = localStorage.getItem(MODIFIED_KEY) || localStorage.getItem(CREATED_KEY);
+    document.getElementById('dateModified').textContent = fmtDate(Number(savedModified));
+
+    function updateModified() {
+        const now = Date.now();
+        localStorage.setItem(MODIFIED_KEY, now);
+        document.getElementById('dateModified').textContent = fmtDate(now);
+    }
+
+    document.getElementById('btnSave').addEventListener('click', updateModified);
+
+    window.addEventListener('resize', resizeCanvasDebounced);
     resizeCanvas();
 
     //출력
     btnSavePNG.addEventListener('click', function() {
+
+        updateModified();
 
         // 배경 포함 저장용 캔버스 생성
         const exportCanvas = document.createElement('canvas');
@@ -2074,6 +2539,8 @@ function draw() {
     });
 
     btnSavePDF.addEventListener('click', function() {
+
+        updateModified();
 
         const {
             jsPDF
