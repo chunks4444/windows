@@ -60,6 +60,7 @@ body { padding-top: 68px; }
 $currentFile = basename($_SERVER['PHP_SELF']);
 $isSabunteok  = (stripos($currentFile, 'Sabunteok') !== false);
 $isSambuntok  = (stripos($currentFile, 'sambuntok') !== false);
+$isIndex      = ($currentFile === 'index.php' || $_SERVER['PHP_SELF'] === '/');
 ?>
 <nav class="pm-navbar navbar navbar-expand-lg fixed-top px-4 py-3">
     <a href="/" class="navbar-brand d-flex align-items-center">
@@ -74,7 +75,7 @@ $isSambuntok  = (stripos($currentFile, 'sambuntok') !== false);
     </button>
     <div class="collapse navbar-collapse justify-content-end" id="pmNavMenu">
         <ul class="navbar-nav gap-3">
-            <li class="nav-item"><a href="#" class="nav-link">Projects</a></li>
+            <li class="nav-item"><a href="#" class="nav-link">Works</a></li>
             <li class="nav-item"><a href="#" class="nav-link">Pattern Library</a></li>
             <li class="nav-item dropdown">
                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Generator</a>
@@ -100,8 +101,12 @@ $isSambuntok  = (stripos($currentFile, 'sambuntok') !== false);
                     </a></li>
                 </ul>
             </li>
-            <li class="nav-item"><a href="#" class="nav-link">Craft Process</a></li>
-            <li class="nav-item"><a href="#" class="nav-link">Contact</a></li>
+            <?php if ($isIndex): ?>
+            <li class="nav-item"><a href="#" class="nav-link">Login</a></li>
+            <li class="nav-item"><a href="#" class="nav-link">Sign In</a></li>
+            <?php else: ?>
+            <li class="nav-item"><a href="#" class="nav-link">My page</a></li>
+            <?php endif; ?>
         </ul>
     </div>
 </nav>
