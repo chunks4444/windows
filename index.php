@@ -51,7 +51,7 @@ header('Content-Type: text/html; charset=UTF-8');
 
     .values-title {
         font-family: 'Noto Serif KR', serif;
-        font-size: 28px;
+        font-size: 22px;
         font-weight: 700;
         letter-spacing: -0.01em;
         margin-bottom: 16px;
@@ -127,22 +127,41 @@ header('Content-Type: text/html; charset=UTF-8');
                 .values-item:hover .values-title { color:#cc2200; }
                 </style>
 
-            <div style="display:flex; gap:0; border-top:1px solid var(--border);">
-                <div class="values-item" style="flex:1; border-bottom:none; border-right:1px solid var(--border); padding-right:40px;">
-                    <h2 class="values-title">당신의 공간에 빛과 바람의 길을 설계합니다.</h2>
-                    <p class="values-desc">전통을 잇는 정교함, 미래를 여는 디자인</p>
+            <!-- 4열 그리드: 제목행 / 구분선행 / 설명행 으로 수직 정렬 -->
+            <div style="display:grid; grid-template-columns:repeat(4,1fr); grid-template-rows:auto 1px auto; border-top:1px solid var(--border);">
+
+                <!-- 제목 행 -->
+                <div class="values-item" style="border-bottom:none; border-right:1px solid var(--border); padding:52px 40px 24px 0;">
+                    <h2 class="values-title">공간에 빛과 바람의 <br>길을 설계합니다.</h2>
                 </div>
-                <div class="values-item" style="flex:1; border-bottom:none; border-right:1px solid var(--border); padding:52px 40px;">
-                    <h2 class="values-title">기다림 대신 창조를</h2>
-                    <p class="values-desc">장인의 작업실에서 수개월을 기다려야 했던 전통 창호를, 이제 당신이 직접 생성하고 수정하여 즉시 제작을 의뢰할 수 있습니다. 당신은 오직 영감에 집중하세요.</p>
+                <div class="values-item" style="border-bottom:none; border-right:1px solid var(--border); padding:52px 40px 24px;">
+                    <h2 class="values-title">기다림 대신<br> 창조를</h2>
                 </div>
-                <div class="values-item" style="flex:1; border-bottom:none; border-right:1px solid var(--border); padding:52px 40px;">
-                    <h2 class="values-title">디지털로 잇는 장인의 숨결</h2>
-                    <p class="values-desc">정밀한 joinery(결구) 기법부터 창호의 미세한 간격까지, 전통 목공의 원리를 계산하여 가장 완벽한 설계도를 완성합니다.</p>
+                <div class="values-item" style="border-bottom:none; border-right:1px solid var(--border); padding:52px 40px 24px;">
+                    <h2 class="values-title">디지털로 잇는 <br>장인의 숨결</h2>
                 </div>
-                <div class="values-item" style="flex:1; border-bottom:none; padding-left:40px;">
-                    <h2 class="values-title">당신의 공간을 위한 단 하나의 창(窓)</h2>
-                    <p class="values-desc">기성품이 담아내지 못하는 공간의 깊이. 직접 설계한 패턴으로 세상에 하나뿐인 나무문과 나무 창문으로 빛과 바람의 길을 디자인하세요.</p>
+                <div class="values-item" style="border-bottom:none; padding:52px 0 24px 40px;">
+                    <h2 class="values-title">당신의 공간을 위한 <br>단 하나의 창(窓)</h2>
+                </div>
+
+                <!-- 구분선 행 -->
+                <div style="background:var(--border); margin-right:40px;"></div>
+                <div style="background:var(--border); margin:0 40px;"></div>
+                <div style="background:var(--border); margin:0 40px;"></div>
+                <div style="background:var(--border); margin-left:40px;"></div>
+
+                <!-- 설명 행 -->
+                <div style="padding:24px 40px 52px 0; border-right:1px solid var(--border);">
+                    <p class="values-desc mb-0">전통을 잇는 정교함, 미래를 여는 디자인</p>
+                </div>
+                <div style="padding:24px 40px 52px; border-right:1px solid var(--border);">
+                    <p class="values-desc mb-0">장인의 작업실에서 수개월을 기다려야 했던 전통 창호를, 이제 당신이 직접 생성하고 수정하여 즉시 제작을 의뢰할 수 있습니다. 당신은 오직 영감에 집중하세요.</p>
+                </div>
+                <div style="padding:24px 40px 52px; border-right:1px solid var(--border);">
+                    <p class="values-desc mb-0">정밀한 joinery(결구) 기법부터 창호의 미세한 간격까지, 전통 목공의 원리를 계산하여 가장 완벽한 설계도를 완성합니다.</p>
+                </div>
+                <div style="padding:24px 0 52px 40px;">
+                    <p class="values-desc mb-0">기성품이 담아내지 못하는 공간의 깊이. 직접 설계한 패턴으로 세상에 하나뿐인 나무문과 나무 창문으로 빛과 바람의 길을 디자인하세요.</p>
                 </div>
             </div>
 
