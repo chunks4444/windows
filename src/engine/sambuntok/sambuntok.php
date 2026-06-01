@@ -1802,227 +1802,6 @@ header('Content-Type: text/html; charset=UTF-8');
         // 여기에 이후 전송 로직 작성
     }
 
-function calculateGeometry() {
-
-    const cols     = parseInt(txtCols.value);
-    const outerW   = parseInt(txtW.value);
-    const outerH   = parseInt(txtH.value);
-    const pungpanH = parseInt(document.getElementById('txtPungpan').value) || 0;
-    const pungpanOn = document.getElementById('chkPungpan').checked;
-    const frameW   = parseInt(txtFrame.value);
-    const frameH   = parseInt(txtFrameH.value);
-    const slatT    = parseInt(txtSlat.value);
-    const effectivePungpanInput = pungpanOn ? pungpanH : 0;
-
-    let innerW, innerH, stepX, rowH, rows;
-    let frameHTop, frameHBottom, frameWActual;
-    let effectivePungpanH, actualPungpanH;
-    let colStepR = 0, rowHR = 0;
-
-    if (!rotateOn) {
-        // ── 가로 방향 (기본): cols 가 WIDTH 등분 ────────────
-        innerW = outerW - 2 * frameW;
-        stepX  = innerW / cols;
-        rowH   = stepX * Math.sqrt(3) / 2;
-        const availH = outerH - 2 * frameH - effectivePungpanInput;
-        rows   = Math.max(2, Math.floor((availH + slatT) / rowH) + 1);
-        innerH = (rows - 1) * rowH - slatT;
-        const actualPatternH = frameH + innerH + frameH;
-        const surplus = (outerH - effectivePungpanInput) - actualPatternH;
-        effectivePungpanH = pungpanOn ? effectivePungpanInput + surplus : 0;
-        actualPungpanH    = effectivePungpanH;
-        const halfSurplus = pungpanOn ? 0 : surplus / 2;
-        frameHTop    = frameH + halfSurplus;
-        frameHBottom = pungpanOn ? frameH : frameH + (surplus - halfSurplus);
-        frameWActual = frameW;
-
-    } else {
-        // ── 세로 방향 (90°): cols 는 WIDTH 기준 그대로 ──────
-        // 첫열 중심 = frameW - slatT/2, 마지막열 중심 = frameW + innerW + slatT/2
-        // → cols * colStep = innerW + slatT → size = (innerW+slatT)/(cols*1.5)
-        // → 수직 피치 rowHR = size*√3 = (innerW+slatT)*2/(cols*√3)
-        innerW = outerW - 2 * frameW;
-        stepX  = innerW / cols;
-        rowH   = stepX * Math.sqrt(3) / 2;
-        colStepR = (innerW + slatT) / cols;
-        rowHR    = colStepR * 2 / Math.sqrt(3);   // 회전 후 수직 피치
-        const availH2  = outerH - 2 * frameH - effectivePungpanInput;
-        rows   = Math.max(2, Math.floor(availH2 / rowHR) + 1);
-        innerH = (rows - 1) * rowHR;
-        const actualPatternHR = frameH + innerH + frameH;
-        const surplusR = (outerH - effectivePungpanInput) - actualPatternHR;
-        effectivePungpanH = pungpanOn ? effectivePungpanInput + surplusR : 0;
-        actualPungpanH    = effectivePungpanH;
-        const halfSurplusR = pungpanOn ? 0 : surplusR / 2;
-        frameHTop    = frameH + halfSurplusR;
-        frameHBottom = pungpanOn ? frameH : frameH + (surplusR - halfSurplusR);
-        frameWActual = frameW;
-    }
-
-    // 세로 방향이면 피치·살간격·사선간격은 회전 후 실제 값 사용
-    const cellW      = rotateOn ? rowHR - slatT : stepX;
-    const cellH      = rowH;
-    const cellSize   = stepX;
-    const step       = rotateOn ? rowHR : stepX;
-    const stepH      = rowH + slatT;
-    const diagEye    = rotateOn ? (colStepR - slatT).toFixed(1) : (stepX - slatT).toFixed(1);
-    const tenonDepth = slatT;
-    const actualPatternH = frameHTop + innerH + frameHBottom;
-
-    const doorType  = txtDoorType.value;
-    const doorCount = parseInt(txtDoorCount.value);
-    const overlap   = frameWActual * 0.55;
-
-    let totalDoorWidth;
-    if (doorType === 'slide') {
-        if      (doorCount === 1) totalDoorWidth = outerW;
-        else if (doorCount === 2) totalDoorWidth = (outerW * 2) - overlap;
-        else if (doorCount === 3) totalDoorWidth = (outerW * 3) - (overlap * 2);
-        else if (doorCount === 4) totalDoorWidth = (outerW * 4) - (overlap * 2);
-    } else {
-        totalDoorWidth = outerW * doorCount;
-    }
-
-    geo = {
-        cellSize, cellW, cellH, stepX, rowH,
-        outerW, outerH,
-        frameW: frameWActual,
-        frameH,
-        frameHTop,
-        frameHBottom,
-        slatT, slatV: slatT, slatH: slatT,
-        step, stepH,
-        cols, rows, rowsInt: rows,
-        innerW, innerH,
-        actualPatternH, actualPungpanH, effectivePungpanH,
-        diagEye, tenonDepth, totalDoorWidth
-    };
-
-    // ── 시방서 업데이트 ────────────────────────────────
-    document.getElementById('spOuterW').innerText = Math.round(outerW);
-    document.getElementById('spOuterH').innerText = Math.round(outerH);
-    document.getElementById('spInnerW').innerText = Math.round(innerW);
-    document.getElementById('spInnerH').innerText = Math.round(innerH);
-    document.getElementById('spCounts').innerText = cols;
-    document.getElementById('spRows').innerText   = Math.round(rows);
-    document.getElementById('spStep').innerText   = step.toFixed(1);
-    document.getElementById('spPungpan').innerText  = Math.round(effectivePungpanH);
-    document.getElementById('spEye').innerText      = cellW.toFixed(1);
-    document.getElementById('spDiagEye').innerText  = diagEye;
-    document.getElementById('spFrameHTop').innerText = Math.round(frameHTop);
-    document.getElementById('spTotalDoorW').innerText = Math.round(totalDoorWidth);
-
-    // ── 부재 목록 (문짝수 연동) ────────────────────────
-    document.getElementById('spFrVLen').textContent = Math.round(outerH + 2 * slatT);
-    document.getElementById('spFrVCnt').textContent = (2 * doorCount) + '개';
-    document.getElementById('spFrHLen').textContent = Math.round(outerW + 2 * slatT);
-    document.getElementById('spFrHCnt').textContent = ((pungpanOn ? 3 : 2) * doorCount) + '개';
-
-    const ppGroup = document.getElementById('pungpanMaterialGroup');
-    if (pungpanOn && effectivePungpanH > 0) {
-        ppGroup.style.display = '';
-        const ppPanelH = effectivePungpanH - frameH;
-        document.getElementById('spPpHLen').textContent = Math.round(innerW + 2 * slatT);
-        document.getElementById('spPpVLen').textContent = Math.round(ppPanelH + 2 * slatT);
-        document.querySelector('#pungpanMaterialGroup .slat-count-badge').textContent = doorCount + '개';
-    } else {
-        ppGroup.style.display = 'none';
-    }
-
-    // ── 방향별 부재 (가로부재 / 세로부재) ─────────────────
-    const dirTitle = document.getElementById('dirSlatGroupTitle');
-    if (!rotateOn) {
-        // 가로 방향: 가로부재 (울거미→울거미 수평 전체)
-        dirTitle.textContent = '가로부재';
-        document.getElementById('spHSlatLen').textContent = Math.round(innerW + 2 * tenonDepth);
-        document.getElementById('spHSlatCnt').textContent = (Math.max(0, rows - 1) * doorCount) + '개';
-    } else {
-        // 세로 방향: 세로부재 (울거미→울거미 수직 전체)
-        dirTitle.textContent = '세로부재';
-        document.getElementById('spHSlatLen').textContent = Math.round(innerH + 2 * tenonDepth);
-        document.getElementById('spHSlatCnt').textContent = (cols * doorCount) + '개';
-    }
-
-    // ── 사선살 (울거미→울거미, 길이별 그룹) ──────────────
-    const diagListEl = document.getElementById('spDiagList');
-    diagListEl.innerHTML = '';
-
-    (function() {
-        const SQRT3 = Math.sqrt(3);
-        const EPS   = 0.5;
-        const MERGE_TOL = 2 * slatT;  // 근접 길이 병합 허용 오차
-
-        // 60° 선 (y = √3·x + b) — 가로 방향
-        function calcGroups60(iW, iH, bStep, sT) {
-            const g = {};
-            const bMin = Math.ceil(-iW * SQRT3 / bStep - EPS) * bStep;
-            const bMax = Math.floor( iH / bStep + EPS) * bStep;
-            for (let b = bMin; b <= bMax + EPS; b += bStep) {
-                const x1 = b < -EPS ? -b / SQRT3 : 0;
-                const y1 = b < -EPS ? 0 : Math.max(0, b);
-                const yR = SQRT3 * iW + b;
-                const x2 = yR < iH - EPS ? iW : (iH - b) / SQRT3;
-                const y2 = yR < iH - EPS ? yR : iH;
-                if (x1 > iW + EPS || x2 < -EPS || x1 > x2 + EPS) continue;
-                const seg = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
-                if (seg < EPS) continue;
-                const k = Math.round(seg + 2*sT);
-                g[k] = (g[k] || 0) + 1;
-            }
-            return g;
-        }
-
-        // 30° 선 (y = x/√3 + b) — 세로 방향 직접 계산
-        function calcGroups30(iW, iH, bStep, sT) {
-            const g = {};
-            const bMin = Math.ceil(-iW / SQRT3 / bStep - EPS) * bStep;
-            const bMax = Math.floor( iH / bStep + EPS) * bStep;
-            for (let b = bMin; b <= bMax + EPS; b += bStep) {
-                const x1 = b < -EPS ? -b * SQRT3 : 0;
-                const y1 = b < -EPS ? 0 : Math.max(0, b);
-                const yR = iW / SQRT3 + b;
-                const x2 = yR < iH - EPS ? iW : (iH - b) * SQRT3;
-                const y2 = yR < iH - EPS ? yR : iH;
-                if (x1 > iW + EPS || x2 < -EPS || x1 > x2 + EPS) continue;
-                const seg = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
-                if (seg < EPS) continue;
-                const k = Math.round(seg + 2*sT);
-                g[k] = (g[k] || 0) + 1;
-            }
-            return g;
-        }
-
-        const rawGroups = rotateOn
-            ? calcGroups30(innerW, innerH, rowHR, slatT)
-            : calcGroups60(innerW, innerH, stepX * SQRT3, slatT);
-
-        // 2*살두께 이내 근접 길이는 병합 (큰 값 기준)
-        const sorted = Object.entries(rawGroups)
-            .map(([len, cnt]) => ({ len: +len, cnt }))
-            .sort((a, b) => a.len - b.len);
-        const merged = [];
-        for (const item of sorted) {
-            const last = merged[merged.length - 1];
-            if (last && item.len - last.len <= MERGE_TOL) {
-                last.cnt += item.cnt;
-                last.len = Math.max(last.len, item.len);
-            } else {
-                merged.push({ len: item.len, cnt: item.cnt });
-            }
-        }
-
-        // ±방향 대칭이므로 ×2
-        merged
-            .map(({ len, cnt }) => ({ len, cnt: cnt * 2 * doorCount }))
-            .sort((a, b) => b.len - a.len)
-            .forEach(({ len, cnt }) => {
-                const el = document.createElement('div');
-                el.className = 'slat-row';
-                el.innerHTML = `<span class="slat-len">${len}<span class="slat-len-unit">mm</span></span><span class="slat-cnt">${cnt}개</span>`;
-                diagListEl.appendChild(el);
-            });
-    })();
-}
 
     function resizeCanvas() {
         const w = container.clientWidth;
@@ -2122,9 +1901,84 @@ function calculateGeometry() {
 
 
 
-function draw() {
+let _geoController = null;
 
-    calculateGeometry();
+async function fetchGeometry() {
+    if (_geoController) _geoController.abort();
+    _geoController = new AbortController();
+    const body = new URLSearchParams({
+        cols:      txtCols.value,
+        outerW:    txtW.value,
+        outerH:    txtH.value,
+        pungpanH:  document.getElementById('txtPungpan').value || 0,
+        pungpanOn: document.getElementById('chkPungpan').checked ? '1' : '0',
+        frameW:    txtFrame.value,
+        frameH:    txtFrameH.value,
+        slatT:     txtSlat.value,
+        rotateOn:  rotateOn ? '1' : '0',
+        doorType:  txtDoorType.value,
+        doorCount: txtDoorCount.value,
+    });
+    try {
+        const res = await fetch('api/geometry.php', {
+            method: 'POST',
+            body,
+            signal: _geoController.signal,
+        });
+        return res.json();
+    } catch (e) {
+        if (e.name === 'AbortError') return null;
+        throw e;
+    }
+}
+
+async function draw() {
+    const data = await fetchGeometry();
+    if (!data) return;
+    geo = data.geo;
+
+    const s = data.specs;
+    document.getElementById('spOuterW').innerText     = s.outerW;
+    document.getElementById('spOuterH').innerText     = s.outerH;
+    document.getElementById('spInnerW').innerText     = s.innerW;
+    document.getElementById('spInnerH').innerText     = s.innerH;
+    document.getElementById('spCounts').innerText     = s.cols;
+    document.getElementById('spRows').innerText       = s.rows;
+    document.getElementById('spStep').innerText       = s.step;
+    document.getElementById('spPungpan').innerText    = s.pungpan;
+    document.getElementById('spEye').innerText        = s.eye;
+    document.getElementById('spDiagEye').innerText    = s.diagEye;
+    document.getElementById('spFrameHTop').innerText  = s.frameHTop;
+    document.getElementById('spTotalDoorW').innerText = s.totalDoorW;
+
+    const p = data.parts;
+    document.getElementById('spFrVLen').textContent = p.frVLen;
+    document.getElementById('spFrVCnt').textContent = p.frVCnt;
+    document.getElementById('spFrHLen').textContent = p.frHLen;
+    document.getElementById('spFrHCnt').textContent = p.frHCnt;
+
+    const ppGroup = document.getElementById('pungpanMaterialGroup');
+    if (p.pungpanVisible) {
+        ppGroup.style.display = '';
+        document.getElementById('spPpHLen').textContent = p.ppHLen;
+        document.getElementById('spPpVLen').textContent = p.ppVLen;
+        document.querySelector('#pungpanMaterialGroup .slat-count-badge').textContent = p.pungpanCnt;
+    } else {
+        ppGroup.style.display = 'none';
+    }
+
+    document.getElementById('dirSlatGroupTitle').textContent = p.dirTitle;
+    document.getElementById('spHSlatLen').textContent = p.hSlatLen;
+    document.getElementById('spHSlatCnt').textContent = p.hSlatCnt;
+
+    const diagListEl = document.getElementById('spDiagList');
+    diagListEl.innerHTML = '';
+    p.diagList.forEach(({ len, cnt }) => {
+        const el = document.createElement('div');
+        el.className = 'slat-row';
+        el.innerHTML = `<span class="slat-len">${len}<span class="slat-len-unit">mm</span></span><span class="slat-cnt">${cnt}개</span>`;
+        diagListEl.appendChild(el);
+    });
 
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -2531,13 +2385,12 @@ function draw() {
     const pungpanCtrl  = document.getElementById('pungpanCtrl');
 
 
-    chkPungpan.addEventListener('change', () => {
+    chkPungpan.addEventListener('change', async () => {
         pungpanCtrl.style.display = chkPungpan.checked ? 'block' : 'none';
         if (!chkPungpan.checked) {
-            // OFF: 풍판 슬라이더 0 리셋 후 세로 슬라이더를 패턴 높이로 축소
             document.getElementById('txtPungpan').value = 0;
             document.getElementById('numPungpan').value = 0;
-            draw();  // actualPatternH 계산
+            await draw();
             const newH = Math.round(geo.actualPatternH);
             txtH.value = newH;
             document.getElementById('numH').value = newH;

@@ -46,5 +46,12 @@ $time    = date('Y-m-d H:i:s');
 $line = sprintf("[%s] IP: %-16s | OS: %-16s | Browser: %-20s | Page: %s\n",
     $time, $ip, $os, $browser, $page);
 
-$logFile = __DIR__ . '/../../logs/access_' . date('Y-m-d') . '.log';
-file_put_contents($logFile, $line, FILE_APPEND | LOCK_EX);
+$logDir  = dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'logs';
+if (!is_dir($logDir) && !mkdir($logDir, 0755, true) && !is_dir($logDir)) {
+    error_log('[PM Logger] logs 디렉토리 생성 실패: ' . $logDir);
+    return;
+}
+$logFile = $logDir . DIRECTORY_SEPARATOR . 'access_' . date('Y-m-d') . '.log';
+if (file_put_contents($logFile, $line, FILE_APPEND | LOCK_EX) === false) {
+    error_log('[PM Logger] 로그 쓰기 실패: ' . $logFile);
+}
