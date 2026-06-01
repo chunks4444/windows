@@ -229,7 +229,7 @@ header('Content-Type: text/html; charset=UTF-8');
                     <div class="toggle-row" style="margin-bottom:10px;">
                         <span class="toggle-label">패턴 세로 방향</span>
                         <label class="toggle-switch">
-                            <input type="checkbox" id="chkRotate">
+                            <input type="checkbox" id="chkRotate" checked>
                             <span class="toggle-track"></span>
                         </label>
                     </div>
@@ -498,7 +498,7 @@ header('Content-Type: text/html; charset=UTF-8');
     let vGrainPat = null;
     let hGrainPat = null;
     let grainOn   = true;
-    let rotateOn  = false;
+    let rotateOn  = true;
 
     function makeGrainTile(w, h, isVertical) {
         const tc = document.createElement('canvas');
