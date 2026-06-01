@@ -1475,7 +1475,7 @@ header('Content-Type: text/html; charset=UTF-8');
                         <div class="diag-list">
                             <div class="slat-row">
                                 <span class="slat-len" id="spFrVLen">—</span><span class="slat-len-unit">mm</span>
-                                <span class="slat-cnt">2개</span>
+                                <span class="slat-cnt" id="spFrVCnt">2개</span>
                             </div>
                             <div class="slat-row">
                                 <span class="slat-len" id="spFrHLen">—</span><span class="slat-len-unit">mm</span>
@@ -1494,16 +1494,10 @@ header('Content-Type: text/html; charset=UTF-8');
                     </div>
 
                     <div class="slat-group">
-                        <div class="slat-group-title">가로살 · 세로살(내경에 살두께 곱하기 2)</div>
-                        <div class="diag-list">
-                            <div class="slat-row">
-                                <span class="slat-len" id="spHSlatLen">—</span><span class="slat-len-unit">mm</span>
-                                <span class="slat-cnt" id="spHSlatCnt">—</span>
-                            </div>
-                            <div class="slat-row">
-                                <span class="slat-len" id="spVSlatLen">—</span><span class="slat-len-unit">mm</span>
-                                <span class="slat-cnt" id="spVSlatCnt">—</span>
-                            </div>
+                        <div class="slat-group-title" id="dirSlatGroupTitle">가로부재</div>
+                        <div class="slat-row">
+                            <span class="slat-len" id="spHSlatLen">—</span><span class="slat-len-unit">mm</span>
+                            <span class="slat-cnt" id="spHSlatCnt">—</span>
                         </div>
                     </div>
 
@@ -1916,10 +1910,11 @@ function calculateGeometry() {
     document.getElementById('spFrameHTop').innerText = Math.round(frameHTop);
     document.getElementById('spTotalDoorW').innerText = Math.round(totalDoorWidth);
 
-    // ── 부재 목록 ──────────────────────────────────────
+    // ── 부재 목록 (문짝수 연동) ────────────────────────
     document.getElementById('spFrVLen').textContent = Math.round(outerH + 2 * slatT);
+    document.getElementById('spFrVCnt').textContent = (2 * doorCount) + '개';
     document.getElementById('spFrHLen').textContent = Math.round(outerW + 2 * slatT);
-    document.getElementById('spFrHCnt').textContent = pungpanOn ? '3개' : '2개';
+    document.getElementById('spFrHCnt').textContent = ((pungpanOn ? 3 : 2) * doorCount) + '개';
 
     const ppGroup = document.getElementById('pungpanMaterialGroup');
     if (pungpanOn && effectivePungpanH > 0) {
@@ -1927,25 +1922,81 @@ function calculateGeometry() {
         const ppPanelH = effectivePungpanH - frameH;
         document.getElementById('spPpHLen').textContent = Math.round(innerW + 2 * slatT);
         document.getElementById('spPpVLen').textContent = Math.round(ppPanelH + 2 * slatT);
+        document.querySelector('#pungpanMaterialGroup .slat-count-badge').textContent = doorCount + '개';
     } else {
         ppGroup.style.display = 'none';
     }
 
-    const hSlatCnt = Math.max(0, rows - 1);
-    const hSlatLen = Math.round(innerW + 2 * tenonDepth);
-    document.getElementById('spHSlatLen').textContent = hSlatLen;
-    document.getElementById('spHSlatCnt').textContent = hSlatCnt + '개';
-    document.getElementById('spVSlatLen').textContent = '—';
-    document.getElementById('spVSlatCnt').textContent = '없음';
+    // ── 방향별 부재 (가로부재 / 세로부재) ─────────────────
+    const dirTitle = document.getElementById('dirSlatGroupTitle');
+    if (!rotateOn) {
+        // 가로 방향: 가로부재 (울거미→울거미 수평 전체)
+        dirTitle.textContent = '가로부재';
+        document.getElementById('spHSlatLen').textContent = Math.round(innerW + 2 * tenonDepth);
+        document.getElementById('spHSlatCnt').textContent = (Math.max(0, rows - 1) * doorCount) + '개';
+    } else {
+        // 세로 방향: 세로부재 (울거미→울거미 수직 전체)
+        dirTitle.textContent = '세로부재';
+        document.getElementById('spHSlatLen').textContent = Math.round(innerH + 2 * tenonDepth);
+        document.getElementById('spHSlatCnt').textContent = (Math.max(0, cols - 1) * doorCount) + '개';
+    }
 
-    const diagListEl  = document.getElementById('spDiagList');
+    // ── 사선살 (울거미→울거미, 길이별 그룹) ──────────────
+    const diagListEl = document.getElementById('spDiagList');
     diagListEl.innerHTML = '';
-    const diagSlatLen = Math.round(stepX + 2 * slatT);
-    const diagSlatCnt = rows * cols * 2;
-    const diagEl = document.createElement('div');
-    diagEl.className = 'slat-row';
-    diagEl.innerHTML = `<span class="slat-len">${diagSlatLen}<span class="slat-len-unit">mm</span></span><span class="slat-cnt">${diagSlatCnt}개</span>`;
-    diagListEl.appendChild(diagEl);
+
+    (function() {
+        const SQRT3 = Math.sqrt(3);
+        const EPS   = 0.5;
+
+        // 60° 방향 평행선 그룹핑
+        // 선 방정식: y = SQRT3*x + b (60°, 화면 좌표 기준 우하향)
+        // 각 b값은 하나의 연속재(울거미→울거미)
+        function calcGroups(iW, iH, bStep, sT) {
+            const g = {};
+            const bMin = Math.ceil(-iW * SQRT3 / bStep - EPS) * bStep;
+            const bMax = Math.floor( iH           / bStep + EPS) * bStep;
+
+            for (let b = bMin; b <= bMax + EPS; b += bStep) {
+                // 진입점
+                const x1 = b < -EPS ? -b / SQRT3 : 0;
+                const y1 = b < -EPS ? 0 : Math.max(0, b);
+                // 탈출점
+                const yR = SQRT3 * iW + b;
+                const x2 = yR < iH - EPS ? iW      : (iH - b) / SQRT3;
+                const y2 = yR < iH - EPS ? yR      : iH;
+
+                if (x1 > iW + EPS || x2 < -EPS || x1 > x2 + EPS) continue;
+
+                const seg = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
+                if (seg < EPS) continue;
+
+                const k = Math.round(seg + 2*sT);
+                g[k] = (g[k] || 0) + 1;
+            }
+            return g;
+        }
+
+        let bStep;
+        if (!rotateOn) {
+            bStep = stepX * SQRT3;                   // 60°/120° 방향
+        } else {
+            bStep = ((innerW + slatT) / cols) / SQRT3; // 30°/150° 방향
+        }
+
+        const groups = calcGroups(innerW, innerH, bStep, slatT);
+
+        // 60°/120° (또는 30°/150°) 두 방향이 대칭이므로 ×2
+        Object.entries(groups)
+            .map(([len, cnt]) => ({ len: +len, cnt: cnt * 2 * doorCount }))
+            .sort((a, b) => b.len - a.len)
+            .forEach(({ len, cnt }) => {
+                const el = document.createElement('div');
+                el.className = 'slat-row';
+                el.innerHTML = `<span class="slat-len">${len}<span class="slat-len-unit">mm</span></span><span class="slat-cnt">${cnt}개</span>`;
+                diagListEl.appendChild(el);
+            });
+    })();
 }
 
     function resizeCanvas() {

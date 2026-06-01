@@ -1468,7 +1468,7 @@ header('Content-Type: text/html; charset=UTF-8');
                         <div class="diag-list">
                             <div class="slat-row">
                                 <span class="slat-len" id="spFrVLen">—</span><span class="slat-len-unit">mm</span>
-                                <span class="slat-cnt">2개</span>
+                                <span class="slat-cnt" id="spFrVCnt">2개</span>
                             </div>
                             <div class="slat-row">
                                 <span class="slat-len" id="spFrHLen">—</span><span class="slat-len-unit">mm</span>
@@ -1938,19 +1938,21 @@ geo = {
     document.getElementById('spTotalDoorW').innerText =
         Math.round(totalDoorWidth);
 
-    // ── 부재 목록 ──────────────────────────────────
+    // ── 부재 목록 (문짝수 연동) ────────────────────────
     // 울거미
-    document.getElementById('spFrVLen').textContent = Math.round(outerH + 2 * slatT);  // 세로 울거미 (outerH가 이미 전체 높이)
-    document.getElementById('spFrHLen').textContent = Math.round(outerW + 2 * slatT);      // 가로 울거미
-    document.getElementById('spFrHCnt').textContent = pungpanOn ? '3개' : '2개';
+    document.getElementById('spFrVLen').textContent = Math.round(outerH + 2 * slatT);
+    document.getElementById('spFrVCnt').textContent = (2 * doorCount) + '개';
+    document.getElementById('spFrHLen').textContent = Math.round(outerW + 2 * slatT);
+    document.getElementById('spFrHCnt').textContent = ((pungpanOn ? 3 : 2) * doorCount) + '개';
 
     // 풍판 부재
     const ppGroup = document.getElementById('pungpanMaterialGroup');
     if (pungpanOn && effectivePungpanH > 0) {
         ppGroup.style.display = '';
         const ppPanelH = effectivePungpanH - frameH;
-        document.getElementById('spPpHLen').textContent = Math.round(innerW + 2 * slatT);       // 풍판 가로
-        document.getElementById('spPpVLen').textContent = Math.round(ppPanelH + 2 * slatT);     // 풍판 세로
+        document.getElementById('spPpHLen').textContent = Math.round(innerW + 2 * slatT);
+        document.getElementById('spPpVLen').textContent = Math.round(ppPanelH + 2 * slatT);
+        document.querySelector('#pungpanMaterialGroup .slat-count-badge').textContent = doorCount + '개';
     } else {
         ppGroup.style.display = 'none';
     }
@@ -1959,13 +1961,13 @@ geo = {
     const hSlatCnt = Math.max(0, rows - 1);
     const hSlatLen  = Math.round(innerW + 2 * tenonDepth);
     document.getElementById('spHSlatLen').textContent = hSlatLen;
-    document.getElementById('spHSlatCnt').textContent = hSlatCnt + '개';
+    document.getElementById('spHSlatCnt').textContent = (hSlatCnt * doorCount) + '개';
 
     // 세로살
     const vSlatCnt = Math.max(0, cols - 1);
     const vSlatLen  = Math.round(innerH + 2 * tenonDepth);
     document.getElementById('spVSlatLen').textContent = vSlatLen;
-    document.getElementById('spVSlatCnt').textContent = vSlatCnt + '개';
+    document.getElementById('spVSlatCnt').textContent = (vSlatCnt * doorCount) + '개';
 
     // 사선살 (연속 부재: 좌측 내경 → 우측 내경)
     const diagListEl = document.getElementById('spDiagList');
@@ -1981,7 +1983,7 @@ geo = {
         }
         const el = document.createElement('div');
         el.className = 'slat-row';
-        el.innerHTML = `<span class="slat-len">${diagLen}<span class="slat-len-unit">mm</span></span><span class="slat-cnt">${diagCnt}개</span>`;
+        el.innerHTML = `<span class="slat-len">${diagLen}<span class="slat-len-unit">mm</span></span><span class="slat-cnt">${diagCnt * doorCount}개</span>`;
         diagListEl.appendChild(el);
     }
 }
