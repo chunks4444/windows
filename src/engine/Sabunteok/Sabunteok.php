@@ -118,6 +118,7 @@ header('Content-Type: text/html; charset=UTF-8');
         <div class="controls" id="sidebar">
             <div class="sb-inner">
                 <div class="sb-section">
+                    <div class="sb-section-title">문 설정</div>
 
                     <div class="door-row">
 
@@ -218,6 +219,7 @@ header('Content-Type: text/html; charset=UTF-8');
 
                 <!-- 풍판 -->
                 <div class="sb-section">
+                    <div class="sb-section-title">풍판</div>
                     <div class="toggle-row">
                         <span class="toggle-label">풍판 사용</span>
                         <label class="toggle-switch">
@@ -237,6 +239,7 @@ header('Content-Type: text/html; charset=UTF-8');
                 </div>
                 <!-- 마감 옵션 -->
                 <div class="sb-section">
+                    <div class="sb-section-title">마감 옵션</div>
                     <div class="ctrl">
                         <div class="ctrl-header">
                             <span class="ctrl-label">내부 마감</span>
@@ -251,6 +254,7 @@ header('Content-Type: text/html; charset=UTF-8');
 
                 <!-- 색상 -->
                 <div class="sb-section">
+                    <div class="sb-section-title">색상</div>
                     <div class="toggle-row" style="margin-bottom:10px;">
                         <span class="toggle-label">나뭇결 질감</span>
                         <label class="toggle-switch">

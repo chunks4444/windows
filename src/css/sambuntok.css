@@ -369,6 +369,11 @@ header {
 .sb-section {
     padding: 10px 16px;
     border-bottom: 1px solid var(--border);
+    transition: padding-bottom 0.3s ease;
+}
+
+.sb-section.sb-collapsed {
+    padding-bottom: 0;
 }
 
 .sb-section:last-child {
@@ -382,6 +387,40 @@ header {
     text-transform: uppercase;
     color: var(--text-3);
     margin-bottom: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+    transition: margin-bottom 0.3s ease, color 0.12s;
+}
+
+.sb-section-title:hover {
+    color: var(--text-2);
+}
+
+.sb-section.sb-collapsed .sb-section-title {
+    margin-bottom: 0;
+}
+
+.sb-chevron {
+    flex-shrink: 0;
+    transition: transform 0.25s ease;
+    color: var(--text-3);
+}
+
+.sb-section.sb-collapsed .sb-chevron {
+    transform: rotate(-90deg);
+}
+
+.sb-section-body {
+    overflow: hidden;
+    max-height: 800px;
+    transition: max-height 0.3s ease;
+}
+
+.sb-section.sb-collapsed .sb-section-body {
+    max-height: 0;
 }
 
 /* ── CONTROL ROWS ────────────────────────── */

@@ -775,6 +775,40 @@ async function draw() {
     }
 
     btnSidebarTab.addEventListener('click', toggleSidebar);
+
+    // Section collapse
+    document.querySelectorAll('.sb-section-title').forEach(title => {
+        const section = title.closest('.sb-section');
+
+        const body = document.createElement('div');
+        body.className = 'sb-section-body';
+        let next = title.nextElementSibling;
+        while (next) {
+            const tmp = next.nextElementSibling;
+            body.appendChild(next);
+            next = tmp;
+        }
+        section.appendChild(body);
+        body.style.overflow = 'visible';
+
+        title.insertAdjacentHTML('beforeend',
+            '<svg class="sb-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6,9 12,15 18,9"/></svg>'
+        );
+
+        title.addEventListener('click', () => {
+            const isCollapsing = !section.classList.contains('sb-collapsed');
+            if (isCollapsing) {
+                body.style.overflow = 'hidden';
+                section.classList.add('sb-collapsed');
+            } else {
+                section.classList.remove('sb-collapsed');
+                body.addEventListener('transitionend', () => {
+                    if (!section.classList.contains('sb-collapsed')) body.style.overflow = 'visible';
+                }, { once: true });
+            }
+        });
+    });
+
     document.getElementById('btnZoomIn').addEventListener('click', () => {
         scaleFactor = Math.min(scaleFactor * 1.2, 20);
         draw();
