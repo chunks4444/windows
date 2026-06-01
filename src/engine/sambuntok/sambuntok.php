@@ -1950,50 +1950,70 @@ function calculateGeometry() {
     (function() {
         const SQRT3 = Math.sqrt(3);
         const EPS   = 0.5;
+        const MERGE_TOL = 2 * slatT;  // 근접 길이 병합 허용 오차
 
-        // 60° 방향 평행선 그룹핑
-        // 선 방정식: y = SQRT3*x + b (60°, 화면 좌표 기준 우하향)
-        // 각 b값은 하나의 연속재(울거미→울거미)
-        function calcGroups(iW, iH, bStep, sT) {
+        // 60° 선 (y = √3·x + b) — 가로 방향
+        function calcGroups60(iW, iH, bStep, sT) {
             const g = {};
             const bMin = Math.ceil(-iW * SQRT3 / bStep - EPS) * bStep;
-            const bMax = Math.floor( iH           / bStep + EPS) * bStep;
-
+            const bMax = Math.floor( iH / bStep + EPS) * bStep;
             for (let b = bMin; b <= bMax + EPS; b += bStep) {
-                // 진입점
                 const x1 = b < -EPS ? -b / SQRT3 : 0;
                 const y1 = b < -EPS ? 0 : Math.max(0, b);
-                // 탈출점
                 const yR = SQRT3 * iW + b;
-                const x2 = yR < iH - EPS ? iW      : (iH - b) / SQRT3;
-                const y2 = yR < iH - EPS ? yR      : iH;
-
+                const x2 = yR < iH - EPS ? iW : (iH - b) / SQRT3;
+                const y2 = yR < iH - EPS ? yR : iH;
                 if (x1 > iW + EPS || x2 < -EPS || x1 > x2 + EPS) continue;
-
                 const seg = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
                 if (seg < EPS) continue;
-
                 const k = Math.round(seg + 2*sT);
                 g[k] = (g[k] || 0) + 1;
             }
             return g;
         }
 
-        let bStep, diagW, diagH;
-        if (!rotateOn) {
-            bStep = stepX * SQRT3;                   // 60°/120° 방향
-            diagW = innerW; diagH = innerH;
-        } else {
-            // 세로 방향: 30° 대각선 → 직사각형을 전치(W↔H)하면 60° 선과 동일
-            bStep = 2 * (innerW + slatT) / cols;    // = colStepR * 2
-            diagW = innerH; diagH = innerW;
+        // 30° 선 (y = x/√3 + b) — 세로 방향 직접 계산
+        function calcGroups30(iW, iH, bStep, sT) {
+            const g = {};
+            const bMin = Math.ceil(-iW / SQRT3 / bStep - EPS) * bStep;
+            const bMax = Math.floor( iH / bStep + EPS) * bStep;
+            for (let b = bMin; b <= bMax + EPS; b += bStep) {
+                const x1 = b < -EPS ? -b * SQRT3 : 0;
+                const y1 = b < -EPS ? 0 : Math.max(0, b);
+                const yR = iW / SQRT3 + b;
+                const x2 = yR < iH - EPS ? iW : (iH - b) * SQRT3;
+                const y2 = yR < iH - EPS ? yR : iH;
+                if (x1 > iW + EPS || x2 < -EPS || x1 > x2 + EPS) continue;
+                const seg = Math.sqrt((x2-x1)**2 + (y2-y1)**2);
+                if (seg < EPS) continue;
+                const k = Math.round(seg + 2*sT);
+                g[k] = (g[k] || 0) + 1;
+            }
+            return g;
         }
 
-        const groups = calcGroups(diagW, diagH, bStep, slatT);
+        const rawGroups = rotateOn
+            ? calcGroups30(innerW, innerH, rowHR, slatT)
+            : calcGroups60(innerW, innerH, stepX * SQRT3, slatT);
 
-        // 60°/120° (또는 30°/150°) 두 방향이 대칭이므로 ×2
-        Object.entries(groups)
-            .map(([len, cnt]) => ({ len: +len, cnt: cnt * 2 * doorCount }))
+        // 2*살두께 이내 근접 길이는 병합 (큰 값 기준)
+        const sorted = Object.entries(rawGroups)
+            .map(([len, cnt]) => ({ len: +len, cnt }))
+            .sort((a, b) => a.len - b.len);
+        const merged = [];
+        for (const item of sorted) {
+            const last = merged[merged.length - 1];
+            if (last && item.len - last.len <= MERGE_TOL) {
+                last.cnt += item.cnt;
+                last.len = Math.max(last.len, item.len);
+            } else {
+                merged.push({ len: item.len, cnt: item.cnt });
+            }
+        }
+
+        // ±방향 대칭이므로 ×2
+        merged
+            .map(({ len, cnt }) => ({ len, cnt: cnt * 2 * doorCount }))
             .sort((a, b) => b.len - a.len)
             .forEach(({ len, cnt }) => {
                 const el = document.createElement('div');
