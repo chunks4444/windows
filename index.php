@@ -7,7 +7,9 @@ header('Content-Type: text/html; charset=UTF-8');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>평목 — 시간 속에서 품격이 더해지는</title>
+    <title>평목 — 전통창호·한옥창호·목창호·맞춤창호 디자인</title>
+    <meta name="description" content="평목은 전통창호, 한옥창호, 목창호, 맞춤창호를 전문으로 하는 창호디자인 스튜디오입니다. 공장에서 담아낼 수 없는 공간의 깊이를 나무문과 나무창문으로 표현합니다.">
+    <meta name="keywords" content="전통창호, 목창호, 한옥창호, 맞춤창호, 창호디자인, 나무창호, 한옥문, 나무문, 전통문, 평목">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
     <?php define('BOOTSTRAP_LOADED', true); ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -55,7 +57,7 @@ header('Content-Type: text/html; charset=UTF-8');
                 <div class="values-grid">
                     <div class="values-item">
                         <h2 class="values-title">당신의 공간에<br> 빛과 바람의 길을 디자인하세요.</h2>
-                        <p class="values-desc">전통을 잇는 정교함, 미래를 여는 디자인</p>
+                        <p class="values-desc">문틀 크기와 비율을 조정하면 실제 제작 가능한<br>맞춤 창호 디자인을 실시간으로 확인할 수 있습니다</p>
                     </div>
                     <div class="values-item">
                         <h2 class="values-title">당신의<br> 공간을 위한 단 하나의 창(窓)</h2>

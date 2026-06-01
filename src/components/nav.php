@@ -70,7 +70,7 @@ $isIndex      = ($currentFile === 'index.php' || $_SERVER['PHP_SELF'] === '/');
     <a href="/" class="navbar-brand d-flex align-items-center">
         <img src="https://pyeongmok.com/wp-content/uploads/2024/01/2024_MYEONGMOK_LOGO-e1705317786643.png"
              alt="평목" class="pm-nav-logo">
-        <span class="pm-nav-tagline">시간 속에서<br>품격이 더해지는</span>
+        <span class="pm-nav-tagline">창호디자인 스튜디오<br><span style="font-size:10px;font-weight:400;">다양한 패턴. 자유로운 비율 조정. 실시간 결과 확인.</span></span>
     </a>
     <button class="navbar-toggler border-0" type="button"
             data-bs-toggle="collapse" data-bs-target="#pmNavMenu"
@@ -79,8 +79,9 @@ $isIndex      = ($currentFile === 'index.php' || $_SERVER['PHP_SELF'] === '/');
     </button>
     <div class="collapse navbar-collapse justify-content-end" id="pmNavMenu">
         <ul class="navbar-nav gap-3">
+            <li class="nav-item d-none"><a href="#" class="nav-link">Works</a></li>
             <li class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Generator</a>
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Design Studio</a>
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item <?= $isSabunteok ? 'active' : '' ?> d-flex align-items-center gap-2"
                            href="/src/engine/Sabunteok/Sabunteok.php">
@@ -90,7 +91,7 @@ $isIndex      = ($currentFile === 'index.php' || $_SERVER['PHP_SELF'] === '/');
                             <g transform="rotate(45 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
                             <g transform="rotate(135 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
                         </svg>
-                        격자교살
+                        Square Grid
                     </a></li>
                     <li><a class="dropdown-item <?= $isSambuntok ? 'active' : '' ?> d-flex align-items-center gap-2"
                            href="/src/engine/sambuntok/sambuntok.php">
@@ -99,12 +100,11 @@ $isIndex      = ($currentFile === 'index.php' || $_SERVER['PHP_SELF'] === '/');
                             <g transform="rotate(60 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
                             <g transform="rotate(120 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
                         </svg>
-                        세모솟을빗살
+                        Triangle Grid
                     </a></li>
                 </ul>
             </li>
-            <li class="nav-item d-none"><a href="#" class="nav-link">Pattern Library</a></li>
-            <li class="nav-item d-none"><a href="#" class="nav-link">Works</a></li>
+            <li class="nav-item"><a href="#" class="nav-link">Pattern Library</a></li>
             <li class="nav-item d-none"><a href="#" class="nav-link">Joiner</a></li>
             <?php if ($isIndex): ?>
             <li class="nav-item d-none"><a href="#" class="nav-link">Login</a></li>
