@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../lib/logger.php';
+
 // 상단 네비게이션 공통 컴포넌트
 // 포함하는 페이지에서 Bootstrap CSS/JS가 없으면 자동으로 로드합니다.
 if (!defined('BOOTSTRAP_LOADED')) {
