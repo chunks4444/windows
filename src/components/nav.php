@@ -101,14 +101,14 @@ $isIndex      = ($currentFile === 'index.php' || $_SERVER['PHP_SELF'] === '/');
                     </a></li>
                 </ul>
             </li>
-            <li class="nav-item"><a href="#" class="nav-link">Pattern Library</a></li>
-            <li class="nav-item"><a href="#" class="nav-link">Works</a></li>
-            <li class="nav-item"><a href="#" class="nav-link">Joiner</a></li>
+            <li class="nav-item d-none"><a href="#" class="nav-link">Pattern Library</a></li>
+            <li class="nav-item d-none"><a href="#" class="nav-link">Works</a></li>
+            <li class="nav-item d-none"><a href="#" class="nav-link">Joiner</a></li>
             <?php if ($isIndex): ?>
-            <li class="nav-item"><a href="#" class="nav-link">Login</a></li>
-            <li class="nav-item"><a href="#" class="nav-link">Register</a></li>
+            <li class="nav-item d-none"><a href="#" class="nav-link">Login</a></li>
+            <li class="nav-item d-none"><a href="#" class="nav-link">Register</a></li>
             <?php else: ?>
-            <li class="nav-item"><a href="#" class="nav-link">My page</a></li>
+            <li class="nav-item d-none"><a href="#" class="nav-link">My page</a></li>
             <?php endif; ?>
         </ul>
     </div>

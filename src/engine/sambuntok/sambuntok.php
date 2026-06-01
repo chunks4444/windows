@@ -1817,6 +1817,7 @@ function calculateGeometry() {
     let innerW, innerH, stepX, rowH, rows;
     let frameHTop, frameHBottom, frameWActual;
     let effectivePungpanH, actualPungpanH;
+    let colStepR = 0, rowHR = 0;
 
     if (!rotateOn) {
         // ── 가로 방향 (기본): cols 가 WIDTH 등분 ────────────
@@ -1843,8 +1844,8 @@ function calculateGeometry() {
         innerW = outerW - 2 * frameW;
         stepX  = innerW / cols;
         rowH   = stepX * Math.sqrt(3) / 2;
-        const colStepR = (innerW + slatT) / cols;
-        const rowHR    = colStepR * 2 / Math.sqrt(3);   // 회전 후 수직 피치
+        colStepR = (innerW + slatT) / cols;
+        rowHR    = colStepR * 2 / Math.sqrt(3);   // 회전 후 수직 피치
         const availH2  = outerH - 2 * frameH - effectivePungpanInput;
         rows   = Math.max(2, Math.floor(availH2 / rowHR) + 1);
         innerH = (rows - 1) * rowHR;
@@ -1858,12 +1859,13 @@ function calculateGeometry() {
         frameWActual = frameW;
     }
 
-    const cellW      = stepX;
+    // 세로 방향이면 피치·살간격·사선간격은 회전 후 실제 값 사용
+    const cellW      = rotateOn ? rowHR - slatT : stepX;
     const cellH      = rowH;
     const cellSize   = stepX;
-    const step       = stepX;
+    const step       = rotateOn ? rowHR : stepX;
     const stepH      = rowH + slatT;
-    const diagEye    = (stepX - slatT).toFixed(1);
+    const diagEye    = rotateOn ? (colStepR - slatT).toFixed(1) : (stepX - slatT).toFixed(1);
     const tenonDepth = slatT;
     const actualPatternH = frameHTop + innerH + frameHBottom;
 
@@ -1938,7 +1940,7 @@ function calculateGeometry() {
         // 세로 방향: 세로부재 (울거미→울거미 수직 전체)
         dirTitle.textContent = '세로부재';
         document.getElementById('spHSlatLen').textContent = Math.round(innerH + 2 * tenonDepth);
-        document.getElementById('spHSlatCnt').textContent = (Math.max(0, cols - 1) * doorCount) + '개';
+        document.getElementById('spHSlatCnt').textContent = (cols * doorCount) + '개';
     }
 
     // ── 사선살 (울거미→울거미, 길이별 그룹) ──────────────
@@ -1977,14 +1979,17 @@ function calculateGeometry() {
             return g;
         }
 
-        let bStep;
+        let bStep, diagW, diagH;
         if (!rotateOn) {
             bStep = stepX * SQRT3;                   // 60°/120° 방향
+            diagW = innerW; diagH = innerH;
         } else {
-            bStep = ((innerW + slatT) / cols) / SQRT3; // 30°/150° 방향
+            // 세로 방향: 30° 대각선 → 직사각형을 전치(W↔H)하면 60° 선과 동일
+            bStep = 2 * (innerW + slatT) / cols;    // = colStepR * 2
+            diagW = innerH; diagH = innerW;
         }
 
-        const groups = calcGroups(innerW, innerH, bStep, slatT);
+        const groups = calcGroups(diagW, diagH, bStep, slatT);
 
         // 60°/120° (또는 30°/150°) 두 방향이 대칭이므로 ×2
         Object.entries(groups)
