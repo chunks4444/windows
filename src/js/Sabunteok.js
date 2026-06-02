@@ -1,4 +1,10 @@
 ﻿    let appBackgroundImage = null;
+    let placementMode       = false;
+    let doorNaturalSize     = { w: 0, h: 0 };
+    let doorOverlay         = { tx: 0, ty: 0, sx: 1, sy: 1, skewX: 0, skewY: 0 };
+    let doorCornerPositions = null;
+    let overlayDrag         = null;
+    let placementNaturalSize = null;
 
     // ── 색상 그룹 ─────────────────────────────────
     const colorGroups = [
@@ -241,6 +247,11 @@
         const found = thumbImages.find(t => t.id === id);
         appBackgroundImage = found ? found.img : null;
 
+        try {
+            if (found) localStorage.setItem(BG_IMAGE_KEY, found.src);
+            else        localStorage.removeItem(BG_IMAGE_KEY);
+        } catch(e) {}
+
         // 활성 표시 갱신
         thumbList.querySelectorAll('.rp-thumb-item').forEach(el => {
             el.classList.toggle('active', el.dataset.id === String(id));
@@ -265,13 +276,14 @@
             e.stopPropagation();
             thumbImages = thumbImages.filter(t => t.id !== id);
             item.remove();
+            saveThumbsToStorage();
             if (activeThumbId === id) {
-                // 다음 이미지 활성화 또는 패널 닫기
                 if (thumbImages.length > 0) {
                     setActiveThumb(thumbImages[thumbImages.length - 1].id);
                 } else {
                     appBackgroundImage = null;
                     activeThumbId = null;
+                    localStorage.removeItem(BG_IMAGE_KEY);
                     rightPanel.classList.remove('open');
                     draw();
                 }
@@ -284,6 +296,34 @@
         thumbList.appendChild(item);
     }
 
+    function compressImage(src, callback) {
+        const img = new Image();
+        img.onload = function() {
+            const MAX = 1600;
+            let w = img.width, h = img.height;
+            if (w > MAX || h > MAX) {
+                const s = Math.min(MAX / w, MAX / h);
+                w = Math.round(w * s);
+                h = Math.round(h * s);
+            }
+            const c = document.createElement('canvas');
+            c.width = w; c.height = h;
+            c.getContext('2d').drawImage(img, 0, 0, w, h);
+            callback(c.toDataURL('image/jpeg', 0.82));
+        };
+        img.src = src;
+    }
+
+    function saveThumbsToStorage() {
+        try {
+            localStorage.setItem(THUMBS_KEY, JSON.stringify(
+                thumbImages.map(t => ({ src: t.src, filename: t.filename || '' }))
+            ));
+        } catch(e) {
+            console.warn('썸네일 저장 실패 (용량 초과)');
+        }
+    }
+
     btnAddThumb.addEventListener('click', () => aiFileUploader.click());
 
     aiFileUploader.addEventListener('change', function(e) {
@@ -291,17 +331,18 @@
         files.forEach(file => {
             const reader = new FileReader();
             reader.onload = function(event) {
-                const id = Date.now() + Math.random();
-                const src = event.target.result;
-
-                const imgObj = new Image();
-                imgObj.src = src;
-                imgObj.onload = function() {
-                    thumbImages.push({ id, src, img: imgObj });
-                    addThumbItem(id, src, file.name);
-                    rightPanel.classList.add('open');
-                    setActiveThumb(id);
-                };
+                compressImage(event.target.result, function(src) {
+                    const id = Date.now() + Math.random();
+                    const imgObj = new Image();
+                    imgObj.src = src;
+                    imgObj.onload = function() {
+                        thumbImages.push({ id, src, img: imgObj, filename: file.name });
+                        addThumbItem(id, src, file.name);
+                        saveThumbsToStorage();
+                        rightPanel.classList.add('open');
+                        setActiveThumb(id);
+                    };
+                });
             };
             reader.readAsDataURL(file);
         });
@@ -401,7 +442,13 @@ async function draw() {
 
     ctx.scale(scaleFactor, scaleFactor);
 
-
+    // 배경 이미지 (pan/zoom 좌표계 안에서 그리기)
+    if (appBackgroundImage) {
+        const img = appBackgroundImage;
+        const s = Math.min(canvas.width / img.width, canvas.height / img.height);
+        const dW = img.width * s, dH = img.height * s;
+        ctx.drawImage(img, -dW / 2, -dH / 2, dW, dH);
+    }
 
     const basePadding = 60;
 
@@ -430,6 +477,30 @@ async function draw() {
 
     const offsetY =
         -(totalH * baseScale) / 2;
+
+    doorNaturalSize = { w: totalWidth * baseScale, h: totalH * baseScale };
+
+    // 배치 모드: 도면 크기가 바뀌면 자동 취소
+    if (placementMode && placementNaturalSize &&
+        (Math.abs(doorNaturalSize.w - placementNaturalSize.w) > 1 ||
+         Math.abs(doorNaturalSize.h - placementNaturalSize.h) > 1)) {
+        placementMode = false;
+        doorCornerPositions = null;
+        canvas.style.cursor = 'grab';
+        document.getElementById('btnScale').classList.remove('cv-btn-active');
+    }
+
+    // 배치 모드: doorCornerPositions에서 직접 transform 계산
+    if (placementMode && doorCornerPositions) {
+        const _tl = doorCornerPositions.tl, _tr = doorCornerPositions.tr, _bl = doorCornerPositions.bl;
+        const _W = doorNaturalSize.w, _H = doorNaturalSize.h;
+        const _sx = (_tr.cx - _tl.cx) / _W,  _skewY = (_tr.cy - _tl.cy) / _W;
+        const _skewX = (_bl.cx - _tl.cx) / _H, _sy = (_bl.cy - _tl.cy) / _H;
+        const _tx = _tl.cx + _sx * _W/2 + _skewX * _H/2;
+        const _ty = _tl.cy + _skewY * _W/2 + _sy * _H/2;
+        ctx.save();
+        ctx.transform(_sx, _skewY, _skewX, _sy, _tx, _ty);
+    }
 
     // 패턴 비율 체크: 셀 크기가 0 이하이거나 내경이 너무 작아 패턴 불가능할 때 레드
     const patternBroken = geo.cellW <= 0 || geo.cellH <= 0 || geo.innerW <= 0 || geo.innerH <= 0;
@@ -772,7 +843,37 @@ async function draw() {
         }
     }
 
+    if (placementMode) ctx.restore();
+
     ctx.restore();
+
+    if (placementMode && doorNaturalSize.w > 0) {
+        const c = getOverlayCorners();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.strokeStyle = 'rgba(58,140,130,0.9)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 4]);
+        ctx.beginPath();
+        ctx.moveTo(c.tl.x, c.tl.y); ctx.lineTo(c.tr.x, c.tr.y);
+        ctx.lineTo(c.br.x, c.br.y); ctx.lineTo(c.bl.x, c.bl.y);
+        ctx.closePath(); ctx.stroke();
+        ctx.setLineDash([]);
+        // TL·TR·BL: 사각형 (자유 이동), BR: 원 (비율 스케일)
+        [c.tl, c.tr, c.bl].forEach(({ x, y }) => {
+            ctx.fillStyle = '#fff';
+            ctx.strokeStyle = '#3A8C82';
+            ctx.lineWidth = 2.5;
+            ctx.fillRect(x - 7, y - 7, 14, 14);
+            ctx.strokeRect(x - 7, y - 7, 14, 14);
+        });
+        ctx.fillStyle = '#3A8C82';
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(c.br.x, c.br.y, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+    }
 }
 
     function drawCenterLine(x1, y1, x2, y2) {
@@ -835,18 +936,124 @@ async function draw() {
         ctx.restore();
     }
 
+    function updateOverlayFromCorners() {
+        if (!doorCornerPositions || doorNaturalSize.w === 0) return;
+        const { tl, tr, bl } = doorCornerPositions;
+        const W = doorNaturalSize.w, H = doorNaturalSize.h;
+        const sx    = (tr.cx - tl.cx) / W;
+        const skewY = (tr.cy - tl.cy) / W;
+        const skewX = (bl.cx - tl.cx) / H;
+        const sy    = (bl.cy - tl.cy) / H;
+        doorOverlay.sx    = sx;
+        doorOverlay.sy    = sy;
+        doorOverlay.skewX = skewX;
+        doorOverlay.skewY = skewY;
+        doorOverlay.tx    = tl.cx + sx * W/2 + skewX * H/2;
+        doorOverlay.ty    = tl.cy + skewY * W/2 + sy * H/2;
+    }
+
+    function getOverlayCorners() {
+        if (!doorCornerPositions) return null;
+        const { tl, tr, bl } = doorCornerPositions;
+        const br = { cx: tr.cx + bl.cx - tl.cx, cy: tr.cy + bl.cy - tl.cy };
+        const ox = canvas.width/2 + panX, oy = canvas.height/2 + panY;
+        const ts = p => ({ x: ox + p.cx * scaleFactor, y: oy + p.cy * scaleFactor });
+        return { tl: ts(tl), tr: ts(tr), bl: ts(bl), br: ts(br) };
+    }
+
+    function getHitOverlayCorner(clientX, clientY) {
+        if (!placementMode || !doorCornerPositions) return null;
+        const rect = canvas.getBoundingClientRect();
+        const ratioX = canvas.width  / rect.width;
+        const ratioY = canvas.height / rect.height;
+        const mx = (clientX - rect.left) * ratioX;
+        const my = (clientY - rect.top)  * ratioY;
+        const c = getOverlayCorners();
+        let best = null, bestD = 20;
+        for (const [k, pt] of Object.entries(c)) {
+            const d = Math.hypot(mx - pt.x, my - pt.y);
+            if (d < bestD) { bestD = d; best = k; }
+        }
+        return best;
+    }
+
     container.addEventListener('mousedown', function(e) {
+        const corner = getHitOverlayCorner(e.clientX, e.clientY);
+        if (corner) {
+            overlayDrag = {
+                corner,
+                startPositions: {
+                    tl: { ...doorCornerPositions.tl },
+                    tr: { ...doorCornerPositions.tr },
+                    bl: { ...doorCornerPositions.bl },
+                },
+                startMx: e.clientX,
+                startMy: e.clientY,
+            };
+            return;
+        }
+        if (placementMode) {
+            overlayDrag = {
+                corner: 'move',
+                startPositions: {
+                    tl: { ...doorCornerPositions.tl },
+                    tr: { ...doorCornerPositions.tr },
+                    bl: { ...doorCornerPositions.bl },
+                },
+                startMx: e.clientX,
+                startMy: e.clientY,
+            };
+            return;
+        }
         isDragging = true;
         startX = e.clientX - panX;
         startY = e.clientY - panY;
     });
     window.addEventListener('mousemove', function(e) {
+        if (overlayDrag) {
+            const dcx = (e.clientX - overlayDrag.startMx) / scaleFactor;
+            const dcy = (e.clientY - overlayDrag.startMy) / scaleFactor;
+            const { corner, startPositions: sp } = overlayDrag;
+
+            if (corner === 'move') {
+                doorCornerPositions.tl = { cx: sp.tl.cx + dcx, cy: sp.tl.cy + dcy };
+                doorCornerPositions.tr = { cx: sp.tr.cx + dcx, cy: sp.tr.cy + dcy };
+                doorCornerPositions.bl = { cx: sp.bl.cx + dcx, cy: sp.bl.cy + dcy };
+            } else if (corner === 'tl') {
+                doorCornerPositions.tl = { cx: sp.tl.cx + dcx, cy: sp.tl.cy + dcy };
+            } else if (corner === 'tr') {
+                doorCornerPositions.tr = { cx: sp.tr.cx + dcx, cy: sp.tr.cy + dcy };
+            } else if (corner === 'bl') {
+                doorCornerPositions.bl = { cx: sp.bl.cx + dcx, cy: sp.bl.cy + dcy };
+            } else if (corner === 'br') {
+                // TL 고정, 마우스까지 거리 비율로 TR·BL 균등 스케일
+                const tl = sp.tl;
+                const origBrCx = sp.tr.cx + sp.bl.cx - tl.cx;
+                const origBrCy = sp.tr.cy + sp.bl.cy - tl.cy;
+                const origD = Math.hypot(origBrCx - tl.cx, origBrCy - tl.cy);
+                const newD  = Math.hypot(origBrCx + dcx - tl.cx, origBrCy + dcy - tl.cy);
+                if (origD > 0) {
+                    const s = Math.max(0.05, newD / origD);
+                    doorCornerPositions.tr = { cx: tl.cx + s*(sp.tr.cx-tl.cx), cy: tl.cy + s*(sp.tr.cy-tl.cy) };
+                    doorCornerPositions.bl = { cx: tl.cx + s*(sp.bl.cx-tl.cx), cy: tl.cy + s*(sp.bl.cy-tl.cy) };
+                }
+            }
+
+            updateOverlayFromCorners();
+            draw();
+            return;
+        }
+        if (placementMode) {
+            const c = getHitOverlayCorner(e.clientX, e.clientY);
+            canvas.style.cursor = c ? (c==='tl'||c==='br' ? 'nwse-resize' : 'nesw-resize') : 'grab';
+        }
         if (!isDragging) return;
         panX = e.clientX - startX;
         panY = e.clientY - startY;
         draw();
     });
     window.addEventListener('mouseup', function() {
+        overlayDrag = null;
         isDragging = false;
     });
     container.addEventListener('wheel', function(e) {
@@ -876,6 +1083,7 @@ async function draw() {
     }
 
     btnSidebarTab.addEventListener('click', toggleSidebar);
+
 
     // Section collapse
     document.querySelectorAll('.sb-section-title').forEach(title => {
@@ -908,6 +1116,26 @@ async function draw() {
                 }, { once: true });
             }
         });
+    });
+
+    document.getElementById('btnScale').addEventListener('click', () => {
+        placementMode = !placementMode;
+        if (placementMode) {
+            const W = doorNaturalSize.w, H = doorNaturalSize.h;
+            placementNaturalSize = { w: W, h: H };
+            doorCornerPositions = {
+                tl: { cx: -W/2, cy: -H/2 },
+                tr: { cx:  W/2, cy: -H/2 },
+                bl: { cx: -W/2, cy:  H/2 },
+            };
+            updateOverlayFromCorners();
+        } else {
+            doorCornerPositions = null;
+            placementNaturalSize = null;
+            canvas.style.cursor = 'grab';
+        }
+        document.getElementById('btnScale').classList.toggle('cv-btn-active', placementMode);
+        draw();
     });
 
     document.getElementById('btnZoomIn').addEventListener('click', () => {
@@ -1016,7 +1244,28 @@ async function draw() {
     const CREATED_KEY  = 'pmok_sabunteok_created';
     const MODIFIED_KEY = 'pmok_sabunteok_modified';
     const VERSIONS_KEY = 'pmok_sabunteok_versions';
+    const BG_IMAGE_KEY = 'pmok_sabunteok_bg';
+    const THUMBS_KEY   = 'pmok_sabunteok_thumbs';
     const MAX_VERSIONS = 20;
+
+    // 썸네일 + 배경 이미지 복원
+    (function restoreThumbs() {
+        let saved = [];
+        try { saved = JSON.parse(localStorage.getItem(THUMBS_KEY) || '[]'); } catch(e) {}
+        if (!saved.length) return;
+        const activeSrc = localStorage.getItem(BG_IMAGE_KEY);
+        rightPanel.classList.add('open');
+        saved.forEach(({ src, filename }) => {
+            const id = Date.now() + Math.random();
+            const imgObj = new Image();
+            imgObj.onload = function() {
+                thumbImages.push({ id, src, img: imgObj, filename });
+                addThumbItem(id, src, filename);
+                if (src === activeSrc) setActiveThumb(id);
+            };
+            imgObj.src = src;
+        });
+    })();
 
     if (!localStorage.getItem(CREATED_KEY)) {
         localStorage.setItem(CREATED_KEY, Date.now());
@@ -1053,6 +1302,7 @@ async function draw() {
             grain:     document.getElementById('chkGrain').checked,
             frameColor: selectedFrameColor,
             slatColor:  selectedSlatColor,
+            panX, panY, scaleFactor,
         };
     }
 
@@ -1077,6 +1327,7 @@ async function draw() {
         document.getElementById('chkGrain').checked = p.grain;
         grainOn = p.grain;
         document.getElementById('pungpanCtrl').style.display = p.pungpanOn ? 'block' : 'none';
+        if (p.panX !== undefined) { panX = p.panX; panY = p.panY; scaleFactor = p.scaleFactor; }
         vGrainPat = null; hGrainPat = null;
         frameColorPicker.selectColor(p.frameColor);
         slatColorPicker.selectColor(p.slatColor);

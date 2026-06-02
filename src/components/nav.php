@@ -70,7 +70,7 @@ $isIndex      = ($currentFile === 'index.php' || $_SERVER['PHP_SELF'] === '/');
     <a href="/" class="navbar-brand d-flex align-items-center">
         <img src="https://pyeongmok.com/wp-content/uploads/2024/01/2024_MYEONGMOK_LOGO-e1705317786643.png"
              alt="평목" class="pm-nav-logo">
-        <span class="pm-nav-tagline">창호디자인 스튜디오<br><span style="font-size:10px;font-weight:400;">다양한 패턴. 자유로운 비율 조정. 실시간 결과 확인.</span></span>
+        <span class="pm-nav-tagline">창호 디자인 스튜디오<br><span style="font-size:10px;font-weight:400;">다양한 패턴. 자유로운 디자인. 실시간 주문.</span></span>
     </a>
     <button class="navbar-toggler border-0" type="button"
             data-bs-toggle="collapse" data-bs-target="#pmNavMenu"
