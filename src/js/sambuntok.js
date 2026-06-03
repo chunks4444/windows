@@ -1044,10 +1044,10 @@ async function draw() {
                 doorCornerPositions.bl = { cx: sp.bl.cx + dcx, cy: sp.bl.cy + dcy };
             } else if (corner === 'transform') {
                 const rect_ = canvas.getBoundingClientRect();
-                const mxC = (e.clientX - rect_.left) * (canvas.width / rect_.width);
-                const myC = (e.clientY - rect_.top)  * (canvas.height / rect_.height);
+                const mxC = (e.clientX - rect_.left) * (logW / rect_.width);
+                const myC = (e.clientY - rect_.top)  * (logH / rect_.height);
                 const { scaleCenter, startDist } = overlayDrag;
-                const ox_ = canvas.width / 2 + panX, oy_ = canvas.height / 2 + panY;
+                const ox_ = logW / 2 + panX, oy_ = logH / 2 + panY;
                 const curDist = Math.hypot(mxC - (ox_ + scaleCenter.cx * scaleFactor), myC - (oy_ + scaleCenter.cy * scaleFactor)) || 0.001;
                 const s = Math.max(0.05, curDist / startDist);
                 for (const k of ['tl', 'tr', 'br', 'bl']) {
@@ -1071,7 +1071,7 @@ async function draw() {
             else if (ch === 'transform') canvas.style.cursor = 'ns-resize';
             else if (ch === 'tl' || ch === 'br') canvas.style.cursor = 'nwse-resize';
             else if (ch === 'tr' || ch === 'bl') canvas.style.cursor = 'nesw-resize';
-            else canvas.style.cursor = near ? 'default' : 'grab';
+            else canvas.style.cursor = near ? 'move' : 'grab';
         }
         if (!isDragging) return;
         panX = e.clientX - startX;

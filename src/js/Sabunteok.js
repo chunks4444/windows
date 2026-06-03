@@ -910,7 +910,7 @@ async function draw() {
         ctx.restore();
         ctx = canvas.getContext('2d');
         // 4코너 투시 변환으로 메인 캔버스에 합성
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         const _c = getOverlayCorners();
         drawPerspectiveQuad(ctx, offCanvas, _c.tl, _c.tr, _c.br, _c.bl);
     } else {
@@ -919,7 +919,7 @@ async function draw() {
 
     if (placementMode && doorNaturalSize.w > 0) {
         const c = getOverlayCorners();
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
         // 외곽선: hover 여부에 따라 밝기 조절
         ctx.strokeStyle = handlesVisible ? 'rgba(58,140,130,0.9)' : 'rgba(58,140,130,0.35)';
@@ -1095,10 +1095,8 @@ async function draw() {
     function getHitOverlayCorner(clientX, clientY) {
         if (!placementMode || !doorCornerPositions) return null;
         const rect = canvas.getBoundingClientRect();
-        const ratioX = canvas.width  / rect.width;
-        const ratioY = canvas.height / rect.height;
-        const mx = (clientX - rect.left) * ratioX;
-        const my = (clientY - rect.top)  * ratioY;
+        const mx = (clientX - rect.left) * (logW / rect.width);
+        const my = (clientY - rect.top)  * (logH / rect.height);
         // transform 핸들 우선 감지
         const th = getTransformHandlePos();
         if (th && Math.hypot(mx - th.x, my - th.y) < 18) return 'transform';
@@ -1129,8 +1127,8 @@ async function draw() {
                 const cCx = (startPos.tl.cx + startPos.tr.cx + startPos.br.cx + startPos.bl.cx) / 4;
                 const cCy = (startPos.tl.cy + startPos.tr.cy + startPos.br.cy + startPos.bl.cy) / 4;
                 const rect_ = canvas.getBoundingClientRect();
-                const mxC = (e.clientX - rect_.left) * (canvas.width / rect_.width);
-                const myC = (e.clientY - rect_.top)  * (canvas.height / rect_.height);
+                const mxC = (e.clientX - rect_.left) * (logW / rect_.width);
+                const myC = (e.clientY - rect_.top)  * (logH / rect_.height);
                 const ox_ = logW / 2 + panX, oy_ = logH / 2 + panY;
                 drag.scaleCenter = { cx: cCx, cy: cCy };
                 drag.startDist = Math.hypot(mxC - (ox_ + cCx * scaleFactor), myC - (oy_ + cCy * scaleFactor)) || 1;
@@ -1167,8 +1165,8 @@ async function draw() {
                 doorCornerPositions.bl = { cx: sp.bl.cx + dcx, cy: sp.bl.cy + dcy };
             } else if (corner === 'transform') {
                 const rect_ = canvas.getBoundingClientRect();
-                const mxC = (e.clientX - rect_.left) * (canvas.width / rect_.width);
-                const myC = (e.clientY - rect_.top)  * (canvas.height / rect_.height);
+                const mxC = (e.clientX - rect_.left) * (logW / rect_.width);
+                const myC = (e.clientY - rect_.top)  * (logH / rect_.height);
                 const { scaleCenter, startDist } = overlayDrag;
                 const ox_ = logW / 2 + panX, oy_ = logH / 2 + panY;
                 const curDist = Math.hypot(mxC - (ox_ + scaleCenter.cx * scaleFactor), myC - (oy_ + scaleCenter.cy * scaleFactor)) || 0.001;
@@ -1196,7 +1194,7 @@ async function draw() {
             else if (ch === 'transform') canvas.style.cursor = 'ns-resize';
             else if (ch === 'tl' || ch === 'br') canvas.style.cursor = 'nwse-resize';
             else if (ch === 'tr' || ch === 'bl') canvas.style.cursor = 'nesw-resize';
-            else canvas.style.cursor = near ? 'default' : 'grab';
+            else canvas.style.cursor = near ? 'move' : 'grab';
         }
         if (!isDragging) return;
         panX = e.clientX - startX;
