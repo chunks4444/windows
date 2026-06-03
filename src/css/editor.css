@@ -361,7 +361,8 @@ canvas:active { cursor: grabbing; }
 }
 
 .rp-prompt:focus { border-color: var(--teal); background: #fff; }
-.rp-prompt::placeholder { color: var(--text-3); }
+.rp-prompt::placeholder { color: var(--text-3); font-size: 11px; }
+.rp-prompt-hint { font-size: 11px; color: var(--text-3); text-align: right; margin-top: -4px; letter-spacing: -0.1px; }
 
 .rp-ai-btn {
     width: 100%;
@@ -474,6 +475,88 @@ canvas:active { cursor: grabbing; }
     font-weight: 600;
     color: rgba(255,255,255,0.85);
     letter-spacing: -0.1px;
+}
+
+/* ── 렌더링 결과 팝업 ─────────────────────── */
+.render-result-pop {
+    position: fixed;
+    inset: 0;
+    z-index: 8000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10,15,15,0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+.render-result-pop.rr-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+.render-result-inner {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.35);
+    width: min(860px, 92vw);
+    max-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    transform: scale(0.94) translateY(16px);
+    transition: transform 0.24s cubic-bezier(.34,1.4,.64,1);
+}
+.render-result-pop.rr-visible .render-result-inner {
+    transform: scale(1) translateY(0);
+}
+.render-result-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    gap: 12px;
+    flex-shrink: 0;
+}
+.render-result-title { font-size: 13px; font-weight: 700; color: var(--text-1); letter-spacing: -0.2px; }
+.render-result-apply {
+    height: 30px;
+    padding: 0 14px;
+    background: var(--teal);
+    color: #fff;
+    border: none;
+    border-radius: var(--r-sm);
+    font-size: 12px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    letter-spacing: -0.1px;
+    transition: background 0.12s;
+}
+.render-result-apply:hover { background: #2F7169; }
+.render-result-close {
+    width: 30px;
+    height: 30px;
+    border: 1px solid var(--border-md);
+    border-radius: var(--r-sm);
+    background: var(--input-bg);
+    color: var(--text-2);
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.12s;
+}
+.render-result-close:hover { background: var(--border); }
+.render-result-img {
+    display: block;
+    width: 100%;
+    max-height: calc(92vh - 58px);
+    object-fit: contain;
+    background: #f0f0f0;
 }
 
 /* ── 공통 모달 ────────────────────────────── */

@@ -15,6 +15,34 @@ if (!$image || !$prompt) {
 require_once __DIR__ . '/config.php';
 $apiKey = STABILITY_API_KEY;
 
+// ── 한국어 감지 시 자동 번역 ────────────────────
+if (preg_match('/[\x{AC00}-\x{D7A3}]/u', $prompt)) {
+    $translated = _translateToEnglish($prompt);
+    if ($translated) $prompt = $translated;
+}
+
+function _translateToEnglish(string $text): string {
+    $url = 'https://translate.googleapis.com/translate_a/single?client=gtx&sl=ko&tl=en&dt=t&q=' . urlencode($text);
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => 10,
+        CURLOPT_HTTPHEADER     => ['User-Agent: Mozilla/5.0'],
+    ]);
+    $res = curl_exec($ch);
+    curl_close($ch);
+    if (!$res) return '';
+    $data = json_decode($res, true);
+    // 응답 구조: [[["translated","original"],...],...]
+    $out = '';
+    if (!empty($data[0]) && is_array($data[0])) {
+        foreach ($data[0] as $part) {
+            if (!empty($part[0])) $out .= $part[0];
+        }
+    }
+    return trim($out);
+}
+
 // base64 추출
 if (preg_match('/^data:image\/\w+;base64,/', $image)) {
     $image = preg_replace('/^data:image\/\w+;base64,/', '', $image);
@@ -60,9 +88,31 @@ imagejpeg($dst, null, 92);
 $resizedBytes = ob_get_clean();
 imagedestroy($dst);
 
-// ── Stability AI img2img 요청 ─────────────────
+// ── 마스크 처리 (있으면 inpainting, 없으면 img2img) ──
+$maskInput = $body['mask'] ?? '';
+$hasMask   = !empty($maskInput);
+
+if ($hasMask) {
+    // 마스크 base64 추출 및 리사이즈
+    if (preg_match('/^data:image\/\w+;base64,/', $maskInput)) {
+        $maskInput = preg_replace('/^data:image\/\w+;base64,/', '', $maskInput);
+    }
+    $maskBytes = base64_decode($maskInput);
+    $maskSrc   = imagecreatefromstring($maskBytes);
+    $maskDst   = imagecreatetruecolor($dstW, $dstH);
+    imagecopyresampled($maskDst, $maskSrc, 0, 0, 0, 0, $dstW, $dstH, imagesx($maskSrc), imagesy($maskSrc));
+    imagedestroy($maskSrc);
+    ob_start();
+    imagepng($maskDst);
+    $resizedMaskBytes = ob_get_clean();
+    imagedestroy($maskDst);
+}
+
+// ── Stability AI 요청 ─────────────────────────
 $engineId = 'stable-diffusion-xl-1024-v1-0';
-$apiUrl   = "https://api.stability.ai/v1/generation/{$engineId}/image-to-image";
+$apiUrl   = $hasMask
+    ? "https://api.stability.ai/v1/generation/{$engineId}/image-to-image/masking"
+    : "https://api.stability.ai/v1/generation/{$engineId}/image-to-image";
 
 $boundary = 'pmBoundary' . bin2hex(random_bytes(8));
 
@@ -73,20 +123,36 @@ $field = function($name, $value) use (&$parts, $boundary) {
     $parts .= "{$value}\r\n";
 };
 
-$field('text_prompts[0][text]', $prompt);
+$field('text_prompts[0][text]',   $prompt . ', photorealistic, architectural visualization, natural lighting, high quality, 8k');
 $field('text_prompts[0][weight]', '1');
-$field('init_image_mode',        'IMAGE_STRENGTH');
-$field('image_strength',         '0.35');
-$field('cfg_scale',              '7');
-$field('samples',                '1');
-$field('steps',                  '30');
-$field('style_preset',           'photographic');
+$field('text_prompts[1][text]',   'flat, 2d, diagram, blueprint, wireframe, schematic, cartoon, plain white');
+$field('text_prompts[1][weight]', '-1');
+$field('cfg_scale', '8');
+$field('samples',   '1');
+$field('steps',     '40');
+$field('style_preset', 'photographic');
 
-// 이미지 파트
+if ($hasMask) {
+    $field('mask_source', 'MASK_IMAGE_WHITE');
+} else {
+    $field('init_image_mode', 'IMAGE_STRENGTH');
+    $field('image_strength',  '0.45');
+}
+
+// init_image 파트
 $parts .= "--{$boundary}\r\n";
 $parts .= "Content-Disposition: form-data; name=\"init_image\"; filename=\"input.jpg\"\r\n";
 $parts .= "Content-Type: image/jpeg\r\n\r\n";
 $parts .= $resizedBytes . "\r\n";
+
+// mask_image 파트 (inpainting 시)
+if ($hasMask) {
+    $parts .= "--{$boundary}\r\n";
+    $parts .= "Content-Disposition: form-data; name=\"mask_image\"; filename=\"mask.png\"\r\n";
+    $parts .= "Content-Type: image/png\r\n\r\n";
+    $parts .= $resizedMaskBytes . "\r\n";
+}
+
 $parts .= "--{$boundary}--\r\n";
 
 $ch = curl_init($apiUrl);

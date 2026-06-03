@@ -274,9 +274,9 @@ header('Content-Type: text/html; charset=UTF-8');
                 <!-- 변형 -->
                 <button class="cv-btn" id="btnScale" title="모서리 변형">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="2" y="2" width="14" height="14" rx="1"/>
-                        <circle cx="19" cy="19" r="3" fill="currentColor" stroke="none"/>
-                        <line x1="16" y1="16" x2="14" y2="14"/>
+                        <rect x="2" y="2" width="14" height="14" rx="1" />
+                        <circle cx="19" cy="19" r="3" fill="currentColor" stroke="none" />
+                        <line x1="16" y1="16" x2="14" y2="14" />
                     </svg>
                 </button>
                 <div class="cv-sep"></div>
@@ -305,8 +305,8 @@ header('Content-Type: text/html; charset=UTF-8');
                 <div class="ver-wrap">
                     <button class="ver-btn" id="verBtn">
                         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="9"/>
-                            <polyline points="12 7 12 12 15 15"/>
+                            <circle cx="12" cy="12" r="9" />
+                            <polyline points="12 7 12 12 15 15" />
                         </svg>
                         <span id="verLabel">—</span>
                     </button>
@@ -329,7 +329,7 @@ header('Content-Type: text/html; charset=UTF-8');
         <div class="sidebar-col">
             <button class="sidebar-tab sidebar-tab-right" id="btnRightSidebarTab" title="배경사진 패널 열기/닫기">
                 <svg width="6" height="10" viewBox="0 0 6 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="1,1 5,5 1,9"/>
+                    <polyline points="1,1 5,5 1,9" />
                 </svg>
             </button>
         </div>
@@ -341,18 +341,18 @@ header('Content-Type: text/html; charset=UTF-8');
                     <div style="display:flex;gap:6px;">
                         <button class="hbtn" id="btnSave" style="flex:1;justify-content:center;">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
-                                <path d="M5 4H17L20 7V20H5V4Z" stroke="currentColor" stroke-width="2"/>
-                                <path d="M8 4V10H16V4" stroke="currentColor" stroke-width="2"/>
-                                <path d="M9 15H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M5 4H17L20 7V20H5V4Z" stroke="currentColor" stroke-width="2" />
+                                <path d="M8 4V10H16V4" stroke="currentColor" stroke-width="2" />
+                                <path d="M9 15H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                             </svg>
                             저장
                         </button>
                         <button class="hbtn hbtn-primary" style="flex:1;justify-content:center;">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
-                                <path d="M7 3H14L19 8V20H7V3Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-                                <path d="M14 3V8H19" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-                                <path d="M10 12L11.8 13.8L15 10.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M10 17H16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                <path d="M7 3H14L19 8V20H7V3Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+                                <path d="M14 3V8H19" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+                                <path d="M10 12L11.8 13.8L15 10.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M10 17H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                             </svg>
                             주문
                         </button>
@@ -396,14 +396,15 @@ header('Content-Type: text/html; charset=UTF-8');
                     <div style="display:flex;flex-direction:column;gap:8px;">
                         <button class="rp-add-btn" id="btnAddThumb">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                <polyline points="17 8 12 3 7 8"/>
-                                <line x1="12" y1="3" x2="12" y2="15"/>
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="17 8 12 3 7 8" />
+                                <line x1="12" y1="3" x2="12" y2="15" />
                             </svg>
                             사진 추가
                         </button>
                         <div class="rp-thumb-list" id="thumbList"></div>
-                        <textarea id="aiPrompt" class="rp-prompt" placeholder="렌더링 프롬프트 입력…" rows="3"></textarea>
+                        <textarea id="aiPrompt" class="rp-prompt" placeholder="한국어 또는 영어로 입력&#10;예) 전통 한옥 창호, 따뜻한 실내 조명" rows="3"></textarea>
+                        <div class="rp-prompt-hint">한국어 입력 시 자동 번역</div>
                         <button class="rp-ai-btn" onclick="startAISynthesis()">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
@@ -417,13 +418,15 @@ header('Content-Type: text/html; charset=UTF-8');
                     <div style="display:flex;gap:6px;">
                         <button class="hbtn" id="btnSavePNG" style="flex:1;justify-content:center;">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 3v13M7 11l5 5 5-5"/><path d="M5 20h14"/>
+                                <path d="M12 3v13M7 11l5 5 5-5" />
+                                <path d="M5 20h14" />
                             </svg>
                             PNG
                         </button>
                         <button class="hbtn" id="btnSavePDF" style="flex:1;justify-content:center;">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 3v13M7 11l5 5 5-5"/><path d="M5 20h14"/>
+                                <path d="M12 3v13M7 11l5 5 5-5" />
+                                <path d="M5 20h14" />
                             </svg>
                             PDF
                         </button>

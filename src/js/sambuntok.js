@@ -262,7 +262,37 @@
             return;
         }
 
-        const imageData = canvas.toDataURL('image/jpeg', 0.92);
+        const dpr = window.devicePixelRatio || 1;
+
+        const composite = document.createElement('canvas');
+        composite.width  = logW;
+        composite.height = logH;
+        const compCtx = composite.getContext('2d');
+        if (appBackgroundImage) {
+            const img = appBackgroundImage;
+            const s = Math.min(logW / img.width, logH / img.height);
+            const dW = img.width * s, dH = img.height * s;
+            compCtx.drawImage(img, (logW - dW) / 2, (logH - dH) / 2, dW, dH);
+        }
+        compCtx.globalAlpha = 0.92;
+        compCtx.drawImage(canvas, 0, 0, logW, logH);
+        compCtx.globalAlpha = 1.0;
+
+        const cx = logW / 2 + panX;
+        const cy = logH / 2 + panY;
+        const dl = Math.max(0, Math.round(cx - doorNaturalSize.w / 2));
+        const dt = Math.max(0, Math.round(cy - doorNaturalSize.h / 2));
+        const dw = Math.min(logW - dl, Math.round(doorNaturalSize.w));
+        const dh = Math.min(logH - dt, Math.round(doorNaturalSize.h));
+
+        const maskCvs = document.createElement('canvas');
+        maskCvs.width  = logW;
+        maskCvs.height = logH;
+        const mCtx = maskCvs.getContext('2d');
+        mCtx.fillStyle = '#000';
+        mCtx.fillRect(0, 0, logW, logH);
+        mCtx.fillStyle = '#fff';
+        mCtx.fillRect(dl, dt, dw, dh);
 
         const overlay = document.getElementById('renderOverlay');
         overlay.style.display = 'flex';
@@ -270,7 +300,11 @@
         fetch('api/render.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ image: imageData, prompt })
+            body: JSON.stringify({
+                image:  composite.toDataURL('image/jpeg', 0.95),
+                mask:   maskCvs.toDataURL('image/png'),
+                prompt
+            })
         })
         .then(r => r.json())
         .then(data => {
@@ -279,16 +313,42 @@
                 return;
             }
             const img = new Image();
-            img.onload = () => {
-                appBackgroundImage = img;
-                draw();
-            };
+            img.onload = () => { showRenderResult(img.src); };
             img.src = data.image;
         })
         .catch(() => pmAlert('렌더링 중 오류가 발생했습니다.', { type: 'danger' }))
         .finally(() => { overlay.style.display = 'none'; });
     }
 
+    function showRenderResult(src) {
+        let pop = document.getElementById('renderResultPop');
+        if (!pop) {
+            pop = document.createElement('div');
+            pop.id = 'renderResultPop';
+            pop.className = 'render-result-pop';
+            pop.innerHTML = `
+                <div class="render-result-inner">
+                    <div class="render-result-toolbar">
+                        <span class="render-result-title">Rendering 결과</span>
+                        <div style="display:flex;gap:6px;">
+                            <button class="render-result-apply" id="rrApply">배경 적용</button>
+                            <button class="render-result-close" id="rrClose">✕</button>
+                        </div>
+                    </div>
+                    <img class="render-result-img" id="rrImg" src="" alt="render">
+                </div>`;
+            document.body.appendChild(pop);
+            document.getElementById('rrClose').onclick = () => pop.classList.remove('rr-visible');
+            document.getElementById('rrApply').onclick = () => {
+                const img = new Image();
+                img.onload = () => { appBackgroundImage = img; draw(); };
+                img.src = document.getElementById('rrImg').src;
+                pop.classList.remove('rr-visible');
+            };
+        }
+        document.getElementById('rrImg').src = src;
+        requestAnimationFrame(() => pop.classList.add('rr-visible'));
+    }
 
     function resizeCanvas() {
         const dpr = window.devicePixelRatio || 1;
