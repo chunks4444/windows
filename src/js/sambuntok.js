@@ -4,6 +4,7 @@
     let doorCornerPositions  = null;
     let overlayDrag          = null;
     let placementNaturalSize = null;
+    let handlesVisible       = false;
 
     // ── 색상 그룹 ─────────────────────────────────
     const colorGroups = [
@@ -121,6 +122,42 @@
 
     selectedFrameColor = DEFAULT_FRAME_COLOR;
     selectedSlatColor  = DEFAULT_SLAT_COLOR;
+
+    // ── 오프스크린 캔버스 (배치 모드 투시 변환용) ────────
+    const offCanvas = document.createElement('canvas');
+
+    function drawTriangleAffine(tctx, img,
+        sx0, sy0, sx1, sy1, sx2, sy2,
+        dx0, dy0, dx1, dy1, dx2, dy2
+    ) {
+        const det = sx0*(sy1-sy2) + sx1*(sy2-sy0) + sx2*(sy0-sy1);
+        if (Math.abs(det) < 0.001) return;
+        const a  = (dx0*(sy1-sy2) + dx1*(sy2-sy0) + dx2*(sy0-sy1)) / det;
+        const b  = (dy0*(sy1-sy2) + dy1*(sy2-sy0) + dy2*(sy0-sy1)) / det;
+        const c  = (sx0*(dx1-dx2) + sx1*(dx2-dx0) + sx2*(dx0-dx1)) / det;
+        const d  = (sx0*(dy1-dy2) + sx1*(dy2-dy0) + sx2*(dy0-dy1)) / det;
+        const e  = dx0 - a*sx0 - c*sy0;
+        const f  = dy0 - b*sx0 - d*sy0;
+        tctx.save();
+        tctx.beginPath();
+        tctx.moveTo(dx0, dy0); tctx.lineTo(dx1, dy1); tctx.lineTo(dx2, dy2);
+        tctx.closePath(); tctx.clip();
+        tctx.transform(a, b, c, d, e, f);
+        tctx.drawImage(img, 0, 0);
+        tctx.restore();
+    }
+
+    function drawPerspectiveQuad(tctx, img, tl, tr, br, bl) {
+        const W = img.width, H = img.height;
+        drawTriangleAffine(tctx, img,
+            0,0,  W,0,  0,H,
+            tl.x,tl.y, tr.x,tr.y, bl.x,bl.y
+        );
+        drawTriangleAffine(tctx, img,
+            W,0,  W,H,  0,H,
+            tr.x,tr.y, br.x,br.y, bl.x,bl.y
+        );
+    }
 
     const frameColorPicker = buildColorPopup('framePopup', 'framePreviewDot', 'framePreviewName', 'framePreviewBtn',
         hex => { selectedFrameColor = hex; }, selectedFrameColor);
@@ -410,6 +447,9 @@ async function draw() {
         diagListEl.appendChild(el);
     });
 
+    // draw() 안에서 ctx를 재할당 가능하도록 로컬 변수로 섀도잉
+    let ctx = canvas.getContext('2d');
+
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -472,16 +512,19 @@ async function draw() {
         document.getElementById('btnScale').classList.remove('cv-btn-active');
     }
 
-    // 배치 모드: doorCornerPositions에서 직접 transform 계산
+    // 배치 모드: 오프스크린 캔버스로 리다이렉트
     if (placementMode && doorCornerPositions) {
-        const _tl = doorCornerPositions.tl, _tr = doorCornerPositions.tr, _bl = doorCornerPositions.bl;
-        const _W = doorNaturalSize.w, _H = doorNaturalSize.h;
-        const _sx = (_tr.cx - _tl.cx) / _W,  _skewY = (_tr.cy - _tl.cy) / _W;
-        const _skewX = (_bl.cx - _tl.cx) / _H, _sy = (_bl.cy - _tl.cy) / _H;
-        const _tx = _tl.cx + _sx * _W/2 + _skewX * _H/2;
-        const _ty = _tl.cy + _skewY * _W/2 + _sy * _H/2;
-        ctx.save();
-        ctx.transform(_sx, _skewY, _skewX, _sy, _tx, _ty);
+        const W = Math.max(1, Math.ceil(doorNaturalSize.w));
+        const H = Math.max(1, Math.ceil(doorNaturalSize.h));
+        if (offCanvas.width !== W || offCanvas.height !== H) {
+            offCanvas.width = W; offCanvas.height = H;
+        }
+        ctx.restore();
+        const offCtx = offCanvas.getContext('2d');
+        offCtx.clearRect(0, 0, W, H);
+        offCtx.save();
+        offCtx.translate(W / 2, H / 2);
+        ctx = offCtx;
     }
 
     // 패턴 비율 체크: 셀 크기가 0 이하이거나 내경이 너무 작아 패턴 불가능할 때 레드
@@ -770,35 +813,67 @@ async function draw() {
         }
     }
 
-    if (placementMode) ctx.restore();
-
-    ctx.restore();
+    if (placementMode && doorCornerPositions) {
+        ctx.restore();
+        ctx = canvas.getContext('2d');
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        const _c = getOverlayCorners();
+        drawPerspectiveQuad(ctx, offCanvas, _c.tl, _c.tr, _c.br, _c.bl);
+    } else {
+        ctx.restore();
+    }
 
     if (placementMode && doorNaturalSize.w > 0) {
         const c = getOverlayCorners();
         ctx.setTransform(1, 0, 0, 1, 0, 0);
-        ctx.strokeStyle = 'rgba(58,140,130,0.9)';
-        ctx.lineWidth = 2;
+
+        ctx.strokeStyle = handlesVisible ? 'rgba(58,140,130,0.9)' : 'rgba(58,140,130,0.35)';
+        ctx.lineWidth   = handlesVisible ? 2 : 1.5;
         ctx.setLineDash([6, 4]);
         ctx.beginPath();
         ctx.moveTo(c.tl.x, c.tl.y); ctx.lineTo(c.tr.x, c.tr.y);
         ctx.lineTo(c.br.x, c.br.y); ctx.lineTo(c.bl.x, c.bl.y);
         ctx.closePath(); ctx.stroke();
         ctx.setLineDash([]);
-        [c.tl, c.tr, c.bl].forEach(({ x, y }) => {
-            ctx.fillStyle = '#fff';
+
+        if (handlesVisible) {
+            [c.tl, c.tr, c.br, c.bl].forEach(({ x, y }) => {
+                ctx.fillStyle   = '#fff';
+                ctx.strokeStyle = '#3A8C82';
+                ctx.lineWidth   = 2.5;
+                ctx.fillRect(x - 7, y - 7, 14, 14);
+                ctx.strokeRect(x - 7, y - 7, 14, 14);
+            });
+
+            const { x: cx, y: cy } = c.center;
+            ctx.fillStyle   = 'rgba(255,255,255,0.92)';
             ctx.strokeStyle = '#3A8C82';
-            ctx.lineWidth = 2.5;
-            ctx.fillRect(x - 7, y - 7, 14, 14);
-            ctx.strokeRect(x - 7, y - 7, 14, 14);
-        });
-        ctx.fillStyle = '#3A8C82';
-        ctx.strokeStyle = '#fff';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.arc(c.br.x, c.br.y, 8, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
+            ctx.lineWidth   = 2;
+            ctx.beginPath(); ctx.arc(cx, cy, 14, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+
+            ctx.strokeStyle = '#3A8C82'; ctx.lineWidth = 1.8; ctx.lineCap = 'round';
+            const a = 8;
+            ctx.beginPath(); ctx.moveTo(cx, cy - 3); ctx.lineTo(cx, cy - a);
+            ctx.lineTo(cx - 3, cy - a + 3); ctx.moveTo(cx, cy - a); ctx.lineTo(cx + 3, cy - a + 3); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(cx, cy + 3); ctx.lineTo(cx, cy + a);
+            ctx.lineTo(cx - 3, cy + a - 3); ctx.moveTo(cx, cy + a); ctx.lineTo(cx + 3, cy + a - 3); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(cx - 3, cy); ctx.lineTo(cx - a, cy);
+            ctx.lineTo(cx - a + 3, cy - 3); ctx.moveTo(cx - a, cy); ctx.lineTo(cx - a + 3, cy + 3); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(cx + 3, cy); ctx.lineTo(cx + a, cy);
+            ctx.lineTo(cx + a - 3, cy - 3); ctx.moveTo(cx + a, cy); ctx.lineTo(cx + a - 3, cy + 3); ctx.stroke();
+
+            const th = getTransformHandlePos();
+            if (th) {
+                ctx.setLineDash([]);
+                ctx.fillStyle = '#fff'; ctx.strokeStyle = '#3A8C82'; ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.arc(th.x, th.y, 10, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+                const hx = th.x, hy = th.y, as = 5;
+                ctx.strokeStyle = '#3A8C82'; ctx.lineWidth = 1.8; ctx.lineCap = 'round';
+                ctx.beginPath(); ctx.moveTo(hx, hy - as - 1); ctx.lineTo(hx, hy + as + 1); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(hx - 3, hy - as + 2); ctx.lineTo(hx, hy - as - 1); ctx.lineTo(hx + 3, hy - as + 2); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(hx - 3, hy + as - 2); ctx.lineTo(hx, hy + as + 1); ctx.lineTo(hx + 3, hy + as - 2); ctx.stroke();
+            }
+        }
     }
 }
 
@@ -816,11 +891,43 @@ async function draw() {
 
     function getOverlayCorners() {
         if (!doorCornerPositions) return null;
-        const { tl, tr, bl } = doorCornerPositions;
-        const br = { cx: tr.cx + bl.cx - tl.cx, cy: tr.cy + bl.cy - tl.cy };
+        const { tl, tr, br, bl } = doorCornerPositions;
+        const center = {
+            cx: (tl.cx + tr.cx + br.cx + bl.cx) / 4,
+            cy: (tl.cy + tr.cy + br.cy + bl.cy) / 4,
+        };
         const ox = canvas.width/2 + panX, oy = canvas.height/2 + panY;
         const ts = p => ({ x: ox + p.cx * scaleFactor, y: oy + p.cy * scaleFactor });
-        return { tl: ts(tl), tr: ts(tr), bl: ts(bl), br: ts(br) };
+        return { tl: ts(tl), tr: ts(tr), br: ts(br), bl: ts(bl), center: ts(center) };
+    }
+
+    function getTransformHandlePos() {
+        if (!doorCornerPositions) return null;
+        const c = getOverlayCorners();
+        if (!c) return null;
+        const topMidX = (c.tl.x + c.tr.x) / 2;
+        const topMidY = (c.tl.y + c.tr.y) / 2;
+        const edgeDx = c.tr.x - c.tl.x;
+        const edgeDy = c.tr.y - c.tl.y;
+        const edgeLen = Math.hypot(edgeDx, edgeDy) || 1;
+        const perpX = -edgeDy / edgeLen;
+        const perpY = edgeDx / edgeLen;
+        const OFFSET = 36;
+        return { x: topMidX + perpX * OFFSET, y: topMidY + perpY * OFFSET };
+    }
+
+    function isMouseNearOverlay(clientX, clientY) {
+        if (!placementMode || !doorCornerPositions) return false;
+        const rect = canvas.getBoundingClientRect();
+        const mx = (clientX - rect.left) * (canvas.width  / rect.width);
+        const my = (clientY - rect.top)  * (canvas.height / rect.height);
+        const c = getOverlayCorners();
+        const pad = 24;
+        const minX = Math.min(c.tl.x, c.tr.x, c.br.x, c.bl.x) - pad;
+        const maxX = Math.max(c.tl.x, c.tr.x, c.br.x, c.bl.x) + pad;
+        const minY = Math.min(c.tl.y, c.tr.y, c.br.y, c.bl.y) - pad;
+        const maxY = Math.max(c.tl.y, c.tr.y, c.br.y, c.bl.y) + pad;
+        return mx >= minX && mx <= maxX && my >= minY && my <= maxY;
     }
 
     function getHitOverlayCorner(clientX, clientY) {
@@ -830,41 +937,46 @@ async function draw() {
         const ratioY = canvas.height / rect.height;
         const mx = (clientX - rect.left) * ratioX;
         const my = (clientY - rect.top)  * ratioY;
+        const th = getTransformHandlePos();
+        if (th && Math.hypot(mx - th.x, my - th.y) < 18) return 'transform';
         const c = getOverlayCorners();
         let best = null, bestD = 20;
         for (const [k, pt] of Object.entries(c)) {
+            const hitR = k === 'center' ? 18 : 20;
             const d = Math.hypot(mx - pt.x, my - pt.y);
-            if (d < bestD) { bestD = d; best = k; }
+            if (d < hitR && d < bestD) { bestD = d; best = k; }
         }
         return best;
     }
 
     container.addEventListener('mousedown', function(e) {
-        const corner = getHitOverlayCorner(e.clientX, e.clientY);
+        const cornerHit = getHitOverlayCorner(e.clientX, e.clientY);
+        const corner = cornerHit === 'center' ? 'move' : cornerHit;
+        const sp = () => ({
+            tl: { ...doorCornerPositions.tl },
+            tr: { ...doorCornerPositions.tr },
+            br: { ...doorCornerPositions.br },
+            bl: { ...doorCornerPositions.bl },
+        });
         if (corner) {
-            overlayDrag = {
-                corner,
-                startPositions: {
-                    tl: { ...doorCornerPositions.tl },
-                    tr: { ...doorCornerPositions.tr },
-                    bl: { ...doorCornerPositions.bl },
-                },
-                startMx: e.clientX,
-                startMy: e.clientY,
-            };
+            handlesVisible = true;
+            const startPos = sp();
+            const drag = { corner, startPositions: startPos, startMx: e.clientX, startMy: e.clientY };
+            if (corner === 'transform') {
+                const cCx = (startPos.tl.cx + startPos.tr.cx + startPos.br.cx + startPos.bl.cx) / 4;
+                const cCy = (startPos.tl.cy + startPos.tr.cy + startPos.br.cy + startPos.bl.cy) / 4;
+                const rect_ = canvas.getBoundingClientRect();
+                const mxC = (e.clientX - rect_.left) * (canvas.width / rect_.width);
+                const myC = (e.clientY - rect_.top)  * (canvas.height / rect_.height);
+                const ox_ = canvas.width / 2 + panX, oy_ = canvas.height / 2 + panY;
+                drag.scaleCenter = { cx: cCx, cy: cCy };
+                drag.startDist = Math.hypot(mxC - (ox_ + cCx * scaleFactor), myC - (oy_ + cCy * scaleFactor)) || 1;
+            }
+            overlayDrag = drag;
             return;
         }
         if (placementMode) {
-            overlayDrag = {
-                corner: 'move',
-                startPositions: {
-                    tl: { ...doorCornerPositions.tl },
-                    tr: { ...doorCornerPositions.tr },
-                    bl: { ...doorCornerPositions.bl },
-                },
-                startMx: e.clientX,
-                startMy: e.clientY,
-            };
+            overlayDrag = { corner: 'move', startPositions: sp(), startMx: e.clientX, startMy: e.clientY };
             return;
         }
         isDragging = true;
@@ -880,31 +992,46 @@ async function draw() {
             if (corner === 'move') {
                 doorCornerPositions.tl = { cx: sp.tl.cx + dcx, cy: sp.tl.cy + dcy };
                 doorCornerPositions.tr = { cx: sp.tr.cx + dcx, cy: sp.tr.cy + dcy };
+                doorCornerPositions.br = { cx: sp.br.cx + dcx, cy: sp.br.cy + dcy };
                 doorCornerPositions.bl = { cx: sp.bl.cx + dcx, cy: sp.bl.cy + dcy };
             } else if (corner === 'tl') {
                 doorCornerPositions.tl = { cx: sp.tl.cx + dcx, cy: sp.tl.cy + dcy };
             } else if (corner === 'tr') {
                 doorCornerPositions.tr = { cx: sp.tr.cx + dcx, cy: sp.tr.cy + dcy };
+            } else if (corner === 'br') {
+                doorCornerPositions.br = { cx: sp.br.cx + dcx, cy: sp.br.cy + dcy };
             } else if (corner === 'bl') {
                 doorCornerPositions.bl = { cx: sp.bl.cx + dcx, cy: sp.bl.cy + dcy };
-            } else if (corner === 'br') {
-                const tl = sp.tl;
-                const origBrCx = sp.tr.cx + sp.bl.cx - tl.cx;
-                const origBrCy = sp.tr.cy + sp.bl.cy - tl.cy;
-                const origD = Math.hypot(origBrCx - tl.cx, origBrCy - tl.cy);
-                const newD  = Math.hypot(origBrCx + dcx - tl.cx, origBrCy + dcy - tl.cy);
-                if (origD > 0) {
-                    const s = Math.max(0.05, newD / origD);
-                    doorCornerPositions.tr = { cx: tl.cx + s*(sp.tr.cx-tl.cx), cy: tl.cy + s*(sp.tr.cy-tl.cy) };
-                    doorCornerPositions.bl = { cx: tl.cx + s*(sp.bl.cx-tl.cx), cy: tl.cy + s*(sp.bl.cy-tl.cy) };
+            } else if (corner === 'transform') {
+                const rect_ = canvas.getBoundingClientRect();
+                const mxC = (e.clientX - rect_.left) * (canvas.width / rect_.width);
+                const myC = (e.clientY - rect_.top)  * (canvas.height / rect_.height);
+                const { scaleCenter, startDist } = overlayDrag;
+                const ox_ = canvas.width / 2 + panX, oy_ = canvas.height / 2 + panY;
+                const curDist = Math.hypot(mxC - (ox_ + scaleCenter.cx * scaleFactor), myC - (oy_ + scaleCenter.cy * scaleFactor)) || 0.001;
+                const s = Math.max(0.05, curDist / startDist);
+                for (const k of ['tl', 'tr', 'br', 'bl']) {
+                    doorCornerPositions[k] = {
+                        cx: scaleCenter.cx + (sp[k].cx - scaleCenter.cx) * s,
+                        cy: scaleCenter.cy + (sp[k].cy - scaleCenter.cy) * s,
+                    };
                 }
             }
             draw();
             return;
         }
         if (placementMode) {
-            const c = getHitOverlayCorner(e.clientX, e.clientY);
-            canvas.style.cursor = c ? (c==='tl'||c==='br' ? 'nwse-resize' : 'nesw-resize') : 'grab';
+            const near = isMouseNearOverlay(e.clientX, e.clientY);
+            if (near !== handlesVisible) {
+                handlesVisible = near;
+                draw();
+            }
+            const ch = getHitOverlayCorner(e.clientX, e.clientY);
+            if (ch === 'center') canvas.style.cursor = 'move';
+            else if (ch === 'transform') canvas.style.cursor = 'ns-resize';
+            else if (ch === 'tl' || ch === 'br') canvas.style.cursor = 'nwse-resize';
+            else if (ch === 'tr' || ch === 'bl') canvas.style.cursor = 'nesw-resize';
+            else canvas.style.cursor = near ? 'default' : 'grab';
         }
         if (!isDragging) return;
         panX = e.clientX - startX;
@@ -912,7 +1039,11 @@ async function draw() {
         draw();
     });
     window.addEventListener('mouseup', function() {
-        overlayDrag = null;
+        if (overlayDrag) {
+            overlayDrag = null;
+            handlesVisible = false;
+            draw();
+        }
         isDragging = false;
     });
     container.addEventListener('wheel', function(e) {
@@ -977,6 +1108,7 @@ async function draw() {
             doorCornerPositions = {
                 tl: { cx: -W/2, cy: -H/2 },
                 tr: { cx:  W/2, cy: -H/2 },
+                br: { cx:  W/2, cy:  H/2 },
                 bl: { cx: -W/2, cy:  H/2 },
             };
         } else {
@@ -1155,6 +1287,9 @@ async function draw() {
             frameColor: selectedFrameColor,
             slatColor:  selectedSlatColor,
             panX, panY, scaleFactor,
+            placementMode,
+            doorCornerPositions: doorCornerPositions ? { ...doorCornerPositions } : null,
+            placementNaturalSize: placementNaturalSize ? { ...placementNaturalSize } : null,
         };
     }
 
@@ -1180,6 +1315,10 @@ async function draw() {
         rotateOn = p.rotate;
         document.getElementById('pungpanCtrl').style.display = p.pungpanOn ? 'block' : 'none';
         if (p.panX !== undefined) { panX = p.panX; panY = p.panY; scaleFactor = p.scaleFactor; }
+        placementMode        = p.placementMode        || false;
+        doorCornerPositions  = p.doorCornerPositions  || null;
+        placementNaturalSize = p.placementNaturalSize || null;
+        document.getElementById('btnScale').classList.toggle('cv-btn-active', placementMode);
         frameColorPicker.selectColor(p.frameColor);
         slatColorPicker.selectColor(p.slatColor);
         updateDoorCountOptions();
@@ -1197,7 +1336,7 @@ async function draw() {
             const realIdx = versions.length - 1 - i;
             const item = document.createElement('div');
             item.className = 'ver-item' + (realIdx === currentVerIdx ? ' active' : '');
-            item.innerHTML = `<span class="ver-num">v${realIdx + 1}</span><span class="ver-date">${fmtDate(ver.savedAt)}</span>`;
+            item.innerHTML = `<span class="ver-num">v${realIdx + 1}</span><span class="ver-date">${fmtDate(ver.savedAt)}</span><span class="ver-del" title="삭제"><i class="bi bi-x-lg"></i></span>`;
             item.addEventListener('click', () => {
                 currentVerIdx = realIdx;
                 applyParams(ver.params);
@@ -1205,8 +1344,45 @@ async function draw() {
                 renderVerList();
                 document.getElementById('verDropdown').classList.remove('open');
             });
+            item.querySelector('.ver-del').addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (!confirm(`v${realIdx + 1}를 정말 삭제하시겠습니까?`)) return;
+                versions.splice(realIdx, 1);
+                localStorage.setItem(VERSIONS_KEY, JSON.stringify(versions));
+                if (currentVerIdx >= versions.length) currentVerIdx = versions.length - 1;
+                const label = versions.length > 0 ? 'v' + (currentVerIdx + 1) : '—';
+                document.getElementById('verLabel').textContent = label;
+                renderVerList();
+            });
             list.appendChild(item);
         });
+    }
+
+    // 버전 삭제 확인 모달 (1회 생성)
+    const _verDelModalEl = document.createElement('div');
+    _verDelModalEl.id = 'verDelModal';
+    _verDelModalEl.className = 'modal fade';
+    _verDelModalEl.tabIndex = -1;
+    _verDelModalEl.innerHTML = `
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4">
+                    <div class="mb-2" style="font-size:28px;color:#e05218;"><i class="bi bi-exclamation-circle"></i></div>
+                    <p class="mb-0 fw-semibold" id="verDelModalMsg" style="font-size:14px;"></p>
+                </div>
+                <div class="modal-footer justify-content-center border-0 pt-0 pb-4 gap-2">
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-sm btn-danger" id="verDelModalConfirm">삭제</button>
+                </div>
+            </div>
+        </div>`;
+    document.body.appendChild(_verDelModalEl);
+
+    function showVerDelConfirm(label, onConfirm) {
+        document.getElementById('verDelModalMsg').textContent = `${label}를 정말 삭제하시겠습니까?`;
+        const modal = new bootstrap.Modal(_verDelModalEl);
+        document.getElementById('verDelModalConfirm').onclick = () => { modal.hide(); onConfirm(); };
+        modal.show();
     }
 
     function loadVersions() {
