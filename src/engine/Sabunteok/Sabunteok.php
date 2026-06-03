@@ -404,7 +404,6 @@ header('Content-Type: text/html; charset=UTF-8');
                         </button>
                         <div class="rp-thumb-list" id="thumbList"></div>
                         <textarea id="aiPrompt" class="rp-prompt" placeholder="한국어 또는 영어로 입력&#10;예) 전통 한옥 창호, 따뜻한 실내 조명" rows="3"></textarea>
-                        <div class="rp-prompt-hint">한국어 입력 시 자동 번역</div>
                         <button class="rp-ai-btn" onclick="startAISynthesis()">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
