@@ -191,22 +191,102 @@
     let isDragging = false;
     let startX, startY;
 
-    // 3. Rendering 함수 (버튼에 연결)
-    // [스크립트 상단 등 최상위 레벨에 작성]
-    function startAISynthesis() {
-        console.log("버튼이 클릭되었습니다!"); // 확인용 로그
+    // ── 공통 모달 유틸리티 ─────────────────────────
+    let _pmModalEl = null;
+    function _pmGetEl() {
+        if (_pmModalEl) return _pmModalEl;
+        const el = document.createElement('div');
+        el.className = 'pm-modal-backdrop';
+        el.innerHTML = `
+            <div class="pm-modal">
+                <div class="pm-modal-icon-wrap" id="pmIconWrap">
+                    <svg id="pmIconSvg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
+                </div>
+                <p class="pm-modal-msg" id="pmMsg"></p>
+                <p class="pm-modal-sub" id="pmSub"></p>
+                <div class="pm-modal-btns" id="pmBtns"></div>
+            </div>`;
+        document.body.appendChild(el);
+        el.addEventListener('click', e => { if (e.target === el) _pmHide(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') _pmHide(); });
+        _pmModalEl = el;
+        return el;
+    }
+    function _pmHide() {
+        if (!_pmModalEl) return;
+        _pmModalEl.classList.remove('pm-active');
+    }
+    function _pmShow(msg, sub, iconType, btnsHtml) {
+        const el = _pmGetEl();
+        const wrap = document.getElementById('pmIconWrap');
+        const svg  = document.getElementById('pmIconSvg');
+        document.getElementById('pmMsg').textContent = msg;
+        const subEl = document.getElementById('pmSub');
+        subEl.textContent = sub || '';
+        subEl.style.display = sub ? '' : 'none';
+        if (iconType === 'danger') {
+            wrap.className = 'pm-modal-icon-wrap warn';
+            svg.setAttribute('stroke', '#E03030');
+            svg.innerHTML = '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>';
+        } else {
+            wrap.className = 'pm-modal-icon-wrap info';
+            svg.setAttribute('stroke', 'var(--teal)');
+            svg.innerHTML = '<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>';
+        }
+        document.getElementById('pmBtns').innerHTML = btnsHtml;
+        el.style.display = 'flex';
+        requestAnimationFrame(() => el.classList.add('pm-active'));
+    }
+    function pmConfirm(msg, onConfirm, { sub = '', type = 'danger', confirmText = '삭제' } = {}) {
+        _pmShow(msg, sub, type, `
+            <button class="pm-btn-cancel" id="pmCancel">취소</button>
+            <button class="pm-btn-${type}" id="pmConfirmBtn">${confirmText}</button>`);
+        document.getElementById('pmCancel').onclick = _pmHide;
+        document.getElementById('pmConfirmBtn').onclick = () => { _pmHide(); onConfirm(); };
+    }
+    function pmAlert(msg, { sub = '', type = 'info' } = {}) {
+        _pmShow(msg, sub, type, `<button class="pm-btn-ok" id="pmOk">확인</button>`);
+        document.getElementById('pmOk').onclick = _pmHide;
+    }
 
-        if (typeof appBackgroundImage === 'undefined' || !appBackgroundImage) {
-            alert("먼저 사진을 업로드해주세요.");
+    // ── Rendering ──────────────────────────────
+    function startAISynthesis() {
+        if (!appBackgroundImage) {
+            pmAlert('먼저 사진을 업로드해주세요.', { type: 'info' });
+            return;
+        }
+        const prompt = (document.getElementById('aiPrompt')?.value || '').trim();
+        if (!prompt) {
+            pmAlert('렌더링 프롬프트를 입력해주세요.', { type: 'info' });
+            document.getElementById('aiPrompt')?.focus();
             return;
         }
 
-        // 캔버스 데이터 추출
-        const canvas = document.getElementById('doorCanvas');
-        const designData = canvas.toDataURL('image/png');
+        const imageData = canvas.toDataURL('image/jpeg', 0.92);
 
-        alert("Rendering을 시작합니다.");
-        // 여기에 이후 전송 로직 작성
+        const overlay = document.getElementById('renderOverlay');
+        overlay.style.display = 'flex';
+
+        fetch('api/render.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ image: imageData, prompt })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.error) {
+                pmAlert(data.error, { type: 'danger' });
+                return;
+            }
+            const img = new Image();
+            img.onload = () => {
+                appBackgroundImage = img;
+                draw();
+            };
+            img.src = data.image;
+        })
+        .catch(() => pmAlert('렌더링 중 오류가 발생했습니다.', { type: 'danger' }))
+        .finally(() => { overlay.style.display = 'none'; });
     }
 
 
@@ -1388,13 +1468,14 @@ async function draw() {
             });
             item.querySelector('.ver-del').addEventListener('click', (e) => {
                 e.stopPropagation();
-                if (!confirm(`v${realIdx + 1}를 정말 삭제하시겠습니까?`)) return;
-                versions.splice(realIdx, 1);
-                localStorage.setItem(VERSIONS_KEY, JSON.stringify(versions));
-                if (currentVerIdx >= versions.length) currentVerIdx = versions.length - 1;
-                const label = versions.length > 0 ? 'v' + (currentVerIdx + 1) : '—';
-                document.getElementById('verLabel').textContent = label;
-                renderVerList();
+                pmConfirm(`v${realIdx + 1}를 정말 삭제하시겠습니까?`, () => {
+                    versions.splice(realIdx, 1);
+                    localStorage.setItem(VERSIONS_KEY, JSON.stringify(versions));
+                    if (currentVerIdx >= versions.length) currentVerIdx = versions.length - 1;
+                    const label = versions.length > 0 ? 'v' + (currentVerIdx + 1) : '—';
+                    document.getElementById('verLabel').textContent = label;
+                    renderVerList();
+                });
             });
             list.appendChild(item);
         });

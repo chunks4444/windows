@@ -193,22 +193,104 @@
     let isDragging = false;
     let startX, startY;
 
-    // 3. Rendering 함수 (버튼에 연결)
-    // [스크립트 상단 등 최상위 레벨에 작성]
-    function startAISynthesis() {
-        console.log("버튼이 클릭되었습니다!"); // 확인용 로그
+    // ── 공통 모달 유틸리티 ─────────────────────────
+    let _pmModalEl = null;
+    function _pmGetEl() {
+        if (_pmModalEl) return _pmModalEl;
+        const el = document.createElement('div');
+        el.className = 'pm-modal-backdrop';
+        el.innerHTML = `
+            <div class="pm-modal">
+                <div class="pm-modal-icon-wrap" id="pmIconWrap">
+                    <svg id="pmIconSvg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></svg>
+                </div>
+                <p class="pm-modal-msg" id="pmMsg"></p>
+                <p class="pm-modal-sub" id="pmSub"></p>
+                <div class="pm-modal-btns" id="pmBtns"></div>
+            </div>`;
+        document.body.appendChild(el);
+        el.addEventListener('click', e => { if (e.target === el) _pmHide(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') _pmHide(); });
+        _pmModalEl = el;
+        return el;
+    }
+    function _pmHide() {
+        if (!_pmModalEl) return;
+        _pmModalEl.classList.remove('pm-active');
+    }
+    function _pmShow(msg, sub, iconType, btnsHtml) {
+        const el = _pmGetEl();
+        const wrap = document.getElementById('pmIconWrap');
+        const svg  = document.getElementById('pmIconSvg');
+        document.getElementById('pmMsg').textContent = msg;
+        const subEl = document.getElementById('pmSub');
+        subEl.textContent = sub || '';
+        subEl.style.display = sub ? '' : 'none';
+        if (iconType === 'danger') {
+            wrap.className = 'pm-modal-icon-wrap warn';
+            svg.setAttribute('stroke', '#E03030');
+            svg.innerHTML = '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>';
+        } else {
+            wrap.className = 'pm-modal-icon-wrap info';
+            svg.setAttribute('stroke', 'var(--teal)');
+            svg.innerHTML = '<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>';
+        }
+        document.getElementById('pmBtns').innerHTML = btnsHtml;
+        el.style.display = 'flex';
+        requestAnimationFrame(() => el.classList.add('pm-active'));
+    }
+    function pmConfirm(msg, onConfirm, { sub = '', type = 'danger', confirmText = '삭제' } = {}) {
+        _pmShow(msg, sub, type, `
+            <button class="pm-btn-cancel" id="pmCancel">취소</button>
+            <button class="pm-btn-${type}" id="pmConfirmBtn">${confirmText}</button>`);
+        document.getElementById('pmCancel').onclick = _pmHide;
+        document.getElementById('pmConfirmBtn').onclick = () => { _pmHide(); onConfirm(); };
+    }
+    function pmAlert(msg, { sub = '', type = 'info' } = {}) {
+        _pmShow(msg, sub, type, `<button class="pm-btn-ok" id="pmOk">확인</button>`);
+        document.getElementById('pmOk').onclick = _pmHide;
+    }
 
-        if (typeof appBackgroundImage === 'undefined' || !appBackgroundImage) {
-            alert("먼저 사진을 업로드해주세요.");
+    // ── Rendering ──────────────────────────────
+    function startAISynthesis() {
+        if (!appBackgroundImage) {
+            pmAlert('먼저 사진을 업로드해주세요.', { type: 'info' });
+            return;
+        }
+        const prompt = (document.getElementById('aiPrompt')?.value || '').trim();
+        if (!prompt) {
+            pmAlert('렌더링 프롬프트를 입력해주세요.', { type: 'info' });
+            document.getElementById('aiPrompt')?.focus();
             return;
         }
 
-        // 캔버스 데이터 추출
-        const canvas = document.getElementById('doorCanvas');
-        const designData = canvas.toDataURL('image/png');
+        // 현재 캔버스 합성 이미지 캡처 (배경 + 도면)
+        const imageData = canvas.toDataURL('image/jpeg', 0.92);
 
-        alert("Rendering을 시작합니다.");
-        // 여기에 이후 전송 로직 작성
+        const overlay = document.getElementById('renderOverlay');
+        overlay.style.display = 'flex';
+
+        fetch('api/render.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ image: imageData, prompt })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.error) {
+                pmAlert(data.error, { type: 'danger' });
+                return;
+            }
+            // 결과 이미지를 캔버스 배경으로 표시
+            const img = new Image();
+            img.onload = () => {
+                appBackgroundImage = img;
+                draw();
+            };
+            img.src = data.image;
+        })
+        .catch(() => pmAlert('렌더링 중 오류가 발생했습니다.', { type: 'danger' }))
+        .finally(() => { overlay.style.display = 'none'; });
     }
 
     function resizeCanvas() {
@@ -1519,31 +1601,8 @@ async function draw() {
         });
     }
 
-    // 버전 삭제 확인 모달 (1회 생성)
-    const _verDelModalEl = document.createElement('div');
-    _verDelModalEl.id = 'verDelModal';
-    _verDelModalEl.className = 'modal fade';
-    _verDelModalEl.tabIndex = -1;
-    _verDelModalEl.innerHTML = `
-        <div class="modal-dialog modal-sm modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-body text-center py-4">
-                    <div class="mb-2" style="font-size:28px;color:#e05218;"><i class="bi bi-exclamation-circle"></i></div>
-                    <p class="mb-0 fw-semibold" id="verDelModalMsg" style="font-size:14px;"></p>
-                </div>
-                <div class="modal-footer justify-content-center border-0 pt-0 pb-4 gap-2">
-                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">취소</button>
-                    <button type="button" class="btn btn-sm btn-danger" id="verDelModalConfirm">삭제</button>
-                </div>
-            </div>
-        </div>`;
-    document.body.appendChild(_verDelModalEl);
-
     function showVerDelConfirm(label, onConfirm) {
-        document.getElementById('verDelModalMsg').textContent = `${label}를 정말 삭제하시겠습니까?`;
-        const modal = new bootstrap.Modal(_verDelModalEl);
-        document.getElementById('verDelModalConfirm').onclick = () => { modal.hide(); onConfirm(); };
-        modal.show();
+        pmConfirm(`${label}를 정말 삭제하시겠습니까?`, onConfirm, { type: 'danger' });
     }
 
     function loadVersions() {

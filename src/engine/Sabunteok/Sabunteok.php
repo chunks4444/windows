@@ -317,6 +317,12 @@ header('Content-Type: text/html; charset=UTF-8');
             </div>
 
             <canvas id="doorCanvas"></canvas>
+
+            <!-- 렌더링 로딩 오버레이 -->
+            <div class="render-overlay" id="renderOverlay" style="display:none;">
+                <div class="render-spinner"></div>
+                <div class="render-overlay-msg">AI 렌더링 중…</div>
+            </div>
         </div>
 
         <!-- RIGHT SIDEBAR TAB -->
@@ -397,6 +403,7 @@ header('Content-Type: text/html; charset=UTF-8');
                             사진 추가
                         </button>
                         <div class="rp-thumb-list" id="thumbList"></div>
+                        <textarea id="aiPrompt" class="rp-prompt" placeholder="렌더링 프롬프트 입력…" rows="3"></textarea>
                         <button class="rp-ai-btn" onclick="startAISynthesis()">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
