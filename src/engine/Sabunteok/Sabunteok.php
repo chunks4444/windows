@@ -18,85 +18,8 @@ header('Content-Type: text/html; charset=UTF-8');
 
 <body class="pm-generator">
     <?php include __DIR__ . '/../../components/nav.php'; ?>
-    <!-- HEADER -->
-    <header>
-        <label class="hdr-title-badge" for="drawingName">
-            <div class="badge-dot"></div>
-            <input type="text" class="drawing-name-input" id="drawingName" placeholder="도면 이름 입력…" maxlength="40">
-        </label>
-        <div class="drawing-dates">
-            <span class="drawing-date-item">작성일 <strong id="dateCreated">—</strong></span>
-            <span class="drawing-date-sep">·</span>
-            <span class="drawing-date-item">수정일 <strong id="dateModified">—</strong></span>
-        </div>
-        <div class="ver-wrap">
-            <button class="ver-btn" id="verBtn">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="9" />
-                    <polyline points="12 7 12 12 15 15" />
-                </svg>
-                <span id="verLabel">—</span>
-            </button>
-            <div class="ver-dropdown" id="verDropdown">
-                <div id="verList"></div>
-            </div>
-        </div>
-        <div class="hdr-actions">
-            <button class="hbtn" id="btnSavePNG">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 3v13M7 11l5 5 5-5" />
-                    <path d="M5 20h14" />
-                </svg>
-                <span>PNG</span>
-            </button>
-            <button class="hbtn" id="btnSavePDF">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 3v13M7 11l5 5 5-5" />
-                    <path d="M5 20h14" />
-                </svg>
-                <span>PDF</span>
-            </button>
 
-            <button class="hbtn" id="btnAICompose">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                </svg>
-                <span>Background</span>
-            </button>
-            <input type="file" id="aiFileUploader" accept="image/*" multiple style="display: none;">
-            <!-- 저장 -->
-            <button class="hbtn hbtn-dark" id="btnSave">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                    <path d="M5 4H17L20 7V20H5V4Z" stroke="currentColor" stroke-width="2" />
-                    <path d="M8 4V10H16V4" stroke="currentColor" stroke-width="2" />
-                    <path d="M9 15H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                </svg>
-                <span>저장</span>
-            </button>
-            <!-- 주문 -->
-            <button class="hbtn hbtn-dark hbtn-primary">
-                <!-- 오더(주문) 아이콘 -->
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                    <!-- 종이 -->
-                    <path d="M7 3H14L19 8V20H7V3Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
-                    <!-- 접힌 모서리 -->
-                    <path d="M14 3V8H19" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
-                    <!-- 체크 -->
-                    <path d="M10 12L11.8 13.8L15 10.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-
-                    <!-- 주문 라인 -->
-                    <path d="M10 17H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-
-                </svg>
-
-                <span>주문</span>
-
-            </button>
-
-
-
-        </div>
-    </header>
+    <input type="file" id="aiFileUploader" accept="image/*" multiple style="display: none;">
 
     <!-- MAIN -->
     <div class="main">
@@ -191,50 +114,6 @@ header('Content-Type: text/html; charset=UTF-8');
                     </div>
                 </div>
 
-                <!-- ── 마감 & 색상 그룹 ──────────── -->
-                <div class="sb-section">
-                    <div class="sb-section-title">마감 &amp; 색상</div>
-
-                    <div class="ctrl">
-                        <div class="ctrl-header"><span class="ctrl-label">내부 마감</span></div>
-                        <select id="txtFinish" class="sb-select">
-                            <option value="changhoji">창호지</option>
-                            <option value="glass">유리</option>
-                            <option value="acrylic">아크릴</option>
-                        </select>
-                    </div>
-
-                    <div class="sb-sub-title">색상</div>
-                    <div class="toggle-row" style="margin-bottom:10px;">
-                        <span class="toggle-label">나뭇결 질감</span>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="chkGrain" checked>
-                            <span class="toggle-track"></span>
-                        </label>
-                    </div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
-                        <div>
-                            <div class="color-label" style="margin-bottom:4px;">울거미</div>
-                            <div class="color-picker-wrap">
-                                <button class="color-preview-btn" id="framePreviewBtn" style="width:100%;">
-                                    <span class="color-preview-dot" id="framePreviewDot"></span>
-                                    <span id="framePreviewName">—</span>
-                                </button>
-                                <div class="color-popup" id="framePopup"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="color-label" style="margin-bottom:4px;">살</div>
-                            <div class="color-picker-wrap">
-                                <button class="color-preview-btn" id="slatPreviewBtn" style="width:100%;">
-                                    <span class="color-preview-dot" id="slatPreviewDot"></span>
-                                    <span id="slatPreviewName">—</span>
-                                </button>
-                                <div class="color-popup" id="slatPopup"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- ── 제작 시방서 ────────────────── -->
                 <div class="sb-section">
@@ -400,27 +279,137 @@ header('Content-Type: text/html; charset=UTF-8');
                 </button>
             </div>
 
+            <!-- 캔버스 상단 제목 오버레이 -->
+            <div class="canvas-title-bar">
+                <label class="hdr-title-badge" for="drawingName">
+                    <div class="badge-dot"></div>
+                    <input type="text" class="drawing-name-input" id="drawingName" placeholder="도면 이름 입력…" maxlength="40">
+                </label>
+                <div class="drawing-dates">
+                    <span class="drawing-date-item">작성일 <strong id="dateCreated">—</strong></span>
+                    <span class="drawing-date-sep">·</span>
+                    <span class="drawing-date-item">수정일 <strong id="dateModified">—</strong></span>
+                </div>
+                <div class="ver-wrap">
+                    <button class="ver-btn" id="verBtn">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="9"/>
+                            <polyline points="12 7 12 12 15 15"/>
+                        </svg>
+                        <span id="verLabel">—</span>
+                    </button>
+                    <div class="ver-dropdown" id="verDropdown">
+                        <div id="verList"></div>
+                    </div>
+                </div>
+            </div>
+
             <canvas id="doorCanvas"></canvas>
         </div>
 
-        <!-- RIGHT PANEL: 업로드 썸네일 -->
-        <div class="right-panel" id="rightPanel">
-            <div class="rp-inner">
-                <div class="rp-title">배경 사진</div>
-                <button class="rp-add-btn" id="btnAddThumb">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-                        <line x1="12" y1="5" x2="12" y2="19" />
-                        <line x1="5" y1="12" x2="19" y2="12" />
-                    </svg>
-                    사진 추가
-                </button>
-                <div class="rp-thumb-list" id="thumbList"></div>
-                <button class="rp-ai-btn" onclick="startAISynthesis()">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                    </svg>
-                    Rendering
-                </button>
+        <!-- RIGHT SIDEBAR TAB -->
+        <div class="sidebar-col">
+            <button class="sidebar-tab sidebar-tab-right" id="btnRightSidebarTab" title="배경사진 패널 열기/닫기">
+                <svg width="6" height="10" viewBox="0 0 6 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="1,1 5,5 1,9"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- RIGHT SIDEBAR -->
+        <div class="controls-right" id="rightSidebar">
+            <div class="sb-inner-right">
+                <div class="sb-section">
+                    <div style="display:flex;gap:6px;">
+                        <button class="hbtn" id="btnSave" style="flex:1;justify-content:center;">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                                <path d="M5 4H17L20 7V20H5V4Z" stroke="currentColor" stroke-width="2"/>
+                                <path d="M8 4V10H16V4" stroke="currentColor" stroke-width="2"/>
+                                <path d="M9 15H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            저장
+                        </button>
+                        <button class="hbtn hbtn-primary" style="flex:1;justify-content:center;">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                                <path d="M7 3H14L19 8V20H7V3Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                <path d="M14 3V8H19" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                <path d="M10 12L11.8 13.8L15 10.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M10 17H16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                            주문
+                        </button>
+                    </div>
+                </div>
+                <div class="sb-section">
+                    <div class="sb-section-title" style="cursor:default;">마감</div>
+                    <div class="ctrl">
+                        <div class="ctrl-header"><span class="ctrl-label">내부 마감</span></div>
+                        <select id="txtFinish" class="sb-select">
+                            <option value="changhoji">창호지</option>
+                            <option value="glass">유리</option>
+                            <option value="acrylic">아크릴</option>
+                        </select>
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
+                        <div>
+                            <div class="color-label" style="margin-bottom:4px;">울거미</div>
+                            <div class="color-picker-wrap">
+                                <button class="color-preview-btn" id="framePreviewBtn" style="width:100%;">
+                                    <span class="color-preview-dot" id="framePreviewDot"></span>
+                                    <span id="framePreviewName">—</span>
+                                </button>
+                                <div class="color-popup" id="framePopup"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="color-label" style="margin-bottom:4px;">살</div>
+                            <div class="color-picker-wrap">
+                                <button class="color-preview-btn" id="slatPreviewBtn" style="width:100%;">
+                                    <span class="color-preview-dot" id="slatPreviewDot"></span>
+                                    <span id="slatPreviewName">—</span>
+                                </button>
+                                <div class="color-popup" id="slatPopup"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sb-section">
+                    <div class="sb-section-title" style="cursor:default;">배경 사진</div>
+                    <div style="display:flex;flex-direction:column;gap:8px;">
+                        <button class="rp-add-btn" id="btnAddThumb">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                            사진 추가
+                        </button>
+                        <div class="rp-thumb-list" id="thumbList"></div>
+                        <button class="rp-ai-btn" onclick="startAISynthesis()">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                            </svg>
+                            Rendering
+                        </button>
+                    </div>
+                </div>
+                <div class="sb-section">
+                    <div class="sb-section-title" style="cursor:default;">내보내기</div>
+                    <div style="display:flex;gap:6px;">
+                        <button class="hbtn" id="btnSavePNG" style="flex:1;justify-content:center;">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 3v13M7 11l5 5 5-5"/><path d="M5 20h14"/>
+                            </svg>
+                            PNG
+                        </button>
+                        <button class="hbtn" id="btnSavePDF" style="flex:1;justify-content:center;">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 3v13M7 11l5 5 5-5"/><path d="M5 20h14"/>
+                            </svg>
+                            PDF
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 

@@ -41,48 +41,6 @@
     let selectedFrameColor = '#28241e';
     let selectedSlatColor  = '#28241e';
 
-    // ── 나뭇결 패턴 ───────────────────────────────
-    let vGrainPat = null;
-    let hGrainPat = null;
-    let grainOn   = true;
-
-    function makeGrainTile(w, h, isVertical) {
-        const tc = document.createElement('canvas');
-        tc.width = w; tc.height = h;
-        const tx = tc.getContext('2d');
-        const dim = isVertical ? w : h;
-        let pos = 0;
-        while (pos < dim) {
-            pos += 5 + Math.random() * 18;
-            const alpha = 0.012 + Math.random() * 0.038;
-            tx.beginPath();
-            tx.strokeStyle = `rgba(40,18,4,${alpha})`;
-            tx.lineWidth = 0.3 + Math.random() * 1.0;
-            if (isVertical) {
-                tx.moveTo(pos, 0);
-                tx.lineTo(pos + (Math.random() - 0.5) * 8, h);
-            } else {
-                tx.moveTo(0, pos);
-                tx.lineTo(w, pos + (Math.random() - 0.5) * 8);
-            }
-            tx.stroke();
-        }
-        return tc;
-    }
-
-    function applyGrain(x, y, w, h, isVertical) {
-        if (!grainOn) return;
-        // ctx 준비된 후 첫 호출 시 패턴 생성 (lazy init)
-        if (!vGrainPat) {
-            vGrainPat = ctx.createPattern(makeGrainTile(400, 1200, true),  'repeat');
-            hGrainPat = ctx.createPattern(makeGrainTile(1200, 400, false), 'repeat');
-        }
-        ctx.save();
-        ctx.globalCompositeOperation = 'multiply';
-        ctx.fillStyle = isVertical ? vGrainPat : hGrainPat;
-        ctx.fillRect(x, y, w, h);
-        ctx.restore();
-    }
 
     function lightenHex(hex, amount) {
         const r = Math.min(255, parseInt(hex.slice(1, 3), 16) + amount);
@@ -186,12 +144,7 @@
     const txtDoorCount = document.getElementById('txtDoorCount');
     const btnSavePNG = document.getElementById('btnSavePNG');
     const btnSavePDF = document.getElementById('btnSavePDF');
-    const btnAICompose = document.getElementById('btnAICompose');
     const aiFileUploader = document.getElementById('aiFileUploader');
-
-    btnAICompose.addEventListener('click', function() {
-        aiFileUploader.click();
-    });
 
     let geo = {};
     let scaleFactor = 1.0;
@@ -234,9 +187,36 @@
     }
 
     // ── 다중 썸네일 관리 ─────────────────────────
-    const rightPanel  = document.getElementById('rightPanel');
-    const thumbList   = document.getElementById('thumbList');
-    const btnAddThumb = document.getElementById('btnAddThumb');
+    const rightSidebar       = document.getElementById('rightSidebar');
+    const btnRightSidebarTab = document.getElementById('btnRightSidebarTab');
+    const thumbList          = document.getElementById('thumbList');
+    const btnAddThumb        = document.getElementById('btnAddThumb');
+
+    function animatePanelResize() {
+        const duration = 270;
+        const start = performance.now();
+        function step(now) {
+            resizeCanvas();
+            if (now - start < duration) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+    }
+
+    function showRightSidebar() {
+        rightSidebar.classList.remove('collapsed');
+        btnRightSidebarTab.classList.remove('collapsed');
+        animatePanelResize();
+    }
+    function hideRightSidebar() {
+        rightSidebar.classList.add('collapsed');
+        btnRightSidebarTab.classList.add('collapsed');
+        animatePanelResize();
+    }
+
+    btnRightSidebarTab.addEventListener('click', () => {
+        if (rightSidebar.classList.contains('collapsed')) showRightSidebar();
+        else hideRightSidebar();
+    });
 
     // 이미지 목록: [{id, src, img}]
     let thumbImages   = [];
@@ -284,7 +264,7 @@
                     appBackgroundImage = null;
                     activeThumbId = null;
                     localStorage.removeItem(BG_IMAGE_KEY);
-                    rightPanel.classList.remove('open');
+                    hideRightSidebar();
                     draw();
                 }
             }
@@ -339,7 +319,7 @@
                         thumbImages.push({ id, src, img: imgObj, filename: file.name });
                         addThumbItem(id, src, file.name);
                         saveThumbsToStorage();
-                        rightPanel.classList.add('open');
+                        showRightSidebar();
                         setActiveThumb(id);
                     };
                 });
@@ -653,7 +633,6 @@ async function draw() {
             // 몸통
             ctx.fillStyle = Color_Slat_Fill;
             ctx.fillRect(toCanvasX(left), toCanvasY(topY), geo.slatV * baseScale, geo.innerH * baseScale);
-            applyGrain(toCanvasX(left), toCanvasY(topY), geo.slatV * baseScale, geo.innerH * baseScale, true);
 
             drawCenterLine(
                 toCanvasX(cx),
@@ -696,7 +675,6 @@ async function draw() {
             // 몸통
             ctx.fillStyle = Color_Slat_Fill;
             ctx.fillRect(toCanvasX(leftX), toCanvasY(top), geo.innerW * baseScale, geo.slatH * baseScale);
-            applyGrain(toCanvasX(leftX), toCanvasY(top), geo.innerW * baseScale, geo.slatH * baseScale, false);
 
             drawCenterLine(
                 toCanvasX(leftX - geo.tenonDepth),
@@ -766,16 +744,12 @@ async function draw() {
 
         // 좌측 세로 울거미
         ctx.fillRect(toCanvasX(0), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale);
-        applyGrain(toCanvasX(0), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale, true);
         // 상부 가로 울거미
         ctx.fillRect(toCanvasX(geo.frameW), toCanvasY(0), geo.innerW * baseScale, geo.frameHTop * baseScale);
-        applyGrain(toCanvasX(geo.frameW), toCanvasY(0), geo.innerW * baseScale, geo.frameHTop * baseScale, false);
         // 하단 울거미
         ctx.fillRect(toCanvasX(geo.frameW), toCanvasY(geo.frameHTop + geo.innerH), geo.innerW * baseScale, geo.frameHBottom * baseScale);
-        applyGrain(toCanvasX(geo.frameW), toCanvasY(geo.frameHTop + geo.innerH), geo.innerW * baseScale, geo.frameHBottom * baseScale, false);
         // 우측 세로 울거미
         ctx.fillRect(toCanvasX(geo.outerW - geo.frameW), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale);
-        applyGrain(toCanvasX(geo.outerW - geo.frameW), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale, true);
     }
 
     // ====================================
@@ -1072,14 +1046,7 @@ async function draw() {
     function toggleSidebar() {
         sidebar.classList.toggle('collapsed');
         btnSidebarTab.classList.toggle('collapsed');
-
-        const duration = 270;
-        const start = performance.now();
-        function animateResize(now) {
-            resizeCanvas();
-            if (now - start < duration) requestAnimationFrame(animateResize);
-        }
-        requestAnimationFrame(animateResize);
+        animatePanelResize();
     }
 
     btnSidebarTab.addEventListener('click', toggleSidebar);
@@ -1224,10 +1191,6 @@ async function draw() {
 
     txtDoorType.addEventListener('input', updateDoorCountOptions);
     txtDoorCount.addEventListener('input', draw);
-    document.getElementById('chkGrain').addEventListener('change', e => {
-        grainOn = e.target.checked;
-        draw();
-    });
     updateDoorCountOptions();
 
     // 작성일 / 수정일
@@ -1254,7 +1217,7 @@ async function draw() {
         try { saved = JSON.parse(localStorage.getItem(THUMBS_KEY) || '[]'); } catch(e) {}
         if (!saved.length) return;
         const activeSrc = localStorage.getItem(BG_IMAGE_KEY);
-        rightPanel.classList.add('open');
+        showRightSidebar();
         saved.forEach(({ src, filename }) => {
             const id = Date.now() + Math.random();
             const imgObj = new Image();
@@ -1299,7 +1262,6 @@ async function draw() {
             pungpanOn: document.getElementById('chkPungpan').checked,
             pungpan:   parseInt(document.getElementById('txtPungpan').value) || 0,
             finish:    document.getElementById('txtFinish').value,
-            grain:     document.getElementById('chkGrain').checked,
             frameColor: selectedFrameColor,
             slatColor:  selectedSlatColor,
             panX, panY, scaleFactor,
@@ -1324,11 +1286,8 @@ async function draw() {
         document.getElementById('chkPungpan').checked = p.pungpanOn;
         setSlider('txtPungpan', 'numPungpan', p.pungpan);
         document.getElementById('txtFinish').value  = p.finish;
-        document.getElementById('chkGrain').checked = p.grain;
-        grainOn = p.grain;
         document.getElementById('pungpanCtrl').style.display = p.pungpanOn ? 'block' : 'none';
         if (p.panX !== undefined) { panX = p.panX; panY = p.panY; scaleFactor = p.scaleFactor; }
-        vGrainPat = null; hGrainPat = null;
         frameColorPicker.selectColor(p.frameColor);
         slatColorPicker.selectColor(p.slatColor);
         updateDoorCountOptions();
