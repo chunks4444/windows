@@ -10,7 +10,6 @@ header('Content-Type: text/html; charset=UTF-8');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>창호 설계 — 삼분턱 V0.1</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/src/css/editor.css">
     <link rel="stylesheet" href="/src/css/sidebar.css">
     <link rel="stylesheet" href="/src/css/sambuntok.css">
@@ -97,6 +96,15 @@ header('Content-Type: text/html; charset=UTF-8');
                         </div>
                     </div>
 
+                    <div class="sb-sub-title">여분 처리</div>
+                    <div class="toggle-row">
+                        <span class="toggle-label">세로 자동 맞춤</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="chkShrinkH">
+                            <span class="toggle-track"></span>
+                        </label>
+                    </div>
+
                     <div class="sb-sub-title">풍판</div>
                     <div class="toggle-row">
                         <span class="toggle-label">풍판 사용</span>
@@ -175,6 +183,10 @@ header('Content-Type: text/html; charset=UTF-8');
                         <div class="spec-card accent">
                             <div class="spec-lbl">전체 문폭</div>
                             <div class="spec-val"><span id="spTotalDoorW">0</span><span class="spec-unit">mm</span></div>
+                        </div>
+                        <div class="spec-card" id="spOverlapCard" style="display:none;">
+                            <div class="spec-lbl">겹침</div>
+                            <div class="spec-val"><span id="spOverlap">0</span><span class="spec-unit">mm</span></div>
                         </div>
                     </div>
                 </div>

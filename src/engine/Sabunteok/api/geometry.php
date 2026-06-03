@@ -47,7 +47,7 @@ $cellSize = $cellW;
 $diagEye  = number_format(($step * sqrt(2)) - ($slatT * 2), 1);
 $tenonDepth = $slatT;
 
-$overlap = $frameW * 0.55;
+$overlap = $frameW;
 if ($doorType === 'slide') {
     if      ($doorCount === 1) $totalDoorWidth = $outerW;
     elseif  ($doorCount === 2) $totalDoorWidth = ($outerW * 2) - $overlap;
@@ -98,6 +98,7 @@ $specs = [
     'diagEye'   => $diagEye,
     'frameHTop' => (string)round($frameHTop),
     'totalDoorW'=> (string)round($totalDoorWidth),
+    'overlap'   => $doorType === 'slide' ? (string)round($overlap) : '0',
 ];
 
 $pungpanVisible = $pungpanOn && $effectivePungpanH > 0;

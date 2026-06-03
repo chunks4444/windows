@@ -189,6 +189,7 @@
     let scaleFactor = 1.0;
     let panX = 0;
     let panY = 0;
+    let logW = 0, logH = 0;
     let isDragging = false;
     let startX, startY;
 
@@ -211,11 +212,18 @@
     }
 
     function resizeCanvas() {
+        const dpr = window.devicePixelRatio || 1;
         const w = container.clientWidth;
         const h = container.clientHeight;
-        if (canvas.width === w && canvas.height === h) return;
-        canvas.width  = w;
-        canvas.height = h;
+        logW = w;
+        logH = h;
+        const pw = Math.round(w * dpr);
+        const ph = Math.round(h * dpr);
+        if (canvas.width === pw && canvas.height === ph) return;
+        canvas.width  = pw;
+        canvas.height = ph;
+        canvas.style.width  = w + 'px';
+        canvas.style.height = h + 'px';
         draw();
     }
 
@@ -419,6 +427,31 @@ async function draw() {
     document.getElementById('spFrameHTop').innerText  = s.frameHTop;
     document.getElementById('spTotalDoorW').innerText = s.totalDoorW;
 
+    const overlapCard = document.getElementById('spOverlapCard');
+    if (overlapCard) {
+        const isSlide = document.getElementById('txtDoorType').value === 'slide';
+        overlapCard.style.display = isSlide ? '' : 'none';
+        document.getElementById('spOverlap').innerText = s.overlap ?? '';
+    }
+
+    // 세로 자동 맞춤: 마지막 격자 행이 하부 울거미에 닿도록 outerH 조정
+    const chkShrinkH = document.getElementById('chkShrinkH');
+    if (chkShrinkH?.checked) {
+        const pungpanOn = document.getElementById('chkPungpan').checked;
+        const pungpanInput = parseInt(document.getElementById('txtPungpan').value) || 0;
+        const effectivePungpan = pungpanOn ? pungpanInput : 0;
+        const rawTarget = Math.round(geo.frameH * 2 + geo.innerH) + effectivePungpan;
+        // 유효한 값이고 슬라이더 범위 안에 있을 때만 조정
+        if (Number.isFinite(rawTarget) && rawTarget >= 400 && rawTarget <= 2600) {
+            const currentH = parseInt(txtH.value);
+            if (rawTarget !== currentH) {
+                setSlider('txtH', 'numH', rawTarget);
+                draw();
+                return;
+            }
+        }
+    }
+
     const p = data.parts;
     document.getElementById('spFrVLen').textContent = p.frVLen;
     document.getElementById('spFrVCnt').textContent = p.frVCnt;
@@ -451,15 +484,16 @@ async function draw() {
 
     // draw() 안에서 ctx를 재할당 가능하도록 로컬 변수로 섀도잉
     let ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
 
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, logW, logH);
 
     ctx.save();
 
     ctx.translate(
-        canvas.width / 2 + panX,
-        canvas.height / 2 + panY
+        logW / 2 + panX,
+        logH / 2 + panY
     );
 
     ctx.scale(scaleFactor, scaleFactor);
@@ -467,7 +501,7 @@ async function draw() {
     // 배경 이미지 (pan/zoom 좌표계 안에서 그리기)
     if (appBackgroundImage) {
         const img = appBackgroundImage;
-        const s = Math.min(canvas.width / img.width, canvas.height / img.height);
+        const s = Math.min(logW / img.width, logH / img.height);
         const dW = img.width * s, dH = img.height * s;
         ctx.drawImage(img, -dW / 2, -dH / 2, dW, dH);
     }
@@ -480,16 +514,22 @@ async function draw() {
     const overlap = geo.frameW;
 
     // 전체 가로폭(짝수 포함) 기준으로 baseScale 계산
-    const totalWidth =
-        (geo.outerW * doorCount) +
-        (gap * (doorCount - 1));
+    let totalWidth;
+    if (doorType === 'slide') {
+        if      (doorCount === 1) totalWidth = geo.outerW;
+        else if (doorCount === 2) totalWidth = geo.outerW * 2 - overlap;
+        else if (doorCount === 3) totalWidth = geo.outerW * 3 - overlap * 2;
+        else                      totalWidth = geo.outerW * 4 - overlap * 2;
+    } else {
+        totalWidth = (geo.outerW * doorCount) + (gap * (doorCount - 1));
+    }
 
     const pungpanH = parseInt(document.getElementById('txtPungpan').value) || 0;
     const totalH   = geo.outerH;  // 외경 고정
 
     const baseScale = Math.min(
-        (canvas.width  - basePadding * 2) / totalWidth,
-        (canvas.height - basePadding * 2) / totalH
+        (logW - basePadding * 2) / totalWidth,
+        (logH - basePadding * 2) / totalH
     );
 
     const renderOrder = [...Array(doorCount).keys()];
@@ -1017,7 +1057,7 @@ async function draw() {
             cx: (tl.cx + tr.cx + br.cx + bl.cx) / 4,
             cy: (tl.cy + tr.cy + br.cy + bl.cy) / 4,
         };
-        const ox = canvas.width/2 + panX, oy = canvas.height/2 + panY;
+        const ox = logW/2 + panX, oy = logH/2 + panY;
         const ts = p => ({ x: ox + p.cx * scaleFactor, y: oy + p.cy * scaleFactor });
         return { tl: ts(tl), tr: ts(tr), br: ts(br), bl: ts(bl), center: ts(center) };
     }
@@ -1041,8 +1081,8 @@ async function draw() {
     function isMouseNearOverlay(clientX, clientY) {
         if (!placementMode || !doorCornerPositions) return false;
         const rect = canvas.getBoundingClientRect();
-        const mx = (clientX - rect.left) * (canvas.width  / rect.width);
-        const my = (clientY - rect.top)  * (canvas.height / rect.height);
+        const mx = (clientX - rect.left) * (logW / rect.width);
+        const my = (clientY - rect.top)  * (logH / rect.height);
         const c = getOverlayCorners();
         const pad = 24;
         const minX = Math.min(c.tl.x, c.tr.x, c.br.x, c.bl.x) - pad;
@@ -1091,7 +1131,7 @@ async function draw() {
                 const rect_ = canvas.getBoundingClientRect();
                 const mxC = (e.clientX - rect_.left) * (canvas.width / rect_.width);
                 const myC = (e.clientY - rect_.top)  * (canvas.height / rect_.height);
-                const ox_ = canvas.width / 2 + panX, oy_ = canvas.height / 2 + panY;
+                const ox_ = logW / 2 + panX, oy_ = logH / 2 + panY;
                 drag.scaleCenter = { cx: cCx, cy: cCy };
                 drag.startDist = Math.hypot(mxC - (ox_ + cCx * scaleFactor), myC - (oy_ + cCy * scaleFactor)) || 1;
             }
@@ -1130,7 +1170,7 @@ async function draw() {
                 const mxC = (e.clientX - rect_.left) * (canvas.width / rect_.width);
                 const myC = (e.clientY - rect_.top)  * (canvas.height / rect_.height);
                 const { scaleCenter, startDist } = overlayDrag;
-                const ox_ = canvas.width / 2 + panX, oy_ = canvas.height / 2 + panY;
+                const ox_ = logW / 2 + panX, oy_ = logH / 2 + panY;
                 const curDist = Math.hypot(mxC - (ox_ + scaleCenter.cx * scaleFactor), myC - (oy_ + scaleCenter.cy * scaleFactor)) || 0.001;
                 const s = Math.max(0.05, curDist / startDist);
                 for (const k of ['tl', 'tr', 'br', 'bl']) {
@@ -1281,6 +1321,8 @@ async function draw() {
         draw();
     });
 
+    document.getElementById('chkShrinkH').addEventListener('change', draw);
+
     // ── 슬라이더 ↔ 인풋창 양방향 동기화 ──────────────────
 
     const syncPairs = [
@@ -1403,6 +1445,7 @@ async function draw() {
             doorCount: parseInt(txtDoorCount.value),
             pungpanOn: document.getElementById('chkPungpan').checked,
             pungpan:   parseInt(document.getElementById('txtPungpan').value) || 0,
+            shrinkH:   document.getElementById('chkShrinkH').checked,
             finish:    document.getElementById('txtFinish').value,
             frameColor: selectedFrameColor,
             slatColor:  selectedSlatColor,
@@ -1430,6 +1473,7 @@ async function draw() {
         txtDoorCount.value = p.doorCount;
         document.getElementById('chkPungpan').checked = p.pungpanOn;
         setSlider('txtPungpan', 'numPungpan', p.pungpan);
+        document.getElementById('chkShrinkH').checked = p.shrinkH || false;
         document.getElementById('txtFinish').value  = p.finish;
         document.getElementById('pungpanCtrl').style.display = p.pungpanOn ? 'block' : 'none';
         if (p.panX !== undefined) { panX = p.panX; panY = p.panY; scaleFactor = p.scaleFactor; }
@@ -1565,17 +1609,15 @@ async function draw() {
         const exportCanvas = document.createElement('canvas');
         const exportCtx = exportCanvas.getContext('2d');
 
-        exportCanvas.width = canvas.width * 2;
-        exportCanvas.height = canvas.height * 2;
-
-        exportCtx.scale(2, 2);
+        exportCanvas.width = logW * 2;
+        exportCanvas.height = logH * 2;
 
         // 배경
         exportCtx.fillStyle = '#E5E7EA';
-        exportCtx.fillRect(0, 0, canvas.width, canvas.height);
+        exportCtx.fillRect(0, 0, logW * 2, logH * 2);
 
-        // 기존 캔버스 복사
-        exportCtx.drawImage(canvas, 0, 0);
+        // 기존 캔버스 복사 (HiDPI → 2x 논리 크기로)
+        exportCtx.drawImage(canvas, 0, 0, logW * 2, logH * 2);
 
         // 다운로드
         const link = document.createElement('a');
@@ -1611,17 +1653,15 @@ async function draw() {
         const exportCanvas = document.createElement('canvas');
         const exportCtx = exportCanvas.getContext('2d');
 
-        exportCanvas.width = canvas.width * 2;
-        exportCanvas.height = canvas.height * 2;
-
-        exportCtx.scale(2, 2);
+        exportCanvas.width = logW * 2;
+        exportCanvas.height = logH * 2;
 
         // 배경
         exportCtx.fillStyle = '#ffffff';
-        exportCtx.fillRect(0, 0, canvas.width, canvas.height);
+        exportCtx.fillRect(0, 0, logW * 2, logH * 2);
 
-        // 원본 그리기
-        exportCtx.drawImage(canvas, 0, 0);
+        // 원본 그리기 (HiDPI → 2x 논리 크기로)
+        exportCtx.drawImage(canvas, 0, 0, logW * 2, logH * 2);
 
         const imgData =
             exportCanvas.toDataURL('image/png');

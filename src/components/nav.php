@@ -17,7 +17,7 @@ body { padding-top: 68px; }
 /* ── NAV (공통) ───────────────────────────────────── */
 .pm-navbar {
     background: linear-gradient(to bottom, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0) 100%);
-    font-family: 'Inter', -apple-system, sans-serif;
+    font-family: 'Noto Sans KR', -apple-system, sans-serif;
 }
 .pm-navbar .navbar-brand { text-decoration: none; color: inherit; }
 .pm-nav-logo {
