@@ -1072,10 +1072,13 @@ async function draw() {
         const tenonLen = 2 * geo.slatT;
         const pxToMm  = geo.innerW / lastIW;
 
-        // lineKey별 세그먼트 그룹화
+        // lineKey별 세그먼트 그룹화 (내경 범위 밖 세그먼트 제외)
         const lineGroups = new Map();
+        const EPS = lastCellSize;
         for (const [segKey, seg] of lastSegMap) {
             if (segKey.startsWith('added:')) continue;
+            if (seg.mx < lastILeft - EPS || seg.mx > lastILeft + lastIW + EPS) continue;
+            if (seg.my < lastITop - EPS || seg.my > lastITop + lastIH + EPS) continue;
             if (!lineGroups.has(seg.lineKey)) lineGroups.set(seg.lineKey, []);
             lineGroups.get(seg.lineKey).push({ segKey, mx: seg.mx, my: seg.my, normAngle: seg.normAngle });
         }
