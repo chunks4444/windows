@@ -38,5 +38,5 @@ try {
     echo json_encode(['token' => $token, 'user' => ['id' => $userId, 'email' => $email]]);
 } catch (Throwable $e) {
     http_response_code(500);
-    echo json_encode(['error' => $e->getMessage(), 'file' => basename($e->getFile()), 'line' => $e->getLine()]);
+    echo json_encode(['error' => '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.']);
 }
