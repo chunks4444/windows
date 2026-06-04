@@ -2,11 +2,13 @@
 $_host = ($_SERVER['HTTP_HOST'] ?? '');
 
 if ($_host === 'windows.pyeongmok.com') {
-    // 프로덕션: 같은 서버이므로 소켓(localhost) + 기본 포트 사용
-    define('DB_HOST',    'localhost');
-    define('DB_PORT',    3306);
+    // 프로덕션: Unix 소켓으로 직접 연결 (host/port 모호성 제거)
+    define('DB_SOCKET',  '/var/run/mysqld/mysqld.sock');
+    define('DB_HOST',    null);
+    define('DB_PORT',    null);
 } else {
     // 로컬 개발: 외부 IP + 커스텀 포트
+    define('DB_SOCKET',  null);
     define('DB_HOST',    '211.35.72.68');
     define('DB_PORT',    6836);
 }
@@ -21,9 +23,9 @@ unset($_host);
 function db(): PDO {
     static $pdo = null;
     if ($pdo === null) {
-        // localhost 는 Unix 소켓 연결 (포트 무시), 외부 IP 는 TCP 연결
-        $dsn = 'mysql:host=' . DB_HOST . ';port=' . DB_PORT
-             . ';dbname=' . DB_NAME . ';charset=' . DB_CHARSET;
+        $dsn = DB_SOCKET
+            ? 'mysql:unix_socket=' . DB_SOCKET . ';dbname=' . DB_NAME . ';charset=' . DB_CHARSET
+            : 'mysql:host=' . DB_HOST . ';port=' . DB_PORT . ';dbname=' . DB_NAME . ';charset=' . DB_CHARSET;
         $pdo = new PDO($dsn, DB_USER, DB_PASS, [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
