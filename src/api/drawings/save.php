@@ -32,8 +32,10 @@ $drawingId = Drawing::save(
     (int) $payload['sub'],
     $type,
     $title,
-    $body['created_at']  ?? null,
-    $body['versions']    ?? []
+    $body['created_at']   ?? null,
+    $body['versions']     ?? [],
+    $body['thumbnail']    ?? null,
+    (int) ($body['work_time_sec'] ?? 0)
 );
 
 echo json_encode(['ok' => true, 'drawing_id' => $drawingId]);

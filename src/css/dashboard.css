@@ -1,0 +1,247 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --teal:       #3A8C82;
+    --teal-mid:   #5AADA2;
+    --teal-pale:  #E6F4F2;
+    --accent-bg:  #EAF5F3;
+    --page-bg:    #F2F3F4;
+    --text-1:     #1A1F1E;
+    --text-2:     #5A6B69;
+    --text-3:     #97A8A6;
+    --border:     #E0E5E4;
+    --border-md:  #C8D4D2;
+    --input-bg:   #F4F6F6;
+    --r:          8px;
+    --r-sm:       6px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Noto Sans KR', -apple-system, 'Malgun Gothic', sans-serif;
+    background: var(--page-bg);
+    color: var(--text-1);
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: -0.2px;
+    word-break: keep-all;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+}
+
+/* ── 페이지 레이아웃 ──────────────────────────── */
+.db-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+}
+
+.db-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    gap: 16px;
+}
+
+.db-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-1);
+    letter-spacing: -0.4px;
+}
+
+.db-new-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 36px;
+    padding: 0 16px;
+    background: var(--teal);
+    color: #fff;
+    border: none;
+    border-radius: var(--r-sm);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    letter-spacing: -0.2px;
+    text-decoration: none;
+    transition: background 0.12s;
+    white-space: nowrap;
+}
+.db-new-btn:hover { background: #2F7169; }
+
+/* ── 타입 섹션 ───────────────────────────────── */
+.db-section { margin-bottom: 48px; }
+
+.db-section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+}
+
+.db-section-icon {
+    width: 28px;
+    height: 28px;
+    color: var(--teal);
+    flex-shrink: 0;
+}
+
+.db-section-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-1);
+    letter-spacing: -0.3px;
+}
+
+.db-section-count {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-3);
+    background: var(--input-bg);
+    border-radius: 20px;
+    padding: 2px 8px;
+}
+
+/* ── 카드 그리드 ──────────────────────────────── */
+.db-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.db-card {
+    background: #fff;
+    border-radius: var(--r);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    cursor: pointer;
+    transition: box-shadow 0.15s, border-color 0.15s, transform 0.15s;
+    position: relative;
+}
+
+.db-card:hover {
+    border-color: var(--teal-mid);
+    box-shadow: 0 8px 24px rgba(58,140,130,0.12);
+    transform: translateY(-2px);
+}
+
+/* ── 썸네일 ──────────────────────────────────── */
+.db-thumb {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: var(--page-bg);
+    overflow: hidden;
+    position: relative;
+}
+
+.db-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.db-thumb-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--border-md);
+}
+
+/* ── 카드 정보 ───────────────────────────────── */
+.db-card-body {
+    padding: 12px 14px 14px;
+}
+
+.db-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-1);
+    letter-spacing: -0.3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 6px;
+}
+
+.db-card-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.db-card-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: var(--text-3);
+}
+
+.db-card-meta-row i { font-size: 10px; flex-shrink: 0; }
+.db-card-meta-row strong { color: var(--text-2); font-weight: 500; }
+
+/* ── 빈 상태 ─────────────────────────────────── */
+.db-empty {
+    grid-column: 1 / -1;
+    padding: 40px 24px;
+    text-align: center;
+    color: var(--text-3);
+    font-size: 13px;
+    background: #fff;
+    border-radius: var(--r);
+    border: 1px dashed var(--border-md);
+}
+
+/* ── 로딩 ────────────────────────────────────── */
+.db-loading {
+    grid-column: 1 / -1;
+    padding: 40px;
+    text-align: center;
+    color: var(--text-3);
+    font-size: 13px;
+}
+
+/* ── 로그인 유도 배너 ────────────────────────── */
+.db-auth-banner {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 48px 32px;
+    text-align: center;
+    margin-top: 40px;
+}
+
+.db-auth-banner p {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-1);
+    margin-bottom: 16px;
+}
+
+.db-auth-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 40px;
+    padding: 0 20px;
+    background: var(--teal);
+    color: #fff;
+    border: none;
+    border-radius: var(--r-sm);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.12s;
+}
+.db-auth-btn:hover { background: #2F7169; }

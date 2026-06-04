@@ -1475,6 +1475,37 @@ async function draw() {
     const NAME_KEY          = 'pmok_sambuntok_name';
     const MAX_VERSIONS      = 20;
 
+    // ── 작업 시간 추적 ──────────────────────────────
+    let workAccum = 0;  // 누적 작업 시간(초) — DB 기준 최신값 + 이번 세션 추가분
+    let workStart = Date.now();
+
+    function workElapsedSec() {
+        return workAccum + Math.floor((Date.now() - workStart) / 1000);
+    }
+
+    function pauseWorkTimer() {
+        workAccum += Math.floor((Date.now() - workStart) / 1000);
+    }
+
+    function resumeWorkTimer() {
+        workStart = Date.now();
+    }
+
+    // ── 썸네일 캡처 ────────────────────────────────
+    function captureThumbnail() {
+        const src = document.getElementById('doorCanvas');
+        const W   = 320;
+        const H   = Math.round(W * src.height / src.width);
+        const tmp = document.createElement('canvas');
+        tmp.width  = W;
+        tmp.height = H;
+        const ctx  = tmp.getContext('2d');
+        ctx.fillStyle = '#E5E7EA';
+        ctx.fillRect(0, 0, W, H);
+        ctx.drawImage(src, 0, 0, W, H);
+        return tmp.toDataURL('image/jpeg', 0.65);
+    }
+
     // 썸네일 + 배경 이미지 복원
     (function restoreThumbs() {
         let saved = [];
@@ -1656,12 +1687,20 @@ async function draw() {
     async function syncToDb() {
         const title = document.getElementById('drawingName').value.trim();
         if (!title) return;
+        pauseWorkTimer();
+        resumeWorkTimer();
         localStorage.setItem(CURRENT_TITLE_KEY, title);
-        DrawingSync.save('sambuntok', title, Number(localStorage.getItem(CREATED_KEY)), versions);
+        /** @type {any} */ (window.DrawingSync).save(
+            'sambuntok', title,
+            Number(localStorage.getItem(CREATED_KEY)),
+            versions,
+            captureThumbnail(),
+            workAccum
+        );
     }
 
     async function loadFromDb(title) {
-        const data = await DrawingSync.load('sambuntok', title);
+        const data = await /** @type {any} */ (window.DrawingSync).load('sambuntok', title);
         if (!data || !data.versions || !data.versions.length) return false;
         versions      = data.versions;
         currentVerIdx = versions.length - 1;
@@ -1678,6 +1717,9 @@ async function draw() {
             localStorage.setItem(MODIFIED_KEY, uAt);
             document.getElementById('dateCreated').textContent  = fmtDate(cAt);
             document.getElementById('dateModified').textContent = fmtDate(uAt);
+            // 작업 시간 DB 기준값으로 초기화
+            workAccum = parseInt(data.drawing.work_time_sec) || 0;
+            workStart = Date.now();
         }
         renderVerList();
         return true;

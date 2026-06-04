@@ -2,6 +2,11 @@
 -- windows.pyeongmok.com 데이터베이스 스키마
 -- ============================================================
 
+-- 기존 DB에 컬럼 추가할 경우 아래 ALTER 실행
+-- ALTER TABLE drawings ADD COLUMN thumbnail   MEDIUMTEXT   NULL    COMMENT '썸네일 이미지 (data:image/jpeg;base64,…)' AFTER updated_at;
+-- ALTER TABLE drawings ADD COLUMN work_time_sec INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '누적 작업 시간(초)' AFTER thumbnail;
+-- ============================================================
+
 -- 사용자 테이블
 CREATE TABLE IF NOT EXISTS users (
     id          INT UNSIGNED    NOT NULL AUTO_INCREMENT COMMENT '사용자 고유 ID',
@@ -21,7 +26,9 @@ CREATE TABLE IF NOT EXISTS drawings (
     type        VARCHAR(64)     NOT NULL COMMENT '도면 종류 (예: sambuntok)',
     title       VARCHAR(100)    NOT NULL DEFAULT '' COMMENT '도면 제목 (유저가 직접 지정, 버전과 독립 관리)',
     created_at  DATETIME        NOT NULL DEFAULT NOW() COMMENT '최초 작성일시',
-    updated_at  DATETIME        NOT NULL DEFAULT NOW() ON UPDATE NOW() COMMENT '최종 저장일시',
+    updated_at    DATETIME        NOT NULL DEFAULT NOW() ON UPDATE NOW() COMMENT '최종 저장일시',
+    thumbnail     MEDIUMTEXT      NULL COMMENT '썸네일 이미지 (data:image/jpeg;base64,…)',
+    work_time_sec INT UNSIGNED    NOT NULL DEFAULT 0 COMMENT '누적 작업 시간(초)',
     PRIMARY KEY (id),
     UNIQUE KEY uq_drawings_user_type_title (user_id, type, title),
     KEY idx_drawings_user_type (user_id, type),

@@ -117,7 +117,7 @@ $isIndex      = ($currentFile === 'index.php' || $_SERVER['PHP_SELF'] === '/');
                     <i class="bi bi-person-circle me-1"></i><span id="navUserEmail"></span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="#">내 도면</a></li>
+                    <li><a class="dropdown-item" href="/dashboard.php">내 도면</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="#" onclick="authLogout();return false;">로그아웃</a></li>
                 </ul>

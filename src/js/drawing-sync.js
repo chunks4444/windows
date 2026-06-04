@@ -8,12 +8,12 @@ window.DrawingSync = (function () {
         return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _token() };
     }
 
-    async function save(type, title, createdAt, versions) {
+    async function save(type, title, createdAt, versions, thumbnail = null, workTimeSec = 0) {
         if (!_token() || !title) return;
         await fetch('/src/api/drawings/save.php', {
             method: 'POST',
             headers: _headers(),
-            body: JSON.stringify({ type, title, created_at: createdAt, versions }),
+            body: JSON.stringify({ type, title, created_at: createdAt, versions, thumbnail, work_time_sec: workTimeSec }),
         }).catch(() => {});
     }
 

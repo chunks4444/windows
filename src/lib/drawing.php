@@ -4,7 +4,7 @@ require_once __DIR__ . '/db.php';
 class Drawing {
 
     // 도면 저장 (type + title 기준 upsert, 버전 전체 교체)
-    static function save(int $userId, string $type, string $title, ?int $createdAtMs, array $versions): int {
+    static function save(int $userId, string $type, string $title, ?int $createdAtMs, array $versions, ?string $thumbnail = null, int $workTimeSec = 0): int {
         $pdo  = db();
         $stmt = $pdo->prepare('SELECT id FROM drawings WHERE user_id = ? AND type = ? AND title = ?');
         $stmt->execute([$userId, $type, $title]);
@@ -12,12 +12,12 @@ class Drawing {
 
         if ($row) {
             $drawingId = (int) $row['id'];
-            $pdo->prepare('UPDATE drawings SET updated_at = NOW() WHERE id = ?')
-                ->execute([$drawingId]);
+            $pdo->prepare('UPDATE drawings SET updated_at = NOW(), thumbnail = COALESCE(?, thumbnail), work_time_sec = ? WHERE id = ?')
+                ->execute([$thumbnail, $workTimeSec, $drawingId]);
         } else {
             $createdAt = $createdAtMs ? date('Y-m-d H:i:s', intval($createdAtMs / 1000)) : date('Y-m-d H:i:s');
-            $pdo->prepare('INSERT INTO drawings (user_id, type, title, created_at) VALUES (?, ?, ?, ?)')
-                ->execute([$userId, $type, $title, $createdAt]);
+            $pdo->prepare('INSERT INTO drawings (user_id, type, title, created_at, thumbnail, work_time_sec) VALUES (?, ?, ?, ?, ?, ?)')
+                ->execute([$userId, $type, $title, $createdAt, $thumbnail, $workTimeSec]);
             $drawingId = (int) $pdo->lastInsertId();
         }
 
@@ -58,11 +58,19 @@ class Drawing {
         return ['drawing' => $drawing, 'versions' => $versions];
     }
 
-    // 유저의 타입별 도면 목록 (제목 + 메타만, 버전 미포함)
+    // 유저의 타입별 도면 목록 (썸네일 + 메타, 버전 미포함)
     static function list(int $userId, string $type): array {
         $pdo  = db();
-        $stmt = $pdo->prepare('SELECT id, title, created_at, updated_at FROM drawings WHERE user_id = ? AND type = ? ORDER BY updated_at DESC');
+        $stmt = $pdo->prepare('SELECT id, title, thumbnail, work_time_sec, created_at, updated_at FROM drawings WHERE user_id = ? AND type = ? ORDER BY updated_at DESC');
         $stmt->execute([$userId, $type]);
+        return $stmt->fetchAll();
+    }
+
+    // 유저의 전체 도면 목록 (타입 무관, 대시보드용)
+    static function list_all(int $userId): array {
+        $pdo  = db();
+        $stmt = $pdo->prepare('SELECT id, type, title, thumbnail, work_time_sec, created_at, updated_at FROM drawings WHERE user_id = ? ORDER BY updated_at DESC');
+        $stmt->execute([$userId]);
         return $stmt->fetchAll();
     }
 
