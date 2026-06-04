@@ -2,12 +2,10 @@
 $_host = ($_SERVER['HTTP_HOST'] ?? '');
 
 if ($_host === 'windows.pyeongmok.com') {
-    // 프로덕션: Unix 소켓으로 직접 연결 (host/port 모호성 제거)
     define('DB_SOCKET',  '/var/run/mysqld/mysqld.sock');
     define('DB_HOST',    null);
     define('DB_PORT',    null);
 } else {
-    // 로컬 개발: 외부 IP + 커스텀 포트
     define('DB_SOCKET',  null);
     define('DB_HOST',    '211.35.72.68');
     define('DB_PORT',    6836);
