@@ -659,3 +659,97 @@ canvas:active { cursor: grabbing; }
 .pm-btn-danger:hover  { background: #C02020; border-color: #C02020; }
 .pm-btn-ok      { background: var(--teal); border-color: var(--teal); color: #fff; }
 .pm-btn-ok:hover      { background: #2F7169; border-color: #2F7169; }
+
+/* ── 도면 목록 모달 ──────────────────────────── */
+.dm-modal {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.22), 0 4px 16px rgba(0,0,0,0.1);
+    width: 380px;
+    max-width: calc(100vw - 32px);
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: scale(0.94) translateY(12px);
+    opacity: 0;
+    transition: transform 0.22s cubic-bezier(.34,1.4,.64,1), opacity 0.18s ease;
+}
+.pm-modal-backdrop.pm-active .dm-modal {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+.dm-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 16px 12px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    gap: 8px;
+}
+.dm-header-title { font-size: 14px; font-weight: 700; color: var(--text-1); letter-spacing: -0.2px; }
+.dm-list {
+    overflow-y: auto;
+    flex: 1;
+    padding: 6px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+}
+.dm-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 10px;
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    transition: background 0.1s;
+}
+.dm-item:hover { background: var(--input-bg); }
+.dm-item.dm-active { background: var(--accent-bg); }
+.dm-item-info { flex: 1; min-width: 0; }
+.dm-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-1);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.dm-item.dm-active .dm-title { color: var(--teal); }
+.dm-date { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+.dm-actions {
+    display: flex;
+    gap: 2px;
+    opacity: 0;
+    transition: opacity 0.12s;
+    flex-shrink: 0;
+}
+.dm-item:hover .dm-actions { opacity: 1; }
+.dm-btn {
+    width: 26px;
+    height: 26px;
+    border: none;
+    background: transparent;
+    color: var(--text-3);
+    cursor: pointer;
+    border-radius: var(--r-xs);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    transition: background 0.1s, color 0.1s;
+}
+.dm-btn:hover { background: var(--border); color: var(--text-1); }
+.dm-del-btn:hover { background: rgba(224,48,48,0.1) !important; color: #e03030 !important; }
+.dm-empty {
+    padding: 28px 16px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-3);
+}
+.dm-footer {
+    padding: 10px 12px;
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+}

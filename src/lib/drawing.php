@@ -3,20 +3,21 @@ require_once __DIR__ . '/db.php';
 
 class Drawing {
 
-    static function save(int $userId, string $type, string $name, ?int $createdAtMs, array $versions): int {
+    // 도면 저장 (type + title 기준 upsert, 버전 전체 교체)
+    static function save(int $userId, string $type, string $title, ?int $createdAtMs, array $versions): int {
         $pdo  = db();
-        $stmt = $pdo->prepare('SELECT id FROM drawings WHERE user_id = ? AND type = ?');
-        $stmt->execute([$userId, $type]);
+        $stmt = $pdo->prepare('SELECT id FROM drawings WHERE user_id = ? AND type = ? AND title = ?');
+        $stmt->execute([$userId, $type, $title]);
         $row  = $stmt->fetch();
 
         if ($row) {
             $drawingId = (int) $row['id'];
-            $pdo->prepare('UPDATE drawings SET name = ?, updated_at = NOW() WHERE id = ?')
-                ->execute([$name, $drawingId]);
+            $pdo->prepare('UPDATE drawings SET updated_at = NOW() WHERE id = ?')
+                ->execute([$drawingId]);
         } else {
             $createdAt = $createdAtMs ? date('Y-m-d H:i:s', intval($createdAtMs / 1000)) : date('Y-m-d H:i:s');
-            $pdo->prepare('INSERT INTO drawings (user_id, type, name, created_at) VALUES (?, ?, ?, ?)')
-                ->execute([$userId, $type, $name, $createdAt]);
+            $pdo->prepare('INSERT INTO drawings (user_id, type, title, created_at) VALUES (?, ?, ?, ?)')
+                ->execute([$userId, $type, $title, $createdAt]);
             $drawingId = (int) $pdo->lastInsertId();
         }
 
@@ -30,10 +31,19 @@ class Drawing {
         return $drawingId;
     }
 
-    static function load(int $userId, string $type): ?array {
+    // 제목 변경 (버전에 영향 없음)
+    static function rename(int $userId, string $type, string $oldTitle, string $newTitle): bool {
         $pdo  = db();
-        $stmt = $pdo->prepare('SELECT * FROM drawings WHERE user_id = ? AND type = ?');
-        $stmt->execute([$userId, $type]);
+        $stmt = $pdo->prepare('UPDATE drawings SET title = ?, updated_at = NOW() WHERE user_id = ? AND type = ? AND title = ?');
+        $stmt->execute([$newTitle, $userId, $type, $oldTitle]);
+        return $stmt->rowCount() > 0;
+    }
+
+    // 특정 도면 로드 (type + title)
+    static function load(int $userId, string $type, string $title): ?array {
+        $pdo  = db();
+        $stmt = $pdo->prepare('SELECT * FROM drawings WHERE user_id = ? AND type = ? AND title = ?');
+        $stmt->execute([$userId, $type, $title]);
         $drawing = $stmt->fetch();
         if (!$drawing) return null;
 
@@ -46,5 +56,21 @@ class Drawing {
         ], $stmt->fetchAll());
 
         return ['drawing' => $drawing, 'versions' => $versions];
+    }
+
+    // 유저의 타입별 도면 목록 (제목 + 메타만, 버전 미포함)
+    static function list(int $userId, string $type): array {
+        $pdo  = db();
+        $stmt = $pdo->prepare('SELECT id, title, created_at, updated_at FROM drawings WHERE user_id = ? AND type = ? ORDER BY updated_at DESC');
+        $stmt->execute([$userId, $type]);
+        return $stmt->fetchAll();
+    }
+
+    // 도면 삭제 (버전도 CASCADE 삭제)
+    static function delete(int $userId, string $type, string $title): bool {
+        $pdo  = db();
+        $stmt = $pdo->prepare('DELETE FROM drawings WHERE user_id = ? AND type = ? AND title = ?');
+        $stmt->execute([$userId, $type, $title]);
+        return $stmt->rowCount() > 0;
     }
 }

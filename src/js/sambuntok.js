@@ -1466,12 +1466,14 @@ async function draw() {
         return `${yy}.${mm}.${dd} ${hh}:${mi}`;
     }
 
-    const CREATED_KEY  = 'pmok_sambuntok_created';
-    const MODIFIED_KEY = 'pmok_sambuntok_modified';
-    const VERSIONS_KEY = 'pmok_sambuntok_versions';
-    const BG_IMAGE_KEY = 'pmok_sambuntok_bg';
-    const THUMBS_KEY   = 'pmok_sambuntok_thumbs';
-    const MAX_VERSIONS = 20;
+    const CREATED_KEY       = 'pmok_sambuntok_created';
+    const MODIFIED_KEY      = 'pmok_sambuntok_modified';
+    const VERSIONS_KEY      = 'pmok_sambuntok_versions';
+    const BG_IMAGE_KEY      = 'pmok_sambuntok_bg';
+    const THUMBS_KEY        = 'pmok_sambuntok_thumbs';
+    const CURRENT_TITLE_KEY = 'pmok_sambuntok_current_title';
+    const NAME_KEY          = 'pmok_sambuntok_name';
+    const MAX_VERSIONS      = 20;
 
     // 썸네일 + 배경 이미지 복원
     (function restoreThumbs() {
@@ -1630,29 +1632,53 @@ async function draw() {
     }
 
     async function loadVersions() {
-        const fromDb = await loadFromDb();
-        if (!fromDb) {
-            try { versions = JSON.parse(localStorage.getItem(VERSIONS_KEY)) || []; } catch(e) { versions = []; }
-            if (versions.length > 0) {
-                currentVerIdx = versions.length - 1;
-                document.getElementById('verLabel').textContent = 'v' + (currentVerIdx + 1);
+        const savedTitle = localStorage.getItem(CURRENT_TITLE_KEY);
+        if (savedTitle) {
+            const ok = await loadFromDb(savedTitle);
+            if (ok) return;
+        } else {
+            // 저장된 제목 없으면 가장 최근 도면 자동 로드
+            const drawings = await DrawingSync.list('sambuntok');
+            if (drawings.length > 0) {
+                const ok = await loadFromDb(drawings[0].title);
+                if (ok) return;
             }
-            renderVerList();
         }
+        // DB 로드 실패 시 localStorage fallback
+        try { versions = JSON.parse(localStorage.getItem(VERSIONS_KEY)) || []; } catch(e) { versions = []; }
+        if (versions.length > 0) {
+            currentVerIdx = versions.length - 1;
+            document.getElementById('verLabel').textContent = 'v' + (currentVerIdx + 1);
+        }
+        renderVerList();
     }
 
     async function syncToDb() {
-        DrawingSync.save('sambuntok', document.getElementById('drawingName').value, Number(localStorage.getItem(CREATED_KEY)), versions);
+        const title = document.getElementById('drawingName').value.trim();
+        if (!title) return;
+        localStorage.setItem(CURRENT_TITLE_KEY, title);
+        DrawingSync.save('sambuntok', title, Number(localStorage.getItem(CREATED_KEY)), versions);
     }
 
-    async function loadFromDb() {
-        const dbVersions = await DrawingSync.load('sambuntok');
-        if (!dbVersions) return false;
-        versions      = dbVersions;
+    async function loadFromDb(title) {
+        const data = await DrawingSync.load('sambuntok', title);
+        if (!data || !data.versions || !data.versions.length) return false;
+        versions      = data.versions;
         currentVerIdx = versions.length - 1;
         applyParams(versions[currentVerIdx].params);
+        document.getElementById('drawingName').value    = title;
         document.getElementById('verLabel').textContent = 'v' + (currentVerIdx + 1);
-        localStorage.setItem(VERSIONS_KEY, JSON.stringify(versions));
+        localStorage.setItem(VERSIONS_KEY,      JSON.stringify(versions));
+        localStorage.setItem(CURRENT_TITLE_KEY, title);
+        localStorage.setItem(NAME_KEY,          title);
+        if (data.drawing) {
+            const cAt = new Date(data.drawing.created_at).getTime();
+            const uAt = new Date(data.drawing.updated_at).getTime();
+            localStorage.setItem(CREATED_KEY,  cAt);
+            localStorage.setItem(MODIFIED_KEY, uAt);
+            document.getElementById('dateCreated').textContent  = fmtDate(cAt);
+            document.getElementById('dateModified').textContent = fmtDate(uAt);
+        }
         renderVerList();
         return true;
     }
@@ -1687,11 +1713,153 @@ async function draw() {
     });
     document.addEventListener('click', () => verDropdown.classList.remove('open'));
 
+    // ── 도면 목록 관리 ─────────────────────────────
+    function escHtml(str) {
+        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function openDrawingManager() {
+        document.getElementById('dmBackdrop').classList.add('pm-active');
+        refreshDrawingList();
+    }
+
+    function closeDrawingManager() {
+        document.getElementById('dmBackdrop').classList.remove('pm-active');
+    }
+
+    async function refreshDrawingList() {
+        const list = document.getElementById('dmList');
+        list.innerHTML = '<div class="dm-empty">불러오는 중…</div>';
+        const drawings = await /** @type {any} */ (window.DrawingSync).list('sambuntok');
+        if (!drawings.length) {
+            list.innerHTML = '<div class="dm-empty">저장된 도면이 없습니다</div>';
+            return;
+        }
+        list.innerHTML = '';
+        const curTitle = document.getElementById('drawingName').value.trim();
+        drawings.forEach(d => {
+            const item = document.createElement('div');
+            item.className = 'dm-item' + (d.title === curTitle ? ' dm-active' : '');
+            item.innerHTML = `
+                <div class="dm-item-info">
+                    <div class="dm-title">${escHtml(d.title)}</div>
+                    <div class="dm-date">${fmtDate(new Date(d.updated_at).getTime())}</div>
+                </div>
+                <div class="dm-actions">
+                    <button class="dm-btn dm-rename-btn" title="이름 변경"><i class="bi bi-pencil"></i></button>
+                    <button class="dm-btn dm-del-btn" title="삭제"><i class="bi bi-x-lg"></i></button>
+                </div>`;
+            item.addEventListener('click', (e) => {
+                if (e.target.closest('.dm-actions')) return;
+                openDrawingByTitle(d.title);
+            });
+            item.querySelector('.dm-rename-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                showRenameModal(d.title);
+            });
+            item.querySelector('.dm-del-btn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                pmConfirm(`"${d.title}" 도면을 삭제하시겠습니까?`, async () => {
+                    await /** @type {any} */ (window.DrawingSync).delete('sambuntok', d.title);
+                    if (d.title === document.getElementById('drawingName').value.trim()) {
+                        startNewDrawing();
+                    }
+                    refreshDrawingList();
+                }, { sub: '모든 버전이 함께 삭제됩니다.' });
+            });
+            list.appendChild(item);
+        });
+    }
+
+    async function openDrawingByTitle(title) {
+        const data = await /** @type {any} */ (window.DrawingSync).load('sambuntok', title);
+        if (!data || !data.versions || !data.versions.length) {
+            pmAlert('도면을 불러올 수 없습니다.');
+            return;
+        }
+        versions      = data.versions;
+        currentVerIdx = versions.length - 1;
+        applyParams(versions[currentVerIdx].params);
+        document.getElementById('drawingName').value    = title;
+        document.getElementById('verLabel').textContent = 'v' + (currentVerIdx + 1);
+        localStorage.setItem(VERSIONS_KEY,      JSON.stringify(versions));
+        localStorage.setItem(CURRENT_TITLE_KEY, title);
+        localStorage.setItem(NAME_KEY,          title);
+        if (data.drawing) {
+            const cAt = new Date(data.drawing.created_at).getTime();
+            const uAt = new Date(data.drawing.updated_at).getTime();
+            localStorage.setItem(CREATED_KEY,  cAt);
+            localStorage.setItem(MODIFIED_KEY, uAt);
+            document.getElementById('dateCreated').textContent  = fmtDate(cAt);
+            document.getElementById('dateModified').textContent = fmtDate(uAt);
+        }
+        renderVerList();
+        closeDrawingManager();
+    }
+
+    function startNewDrawing() {
+        versions      = [];
+        currentVerIdx = -1;
+        document.getElementById('drawingName').value    = '';
+        document.getElementById('verLabel').textContent = '—';
+        const now = Date.now();
+        localStorage.setItem(CREATED_KEY,  now);
+        localStorage.setItem(MODIFIED_KEY, now);
+        localStorage.removeItem(CURRENT_TITLE_KEY);
+        localStorage.removeItem(NAME_KEY);
+        document.getElementById('dateCreated').textContent  = fmtDate(now);
+        document.getElementById('dateModified').textContent = fmtDate(now);
+        renderVerList();
+        closeDrawingManager();
+    }
+
+    let _renameTarget = '';
+    function showRenameModal(title) {
+        _renameTarget = title;
+        const input = document.getElementById('dmRenameInput');
+        input.value = title;
+        document.getElementById('dmRenameBackdrop').classList.add('pm-active');
+        setTimeout(() => { input.select(); }, 60);
+    }
+
+    document.getElementById('dmBtn').addEventListener('click', openDrawingManager);
+    document.getElementById('dmNewBtn').addEventListener('click', startNewDrawing);
+    document.getElementById('dmCloseBtn').addEventListener('click', closeDrawingManager);
+    document.getElementById('dmBackdrop').addEventListener('click', (e) => {
+        if (e.target === document.getElementById('dmBackdrop')) closeDrawingManager();
+    });
+
+    document.getElementById('dmRenameCancel').addEventListener('click', () => {
+        document.getElementById('dmRenameBackdrop').classList.remove('pm-active');
+    });
+    document.getElementById('dmRenameOk').addEventListener('click', async () => {
+        const newTitle = document.getElementById('dmRenameInput').value.trim();
+        if (!newTitle || newTitle === _renameTarget) {
+            document.getElementById('dmRenameBackdrop').classList.remove('pm-active');
+            return;
+        }
+        const ok = await /** @type {any} */ (window.DrawingSync).rename('sambuntok', _renameTarget, newTitle);
+        if (ok) {
+            if (_renameTarget === document.getElementById('drawingName').value.trim()) {
+                document.getElementById('drawingName').value = newTitle;
+                localStorage.setItem(NAME_KEY,          newTitle);
+                localStorage.setItem(CURRENT_TITLE_KEY, newTitle);
+            }
+            document.getElementById('dmRenameBackdrop').classList.remove('pm-active');
+            refreshDrawingList();
+        } else {
+            pmAlert('이름 변경에 실패했습니다.', { sub: '이미 같은 제목의 도면이 있을 수 있습니다.' });
+        }
+    });
+    document.getElementById('dmRenameInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter')  document.getElementById('dmRenameOk').click();
+        if (e.key === 'Escape') document.getElementById('dmRenameCancel').click();
+    });
+
     loadSavedRenders();
     loadVersions();
 
     // ── 도면 이름 자동 저장 ────────────────────────
-    const NAME_KEY    = 'pmok_sambuntok_name';
     const drawingNameEl = document.getElementById('drawingName');
     const savedName = localStorage.getItem(NAME_KEY);
     if (savedName) drawingNameEl.value = savedName;

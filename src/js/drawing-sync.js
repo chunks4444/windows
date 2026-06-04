@@ -3,28 +3,63 @@
 
 window.DrawingSync = (function () {
 
-    async function save(type, name, createdAt, versions) {
-        const token = localStorage.getItem('pmok_auth_token');
-        if (!token) return;
+    function _token() { return localStorage.getItem('pmok_auth_token'); }
+    function _headers() {
+        return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _token() };
+    }
+
+    async function save(type, title, createdAt, versions) {
+        if (!_token() || !title) return;
         await fetch('/src/api/drawings/save.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-            body: JSON.stringify({ type, name, created_at: createdAt, modified_at: Date.now(), versions }),
+            headers: _headers(),
+            body: JSON.stringify({ type, title, created_at: createdAt, versions }),
         }).catch(() => {});
     }
 
-    async function load(type) {
-        const token = localStorage.getItem('pmok_auth_token');
-        if (!token) return null;
+    // title 있으면 특정 도면 + 버전 반환 { drawing, versions }
+    // title 없으면 해당 타입의 도면 목록 반환 { drawings: [] }
+    async function load(type, title) {
+        if (!_token()) return null;
+        const qs = title
+            ? `type=${encodeURIComponent(type)}&title=${encodeURIComponent(title)}`
+            : `type=${encodeURIComponent(type)}`;
         try {
-            const res  = await fetch('/src/api/drawings/load.php?type=' + type, {
-                headers: { 'Authorization': 'Bearer ' + token },
+            const res  = await fetch('/src/api/drawings/load.php?' + qs, {
+                headers: { 'Authorization': 'Bearer ' + _token() },
             });
-            const data = await res.json();
-            if (!data.drawing || !data.versions.length) return null;
-            return data.versions;
+            return await res.json();
         } catch { return null; }
     }
 
-    return { save, load };
+    async function list(type) {
+        const data = await load(type, '');
+        return data?.drawings ?? [];
+    }
+
+    async function rename(type, oldTitle, newTitle) {
+        if (!_token()) return false;
+        try {
+            const res  = await fetch('/src/api/drawings/rename.php', {
+                method: 'POST',
+                headers: _headers(),
+                body: JSON.stringify({ type, old_title: oldTitle, new_title: newTitle }),
+            });
+            return (await res.json()).ok === true;
+        } catch { return false; }
+    }
+
+    async function del(type, title) {
+        if (!_token()) return false;
+        try {
+            const res  = await fetch('/src/api/drawings/delete.php', {
+                method: 'POST',
+                headers: _headers(),
+                body: JSON.stringify({ type, title }),
+            });
+            return (await res.json()).ok === true;
+        } catch { return false; }
+    }
+
+    return { save, load, list, rename, delete: del };
 })();

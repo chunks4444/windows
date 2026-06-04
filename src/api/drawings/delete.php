@@ -16,24 +16,18 @@ if (!$payload) {
     http_response_code(401); echo json_encode(['error' => '인증이 필요합니다.']); exit;
 }
 
-$body = json_decode(file_get_contents('php://input'), true);
-$type = $body['type'] ?? '';
-
-if (!$type) {
-    http_response_code(422); echo json_encode(['error' => 'type 필드가 필요합니다.']); exit;
-}
-
+$body  = json_decode(file_get_contents('php://input'), true);
+$type  = $body['type']  ?? '';
 $title = $body['title'] ?? '';
-if (!$title) {
-    http_response_code(422); echo json_encode(['error' => 'title 필드가 필요합니다.']); exit;
+
+if (!$type || !$title) {
+    http_response_code(422); echo json_encode(['error' => 'type, title 필드가 필요합니다.']); exit;
 }
 
-$drawingId = Drawing::save(
-    (int) $payload['sub'],
-    $type,
-    $title,
-    $body['created_at']  ?? null,
-    $body['versions']    ?? []
-);
+$ok = Drawing::delete((int) $payload['sub'], $type, $title);
 
-echo json_encode(['ok' => true, 'drawing_id' => $drawingId]);
+if (!$ok) {
+    http_response_code(404); echo json_encode(['error' => '도면을 찾을 수 없습니다.']); exit;
+}
+
+echo json_encode(['ok' => true]);
