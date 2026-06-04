@@ -1,10 +1,14 @@
 <?php
-define('DB_HOST', '211.35.72.68');
-define('DB_PORT', 6836);
-define('DB_NAME', 'windowspyeongmok');
-define('DB_USER', 'webpyeongmok');
-define('DB_PASS', '@@@Chun20662782@@');
+$_isProduction = ($_SERVER['HTTP_HOST'] ?? '') === 'windows.pyeongmok.com';
+
+define('DB_HOST',    $_isProduction ? '127.0.0.1'        : '211.35.72.68');
+define('DB_PORT',    $_isProduction ? 3306                : 6836);
+define('DB_NAME',    'windowspyeongmok');
+define('DB_USER',    'webpyeongmok');
+define('DB_PASS',    '@@@Chun20662782@@');
 define('DB_CHARSET', 'utf8mb4');
+
+unset($_isProduction);
 
 function db(): PDO {
     static $pdo = null;
