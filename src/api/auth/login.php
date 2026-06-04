@@ -23,7 +23,13 @@ if (!$email || !$password) {
     exit;
 }
 
-$pdo  = db();
+try {
+    $pdo = db();
+} catch (PDOException $e) {
+    http_response_code(503);
+    echo json_encode(['error' => '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.']);
+    exit;
+}
 $stmt = $pdo->prepare('SELECT id, email, password_hash FROM users WHERE email = ?');
 $stmt->execute([$email]);
 $user = $stmt->fetch();

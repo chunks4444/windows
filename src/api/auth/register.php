@@ -28,7 +28,13 @@ if (strlen($password) < 6) {
     exit;
 }
 
-$pdo = db();
+try {
+    $pdo = db();
+} catch (PDOException $e) {
+    http_response_code(503);
+    echo json_encode(['error' => '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.']);
+    exit;
+}
 
 $stmt = $pdo->prepare('SELECT id FROM users WHERE email = ?');
 $stmt->execute([$email]);
@@ -39,8 +45,14 @@ if ($stmt->fetch()) {
 }
 
 $hash = password_hash($password, PASSWORD_BCRYPT);
-$stmt = $pdo->prepare('INSERT INTO users (email, password_hash) VALUES (?, ?)');
-$stmt->execute([$email, $hash]);
+try {
+    $stmt = $pdo->prepare('INSERT INTO users (email, password_hash) VALUES (?, ?)');
+    $stmt->execute([$email, $hash]);
+} catch (PDOException $e) {
+    http_response_code(500);
+    echo json_encode(['error' => '회원가입 처리 중 오류가 발생했습니다.']);
+    exit;
+}
 $userId = (int) $pdo->lastInsertId();
 
 $token = jwt_encode([

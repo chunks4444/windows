@@ -10,8 +10,8 @@
 -- 사용자 테이블
 CREATE TABLE IF NOT EXISTS users (
     id          INT UNSIGNED    NOT NULL AUTO_INCREMENT COMMENT '사용자 고유 ID',
-    email       VARCHAR(255)    NOT NULL COMMENT '이메일 (로그인 아이디)',
-    password    VARCHAR(255)    NOT NULL COMMENT '비밀번호 해시 (bcrypt)',
+    email         VARCHAR(255)    NOT NULL COMMENT '이메일 (로그인 아이디)',
+    password_hash VARCHAR(255)    NOT NULL COMMENT '비밀번호 해시 (bcrypt)',
     created_at  DATETIME        NOT NULL DEFAULT NOW() COMMENT '가입일시',
     PRIMARY KEY (id),
     UNIQUE KEY uq_users_email (email)

@@ -1,6 +1,4 @@
 ﻿<?php
-// 전통 창호 사분턱 도면 설계기
-// 모든 계산은 클라이언트(JS)에서 처리됩니다.
 header('Content-Type: text/html; charset=UTF-8');
 ?>
 <!DOCTYPE html>
@@ -19,19 +17,15 @@ header('Content-Type: text/html; charset=UTF-8');
 
     <?php include __DIR__ . '/../../components/nav.php'; ?>
     <?php include __DIR__ . '/../../components/auth_guard.php'; ?>
-
     <input type="file" id="aiFileUploader" accept="image/*" multiple style="display: none;">
     <!-- MAIN -->
     <div class="main">
-
         <!-- SIDEBAR -->
         <div class="controls" id="sidebar">
             <div class="sb-inner">
-
                 <!-- ── 문 설정 그룹 ─────────────── -->
                 <div class="sb-section">
                     <div class="sb-section-title">문 설정</div>
-
                     <div class="door-row">
                         <div class="ctrl">
                             <div class="ctrl-header"><span class="ctrl-label">문 종류</span></div>
