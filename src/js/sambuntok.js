@@ -578,16 +578,82 @@
 
 
 // ── 라인 편집 ──────────────────────────────────
-let deletedSegs  = new Set();   // 삭제된 선 키 "d:orient:cIdx:rowIdx:dir"
-let delStraightCount = 0;       // 시각적으로 삭제된 직선 수
-let delDiagCount     = 0;       // 시각적으로 삭제된 사선 수
-let addedLines   = [];          // 추가 선 [{nx1,ny1,nx2,ny2}] 내경 정규화 좌표
-let lineEditMode = null;        // null | 'delete' | 'add'
-let addLineStart = null;        // 선 추가 시작점 {nx,ny}
+let deletedSegs     = new Set();   // 삭제된 개별 세그먼트 키 (draw skip용)
+let deletedPairs    = new Set();   // 시각적 삭제 단위 pairId (카운팅)
+let deletedPairMeta = new Map();   // pairId → {isStraight, nmA:{nx,ny}, nmB:{nx,ny}|null}
+let addedLines   = [];
+let lineEditMode = null;
+let addLineStart = null;
 
-let lastSegMap  = new Map();    // segKey → {mx,my,normAngle} ctx 로컬 좌표(midpoint)
-let lastNodeList = [];          // 교점 좌표 [{cx,cy}] — 선 추가 스냅용
+let lastSegMap   = new Map();   // segKey → {mx,my,normAngle,cx,cy}
+let lastNodeList = [];
 let lastILeft=0, lastITop=0, lastIW=1, lastIH=1, lastSlatPx=1, lastCellSize=1;
+
+// 캔버스 좌표 → 내경 mm 좌표 변환
+function canvasToInnerMm(cx, cy) {
+    if (!lastIW || !lastIH) return { nx: 0, ny: 0 };
+    return {
+        nx: (cx - lastILeft) * (geo.innerW || 1) / lastIW,
+        ny: (cy - lastITop)  * (geo.innerH || 1) / lastIH,
+    };
+}
+
+// 30° 사선살 (rotateOn=true) 끝점 계산 (inner mm)
+function getSlatEndpoints30(b, iW, iH) {
+    const S3 = Math.sqrt(3), EPS = 0.5;
+    const x1 = b < -EPS ? -b * S3 : 0;
+    const y1 = b < -EPS ? 0 : Math.max(0, b);
+    const yR = iW / S3 + b;
+    const x2 = yR < iH - EPS ? iW : (iH - b) * S3;
+    const y2 = yR < iH - EPS ? yR : iH;
+    if (x1 > iW + EPS || x2 < -EPS || x1 > x2 + EPS) return null;
+    return { x1, y1, x2, y2 };
+}
+
+// 60° 사선살 (rotateOn=false) 끝점 계산 (inner mm)
+function getSlatEndpoints60(b, iW, iH) {
+    const S3 = Math.sqrt(3), EPS = 0.5;
+    const x1 = b < -EPS ? -b / S3 : 0;
+    const y1 = b < -EPS ? 0 : Math.max(0, b);
+    const yR = iW * S3 + b;
+    const x2 = yR < iH - EPS ? iW : (iH - b) / S3;
+    const y2 = yR < iH - EPS ? yR : iH;
+    if (x1 > iW + EPS || x2 < -EPS || x1 > x2 + EPS) return null;
+    return { x1, y1, x2, y2 };
+}
+
+// 삭제 쌍 토글 (교점 간 1구간)
+function toggleSegPair(segKey) {
+    const seg = lastSegMap.get(segKey);
+    if (!seg) return;
+
+    // 같은 방향, 가장 가까운 파트너 탐색
+    let partnerKey = null, bestDist = Infinity;
+    for (const [key, pos] of lastSegMap) {
+        if (key === segKey || key.startsWith('added:')) continue;
+        if (Math.abs(pos.normAngle - seg.normAngle) > 0.05) continue;
+        const d = Math.hypot(pos.mx - seg.mx, pos.my - seg.my);
+        if (d < lastCellSize * 0.9 && d < bestDist) { bestDist = d; partnerKey = key; }
+    }
+
+    const keys = partnerKey ? [segKey, partnerKey].sort() : [segKey];
+    const pairId = keys.join('|');
+    const dir = parseInt(segKey.split(':').pop());
+    const isStraight = (dir === 0 || dir === 3);
+
+    if (deletedPairs.has(pairId)) {
+        deletedPairs.delete(pairId);
+        deletedPairMeta.delete(pairId);
+        for (const k of keys) deletedSegs.delete(k);
+    } else {
+        const nmA = canvasToInnerMm(seg.cx, seg.cy);
+        const partnerSeg = partnerKey ? lastSegMap.get(partnerKey) : null;
+        const nmB = partnerSeg ? canvasToInnerMm(partnerSeg.cx, partnerSeg.cy) : null;
+        deletedPairs.add(pairId);
+        deletedPairMeta.set(pairId, { isStraight, normAngle: seg.normAngle, nmA, nmB });
+        for (const k of keys) deletedSegs.add(k);
+    }
+}
 
 function screenToCtxCoord(clientX, clientY) {
     const rect = canvas.getBoundingClientRect();
@@ -947,9 +1013,10 @@ async function draw() {
                         const ey = cy + size * Math.sin(angle);
                         const segKey = `${d}:h:${rIdx}:${cIdx}:${i}`;
                         const normAngle = ((angle % Math.PI) + Math.PI) % Math.PI;
-                        lastSegMap.set(segKey, { mx: (cx + ex) / 2, my: (cy + ey) / 2, normAngle });
+                        const lineKey  = makeLineKey(cx, cy, normAngle);
+                        lastSegMap.set(segKey, { mx: (cx + ex) / 2, my: (cy + ey) / 2, normAngle, lineKey });
                         if (i === 0) lastNodeList.push({ cx, cy });
-                        if (deletedSegs.has(segKey)) continue;
+                        if (deletedLines.has(lineKey)) continue;
                         ctx.beginPath();
                         ctx.moveTo(cx, cy);
                         ctx.lineTo(ex, ey);
@@ -985,9 +1052,10 @@ async function draw() {
                         const ey = cy + size * Math.sin(angle);
                         const segKey = `${d}:v:${cIdx}:${rowIdx}:${i}`;
                         const normAngle = ((angle % Math.PI) + Math.PI) % Math.PI;
-                        lastSegMap.set(segKey, { mx: (cx + ex) / 2, my: (cy + ey) / 2, normAngle });
+                        const lineKey  = makeLineKey(cx, cy, normAngle);
+                        lastSegMap.set(segKey, { mx: (cx + ex) / 2, my: (cy + ey) / 2, normAngle, lineKey });
                         if (i === 0) lastNodeList.push({ cx, cy });
-                        if (deletedSegs.has(segKey)) continue;
+                        if (deletedLines.has(lineKey)) continue;
                         ctx.beginPath();
                         ctx.moveTo(cx, cy);
                         ctx.lineTo(ex, ey);
@@ -1002,12 +1070,16 @@ async function draw() {
 
     // ── 편집 반영 부재 목록 최종 업데이트 ──────
     {
+        const metaVals      = [...deletedLineMeta.values()];
+        const delStraight   = metaVals.filter(v => v).length;
+        const delDiag       = metaVals.filter(v => !v).length;
+
         // 세로/가로부재
         document.getElementById('spHSlatCnt').textContent =
-            Math.max(0, parseInt(p.hSlatCnt) - delStraightCount) + '개';
+            Math.max(0, parseInt(p.hSlatCnt) - delStraight) + '개';
 
-        // 사선살 — delDiagCount 만큼 큰 길이부터 차감
-        let toReduce = delDiagCount;
+        // 사선살 — delDiag 만큼 큰 길이부터 차감
+        let toReduce = delDiag;
         const adjDiag = p.diagList.map(item => {
             if (toReduce <= 0) return { ...item };
             const cut = Math.min(toReduce, item.cnt);
@@ -1311,34 +1383,6 @@ async function draw() {
         return (best && bestDist < lastCellSize) ? best : null;
     }
 
-    function toggleSegWithPartner(segKey) {
-        const seg = lastSegMap.get(segKey);
-        if (!seg) return;
-        const isDeleted = deletedSegs.has(segKey);
-        const toToggle = [segKey];
-        for (const [key, pos] of lastSegMap) {
-            if (key === segKey) continue;
-            const angleDiff = Math.abs(pos.normAngle - seg.normAngle);
-            if (angleDiff > 0.05) continue;
-            const dist = Math.hypot(pos.mx - seg.mx, pos.my - seg.my);
-            if (dist < lastCellSize * 0.9) toToggle.push(key);
-        }
-        for (const key of toToggle) {
-            if (isDeleted) deletedSegs.delete(key);
-            else           deletedSegs.add(key);
-        }
-        // 시각적 삭제 카운터 — 쌍 관계없이 1회만 반영
-        const dir = parseInt(segKey.split(':').pop());
-        const isStraight = (dir === 0 || dir === 3);
-        if (isDeleted) {
-            if (isStraight) delStraightCount = Math.max(0, delStraightCount - 1);
-            else             delDiagCount     = Math.max(0, delDiagCount     - 1);
-        } else {
-            if (isStraight) delStraightCount++;
-            else             delDiagCount++;
-        }
-    }
-
     function handleEditClick(e) {
         const coord = screenToCtxCoord(e.clientX, e.clientY);
 
@@ -1353,7 +1397,11 @@ async function draw() {
                 const idx = parseInt(bestKey.split(':')[1]);
                 addedLines.splice(idx, 1);
             } else {
-                toggleSegWithPartner(bestKey);
+                const seg = lastSegMap.get(bestKey);
+                if (seg) {
+                    const isStraight = Math.abs(seg.normAngle - Math.PI / 2) < 0.05;
+                    toggleLine(seg.lineKey, isStraight);
+                }
             }
             draw();
             return;
@@ -1661,11 +1709,10 @@ async function draw() {
     document.getElementById('btnEditAdd').addEventListener('click', () => setEditMode('add'));
     document.getElementById('btnEditClear').addEventListener('click', () => {
         pmConfirm('편집 내용을 모두 초기화하시겠습니까?', () => {
-            deletedSegs.clear();
-            addedLines       = [];
-            addLineStart     = null;
-            delStraightCount = 0;
-            delDiagCount     = 0;
+            deletedLines.clear();
+            deletedLineMeta.clear();
+            addedLines   = [];
+            addLineStart = null;
             draw();
         });
     });
@@ -1785,10 +1832,9 @@ async function draw() {
             placementMode,
             doorCornerPositions: doorCornerPositions ? { ...doorCornerPositions } : null,
             placementNaturalSize: placementNaturalSize ? { ...placementNaturalSize } : null,
-            deletedSegs: [...deletedSegs],
+            deletedLines: [...deletedLines],
+            deletedLineMeta: [...deletedLineMeta.entries()],
             addedLines,
-            delStraightCount,
-            delDiagCount,
         };
     }
 
@@ -1818,11 +1864,10 @@ async function draw() {
         placementMode        = p.placementMode        || false;
         doorCornerPositions  = p.doorCornerPositions  || null;
         placementNaturalSize = p.placementNaturalSize || null;
-        deletedSegs      = new Set(p.deletedSegs || []);
-        addedLines       = p.addedLines || [];
-        addLineStart     = null;
-        delStraightCount = p.delStraightCount || 0;
-        delDiagCount     = p.delDiagCount     || 0;
+        deletedLines    = new Set(p.deletedLines || []);
+        deletedLineMeta = new Map(p.deletedLineMeta || []);
+        addedLines      = p.addedLines || [];
+        addLineStart    = null;
         document.getElementById('btnScale').classList.toggle('cv-btn-active', placementMode);
         frameColorPicker.selectColor(p.frameColor);
         slatColorPicker.selectColor(p.slatColor);
