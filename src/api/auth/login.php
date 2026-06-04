@@ -1,0 +1,44 @@
+<?php
+header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Headers: Content-Type');
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') exit;
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode(['error' => 'Method not allowed']);
+    exit;
+}
+
+require_once __DIR__ . '/../../lib/db.php';
+require_once __DIR__ . '/../../lib/jwt.php';
+
+$body     = json_decode(file_get_contents('php://input'), true);
+$email    = trim($body['email'] ?? '');
+$password = $body['password'] ?? '';
+
+if (!$email || !$password) {
+    http_response_code(422);
+    echo json_encode(['error' => '이메일과 비밀번호를 입력해주세요.']);
+    exit;
+}
+
+$pdo  = db();
+$stmt = $pdo->prepare('SELECT id, email, password_hash FROM users WHERE email = ?');
+$stmt->execute([$email]);
+$user = $stmt->fetch();
+
+if (!$user || !password_verify($password, $user['password_hash'])) {
+    http_response_code(401);
+    echo json_encode(['error' => '이메일 또는 비밀번호가 올바르지 않습니다.']);
+    exit;
+}
+
+$token = jwt_encode([
+    'sub'   => $user['id'],
+    'email' => $user['email'],
+    'iat'   => time(),
+    'exp'   => time() + JWT_EXPIRE,
+]);
+
+echo json_encode(['token' => $token, 'user' => ['id' => $user['id'], 'email' => $user['email']]]);

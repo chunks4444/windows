@@ -1629,13 +1629,32 @@ async function draw() {
         modal.show();
     }
 
-    function loadVersions() {
-        try { versions = JSON.parse(localStorage.getItem(VERSIONS_KEY)) || []; } catch(e) { versions = []; }
-        if (versions.length > 0) {
-            currentVerIdx = versions.length - 1;
-            document.getElementById('verLabel').textContent = 'v' + (currentVerIdx + 1);
+    async function loadVersions() {
+        const fromDb = await loadFromDb();
+        if (!fromDb) {
+            try { versions = JSON.parse(localStorage.getItem(VERSIONS_KEY)) || []; } catch(e) { versions = []; }
+            if (versions.length > 0) {
+                currentVerIdx = versions.length - 1;
+                document.getElementById('verLabel').textContent = 'v' + (currentVerIdx + 1);
+            }
+            renderVerList();
         }
+    }
+
+    async function syncToDb() {
+        DrawingSync.save('sambuntok', document.getElementById('drawingName').value, Number(localStorage.getItem(CREATED_KEY)), versions);
+    }
+
+    async function loadFromDb() {
+        const dbVersions = await DrawingSync.load('sambuntok');
+        if (!dbVersions) return false;
+        versions      = dbVersions;
+        currentVerIdx = versions.length - 1;
+        applyParams(versions[currentVerIdx].params);
+        document.getElementById('verLabel').textContent = 'v' + (currentVerIdx + 1);
+        localStorage.setItem(VERSIONS_KEY, JSON.stringify(versions));
         renderVerList();
+        return true;
     }
 
     function saveVersion() {
@@ -1655,6 +1674,7 @@ async function draw() {
         document.getElementById('verLabel').textContent = 'v' + (currentVerIdx + 1);
         renderVerList();
         updateModified();
+        syncToDb();
     }
 
     document.getElementById('btnSave').addEventListener('click', saveVersion);

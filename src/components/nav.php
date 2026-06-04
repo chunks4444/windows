@@ -107,15 +107,25 @@ $isIndex      = ($currentFile === 'index.php' || $_SERVER['PHP_SELF'] === '/');
             </li>
             <li class="nav-item"><a href="#" class="nav-link">Pattern Library</a></li>
             <li class="nav-item d-none"><a href="#" class="nav-link">Joiner</a></li>
-            <?php if ($isIndex): ?>
-            <li class="nav-item d-none"><a href="#" class="nav-link">Login</a></li>
-            <li class="nav-item d-none"><a href="#" class="nav-link">Register</a></li>
-            <?php else: ?>
-            <li class="nav-item d-none"><a href="#" class="nav-link">My page</a></li>
-            <?php endif; ?>
+            <!-- 비로그인 -->
+            <li class="nav-item" id="navLoginBtn">
+                <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#authModal">로그인</a>
+            </li>
+            <!-- 로그인 후 -->
+            <li class="nav-item dropdown" id="navUserMenu" style="display:none;">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-circle me-1"></i><span id="navUserEmail"></span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#">내 도면</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#" onclick="authLogout();return false;">로그아웃</a></li>
+                </ul>
+            </li>
         </ul>
     </div>
 </nav>
 <?php if (!defined('BOOTSTRAP_JS_LOADED')): define('BOOTSTRAP_JS_LOADED', true); ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
 <?php endif; ?>
+<?php include __DIR__ . '/auth_modal.php'; ?>

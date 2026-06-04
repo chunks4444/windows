@@ -17,6 +17,7 @@ header('Content-Type: text/html; charset=UTF-8');
 
 <body class="pm-generator">
     <?php include __DIR__ . '/../../components/nav.php'; ?>
+    <?php include __DIR__ . '/../../components/auth_guard.php'; ?>
 
     <input type="file" id="aiFileUploader" accept="image/*" multiple style="display: none;">
 
@@ -443,6 +444,7 @@ header('Content-Type: text/html; charset=UTF-8');
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="/src/js/drawing-sync.js"></script>
     <script src="/src/js/Sabunteok.js"></script>
 </body>
 
