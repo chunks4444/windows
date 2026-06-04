@@ -396,7 +396,8 @@ header('Content-Type: text/html; charset=UTF-8');
                 <div class="sb-section">
                     <div class="sb-section-title" style="cursor:default;">배경 사진</div>
                     <div style="display:flex;flex-direction:column;gap:8px;">
-                        <button class="rp-add-btn" id="btnAddThumb">
+                        <div style="display:flex;gap:6px;">
+                        <button class="rp-add-btn" id="btnAddThumb" style="flex:1;">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                                 <polyline points="17 8 12 3 7 8"/>
@@ -404,6 +405,10 @@ header('Content-Type: text/html; charset=UTF-8');
                             </svg>
                             사진 추가
                         </button>
+                        <button id="btnClearBg" style="display:none;flex-shrink:0;width:28px;height:28px;border:none;background:none;padding:0;cursor:pointer;color:#e05218;align-items:center;justify-content:center;align-self:center;" title="배경 지우기">
+                            <i class="bi bi-x-lg" style="font-size:13px;"></i>
+                        </button>
+                        </div>
                         <div class="rp-thumb-list" id="thumbList"></div>
                         <textarea id="aiPrompt" class="rp-prompt" placeholder="한국어 또는 영어로 입력&#10;예) 전통 한옥 창호, 따뜻한 실내 조명" rows="3"></textarea>
                         <button class="rp-ai-btn" onclick="startAISynthesis()">
@@ -412,6 +417,7 @@ header('Content-Type: text/html; charset=UTF-8');
                             </svg>
                             Rendering
                         </button>
+                        <div id="renderSavedList" class="render-saved-list"></div>
                     </div>
                 </div>
                 <div class="sb-section">

@@ -249,6 +249,51 @@
         document.getElementById('pmOk').onclick = _pmHide;
     }
 
+    // ── 렌더링 결과 저장 ───────────────────────────
+    const RENDERS_KEY = 'pmok_sambuntok_renders';
+    const MAX_RENDERS = 9;
+    let savedRenders = [];
+
+    function loadSavedRenders() {
+        try { savedRenders = JSON.parse(localStorage.getItem(RENDERS_KEY)) || []; } catch(e) { savedRenders = []; }
+        renderSavedThumbList();
+    }
+
+    function saveRender(src) {
+        savedRenders.push({ src, savedAt: Date.now() });
+        if (savedRenders.length > MAX_RENDERS) savedRenders.shift();
+        let ok = false;
+        while (!ok && savedRenders.length > 0) {
+            try { localStorage.setItem(RENDERS_KEY, JSON.stringify(savedRenders)); ok = true; }
+            catch(e) { savedRenders.shift(); }
+        }
+        renderSavedThumbList();
+    }
+
+    function renderSavedThumbList() {
+        const list = document.getElementById('renderSavedList');
+        if (!list) return;
+        list.innerHTML = '';
+        [...savedRenders].reverse().forEach((r, i) => {
+            const realIdx = savedRenders.length - 1 - i;
+            const item = document.createElement('div');
+            item.className = 'render-saved-item';
+            item.innerHTML = `<img src="${r.src}"><span class="render-saved-del"><i class="bi bi-x"></i></span>`;
+            item.querySelector('img').addEventListener('click', () => {
+                const img = new Image();
+                img.onload = () => { appBackgroundImage = img; updateClearBgBtn(); draw(); };
+                img.src = r.src;
+            });
+            item.querySelector('.render-saved-del').addEventListener('click', (e) => {
+                e.stopPropagation();
+                savedRenders.splice(realIdx, 1);
+                try { localStorage.setItem(RENDERS_KEY, JSON.stringify(savedRenders)); } catch(e2) {}
+                renderSavedThumbList();
+            });
+            list.appendChild(item);
+        });
+    }
+
     // ── Rendering ──────────────────────────────
     function startAISynthesis() {
         if (!appBackgroundImage) {
@@ -313,7 +358,7 @@
                 return;
             }
             const img = new Image();
-            img.onload = () => { showRenderResult(img.src); };
+            img.onload = () => { saveRender(img.src); showRenderResult(img.src); };
             img.src = data.image;
         })
         .catch(() => pmAlert('렌더링 중 오류가 발생했습니다.', { type: 'danger' }))
@@ -408,6 +453,21 @@
     let thumbImages   = [];
     let activeThumbId = null;
 
+    const btnClearBg = document.getElementById('btnClearBg');
+
+    function updateClearBgBtn() {
+        btnClearBg.style.display = appBackgroundImage ? 'flex' : 'none';
+    }
+
+    btnClearBg.addEventListener('click', () => {
+        appBackgroundImage = null;
+        localStorage.removeItem(BG_IMAGE_KEY);
+        thumbList.querySelectorAll('.rp-thumb-item').forEach(el => el.classList.remove('active'));
+        activeThumbId = null;
+        updateClearBgBtn();
+        draw();
+    });
+
     function setActiveThumb(id) {
         activeThumbId = id;
         const found = thumbImages.find(t => t.id === id);
@@ -421,6 +481,7 @@
         thumbList.querySelectorAll('.rp-thumb-item').forEach(el => {
             el.classList.toggle('active', el.dataset.id === String(id));
         });
+        updateClearBgBtn();
         draw();
     }
 
@@ -1606,6 +1667,7 @@ async function draw() {
     });
     document.addEventListener('click', () => verDropdown.classList.remove('open'));
 
+    loadSavedRenders();
     loadVersions();
 
     // ── 도면 이름 자동 저장 ────────────────────────

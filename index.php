@@ -56,12 +56,13 @@ header('Content-Type: text/html; charset=UTF-8');
             <div class="values-inner">
                 <div class="values-grid">
                     <div class="values-item">
-                        <h2 class="values-title">당신의 공간에<br> 빛과 바람의 길을 디자인하세요.</h2>
+                        <h2 class="values-title">당신의 공간에 빛과 바람의 길을 디자인하세요.</h2>
                         <p class="values-desc">문틀 크기와 비율을 조정하면 실제 제작 가능한<br>맞춤 창호 디자인을 실시간으로 확인할 수 있습니다</p>
                     </div>
                     <div class="values-item">
-                        <h2 class="values-title">당신의<br> 공간을 위한 단 하나의 창(窓)</h2>
-                        <p class="values-desc">공장에서 담아내지 못하는 공간의 깊이. <br>당신이 디자인한 세상에 하나뿐인 나무문과 나무 창문으로 빛과 바람의 길을 만드세요.</p>
+                        <h2 class="values-title">DESIGN IN REAL TIME</h2>
+                        <p class="values-desc">실시간으로 디자인하고, 공방에서 완성합니다.<br>원하는 디자인을 즉시 확인하고
+<br>완성된 설계는 실제 제작으로 이어집니다.</p>
                     </div>
                 </div>
                 <hr>
