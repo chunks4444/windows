@@ -166,7 +166,7 @@ header('Content-Type: text/html; charset=UTF-8');
                             <p class="sub-title">문틀 크기와 비율을 조정하면 실제 제작 가능한<br>맞춤 창호 디자인을 실시간으로 확인할 수 있습니다</p>
                         </div>
                         <div class="values-item">
-                            <h2 class="values-title">DESIGN IN REAL TIME</h2>
+                            <h2 class="values-title">나만의 창호를 직접 디자인하세요.</h2>
                             <p class="sub-title">실시간으로 디자인하고, 공방에서 완성합니다.<br>원하는 디자인을 즉시 확인하고
                                 <br>완성된 설계는 실제 제작으로 이어집니다.
                             </p>
