@@ -7,7 +7,6 @@ header('Content-Type: text/html; charset=UTF-8');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>창호 설계 — 삼분턱 V0.1</title>
     <link rel="stylesheet" href="/src/css/editor.css">
     <link rel="stylesheet" href="/src/css/sidebar.css">
     <link rel="stylesheet" href="/src/css/sambuntok.css">
@@ -249,9 +248,8 @@ header('Content-Type: text/html; charset=UTF-8');
         <div class="canvas-area" id="canvasContainer">
             <div class="zoom-hint">휠: 확대/축소 &nbsp;·&nbsp; 드래그: 이동</div>
 
-            <!-- 캔버스 컨트롤 버튼 -->
+            <!-- 캔버스 컨트롤 버튼 (우측 중앙) -->
             <div class="canvas-controls">
-                <!-- 줌인 -->
                 <button class="cv-btn" id="btnZoomIn" title="확대">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
                         <circle cx="11" cy="11" r="7"/>
@@ -260,7 +258,6 @@ header('Content-Type: text/html; charset=UTF-8');
                         <line x1="16.5" y1="16.5" x2="21" y2="21"/>
                     </svg>
                 </button>
-                <!-- 줌아웃 -->
                 <button class="cv-btn" id="btnZoomOut" title="축소">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
                         <circle cx="11" cy="11" r="7"/>
@@ -268,8 +265,6 @@ header('Content-Type: text/html; charset=UTF-8');
                         <line x1="16.5" y1="16.5" x2="21" y2="21"/>
                     </svg>
                 </button>
-                <div class="cv-sep"></div>
-                <!-- 변형 -->
                 <button class="cv-btn" id="btnScale" title="모서리 변형">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="2" y="2" width="14" height="14" rx="1"/>
@@ -277,14 +272,38 @@ header('Content-Type: text/html; charset=UTF-8');
                         <line x1="16" y1="16" x2="14" y2="14"/>
                     </svg>
                 </button>
-                <div class="cv-sep"></div>
-                <!-- 초기화 -->
                 <button class="cv-btn" id="btnResetView" title="화면 초기화">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M4 4V10H10"/>
                         <path d="M20 20V14H14"/>
                         <path d="M20 9A8 8 0 0 0 6.34 5.34L4 8"/>
                         <path d="M4 15A8 8 0 0 0 17.66 18.66L20 16"/>
+                    </svg>
+                </button>
+                <div class="cv-sep"></div>
+                <button class="cv-btn" id="btnEditDelete" title="선 삭제
+클릭 → 선 삭제
+다시 클릭 → 복구">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="11" width="16" height="8" rx="2"/>
+                        <rect x="4" y="11" width="7" height="8" rx="0" fill="currentColor" opacity="0.4" stroke="none"/>
+                        <line x1="4" y1="19" x2="20" y2="19"/>
+                        <path d="M9 8l3-3 3 3" stroke-width="1.8"/>
+                    </svg>
+                </button>
+                <button class="cv-btn" id="btnEditAdd" title="선 추가
+① 시작 교점 클릭
+② 끝 교점 클릭 → 선 완성">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 20h9"/>
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                    </svg>
+                </button>
+                <button class="cv-btn" id="btnEditClear" title="편집 초기화
+모든 삭제·추가 선 초기화">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="1 4 1 10 7 10"/>
+                        <path d="M3.51 15a9 9 0 1 0 .49-3.37"/>
                     </svg>
                 </button>
             </div>
@@ -295,11 +314,7 @@ header('Content-Type: text/html; charset=UTF-8');
                     <div class="badge-dot"></div>
                     <input type="text" class="drawing-name-input" id="drawingName" placeholder="도면 이름 입력…" maxlength="40">
                 </label>
-                <div class="drawing-dates">
-                    <span class="drawing-date-item">작성일 <strong id="dateCreated">—</strong></span>
-                    <span class="drawing-date-sep">·</span>
-                    <span class="drawing-date-item">수정일 <strong id="dateModified">—</strong></span>
-                </div>
+
                 <div class="ver-wrap" style="margin-left:0;">
                     <button class="ver-btn" id="dmBtn" title="도면 목록">
                         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -323,6 +338,7 @@ header('Content-Type: text/html; charset=UTF-8');
             </div>
 
             <canvas id="doorCanvas"></canvas>
+
 
             <!-- 렌더링 로딩 오버레이 -->
             <div class="render-overlay" id="renderOverlay" style="display:none;">

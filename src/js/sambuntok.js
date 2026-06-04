@@ -577,6 +577,32 @@
 
 
 
+// ── 라인 편집 ──────────────────────────────────
+let deletedSegs  = new Set();   // 삭제된 선 키 "d:orient:cIdx:rowIdx:dir"
+let delStraightCount = 0;       // 시각적으로 삭제된 직선 수
+let delDiagCount     = 0;       // 시각적으로 삭제된 사선 수
+let addedLines   = [];          // 추가 선 [{nx1,ny1,nx2,ny2}] 내경 정규화 좌표
+let lineEditMode = null;        // null | 'delete' | 'add'
+let addLineStart = null;        // 선 추가 시작점 {nx,ny}
+
+let lastSegMap  = new Map();    // segKey → {mx,my,normAngle} ctx 로컬 좌표(midpoint)
+let lastNodeList = [];          // 교점 좌표 [{cx,cy}] — 선 추가 스냅용
+let lastILeft=0, lastITop=0, lastIW=1, lastIH=1, lastSlatPx=1, lastCellSize=1;
+
+function screenToCtxCoord(clientX, clientY) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+        x: (clientX - rect.left - logW / 2 - panX) / scaleFactor,
+        y: (clientY - rect.top  - logH / 2 - panY) / scaleFactor,
+    };
+}
+function ctxToNorm(cx, cy) {
+    return { nx: (cx - lastILeft) / lastIW, ny: (cy - lastITop) / lastIH };
+}
+function normToCtx(nx, ny) {
+    return { x: lastILeft + nx * lastIW, y: lastITop + ny * lastIH };
+}
+
 let _geoController = null;
 
 async function fetchGeometry() {
@@ -791,6 +817,8 @@ async function draw() {
     }
 
     // ====== 1차 루프: 패턴만 그리기 (세로살, 가로살, 사분턱) ======
+    lastSegMap.clear();
+    lastNodeList = [];
     for (const d of renderOrder) {
 
         let panelOffsetX = 0;
@@ -887,6 +915,10 @@ async function draw() {
         const iH         = clipH * baseScale;
         const slatPx     = geo.slatT * baseScale;
 
+        if (d === renderOrder[0]) {
+            lastILeft = iLeft; lastITop = iTop; lastIW = iW; lastIH = iH; lastSlatPx = slatPx;
+        }
+
         ctx.strokeStyle = patternBroken ? '#cc0000' : selectedSlatColor;
         ctx.lineWidth   = slatPx;
         ctx.lineCap     = 'round';
@@ -904,15 +936,23 @@ async function draw() {
             const rowStep = size * 1.5;
             const startY  = iTop - slatPx / 2;
 
+            lastCellSize = size;
             for (let y = startY - rowStep, rIdx = 0; y < iTop + iH + rowStep; y += rowStep, rIdx++) {
-                for (let x = iLeft - width; x < iLeft + iW + width; x += width) {
+                for (let x = iLeft - width, cIdx = 0; x < iLeft + iW + width; x += width, cIdx++) {
                     const offX = (rIdx % 2 === 0) ? width / 2 : 0;
                     const cx = x + offX, cy = y;
                     for (let i = 0; i < 6; i++) {
+                        const angle = i * Math.PI / 3;
+                        const ex = cx + size * Math.cos(angle);
+                        const ey = cy + size * Math.sin(angle);
+                        const segKey = `${d}:h:${rIdx}:${cIdx}:${i}`;
+                        const normAngle = ((angle % Math.PI) + Math.PI) % Math.PI;
+                        lastSegMap.set(segKey, { mx: (cx + ex) / 2, my: (cy + ey) / 2, normAngle });
+                        if (i === 0) lastNodeList.push({ cx, cy });
+                        if (deletedSegs.has(segKey)) continue;
                         ctx.beginPath();
                         ctx.moveTo(cx, cy);
-                        ctx.lineTo(cx + size * Math.cos(i * Math.PI / 3),
-                                   cy + size * Math.sin(i * Math.PI / 3));
+                        ctx.lineTo(ex, ey);
                         ctx.stroke();
                     }
                 }
@@ -934,16 +974,23 @@ async function draw() {
             const colStep = size * 1.5;
             const startX  = iLeft - slatPx / 2;
 
+            lastCellSize = size;
             for (let x = startX - colStep, cIdx = 0; x < iLeft + iW + colStep; x += colStep, cIdx++) {
-                for (let y = iTop - width; y < iTop + iH + width; y += width) {
+                for (let y = iTop - width, rowIdx = 0; y < iTop + iH + width; y += width, rowIdx++) {
                     const offY = (cIdx % 2 === 0) ? width / 2 : 0;
                     const cx = x, cy = y + offY;
                     for (let i = 0; i < 6; i++) {
                         const angle = i * Math.PI / 3 + Math.PI / 2;
+                        const ex = cx + size * Math.cos(angle);
+                        const ey = cy + size * Math.sin(angle);
+                        const segKey = `${d}:v:${cIdx}:${rowIdx}:${i}`;
+                        const normAngle = ((angle % Math.PI) + Math.PI) % Math.PI;
+                        lastSegMap.set(segKey, { mx: (cx + ex) / 2, my: (cy + ey) / 2, normAngle });
+                        if (i === 0) lastNodeList.push({ cx, cy });
+                        if (deletedSegs.has(segKey)) continue;
                         ctx.beginPath();
                         ctx.moveTo(cx, cy);
-                        ctx.lineTo(cx + size * Math.cos(angle),
-                                   cy + size * Math.sin(angle));
+                        ctx.lineTo(ex, ey);
                         ctx.stroke();
                     }
                 }
@@ -952,6 +999,71 @@ async function draw() {
         }
 
     }   // ← 1차 루프 끝
+
+    // ── 편집 반영 부재 목록 최종 업데이트 ──────
+    {
+        // 세로/가로부재
+        document.getElementById('spHSlatCnt').textContent =
+            Math.max(0, parseInt(p.hSlatCnt) - delStraightCount) + '개';
+
+        // 사선살 — delDiagCount 만큼 큰 길이부터 차감
+        let toReduce = delDiagCount;
+        const adjDiag = p.diagList.map(item => {
+            if (toReduce <= 0) return { ...item };
+            const cut = Math.min(toReduce, item.cnt);
+            toReduce -= cut;
+            return { len: item.len, cnt: item.cnt - cut };
+        }).filter(item => item.cnt > 0);
+
+        // 추가 선 → 길이 계산 후 병합
+        addedLines.forEach(ln => {
+            const dx = (ln.nx2 - ln.nx1) * geo.innerW;
+            const dy = (ln.ny2 - ln.ny1) * geo.innerH;
+            const realLen = Math.round(Math.hypot(dx, dy) + 2 * geo.slatT);
+            const match = adjDiag.find(it => Math.abs(it.len - realLen) <= 2 * geo.slatT);
+            if (match) match.cnt++;
+            else adjDiag.push({ len: realLen, cnt: 1 });
+        });
+        adjDiag.sort((a, b) => b.len - a.len);
+
+        diagListEl.innerHTML = '';
+        adjDiag.forEach(({ len, cnt }) => {
+            const el = document.createElement('div');
+            el.className = 'slat-row';
+            el.innerHTML = `<span class="slat-len">${len}<span class="slat-len-unit">mm</span></span><span class="slat-cnt">${cnt}개</span>`;
+            diagListEl.appendChild(el);
+        });
+    }
+
+    // ====== 추가 선 그리기 ======
+    if (addedLines.length > 0) {
+        ctx.save();
+        ctx.strokeStyle = patternBroken ? '#cc0000' : selectedSlatColor;
+        ctx.lineWidth   = lastSlatPx;
+        ctx.lineCap     = 'round';
+        ctx.setLineDash([]);
+        addedLines.forEach((ln, idx) => {
+            const p1 = normToCtx(ln.nx1, ln.ny1);
+            const p2 = normToCtx(ln.nx2, ln.ny2);
+            lastSegMap.set(`added:${idx}`, { mx: (p1.x + p2.x) / 2, my: (p1.y + p2.y) / 2, normAngle: 0 });
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+        });
+        ctx.restore();
+    }
+
+    // 선 추가 모드 — 시작점 표시
+    if (lineEditMode === 'add' && addLineStart) {
+        const p = normToCtx(addLineStart.nx, addLineStart.ny);
+        ctx.save();
+        ctx.fillStyle = '#3A8C82';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, lastSlatPx * 1.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+    }
 
     // ====== 2차 루프: 울거미만 그리기 (패턴 위에 덮음) ======
     for (const d of renderOrder) {
@@ -1190,7 +1302,83 @@ async function draw() {
         return best;
     }
 
+    function snapToNode(cx, cy) {
+        let best = null, bestDist = Infinity;
+        for (const node of lastNodeList) {
+            const d = Math.hypot(cx - node.cx, cy - node.cy);
+            if (d < bestDist) { bestDist = d; best = node; }
+        }
+        return (best && bestDist < lastCellSize) ? best : null;
+    }
+
+    function toggleSegWithPartner(segKey) {
+        const seg = lastSegMap.get(segKey);
+        if (!seg) return;
+        const isDeleted = deletedSegs.has(segKey);
+        const toToggle = [segKey];
+        for (const [key, pos] of lastSegMap) {
+            if (key === segKey) continue;
+            const angleDiff = Math.abs(pos.normAngle - seg.normAngle);
+            if (angleDiff > 0.05) continue;
+            const dist = Math.hypot(pos.mx - seg.mx, pos.my - seg.my);
+            if (dist < lastCellSize * 0.9) toToggle.push(key);
+        }
+        for (const key of toToggle) {
+            if (isDeleted) deletedSegs.delete(key);
+            else           deletedSegs.add(key);
+        }
+        // 시각적 삭제 카운터 — 쌍 관계없이 1회만 반영
+        const dir = parseInt(segKey.split(':').pop());
+        const isStraight = (dir === 0 || dir === 3);
+        if (isDeleted) {
+            if (isStraight) delStraightCount = Math.max(0, delStraightCount - 1);
+            else             delDiagCount     = Math.max(0, delDiagCount     - 1);
+        } else {
+            if (isStraight) delStraightCount++;
+            else             delDiagCount++;
+        }
+    }
+
+    function handleEditClick(e) {
+        const coord = screenToCtxCoord(e.clientX, e.clientY);
+
+        if (lineEditMode === 'delete') {
+            let bestKey = null, bestDist = Infinity;
+            for (const [key, pos] of lastSegMap) {
+                const dist = Math.hypot(coord.x - pos.mx, coord.y - pos.my);
+                if (dist < bestDist) { bestDist = dist; bestKey = key; }
+            }
+            if (!bestKey || bestDist > lastCellSize * 1.2) return;
+            if (bestKey.startsWith('added:')) {
+                const idx = parseInt(bestKey.split(':')[1]);
+                addedLines.splice(idx, 1);
+            } else {
+                toggleSegWithPartner(bestKey);
+            }
+            draw();
+            return;
+        }
+
+        if (lineEditMode === 'add') {
+            const snapped = snapToNode(coord.x, coord.y);
+            if (!snapped) return; // 교점에서만 동작
+            const norm = ctxToNorm(snapped.cx, snapped.cy);
+            if (!addLineStart) {
+                addLineStart = norm;
+                draw();
+            } else {
+                // 같은 점이면 무시
+                if (Math.abs(norm.nx - addLineStart.nx) < 0.001 && Math.abs(norm.ny - addLineStart.ny) < 0.001) return;
+                addedLines.push({ nx1: addLineStart.nx, ny1: addLineStart.ny, nx2: norm.nx, ny2: norm.ny });
+                addLineStart = null;
+                draw();
+            }
+        }
+    }
+
     container.addEventListener('mousedown', function(e) {
+        if (e.target.closest('.canvas-controls')) return;
+        if (lineEditMode) { handleEditClick(e); return; }
         const cornerHit = getHitOverlayCorner(e.clientX, e.clientY);
         const corner = cornerHit === 'center' ? 'move' : cornerHit;
         const sp = () => ({
@@ -1455,6 +1643,33 @@ async function draw() {
     });
     updateDoorCountOptions();
 
+    // ── 편집 버튼 ──────────────────────────────────
+    const CURSOR_ERASER = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Crect x='5' y='10' width='14' height='9' rx='2' fill='%23fff' stroke='%23555' stroke-width='1.5'/%3E%3Crect x='5' y='10' width='6' height='9' rx='0' fill='%23f87171' stroke='none'/%3E%3Crect x='5' y='10' width='6' height='9' rx='0' fill='none' stroke='%23555' stroke-width='1.5'/%3E%3Cline x1='5' y1='19' x2='19' y2='19' stroke='%23555' stroke-width='1.5'/%3E%3C/svg%3E") 4 20, crosshair`;
+    const CURSOR_PEN    = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z' fill='%23fff' stroke='%23555' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 2 22, crosshair`;
+
+    function setEditMode(mode) {
+        lineEditMode = lineEditMode === mode ? null : mode;
+        addLineStart = null;
+        document.getElementById('btnEditDelete').classList.toggle('cv-btn-active', lineEditMode === 'delete');
+        document.getElementById('btnEditAdd').classList.toggle('cv-btn-active', lineEditMode === 'add');
+        if (lineEditMode === 'delete')     canvas.style.cursor = CURSOR_ERASER;
+        else if (lineEditMode === 'add')   canvas.style.cursor = CURSOR_PEN;
+        else                               canvas.style.cursor = 'grab';
+        if (lineEditMode === 'add') draw();
+    }
+    document.getElementById('btnEditDelete').addEventListener('click', () => setEditMode('delete'));
+    document.getElementById('btnEditAdd').addEventListener('click', () => setEditMode('add'));
+    document.getElementById('btnEditClear').addEventListener('click', () => {
+        pmConfirm('편집 내용을 모두 초기화하시겠습니까?', () => {
+            deletedSegs.clear();
+            addedLines       = [];
+            addLineStart     = null;
+            delStraightCount = 0;
+            delDiagCount     = 0;
+            draw();
+        });
+    });
+
     // 작성일 / 수정일
     function fmtDate(ts) {
         const d = new Date(ts);
@@ -1525,18 +1740,23 @@ async function draw() {
         });
     })();
 
+    function setElText(id, val) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val;
+    }
+
     if (!localStorage.getItem(CREATED_KEY)) {
         localStorage.setItem(CREATED_KEY, Date.now());
     }
-    document.getElementById('dateCreated').textContent = fmtDate(Number(localStorage.getItem(CREATED_KEY)));
+    setElText('dateCreated', fmtDate(Number(localStorage.getItem(CREATED_KEY))));
 
     const savedModified = localStorage.getItem(MODIFIED_KEY) || localStorage.getItem(CREATED_KEY);
-    document.getElementById('dateModified').textContent = fmtDate(Number(savedModified));
+    setElText('dateModified', fmtDate(Number(savedModified)));
 
     function updateModified() {
         const now = Date.now();
         localStorage.setItem(MODIFIED_KEY, now);
-        document.getElementById('dateModified').textContent = fmtDate(now);
+        setElText('dateModified', fmtDate(now));
     }
 
     // ── 버전 시스템 ────────────────────────────────
@@ -1565,6 +1785,10 @@ async function draw() {
             placementMode,
             doorCornerPositions: doorCornerPositions ? { ...doorCornerPositions } : null,
             placementNaturalSize: placementNaturalSize ? { ...placementNaturalSize } : null,
+            deletedSegs: [...deletedSegs],
+            addedLines,
+            delStraightCount,
+            delDiagCount,
         };
     }
 
@@ -1594,6 +1818,11 @@ async function draw() {
         placementMode        = p.placementMode        || false;
         doorCornerPositions  = p.doorCornerPositions  || null;
         placementNaturalSize = p.placementNaturalSize || null;
+        deletedSegs      = new Set(p.deletedSegs || []);
+        addedLines       = p.addedLines || [];
+        addLineStart     = null;
+        delStraightCount = p.delStraightCount || 0;
+        delDiagCount     = p.delDiagCount     || 0;
         document.getElementById('btnScale').classList.toggle('cv-btn-active', placementMode);
         frameColorPicker.selectColor(p.frameColor);
         slatColorPicker.selectColor(p.slatColor);
@@ -1664,6 +1893,12 @@ async function draw() {
 
     async function loadVersions() {
         const savedTitle = localStorage.getItem(CURRENT_TITLE_KEY);
+
+        if (savedTitle) {
+            document.getElementById('drawingName').value = savedTitle;
+            localStorage.setItem(NAME_KEY, savedTitle);
+        }
+
         if (savedTitle) {
             const ok = await loadFromDb(savedTitle);
             if (ok) return;
@@ -1715,8 +1950,8 @@ async function draw() {
             const uAt = new Date(data.drawing.updated_at).getTime();
             localStorage.setItem(CREATED_KEY,  cAt);
             localStorage.setItem(MODIFIED_KEY, uAt);
-            document.getElementById('dateCreated').textContent  = fmtDate(cAt);
-            document.getElementById('dateModified').textContent = fmtDate(uAt);
+            setElText('dateCreated', fmtDate(cAt));
+            setElText('dateModified', fmtDate(uAt));
             // 작업 시간 DB 기준값으로 초기화
             workAccum = parseInt(data.drawing.work_time_sec) || 0;
             workStart = Date.now();
@@ -1727,7 +1962,8 @@ async function draw() {
 
     function saveVersion() {
         const badge = document.querySelector('.hdr-title-badge');
-        if (!document.getElementById('drawingName').value.trim()) {
+        const title = document.getElementById('drawingName').value.trim();
+        if (!title) {
             badge.classList.remove('shake');
             void badge.offsetWidth;
             badge.classList.add('shake');
@@ -1735,6 +1971,19 @@ async function draw() {
             document.getElementById('drawingName').focus();
             return;
         }
+
+        // 제목이 바뀌면 새 도면 → 버전·작업시간·생성일 초기화
+        const prevTitle = localStorage.getItem(CURRENT_TITLE_KEY);
+        if (prevTitle && prevTitle !== title) {
+            versions      = [];
+            currentVerIdx = -1;
+            const now = Date.now();
+            localStorage.setItem(CREATED_KEY, now);
+            localStorage.setItem(MODIFIED_KEY, now);
+            workAccum  = 0;
+            workStart  = Date.now();
+        }
+
         versions.push({ savedAt: Date.now(), params: getParams() });
         if (versions.length > MAX_VERSIONS) versions.shift();
         localStorage.setItem(VERSIONS_KEY, JSON.stringify(versions));
@@ -1832,8 +2081,8 @@ async function draw() {
             const uAt = new Date(data.drawing.updated_at).getTime();
             localStorage.setItem(CREATED_KEY,  cAt);
             localStorage.setItem(MODIFIED_KEY, uAt);
-            document.getElementById('dateCreated').textContent  = fmtDate(cAt);
-            document.getElementById('dateModified').textContent = fmtDate(uAt);
+            setElText('dateCreated', fmtDate(cAt));
+            setElText('dateModified', fmtDate(uAt));
         }
         renderVerList();
         closeDrawingManager();
@@ -1849,8 +2098,8 @@ async function draw() {
         localStorage.setItem(MODIFIED_KEY, now);
         localStorage.removeItem(CURRENT_TITLE_KEY);
         localStorage.removeItem(NAME_KEY);
-        document.getElementById('dateCreated').textContent  = fmtDate(now);
-        document.getElementById('dateModified').textContent = fmtDate(now);
+        setElText('dateCreated', fmtDate(now));
+        setElText('dateModified', fmtDate(now));
         renderVerList();
         closeDrawingManager();
     }

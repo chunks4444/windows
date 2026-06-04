@@ -9,6 +9,7 @@ if (!defined('BOOTSTRAP_LOADED')) {
     echo '<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">';
 }
 ?>
+<title>평목 - DESIGN IN REAL TIME</title>
 <style>
 /* ── 고정 네비 여백 ─────────────────────────────────── */
 body { padding-top: 68px; }
@@ -82,7 +83,7 @@ $isIndex      = ($currentFile === 'index.php' || $_SERVER['PHP_SELF'] === '/');
         <ul class="navbar-nav gap-3">
             <li class="nav-item d-none"><a href="#" class="nav-link">Works</a></li>
             <li class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Design Studio</a>
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Studio</a>
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item <?= $isSabunteok ? 'active' : '' ?> d-flex align-items-center gap-2"
                            href="/src/engine/Sabunteok/Sabunteok.php">
@@ -117,6 +118,8 @@ $isIndex      = ($currentFile === 'index.php' || $_SERVER['PHP_SELF'] === '/');
                     <i class="bi bi-person-circle me-1"></i><span id="navUserEmail"></span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
+                    <li><span class="dropdown-item-text" style="font-size:11px;color:#aaa;padding:8px 18px 4px;">마지막 접속<br><span id="navLastLogin" style="color:#888;font-weight:600;">—</span></span></li>
+                    <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="/dashboard.php">내 도면</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="#" onclick="authLogout();return false;">로그아웃</a></li>

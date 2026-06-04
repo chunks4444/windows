@@ -6,7 +6,6 @@ header('Content-Type: text/html; charset=UTF-8');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>내 도면 — 평목</title>
     <?php define('BOOTSTRAP_LOADED', true); ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
@@ -84,50 +83,35 @@ function openDrawing(type, title) {
     location.href = cfg.editorUrl;
 }
 
-function renderSection(type, drawings) {
-    const cfg = TYPE_CONFIG[type];
-    if (!cfg) return '';
-
-    const cards = drawings.length === 0
-        ? `<div class="db-empty">저장된 도면이 없습니다.<br>에디터에서 도면을 저장하면 여기에 표시됩니다.</div>`
-        : drawings.map(d => {
-            const thumb = d.thumbnail
-                ? `<img src="${escAttr(d.thumbnail)}" alt="${escAttr(d.title)}" loading="lazy">`
-                : `<div class="db-thumb-placeholder">
-                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-                         <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
-                     </svg>
-                   </div>`;
-            return `
-                <div class="db-card" onclick="openDrawing('${escAttr(type)}', '${escAttr(d.title)}')">
-                    <div class="db-thumb">${thumb}</div>
-                    <div class="db-card-body">
-                        <div class="db-card-title">${escHtml(d.title)}</div>
-                        <div class="db-card-meta">
-                            <div class="db-card-meta-row">
-                                <i class="bi bi-clock"></i>
-                                <span>작업 <strong>${fmtWorkTime(d.work_time_sec)}</strong></span>
-                            </div>
-                            <div class="db-card-meta-row">
-                                <i class="bi bi-pencil"></i>
-                                <span>수정 <strong>${fmtDate(new Date(d.updated_at).getTime())}</strong></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-        }).join('');
-
+function renderCard(d) {
+    const cfg   = TYPE_CONFIG[d.type] || { label: d.type };
+    const thumb = d.thumbnail
+        ? `<img src="${escAttr(d.thumbnail)}" alt="${escAttr(d.title)}" loading="lazy">`
+        : `<div class="db-thumb-placeholder">
+             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                 <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
+             </svg>
+           </div>`;
     return `
-        <div class="db-section">
-            <div class="db-section-header">
-                ${cfg.icon}
-                <span class="db-section-title">${cfg.label}</span>
-                <span class="db-section-count">${drawings.length}개</span>
-                <a href="${cfg.newUrl}" class="db-new-btn ms-auto" onclick="localStorage.removeItem('${cfg.titleKey}')">
-                    <i class="bi bi-plus-lg"></i> 새 도면
-                </a>
+        <div class="db-card" onclick="openDrawing('${escAttr(d.type)}', '${escAttr(d.title)}')">
+            <div class="db-thumb">${thumb}</div>
+            <div class="db-card-body">
+                <div class="db-card-title">${escHtml(d.title)}</div>
+                <div class="db-card-meta">
+                    <div class="db-card-meta-row">
+                        <i class="bi bi-clock"></i>
+                        <span>작업 <strong>${fmtWorkTime(d.work_time_sec)}</strong></span>
+                    </div>
+                    <div class="db-card-meta-row">
+                        <i class="bi bi-layers"></i>
+                        <span>ver <strong>${d.version_count || 0}</strong></span>
+                    </div>
+                    <div class="db-card-meta-row">
+                        <i class="bi bi-pencil"></i>
+                        <span>수정 <strong>${fmtDate(new Date(d.updated_at).getTime())}</strong></span>
+                    </div>
+                </div>
             </div>
-            <div class="db-grid">${cards}</div>
         </div>`;
 }
 
@@ -159,20 +143,15 @@ async function loadDashboard() {
             return;
         }
 
-        // 타입별로 그룹핑
-        const grouped = {};
-        (data.drawings || []).forEach(d => {
-            if (!grouped[d.type]) grouped[d.type] = [];
-            grouped[d.type].push(d);
-        });
+        const drawings = data.drawings || [];
 
-        // 알려진 타입 순서대로, 없는 타입도 빈 섹션으로
-        const knownTypes = Object.keys(TYPE_CONFIG);
-        const html = knownTypes.map(type =>
-            renderSection(type, grouped[type] || [])
-        ).join('');
+        if (!drawings.length) {
+            document.getElementById('dbContent').innerHTML = '<div class="db-empty">저장된 도면이 없습니다.</div>';
+            return;
+        }
 
-        document.getElementById('dbContent').innerHTML = html || '<div class="db-loading">도면이 없습니다.</div>';
+        const html = `<div class="db-grid">${drawings.map(renderCard).join('')}</div>`;
+        document.getElementById('dbContent').innerHTML = html;
     } catch (e) {
         document.getElementById('dbContent').innerHTML = '<div class="db-loading">오류가 발생했습니다.</div>';
     }

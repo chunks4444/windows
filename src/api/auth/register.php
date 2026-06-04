@@ -34,6 +34,10 @@ try {
     $stmt->execute([$email, $hash]);
     $userId = (int) $pdo->lastInsertId();
     $token  = jwt_encode(['sub' => $userId, 'email' => $email, 'iat' => time(), 'exp' => time() + JWT_EXPIRE]);
+    if (session_status() === PHP_SESSION_NONE) @session_start();
+    $_SESSION['pmok_user_id'] = $userId;
+    $_SESSION['pmok_email']   = $email;
+
     http_response_code(201);
     echo json_encode(['token' => $token, 'user' => ['id' => $userId, 'email' => $email]]);
 } catch (Throwable $e) {

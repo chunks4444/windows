@@ -145,20 +145,6 @@ body {
 .drawing-name-input:focus { width: 200px; }
 .drawing-name-input::placeholder { color: rgba(58,140,130,0.45); font-weight: 400; }
 
-.drawing-dates {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 8px;
-    margin-left: 10px;
-    font-size: 11px;
-    color: var(--text-3);
-    font-weight: 400;
-    white-space: nowrap;
-}
-
-.drawing-date-item strong { color: var(--text-2); font-weight: 500; }
-.drawing-date-sep { opacity: 0.3; }
 .badge-dot { width: 6px; height: 6px; background: var(--teal); border-radius: 50%; }
 .hdr-actions { margin-left: auto; display: flex; align-items: center; gap: 6px; }
 
@@ -244,32 +230,40 @@ canvas:active { cursor: grabbing; }
 /* ── CANVAS CONTROLS ─────────────────────── */
 .canvas-controls {
     position: absolute;
-    bottom: 16px;
-    left: 16px;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    align-items: center;
+    gap: 0;
     z-index: 10;
+    background: rgba(80,90,88,0.35);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 5px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.18);
 }
 
 .cv-btn {
-    width: 32px;
-    height: 32px;
-    border-radius: var(--r-sm);
-    border: 1px solid rgba(0,0,0,0.15);
-    background: rgba(0,0,0,0.25);
-    color: #ffffff;
+    width: 28px;
+    height: 28px;
+    border-radius: 12px;
+    border: none;
+    background: transparent;
+    color: rgba(255,255,255,0.75);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background 0.12s;
-    backdrop-filter: blur(4px);
+    transition: background 0.12s, color 0.12s;
 }
 
-.cv-btn:hover { background: rgba(0,0,0,0.4); }
-.cv-btn-active { background: var(--teal) !important; border-color: rgba(255,255,255,0.3) !important; }
-.cv-sep { height: 1px; background: rgba(255,255,255,0.12); margin: 2px 0; }
+.cv-btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
+.cv-btn-active { background: var(--teal) !important; color: #fff !important; }
+.cv-sep { width: 16px; height: 1px; background: rgba(255,255,255,0.15); margin: 3px 0; }
+
 
 /* ── ZOOM HINT ───────────────────────────── */
 .zoom-hint {

@@ -5,7 +5,7 @@
 <!-- AUTH MODAL -->
 <div class="modal fade" id="authModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" style="max-width:400px;">
-        <div class="modal-content border-0 rounded-0" style="box-shadow:0 16px 48px rgba(0,0,0,0.12);">
+        <div class="modal-content border-0" style="border-radius:16px;box-shadow:0 8px 16px rgba(0,0,0,0.06), 0 24px 64px rgba(0,0,0,0.14);overflow:hidden;">
 
             <!-- 탭 헤더 -->
             <div class="modal-header border-0 pb-0 pt-4 px-4">
@@ -132,6 +132,7 @@ async function authLogin(e) {
         bootstrap.Modal.getInstance(document.getElementById('authModal')).hide();
         authUpdateNav();
         window.dispatchEvent(new CustomEvent('pmokAuthChanged'));
+        if (!window.__pmokGuardedPage) location.href = '/dashboard.php';
     } catch {
         authShowError('서버 오류가 발생했습니다.');
     } finally {
@@ -162,6 +163,7 @@ async function authRegister(e) {
         bootstrap.Modal.getInstance(document.getElementById('authModal')).hide();
         authUpdateNav();
         window.dispatchEvent(new CustomEvent('pmokAuthChanged'));
+        if (!window.__pmokGuardedPage) location.href = '/dashboard.php';
     } catch {
         authShowError('서버 오류가 발생했습니다.');
     } finally {
@@ -170,14 +172,17 @@ async function authRegister(e) {
 }
 
 function authSaveSession(token, user) {
+    localStorage.setItem('pmok_last_login', Date.now().toString());
     localStorage.setItem(AUTH_TOKEN_KEY, token);
     localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
+    document.cookie = 'pmok_auth=' + token + '; path=/; SameSite=Lax';
 }
 
 function authLogout() {
     localStorage.removeItem(AUTH_TOKEN_KEY);
     localStorage.removeItem(AUTH_USER_KEY);
-    authUpdateNav();
+    document.cookie = 'pmok_auth=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    location.href = '/';
 }
 
 function authGetUser() {
@@ -198,6 +203,15 @@ function authUpdateNav() {
         loginBtn.style.display = 'none';
         userMenu.style.display = '';
         if (userEmail) userEmail.textContent = user.email;
+        const lastLogin = document.getElementById('navLastLogin');
+        if (lastLogin) {
+            const ts = parseInt(localStorage.getItem('pmok_last_login') || '0');
+            if (ts) {
+                const d = new Date(ts);
+                const pad = n => String(n).padStart(2, '0');
+                lastLogin.textContent = `${d.getFullYear()}.${pad(d.getMonth()+1)}.${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+            }
+        }
     } else {
         loginBtn.style.display = '';
         userMenu.style.display = 'none';

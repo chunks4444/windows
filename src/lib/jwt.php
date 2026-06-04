@@ -22,9 +22,30 @@ function jwt_decode(string $token): ?array {
 }
 
 function jwt_from_request(): ?array {
-    $header = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
-    if (!preg_match('/^Bearer\s+(.+)$/i', $header, $m)) return null;
-    return jwt_decode($m[1]);
+    // 1) PHP 세션 (브라우저 환경 — Apache 헤더 문제 우회)
+    if (session_status() === PHP_SESSION_NONE) @session_start();
+    if (!empty($_SESSION['pmok_user_id'])) {
+        return ['sub' => (int)$_SESSION['pmok_user_id'], 'email' => $_SESSION['pmok_email'] ?? ''];
+    }
+
+    // 2) Authorization 헤더 (API 클라이언트 / 프로덕션)
+    $header = $_SERVER['HTTP_AUTHORIZATION']
+           ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION']
+           ?? '';
+    if (!$header && function_exists('getallheaders')) {
+        $all    = getallheaders();
+        $header = $all['Authorization'] ?? $all['authorization'] ?? '';
+    }
+    if (preg_match('/^Bearer\s+(.+)$/i', $header, $m)) {
+        return jwt_decode($m[1]);
+    }
+
+    // 3) 쿠키 폴백
+    if (!empty($_COOKIE['pmok_auth'])) {
+        return jwt_decode($_COOKIE['pmok_auth']);
+    }
+
+    return null;
 }
 
 function _b64u(string $data): string {

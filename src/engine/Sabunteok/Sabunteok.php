@@ -9,7 +9,6 @@ header('Content-Type: text/html; charset=UTF-8');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>창호 설계 — 사분턱 V0.3</title>
     <link rel="stylesheet" href="/src/css/editor.css">
     <link rel="stylesheet" href="/src/css/sidebar.css">
     <link rel="stylesheet" href="/src/css/sabunteok.css">
@@ -298,11 +297,15 @@ header('Content-Type: text/html; charset=UTF-8');
                     <div class="badge-dot"></div>
                     <input type="text" class="drawing-name-input" id="drawingName" placeholder="도면 이름 입력…" maxlength="40">
                 </label>
-                <div class="drawing-dates">
-                    <span class="drawing-date-item">작성일 <strong id="dateCreated">—</strong></span>
-                    <span class="drawing-date-sep">·</span>
-                    <span class="drawing-date-item">수정일 <strong id="dateModified">—</strong></span>
+                <div class="ver-wrap" style="margin-left:0;">
+                    <button class="ver-btn" id="dmBtn" title="도면 목록">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                        </svg>
+                        <span>도면</span>
+                    </button>
                 </div>
+
                 <div class="ver-wrap">
                     <button class="ver-btn" id="verBtn">
                         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -441,6 +444,37 @@ header('Content-Type: text/html; charset=UTF-8');
             </div>
         </div>
 
+    </div>
+
+    <!-- 도면 목록 모달 -->
+    <div class="pm-modal-backdrop" id="dmBackdrop" style="z-index:8500;">
+        <div class="dm-modal">
+            <div class="dm-header">
+                <span class="dm-header-title">도면 목록</span>
+                <button class="hbtn" id="dmNewBtn" style="height:28px;padding:0 10px;font-size:11px;">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    새 도면
+                </button>
+            </div>
+            <div class="dm-list" id="dmList"></div>
+            <div class="dm-footer">
+                <button class="hbtn" id="dmCloseBtn" style="width:100%;justify-content:center;">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 제목 변경 모달 -->
+    <div class="pm-modal-backdrop" id="dmRenameBackdrop" style="z-index:9100;">
+        <div class="pm-modal" style="width:320px;">
+            <div class="pm-modal-msg">도면 제목 변경</div>
+            <input type="text" id="dmRenameInput" class="rp-prompt" style="width:100%;margin-top:4px;" maxlength="40" placeholder="새 제목 입력…">
+            <div class="pm-modal-btns">
+                <button class="pm-btn-cancel" id="dmRenameCancel">취소</button>
+                <button class="pm-btn-ok" id="dmRenameOk">변경</button>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>

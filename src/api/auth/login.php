@@ -42,6 +42,10 @@ try {
         'exp'   => time() + JWT_EXPIRE,
     ]);
 
+    if (session_status() === PHP_SESSION_NONE) @session_start();
+    $_SESSION['pmok_user_id'] = $user['id'];
+    $_SESSION['pmok_email']   = $user['email'];
+
     echo json_encode(['token' => $token, 'user' => ['id' => $user['id'], 'email' => $user['email']]]);
 } catch (Throwable $e) {
     http_response_code(500);
