@@ -58,9 +58,8 @@ header('Content-Type: text/html; charset=UTF-8');
                                     </svg>
                                 </a>
                             </div>
-                            <h4 class="service-title text-center mb-3">Web Development</h4>
-                            <p class="service-text text-center mb-0">Create stunning, responsive websites
-                                tailored to your brand's unique vision and goals.</p>
+                            <h4 class="service-title text-center mb-3">Square Grid</h4>
+                            <p class="service-sub-text text-center mb-0">가로살과 세로살이 일정한 간격으로 교차하여 <br>정사각형 격자를 만드는 문살 형식</p>
                         </div>
                     </div>
                     <div class="col-md-4 text-center">
@@ -83,7 +82,7 @@ header('Content-Type: text/html; charset=UTF-8');
                                 </a>
                             </div>
                             <h4 class="service-title text-center mb-3">Triangle Grid</h4>
-                            <p class="values-desc text-center mb-0">Build powerful mobile applications that engage users and drive results.</p>
+                            <p class="service-sub-text  text-center mb-0">사선으로 교차하는 문살을 기반으로 구성된 패턴으로, 직선 격자보다 역동적이고 세련된 인상을 제공합니다.</p>
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -106,8 +105,8 @@ header('Content-Type: text/html; charset=UTF-8');
                                     </svg>
                                 </a>
                             </div>
-                            <h4 class="service-title text-center mb-3">Square Grid</h4>
-                            <p class="values-desc text-center mb-0">Transform your data into actionable
+                            <h4 class="service-title text-center mb-3">Diamond Grid</h4>
+                            <p class="service-sub-text  text-center mb-0">Transform your data into actionable
                                 insights with our advanced analytics solutions.</p>
                         </div>
                     </div>

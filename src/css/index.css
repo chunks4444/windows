@@ -89,6 +89,17 @@ body {
     word-break: keep-all;
     margin: 6px 0 0;
 }
+
+.service-sub-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: #Ffffff !important;
+    line-height: 1.7;
+    word-break: keep-all;
+    margin: 6px 0 0; 
+}
+
 /* FOOTER */
 .footer-copy {
     font-family: 'Inter', sans-serif;
