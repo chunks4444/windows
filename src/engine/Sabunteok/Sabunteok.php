@@ -289,6 +289,28 @@ header('Content-Type: text/html; charset=UTF-8');
                         <path d="M4 15A8 8 0 0 0 17.66 18.66L20 16" />
                     </svg>
                 </button>
+                <div class="cv-sep"></div>
+                <button class="cv-btn" id="btnEditDelete" title="선 삭제&#10;클릭 → 선 삭제&#10;다시 클릭 → 복구">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="11" width="16" height="8" rx="2"/>
+                        <rect x="4" y="11" width="7" height="8" rx="0" fill="currentColor" opacity="0.4" stroke="none"/>
+                        <rect x="4" y="11" width="7" height="8" rx="0" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                        <line x1="4" y1="19" x2="20" y2="19"/>
+                        <path d="M9 8l3-3 3 3" stroke-width="1.8"/>
+                    </svg>
+                </button>
+                <button class="cv-btn" id="btnEditAdd" title="선 추가&#10;① 시작 교점 클릭&#10;② 끝 교점 클릭 → 선 완성">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 20h9"/>
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                    </svg>
+                </button>
+                <button class="cv-btn" id="btnEditClear" title="편집 초기화&#10;모든 삭제·추가 선 초기화">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="1 4 1 10 7 10"/>
+                        <path d="M3.51 15a9 9 0 1 0 .49-3.37"/>
+                    </svg>
+                </button>
             </div>
 
             <!-- 캔버스 상단 제목 오버레이 -->

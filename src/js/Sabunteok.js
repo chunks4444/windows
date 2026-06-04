@@ -42,6 +42,16 @@
     let selectedFrameColor = '#28241e';
     let selectedSlatColor  = '#28241e';
 
+    // ── 라인 편집 상태 ──────────────────────────────
+    let deletedSegs  = new Set();
+    let addedLines   = [];
+    let lineEditMode = null;
+    let addLineStart = null;
+
+    let lastSegMap   = new Map();
+    let lastNodeList = [];
+    let lastILeft = 0, lastITop = 0, lastIW = 1, lastIH = 1, lastSlatPx = 1, lastCellSize = 1;
+
 
     function lightenHex(hex, amount) {
         const r = Math.min(255, parseInt(hex.slice(1, 3), 16) + amount);
@@ -595,6 +605,37 @@
 
 
 
+function makeLineKey(cx, cy, normAngle) {
+    const perp = cx * Math.sin(normAngle) - cy * Math.cos(normAngle);
+    return `${Math.round(normAngle * 1000)}:${Math.round(perp)}`;
+}
+
+function screenToCtxCoord(clientX, clientY) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+        x: (clientX - rect.left - logW / 2 - panX) / scaleFactor,
+        y: (clientY - rect.top  - logH / 2 - panY) / scaleFactor,
+    };
+}
+
+function ctxToNorm(cx, cy) {
+    return { nx: (cx - lastILeft) / lastIW, ny: (cy - lastITop) / lastIH };
+}
+
+function normToCtx(nx, ny) {
+    return { x: lastILeft + nx * lastIW, y: lastITop + ny * lastIH };
+}
+
+function snapToNode(cx, cy) {
+    if (!lastNodeList.length) return null;
+    let best = null, bestDist = Infinity;
+    for (const node of lastNodeList) {
+        const d = Math.hypot(node.cx - cx, node.cy - cy);
+        if (d < bestDist) { bestDist = d; best = node; }
+    }
+    return (best && bestDist < lastCellSize) ? best : null;
+}
+
 let _geoController = null;
 
 async function fetchGeometry() {
@@ -810,6 +851,8 @@ async function draw() {
     }
 
     // ====== 1차 루프: 패턴만 그리기 (세로살, 가로살, 사분턱) ======
+    lastSegMap.clear();
+    lastNodeList = [];
     for (const d of renderOrder) {
 
         let panelOffsetX = 0;
@@ -890,6 +933,15 @@ async function draw() {
             offsetY +
             realY * baseScale;
 
+        if (d === renderOrder[0]) {
+            lastILeft    = toCanvasX(geo.frameW);
+            lastITop     = toCanvasY(geo.frameHTop);
+            lastIW       = geo.innerW * baseScale;
+            lastIH       = geo.innerH * baseScale;
+            lastSlatPx   = geo.slatT  * baseScale;
+            lastCellSize = geo.cellW  * baseScale;
+        }
+
         // ====================================
         // 세로살
         // ====================================
@@ -916,6 +968,11 @@ async function draw() {
             const left  = cx - geo.slatV / 2;
             const topY  = geo.frameHTop;
             const botY  = geo.frameHTop + geo.innerH;
+
+            const vsKey = `${d}:vs:${i}`;
+            const vsCx  = toCanvasX(cx), vsCy = toCanvasY((topY + botY) / 2);
+            lastSegMap.set(vsKey, { cx: vsCx, cy: toCanvasY(topY), ex: vsCx, ey: toCanvasY(botY), mx: vsCx, my: vsCy, normAngle: Math.PI / 2, lineKey: makeLineKey(vsCx, vsCy, Math.PI / 2) });
+            if (deletedSegs.has(vsKey)) continue;
 
             // 촉
             ctx.fillStyle =
@@ -958,6 +1015,11 @@ async function draw() {
             const top   = ry - geo.slatH / 2;
             const leftX  = geo.frameW;
             const rightX = geo.frameW + geo.innerW;
+
+            const hsKey = `${d}:hs:${j}`;
+            const hsCx  = toCanvasX((leftX + rightX) / 2), hsCy = toCanvasY(ry);
+            lastSegMap.set(hsKey, { cx: toCanvasX(leftX), cy: hsCy, ex: toCanvasX(rightX), ey: hsCy, mx: hsCx, my: hsCy, normAngle: 0, lineKey: makeLineKey(hsCx, hsCy, 0) });
+            if (deletedSegs.has(hsKey)) continue;
 
             // 촉
             ctx.fillStyle =
@@ -1006,17 +1068,39 @@ async function draw() {
                 const x = geo.frameW + col * (geo.cellW + geo.slatV);
                 const y = geo.frameHTop + row * (geo.cellH + geo.slatH);
 
-                // 좌상 → 우하
-                ctx.beginPath();
-                ctx.moveTo(toCanvasX(x),              toCanvasY(y));
-                ctx.lineTo(toCanvasX(x + geo.cellW),  toCanvasY(y + geo.cellH));
-                ctx.stroke();
+                // 셀 코너 노드 (첫 패널만)
+                if (d === renderOrder[0]) {
+                    lastNodeList.push({ cx: toCanvasX(x), cy: toCanvasY(y) });
+                    if (col === geo.cols - 1) lastNodeList.push({ cx: toCanvasX(x + geo.cellW), cy: toCanvasY(y) });
+                    if (row === geo.rowsInt - 1) lastNodeList.push({ cx: toCanvasX(x), cy: toCanvasY(y + geo.cellH) });
+                    if (col === geo.cols - 1 && row === geo.rowsInt - 1) lastNodeList.push({ cx: toCanvasX(x + geo.cellW), cy: toCanvasY(y + geo.cellH) });
+                }
 
-                // 우상 → 좌하
-                ctx.beginPath();
-                ctx.moveTo(toCanvasX(x + geo.cellW),  toCanvasY(y));
-                ctx.lineTo(toCanvasX(x),              toCanvasY(y + geo.cellH));
-                ctx.stroke();
+                // 좌상 → 우하 (\)
+                const bsCx = toCanvasX(x),             bsCy = toCanvasY(y);
+                const bsEx = toCanvasX(x + geo.cellW), bsEy = toCanvasY(y + geo.cellH);
+                const bsMx = (bsCx + bsEx) / 2,        bsMy = (bsCy + bsEy) / 2;
+                const bsKey = `${d}:bs:${row}:${col}`;
+                lastSegMap.set(bsKey, { cx: bsCx, cy: bsCy, ex: bsEx, ey: bsEy, mx: bsMx, my: bsMy, normAngle: Math.PI / 4, lineKey: makeLineKey(bsMx, bsMy, Math.PI / 4) });
+                if (!deletedSegs.has(bsKey)) {
+                    ctx.beginPath();
+                    ctx.moveTo(bsCx, bsCy);
+                    ctx.lineTo(bsEx, bsEy);
+                    ctx.stroke();
+                }
+
+                // 우상 → 좌하 (/)
+                const fsCx = toCanvasX(x + geo.cellW), fsCy = toCanvasY(y);
+                const fsEx = toCanvasX(x),              fsEy = toCanvasY(y + geo.cellH);
+                const fsMx = (fsCx + fsEx) / 2,         fsMy = (fsCy + fsEy) / 2;
+                const fsKey = `${d}:fs:${row}:${col}`;
+                lastSegMap.set(fsKey, { cx: fsCx, cy: fsCy, ex: fsEx, ey: fsEy, mx: fsMx, my: fsMy, normAngle: 3 * Math.PI / 4, lineKey: makeLineKey(fsMx, fsMy, 3 * Math.PI / 4) });
+                if (!deletedSegs.has(fsKey)) {
+                    ctx.beginPath();
+                    ctx.moveTo(fsCx, fsCy);
+                    ctx.lineTo(fsEx, fsEy);
+                    ctx.stroke();
+                }
             }
         }
 
@@ -1024,6 +1108,141 @@ async function draw() {
         ctx.restore();
 
     }   // ← 1차 루프 끝
+
+    // ── 편집 반영 부재 목록 최종 업데이트 ──────
+    {
+        const tenonLen = 2 * geo.slatT;
+        const pxToMm   = geo.innerW / lastIW;
+
+        // 내경 범위 밖 세그먼트 제외
+        const lineGroups = new Map();
+        const EPS = lastCellSize;
+        for (const [segKey, seg] of lastSegMap) {
+            if (segKey.startsWith('added:')) continue;
+            if (seg.mx < lastILeft - EPS || seg.mx > lastILeft + lastIW + EPS) continue;
+            if (seg.my < lastITop  - EPS || seg.my > lastITop  + lastIH + EPS) continue;
+            if (!lineGroups.has(seg.lineKey)) lineGroups.set(seg.lineKey, []);
+            lineGroups.get(seg.lineKey).push({ segKey, mx: seg.mx, my: seg.my, normAngle: seg.normAngle });
+        }
+
+        let adjHSlatCnt = parseInt(p.hSlatCnt) || 0;
+        let adjVSlatCnt = parseInt(p.vSlatCnt) || 0;
+        let adjDiag     = p.diagList.map(item => ({ ...item }));
+        const extraPieces = [];
+
+        for (const [, segs] of lineGroups) {
+            const normAngle  = segs[0].normAngle;
+            const isHSlat    = normAngle < 0.05;
+            const isVSlat    = Math.abs(normAngle - Math.PI / 2) < 0.05;
+            const ldx = Math.cos(normAngle), ldy = Math.sin(normAngle);
+
+            const vSegs = segs.map(s => ({
+                segKey:    s.segKey,
+                isDeleted: deletedSegs.has(s.segKey),
+                pos:       s.mx * ldx + s.my * ldy,
+            })).sort((a, b) => a.pos - b.pos);
+
+            if (!vSegs.some(vs => vs.isDeleted)) continue;
+
+            const runLen = (i0, i1) => {
+                let minP = Infinity, maxP = -Infinity, minN = null, maxN = null;
+                for (let i = i0; i <= i1; i++) {
+                    const sg = lastSegMap.get(vSegs[i].segKey);
+                    if (!sg) continue;
+                    for (const [nx, ny] of [[sg.cx, sg.cy], [sg.ex, sg.ey]]) {
+                        const proj = nx * ldx + ny * ldy;
+                        if (proj < minP) { minP = proj; minN = [nx, ny]; }
+                        if (proj > maxP) { maxP = proj; maxN = [nx, ny]; }
+                    }
+                }
+                if (!minN || !maxN) return 0;
+                return Math.round(Math.hypot(maxN[0] - minN[0], maxN[1] - minN[1]) * pxToMm + tenonLen);
+            };
+
+            const fullLen = runLen(0, vSegs.length - 1);
+            if (isHSlat) {
+                adjHSlatCnt = Math.max(0, adjHSlatCnt - 1);
+            } else if (isVSlat) {
+                adjVSlatCnt = Math.max(0, adjVSlatCnt - 1);
+            } else {
+                const m = adjDiag.find(it => it.cnt > 0 && Math.abs(it.len - fullLen) <= tenonLen + 1);
+                if (m) m.cnt = Math.max(0, m.cnt - 1);
+            }
+
+            let runStart = -1;
+            for (let i = 0; i <= vSegs.length; i++) {
+                if (i < vSegs.length && !vSegs[i].isDeleted) {
+                    if (runStart < 0) runStart = i;
+                } else if (runStart >= 0) {
+                    extraPieces.push({ len: runLen(runStart, i - 1), isHSlat, isVSlat });
+                    runStart = -1;
+                }
+            }
+        }
+
+        extraPieces.forEach(({ len, isHSlat, isVSlat }) => {
+            if (isHSlat) {
+                adjHSlatCnt++;
+            } else if (isVSlat) {
+                adjVSlatCnt++;
+            } else {
+                const m = adjDiag.find(it => Math.abs(it.len - len) <= tenonLen + 1);
+                if (m) m.cnt++;
+                else adjDiag.push({ len, cnt: 1 });
+            }
+        });
+
+        addedLines.forEach(ln => {
+            const dx = (ln.nx2 - ln.nx1) * geo.innerW;
+            const dy = (ln.ny2 - ln.ny1) * geo.innerH;
+            const realLen = Math.round(Math.hypot(dx, dy) + tenonLen);
+            const m = adjDiag.find(it => Math.abs(it.len - realLen) <= tenonLen);
+            if (m) m.cnt++;
+            else adjDiag.push({ len: realLen, cnt: 1 });
+        });
+
+        document.getElementById('spHSlatCnt').textContent = Math.max(0, adjHSlatCnt) + '개';
+        document.getElementById('spVSlatCnt').textContent = Math.max(0, adjVSlatCnt) + '개';
+
+        adjDiag = adjDiag.filter(item => item.cnt > 0);
+        adjDiag.sort((a, b) => b.len - a.len);
+        diagListEl.innerHTML = '';
+        adjDiag.forEach(({ len, cnt }) => {
+            const el = document.createElement('div');
+            el.className = 'slat-row';
+            el.innerHTML = `<span class="slat-len">${len}<span class="slat-len-unit">mm</span></span><span class="slat-cnt">${cnt}개</span>`;
+            diagListEl.appendChild(el);
+        });
+    }
+
+    // ====== 추가 선 그리기 ======
+    if (addedLines.length > 0) {
+        ctx.save();
+        ctx.strokeStyle = patternBroken ? '#cc0000' : selectedSlatColor;
+        ctx.lineWidth   = lastSlatPx;
+        ctx.lineCap     = 'round';
+        ctx.setLineDash([]);
+        addedLines.forEach((ln, idx) => {
+            const p1 = normToCtx(ln.nx1, ln.ny1);
+            const p2 = normToCtx(ln.nx2, ln.ny2);
+            lastSegMap.set(`added:${idx}`, { mx: (p1.x + p2.x) / 2, my: (p1.y + p2.y) / 2, normAngle: 0 });
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+        });
+        ctx.restore();
+    }
+
+    if (lineEditMode === 'add' && addLineStart) {
+        const pt = normToCtx(addLineStart.nx, addLineStart.ny);
+        ctx.save();
+        ctx.fillStyle = '#3A8C82';
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, lastSlatPx * 1.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+    }
 
     // ====== 2차 루프: 울거미만 그리기 (패턴 위에 덮음) ======
     for (const d of renderOrder) {
@@ -1328,6 +1547,8 @@ async function draw() {
     }
 
     container.addEventListener('mousedown', function(e) {
+        if (e.target.closest('.canvas-controls')) return;
+        if (lineEditMode) { handleEditClick(e); return; }
         const cornerHit = getHitOverlayCorner(e.clientX, e.clientY);
         const corner = cornerHit === 'center' ? 'move' : cornerHit;
         const sp = () => ({
@@ -1518,6 +1739,73 @@ async function draw() {
         slatColorPicker.selectColor(DEFAULT_SLAT_COLOR);
         draw();
     });
+
+    // ── 편집 버튼 ──────────────────────────────────
+    const CURSOR_ERASER = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Crect x='5' y='10' width='14' height='9' rx='2' fill='%23fff' stroke='%23555' stroke-width='1.5'/%3E%3Crect x='5' y='10' width='6' height='9' rx='0' fill='%23f87171' stroke='none'/%3E%3Crect x='5' y='10' width='6' height='9' rx='0' fill='none' stroke='%23555' stroke-width='1.5'/%3E%3Cline x1='5' y1='19' x2='19' y2='19' stroke='%23555' stroke-width='1.5'/%3E%3C/svg%3E") 4 20, crosshair`;
+    const CURSOR_PEN    = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z' fill='%23fff' stroke='%23555' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 2 22, crosshair`;
+
+    function setEditMode(mode) {
+        lineEditMode = lineEditMode === mode ? null : mode;
+        addLineStart = null;
+        document.getElementById('btnEditDelete').classList.toggle('cv-btn-active', lineEditMode === 'delete');
+        document.getElementById('btnEditAdd').classList.toggle('cv-btn-active', lineEditMode === 'add');
+        if (lineEditMode === 'delete')   canvas.style.cursor = CURSOR_ERASER;
+        else if (lineEditMode === 'add') canvas.style.cursor = CURSOR_PEN;
+        else                             canvas.style.cursor = 'grab';
+        if (lineEditMode === 'add') draw();
+    }
+
+    function handleEditClick(e) {
+        const coord = screenToCtxCoord(e.clientX, e.clientY);
+
+        if (lineEditMode === 'delete') {
+            let bestKey = null, bestDist = Infinity;
+            for (const [key, pos] of lastSegMap) {
+                const dist = Math.hypot(coord.x - pos.mx, coord.y - pos.my);
+                if (dist < bestDist) { bestDist = dist; bestKey = key; }
+            }
+            if (!bestKey || bestDist > lastCellSize * 1.2) return;
+            if (bestKey.startsWith('added:')) {
+                const idx = parseInt(bestKey.split(':')[1]);
+                addedLines.splice(idx, 1);
+            } else {
+                if (deletedSegs.has(bestKey)) {
+                    deletedSegs.delete(bestKey);
+                } else {
+                    deletedSegs.add(bestKey);
+                }
+            }
+            draw();
+            return;
+        }
+
+        if (lineEditMode === 'add') {
+            const snapped = snapToNode(coord.x, coord.y);
+            if (!snapped) return;
+            const norm = ctxToNorm(snapped.cx, snapped.cy);
+            if (!addLineStart) {
+                addLineStart = norm;
+                draw();
+            } else {
+                if (Math.abs(norm.nx - addLineStart.nx) < 0.001 && Math.abs(norm.ny - addLineStart.ny) < 0.001) return;
+                addedLines.push({ nx1: addLineStart.nx, ny1: addLineStart.ny, nx2: norm.nx, ny2: norm.ny });
+                addLineStart = null;
+                draw();
+            }
+        }
+    }
+
+    document.getElementById('btnEditDelete').addEventListener('click', () => setEditMode('delete'));
+    document.getElementById('btnEditAdd').addEventListener('click', () => setEditMode('add'));
+    document.getElementById('btnEditClear').addEventListener('click', () => {
+        pmConfirm('편집 내용을 모두 초기화하시겠습니까?', () => {
+            deletedSegs.clear();
+            addedLines   = [];
+            addLineStart = null;
+            draw();
+        });
+    });
+
     // ── 풍판 토글 ─────────────────────────────
     const chkPungpan   = document.getElementById('chkPungpan');
     const pungpanCtrl  = document.getElementById('pungpanCtrl');
