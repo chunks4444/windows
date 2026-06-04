@@ -74,12 +74,21 @@ body {
     font-family: 'Inter', sans-serif;
     font-size: 13px;
     font-weight: 400;
-    color: rgba(0, 0, 0, 0.7);
+    color: #ffffff !important;
     line-height: 1.7;
     word-break: keep-all;
     margin: 6px 0 0;
 }
 
+.sub-title{
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: #191919 !important;
+    line-height: 1.7;
+    word-break: keep-all;
+    margin: 6px 0 0;
+}
 /* FOOTER */
 .footer-copy {
     font-family: 'Inter', sans-serif;
@@ -120,7 +129,7 @@ body {
 }
 
 .pm-symbol-bar {
-    fill: #2a2418;
+    fill: #ffffff;
 }
 
 .pm-symbol-link:hover .pm-symbol-bar {
