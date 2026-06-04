@@ -24,27 +24,26 @@ if (!$email || !$password) {
 }
 
 try {
-    $pdo = db();
-} catch (PDOException $e) {
-    http_response_code(503);
+    $pdo  = db();
+    $stmt = $pdo->prepare('SELECT id, email, password_hash FROM users WHERE email = ?');
+    $stmt->execute([$email]);
+    $user = $stmt->fetch();
+
+    if (!$user || !password_verify($password, $user['password_hash'])) {
+        http_response_code(401);
+        echo json_encode(['error' => '이메일 또는 비밀번호가 올바르지 않습니다.']);
+        exit;
+    }
+
+    $token = jwt_encode([
+        'sub'   => $user['id'],
+        'email' => $user['email'],
+        'iat'   => time(),
+        'exp'   => time() + JWT_EXPIRE,
+    ]);
+
+    echo json_encode(['token' => $token, 'user' => ['id' => $user['id'], 'email' => $user['email']]]);
+} catch (Throwable $e) {
+    http_response_code(500);
     echo json_encode(['error' => '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.']);
-    exit;
 }
-$stmt = $pdo->prepare('SELECT id, email, password_hash FROM users WHERE email = ?');
-$stmt->execute([$email]);
-$user = $stmt->fetch();
-
-if (!$user || !password_verify($password, $user['password_hash'])) {
-    http_response_code(401);
-    echo json_encode(['error' => '이메일 또는 비밀번호가 올바르지 않습니다.']);
-    exit;
-}
-
-$token = jwt_encode([
-    'sub'   => $user['id'],
-    'email' => $user['email'],
-    'iat'   => time(),
-    'exp'   => time() + JWT_EXPIRE,
-]);
-
-echo json_encode(['token' => $token, 'user' => ['id' => $user['id'], 'email' => $user['email']]]);

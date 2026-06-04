@@ -16,9 +16,16 @@ class Drawing {
                 ->execute([$thumbnail, $workTimeSec, $drawingId]);
         } else {
             $createdAt = $createdAtMs ? date('Y-m-d H:i:s', intval($createdAtMs / 1000)) : date('Y-m-d H:i:s');
-            $pdo->prepare('INSERT INTO drawings (user_id, type, title, created_at, thumbnail, work_time_sec) VALUES (?, ?, ?, ?, ?, ?)')
+            // IGNORE 로 중복 삽입(레이스 컨디션) 방지 — 중복이면 INSERT 건너뜀
+            $pdo->prepare('INSERT IGNORE INTO drawings (user_id, type, title, created_at, thumbnail, work_time_sec) VALUES (?, ?, ?, ?, ?, ?)')
                 ->execute([$userId, $type, $title, $createdAt, $thumbnail, $workTimeSec]);
             $drawingId = (int) $pdo->lastInsertId();
+            // lastInsertId()가 0이면 이미 존재 → SELECT로 ID 조회
+            if ($drawingId === 0) {
+                $stmt2 = $pdo->prepare('SELECT id FROM drawings WHERE user_id = ? AND type = ? AND title = ?');
+                $stmt2->execute([$userId, $type, $title]);
+                $drawingId = (int) $stmt2->fetchColumn();
+            }
         }
 
         $pdo->prepare('DELETE FROM drawing_versions WHERE drawing_id = ?')->execute([$drawingId]);

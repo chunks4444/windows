@@ -131,6 +131,7 @@ async function authLogin(e) {
         authSaveSession(data.token, data.user);
         bootstrap.Modal.getInstance(document.getElementById('authModal')).hide();
         authUpdateNav();
+        window.dispatchEvent(new CustomEvent('pmokAuthChanged'));
     } catch {
         authShowError('서버 오류가 발생했습니다.');
     } finally {
@@ -160,6 +161,7 @@ async function authRegister(e) {
         authSaveSession(data.token, data.user);
         bootstrap.Modal.getInstance(document.getElementById('authModal')).hide();
         authUpdateNav();
+        window.dispatchEvent(new CustomEvent('pmokAuthChanged'));
     } catch {
         authShowError('서버 오류가 발생했습니다.');
     } finally {
