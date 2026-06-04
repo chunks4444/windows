@@ -127,5 +127,6 @@ $isIndex      = ($currentFile === 'index.php' || $_SERVER['PHP_SELF'] === '/');
 </nav>
 <?php if (!defined('BOOTSTRAP_JS_LOADED')): define('BOOTSTRAP_JS_LOADED', true); ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+<script src="/src/js/visitor-log.js" defer></script>
 <?php endif; ?>
 <?php include __DIR__ . '/auth_modal.php'; ?>
