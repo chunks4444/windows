@@ -68,6 +68,7 @@ $isSabunteok  = (stripos($currentFile, 'Sabunteok') !== false);
 $isSambuntok  = (stripos($currentFile, 'sambuntok') !== false);
 $isIndex      = ($currentFile === 'index.php' || $_SERVER['PHP_SELF'] === '/');
 $isAbout      = (strpos($_SERVER['PHP_SELF'], '/company/') !== false);
+$isLibrary    = (strpos($_SERVER['PHP_SELF'], '/library/') !== false);
 ?>
 <nav class="pm-navbar navbar navbar-expand-lg fixed-top px-4 py-3">
     <a href="/" class="navbar-brand d-flex align-items-center">
@@ -117,7 +118,7 @@ $isAbout      = (strpos($_SERVER['PHP_SELF'], '/company/') !== false);
                     </a></li>
                 </ul>
             </li>
-            <li class="nav-item"><a href="#" class="nav-link">Pattern Library</a></li>
+            <li class="nav-item"><a href="/src/library/" class="nav-link <?= $isLibrary ? 'active' : '' ?>">Pattern Library</a></li>
             <li class="nav-item"><a href="/src/company/" class="nav-link <?= $isAbout ? 'active' : '' ?>">About</a></li>
             <li class="nav-item d-none"><a href="#" class="nav-link">Joiner</a></li>
             <!-- 비로그인 -->

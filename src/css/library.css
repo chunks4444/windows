@@ -1,0 +1,299 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap');
+
+:root {
+    --teal:      #3A8C82;
+    --teal-mid:  #5AADA2;
+    --teal-pale: #E6F4F2;
+    --red:       #cc2200;
+    --page-bg:   #f7f7f6;
+    --text-1:    #1A1F1E;
+    --text-2:    #5A6B69;
+    --text-3:    #97A8A6;
+    --border:    #E0E5E4;
+    --r:         16px;
+    --r-sm:      8px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Noto Sans KR', -apple-system, 'Malgun Gothic', sans-serif;
+    background: var(--page-bg);
+    color: var(--text-1);
+    font-size: 13px;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ── 검색/필터 바 ─────────────────────────────── */
+.lib-toolbar {
+    position: sticky;
+    top: 68px;
+    z-index: 100;
+    background: var(--page-bg);
+    padding: 16px 24px 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.lib-toolbar-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.lib-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 200px;
+    max-width: 320px;
+    height: 38px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0 16px;
+}
+
+.lib-search input {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--text-1);
+    width: 100%;
+}
+
+.lib-search i { color: var(--text-3); font-size: 14px; }
+
+.lib-filters {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 2px;
+}
+.lib-filters::-webkit-scrollbar { display: none; }
+
+.lib-filter-btn {
+    height: 32px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: #fff;
+    font-size: 12px;
+    font-weight: 500;
+    font-family: inherit;
+    color: var(--text-2);
+    cursor: pointer;
+    transition: all 0.12s;
+    white-space: nowrap;
+}
+
+.lib-filter-btn:hover,
+.lib-filter-btn.active {
+    background: var(--text-1);
+    border-color: var(--text-1);
+    color: #fff;
+}
+
+/* ── 메인 영역 ───────────────────────────────── */
+.lib-main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 24px 16px 80px;
+}
+
+/* ── 매소너리 그리드 ──────────────────────────── */
+.lib-masonry {
+    columns: 5 200px;
+    column-gap: 12px;
+}
+
+.lib-item {
+    break-inside: avoid;
+    margin-bottom: 12px;
+    position: relative;
+    border-radius: var(--r);
+    overflow: hidden;
+    cursor: pointer;
+    background: #fff;
+}
+
+.lib-item:hover .lib-overlay {
+    opacity: 1;
+}
+
+.lib-item:hover .lib-card-img svg,
+.lib-item:hover .lib-card-img canvas {
+    transform: scale(1.03);
+    transition: transform 0.3s ease;
+}
+
+/* ── 카드 이미지 영역 ─────────────────────────── */
+.lib-card-img {
+    width: 100%;
+    overflow: hidden;
+    background: #f0f0ef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.lib-card-img svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+/* ── 오버레이 ─────────────────────────────────── */
+.lib-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.38);
+    opacity: 0;
+    transition: opacity 0.2s;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+.lib-overlay-top {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+.lib-overlay-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ── 아이콘 버튼 (좋아요 / 보드) ─────────────── */
+.lib-icon-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.9);
+    color: var(--text-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s, transform 0.12s;
+}
+.lib-icon-btn:hover { background: #fff; transform: scale(1.08); }
+
+.lib-like-btn.liked { color: #e03; background: #fff; }
+.lib-like-btn.liked i { animation: heartPop 0.25s ease; }
+
+@keyframes heartPop {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.4); }
+    100% { transform: scale(1); }
+}
+
+.lib-overlay-title {
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    text-align: center;
+    letter-spacing: -0.2px;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+    width: 100%;
+}
+
+.lib-overlay-actions {
+    display: flex;
+    gap: 6px;
+    width: 100%;
+    justify-content: center;
+}
+
+.lib-btn {
+    height: 32px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: none;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.12s;
+    white-space: nowrap;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.lib-btn-primary {
+    background: var(--red);
+    color: #fff;
+}
+.lib-btn-primary:hover { background: #aa1a00; }
+
+.lib-btn-secondary {
+    background: rgba(255,255,255,0.9);
+    color: var(--text-1);
+}
+.lib-btn-secondary:hover { background: #fff; }
+
+/* ── 카드 하단 정보 ──────────────────────────── */
+.lib-card-body {
+    padding: 10px 12px 12px;
+}
+
+.lib-card-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-1);
+    letter-spacing: -0.2px;
+    margin-bottom: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.lib-card-sub {
+    font-size: 11px;
+    color: var(--text-3);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ── 섹션 타이틀 ──────────────────────────────── */
+.lib-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin: 28px 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+}
+
+/* ── 반응형 ──────────────────────────────────── */
+@media (max-width: 900px) {
+    .lib-masonry { columns: 3 160px; }
+}
+@media (max-width: 600px) {
+    .lib-masonry { columns: 2 140px; column-gap: 8px; }
+    .lib-item { margin-bottom: 8px; }
+    .lib-main { padding: 16px 10px 60px; }
+}
