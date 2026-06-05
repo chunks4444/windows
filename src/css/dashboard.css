@@ -132,6 +132,35 @@ body {
     transform: translateY(-2px);
 }
 
+.db-card-delete {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 2;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.85);
+    color: var(--text-3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s, background 0.15s, color 0.15s;
+}
+
+.db-card:hover .db-card-delete {
+    opacity: 1;
+}
+
+.db-card-delete:hover {
+    background: #FEE2E2;
+    color: #DC2626;
+}
+
 /* ── 썸네일 ──────────────────────────────────── */
 .db-thumb {
     width: 100%;

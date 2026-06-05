@@ -17,7 +17,7 @@ body { padding-top: 68px; }
 
 /* ── NAV (공통) ───────────────────────────────────── */
 .pm-navbar {
-    background: linear-gradient(to bottom, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0) 100%);
+    background: #fff;
     font-family: 'Noto Sans KR', -apple-system, sans-serif;
 }
 .pm-navbar .navbar-brand { text-decoration: none; color: inherit; }
@@ -67,6 +67,7 @@ $currentFile = basename($_SERVER['PHP_SELF']);
 $isSabunteok  = (stripos($currentFile, 'Sabunteok') !== false);
 $isSambuntok  = (stripos($currentFile, 'sambuntok') !== false);
 $isIndex      = ($currentFile === 'index.php' || $_SERVER['PHP_SELF'] === '/');
+$isAbout      = (strpos($_SERVER['PHP_SELF'], '/company/') !== false);
 ?>
 <nav class="pm-navbar navbar navbar-expand-lg fixed-top px-4 py-3">
     <a href="/" class="navbar-brand d-flex align-items-center">
@@ -117,6 +118,7 @@ $isIndex      = ($currentFile === 'index.php' || $_SERVER['PHP_SELF'] === '/');
                 </ul>
             </li>
             <li class="nav-item"><a href="#" class="nav-link">Pattern Library</a></li>
+            <li class="nav-item"><a href="/src/company/" class="nav-link <?= $isAbout ? 'active' : '' ?>">About</a></li>
             <li class="nav-item d-none"><a href="#" class="nav-link">Joiner</a></li>
             <!-- 비로그인 -->
             <li class="nav-item" id="navLoginBtn">

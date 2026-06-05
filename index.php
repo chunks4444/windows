@@ -14,7 +14,7 @@ header('Content-Type: text/html; charset=UTF-8');
             name="keywords"
             content="전통창호, 목창호, 한옥창호, 맞춤창호, 창호디자인, 나무창호, 한옥문, 나무문, 전통문, 평목">
         <link
-            href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700;900&family=Inter:wght@300;400;500&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;900&family=Inter:wght@300;400;500&display=swap"
             rel="stylesheet">
         <?php define('BOOTSTRAP_LOADED', true); ?>
         <link
@@ -31,13 +31,8 @@ header('Content-Type: text/html; charset=UTF-8');
 
             <!-- -->
             <div class="container">
-                <div class="row justify-content-center mt-5">
-                    <div class="col-12 text-center mb-5">
 
-                        <span class="custom-badge text-white mb-3 d-inline-block">Our Services</span>
-                    </div>
-                </div>
-                <div class="row g-4">
+                <div class="row g-4 mt-5">
                     <div class="col-md-4 text-center">
                         <div class="service-card service-card--square h-80 p-4">
                             <div class=" mb-4">

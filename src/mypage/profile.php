@@ -12,6 +12,7 @@ header('Content-Type: text/html; charset=UTF-8');
     <link rel="stylesheet" href="/src/css/dashboard.css">
     <link rel="stylesheet" href="/src/css/profile.css">
     <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js" defer></script>
+    <?php include __DIR__ . '/../components/auth_guard.php'; ?>
 </head>
 <body>
 
@@ -129,10 +130,7 @@ header('Content-Type: text/html; charset=UTF-8');
 const token = () => localStorage.getItem('pmok_auth_token');
 
 async function loadProfile() {
-    if (!token()) {
-        document.getElementById('profileAuthWall').style.display = '';
-        return;
-    }
+    if (!token()) { location.href = '/'; return; }
     document.getElementById('profilePage').style.display = '';
 
     const res  = await fetch('/src/api/auth/profile.php', {

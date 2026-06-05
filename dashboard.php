@@ -94,6 +94,9 @@ function renderCard(d) {
            </div>`;
     return `
         <div class="db-card" onclick="openDrawing('${escAttr(d.type)}', '${escAttr(d.title)}')">
+            <button class="db-card-delete" onclick="deleteDrawing(event,'${escAttr(d.type)}','${escAttr(d.title)}')" title="삭제">
+                <i class="bi bi-trash"></i>
+            </button>
             <div class="db-thumb">${thumb}</div>
             <div class="db-card-body">
                 <div class="db-card-title">${escHtml(d.title)}</div>
@@ -113,6 +116,26 @@ function renderCard(d) {
                 </div>
             </div>
         </div>`;
+}
+
+async function deleteDrawing(e, type, title) {
+    e.stopPropagation();
+    if (!confirm(`"${title}" 도면을 삭제할까요?`)) return;
+    const token = localStorage.getItem('pmok_auth_token');
+    const res = await fetch('/src/api/drawings/delete.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ type, title }),
+    });
+    if (res.ok) {
+        e.target.closest('.db-card').remove();
+        const grid = document.querySelector('.db-grid');
+        if (grid && !grid.children.length) {
+            document.getElementById('dbContent').innerHTML = '<div class="db-empty">저장된 도면이 없습니다.</div>';
+        }
+    } else {
+        alert('삭제에 실패했습니다.');
+    }
 }
 
 function escHtml(str) {

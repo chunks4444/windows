@@ -2,6 +2,8 @@
 ini_set('display_errors', 0);
 error_reporting(0);
 header('Content-Type: application/json; charset=UTF-8');
+require_once __DIR__ . '/../../../lib/jwt.php';
+if (!jwt_from_request()) { http_response_code(401); echo json_encode(['error' => '인증이 필요합니다.']); exit; }
 
 $cols      = max(2,   (int)($_POST['cols']      ?? 4));
 $outerW    = max(400, (int)($_POST['outerW']    ?? 600));

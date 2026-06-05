@@ -66,6 +66,7 @@ header('Content-Type: text/html; charset=UTF-8');
     .role-badge[data-role="m"] { background:#EDE9FE; color:#6D28D9; }
     .role-badge[data-role="a"] { background:#DCFCE7; color:#15803D; }
     </style>
+    <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
 </head>
 <body>
 <?php include __DIR__ . '/../components/nav.php'; ?>
@@ -149,10 +150,7 @@ function token() { return localStorage.getItem('pmok_auth_token'); }
 
 async function init() {
     const user = authGetUser();
-    if (!user || user.role !== 's') {
-        document.getElementById('statsAuthWall').style.display = '';
-        return;
-    }
+    if (!user || user.role !== 's') { location.href = '/'; return; }
     document.getElementById('statsPage').style.display = '';
     await loadStats(6);
 }

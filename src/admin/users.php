@@ -180,6 +180,7 @@ header('Content-Type: text/html; charset=UTF-8');
     }
     .adm-restore-btn:hover { background: #DCFCE7; }
     </style>
+    <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
 </head>
 <body>
 <?php include __DIR__ . '/../components/nav.php'; ?>
@@ -295,14 +296,7 @@ function token() { return localStorage.getItem('pmok_auth_token'); }
 
 async function init() {
     const user = authGetUser();
-    if (!user) {
-        document.getElementById('adminAuthWall').style.display = '';
-        return;
-    }
-    if (user.role !== 's') {
-        document.getElementById('adminForbidden').style.display = '';
-        return;
-    }
+    if (!user || user.role !== 's') { location.href = '/'; return; }
     document.getElementById('adminPage').style.display = '';
     await loadUsers(1);
 }
