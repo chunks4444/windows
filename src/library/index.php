@@ -23,6 +23,7 @@
         </div>
         <div class="lib-filters">
             <button class="lib-filter-btn active" data-filter="all">전체</button>
+            <button class="lib-filter-btn lib-filter-like" data-filter="liked"><i class="bi bi-heart-fill"></i> 좋아요</button>
             <button class="lib-filter-btn" data-filter="anbang">안방</button>
             <button class="lib-filter-btn" data-filter="hyeongwan">현관</button>
             <button class="lib-filter-btn" data-filter="jungmun">중문</button>
@@ -462,7 +463,9 @@ function buildCard(p) {
 function renderMasonry() {
     const masonry = document.getElementById('libMasonry');
     const filtered = PATTERNS.filter(p => {
-        const matchCat = activeFilter === 'all' || p.category === activeFilter;
+        const matchCat = activeFilter === 'all'    ? true
+                       : activeFilter === 'liked'  ? !!likes[p.id]
+                       : p.category === activeFilter;
         const matchQ   = !searchQuery || p.name.includes(searchQuery) || p.sub.toLowerCase().includes(searchQuery.toLowerCase());
         return matchCat && matchQ;
     });
