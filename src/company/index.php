@@ -503,8 +503,8 @@ header('Content-Type: text/html; charset=UTF-8');
 <div class="container">
     <section class="ab-section">
         <p class="ab-section-label">Studio</p>
-        <h2 class="ab-section-title">직접 설계해보세요.</h2>
-        <p class="ab-section-body">평목 스튜디오는 브라우저에서 바로 사용할 수 있는 창호 설계 도구입니다. 문틀 크기, 살 간격, 패턴을 조정하며 나만의 창호를 완성해보세요.</p>
+        <h2 class="ab-section-title">직접 설계해 보세요.</h2>
+        <p class="ab-section-body">평목 스튜디오는 브라우저에서 바로 사용할 수 있는 창호 설계 도구입니다. 문틀 크기, 살 간격, 패턴을 조정하며 나만의 창호를 완성해 보세요.</p>
         <div class="ab-tools-grid">
             <a href="/src/engine/Sabunteok/Sabunteok.php" class="ab-tool-card">
                 <svg class="ab-tool-icon" width="48" height="48" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
