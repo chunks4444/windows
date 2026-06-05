@@ -41,8 +41,8 @@ try {
         exit;
     }
 
-    $ip = $_SERVER['HTTP_CF_CONNECTING_IP'] ?? $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? null;
-    if ($ip) $ip = trim(explode(',', $ip)[0]);
+    require_once __DIR__ . '/../../lib/logger.php';
+    $ip = pm_get_ip();
     $pdo->prepare('UPDATE users SET last_login_at = NOW(), last_login_ip = ? WHERE id = ?')->execute([$ip, $user['id']]);
 
     $token = jwt_encode([

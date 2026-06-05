@@ -25,7 +25,7 @@ function pm_detect_browser(string $ua): string {
 }
 
 function pm_get_ip(): string {
-    foreach (['HTTP_CF_CONNECTING_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR'] as $key) {
+    foreach (['HTTP_CF_CONNECTING_IP', 'HTTP_X_REAL_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR'] as $key) {
         if (!empty($_SERVER[$key])) {
             $ip = trim(explode(',', $_SERVER[$key])[0]);
             if (filter_var($ip, FILTER_VALIDATE_IP)) return $ip;
