@@ -112,7 +112,7 @@ header('Content-Type: text/html; charset=UTF-8');
 
             <!-- card -->
             <section class="values-section mt-5">
-                <div class="values-inner">
+                <div class="values-inner container">
                     <div class="values-grid">
                         <div class="values-item">
                             <h2 class="values-title">당신의 공간에 빛과 바람의 길을 디자인하세요.</h2>

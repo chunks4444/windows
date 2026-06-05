@@ -32,12 +32,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
     if ($q) {
         $like    = '%' . $q . '%';
-        $stmt    = $pdo->prepare('SELECT id, email, role, name, phone, company, created_at, last_login_at, withdrawn_at FROM users WHERE email LIKE ? OR name LIKE ? ORDER BY id DESC LIMIT ? OFFSET ?');
+        $stmt    = $pdo->prepare('SELECT id, email, role, name, phone, company, created_at, last_login_at, last_login_ip, withdrawn_at FROM users WHERE email LIKE ? OR name LIKE ? ORDER BY id DESC LIMIT ? OFFSET ?');
         $stmt->execute([$like, $like, $limit, $offset]);
         $cntStmt = $pdo->prepare('SELECT COUNT(*) FROM users WHERE email LIKE ? OR name LIKE ?');
         $cntStmt->execute([$like, $like]);
     } else {
-        $stmt    = $pdo->prepare('SELECT id, email, role, name, phone, company, created_at, last_login_at, withdrawn_at FROM users ORDER BY id DESC LIMIT ? OFFSET ?');
+        $stmt    = $pdo->prepare('SELECT id, email, role, name, phone, company, created_at, last_login_at, last_login_ip, withdrawn_at FROM users ORDER BY id DESC LIMIT ? OFFSET ?');
         $stmt->execute([$limit, $offset]);
         $cntStmt = $pdo->query('SELECT COUNT(*) FROM users');
     }

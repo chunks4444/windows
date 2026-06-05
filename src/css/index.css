@@ -18,13 +18,11 @@ body {
 
 /* VALUES */
 .values-section {
-    padding: 0 48px 40px;
+    padding-bottom: 40px;
 }
 
 .values-inner {
     width: 100%;
-    max-width: 1024px;
-    margin: 0 auto;
 }
 
 .values-item {

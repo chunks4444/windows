@@ -227,6 +227,7 @@ header('Content-Type: text/html; charset=UTF-8');
                         <th>연락처</th>
                         <th>가입일</th>
                         <th>최종 접속</th>
+                        <th>접속 IP</th>
                         <th>상태</th>
                         <th></th>
                     </tr>
@@ -334,6 +335,7 @@ function renderTable(users) {
             <td>${u.phone ? esc(u.phone) : '<span class="adm-null">—</span>'}</td>
             <td style="color:var(--text-3);font-size:12px;">${u.created_at ? u.created_at.slice(0,10) : '—'}</td>
             <td style="color:var(--text-3);font-size:12px;">${fmtDatetime(u.last_login_at)}</td>
+            <td style="color:var(--text-3);font-size:12px;font-family:monospace;">${u.last_login_ip ? esc(u.last_login_ip) : '<span class="adm-null">—</span>'}</td>
             <td>${u.withdrawn_at ? '<span class="adm-withdrawn-badge">탈퇴</span>' : '<span class="adm-active-badge">정상</span>'}</td>
             <td><div class="adm-action-cell">
                 <button class="adm-edit-btn" onclick='openModal(${u.id}, ${JSON.stringify(u)})'>수정</button>

@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS users (
     password_hash VARCHAR(255)    NOT NULL COMMENT '비밀번호 해시 (bcrypt)',
     created_at    DATETIME        NOT NULL DEFAULT NOW() COMMENT '가입일시',
     last_login_at DATETIME        NULL COMMENT '최종 접속일시',
+    last_login_ip VARCHAR(45)     NULL COMMENT '최종 접속 IP',
     withdrawn_at  DATETIME        NULL COMMENT '탈퇴일시 (NULL=정상, NOT NULL=탈퇴)',
     PRIMARY KEY (id),
     UNIQUE KEY uq_users_email (email)
