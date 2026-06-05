@@ -116,7 +116,7 @@ header('Content-Type: text/html; charset=UTF-8');
         font-weight: 600;
         letter-spacing: 0.12em;
         text-transform: uppercase;
-        color: var(--text-3);
+        color: var(--red);
         margin-bottom: 16px;
     }
 
