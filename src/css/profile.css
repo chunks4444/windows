@@ -123,6 +123,7 @@
 .pf-row {
     display: flex;
     gap: 12px;
+    margin-bottom: 16px;
 }
 
 .pf-row .pf-field {

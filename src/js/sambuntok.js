@@ -587,6 +587,7 @@ let addLineStart = null;
 let lastSegMap   = new Map();   // segKey → {mx,my,normAngle,cx,cy}
 let lastNodeList = [];
 let lastILeft=0, lastITop=0, lastIW=1, lastIH=1, lastSlatPx=1, lastCellSize=1;
+let lastBaseScale = 1, lastOLeft = 0, lastOTop = 0, lastDoorWpx = 0, lastDoorHpx = 0;
 
 // 캔버스 좌표 → 내경 mm 좌표 변환
 function canvasToInnerMm(cx, cy) {
@@ -983,6 +984,11 @@ async function draw() {
 
         if (d === renderOrder[0]) {
             lastILeft = iLeft; lastITop = iTop; lastIW = iW; lastIH = iH; lastSlatPx = slatPx;
+            lastOLeft     = toCanvasX(0);
+            lastOTop      = toCanvasY(0);
+            lastBaseScale = baseScale;
+            lastDoorWpx   = totalWidth * baseScale;
+            lastDoorHpx   = totalH     * baseScale;
         }
 
         ctx.strokeStyle = patternBroken ? '#cc0000' : selectedSlatColor;
@@ -1380,7 +1386,101 @@ async function draw() {
             }
         }
     }
+    drawRulers();
 }
+
+    function drawRulers() {
+        const rCtx = canvas.getContext('2d');
+        const rDpr = window.devicePixelRatio || 1;
+        if (!lastBaseScale) return;
+
+        const R    = 18;
+        const mmPx = lastBaseScale * scaleFactor;
+
+        let step;
+        if      (mmPx >= 5)    step = 5;
+        else if (mmPx >= 2)    step = 10;
+        else if (mmPx >= 0.8)  step = 25;
+        else if (mmPx >= 0.35) step = 50;
+        else                   step = 100;
+
+        const ox = logW / 2 + panX + lastOLeft * scaleFactor;
+        const oy = logH / 2 + panY + lastOTop  * scaleFactor;
+
+        rCtx.save();
+        rCtx.setTransform(rDpr, 0, 0, rDpr, 0, 0);
+
+        const BG_IN  = 'rgba(195,197,197,0.97)';
+        const BG_OUT = 'rgba(252,252,252,0.97)';
+        const LINE   = '#bbb';
+        const LBL    = '#888';
+        const ZERO   = '#3A8C82';
+
+        const doorL = ox;
+        const doorR = ox + lastDoorWpx * scaleFactor;
+        const doorT = oy;
+        const doorB = oy + lastDoorHpx * scaleFactor;
+
+        // 가로 눈금자
+        rCtx.fillStyle = BG_OUT;
+        rCtx.fillRect(R, 0, logW - R, R);
+        const hL = Math.max(R, doorL), hR = Math.min(logW, doorR);
+        if (hR > hL) { rCtx.fillStyle = BG_IN; rCtx.fillRect(hL, R - 8, hR - hL, 8); }
+        rCtx.strokeStyle = '#ccc'; rCtx.lineWidth = 0.5;
+        rCtx.beginPath(); rCtx.moveTo(R, R); rCtx.lineTo(logW, R); rCtx.stroke();
+
+        const xS = Math.ceil((R - ox) / mmPx / step) * step;
+        const xE = Math.floor((logW - ox) / mmPx / step) * step;
+        for (let mm = xS; mm <= xE; mm += step) {
+            const x = ox + mm * mmPx;
+            if (x < R || x > logW) continue;
+            rCtx.strokeStyle = mm === 0 ? ZERO : LINE;
+            rCtx.lineWidth   = mm === 0 ? 1 : 0.5;
+            rCtx.beginPath(); rCtx.moveTo(x, R - 8); rCtx.lineTo(x, R); rCtx.stroke();
+            rCtx.fillStyle    = mm === 0 ? ZERO : LBL;
+            rCtx.font         = '8px sans-serif';
+            rCtx.textBaseline = 'top';
+            rCtx.textAlign    = mm === 0 ? 'left' : 'center';
+            rCtx.fillText(mm, mm === 0 ? x + 2 : x, 2);
+        }
+
+        // 세로 눈금자
+        rCtx.fillStyle = BG_OUT;
+        rCtx.fillRect(0, R, R, logH);
+        const vT = Math.max(R, doorT), vB = Math.min(logH, doorB);
+        if (vB > vT) { rCtx.fillStyle = BG_IN; rCtx.fillRect(R - 8, vT, 8, vB - vT); }
+        rCtx.strokeStyle = '#ddd'; rCtx.lineWidth = 0.5;
+        rCtx.beginPath(); rCtx.moveTo(R, R); rCtx.lineTo(R, logH); rCtx.stroke();
+
+        const yS = Math.ceil((R - oy) / mmPx / step) * step;
+        const yE = Math.floor((logH - oy) / mmPx / step) * step;
+        for (let mm = yS; mm <= yE; mm += step) {
+            const y = oy + mm * mmPx;
+            if (y < R || y > logH) continue;
+            rCtx.strokeStyle = mm === 0 ? ZERO : LINE;
+            rCtx.lineWidth   = mm === 0 ? 1 : 0.5;
+            rCtx.beginPath(); rCtx.moveTo(R - 8, y); rCtx.lineTo(R, y); rCtx.stroke();
+            rCtx.save();
+            rCtx.translate(R / 2, y);
+            rCtx.rotate(-Math.PI / 2);
+            rCtx.fillStyle    = mm === 0 ? ZERO : LBL;
+            rCtx.font         = '8px sans-serif';
+            rCtx.textAlign    = 'center';
+            rCtx.textBaseline = 'middle';
+            rCtx.fillText(mm, 0, 0);
+            rCtx.restore();
+        }
+
+        // 코너 블록
+        rCtx.fillStyle = BG_OUT;
+        rCtx.fillRect(0, 0, R, R);
+        rCtx.strokeStyle = '#ddd'; rCtx.lineWidth = 0.5;
+        rCtx.beginPath();
+        rCtx.moveTo(R, 0); rCtx.lineTo(R, R); rCtx.lineTo(0, R);
+        rCtx.stroke();
+
+        rCtx.restore();
+    }
 
     function drawCenterLine(x1, y1, x2, y2) {
         ctx.save();

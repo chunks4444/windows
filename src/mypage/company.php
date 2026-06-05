@@ -51,17 +51,19 @@ header('Content-Type: text/html; charset=UTF-8');
                 <div class="pf-columns">
                     <!-- 왼쪽 -->
                     <div class="pf-col">
-                        <div class="pf-field">
-                            <label class="pf-label" for="cpName">회사명</label>
-                            <input id="cpName" name="company_name" type="text" class="pf-input pf-input--half"
-                                   placeholder="(주)평목" maxlength="100">
-                        </div>
-                        <div class="pf-field">
-                            <label class="pf-label" for="cpBizNo">사업자등록번호</label>
-                            <input id="cpBizNo" name="company_biz_no" type="text" class="pf-input pf-input--half"
-                                   placeholder="000-00-00000" maxlength="20">
-                        </div>
                         <div class="pf-row">
+                            <div class="pf-field">
+                                <label class="pf-label" for="cpName">회사명</label>
+                                <input id="cpName" name="company_name" type="text" class="pf-input"
+                                       placeholder="(주)평목" maxlength="100">
+                            </div>
+                            <div class="pf-field">
+                                <label class="pf-label" for="cpBizNo">사업자등록번호</label>
+                                <input id="cpBizNo" name="company_biz_no" type="text" class="pf-input"
+                                       placeholder="000-00-00000" maxlength="20">
+                            </div>
+                        </div>
+                        <div class="pf-row" style="margin-top:12px;">
                             <div class="pf-field">
                                 <label class="pf-label" for="cpBizType">업태</label>
                                 <input id="cpBizType" name="company_biz_type" type="text" class="pf-input"
@@ -73,15 +75,17 @@ header('Content-Type: text/html; charset=UTF-8');
                                        placeholder="목재가구" maxlength="100">
                             </div>
                         </div>
-                        <div class="pf-field" style="margin-top:12px;">
-                            <label class="pf-label" for="cpCeo">대표자명</label>
-                            <input id="cpCeo" name="company_ceo" type="text" class="pf-input pf-input--half"
-                                   placeholder="홍길동" maxlength="100">
-                        </div>
-                        <div class="pf-field">
-                            <label class="pf-label" for="cpPhone">대표 연락처</label>
-                            <input id="cpPhone" name="company_phone" type="tel" class="pf-input pf-input--half"
-                                   placeholder="02-0000-0000" maxlength="30">
+                        <div class="pf-row" style="margin-top:12px;">
+                            <div class="pf-field">
+                                <label class="pf-label" for="cpCeo">대표자명</label>
+                                <input id="cpCeo" name="company_ceo" type="text" class="pf-input"
+                                       placeholder="홍길동" maxlength="100">
+                            </div>
+                            <div class="pf-field">
+                                <label class="pf-label" for="cpPhone">대표 연락처</label>
+                                <input id="cpPhone" name="company_phone" type="tel" class="pf-input"
+                                       placeholder="02-0000-0000" maxlength="30">
+                            </div>
                         </div>
                     </div>
 
