@@ -179,10 +179,15 @@ function authSaveSession(token, user) {
 }
 
 function authLogout() {
+    const token = localStorage.getItem(AUTH_TOKEN_KEY);
     localStorage.removeItem(AUTH_TOKEN_KEY);
     localStorage.removeItem(AUTH_USER_KEY);
     document.cookie = 'pmok_auth=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-    location.href = '/';
+    fetch('/src/api/auth/logout.php', {
+        method: 'POST',
+        headers: token ? { 'Authorization': 'Bearer ' + token } : {},
+        keepalive: true,
+    }).finally(() => { location.href = '/'; });
 }
 
 function authGetUser() {
