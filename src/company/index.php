@@ -304,6 +304,16 @@ header('Content-Type: text/html; charset=UTF-8');
         color: var(--red);
     }
 
+    /* ── FULL-WIDTH BOXES ────────────────────────── */
+    .ab-contact-box,
+    .ab-phil-box,
+    .ab-studio-box {
+        background: #f7f7f6;
+        padding: 80px 0;
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+    }
+
     /* ── CONTACT ─────────────────────────────────── */
     .ab-contact-cols {
         display: grid;
@@ -452,13 +462,11 @@ header('Content-Type: text/html; charset=UTF-8');
     </div>
 </section>
 
-<div class="container">
-
-    <!-- PHILOSOPHY -->
-    <section class="ab-section ab-section--no-border">
+<!-- PHILOSOPHY — full-width box -->
+<div class="ab-phil-box">
+    <div class="container">
         <p class="ab-section-label">Philosophy</p>
         <div class="ab-phil-cols">
-            <!-- 왼쪽: 평목 소개 -->
             <div class="ab-phil-left">
                 <h2 class="ab-section-title">평목(平木)<br><span style="font-size:0.6em;font-weight:400;color:var(--text-3);letter-spacing:0.05em;">workgroup pyeongmok</span></h2>
                 <div class="ab-phil-text">
@@ -467,7 +475,6 @@ header('Content-Type: text/html; charset=UTF-8');
                     <p>견고한 나무를 다듬는 평목의 목수들은<br>시간에 마모되지 않고 시간 속에서<br>품격이 더해지는 창호와 가구를 만들고자 합니다.</p>
                 </div>
             </div>
-            <!-- 오른쪽: 3항목 -->
             <div class="ab-phil-right">
                 <div class="ab-phil-grid">
                     <div class="ab-phil-item">
@@ -488,15 +495,16 @@ header('Content-Type: text/html; charset=UTF-8');
                 </div>
             </div>
         </div>
-    </section>
-    <hr class="ab-full-divider">
+    </div>
+</div>
 
-    <!-- STUDIO TOOLS -->
+
+<!-- STUDIO -->
+<div class="container">
     <section class="ab-section">
         <p class="ab-section-label">Studio</p>
         <h2 class="ab-section-title">직접 설계해보세요.</h2>
         <p class="ab-section-body">평목 스튜디오는 브라우저에서 바로 사용할 수 있는 창호 설계 도구입니다. 문틀 크기, 살 간격, 패턴을 조정하며 나만의 창호를 완성해보세요.</p>
-
         <div class="ab-tools-grid">
             <a href="/src/engine/Sabunteok/Sabunteok.php" class="ab-tool-card">
                 <svg class="ab-tool-icon" width="48" height="48" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
@@ -523,9 +531,11 @@ header('Content-Type: text/html; charset=UTF-8');
             </a>
         </div>
     </section>
+</div>
 
-    <!-- INFO -->
-    <section class="ab-section">
+<!-- INFO — full-width box -->
+<div class="ab-contact-box">
+    <div class="container">
         <p class="ab-section-label">Contact</p>
         <h2 class="ab-section-title">함께 만들어가요.</h2>
         <p class="ab-section-body">설계 문의, 제작 상담, 협업 제안 모두 환영합니다.</p>
@@ -571,8 +581,7 @@ header('Content-Type: text/html; charset=UTF-8');
                 <img src="/src/img/web/IMG_0889.jpeg" alt="공방 사진 4">
             </div>
         </div>
-    </section>
-
+    </div>
 </div>
 
 <!-- FOOTER -->
