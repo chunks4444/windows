@@ -960,48 +960,30 @@ async function draw() {
 
         for (let i = 1; i < geo.cols; i++) {
 
-            // 내경 시작(frameW)에서 i번째 살 중심 위치
-            // = frameW + i*cellW + (i-0.5)*slatV
-            // = frameW + i*(cellW + slatV) - slatV/2
-            // = frameW + i*stepW - slatV/2
             const cx    = geo.frameW + i * (geo.cellW + geo.slatV) - geo.slatV / 2;
             const left  = cx - geo.slatV / 2;
             const topY  = geo.frameHTop;
             const botY  = geo.frameHTop + geo.innerH;
+            const stepH = geo.cellH + geo.slatH;
 
-            const vsKey = `${d}:vs:${i}`;
-            const vsCx  = toCanvasX(cx), vsCy = toCanvasY((topY + botY) / 2);
-            lastSegMap.set(vsKey, { cx: vsCx, cy: toCanvasY(topY), ex: vsCx, ey: toCanvasY(botY), mx: vsCx, my: vsCy, normAngle: Math.PI / 2, lineKey: makeLineKey(vsCx, vsCy, Math.PI / 2) });
-            if (deletedSegs.has(vsKey)) continue;
+            // 촉 (항상)
+            ctx.fillStyle = Color_Tenon_Fill;
+            ctx.fillRect(toCanvasX(left), toCanvasY(topY - geo.tenonDepth), geo.slatV * baseScale, geo.tenonDepth * baseScale);
+            ctx.fillRect(toCanvasX(left), toCanvasY(botY), geo.slatV * baseScale, geo.tenonDepth * baseScale);
 
-            // 촉
-            ctx.fillStyle =
-                Color_Tenon_Fill;
+            for (let j = 0; j < geo.rowsInt; j++) {
+                const segStartY = topY + j * stepH;
+                const segEndY   = topY + (j + 1) * stepH;
+                const segMidY   = (segStartY + segEndY) / 2;
+                const vsCx = toCanvasX(cx), vsCy = toCanvasY(segMidY);
+                const vsKey = `${d}:vs:${i}:${j}`;
+                lastSegMap.set(vsKey, { cx: vsCx, cy: toCanvasY(segStartY), ex: vsCx, ey: toCanvasY(segEndY), mx: vsCx, my: vsCy, normAngle: Math.PI / 2, lineKey: makeLineKey(vsCx, vsCy, Math.PI / 2) });
+                if (deletedSegs.has(vsKey)) continue;
 
-            ctx.fillRect(
-                toCanvasX(left),
-                toCanvasY(topY - geo.tenonDepth),
-                geo.slatV * baseScale,
-                geo.tenonDepth * baseScale
-            );
-
-            ctx.fillRect(
-                toCanvasX(left),
-                toCanvasY(botY),
-                geo.slatV * baseScale,
-                geo.tenonDepth * baseScale
-            );
-
-            // 몸통
-            ctx.fillStyle = Color_Slat_Fill;
-            ctx.fillRect(toCanvasX(left), toCanvasY(topY), geo.slatV * baseScale, geo.innerH * baseScale);
-
-            drawCenterLine(
-                toCanvasX(cx),
-                toCanvasY(topY - geo.tenonDepth),
-                toCanvasX(cx),
-                toCanvasY(botY + geo.tenonDepth)
-            );
+                ctx.fillStyle = Color_Slat_Fill;
+                ctx.fillRect(toCanvasX(left), toCanvasY(segStartY), geo.slatV * baseScale, stepH * baseScale);
+                drawCenterLine(toCanvasX(cx), toCanvasY(segStartY), toCanvasX(cx), toCanvasY(segEndY));
+            }
         }
 
         // ====================================
@@ -1010,45 +992,30 @@ async function draw() {
 
         for (let j = 1; j < geo.rowsInt; j++) {
 
-            // j번째 가로살 중심
             const ry    = geo.frameHTop + j * (geo.cellH + geo.slatH) - geo.slatH / 2;
             const top   = ry - geo.slatH / 2;
             const leftX  = geo.frameW;
             const rightX = geo.frameW + geo.innerW;
+            const stepW  = geo.cellW + geo.slatV;
 
-            const hsKey = `${d}:hs:${j}`;
-            const hsCx  = toCanvasX((leftX + rightX) / 2), hsCy = toCanvasY(ry);
-            lastSegMap.set(hsKey, { cx: toCanvasX(leftX), cy: hsCy, ex: toCanvasX(rightX), ey: hsCy, mx: hsCx, my: hsCy, normAngle: 0, lineKey: makeLineKey(hsCx, hsCy, 0) });
-            if (deletedSegs.has(hsKey)) continue;
+            // 촉 (항상)
+            ctx.fillStyle = Color_Tenon_Fill;
+            ctx.fillRect(toCanvasX(leftX - geo.tenonDepth), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale);
+            ctx.fillRect(toCanvasX(rightX), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale);
 
-            // 촉
-            ctx.fillStyle =
-                Color_Tenon_Fill;
+            for (let i = 0; i < geo.cols; i++) {
+                const segStartX = leftX + i * stepW;
+                const segEndX   = leftX + (i + 1) * stepW;
+                const segMidX   = (segStartX + segEndX) / 2;
+                const hsCy = toCanvasY(ry);
+                const hsKey = `${d}:hs:${j}:${i}`;
+                lastSegMap.set(hsKey, { cx: toCanvasX(segStartX), cy: hsCy, ex: toCanvasX(segEndX), ey: hsCy, mx: toCanvasX(segMidX), my: hsCy, normAngle: 0, lineKey: makeLineKey(toCanvasX(segMidX), hsCy, 0) });
+                if (deletedSegs.has(hsKey)) continue;
 
-            ctx.fillRect(
-                toCanvasX(leftX - geo.tenonDepth),
-                toCanvasY(top),
-                geo.tenonDepth * baseScale,
-                geo.slatH * baseScale
-            );
-
-            ctx.fillRect(
-                toCanvasX(rightX),
-                toCanvasY(top),
-                geo.tenonDepth * baseScale,
-                geo.slatH * baseScale
-            );
-
-            // 몸통
-            ctx.fillStyle = Color_Slat_Fill;
-            ctx.fillRect(toCanvasX(leftX), toCanvasY(top), geo.innerW * baseScale, geo.slatH * baseScale);
-
-            drawCenterLine(
-                toCanvasX(leftX - geo.tenonDepth),
-                toCanvasY(ry),
-                toCanvasX(rightX + geo.tenonDepth),
-                toCanvasY(ry)
-            );
+                ctx.fillStyle = Color_Slat_Fill;
+                ctx.fillRect(toCanvasX(segStartX), toCanvasY(top), stepW * baseScale, geo.slatH * baseScale);
+                drawCenterLine(toCanvasX(segStartX), toCanvasY(ry), toCanvasX(segEndX), toCanvasY(ry));
+            }
         }
 
         // ====================================
@@ -1065,21 +1032,29 @@ async function draw() {
             for (let col = 0; col < geo.cols; col++) {
 
                 // 각 셀의 좌상 코너 (mm)
-                const x = geo.frameW + col * (geo.cellW + geo.slatV);
-                const y = geo.frameHTop + row * (geo.cellH + geo.slatH);
+                const x     = geo.frameW + col * (geo.cellW + geo.slatV);
+                const y     = geo.frameHTop + row * (geo.cellH + geo.slatH);
+                const stepW = geo.cellW + geo.slatV;
+                const stepH = geo.cellH + geo.slatH;
 
-                // 셀 코너 노드 (첫 패널만)
+                // 교점 중심 좌표 (살 두께 절반 보정)
+                const jx0 = x - geo.slatV / 2;                    // 현재 열 교점 중심 x
+                const jx1 = x + geo.cellW + geo.slatV / 2;        // 다음 열 교점 중심 x
+                const jy0 = y - geo.slatH / 2;                    // 현재 행 교점 중심 y
+                const jy1 = y + geo.cellH + geo.slatH / 2;        // 다음 행 교점 중심 y
+
+                // 교점 중심 노드 (첫 패널만)
                 if (d === renderOrder[0]) {
-                    lastNodeList.push({ cx: toCanvasX(x), cy: toCanvasY(y) });
-                    if (col === geo.cols - 1) lastNodeList.push({ cx: toCanvasX(x + geo.cellW), cy: toCanvasY(y) });
-                    if (row === geo.rowsInt - 1) lastNodeList.push({ cx: toCanvasX(x), cy: toCanvasY(y + geo.cellH) });
-                    if (col === geo.cols - 1 && row === geo.rowsInt - 1) lastNodeList.push({ cx: toCanvasX(x + geo.cellW), cy: toCanvasY(y + geo.cellH) });
+                    lastNodeList.push({ cx: toCanvasX(jx0), cy: toCanvasY(jy0) });
+                    if (col === geo.cols - 1) lastNodeList.push({ cx: toCanvasX(jx1), cy: toCanvasY(jy0) });
+                    if (row === geo.rowsInt - 1) lastNodeList.push({ cx: toCanvasX(jx0), cy: toCanvasY(jy1) });
+                    if (col === geo.cols - 1 && row === geo.rowsInt - 1) lastNodeList.push({ cx: toCanvasX(jx1), cy: toCanvasY(jy1) });
                 }
 
                 // 좌상 → 우하 (\)
-                const bsCx = toCanvasX(x),             bsCy = toCanvasY(y);
-                const bsEx = toCanvasX(x + geo.cellW), bsEy = toCanvasY(y + geo.cellH);
-                const bsMx = (bsCx + bsEx) / 2,        bsMy = (bsCy + bsEy) / 2;
+                const bsCx = toCanvasX(jx0), bsCy = toCanvasY(jy0);
+                const bsEx = toCanvasX(jx1), bsEy = toCanvasY(jy1);
+                const bsMx = (bsCx + bsEx) / 2, bsMy = (bsCy + bsEy) / 2;
                 const bsKey = `${d}:bs:${row}:${col}`;
                 lastSegMap.set(bsKey, { cx: bsCx, cy: bsCy, ex: bsEx, ey: bsEy, mx: bsMx, my: bsMy, normAngle: Math.PI / 4, lineKey: makeLineKey(bsMx, bsMy, Math.PI / 4) });
                 if (!deletedSegs.has(bsKey)) {
@@ -1090,8 +1065,8 @@ async function draw() {
                 }
 
                 // 우상 → 좌하 (/)
-                const fsCx = toCanvasX(x + geo.cellW), fsCy = toCanvasY(y);
-                const fsEx = toCanvasX(x),              fsEy = toCanvasY(y + geo.cellH);
+                const fsCx = toCanvasX(jx1), fsCy = toCanvasY(jy0);
+                const fsEx = toCanvasX(jx0), fsEy = toCanvasY(jy1);
                 const fsMx = (fsCx + fsEx) / 2,         fsMy = (fsCy + fsEy) / 2;
                 const fsKey = `${d}:fs:${row}:${col}`;
                 lastSegMap.set(fsKey, { cx: fsCx, cy: fsCy, ex: fsEx, ey: fsEy, mx: fsMx, my: fsMy, normAngle: 3 * Math.PI / 4, lineKey: makeLineKey(fsMx, fsMy, 3 * Math.PI / 4) });
@@ -1225,7 +1200,7 @@ async function draw() {
         addedLines.forEach((ln, idx) => {
             const p1 = normToCtx(ln.nx1, ln.ny1);
             const p2 = normToCtx(ln.nx2, ln.ny2);
-            lastSegMap.set(`added:${idx}`, { mx: (p1.x + p2.x) / 2, my: (p1.y + p2.y) / 2, normAngle: 0 });
+            lastSegMap.set(`added:${idx}`, { cx: p1.x, cy: p1.y, ex: p2.x, ey: p2.y, mx: (p1.x + p2.x) / 2, my: (p1.y + p2.y) / 2, normAngle: 0 });
             ctx.beginPath();
             ctx.moveTo(p1.x, p1.y);
             ctx.lineTo(p2.x, p2.y);
@@ -1755,25 +1730,32 @@ async function draw() {
         if (lineEditMode === 'add') draw();
     }
 
+    function distToSeg(px, py, seg) {
+        const { cx, cy, ex, ey } = seg;
+        const dx = ex - cx, dy = ey - cy;
+        const lenSq = dx * dx + dy * dy;
+        if (lenSq === 0) return Math.hypot(px - cx, py - cy);
+        const t = Math.max(0, Math.min(1, ((px - cx) * dx + (py - cy) * dy) / lenSq));
+        return Math.hypot(px - cx - t * dx, py - cy - t * dy);
+    }
+
     function handleEditClick(e) {
         const coord = screenToCtxCoord(e.clientX, e.clientY);
 
         if (lineEditMode === 'delete') {
             let bestKey = null, bestDist = Infinity;
-            for (const [key, pos] of lastSegMap) {
-                const dist = Math.hypot(coord.x - pos.mx, coord.y - pos.my);
+            const threshold = Math.max(lastSlatPx * 4, lastCellSize * 0.35);
+            for (const [key, seg] of lastSegMap) {
+                const dist = distToSeg(coord.x, coord.y, seg);
                 if (dist < bestDist) { bestDist = dist; bestKey = key; }
             }
-            if (!bestKey || bestDist > lastCellSize * 1.2) return;
+            if (!bestKey || bestDist > threshold) return;
             if (bestKey.startsWith('added:')) {
                 const idx = parseInt(bestKey.split(':')[1]);
                 addedLines.splice(idx, 1);
             } else {
-                if (deletedSegs.has(bestKey)) {
-                    deletedSegs.delete(bestKey);
-                } else {
-                    deletedSegs.add(bestKey);
-                }
+                if (deletedSegs.has(bestKey)) deletedSegs.delete(bestKey);
+                else deletedSegs.add(bestKey);
             }
             draw();
             return;

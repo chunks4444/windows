@@ -104,6 +104,16 @@ $isIndex      = ($currentFile === 'index.php' || $_SERVER['PHP_SELF'] === '/');
                         </svg>
                         Triangle Grid
                     </a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item d-flex align-items-center gap-2" href="/dashboard.php">
+                        <svg width="27" height="27" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+                            <rect fill="currentColor" x="148" y="204" width="384" height="46" rx="23"/>
+                            <rect fill="currentColor" x="148" y="430" width="384" height="46" rx="23"/>
+                            <rect fill="currentColor" x="204" y="148" width="46" height="384" rx="23"/>
+                            <rect fill="currentColor" x="430" y="148" width="46" height="384" rx="23"/>
+                        </svg>
+                        내 도면
+                    </a></li>
                 </ul>
             </li>
             <li class="nav-item"><a href="#" class="nav-link">Pattern Library</a></li>
@@ -120,7 +130,8 @@ $isIndex      = ($currentFile === 'index.php' || $_SERVER['PHP_SELF'] === '/');
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li><span class="dropdown-item-text" style="font-size:11px;color:#aaa;padding:8px 18px 4px;">마지막 접속<br><span id="navLastLogin" style="color:#888;font-weight:600;">—</span></span></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="/dashboard.php">내 도면</a></li>
+                    <li><a class="dropdown-item" href="/src/mypage/profile.php">프로필</a></li>
+                    <li><a class="dropdown-item" href="/src/mypage/company.php">회사 정보</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="#" onclick="authLogout();return false;">로그아웃</a></li>
                 </ul>

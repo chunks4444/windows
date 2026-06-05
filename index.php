@@ -39,7 +39,7 @@ header('Content-Type: text/html; charset=UTF-8');
                 </div>
                 <div class="row g-4">
                     <div class="col-md-4 text-center">
-                        <div class="service-card h-80 p-4" style="background-image: url(https://i.pinimg.com/736x/eb/eb/ba/ebebbadeff7623b9372b42c52f01a5de.jpg);">
+                        <div class="service-card service-card--square h-80 p-4">
                             <div class=" mb-4">
                                 
                                 <a href="/src/engine/sambuntok/sambuntok.php" class="pm-symbol-link">
@@ -48,13 +48,10 @@ header('Content-Type: text/html; charset=UTF-8');
                                         height="120"
                                         viewbox="0 0 680 680"
                                         xmlns="http://www.w3.org/2000/svg">
-                                        <rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="0"/>
-                                        <g transform="rotate(60 340 340)">
-                                            <rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="0"/>
-                                        </g>
-                                        <g transform="rotate(120 340 340)">
-                                            <rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="0"/>
-                                        </g>
+                                        <rect class="pm-symbol-bar" x="148" y="204" width="384" height="46" rx="0"/>
+                                        <rect class="pm-symbol-bar" x="148" y="430" width="384" height="46" rx="0"/>
+                                        <rect class="pm-symbol-bar" x="204" y="148" width="46" height="384" rx="0"/>
+                                        <rect class="pm-symbol-bar" x="430" y="148" width="46" height="384" rx="0"/>
                                     </svg>
                                 </a>
                             </div>
@@ -63,7 +60,7 @@ header('Content-Type: text/html; charset=UTF-8');
                         </div>
                     </div>
                     <div class="col-md-4 text-center">
-                        <div class="service-card h-80 p-4" style="background-image: url(https://i.pinimg.com/736x/eb/39/7c/eb397c9ef2482d34fdbfe0c5aaafffd3.jpg);">
+                        <div class="service-card service-card--triangle h-80 p-4">
                             <div class=" mb-4" >
                                 <a href="/src/engine/sambuntok/sambuntok.php" class="pm-symbol-link">
                                     <svg
@@ -86,7 +83,7 @@ header('Content-Type: text/html; charset=UTF-8');
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="service-card h-80 p-4" style="background-image: url(https://i.pinimg.com/736x/0f/1a/f2/0f1af248ae79652e0b6b388b7ddb871d.jpg);">
+                        <div class="service-card service-card--diamond h-80 p-4">
                             <div class="text-center mb-4">
                                 <a href="/src/engine/Sabunteok/Sabunteok.php" class="pm-symbol-link">
                                     <svg
@@ -112,50 +109,6 @@ header('Content-Type: text/html; charset=UTF-8');
                     </div>
                 </div>
             </div>
-            <style>
-                .service-card {
-                    transition: all 0.3s ease;
-                    border: none;
-                    border-radius: 15px;
-                    overflow: hidden;
-                    background: linear-gradient(145deg, #ffffff, #f3f3f3);
-                    box-shadow: 5px 5px 15px #d9d9d9, -5px -5px 15px #ffffff;
-                }
-
-                .service-card:hover {
-                    transform: translateY(-10px);
-                    box-shadow: 8px 8px 20px #d1d1d1, -8px -8px 20px #ffffff;
-                }
-
-                .icon-wrapper {
-                    width: 80px;
-                    height: 80px;
-                    border-radius: 50%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    margin: 0 auto;
-                    background: linear-gradient(135deg, #6366f1, #8b5cf6);
-                }
-
-                .custom-badge {
-                    background: linear-gradient(135deg, #6366f1, #8b5cf6);
-                    padding: 8px 15px;
-                    border-radius: 20px;
-                    font-size: 0.8rem;
-                    font-weight: 500;
-                }
-
-                .service-title {
-                    color: #ffffff;
-                    font-weight: 600;
-                }
-
-                .service-text {
-                    color: #ffffff;
-                    font-size: 0.95rem;
-                }
-            </style>
 
             <!-- card -->
             <section class="values-section mt-5">
@@ -181,7 +134,7 @@ header('Content-Type: text/html; charset=UTF-8');
 
         <!-- FOOTER -->
         <div
-            class="border-top d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2 px-4 py-4">
+            class="site-footer border-top d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2 px-4 py-4">
             <p class="footer-copy mb-0">©
                 <?= date('Y') ?>
                 평목(平木). All rights reserved.</p>

@@ -13,13 +13,7 @@ body {
     min-height: calc(100vh - 68px);
     display: flex;
     flex-direction: column;
-}
-
-.pm-hero {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding-bottom: 64px;
 }
 
 /* VALUES */
@@ -31,20 +25,6 @@ body {
     width: 100%;
     max-width: 1024px;
     margin: 0 auto;
-}
-
-.values-heading-main {
-    font-family: 'Noto Serif KR', serif;
-    font-size: 28px;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    word-break: keep-all;
-}
-
-.values-heading-sub {
-    font-family: 'Noto Serif KR', serif;
-    font-weight: 400;
-    color: rgba(0, 0, 0, 0.95);
 }
 
 .values-item {
@@ -70,17 +50,7 @@ body {
     color: #cc2200;
 }
 
-.values-desc {
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    font-weight: 400;
-    color: #ffffff !important;
-    line-height: 1.7;
-    word-break: keep-all;
-    margin: 6px 0 0;
-}
-
-.sub-title{
+.sub-title {
     font-family: 'Inter', sans-serif;
     font-size: 13px;
     font-weight: 400;
@@ -101,6 +71,15 @@ body {
 }
 
 /* FOOTER */
+.site-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    z-index: 100;
+}
+
 .footer-copy {
     font-family: 'Inter', sans-serif;
     font-size: 11px;
@@ -120,13 +99,47 @@ body {
     color: var(--gold);
 }
 
-/* SYMBOLS */
-.pm-symbols-row {
-    display: flex;
-    justify-content: center;
-    gap: 40px;
+/* SERVICE CARDS */
+.service-card {
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    background: linear-gradient(145deg, #ffffff, #f3f3f3);
+    box-shadow: 5px 5px 15px #d9d9d9, -5px -5px 15px #ffffff;
 }
 
+.service-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 8px 8px 20px #d1d1d1, -8px -8px 20px #ffffff;
+}
+
+.service-card--square {
+    background-image: url(https://i.pinimg.com/736x/eb/eb/ba/ebebbadeff7623b9372b42c52f01a5de.jpg);
+}
+
+.service-card--triangle {
+    background-image: url(https://i.pinimg.com/736x/eb/39/7c/eb397c9ef2482d34fdbfe0c5aaafffd3.jpg);
+}
+
+.service-card--diamond {
+    background-image: url(https://i.pinimg.com/736x/0f/1a/f2/0f1af248ae79652e0b6b388b7ddb871d.jpg);
+}
+
+.custom-badge {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.service-title {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* SYMBOLS */
 .pm-symbol-link {
     display: inline-block;
 }
@@ -145,6 +158,9 @@ body {
 
 .pm-symbol-link:hover .pm-symbol-bar {
     fill: #cc2200;
+    stroke: #ffffff;
+    stroke-width: 10px;
+    paint-order: stroke fill;
 }
 
 /* VALUES GRID */
@@ -177,15 +193,6 @@ body {
         padding: 0 24px 32px;
     }
 
-    .pm-symbols-row {
-        gap: 24px;
-    }
-
-    .pm-symbols-row svg {
-        width: 200px;
-        height: 200px;
-    }
-
     .values-grid {
         flex-direction: column;
     }
@@ -208,15 +215,6 @@ body {
 @media (max-width: 480px) {
     .values-section {
         padding: 0 20px 24px;
-    }
-
-    .pm-symbols-row {
-        gap: 16px;
-    }
-
-    .pm-symbols-row svg {
-        width: 160px;
-        height: 160px;
     }
 
     .values-title {
