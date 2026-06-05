@@ -5,14 +5,35 @@
 -- 기존 DB에 컬럼 추가할 경우 아래 ALTER 실행
 -- ALTER TABLE drawings ADD COLUMN thumbnail   MEDIUMTEXT   NULL    COMMENT '썸네일 이미지 (data:image/jpeg;base64,…)' AFTER updated_at;
 -- ALTER TABLE drawings ADD COLUMN work_time_sec INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '누적 작업 시간(초)' AFTER thumbnail;
+-- ALTER TABLE users ADD COLUMN role ENUM('s','m','a','u') NOT NULL DEFAULT 'u' COMMENT '권한: s=슈퍼, m=관리자, a=작가, u=회원' AFTER email;
+-- ALTER TABLE users ADD COLUMN last_login_at DATETIME NULL COMMENT '최종 접속일시' AFTER created_at;
+-- ALTER TABLE users ADD COLUMN withdrawn_at DATETIME NULL COMMENT '탈퇴일시 (NULL=정상, NOT NULL=탈퇴)' AFTER last_login_at;
+
+-- 접속 통계 (6개월 rolling)
+CREATE TABLE IF NOT EXISTS page_views (
+    id          INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    visited_at  DATETIME     NOT NULL DEFAULT NOW() COMMENT '방문일시',
+    page        VARCHAR(120) NOT NULL               COMMENT '페이지 경로',
+    user_id     INT UNSIGNED NULL                   COMMENT '로그인 유저 ID (비회원 NULL)',
+    ip_hash     CHAR(8)      NOT NULL               COMMENT 'IP MD5 앞 8자 (UV 계산용)',
+    ip          VARCHAR(45)  NULL                   COMMENT '방문자 IP',
+    is_mobile   TINYINT(1)   NOT NULL DEFAULT 0     COMMENT '모바일 여부',
+    PRIMARY KEY (id),
+    KEY idx_pv_visited (visited_at),
+    KEY idx_pv_date_page (visited_at, page),
+    CONSTRAINT fk_pv_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='페이지 방문 통계 (6개월 rolling)';
 -- ============================================================
 
 -- 사용자 테이블
 CREATE TABLE IF NOT EXISTS users (
     id          INT UNSIGNED    NOT NULL AUTO_INCREMENT COMMENT '사용자 고유 ID',
     email         VARCHAR(255)    NOT NULL COMMENT '이메일 (로그인 아이디)',
+    role          ENUM('s','m','a','u') NOT NULL DEFAULT 'u' COMMENT '권한: s=슈퍼, m=관리자, a=작가, u=회원',
     password_hash VARCHAR(255)    NOT NULL COMMENT '비밀번호 해시 (bcrypt)',
-    created_at  DATETIME        NOT NULL DEFAULT NOW() COMMENT '가입일시',
+    created_at    DATETIME        NOT NULL DEFAULT NOW() COMMENT '가입일시',
+    last_login_at DATETIME        NULL COMMENT '최종 접속일시',
+    withdrawn_at  DATETIME        NULL COMMENT '탈퇴일시 (NULL=정상, NOT NULL=탈퇴)',
     PRIMARY KEY (id),
     UNIQUE KEY uq_users_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='회원 정보';

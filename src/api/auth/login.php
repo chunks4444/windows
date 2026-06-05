@@ -25,7 +25,7 @@ if (!$email || !$password) {
 
 try {
     $pdo  = db();
-    $stmt = $pdo->prepare('SELECT id, email, password_hash FROM users WHERE email = ?');
+    $stmt = $pdo->prepare('SELECT id, email, role, password_hash, withdrawn_at FROM users WHERE email = ?');
     $stmt->execute([$email]);
     $user = $stmt->fetch();
 
@@ -35,9 +35,18 @@ try {
         exit;
     }
 
+    if ($user['withdrawn_at']) {
+        http_response_code(403);
+        echo json_encode(['error' => '탈퇴한 계정입니다.']);
+        exit;
+    }
+
+    $pdo->prepare('UPDATE users SET last_login_at = NOW() WHERE id = ?')->execute([$user['id']]);
+
     $token = jwt_encode([
         'sub'   => $user['id'],
         'email' => $user['email'],
+        'role'  => $user['role'],
         'iat'   => time(),
         'exp'   => time() + JWT_EXPIRE,
     ]);
@@ -46,7 +55,7 @@ try {
     $_SESSION['pmok_user_id'] = $user['id'];
     $_SESSION['pmok_email']   = $user['email'];
 
-    echo json_encode(['token' => $token, 'user' => ['id' => $user['id'], 'email' => $user['email']]]);
+    echo json_encode(['token' => $token, 'user' => ['id' => $user['id'], 'email' => $user['email'], 'role' => $user['role']]]);
 } catch (Throwable $e) {
     http_response_code(500);
     echo json_encode(['error' => '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.']);

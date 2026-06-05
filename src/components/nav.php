@@ -132,6 +132,9 @@ $isIndex      = ($currentFile === 'index.php' || $_SERVER['PHP_SELF'] === '/');
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="/src/mypage/profile.php">프로필</a></li>
                     <li><a class="dropdown-item" href="/src/mypage/company.php">회사 정보</a></li>
+                    <li id="navAdminLink" style="display:none;"><hr class="dropdown-divider"></li>
+                    <li id="navAdminMenu" style="display:none;"><a class="dropdown-item" href="/src/admin/users.php"><i class="bi bi-shield-lock me-1"></i>회원 관리</a></li>
+                    <li id="navAdminStats" style="display:none;"><a class="dropdown-item" href="/src/admin/stats.php"><i class="bi bi-bar-chart-line me-1"></i>접속 통계</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="#" onclick="authLogout();return false;">로그아웃</a></li>
                 </ul>

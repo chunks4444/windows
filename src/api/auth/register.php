@@ -33,13 +33,13 @@ try {
     $stmt = $pdo->prepare('INSERT INTO users (email, password_hash) VALUES (?, ?)');
     $stmt->execute([$email, $hash]);
     $userId = (int) $pdo->lastInsertId();
-    $token  = jwt_encode(['sub' => $userId, 'email' => $email, 'iat' => time(), 'exp' => time() + JWT_EXPIRE]);
+    $token  = jwt_encode(['sub' => $userId, 'email' => $email, 'role' => 'u', 'iat' => time(), 'exp' => time() + JWT_EXPIRE]);
     if (session_status() === PHP_SESSION_NONE) @session_start();
     $_SESSION['pmok_user_id'] = $userId;
     $_SESSION['pmok_email']   = $email;
 
     http_response_code(201);
-    echo json_encode(['token' => $token, 'user' => ['id' => $userId, 'email' => $email]]);
+    echo json_encode(['token' => $token, 'user' => ['id' => $userId, 'email' => $email, 'role' => 'u']]);
 } catch (Throwable $e) {
     http_response_code(500);
     echo json_encode(['error' => '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.']);

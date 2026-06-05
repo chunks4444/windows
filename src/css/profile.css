@@ -35,6 +35,22 @@
     color: var(--text-1);
 }
 
+.pf-role-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    background: var(--border);
+    color: var(--text-2);
+}
+
+.pf-role-badge[data-role="s"] { background: #FEF3C7; color: #B45309; }
+.pf-role-badge[data-role="m"] { background: #EDE9FE; color: #6D28D9; }
+.pf-role-badge[data-role="a"] { background: #DCFCE7; color: #15803D; }
+.pf-role-badge[data-role="u"] { background: var(--border); color: var(--text-2); }
+
 .pf-field {
     display: flex;
     flex-direction: column;

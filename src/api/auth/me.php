@@ -16,7 +16,7 @@ if (!$payload) {
 }
 
 $pdo  = db();
-$stmt = $pdo->prepare('SELECT id, email, created_at FROM users WHERE id = ?');
+$stmt = $pdo->prepare('SELECT id, email, role, created_at FROM users WHERE id = ?');
 $stmt->execute([$payload['sub']]);
 $user = $stmt->fetch();
 

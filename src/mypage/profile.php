@@ -40,6 +40,7 @@ header('Content-Type: text/html; charset=UTF-8');
             <div class="pf-email-row">
                 <span class="pf-label">이메일</span>
                 <span class="pf-email" id="pfEmail">—</span>
+                <span class="pf-role-badge" id="pfRoleBadge"></span>
             </div>
         </div>
 
@@ -142,6 +143,10 @@ async function loadProfile() {
 
     const u = data.user;
     document.getElementById('pfEmail').textContent        = u.email          || '—';
+    const roleMap = { s: '슈퍼', m: '관리자', a: '작가', u: '회원' };
+    const badge = document.getElementById('pfRoleBadge');
+    badge.textContent  = roleMap[u.role] || u.role || '';
+    badge.dataset.role = u.role || 'u';
     document.getElementById('pfName').value               = u.name           || '';
     document.getElementById('pfPhone').value              = u.phone          || '';
     document.getElementById('pfZipcode').value            = u.zipcode        || '';

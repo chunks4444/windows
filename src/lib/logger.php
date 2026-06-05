@@ -34,6 +34,27 @@ function pm_get_ip(): string {
     return '-';
 }
 
+function pm_record_pageview(string $page, string $ip, string $ua, string $userId): void {
+    try {
+        require_once __DIR__ . '/db.php';
+        $pdo      = db();
+        $ipHash   = substr(md5($ip), 0, 8);
+        $isMobile = (int)(bool)preg_match('/iPhone|Android|iPad|Mobile/i', $ua);
+        $uid      = ($userId !== '-' && ctype_digit($userId)) ? (int)$userId : null;
+
+        $pdo->prepare(
+            'INSERT INTO page_views (page, user_id, ip_hash, ip, is_mobile) VALUES (?, ?, ?, ?, ?)'
+        )->execute([$page, $uid, $ipHash, $ip, $isMobile]);
+
+        // 1% 확률로 6개월 초과분 자동 삭제
+        if (mt_rand(0, 99) === 0) {
+            $pdo->exec("DELETE FROM page_views WHERE visited_at < DATE_SUB(NOW(), INTERVAL 6 MONTH)");
+        }
+    } catch (Throwable $e) {
+        // 통계 기록 실패는 무시
+    }
+}
+
 function pm_write_log(string $line): void {
     static $logDir = null;
     if ($logDir === null) {
@@ -92,3 +113,4 @@ $line = sprintf(
 );
 
 pm_write_log($line);
+pm_record_pageview($page, $ip, $ua, $userId);

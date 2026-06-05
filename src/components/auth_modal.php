@@ -212,6 +212,13 @@ function authUpdateNav() {
                 lastLogin.textContent = `${d.getFullYear()}.${pad(d.getMonth()+1)}.${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
             }
         }
+        const isSuper = user.role === 's';
+        const adminLink  = document.getElementById('navAdminLink');
+        const adminMenu  = document.getElementById('navAdminMenu');
+        const adminStats = document.getElementById('navAdminStats');
+        if (adminLink)  adminLink.style.display  = isSuper ? '' : 'none';
+        if (adminMenu)  adminMenu.style.display  = isSuper ? '' : 'none';
+        if (adminStats) adminStats.style.display = isSuper ? '' : 'none';
     } else {
         loginBtn.style.display = '';
         userMenu.style.display = 'none';

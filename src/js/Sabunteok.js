@@ -202,6 +202,7 @@
     let logW = 0, logH = 0;
     let isDragging = false;
     let startX, startY;
+    let panMode = false;
 
     // ── 공통 모달 유틸리티 ─────────────────────────
     let _pmModalEl = null;
@@ -806,7 +807,7 @@ async function draw() {
          Math.abs(doorNaturalSize.h - placementNaturalSize.h) > 1)) {
         placementMode = false;
         doorCornerPositions = null;
-        canvas.style.cursor = 'grab';
+        canvas.style.cursor = panMode ? 'grab' : 'default';
         document.getElementById('btnScale').classList.remove('cv-btn-active');
     }
 
@@ -1553,6 +1554,7 @@ async function draw() {
             overlayDrag = { corner: 'move', startPositions: sp(), startMx: e.clientX, startMy: e.clientY };
             return;
         }
+        if (!panMode) return;
         isDragging = true;
         startX = e.clientX - panX;
         startY = e.clientY - panY;
@@ -1607,7 +1609,7 @@ async function draw() {
             else if (ch === 'transform') canvas.style.cursor = 'ns-resize';
             else if (ch === 'tl' || ch === 'br') canvas.style.cursor = 'nwse-resize';
             else if (ch === 'tr' || ch === 'bl') canvas.style.cursor = 'nesw-resize';
-            else canvas.style.cursor = near ? 'move' : 'grab';
+            else canvas.style.cursor = near ? 'move' : (panMode ? 'grab' : 'default');
         }
         if (!isDragging) return;
         panX = e.clientX - startX;
@@ -1692,7 +1694,7 @@ async function draw() {
         } else {
             doorCornerPositions = null;
             placementNaturalSize = null;
-            canvas.style.cursor = 'grab';
+            canvas.style.cursor = panMode ? 'grab' : 'default';
         }
         document.getElementById('btnScale').classList.toggle('cv-btn-active', placementMode);
         draw();
@@ -1719,14 +1721,31 @@ async function draw() {
     const CURSOR_ERASER = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Crect x='5' y='10' width='14' height='9' rx='2' fill='%23fff' stroke='%23555' stroke-width='1.5'/%3E%3Crect x='5' y='10' width='6' height='9' rx='0' fill='%23f87171' stroke='none'/%3E%3Crect x='5' y='10' width='6' height='9' rx='0' fill='none' stroke='%23555' stroke-width='1.5'/%3E%3Cline x1='5' y1='19' x2='19' y2='19' stroke='%23555' stroke-width='1.5'/%3E%3C/svg%3E") 4 20, crosshair`;
     const CURSOR_PEN    = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z' fill='%23fff' stroke='%23555' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E") 2 22, crosshair`;
 
+    function setPanMode() {
+        panMode = !panMode;
+        document.getElementById('btnPan').classList.toggle('cv-btn-active', panMode);
+        if (panMode) {
+            lineEditMode = null;
+            addLineStart = null;
+            document.getElementById('btnEditDelete').classList.remove('cv-btn-active');
+            document.getElementById('btnEditAdd').classList.remove('cv-btn-active');
+            canvas.style.cursor = 'grab';
+            draw();
+        } else {
+            canvas.style.cursor = 'default';
+        }
+    }
+
     function setEditMode(mode) {
+        panMode = false;
+        document.getElementById('btnPan').classList.remove('cv-btn-active');
         lineEditMode = lineEditMode === mode ? null : mode;
         addLineStart = null;
         document.getElementById('btnEditDelete').classList.toggle('cv-btn-active', lineEditMode === 'delete');
         document.getElementById('btnEditAdd').classList.toggle('cv-btn-active', lineEditMode === 'add');
         if (lineEditMode === 'delete')   canvas.style.cursor = CURSOR_ERASER;
         else if (lineEditMode === 'add') canvas.style.cursor = CURSOR_PEN;
-        else                             canvas.style.cursor = 'grab';
+        else                             canvas.style.cursor = 'default';
         if (lineEditMode === 'add') draw();
     }
 
@@ -1777,6 +1796,7 @@ async function draw() {
         }
     }
 
+    document.getElementById('btnPan').addEventListener('click', setPanMode);
     document.getElementById('btnEditDelete').addEventListener('click', () => setEditMode('delete'));
     document.getElementById('btnEditAdd').addEventListener('click', () => setEditMode('add'));
     document.getElementById('btnEditClear').addEventListener('click', () => {
@@ -1957,6 +1977,7 @@ async function draw() {
             pungpanOn: document.getElementById('chkPungpan').checked,
             pungpan:   parseInt(document.getElementById('txtPungpan').value) || 0,
             shrinkH:   document.getElementById('chkShrinkH').checked,
+            wood:      document.getElementById('txtWood').value,
             finish:    document.getElementById('txtFinish').value,
             frameColor: selectedFrameColor,
             slatColor:  selectedSlatColor,
@@ -1985,6 +2006,7 @@ async function draw() {
         document.getElementById('chkPungpan').checked = p.pungpanOn;
         setSlider('txtPungpan', 'numPungpan', p.pungpan);
         document.getElementById('chkShrinkH').checked = p.shrinkH || false;
+        document.getElementById('txtWood').value    = p.wood || 'hongsong';
         document.getElementById('txtFinish').value  = p.finish;
         document.getElementById('pungpanCtrl').style.display = p.pungpanOn ? 'block' : 'none';
         if (p.panX !== undefined) { panX = p.panX; panY = p.panY; scaleFactor = p.scaleFactor; }

@@ -21,7 +21,7 @@ $pdo    = db();
 
 // GET: 프로필 조회
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $stmt = $pdo->prepare('SELECT id, email, name, phone, company, zipcode, address, address_detail, created_at FROM users WHERE id = ?');
+    $stmt = $pdo->prepare('SELECT id, email, role, name, phone, company, zipcode, address, address_detail, created_at FROM users WHERE id = ?');
     $stmt->execute([$userId]);
     $user = $stmt->fetch();
     if (!$user) {
