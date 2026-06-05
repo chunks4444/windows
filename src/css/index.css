@@ -150,6 +150,11 @@ body {
 
 .pm-symbol-link:hover svg {
     transform: rotate(45deg);
+    filter:
+        drop-shadow(1px 0 0 #fff)
+        drop-shadow(-1px 0 0 #fff)
+        drop-shadow(0 1px 0 #fff)
+        drop-shadow(0 -1px 0 #fff);
 }
 
 .pm-symbol-bar {
@@ -158,9 +163,6 @@ body {
 
 .pm-symbol-link:hover .pm-symbol-bar {
     fill: #cc2200;
-    stroke: #ffffff;
-    stroke-width: 10px;
-    paint-order: stroke fill;
 }
 
 /* VALUES GRID */
