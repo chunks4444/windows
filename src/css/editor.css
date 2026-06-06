@@ -1,51 +1,20 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap');
-
 :root {
-    --teal: #3A8C82;
-    --teal-mid: #5AADA2;
-    --teal-pale: #E6F4F2;
-    --accent: #3A8C82;
-    --accent-bg: #EAF5F3;
-    --blue: #2E7D6E;
-    --blue-bg: #E6F4F2;
-    --page-bg: #F2F3F4;
+    --accent:     #3A8C82;
+    --blue:       #2E7D6E;
+    --blue-bg:    #E6F4F2;
     --sidebar-bg: #FFFFFF;
-    --canvas-bg: #E5E7EA;
-    --text-1: #1A1F1E;
-    --text-2: #5A6B69;
-    --text-3: #97A8A6;
-    --border: #E0E5E4;
-    --border-md: #C8D4D2;
-    --input-bg: #F4F6F6;
-    --sidebar-w: 230px;
-    --hdr-h: 52px;
-    --r: 8px;
-    --r-sm: 6px;
-    --r-xs: 4px;
-}
-
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+    --canvas-bg:  #E5E7EA;
+    --sidebar-w:  230px;
+    --hdr-h:      52px;
+    --r-xs:       4px;
 }
 
 body {
-    font-family: 'Noto Sans KR', -apple-system, 'Malgun Gothic', sans-serif;
     background: var(--page-bg);
     height: 100vh;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    color: var(--text-1);
-    font-size: 13px;
-    font-weight: 400;
-    line-height: 1.5;
-    letter-spacing: -0.2px;
-    word-break: keep-all;
-    -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
 }
 
