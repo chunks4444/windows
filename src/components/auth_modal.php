@@ -54,42 +54,7 @@
     </div>
 </div>
 
-<style>
-#authModal * { font-family: 'Noto Sans KR', -apple-system, 'Malgun Gothic', sans-serif; }
-.auth-tab {
-    background: none; border: none; padding: 0 0 8px;
-    font-size: 14px; font-weight: 700; color: #aaa;
-    border-bottom: 2px solid transparent; cursor: pointer;
-    transition: color .15s, border-color .15s;
-}
-.auth-tab.active { color: #111; border-bottom-color: #111; }
-.auth-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
-.auth-field label { font-size: 11px; font-weight: 600; color: #666; letter-spacing: 0.02em; }
-.auth-field input {
-    border: 1px solid #e0e0e0; border-radius: 0;
-    padding: 9px 12px; font-size: 13px; outline: none;
-    font-family: 'Noto Sans KR', -apple-system, 'Malgun Gothic', sans-serif;
-    transition: border-color .15s;
-}
-.auth-field input:focus { border-color: #111; }
-.auth-submit {
-    width: 100%; height: 38px; margin-top: 4px;
-    background: #3A8C82; color: #fff; border: none;
-    border-radius: 6px;
-    font-size: 12px; font-weight: 600; cursor: pointer;
-    font-family: 'Noto Sans KR', -apple-system, 'Malgun Gothic', sans-serif;
-    letter-spacing: -0.2px;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-    transition: background .12s;
-}
-.auth-submit:hover { background: #2F7169; }
-.auth-submit:disabled { background: #999; cursor: not-allowed; }
-.auth-error {
-    background: #fff3f0; border-left: 3px solid #e05218;
-    padding: 9px 12px; font-size: 12px; color: #c0392b;
-    margin-bottom: 14px;
-}
-</style>
+<link rel="stylesheet" href="/src/css/auth_modal.css">
 
 <script>
 const AUTH_TOKEN_KEY = 'pmok_auth_token';

@@ -2171,6 +2171,7 @@ async function draw() {
         if (versions.length > 0) {
             currentVerIdx = versions.length - 1;
             document.getElementById('verLabel').textContent = 'v' + (currentVerIdx + 1);
+            applyParams(versions[currentVerIdx].params);
         }
         renderVerList();
     }
@@ -2405,6 +2406,7 @@ async function draw() {
 
     loadSavedRenders();
     loadVersions();
+    window.addEventListener('pmokAuthChanged', loadVersions);
 
     // ── 도면 이름 자동 저장 ────────────────────────
     const drawingNameEl = document.getElementById('drawingName');

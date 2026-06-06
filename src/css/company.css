@@ -1,0 +1,401 @@
+:root {
+    --border: rgba(12,12,11,0.1);
+    --text-1: #111;
+    --text-2: #555;
+    --text-3: #999;
+}
+
+body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #fff;
+}
+
+/* ── HERO ─────────────────────────────────────── */
+.ab-hero {
+    position: relative;
+    min-height: 80vh;
+    display: flex;
+    align-items: flex-end;
+    padding: 0;
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+    margin-top: -68px;
+}
+.ab-hero-bg {
+    position: absolute;
+    inset: 0;
+    background: url('/src/img/web/bg_1.jpeg') center center / cover no-repeat;
+}
+.ab-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+}
+.ab-hero-content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    padding: 80px 0 72px;
+}
+.ab-hero-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #fff;
+    margin-bottom: 20px;
+}
+.ab-hero-title {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: clamp(32px, 5vw, 64px);
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    color: #fff;
+    margin-bottom: 28px;
+}
+.ab-hero-title em { font-style: normal; color: #fff; }
+.ab-hero-desc {
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.9;
+    color: #fff;
+    max-width: 560px;
+    word-break: keep-all;
+}
+
+/* ── SECTION COMMON ───────────────────────────── */
+.ab-section {
+    padding: 80px 0;
+    border-bottom: 1px solid var(--border);
+}
+.ab-section--no-border { border-bottom: none; }
+.ab-full-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0;
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.ab-section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 16px;
+}
+.ab-section-title {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: clamp(22px, 3vw, 32px);
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+    margin-bottom: 24px;
+}
+.ab-section-body {
+    font-size: 14px;
+    line-height: 1.9;
+    color: var(--text-2);
+    word-break: keep-all;
+}
+
+/* ── PHILOSOPHY ──────────────────────────────── */
+.ab-phil-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    align-items: stretch;
+    margin-top: 40px;
+}
+.ab-phil-left {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding-top: 28px;
+    padding-bottom: 28px;
+}
+.ab-phil-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-top: 1px solid var(--border);
+    border-left: none;
+}
+.ab-phil-item {
+    padding: 28px 0;
+    border-bottom: 1px solid var(--border);
+}
+.ab-phil-text {
+    margin-top: 40px;
+    max-width: 600px;
+}
+.ab-phil-text p {
+    font-size: 16px;
+    line-height: 2.0;
+    color: var(--text-1);
+    margin-bottom: 28px;
+    word-break: keep-all;
+}
+.ab-phil-text p:last-child { margin-bottom: 0; }
+.ab-phil-num {
+    display: block;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text-1);
+    margin-bottom: 16px;
+    letter-spacing: -0.02em;
+}
+.ab-phil-name {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+.ab-phil-desc {
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text-2);
+    word-break: keep-all;
+    margin: 0;
+}
+
+/* ── STUDIO TOOLS ─────────────────────────────── */
+.ab-tools-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-top: 48px;
+}
+.ab-tool-card {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 36px 32px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.ab-tool-card:hover {
+    border-color: var(--red);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    color: inherit;
+}
+.ab-tool-icon { flex-shrink: 0; opacity: 0.7; }
+.ab-tool-card:hover .ab-tool-icon { opacity: 1; }
+.ab-tool-name {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+.ab-tool-desc {
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text-2);
+    margin: 0;
+    word-break: keep-all;
+}
+
+/* ── INFO ─────────────────────────────────────── */
+.ab-info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--border);
+    margin-top: 48px;
+}
+.ab-info-item {
+    padding: 32px 0 32px;
+    border-bottom: 1px solid var(--border);
+    padding-right: 32px;
+}
+.ab-info-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 10px;
+}
+.ab-info-value {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.6;
+    color: var(--text-1);
+    margin: 0;
+}
+.ab-info-value a { color: inherit; text-decoration: none; }
+.ab-info-value a:hover { color: var(--red); }
+
+/* ── FULL-WIDTH BOXES ────────────────────────── */
+.ab-contact-box,
+.ab-phil-box,
+.ab-studio-box {
+    background: #f7f7f6;
+    padding: 80px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+}
+
+/* ── CONTACT ─────────────────────────────────── */
+.ab-contact-cols {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 40px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+.ab-contact-map {
+    height: 280px;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+.ab-contact-dl {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-top: 1px solid var(--border);
+}
+.ab-contact-row {
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+}
+.ab-contact-row dt {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--text-3);
+    padding-top: 2px;
+}
+.ab-contact-row dd {
+    font-size: 14px;
+    color: var(--text-1);
+    margin: 0;
+    line-height: 1.6;
+}
+.ab-contact-row dd a { color: inherit; text-decoration: none; }
+.ab-contact-row dd a:hover { color: var(--red); }
+
+.ab-contact-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-top: 24px;
+    height: 40px; padding: 0 20px;
+    background: var(--red); color: #fff; border: none;
+    border-radius: 4px; font-family: inherit;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    transition: background .15s;
+}
+.ab-contact-btn:hover { background: #a81d00; }
+
+/* ── CONTACT MODAL ───────────────────────────── */
+#contactModal .modal-content {
+    border: none; border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+}
+#contactModal .modal-header {
+    border-bottom: 1px solid var(--border);
+    padding: 20px 24px 16px;
+}
+#contactModal .modal-title {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 15px; font-weight: 700;
+}
+#contactModal .modal-body { padding: 24px; }
+.ct-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+.ct-field label { font-size: 11px; font-weight: 700; color: #666; letter-spacing: .03em; }
+.ct-field input, .ct-field textarea {
+    border: 1px solid #e0e0e0; border-radius: 4px;
+    padding: 9px 12px; font-size: 13px;
+    font-family: inherit; outline: none;
+    transition: border-color .15s; resize: none;
+}
+.ct-field input:focus, .ct-field textarea:focus { border-color: #111; }
+.ct-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.ct-submit {
+    width: 100%; height: 40px; margin-top: 4px;
+    background: var(--red); color: #fff; border: none;
+    border-radius: 4px; font-family: inherit;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    transition: background .15s;
+}
+.ct-submit:hover { background: #a81d00; }
+.ct-submit:disabled { background: #999; cursor: not-allowed; }
+.ct-error {
+    background: #fff3f0; border-left: 3px solid #e05218;
+    padding: 9px 12px; font-size: 12px; color: #c0392b;
+    margin-bottom: 14px; border-radius: 2px;
+}
+.ct-success {
+    text-align: center; padding: 32px 0 16px;
+    font-size: 14px; color: var(--text-2); line-height: 1.8;
+}
+.ct-success strong { display: block; font-size: 16px; color: var(--text-1); margin-bottom: 8px; }
+
+/* ── GALLERY ─────────────────────────────────── */
+.ab-gallery {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 40px;
+}
+.ab-gallery-item {
+    overflow: hidden;
+    border-radius: 4px;
+    aspect-ratio: 4 / 3;
+}
+.ab-gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+}
+.ab-gallery-item:hover img { transform: scale(1.04); }
+
+/* ── FOOTER ───────────────────────────────────── */
+.ab-footer {
+    padding: 32px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.ab-footer-copy {
+    font-size: 11px;
+    font-weight: 300;
+    color: var(--text-3);
+    margin: 0;
+}
+.ab-footer-link {
+    font-size: 11px;
+    color: var(--text-3);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.ab-footer-link:hover { color: var(--gold); }
+
+/* ── RESPONSIVE ───────────────────────────────── */
+@media (max-width: 768px) {
+    .ab-hero   { padding: 64px 0 56px; }
+    .ab-section { padding: 56px 0; }
+    .ab-phil-cols { grid-template-columns: 1fr; gap: 40px; }
+    .ab-phil-grid { grid-template-columns: 1fr; }
+    .ab-tools-grid { grid-template-columns: 1fr; }
+    .ab-info-grid { grid-template-columns: repeat(2, 1fr); }
+    .ab-contact-cols { grid-template-columns: 1fr; }
+    .ab-contact-map { height: 220px; }
+}
+@media (max-width: 640px) {
+    .ab-gallery { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+    .ab-info-grid { grid-template-columns: 1fr; }
+}

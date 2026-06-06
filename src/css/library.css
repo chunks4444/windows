@@ -1,28 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap');
-
 :root {
-    --teal:      #3A8C82;
-    --teal-mid:  #5AADA2;
-    --teal-pale: #E6F4F2;
-    --red:       #cc2200;
-    --page-bg:   #f7f7f6;
-    --text-1:    #1A1F1E;
-    --text-2:    #5A6B69;
-    --text-3:    #97A8A6;
-    --border:    #E0E5E4;
-    --r:         16px;
-    --r-sm:      8px;
+    --page-bg: #f7f7f6;
+    --r:       16px;
+    --r-sm:    8px;
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-    font-family: 'Noto Sans KR', -apple-system, 'Malgun Gothic', sans-serif;
-    background: var(--page-bg);
-    color: var(--text-1);
-    font-size: 13px;
-    -webkit-font-smoothing: antialiased;
-}
+body { background: var(--page-bg); }
 
 /* ── 검색/필터 바 ─────────────────────────────── */
 .lib-toolbar {

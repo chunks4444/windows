@@ -10,56 +10,8 @@ if (!defined('BOOTSTRAP_LOADED')) {
 }
 ?>
 <title>평목 - DESIGN IN REAL TIME</title>
-<style>
-/* ── 고정 네비 여백 ─────────────────────────────────── */
-body { padding-top: 68px; }
-
-
-/* ── NAV (공통) ───────────────────────────────────── */
-.pm-navbar {
-    background: #fff;
-    font-family: 'Noto Sans KR', -apple-system, sans-serif;
-}
-.pm-navbar .navbar-brand { text-decoration: none; color: inherit; }
-.pm-nav-logo {
-    height: 32px;
-    filter: brightness(0);
-    opacity: 0.85;
-}
-.pm-nav-tagline {
-    font-size: 12px;
-    font-weight: 600;
-    line-height: 1.6;
-    border-left: 1px solid rgba(0,0,0,0.3);
-    padding-left: 12px;
-    margin-left: 12px;
-}
-.pm-navbar .nav-link {
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    color: #000 !important;
-}
-.pm-navbar .dropdown-menu {
-    min-width: 180px;
-    border: 1px solid rgba(12,12,11,0.1);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-    border-radius: 0;
-    padding: 14px 0 6px;
-}
-.pm-navbar .dropdown-item {
-    font-size: 12px;
-    font-weight: 400;
-    padding: 10px 18px;
-}
-.pm-navbar .dropdown-item svg { transition: transform .5s cubic-bezier(.25,.46,.45,.94); }
-.pm-navbar .dropdown-item:hover svg { transform: rotate(45deg); }
-.pm-navbar .dropdown-item:hover { background: rgba(12,12,11,0.04); color: #cc2200; }
-.pm-navbar .dropdown-item.active { font-weight: 600; color: #cc2200; background: none; }
-@media (max-width: 768px) {
-    .pm-navbar { background: rgba(255,255,255,0.97); }
-}
-</style>
+<link rel="stylesheet" href="/src/css/common.css">
+<link rel="stylesheet" href="/src/css/nav.css">
 
 <?php
 // 현재 페이지 파일명으로 active 항목 판별

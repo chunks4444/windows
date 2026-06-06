@@ -2249,6 +2249,7 @@ async function draw() {
         if (versions.length > 0) {
             currentVerIdx = versions.length - 1;
             document.getElementById('verLabel').textContent = 'v' + (currentVerIdx + 1);
+            applyParams(versions[currentVerIdx].params);
         }
         renderVerList();
     }

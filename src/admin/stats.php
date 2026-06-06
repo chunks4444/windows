@@ -10,62 +10,7 @@ header('Content-Type: text/html; charset=UTF-8');
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/src/css/dashboard.css">
-    <style>
-    .st-cards { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; }
-    @media(max-width:768px) { .st-cards { grid-template-columns:repeat(2,1fr); } }
-    .st-card {
-        background:#fff; border:1px solid var(--border); border-radius:var(--r);
-        padding:20px 24px;
-    }
-    .st-card-label { font-size:11px; font-weight:700; color:var(--text-2); letter-spacing:.04em; text-transform:uppercase; margin-bottom:6px; }
-    .st-card-value { font-size:26px; font-weight:700; color:var(--text-1); letter-spacing:-.5px; }
-    .st-card-sub   { font-size:11px; color:var(--text-3); margin-top:4px; }
-
-    .st-panel {
-        background:#fff; border:1px solid var(--border); border-radius:var(--r);
-        overflow:hidden; margin-bottom:20px;
-    }
-    .st-panel-head {
-        display:flex; align-items:center; justify-content:space-between;
-        padding:14px 20px; border-bottom:1px solid var(--border);
-    }
-    .st-panel-title { font-size:13px; font-weight:700; color:var(--text-1); }
-    .st-panel-body  { padding:20px; }
-    .st-chart-wrap  { position:relative; height:260px; }
-
-    .st-month-btns { display:flex; gap:6px; }
-    .st-month-btn {
-        height:28px; padding:0 12px; background:#fff;
-        border:1px solid var(--border-md); border-radius:var(--r-sm);
-        font-family:inherit; font-size:12px; font-weight:600;
-        color:var(--text-2); cursor:pointer;
-        transition:border-color .15s, color .15s, background .15s;
-    }
-    .st-month-btn:hover { border-color:var(--teal); color:var(--teal); }
-    .st-month-btn.active { background:var(--teal); border-color:var(--teal); color:#fff; }
-
-    .st-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
-    @media(max-width:768px) { .st-grid-2 { grid-template-columns:1fr; } }
-
-    table { width:100%; border-collapse:collapse; }
-    thead th {
-        padding:9px 14px; font-size:11px; font-weight:700; color:var(--text-2);
-        letter-spacing:.04em; text-transform:uppercase;
-        background:var(--input-bg); border-bottom:1px solid var(--border);
-        white-space:nowrap;
-    }
-    tbody tr { border-bottom:1px solid var(--border); }
-    tbody tr:last-child { border-bottom:none; }
-    tbody td { padding:9px 14px; font-size:13px; color:var(--text-1); vertical-align:middle; }
-    .st-rank { font-size:12px; color:var(--text-3); font-weight:700; }
-    .st-page { font-size:12px; color:var(--text-2); font-family:monospace; word-break:break-all; }
-    .st-num  { font-weight:600; }
-
-    .role-badge { display:inline-block; padding:2px 7px; border-radius:99px; font-size:11px; font-weight:700; background:var(--border); color:var(--text-2); }
-    .role-badge[data-role="s"] { background:#FEF3C7; color:#B45309; }
-    .role-badge[data-role="m"] { background:#EDE9FE; color:#6D28D9; }
-    .role-badge[data-role="a"] { background:#DCFCE7; color:#15803D; }
-    </style>
+    <link rel="stylesheet" href="/src/css/stats.css">
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
 </head>
 <body>
