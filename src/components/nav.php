@@ -70,7 +70,7 @@ $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/library/') !== false);
                     </a></li>
                 </ul>
             </li>
-            <li class="nav-item"><a href="/src/library/" class="nav-link <?= $isLibrary ? 'active' : '' ?>">Pattern Library</a></li>
+            <li class="nav-item"><a href="/src/library/" class="nav-link <?= $isLibrary ? 'active' : '' ?>">Works</a></li>
             <li class="nav-item"><a href="/src/company/" class="nav-link <?= $isAbout ? 'active' : '' ?>">About</a></li>
             <li class="nav-item d-none"><a href="#" class="nav-link">Joiner</a></li>
             <!-- 비로그인 -->
@@ -90,7 +90,7 @@ $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/library/') !== false);
                     <li id="navAdminLink" style="display:none;"><hr class="dropdown-divider"></li>
                     <li id="navAdminMenu" style="display:none;"><a class="dropdown-item" href="/src/admin/users.php"><i class="bi bi-shield-lock me-1"></i>회원 관리</a></li>
                     <li id="navAdminStats" style="display:none;"><a class="dropdown-item" href="/src/admin/stats.php"><i class="bi bi-bar-chart-line me-1"></i>접속 통계</a></li>
-                    <li id="navAdminCats" style="display:none;"><a class="dropdown-item" href="/src/admin/categories.php"><i class="bi bi-tags me-1"></i>카테고리 관리</a></li>
+                    <li id="navAdminLib" style="display:none;"><a class="dropdown-item" href="/src/admin/library.php"><i class="bi bi-image me-1"></i>라이브러리 관리</a></li>
                     <li id="navAdminMeta" style="display:none;"><a class="dropdown-item" href="/src/admin/meta.php"><i class="bi bi-search me-1"></i>SEO 메타 관리</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="#" onclick="authLogout();return false;">로그아웃</a></li>

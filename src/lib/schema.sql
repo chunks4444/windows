@@ -103,17 +103,44 @@ CREATE TABLE IF NOT EXISTS page_meta (
     UNIQUE KEY uq_meta_path (path)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='페이지 SEO 메타데이터';
 
--- 라이브러리 카테고리
-CREATE TABLE IF NOT EXISTS library_categories (
-    id          INT UNSIGNED    NOT NULL AUTO_INCREMENT,
-    slug        VARCHAR(60)     NOT NULL COMMENT '필터 key (영문)',
-    name_ko     VARCHAR(80)     NOT NULL COMMENT '한국어 표시명',
+-- 라이브러리 패턴 카드
+-- (기존 library_categories 테이블을 대체: RENAME TABLE library_categories TO library_patterns; 후 컬럼 추가)
+CREATE TABLE IF NOT EXISTS library_patterns (
+    id          INT UNSIGNED      NOT NULL AUTO_INCREMENT,
+    name_ko     VARCHAR(80)       NOT NULL DEFAULT '' COMMENT '패턴 이름 (예: 정자살)',
+    drawing_id  INT UNSIGNED      NULL               COMMENT '연결 도면 (drawings.id FK)',
+    image_path  VARCHAR(500)      NOT NULL DEFAULT '' COMMENT '대표 이미지 경로 (/uploads/library/…)',
     sort_order  SMALLINT UNSIGNED NOT NULL DEFAULT 0,
-    is_active   TINYINT(1)      NOT NULL DEFAULT 1,
-    created_at  DATETIME        NOT NULL DEFAULT NOW(),
+    is_active   TINYINT(1)        NOT NULL DEFAULT 1,
+    created_at  DATETIME          NOT NULL DEFAULT NOW(),
     PRIMARY KEY (id),
-    UNIQUE KEY uq_cat_slug (slug)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='라이브러리 카테고리';
+    KEY idx_lp_drawing (drawing_id),
+    CONSTRAINT fk_lp_drawing FOREIGN KEY (drawing_id) REFERENCES drawings(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='라이브러리 패턴 카드';
+
+-- 라이브러리 패턴 좋아요 (개인별)
+CREATE TABLE IF NOT EXISTS library_likes (
+    id         INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    user_id    INT UNSIGNED NOT NULL,
+    pattern_id INT UNSIGNED NOT NULL,
+    created_at DATETIME     NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_like (user_id, pattern_id),
+    KEY idx_like_user (user_id),
+    CONSTRAINT fk_like_user    FOREIGN KEY (user_id)    REFERENCES users(id)            ON DELETE CASCADE,
+    CONSTRAINT fk_like_pattern FOREIGN KEY (pattern_id) REFERENCES library_patterns(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='라이브러리 패턴 좋아요';
+
+-- 라이브러리 패턴 키워드 (검색 + 카테고리 필터 통합)
+CREATE TABLE IF NOT EXISTS library_keywords (
+    id          INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    pattern_id  INT UNSIGNED NOT NULL COMMENT 'library_patterns.id FK',
+    keyword     VARCHAR(60)  NOT NULL COMMENT '키워드 하나 (예: 중문, geosil, 현관문)',
+    PRIMARY KEY (id),
+    KEY idx_lkw_pattern (pattern_id),
+    KEY idx_lkw_keyword (keyword),
+    CONSTRAINT fk_lkw_pattern FOREIGN KEY (pattern_id) REFERENCES library_patterns(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='라이브러리 패턴 검색/필터 키워드';
 
 -- 도면 버전 테이블 (한 도면의 저장 이력)
 CREATE TABLE IF NOT EXISTS drawing_versions (

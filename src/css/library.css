@@ -78,11 +78,16 @@ body { background: var(--page-bg); }
     white-space: nowrap;
 }
 
-.lib-filter-btn:hover,
-.lib-filter-btn.active {
-    background: var(--text-1);
-    border-color: var(--text-1);
+.lib-filter-btn:hover {
+    background: var(--teal);
+    border-color: var(--teal);
     color: #fff;
+}
+.lib-filter-btn.active {
+    background: var(--teal);
+    border-color: var(--teal);
+    color: #fff;
+    font-weight: 700;
 }
 
 .lib-filter-like { gap: 5px; }
