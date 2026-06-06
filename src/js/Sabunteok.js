@@ -2046,7 +2046,7 @@ async function draw() {
     }
 
     // 썸네일 + 배경 이미지 복원 (서버에서 로드)
-    (async function restoreThumbs() {
+    async function restoreThumbs() {
         try {
             const res  = await fetch(WALLPAPER_API + 'list.php?engine=' + WALLPAPER_ENGINE, {
                 headers: { 'Authorization': 'Bearer ' + _wpToken() },
@@ -2055,7 +2055,7 @@ async function draw() {
             if (!data.wallpapers?.length) return;
             const activeServerId = localStorage.getItem(BG_IMAGE_KEY);
             showRightSidebar();
-            data.wallpapers.forEach(({ id: serverId, filename, image: src }) => {
+            data.wallpapers.forEach(({ id: serverId, filename, url: src }) => {
                 const id = Date.now() + Math.random();
                 const imgObj = new Image();
                 imgObj.onload = function() {
@@ -2066,7 +2066,7 @@ async function draw() {
                 imgObj.src = src;
             });
         } catch(e) {}
-    })();
+    }
 
     function setElText(id, val) {
         const el = document.getElementById(id);
@@ -2410,6 +2410,11 @@ async function draw() {
     });
 
     loadVersions();
+    restoreThumbs();
+    window.addEventListener('pmokAuthChanged', () => {
+        loadVersions();
+        restoreThumbs();
+    });
 
     // ── 도면 이름 자동 저장 ────────────────────────
     const drawingNameEl = document.getElementById('drawingName');
