@@ -66,6 +66,44 @@ body {
     color: var(--teal);
 }
 
+.title-btn-group {
+    display: flex;
+    align-items: center;
+    background: var(--accent-bg);
+    border: 1px solid rgba(58, 140, 130, 0.25);
+    border-radius: 20px;
+    transition: border-color .15s;
+}
+.title-btn-group:focus-within { border-color: var(--teal); }
+
+.title-btn-group .hdr-title-badge {
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    padding: 3px 8px 3px 8px;
+}
+.title-btn-group .hdr-title-badge:focus-within { border-color: transparent; }
+
+.title-group-btn {
+    height: 26px;
+    padding: 0 10px;
+    border: none;
+    border-left: 1px solid rgba(58, 140, 130, 0.2);
+    background: transparent;
+    color: var(--teal);
+    font-size: 11px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    transition: background .15s;
+    letter-spacing: -0.1px;
+}
+.title-group-btn:hover { background: rgba(58, 140, 130, 0.08); }
+
 .hdr-title-badge {
     display: flex;
     align-items: center;

@@ -26,8 +26,8 @@ header('Content-Type: text/html; charset=UTF-8');
                     <div class="col-md-4 text-center">
                         <div class="service-card service-card--square h-80 p-4">
                             <div class=" mb-4">
-                                
-                                <a href="/src/engine/sambuntok/sambuntok.php" class="pm-symbol-link">
+
+                                <a href="/src/engine/square/square.php" class="pm-symbol-link">
                                     <svg
                                         width="120"
                                         height="120"

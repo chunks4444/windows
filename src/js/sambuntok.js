@@ -857,14 +857,19 @@ async function draw() {
 
     doorNaturalSize = { w: totalWidth * baseScale, h: totalH * baseScale };
 
-    // 배치 모드: 도면 크기가 바뀌면 자동 취소
-    if (placementMode && placementNaturalSize &&
+    // 배치 좌표: 도면 크기가 바뀌면 코너를 비례 조정
+    if (doorCornerPositions && placementNaturalSize &&
         (Math.abs(doorNaturalSize.w - placementNaturalSize.w) > 1 ||
          Math.abs(doorNaturalSize.h - placementNaturalSize.h) > 1)) {
-        placementMode = false;
-        doorCornerPositions = null;
-        canvas.style.cursor = panMode ? 'grab' : 'default';
-        document.getElementById('btnScale').classList.remove('cv-btn-active');
+        const sx = doorNaturalSize.w / placementNaturalSize.w;
+        const sy = doorNaturalSize.h / placementNaturalSize.h;
+        for (const k of ['tl', 'tr', 'br', 'bl']) {
+            doorCornerPositions[k] = {
+                cx: doorCornerPositions[k].cx * sx,
+                cy: doorCornerPositions[k].cy * sy,
+            };
+        }
+        placementNaturalSize = { w: doorNaturalSize.w, h: doorNaturalSize.h };
     }
 
     // 배치 모드: 오프스크린 캔버스로 리다이렉트
@@ -1812,6 +1817,21 @@ async function draw() {
             }
             document.getElementById('btnScale').classList.add('cv-btn-active');
         }
+        updateResetPlacementBtn();
+        draw();
+    });
+
+    const btnResetPlacement = document.getElementById('btnResetPlacement');
+    function updateResetPlacementBtn() {
+        btnResetPlacement.style.display = doorCornerPositions ? '' : 'none';
+    }
+    btnResetPlacement.addEventListener('click', () => {
+        placementMode = false;
+        doorCornerPositions = null;
+        placementNaturalSize = null;
+        canvas.style.cursor = panMode ? 'grab' : 'default';
+        document.getElementById('btnScale').classList.remove('cv-btn-active');
+        updateResetPlacementBtn();
         draw();
     });
 
@@ -2442,6 +2462,7 @@ async function draw() {
         setTimeout(() => { input.select(); }, 60);
     }
 
+    document.getElementById('btnNewDrawing').addEventListener('click', startNewDrawing);
     document.getElementById('dmBtn').addEventListener('click', openDrawingManager);
     document.getElementById('dmNewBtn').addEventListener('click', startNewDrawing);
     document.getElementById('dmCloseBtn').addEventListener('click', closeDrawingManager);

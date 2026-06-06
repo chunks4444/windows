@@ -13,6 +13,7 @@ $pdo = db();
 $editorMap = [
     'sabunteok' => '/src/engine/Sabunteok/Sabunteok.php',
     'sambuntok' => '/src/engine/sambuntok/sambuntok.php',
+    'square'    => '/src/engine/square/square.php',
 ];
 
 if ($q !== '') {

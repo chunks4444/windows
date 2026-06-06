@@ -290,6 +290,13 @@ header('Content-Type: text/html; charset=UTF-8');
                         <line x1="16" y1="16" x2="14" y2="14" />
                     </svg>
                 </button>
+                <button class="cv-btn" id="btnResetPlacement" title="배치 초기화" style="display:none;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2"/>
+                        <line x1="9" y1="12" x2="15" y2="12"/>
+                        <line x1="12" y1="9" x2="12" y2="15"/>
+                    </svg>
+                </button>
                 <div class="cv-sep"></div>
                 <!-- 초기화 -->
                 <button class="cv-btn" id="btnResetView" title="화면 초기화">
@@ -326,29 +333,36 @@ header('Content-Type: text/html; charset=UTF-8');
 
             <!-- 캔버스 상단 제목 오버레이 -->
             <div class="canvas-title-bar">
-                <label class="hdr-title-badge" for="drawingName">
-                    <div class="badge-dot"></div>
-                    <input type="text" class="drawing-name-input" id="drawingName" placeholder="도면 이름 입력…" maxlength="40">
-                </label>
-                <div class="ver-wrap" style="margin-left:0;">
-                    <button class="ver-btn" id="dmBtn" title="도면 목록">
+                <div class="title-btn-group">
+                    <label class="hdr-title-badge" for="drawingName">
+                        <div class="badge-dot"></div>
+                        <input type="text" class="drawing-name-input" id="drawingName" placeholder="도면 이름 입력…" maxlength="40">
+                    </label>
+                    <button class="title-group-btn" id="btnNewDrawing" title="새 도면">
                         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
                         </svg>
-                        <span>도면</span>
+                        <span>새 도면</span>
                     </button>
-                </div>
-
-                <div class="ver-wrap">
-                    <button class="ver-btn" id="verBtn">
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="9" />
-                            <polyline points="12 7 12 12 15 15" />
-                        </svg>
-                        <span id="verLabel">—</span>
-                    </button>
-                    <div class="ver-dropdown" id="verDropdown">
-                        <div id="verList"></div>
+                    <div class="ver-wrap" style="margin:0;">
+                        <button class="title-group-btn" id="dmBtn" title="도면 목록">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                            </svg>
+                            <span>도면</span>
+                        </button>
+                    </div>
+                    <div class="ver-wrap" style="margin:0;">
+                        <button class="title-group-btn" id="verBtn">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="9" />
+                                <polyline points="12 7 12 12 15 15" />
+                            </svg>
+                            <span id="verLabel">—</span>
+                        </button>
+                        <div class="ver-dropdown" id="verDropdown">
+                            <div id="verList"></div>
+                        </div>
                     </div>
                 </div>
             </div>

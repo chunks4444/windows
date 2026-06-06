@@ -16,7 +16,8 @@ echo '<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/boots
 <?php
 // 현재 페이지 파일명으로 active 항목 판별
 $currentFile = basename($_SERVER['PHP_SELF']);
-$isSabunteok  = (stripos($currentFile, 'Sabunteok') !== false);
+$isSquare     = (stripos($_SERVER['PHP_SELF'], '/square/') !== false);
+$isSabunteok  = (!$isSquare && stripos($currentFile, 'Sabunteok') !== false);
 $isSambuntok  = (stripos($currentFile, 'sambuntok') !== false);
 $isIndex      = ($currentFile === 'index.php' || $_SERVER['PHP_SELF'] === '/');
 $isAbout      = (strpos($_SERVER['PHP_SELF'], '/company/') !== false);
@@ -39,6 +40,16 @@ $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/library/') !== false);
             <li class="nav-item dropdown">
                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Studio</a>
                 <ul class="dropdown-menu">
+                    <li><a class="dropdown-item <?= $isSquare ? 'active' : '' ?> d-flex align-items-center gap-2"
+                           href="/src/engine/square/square.php">
+                        <svg width="27" height="27" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+                            <rect fill="currentColor" x="148" y="204" width="384" height="46" rx="23"/>
+                            <rect fill="currentColor" x="148" y="430" width="384" height="46" rx="23"/>
+                            <rect fill="currentColor" x="204" y="148" width="46" height="384" rx="23"/>
+                            <rect fill="currentColor" x="430" y="148" width="46" height="384" rx="23"/>
+                        </svg>
+                        Square Grid
+                    </a></li>
                     <li><a class="dropdown-item <?= $isSabunteok ? 'active' : '' ?> d-flex align-items-center gap-2"
                            href="/src/engine/Sabunteok/Sabunteok.php">
                         <svg width="27" height="27" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
@@ -47,7 +58,7 @@ $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/library/') !== false);
                             <g transform="rotate(45 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
                             <g transform="rotate(135 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
                         </svg>
-                        Square Grid
+                        Diamond Grid
                     </a></li>
                     <li><a class="dropdown-item <?= $isSambuntok ? 'active' : '' ?> d-flex align-items-center gap-2"
                            href="/src/engine/sambuntok/sambuntok.php">
