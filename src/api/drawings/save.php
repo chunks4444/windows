@@ -10,6 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 require_once __DIR__ . '/../../lib/jwt.php';
 require_once __DIR__ . '/../../lib/drawing.php';
+require_once __DIR__ . '/../../lib/db.php';
 
 $payload = jwt_from_request();
 if (!$payload) {
@@ -37,5 +38,10 @@ $drawingId = Drawing::save(
     $body['thumbnail']    ?? null,
     (int) ($body['work_time_sec'] ?? 0)
 );
+
+// 도면 저장 직후, drawing_id가 없는(NULL) 배경 이미지를 이 도면에 연결
+$pdo = db();
+$pdo->prepare('UPDATE wallpapers SET drawing_id = ? WHERE user_id = ? AND engine = ? AND drawing_id IS NULL')
+    ->execute([$drawingId, (int)$payload['sub'], strtolower($type)]);
 
 echo json_encode(['ok' => true, 'drawing_id' => $drawingId]);

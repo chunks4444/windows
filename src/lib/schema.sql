@@ -70,17 +70,22 @@ CREATE TABLE IF NOT EXISTS contact_log (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='문의 메일 발송 이력';
 
 -- 배경 이미지 테이블 (엔진별 사용자 업로드 배경)
+-- 기존 DB에 컬럼 추가:
+-- ALTER TABLE wallpapers ADD COLUMN version_saved_at INT UNSIGNED NULL COMMENT '소속 버전 savedAt (Unix초)' AFTER drawing_id;
+-- ALTER TABLE wallpapers ADD KEY idx_wallpapers_version (drawing_id, version_saved_at);
 CREATE TABLE IF NOT EXISTS wallpapers (
-    id          INT UNSIGNED    NOT NULL AUTO_INCREMENT COMMENT '배경 고유 ID',
-    user_id     INT UNSIGNED    NOT NULL COMMENT '소유 사용자 ID (users.id FK)',
-    engine      VARCHAR(64)     NOT NULL DEFAULT '' COMMENT '엔진 구분 (예: sabunteok)',
-    drawing_id  INT UNSIGNED    NULL COMMENT '소속 도면 ID (drawings.id FK, nullable)',
-    filename    VARCHAR(255)    NOT NULL DEFAULT '' COMMENT '원본 파일명',
-    filepath    VARCHAR(500)    NOT NULL DEFAULT '' COMMENT '저장 파일 경로 (/uploads/wallpapers/…)',
-    created_at  DATETIME        NOT NULL DEFAULT NOW() COMMENT '업로드 일시',
+    id               INT UNSIGNED    NOT NULL AUTO_INCREMENT COMMENT '배경 고유 ID',
+    user_id          INT UNSIGNED    NOT NULL COMMENT '소유 사용자 ID (users.id FK)',
+    engine           VARCHAR(64)     NOT NULL DEFAULT '' COMMENT '엔진 구분 (예: sabunteok)',
+    drawing_id       INT UNSIGNED    NULL COMMENT '소속 도면 ID (drawings.id FK, nullable)',
+    version_saved_at INT UNSIGNED    NULL COMMENT '소속 버전 savedAt (Unix초, nullable)',
+    filename         VARCHAR(255)    NOT NULL DEFAULT '' COMMENT '원본 파일명',
+    filepath         VARCHAR(500)    NOT NULL DEFAULT '' COMMENT '저장 파일 경로 (/uploads/wallpapers/…)',
+    created_at       DATETIME        NOT NULL DEFAULT NOW() COMMENT '업로드 일시',
     PRIMARY KEY (id),
     KEY idx_wallpapers_user_engine (user_id, engine),
     KEY idx_wallpapers_drawing_id (drawing_id),
+    KEY idx_wallpapers_version (drawing_id, version_saved_at),
     CONSTRAINT fk_wallpapers_user    FOREIGN KEY (user_id)    REFERENCES users(id)    ON DELETE CASCADE,
     CONSTRAINT fk_wallpapers_drawing FOREIGN KEY (drawing_id) REFERENCES drawings(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='엔진 배경 이미지';

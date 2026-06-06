@@ -581,11 +581,16 @@
         img.src = src;
     }
 
-    async function uploadWallpaperToServer(dataUrl, filename, drawingId) {
+    function _currentVersionSavedAt() {
+        const ver = versions[currentVerIdx];
+        return ver ? Math.floor(ver.savedAt / 1000) : null;
+    }
+
+    async function uploadWallpaperToServer(dataUrl, filename, drawingId, versionSavedAt) {
         try {
             const res  = await fetch(WALLPAPER_API + 'upload.php', {
                 method: 'POST', headers: _wpHeaders(),
-                body: JSON.stringify({ image: dataUrl, filename, engine: WALLPAPER_ENGINE, drawing_id: drawingId || null }),
+                body: JSON.stringify({ image: dataUrl, filename, engine: WALLPAPER_ENGINE, drawing_id: drawingId || null, version_saved_at: versionSavedAt || null }),
             });
             const data = await res.json();
             if (data.error) { console.warn('배경 업로드 실패:', data.error); return null; }
@@ -613,7 +618,7 @@
                     };
 
                     // 서버 업로드 후 src를 URL로 교체
-                    const result = await uploadWallpaperToServer(dataUrl, file.name, drawingId);
+                    const result = await uploadWallpaperToServer(dataUrl, file.name, drawingId, _currentVersionSavedAt());
                     if (result) {
                         const thumb = thumbImages.find(t => t.id === id);
                         if (thumb) {
@@ -2048,6 +2053,10 @@ async function draw() {
 
     // 썸네일 + 배경 이미지 복원 (서버에서 로드)
     async function restoreThumbs() {
+        // 구버전 BG_IMAGE_KEY 값(숫자 id가 아닌 경우) 정리
+        const _bgRaw = localStorage.getItem(BG_IMAGE_KEY);
+        if (_bgRaw && !/^\d+$/.test(_bgRaw)) localStorage.removeItem(BG_IMAGE_KEY);
+
         // 기존 썸네일 초기화
         thumbImages = [];
         thumbList.innerHTML = '';
@@ -2055,7 +2064,9 @@ async function draw() {
         activeThumbId = null;
         updateClearBgBtn();
         try {
-            const res  = await fetch(WALLPAPER_API + 'list.php?drawing_id=' + (drawingId || 0), {
+            const vsa = _currentVersionSavedAt();
+            const qs  = `drawing_id=${drawingId || 0}&engine=${WALLPAPER_ENGINE}${vsa ? '&version_saved_at=' + vsa : ''}`;
+            const res = await fetch(WALLPAPER_API + 'list.php?' + qs, {
                 headers: { 'Authorization': 'Bearer ' + _wpToken() },
             });
             if (!res.ok) return;
@@ -2063,9 +2074,10 @@ async function draw() {
             if (!data.wallpapers?.length) { hideRightSidebar(); return; }
             const activeServerId = localStorage.getItem(BG_IMAGE_KEY);
             showRightSidebar();
-            // list.php가 id ASC 반환 → 마지막이 가장 최근
+            const serverIds    = data.wallpapers.map(w => String(w.id));
             const lastServerId = String(data.wallpapers[data.wallpapers.length - 1].id);
-            const targetId = activeServerId || lastServerId;
+            const targetId = (activeServerId && serverIds.includes(activeServerId))
+                ? activeServerId : lastServerId;
             data.wallpapers.forEach(({ id: serverId, filename, url: src }) => {
                 const id = Date.now() + Math.random();
                 const imgObj = new Image();
@@ -2177,6 +2189,7 @@ async function draw() {
                 document.getElementById('verLabel').textContent = 'v' + (realIdx + 1);
                 renderVerList();
                 document.getElementById('verDropdown').classList.remove('open');
+                restoreThumbs();
             });
             item.querySelector('.ver-del').addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -2288,7 +2301,7 @@ async function draw() {
             document.getElementById('drawingName').focus();
             return;
         }
-        versions.push({ savedAt: Date.now(), params: getParams() });
+        versions.push({ savedAt: Math.floor(Date.now() / 1000) * 1000, params: getParams() });
         if (versions.length > MAX_VERSIONS) versions.shift();
         localStorage.setItem(VERSIONS_KEY, JSON.stringify(versions));
         currentVerIdx = versions.length - 1;
