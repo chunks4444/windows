@@ -842,7 +842,7 @@ async function draw() {
     }
 
     // 배치 모드: 오프스크린 캔버스로 리다이렉트
-    if (placementMode && doorCornerPositions) {
+    if (doorCornerPositions) {
         const W = Math.max(1, Math.ceil(doorNaturalSize.w));
         const H = Math.max(1, Math.ceil(doorNaturalSize.h));
         if (offCanvas.width !== W || offCanvas.height !== H) {
@@ -1352,7 +1352,7 @@ async function draw() {
         }
     }
 
-    if (placementMode && doorCornerPositions) {
+    if (doorCornerPositions) {
         // 오프스크린 컨텍스트 복원 후 메인 캔버스로 전환
         ctx.restore();
         ctx = canvas.getContext('2d');
@@ -1815,13 +1815,18 @@ async function draw() {
         if (willActivate) {
             placementMode = true;
             const W = doorNaturalSize.w, H = doorNaturalSize.h;
-            placementNaturalSize = { w: W, h: H };
-            doorCornerPositions = {
-                tl: { cx: -W/2, cy: -H/2 },
-                tr: { cx:  W/2, cy: -H/2 },
-                br: { cx:  W/2, cy:  H/2 },
-                bl: { cx: -W/2, cy:  H/2 },
-            };
+            const sizeChanged = !placementNaturalSize ||
+                Math.abs(W - placementNaturalSize.w) > 1 ||
+                Math.abs(H - placementNaturalSize.h) > 1;
+            if (!doorCornerPositions || sizeChanged) {
+                placementNaturalSize = { w: W, h: H };
+                doorCornerPositions = {
+                    tl: { cx: -W/2, cy: -H/2 },
+                    tr: { cx:  W/2, cy: -H/2 },
+                    br: { cx:  W/2, cy:  H/2 },
+                    bl: { cx: -W/2, cy:  H/2 },
+                };
+            }
             updateOverlayFromCorners();
             document.getElementById('btnScale').classList.add('cv-btn-active');
         }
@@ -1856,6 +1861,8 @@ async function draw() {
         addLineStart = null;
         document.getElementById('btnEditDelete').classList.remove('cv-btn-active');
         document.getElementById('btnEditAdd').classList.remove('cv-btn-active');
+        placementMode = false;
+        document.getElementById('btnScale').classList.remove('cv-btn-active');
         canvas.style.cursor = 'default';
     }
 
