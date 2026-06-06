@@ -57,6 +57,19 @@ CREATE TABLE IF NOT EXISTS drawings (
     CONSTRAINT fk_drawings_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='도면 메타 정보 (제목별로 독립 관리)';
 
+-- 배경 이미지 테이블 (엔진별 사용자 업로드 배경)
+CREATE TABLE IF NOT EXISTS wallpapers (
+    id          INT UNSIGNED    NOT NULL AUTO_INCREMENT COMMENT '배경 고유 ID',
+    user_id     INT UNSIGNED    NOT NULL COMMENT '소유 사용자 ID (users.id FK)',
+    engine      VARCHAR(64)     NOT NULL DEFAULT '' COMMENT '엔진 구분 (예: sabunteok)',
+    filename    VARCHAR(255)    NOT NULL DEFAULT '' COMMENT '원본 파일명',
+    filepath    VARCHAR(500)    NOT NULL DEFAULT '' COMMENT '저장 파일 경로 (/uploads/wallpapers/…)',
+    created_at  DATETIME        NOT NULL DEFAULT NOW() COMMENT '업로드 일시',
+    PRIMARY KEY (id),
+    KEY idx_wallpapers_user_engine (user_id, engine),
+    CONSTRAINT fk_wallpapers_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='엔진 배경 이미지';
+
 -- 도면 버전 테이블 (한 도면의 저장 이력)
 CREATE TABLE IF NOT EXISTS drawing_versions (
     id          INT UNSIGNED    NOT NULL AUTO_INCREMENT COMMENT '버전 고유 ID',

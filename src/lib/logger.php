@@ -97,14 +97,12 @@ if (!empty($_SERVER['HTTP_REFERER'])) {
 $https  = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'Y' : 'N';
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
-// 로그인 사용자 ID (JWT, 실패해도 무시)
+// 로그인 사용자 ID (JWT — 헤더·쿠키·세션 순으로 시도)
 $userId = '-';
 try {
-    $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? ($_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '');
-    if (preg_match('/Bearer\s+(.+)/i', $authHeader, $tok) && function_exists('jwt_from_request')) {
-        $payload = jwt_from_request();
-        if ($payload && isset($payload['sub'])) $userId = (string) $payload['sub'];
-    }
+    require_once __DIR__ . '/jwt.php';
+    $payload = jwt_from_request();
+    if ($payload && isset($payload['sub'])) $userId = (string) $payload['sub'];
 } catch (Throwable $e) {}
 
 $line = sprintf(

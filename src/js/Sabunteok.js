@@ -474,7 +474,12 @@
         else hideRightSidebar();
     });
 
-    // 이미지 목록: [{id, src, img}]
+    const WALLPAPER_ENGINE  = 'sabunteok';
+    const WALLPAPER_API     = '/src/api/wallpapers/';
+    function _wpToken()   { return localStorage.getItem('pmok_auth_token'); }
+    function _wpHeaders() { return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _wpToken() }; }
+
+    // 이미지 목록: [{id, serverId, src, img, filename}]
     let thumbImages   = [];
     let activeThumbId = null;
 
@@ -503,8 +508,8 @@
         appBackgroundImage = found ? found.img : null;
 
         try {
-            if (found) localStorage.setItem(BG_IMAGE_KEY, found.src);
-            else        localStorage.removeItem(BG_IMAGE_KEY);
+            if (found?.serverId) localStorage.setItem(BG_IMAGE_KEY, String(found.serverId));
+            else                 localStorage.removeItem(BG_IMAGE_KEY);
         } catch(e) {}
 
         // 활성 표시 갱신
@@ -530,9 +535,15 @@
         btn.textContent = '✕';
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
+            const thumb = thumbImages.find(t => t.id === id);
+            if (thumb?.serverId) {
+                fetch(WALLPAPER_API + 'delete.php', {
+                    method: 'POST', headers: _wpHeaders(),
+                    body: JSON.stringify({ id: thumb.serverId }),
+                }).catch(() => {});
+            }
             thumbImages = thumbImages.filter(t => t.id !== id);
             item.remove();
-            saveThumbsToStorage();
             if (activeThumbId === id) {
                 if (thumbImages.length > 0) {
                     setActiveThumb(thumbImages[thumbImages.length - 1].id);
@@ -570,14 +581,16 @@
         img.src = src;
     }
 
-    function saveThumbsToStorage() {
+    async function uploadWallpaperToServer(dataUrl, filename) {
         try {
-            localStorage.setItem(THUMBS_KEY, JSON.stringify(
-                thumbImages.map(t => ({ src: t.src, filename: t.filename || '' }))
-            ));
-        } catch(e) {
-            console.warn('썸네일 저장 실패 (용량 초과)');
-        }
+            const res  = await fetch(WALLPAPER_API + 'upload.php', {
+                method: 'POST', headers: _wpHeaders(),
+                body: JSON.stringify({ image: dataUrl, filename, engine: WALLPAPER_ENGINE }),
+            });
+            const data = await res.json();
+            if (data.error) { console.warn('배경 업로드 실패:', data.error); return null; }
+            return { id: data.id, url: data.url };
+        } catch { return null; }
     }
 
     btnAddThumb.addEventListener('click', () => aiFileUploader.click());
@@ -587,17 +600,28 @@
         files.forEach(file => {
             const reader = new FileReader();
             reader.onload = function(event) {
-                compressImage(event.target.result, function(src) {
+                compressImage(event.target.result, async function(dataUrl) {
+                    // 로컬 미리보기를 먼저 표시
                     const id = Date.now() + Math.random();
                     const imgObj = new Image();
-                    imgObj.src = src;
+                    imgObj.src = dataUrl;
                     imgObj.onload = function() {
-                        thumbImages.push({ id, src, img: imgObj, filename: file.name });
-                        addThumbItem(id, src, file.name);
-                        saveThumbsToStorage();
+                        thumbImages.push({ id, serverId: null, src: dataUrl, img: imgObj, filename: file.name });
+                        addThumbItem(id, dataUrl, file.name);
                         showRightSidebar();
                         setActiveThumb(id);
                     };
+
+                    // 서버 업로드 후 src를 URL로 교체
+                    const result = await uploadWallpaperToServer(dataUrl, file.name);
+                    if (result) {
+                        const thumb = thumbImages.find(t => t.id === id);
+                        if (thumb) {
+                            thumb.serverId = result.id;
+                            thumb.src      = result.url;
+                        }
+                        if (activeThumbId === id) localStorage.setItem(BG_IMAGE_KEY, String(result.id));
+                    }
                 });
             };
             reader.readAsDataURL(file);
@@ -1998,7 +2022,6 @@ async function draw() {
     const MODIFIED_KEY      = 'pmok_sabunteok_modified';
     const VERSIONS_KEY      = 'pmok_sabunteok_versions';
     const BG_IMAGE_KEY      = 'pmok_sabunteok_bg';
-    const THUMBS_KEY        = 'pmok_sabunteok_thumbs';
     const CURRENT_TITLE_KEY = 'pmok_sabunteok_current_title';
     const NAME_KEY          = 'pmok_sabunteok_name';
     const MAX_VERSIONS      = 20;
@@ -2022,23 +2045,27 @@ async function draw() {
         return tmp.toDataURL('image/jpeg', 0.65);
     }
 
-    // 썸네일 + 배경 이미지 복원
-    (function restoreThumbs() {
-        let saved = [];
-        try { saved = JSON.parse(localStorage.getItem(THUMBS_KEY) || '[]'); } catch(e) {}
-        if (!saved.length) return;
-        const activeSrc = localStorage.getItem(BG_IMAGE_KEY);
-        showRightSidebar();
-        saved.forEach(({ src, filename }) => {
-            const id = Date.now() + Math.random();
-            const imgObj = new Image();
-            imgObj.onload = function() {
-                thumbImages.push({ id, src, img: imgObj, filename });
-                addThumbItem(id, src, filename);
-                if (src === activeSrc) setActiveThumb(id);
-            };
-            imgObj.src = src;
-        });
+    // 썸네일 + 배경 이미지 복원 (서버에서 로드)
+    (async function restoreThumbs() {
+        try {
+            const res  = await fetch(WALLPAPER_API + 'list.php?engine=' + WALLPAPER_ENGINE, {
+                headers: { 'Authorization': 'Bearer ' + _wpToken() },
+            });
+            const data = await res.json();
+            if (!data.wallpapers?.length) return;
+            const activeServerId = localStorage.getItem(BG_IMAGE_KEY);
+            showRightSidebar();
+            data.wallpapers.forEach(({ id: serverId, filename, image: src }) => {
+                const id = Date.now() + Math.random();
+                const imgObj = new Image();
+                imgObj.onload = function() {
+                    thumbImages.push({ id, serverId: Number(serverId), src, img: imgObj, filename });
+                    addThumbItem(id, src, filename);
+                    if (String(serverId) === activeServerId) setActiveThumb(id);
+                };
+                imgObj.src = src;
+            });
+        } catch(e) {}
     })();
 
     function setElText(id, val) {
