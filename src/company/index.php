@@ -6,11 +6,9 @@ header('Content-Type: text/html; charset=UTF-8');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="평목은 전통창호와 한국 목공예의 미를 현대 공간에 담아내는 창호디자인 스튜디오입니다.">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <?php require_once __DIR__ . '/../lib/meta.php'; meta_tags(); ?>
     <?php define('BOOTSTRAP_LOADED', true); ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/src/css/company.css">
     
 </head>
@@ -51,7 +49,7 @@ header('Content-Type: text/html; charset=UTF-8');
                     <div class="ab-phil-item">
                         <p class="ab-phil-num">01</p>
                         <h3 class="ab-phil-name">오랜 시간 축적된 지혜와 다듬어진 원리를 공간에 담습니다.</h3>
-                        <p class="ab-phil-desc">어금육모, 솟을살, 아자살 등 수백 년을 이어온 전통 문살 기법을 현대적 감각으로 재해석합니다. <br>형태는 단순해지고, 정신은 깊어집니다.</p>
+                        <p class="ab-phil-desc">어금육모, 솟을살, 아자살 등 수백 년을 이어온 전통 문살 기법을 현대적 감각으로 해석합니다. <br><strong>형태는 단순해지고, 정신은 깊어집니다.</strong></p>
                     </div>
                     <div class="ab-phil-item">
                         <p class="ab-phil-num">02</p>
@@ -75,7 +73,7 @@ header('Content-Type: text/html; charset=UTF-8');
     <section class="ab-section">
         <p class="ab-section-label">Studio</p>
         <h2 class="ab-section-title">직접 설계해 보세요.</h2>
-        <p class="ab-section-body">평목 스튜디오는 브라우저에서 바로 사용할 수 있는 창호 설계 도구입니다. 문틀 크기, 살 간격, 패턴을 조정하며 나만의 창호를 완성해 보세요.</p>
+        <p class="ab-section-body">평목 스튜디오는 브라우저에서 바로 사용할 수 있는 <strong>창호 설계 도구</strong>입니다. <br>문틀 크기, 살 간격, 패턴을 조정하며 나만의 창호를 완성해 보세요.</p>
         <div class="ab-tools-grid">
             <a href="/src/engine/Sabunteok/Sabunteok.php" class="ab-tool-card">
                 <svg class="ab-tool-icon" width="48" height="48" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
@@ -85,8 +83,8 @@ header('Content-Type: text/html; charset=UTF-8');
                     <g transform="rotate(135 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="4"/></g>
                 </svg>
                 <div>
-                    <p class="ab-tool-name">Square Grid (사분턱)</p>
-                    <p class="ab-tool-desc">가로살과 세로살이 직각으로 교차하는 정방형 문살 패턴. 단아하고 절제된 아름다움을 표현합니다.</p>
+                    <p class="ab-tool-name">Square Grid</p>
+                    <p class="ab-tool-desc">가로살과 세로살이 직각으로 교차하는 정방형 문살 패턴.<br> 단아하고 절제된 아름다움을 표현합니다.</p>
                 </div>
             </a>
             <a href="/src/engine/sambuntok/sambuntok.php" class="ab-tool-card">
@@ -96,8 +94,8 @@ header('Content-Type: text/html; charset=UTF-8');
                     <g transform="rotate(120 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="4"/></g>
                 </svg>
                 <div>
-                    <p class="ab-tool-name">Triangle Grid (삼분턱)</p>
-                    <p class="ab-tool-desc">세 방향의 살이 60° 각도로 교차하는 삼각형 문살 패턴. 역동적이고 세련된 인상을 공간에 더합니다.</p>
+                    <p class="ab-tool-name">Triangle Grid</p>
+                    <p class="ab-tool-desc">세 방향의 살이 60° 각도로 교차하는 삼각형 문살 패턴.<br> 역동적이고 세련된 인상을 공간에 더합니다.</p>
                 </div>
             </a>
         </div>
@@ -208,7 +206,6 @@ header('Content-Type: text/html; charset=UTF-8');
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 async function ctSubmit(e) {
     e.preventDefault();

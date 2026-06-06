@@ -82,6 +82,31 @@ CREATE TABLE IF NOT EXISTS wallpapers (
     CONSTRAINT fk_wallpapers_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='엔진 배경 이미지';
 
+-- 페이지 SEO 메타데이터
+CREATE TABLE IF NOT EXISTS page_meta (
+    id          INT UNSIGNED  NOT NULL AUTO_INCREMENT,
+    path        VARCHAR(120)  NOT NULL COMMENT 'URL 경로 (PHP_SELF 기준)',
+    title       VARCHAR(200)  NOT NULL DEFAULT '',
+    description VARCHAR(320)  NOT NULL DEFAULT '',
+    keywords    VARCHAR(500)  NOT NULL DEFAULT '',
+    og_image    VARCHAR(500)  NOT NULL DEFAULT '',
+    updated_at  DATETIME      NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_meta_path (path)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='페이지 SEO 메타데이터';
+
+-- 라이브러리 카테고리
+CREATE TABLE IF NOT EXISTS library_categories (
+    id          INT UNSIGNED    NOT NULL AUTO_INCREMENT,
+    slug        VARCHAR(60)     NOT NULL COMMENT '필터 key (영문)',
+    name_ko     VARCHAR(80)     NOT NULL COMMENT '한국어 표시명',
+    sort_order  SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    is_active   TINYINT(1)      NOT NULL DEFAULT 1,
+    created_at  DATETIME        NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_cat_slug (slug)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='라이브러리 카테고리';
+
 -- 도면 버전 테이블 (한 도면의 저장 이력)
 CREATE TABLE IF NOT EXISTS drawing_versions (
     id          INT UNSIGNED    NOT NULL AUTO_INCREMENT COMMENT '버전 고유 ID',

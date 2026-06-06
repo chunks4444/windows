@@ -7,19 +7,9 @@ header('Content-Type: text/html; charset=UTF-8');
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta
-            name="description"
-            content="평목은 전통창호, 한옥창호, 목창호, 맞춤창호를 전문으로 하는 창호디자인 스튜디오입니다. 공장에서 담아낼 수 없는 공간의 깊이를 나무문과 나무창문으로 표현합니다.">
-        <meta
-            name="keywords"
-            content="전통창호, 목창호, 한옥창호, 맞춤창호, 창호디자인, 나무창호, 한옥문, 나무문, 전통문, 평목">
-        <link
-            href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;900&family=Inter:wght@300;400;500&display=swap"
-            rel="stylesheet">
+        <?php require_once __DIR__ . '/src/lib/meta.php'; meta_tags(); ?>
         <?php define('BOOTSTRAP_LOADED', true); ?>
-        <link
-            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-            rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="/src/css/index.css">
     </head>
 

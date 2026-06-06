@@ -25,7 +25,11 @@ function jwt_from_request(): ?array {
     // 1) PHP 세션 (브라우저 환경 — Apache 헤더 문제 우회)
     if (session_status() === PHP_SESSION_NONE) @session_start();
     if (!empty($_SESSION['pmok_user_id'])) {
-        return ['sub' => (int)$_SESSION['pmok_user_id'], 'email' => $_SESSION['pmok_email'] ?? ''];
+        return [
+            'sub'   => (int)$_SESSION['pmok_user_id'],
+            'email' => $_SESSION['pmok_email'] ?? '',
+            'role'  => $_SESSION['pmok_role']  ?? '',
+        ];
     }
 
     // 2) Authorization 헤더 (API 클라이언트 / 프로덕션)

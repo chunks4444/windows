@@ -186,9 +186,13 @@ function authUpdateNav() {
         const adminLink  = document.getElementById('navAdminLink');
         const adminMenu  = document.getElementById('navAdminMenu');
         const adminStats = document.getElementById('navAdminStats');
+        const adminCats  = document.getElementById('navAdminCats');
         if (adminLink)  adminLink.style.display  = isSuper ? '' : 'none';
         if (adminMenu)  adminMenu.style.display  = isSuper ? '' : 'none';
         if (adminStats) adminStats.style.display = isSuper ? '' : 'none';
+        if (adminCats)  adminCats.style.display  = isSuper ? '' : 'none';
+        const adminMeta  = document.getElementById('navAdminMeta');
+        if (adminMeta)  adminMeta.style.display  = isSuper ? '' : 'none';
     } else {
         loginBtn.style.display = '';
         userMenu.style.display = 'none';

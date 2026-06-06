@@ -4,10 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="전통창호 문살 패턴 라이브러리 — 정자살, 아자살, 귀갑살, 빗살 등 다양한 창호 패턴을 탐색하세요.">
+    <?php require_once __DIR__ . '/../lib/meta.php'; meta_tags(); ?>
     <?php define('BOOTSTRAP_LOADED', true); ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/src/css/library.css">
 </head>
 <body>
@@ -21,23 +20,9 @@
             <i class="bi bi-search"></i>
             <input type="text" id="libSearch" placeholder="패턴 검색…" autocomplete="off">
         </div>
-        <div class="lib-filters">
+        <div class="lib-filters" id="libFilters">
             <button class="lib-filter-btn active" data-filter="all">전체</button>
             <button class="lib-filter-btn lib-filter-like" data-filter="liked"><i class="bi bi-heart-fill"></i> 좋아요</button>
-            <button class="lib-filter-btn" data-filter="anbang">안방</button>
-            <button class="lib-filter-btn" data-filter="hyeongwan">현관</button>
-            <button class="lib-filter-btn" data-filter="jungmun">중문</button>
-            <button class="lib-filter-btn" data-filter="geosil">거실</button>
-            <button class="lib-filter-btn" data-filter="office">사무실</button>
-            <button class="lib-filter-btn" data-filter="cafe">카페</button>
-            <button class="lib-filter-btn" data-filter="gyeongbok">경복궁</button>
-            <button class="lib-filter-btn" data-filter="changdeok">창덕궁</button>
-            <button class="lib-filter-btn" data-filter="lobby">로비</button>
-            <button class="lib-filter-btn" data-filter="hotel">호텔객실</button>
-            <button class="lib-filter-btn" data-filter="traditional">전통창호</button>
-            <button class="lib-filter-btn" data-filter="hanok">한옥</button>
-            <button class="lib-filter-btn" data-filter="hanhotel">한식호텔</button>
-            <button class="lib-filter-btn" data-filter="wall">벽장식</button>
         </div>
     </div>
 </div>
@@ -477,22 +462,42 @@ function renderMasonry() {
     masonry.innerHTML = filtered.map(buildCard).join('');
 }
 
-/* ── 이벤트 ──────────────────────────────────── */
-document.querySelectorAll('.lib-filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.lib-filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        activeFilter = btn.dataset.filter;
-        renderMasonry();
+/* ── 필터 버튼 이벤트 바인딩 ─────────────────── */
+function bindFilterBtns() {
+    document.querySelectorAll('.lib-filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.lib-filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            activeFilter = btn.dataset.filter;
+            renderMasonry();
+        });
     });
-});
+}
+
+async function loadCategories() {
+    const res  = await fetch('/src/api/categories.php');
+    const data = await res.json();
+    const container = document.getElementById('libFilters');
+    data.categories.forEach(c => {
+        const btn = document.createElement('button');
+        btn.className   = 'lib-filter-btn';
+        btn.dataset.filter = c.slug;
+        btn.textContent = c.name_ko;
+        container.appendChild(btn);
+    });
+    bindFilterBtns();
+}
 
 document.getElementById('libSearch').addEventListener('input', e => {
     searchQuery = e.target.value.trim();
     renderMasonry();
 });
 
-document.addEventListener('DOMContentLoaded', renderMasonry);
+document.addEventListener('DOMContentLoaded', async () => {
+    bindFilterBtns();
+    await loadCategories();
+    renderMasonry();
+});
 
 /* ── 좋아요 ──────────────────────────────────── */
 const likes = JSON.parse(localStorage.getItem('pmok_likes') || '{}');
