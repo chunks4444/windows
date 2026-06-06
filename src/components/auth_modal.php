@@ -230,5 +230,13 @@ function authUpdateNav() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', authUpdateNav);
+document.addEventListener('DOMContentLoaded', function () {
+    authUpdateNav();
+    var el = document.getElementById('authModal');
+    if (el) {
+        el.addEventListener('hidden.bs.modal', function () {
+            if (!authGetToken()) location.href = '/';
+        });
+    }
+});
 </script>

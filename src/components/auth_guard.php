@@ -25,6 +25,7 @@ $_guardRole = $authRequireRole ?? null;
         if (!isInternal) {
             location.replace('/');
         } else {
+            window.__pmokGuardedPage = true;
             document.addEventListener('DOMContentLoaded', function () {
                 var el = document.getElementById('authModal');
                 if (el && window.bootstrap) {
