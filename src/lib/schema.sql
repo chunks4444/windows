@@ -74,12 +74,15 @@ CREATE TABLE IF NOT EXISTS wallpapers (
     id          INT UNSIGNED    NOT NULL AUTO_INCREMENT COMMENT '배경 고유 ID',
     user_id     INT UNSIGNED    NOT NULL COMMENT '소유 사용자 ID (users.id FK)',
     engine      VARCHAR(64)     NOT NULL DEFAULT '' COMMENT '엔진 구분 (예: sabunteok)',
+    drawing_id  INT UNSIGNED    NULL COMMENT '소속 도면 ID (drawings.id FK, nullable)',
     filename    VARCHAR(255)    NOT NULL DEFAULT '' COMMENT '원본 파일명',
     filepath    VARCHAR(500)    NOT NULL DEFAULT '' COMMENT '저장 파일 경로 (/uploads/wallpapers/…)',
     created_at  DATETIME        NOT NULL DEFAULT NOW() COMMENT '업로드 일시',
     PRIMARY KEY (id),
     KEY idx_wallpapers_user_engine (user_id, engine),
-    CONSTRAINT fk_wallpapers_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    KEY idx_wallpapers_drawing_id (drawing_id),
+    CONSTRAINT fk_wallpapers_user    FOREIGN KEY (user_id)    REFERENCES users(id)    ON DELETE CASCADE,
+    CONSTRAINT fk_wallpapers_drawing FOREIGN KEY (drawing_id) REFERENCES drawings(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='엔진 배경 이미지';
 
 -- 페이지 SEO 메타데이터

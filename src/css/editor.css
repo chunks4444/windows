@@ -139,6 +139,8 @@ body {
 .hbtn-primary { background: var(--teal); border-color: var(--teal); color: #fff; }
 .hbtn-primary:hover { background: #2F7169; border-color: #2F7169; color: #fff; }
 .hbtn svg { flex-shrink: 0; }
+.hbtn.save-ok  { background: var(--teal); border-color: var(--teal); color: #fff; transition: background .15s, color .15s; }
+.hbtn.save-err { background: #c00;        border-color: #c00;        color: #fff; transition: background .15s, color .15s; }
 
 .hbtn-dark { position: relative; overflow: visible; }
 

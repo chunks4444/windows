@@ -581,11 +581,11 @@
         img.src = src;
     }
 
-    async function uploadWallpaperToServer(dataUrl, filename) {
+    async function uploadWallpaperToServer(dataUrl, filename, drawingId) {
         try {
             const res  = await fetch(WALLPAPER_API + 'upload.php', {
                 method: 'POST', headers: _wpHeaders(),
-                body: JSON.stringify({ image: dataUrl, filename, engine: WALLPAPER_ENGINE }),
+                body: JSON.stringify({ image: dataUrl, filename, engine: WALLPAPER_ENGINE, drawing_id: drawingId || null }),
             });
             const data = await res.json();
             if (data.error) { console.warn('배경 업로드 실패:', data.error); return null; }
@@ -613,7 +613,7 @@
                     };
 
                     // 서버 업로드 후 src를 URL로 교체
-                    const result = await uploadWallpaperToServer(dataUrl, file.name);
+                    const result = await uploadWallpaperToServer(dataUrl, file.name, drawingId);
                     if (result) {
                         const thumb = thumbImages.find(t => t.id === id);
                         if (thumb) {
@@ -2028,6 +2028,7 @@ async function draw() {
 
     let workAccum = 0;
     let workStart = Date.now();
+    let drawingId = null;
 
     function pauseWorkTimer() { workAccum += Math.floor((Date.now() - workStart) / 1000); }
     function resumeWorkTimer() { workStart = Date.now(); }
@@ -2047,21 +2048,31 @@ async function draw() {
 
     // 썸네일 + 배경 이미지 복원 (서버에서 로드)
     async function restoreThumbs() {
+        // 기존 썸네일 초기화
+        thumbImages = [];
+        thumbList.innerHTML = '';
+        appBackgroundImage = null;
+        activeThumbId = null;
+        updateClearBgBtn();
         try {
-            const res  = await fetch(WALLPAPER_API + 'list.php?engine=' + WALLPAPER_ENGINE, {
+            const res  = await fetch(WALLPAPER_API + 'list.php?drawing_id=' + (drawingId || 0), {
                 headers: { 'Authorization': 'Bearer ' + _wpToken() },
             });
+            if (!res.ok) return;
             const data = await res.json();
-            if (!data.wallpapers?.length) return;
+            if (!data.wallpapers?.length) { hideRightSidebar(); return; }
             const activeServerId = localStorage.getItem(BG_IMAGE_KEY);
             showRightSidebar();
+            // list.php가 id ASC 반환 → 마지막이 가장 최근
+            const lastServerId = String(data.wallpapers[data.wallpapers.length - 1].id);
+            const targetId = activeServerId || lastServerId;
             data.wallpapers.forEach(({ id: serverId, filename, url: src }) => {
                 const id = Date.now() + Math.random();
                 const imgObj = new Image();
                 imgObj.onload = function() {
                     thumbImages.push({ id, serverId: Number(serverId), src, img: imgObj, filename });
                     addThumbItem(id, src, filename);
-                    if (String(serverId) === activeServerId) setActiveThumb(id);
+                    if (String(serverId) === targetId) setActiveThumb(id);
                 };
                 imgObj.src = src;
             });
@@ -2192,13 +2203,25 @@ async function draw() {
         pauseWorkTimer();
         resumeWorkTimer();
         localStorage.setItem(CURRENT_TITLE_KEY, title);
-        /** @type {any} */ (window.DrawingSync).save(
+        const result = await /** @type {any} */ (window.DrawingSync).save(
             'Sabunteok', title,
             Number(localStorage.getItem(CREATED_KEY)),
             versions,
             captureThumbnail(),
             workAccum
         );
+        if (!result) return;
+        const btn = document.getElementById('btnSave');
+        if (result.ok) {
+            if (result.drawingId) drawingId = result.drawingId;
+            btn.classList.add('save-ok');
+            setTimeout(() => btn.classList.remove('save-ok'), 1200);
+        } else if (result.reason === 'auth') {
+            pmAlert('로그인이 필요합니다. 다시 로그인해 주세요.', { type: 'danger' });
+        } else if (result.reason !== 'no_token') {
+            btn.classList.add('save-err');
+            setTimeout(() => btn.classList.remove('save-err'), 1200);
+        }
     }
 
     async function loadFromDb(title) {
@@ -2213,6 +2236,7 @@ async function draw() {
         localStorage.setItem(CURRENT_TITLE_KEY, title);
         localStorage.setItem(NAME_KEY,          title);
         if (data.drawing) {
+            drawingId = data.drawing.id ?? null;
             const cAt = new Date(data.drawing.created_at).getTime();
             const uAt = new Date(data.drawing.updated_at).getTime();
             localStorage.setItem(CREATED_KEY,  cAt);
@@ -2254,7 +2278,7 @@ async function draw() {
         renderVerList();
     }
 
-    function saveVersion() {
+    async function saveVersion() {
         const badge = document.querySelector('.hdr-title-badge');
         if (!document.getElementById('drawingName').value.trim()) {
             badge.classList.remove('shake');
@@ -2271,7 +2295,7 @@ async function draw() {
         document.getElementById('verLabel').textContent = 'v' + (currentVerIdx + 1);
         renderVerList();
         updateModified();
-        syncToDb();
+        await syncToDb();
     }
 
     document.getElementById('btnSave').addEventListener('click', saveVersion);
@@ -2350,6 +2374,7 @@ async function draw() {
         localStorage.setItem(CURRENT_TITLE_KEY, title);
         localStorage.setItem(NAME_KEY, title);
         if (data.drawing) {
+            drawingId = data.drawing.id ?? null;
             const cAt = new Date(data.drawing.created_at).getTime();
             const uAt = new Date(data.drawing.updated_at).getTime();
             localStorage.setItem(CREATED_KEY, cAt); localStorage.setItem(MODIFIED_KEY, uAt);
@@ -2358,6 +2383,7 @@ async function draw() {
             workAccum = parseInt(data.drawing.work_time_sec) || 0; workStart = Date.now();
         }
         renderVerList(); closeDrawingManager();
+        restoreThumbs();
     }
 
     function startNewDrawing() {
@@ -2410,11 +2436,9 @@ async function draw() {
         if (e.key === 'Escape') document.getElementById('dmRenameCancel').click();
     });
 
-    loadVersions();
-    restoreThumbs();
+    loadVersions().then(() => restoreThumbs());
     window.addEventListener('pmokAuthChanged', () => {
-        loadVersions();
-        restoreThumbs();
+        loadVersions().then(() => restoreThumbs());
     });
 
     // ── 도면 이름 자동 저장 ────────────────────────

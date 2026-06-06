@@ -9,12 +9,20 @@ window.DrawingSync = (function () {
     }
 
     async function save(type, title, createdAt, versions, thumbnail = null, workTimeSec = 0) {
-        if (!_token() || !title) return;
-        await fetch('/src/api/drawings/save.php', {
-            method: 'POST',
-            headers: _headers(),
-            body: JSON.stringify({ type, title, created_at: createdAt, versions, thumbnail, work_time_sec: workTimeSec }),
-        }).catch(() => {});
+        if (!_token() || !title) return { ok: false, reason: 'no_token' };
+        try {
+            const res  = await fetch('/src/api/drawings/save.php', {
+                method: 'POST',
+                headers: _headers(),
+                body: JSON.stringify({ type, title, created_at: createdAt, versions, thumbnail, work_time_sec: workTimeSec }),
+            });
+            const data = await res.json().catch(() => ({}));
+            if (res.status === 401) return { ok: false, reason: 'auth' };
+            if (!res.ok)           return { ok: false, reason: data.error || 'server_error' };
+            return { ok: true, drawingId: data.drawing_id ?? null };
+        } catch {
+            return { ok: false, reason: 'network' };
+        }
     }
 
     // title 있으면 특정 도면 + 버전 반환 { drawing, versions }

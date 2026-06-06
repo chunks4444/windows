@@ -13,10 +13,11 @@ if (!$payload) {
     http_response_code(401); echo json_encode(['error' => '인증이 필요합니다.']); exit;
 }
 
-$body     = json_decode(file_get_contents('php://input'), true);
-$dataUrl  = $body['image']    ?? '';
-$filename = $body['filename'] ?? '';
-$engine   = $body['engine']   ?? '';
+$body      = json_decode(file_get_contents('php://input'), true);
+$dataUrl   = $body['image']      ?? '';
+$filename  = $body['filename']   ?? '';
+$engine    = $body['engine']     ?? '';
+$drawingId = (int)($body['drawing_id'] ?? 0) ?: null;
 
 if (!$dataUrl || !preg_match('/^data:image\/(jpeg|png|webp);base64,/', $dataUrl, $m)) {
     http_response_code(422); echo json_encode(['error' => '유효하지 않은 이미지입니다.']); exit;
@@ -46,7 +47,7 @@ if ($w > 1600 || $h > 1600) {
 }
 
 $userId = (int)$payload['sub'];
-$dir    = __DIR__ . '/../../../../uploads/wallpapers/' . $userId;
+$dir    = __DIR__ . '/../../../uploads/wallpapers/' . $userId;
 if (!is_dir($dir)) mkdir($dir, 0755, true);
 
 $fname = time() . '_' . bin2hex(random_bytes(4)) . '.jpg';
@@ -57,6 +58,6 @@ imagedestroy($img);
 $webPath = '/uploads/wallpapers/' . $userId . '/' . $fname;
 
 $pdo  = db();
-$stmt = $pdo->prepare('INSERT INTO wallpapers (user_id, engine, filename, filepath) VALUES (?, ?, ?, ?)');
-$stmt->execute([$userId, $engine, $filename, $webPath]);
+$stmt = $pdo->prepare('INSERT INTO wallpapers (user_id, engine, drawing_id, filename, filepath) VALUES (?, ?, ?, ?, ?)');
+$stmt->execute([$userId, $engine, $drawingId, $filename, $webPath]);
 echo json_encode(['ok' => true, 'id' => (int)$pdo->lastInsertId(), 'url' => $webPath]);
