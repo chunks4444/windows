@@ -441,6 +441,62 @@ header('Content-Type: text/html; charset=UTF-8');
     @media (max-width: 480px) {
         .ab-info-grid { grid-template-columns: 1fr; }
     }
+
+    /* ── CONTACT BUTTON ──────────────────────────── */
+    .ab-contact-btn {
+        display: inline-flex; align-items: center; gap: 8px;
+        margin-top: 24px;
+        height: 40px; padding: 0 20px;
+        background: var(--red); color: #fff; border: none;
+        border-radius: 4px; font-family: inherit;
+        font-size: 13px; font-weight: 600; cursor: pointer;
+        transition: background .15s;
+    }
+    .ab-contact-btn:hover { background: #a81d00; }
+
+    /* ── CONTACT MODAL ───────────────────────────── */
+    #contactModal .modal-content {
+        border: none; border-radius: 8px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    }
+    #contactModal .modal-header {
+        border-bottom: 1px solid var(--border);
+        padding: 20px 24px 16px;
+    }
+    #contactModal .modal-title {
+        font-family: 'Noto Sans KR', sans-serif;
+        font-size: 15px; font-weight: 700;
+    }
+    #contactModal .modal-body { padding: 24px; }
+    .ct-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+    .ct-field label { font-size: 11px; font-weight: 700; color: #666; letter-spacing: .03em; }
+    .ct-field input, .ct-field textarea {
+        border: 1px solid #e0e0e0; border-radius: 4px;
+        padding: 9px 12px; font-size: 13px;
+        font-family: inherit; outline: none;
+        transition: border-color .15s; resize: none;
+    }
+    .ct-field input:focus, .ct-field textarea:focus { border-color: #111; }
+    .ct-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .ct-submit {
+        width: 100%; height: 40px; margin-top: 4px;
+        background: var(--red); color: #fff; border: none;
+        border-radius: 4px; font-family: inherit;
+        font-size: 13px; font-weight: 600; cursor: pointer;
+        transition: background .15s;
+    }
+    .ct-submit:hover { background: #a81d00; }
+    .ct-submit:disabled { background: #999; cursor: not-allowed; }
+    .ct-error {
+        background: #fff3f0; border-left: 3px solid #e05218;
+        padding: 9px 12px; font-size: 12px; color: #c0392b;
+        margin-bottom: 14px; border-radius: 2px;
+    }
+    .ct-success {
+        text-align: center; padding: 32px 0 16px;
+        font-size: 14px; color: var(--text-2); line-height: 1.8;
+    }
+    .ct-success strong { display: block; font-size: 16px; color: var(--text-1); margin-bottom: 8px; }
     </style>
 </head>
 <body>
@@ -539,6 +595,10 @@ header('Content-Type: text/html; charset=UTF-8');
         <p class="ab-section-label">Contact</p>
         <h2 class="ab-section-title">함께 만들어가요.</h2>
         <p class="ab-section-body">설계 문의, 제작 상담, 협업 제안 모두 환영합니다.</p>
+        <button class="ab-contact-btn" data-bs-toggle="modal" data-bs-target="#contactModal">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            이메일 문의하기
+        </button>
 
         <div class="ab-contact-cols">
             <div class="ab-contact-info">
@@ -592,5 +652,91 @@ header('Content-Type: text/html; charset=UTF-8');
     </div>
 </div>
 
+<!-- CONTACT MODAL -->
+<div class="modal fade" id="contactModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:480px;">
+        <div class="modal-content" id="contactModalContent">
+            <div class="modal-header">
+                <h5 class="modal-title">이메일 문의</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" style="font-size:11px;"></button>
+            </div>
+            <div class="modal-body">
+                <div id="ctError" class="ct-error" style="display:none;"></div>
+                <div id="ctSuccess" class="ct-success" style="display:none;">
+                    <strong>문의가 접수되었습니다.</strong>
+                    확인 후 빠르게 답변 드리겠습니다.<br>
+                    <small style="color:var(--text-3);font-size:12px;">pyeongmok@gmail.com</small>
+                </div>
+                <form id="contactForm" onsubmit="ctSubmit(event)">
+                    <div class="ct-row-2">
+                        <div class="ct-field">
+                            <label>이름</label>
+                            <input type="text" id="ctName" placeholder="홍길동" required maxlength="50">
+                        </div>
+                        <div class="ct-field">
+                            <label>이메일 (답변 받을 주소)</label>
+                            <input type="email" id="ctEmail" placeholder="example@email.com" required>
+                        </div>
+                    </div>
+                    <div class="ct-field">
+                        <label>제목</label>
+                        <input type="text" id="ctSubject" placeholder="문의 제목" required maxlength="100">
+                    </div>
+                    <div class="ct-field">
+                        <label>내용</label>
+                        <textarea id="ctMessage" rows="6" placeholder="문의 내용을 입력해주세요." required maxlength="2000"></textarea>
+                    </div>
+                    <button type="submit" class="ct-submit" id="ctBtn">보내기</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+async function ctSubmit(e) {
+    e.preventDefault();
+    const btn = document.getElementById('ctBtn');
+    btn.disabled = true;
+    document.getElementById('ctError').style.display = 'none';
+    try {
+        const res  = await fetch('/src/api/contact/send.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name:    document.getElementById('ctName').value,
+                email:   document.getElementById('ctEmail').value,
+                subject: document.getElementById('ctSubject').value,
+                message: document.getElementById('ctMessage').value,
+            }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            const el = document.getElementById('ctError');
+            el.textContent = data.error || '전송 실패';
+            el.style.display = '';
+            return;
+        }
+        document.getElementById('contactForm').style.display = 'none';
+        document.getElementById('ctSuccess').style.display = '';
+    } catch {
+        const el = document.getElementById('ctError');
+        el.textContent = '서버 오류가 발생했습니다.';
+        el.style.display = '';
+    } finally {
+        btn.disabled = false;
+    }
+}
+
+// 모달 닫힐 때 폼 초기화
+document.getElementById('contactModal').addEventListener('hidden.bs.modal', function () {
+    document.getElementById('contactForm').reset();
+    document.getElementById('contactForm').style.display = '';
+    document.getElementById('ctSuccess').style.display = 'none';
+    document.getElementById('ctError').style.display = 'none';
+    document.getElementById('ctBtn').disabled = false;
+});
+</script>
 </body>
 </html>

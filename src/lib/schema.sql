@@ -57,6 +57,18 @@ CREATE TABLE IF NOT EXISTS drawings (
     CONSTRAINT fk_drawings_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='도면 메타 정보 (제목별로 독립 관리)';
 
+-- 문의 메일 발송 이력 (rate limit용)
+CREATE TABLE IF NOT EXISTS contact_log (
+    id       INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    ip_hash  CHAR(8)      NOT NULL,
+    name     VARCHAR(50)  NOT NULL DEFAULT '',
+    email    VARCHAR(100) NOT NULL DEFAULT '',
+    subject  VARCHAR(100) NOT NULL DEFAULT '',
+    sent_at  DATETIME     NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (id),
+    KEY idx_contact_ip_sent (ip_hash, sent_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='문의 메일 발송 이력';
+
 -- 배경 이미지 테이블 (엔진별 사용자 업로드 배경)
 CREATE TABLE IF NOT EXISTS wallpapers (
     id          INT UNSIGNED    NOT NULL AUTO_INCREMENT COMMENT '배경 고유 ID',
