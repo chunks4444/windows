@@ -1857,8 +1857,6 @@ async function draw() {
         document.getElementById('btnEditDelete').classList.remove('cv-btn-active');
         document.getElementById('btnEditAdd').classList.remove('cv-btn-active');
         placementMode = false;
-        doorCornerPositions = null;
-        placementNaturalSize = null;
         document.getElementById('btnScale').classList.remove('cv-btn-active');
         canvas.style.cursor = 'default';
     }
