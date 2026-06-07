@@ -187,6 +187,40 @@ body { font-weight: 900; }
     margin: 0;
 }
 
+.process-icon {
+    font-size: 28px;
+    color: #111;
+    margin-bottom: 12px;
+}
+
+.process-hints {
+    list-style: none;
+    padding: 0;
+    margin: 16px 0 0;
+    text-align: left;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-top: 1px solid rgba(0,0,0,0.07);
+    padding-top: 16px;
+}
+
+.process-hints li {
+    font-size: 12px;
+    color: #666;
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.process-hints li i {
+    color: #cc2200;
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
 .process-arrow {
     font-size: 18px;
     color: rgba(0,0,0,0.15);

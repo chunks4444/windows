@@ -228,23 +228,45 @@ $spaceCards = db()->query('SELECT label, image_url, collection_query FROM space_
         <!-- Process -->
         <section class="process-section">
             <div class="container">
+                <div class="mb-4">
+                    <p class="ab-section-label">사용법</p>
+                    <h2 class="ab-section-title">이렇게 사용하세요.</h2>
+                </div>
                 <div class="process-container">
                     <div class="process-step">
                         <span class="process-num">01</span>
-                        <h3 class="process-title">설계</h3>
-                        <p class="process-desc">웹 스튜디오에서 패턴과<br>크기를 직접 디자인</p>
+                        <i class="bi bi-pencil-square process-icon"></i>
+                        <h3 class="process-title">패턴 설계</h3>
+                        <p class="process-desc">상단 Studio 메뉴에서 원하는<br>창호 패턴을 선택하세요.</p>
+                        <ul class="process-hints">
+                            <li><i class="bi bi-check2"></i> 문틀 가로·세로 크기 입력</li>
+                            <li><i class="bi bi-check2"></i> 살 간격·두께 슬라이더 조정</li>
+                            <li><i class="bi bi-check2"></i> 실시간으로 결과 확인</li>
+                        </ul>
                     </div>
                     <div class="process-arrow">→</div>
                     <div class="process-step">
                         <span class="process-num">02</span>
-                        <h3 class="process-title">선택</h3>
-                        <p class="process-desc">나만의 도면을 저장하고<br>컬렉션에서 완성</p>
+                        <i class="bi bi-bookmark-heart process-icon"></i>
+                        <h3 class="process-title">저장 & 탐색</h3>
+                        <p class="process-desc">완성된 도면을 저장하고<br>컬렉션에서 영감을 찾아보세요.</p>
+                        <ul class="process-hints">
+                            <li><i class="bi bi-check2"></i> 도면 저장 후 내 도면에서 관리</li>
+                            <li><i class="bi bi-check2"></i> 컬렉션에서 다양한 패턴 탐색</li>
+                            <li><i class="bi bi-check2"></i> 보드에 마음에 드는 패턴 모으기</li>
+                        </ul>
                     </div>
                     <div class="process-arrow">→</div>
                     <div class="process-step">
                         <span class="process-num">03</span>
-                        <h3 class="process-title">상담</h3>
-                        <p class="process-desc">완성된 설계를 바탕으로<br>제작 의뢰</p>
+                        <i class="bi bi-chat-heart process-icon"></i>
+                        <h3 class="process-title">제작 상담</h3>
+                        <p class="process-desc">완성된 설계를 가지고<br>평목 공방에 제작을 의뢰하세요.</p>
+                        <ul class="process-hints">
+                            <li><i class="bi bi-check2"></i> About 페이지에서 이메일 문의</li>
+                            <li><i class="bi bi-check2"></i> 저장한 도면 기반으로 상담</li>
+                            <li><i class="bi bi-check2"></i> 설계·제작·협업 모두 환영</li>
+                        </ul>
                     </div>
                 </div>
             </div>
