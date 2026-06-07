@@ -244,7 +244,7 @@ $spaceCards = db()->query('SELECT label, image_url, collection_query FROM space_
                     <div class="process-step">
                         <span class="process-num">03</span>
                         <h3 class="process-title">상담</h3>
-                        <p class="process-desc">완성된 설계를 바탕으로<br>전문 공방 제작 의뢰</p>
+                        <p class="process-desc">완성된 설계를 바탕으로<br>제작 의뢰</p>
                     </div>
                 </div>
             </div>
