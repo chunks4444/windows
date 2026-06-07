@@ -6,7 +6,11 @@
 .hero-carousel-outer {
     padding-top: 68px;
     width: 100%;
+}
+
+.hero-carousel-outer .container {
     overflow: hidden;
+    border-radius: 16px;
 }
 
 .hero-slide-img {

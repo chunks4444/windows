@@ -23,6 +23,7 @@ $spaceCards = db()->query('SELECT label, image_url, collection_query FROM space_
 
             <!-- Hero Carousel -->
             <div class="hero-carousel-outer">
+              <div class="container">
                 <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="4500">
                     <div class="carousel-indicators">
                         <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
@@ -55,6 +56,7 @@ $spaceCards = db()->query('SELECT label, image_url, collection_query FROM space_
                         <span class="carousel-control-next-icon" aria-hidden="true"></span>
                     </button>
                 </div>
+              </div>
             </div>
 
             <!-- -->
