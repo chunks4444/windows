@@ -145,7 +145,7 @@ async function loadDrawings() {
 }
 
 async function loadPatterns() {
-    const res  = await fetch('/src/api/admin/library.php', { headers: headers() });
+    const res  = await fetch('/src/api/admin/collection.php', { headers: headers() });
     const data = await res.json();
     if (!res.ok) return;
     allPatterns = data.patterns || [];
@@ -294,7 +294,7 @@ async function savePattern() {
 
     btn.disabled = true; btn.textContent = '저장 중…';
     try {
-        const res  = await fetch('/src/api/admin/library.php', {
+        const res  = await fetch('/src/api/admin/collection.php', {
             method:  editingId !== null ? 'PUT' : 'POST',
             headers: headers(),
             body:    JSON.stringify(body),
@@ -313,7 +313,7 @@ async function savePattern() {
 async function toggleActive(id, active) {
     const row  = document.querySelector(`[onclick*="toggleActive(${id},"]`).closest('tr');
     const name = row.querySelector('td:nth-child(2)').textContent.trim();
-    const res  = await fetch('/src/api/admin/library.php', {
+    const res  = await fetch('/src/api/admin/collection.php', {
         method:  'PUT',
         headers: headers(),
         body:    JSON.stringify({ id, name_ko: name, is_active: active }),
@@ -323,7 +323,7 @@ async function toggleActive(id, active) {
 
 async function deletePattern(id, name) {
     if (!confirm(`"${name}" 패턴을 삭제하시겠습니까?`)) return;
-    const res = await fetch('/src/api/admin/library.php', {
+    const res = await fetch('/src/api/admin/collection.php', {
         method:  'DELETE',
         headers: headers(),
         body:    JSON.stringify({ id }),

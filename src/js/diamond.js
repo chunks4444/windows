@@ -264,7 +264,7 @@
     }
 
     // ── 렌더링 결과 저장 ───────────────────────────
-    const RENDERS_KEY = 'pmok_sabunteok_renders';
+    const RENDERS_KEY = 'pmok_diamond_renders';
     const MAX_RENDERS = 9;
     let savedRenders = [];
 
@@ -474,7 +474,7 @@
         else hideRightSidebar();
     });
 
-    const WALLPAPER_ENGINE  = 'sabunteok';
+    const WALLPAPER_ENGINE  = 'diamond';
     const WALLPAPER_API     = '/src/api/wallpapers/';
     function _wpToken()   { return localStorage.getItem('pmok_auth_token'); }
     function _wpHeaders() { return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _wpToken() }; }
@@ -2053,12 +2053,12 @@ async function draw() {
         return `${yy}.${mm}.${dd} ${hh}:${mi}`;
     }
 
-    const CREATED_KEY       = 'pmok_sabunteok_created';
-    const MODIFIED_KEY      = 'pmok_sabunteok_modified';
-    const VERSIONS_KEY      = 'pmok_sabunteok_versions';
-    const BG_IMAGE_KEY      = 'pmok_sabunteok_bg';
-    const CURRENT_TITLE_KEY = 'pmok_sabunteok_current_title';
-    const NAME_KEY          = 'pmok_sabunteok_name';
+    const CREATED_KEY       = 'pmok_diamond_created';
+    const MODIFIED_KEY      = 'pmok_diamond_modified';
+    const VERSIONS_KEY      = 'pmok_diamond_versions';
+    const BG_IMAGE_KEY      = 'pmok_diamond_bg';
+    const CURRENT_TITLE_KEY = 'pmok_diamond_current_title';
+    const NAME_KEY          = 'pmok_diamond_name';
     const MAX_VERSIONS      = 20;
 
     let workAccum = 0;
@@ -2247,7 +2247,7 @@ async function draw() {
         resumeWorkTimer();
         localStorage.setItem(CURRENT_TITLE_KEY, title);
         const result = await /** @type {any} */ (window.DrawingSync).save(
-            'Sabunteok', title,
+            'diamond', title,
             Number(localStorage.getItem(CREATED_KEY)),
             versions,
             captureThumbnail(),
@@ -2268,7 +2268,7 @@ async function draw() {
     }
 
     async function loadFromDb(title) {
-        const data = await /** @type {any} */ (window.DrawingSync).load('Sabunteok', title);
+        const data = await /** @type {any} */ (window.DrawingSync).load('diamond', title);
         if (!data || !data.versions || !data.versions.length) return false;
         versions      = data.versions;
         currentVerIdx = versions.length - 1;
@@ -2306,7 +2306,7 @@ async function draw() {
             const ok = await loadFromDb(savedTitle);
             if (ok) return;
         } else {
-            const drawings = await /** @type {any} */ (window.DrawingSync).list('Sabunteok');
+            const drawings = await /** @type {any} */ (window.DrawingSync).list('diamond');
             if (drawings.length > 0) {
                 const ok = await loadFromDb(drawings[0].title);
                 if (ok) return;
@@ -2367,7 +2367,7 @@ async function draw() {
     async function refreshDrawingList() {
         const list = document.getElementById('dmList');
         list.innerHTML = '<div class="dm-empty">불러오는 중…</div>';
-        const drawings = await /** @type {any} */ (window.DrawingSync).list('Sabunteok');
+        const drawings = await /** @type {any} */ (window.DrawingSync).list('diamond');
         if (!drawings.length) {
             list.innerHTML = '<div class="dm-empty">저장된 도면이 없습니다</div>';
             return;
@@ -2397,7 +2397,7 @@ async function draw() {
             item.querySelector('.dm-del-btn').addEventListener('click', (e) => {
                 e.stopPropagation();
                 pmConfirm(`"${d.title}" 도면을 삭제하시겠습니까?`, async () => {
-                    await /** @type {any} */ (window.DrawingSync).delete('Sabunteok', d.title);
+                    await /** @type {any} */ (window.DrawingSync).delete('diamond', d.title);
                     if (d.title === document.getElementById('drawingName').value.trim()) startNewDrawing();
                     refreshDrawingList();
                 }, { sub: '모든 버전이 함께 삭제됩니다.' });
@@ -2407,7 +2407,7 @@ async function draw() {
     }
 
     async function openDrawingByTitle(title) {
-        const data = await /** @type {any} */ (window.DrawingSync).load('Sabunteok', title);
+        const data = await /** @type {any} */ (window.DrawingSync).load('diamond', title);
         if (!data || !data.versions || !data.versions.length) { pmAlert('도면을 불러올 수 없습니다.'); return; }
         versions = data.versions; currentVerIdx = versions.length - 1;
         applyParams(versions[currentVerIdx].params);
@@ -2463,7 +2463,7 @@ async function draw() {
     document.getElementById('dmRenameOk').addEventListener('click', async () => {
         const newTitle = document.getElementById('dmRenameInput').value.trim();
         if (!newTitle || newTitle === _renameTarget) { document.getElementById('dmRenameBackdrop').classList.remove('pm-active'); return; }
-        const ok = await /** @type {any} */ (window.DrawingSync).rename('Sabunteok', _renameTarget, newTitle);
+        const ok = await /** @type {any} */ (window.DrawingSync).rename('diamond', _renameTarget, newTitle);
         if (ok) {
             if (_renameTarget === document.getElementById('drawingName').value.trim()) {
                 document.getElementById('drawingName').value = newTitle;

@@ -53,10 +53,12 @@ try {
         'exp'   => time() + JWT_EXPIRE,
     ]);
 
-    if (session_status() === PHP_SESSION_NONE) @session_start();
-    $_SESSION['pmok_user_id'] = $user['id'];
-    $_SESSION['pmok_email']   = $user['email'];
-    $_SESSION['pmok_role']    = $user['role'];
+    setcookie('pmok_auth', $token, [
+        'expires'  => time() + JWT_EXPIRE,
+        'path'     => '/',
+        'httponly' => true,
+        'samesite' => 'Lax',
+    ]);
 
     echo json_encode(['token' => $token, 'user' => ['id' => $user['id'], 'email' => $user['email'], 'role' => $user['role']]]);
 } catch (Throwable $e) {

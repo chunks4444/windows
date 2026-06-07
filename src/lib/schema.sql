@@ -142,6 +142,55 @@ CREATE TABLE IF NOT EXISTS library_keywords (
     CONSTRAINT fk_lkw_pattern FOREIGN KEY (pattern_id) REFERENCES library_patterns(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='라이브러리 패턴 검색/필터 키워드';
 
+-- 사용자 보드 (컬렉션 패턴 모음)
+CREATE TABLE IF NOT EXISTS boards (
+    id         INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    user_id    INT UNSIGNED NOT NULL,
+    name       VARCHAR(100) NOT NULL,
+    created_at DATETIME     NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (id),
+    KEY idx_boards_user (user_id),
+    CONSTRAINT fk_boards_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='사용자 보드';
+
+-- 보드 패턴 항목
+CREATE TABLE IF NOT EXISTS board_items (
+    id         INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    board_id   INT UNSIGNED NOT NULL,
+    pattern_id INT UNSIGNED NOT NULL,
+    created_at DATETIME     NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_board_item (board_id, pattern_id),
+    KEY idx_bi_board (board_id),
+    CONSTRAINT fk_bi_board   FOREIGN KEY (board_id)   REFERENCES boards(id)           ON DELETE CASCADE,
+    CONSTRAINT fk_bi_pattern FOREIGN KEY (pattern_id) REFERENCES library_patterns(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='보드 패턴 항목';
+
+-- 메인 페이지 공간 카드
+CREATE TABLE IF NOT EXISTS space_cards (
+    id               INT UNSIGNED      NOT NULL AUTO_INCREMENT,
+    label            VARCHAR(50)       NOT NULL DEFAULT '' COMMENT '카드 라벨 (예: 중문)',
+    image_url        VARCHAR(500)      NOT NULL DEFAULT '' COMMENT '이미지 URL 또는 /uploads/ 경로',
+    collection_query VARCHAR(100)      NOT NULL DEFAULT '' COMMENT '컬렉션 검색어 (?q=)',
+    sort_order       SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    is_active        TINYINT(1)        NOT NULL DEFAULT 1,
+    created_at       DATETIME          NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (id),
+    KEY idx_sc_sort (sort_order, is_active)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='메인 페이지 공간 카드';
+
+INSERT IGNORE INTO space_cards (id, label, image_url, collection_query, sort_order) VALUES
+(1,  '중문',   'https://picsum.photos/seed/sp01/600/400', '중문',   0),
+(2,  '거실',   'https://picsum.photos/seed/sp02/600/400', '거실',   1),
+(3,  '카페',   'https://picsum.photos/seed/sp03/600/400', '카페',   2),
+(4,  '침실',   'https://picsum.photos/seed/sp04/600/400', '침실',   3),
+(5,  '서재',   'https://picsum.photos/seed/sp05/600/400', '서재',   4),
+(6,  '현관',   'https://picsum.photos/seed/sp06/600/400', '현관',   5),
+(7,  '다실',   'https://picsum.photos/seed/sp07/600/400', '다실',   6),
+(8,  '한옥',   'https://picsum.photos/seed/sp08/600/400', '한옥',   7),
+(9,  '주방',   'https://picsum.photos/seed/sp09/600/400', '주방',   8),
+(10, '갤러리', 'https://picsum.photos/seed/sp10/600/400', '갤러리', 9);
+
 -- 도면 버전 테이블 (한 도면의 저장 이력)
 CREATE TABLE IF NOT EXISTS drawing_versions (
     id          INT UNSIGNED    NOT NULL AUTO_INCREMENT COMMENT '버전 고유 ID',

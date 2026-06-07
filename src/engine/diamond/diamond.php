@@ -534,7 +534,7 @@ header('Content-Type: text/html; charset=UTF-8');
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="/src/js/drawing-sync.js"></script>
-    <script src="/src/js/Sabunteok.js"></script>
+    <script src="/src/js/diamond.js"></script>
 </body>
 
 </html>

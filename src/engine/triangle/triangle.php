@@ -10,7 +10,7 @@ header('Content-Type: text/html; charset=UTF-8');
     <?php require_once __DIR__ . '/../../lib/meta.php'; meta_tags(); ?>
     <link rel="stylesheet" href="/src/css/editor.css">
     <link rel="stylesheet" href="/src/css/sidebar.css">
-    <link rel="stylesheet" href="/src/css/sambuntok.css">
+    <link rel="stylesheet" href="/src/css/triangle.css">
 </head>
 
 <body class="pm-generator">
@@ -527,7 +527,7 @@ header('Content-Type: text/html; charset=UTF-8');
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="/src/js/drawing-sync.js"></script>
-    <script src="/src/js/sambuntok.js"></script>
+    <script src="/src/js/triangle.js"></script>
 </body>
 
 </html>

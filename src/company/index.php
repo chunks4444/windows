@@ -75,7 +75,48 @@ header('Content-Type: text/html; charset=UTF-8');
         <h2 class="ab-section-title">직접 설계해 보세요.</h2>
         <p class="ab-section-body">평목 스튜디오는 브라우저에서 바로 사용할 수 있는 <strong>창호 설계 도구</strong>입니다. <br>문틀 크기, 살 간격, 패턴을 조정하며 나만의 창호를 완성해 보세요.</p>
         <div class="ab-tools-grid">
-            <a href="/src/engine/Sabunteok/Sabunteok.php" class="ab-tool-card">
+            <a href="/src/engine/classic/classic.php" class="ab-tool-card">
+                <svg class="ab-tool-icon" width="48" height="48" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+                    <g transform="rotate(90 340 340)">
+                        <rect fill="currentColor" x="148" y="204" width="384" height="46" rx="4"/>
+                        <rect fill="currentColor" x="148" y="430" width="384" height="46" rx="4"/>
+                        <rect fill="currentColor" x="148" y="148" width="46" height="384" rx="4"/>
+                        <rect fill="currentColor" x="294" y="148" width="46" height="384" rx="4"/>
+                        <rect fill="currentColor" x="486" y="148" width="46" height="384" rx="4"/>
+                    </g>
+                </svg>
+                <div>
+                    <p class="ab-tool-name">Classic Grid</p>
+                    <p class="ab-tool-desc">전통 창호의 기본이 되는 격자 문살 패턴.<br>균형 잡힌 비례와 절제된 구조가 특징입니다.</p>
+                </div>
+            </a>
+            <a href="/src/engine/square/square.php" class="ab-tool-card">
+                <svg class="ab-tool-icon" width="48" height="48" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+                    <rect fill="currentColor" x="148" y="204" width="384" height="46" rx="4"/>
+                    <rect fill="currentColor" x="148" y="430" width="384" height="46" rx="4"/>
+                    <rect fill="currentColor" x="204" y="148" width="46" height="384" rx="4"/>
+                    <rect fill="currentColor" x="430" y="148" width="46" height="384" rx="4"/>
+                </svg>
+                <div>
+                    <p class="ab-tool-name">Square Grid</p>
+                    <p class="ab-tool-desc">가로살과 세로살이 직각으로 교차하는 정방형 문살 패턴.<br>단아하고 절제된 아름다움을 표현합니다.</p>
+                </div>
+            </a>
+            <a href="/src/engine/cross/cross.php" class="ab-tool-card">
+                <svg class="ab-tool-icon" width="48" height="48" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+                    <g transform="rotate(45 340 340)">
+                        <rect fill="currentColor" x="148" y="204" width="384" height="46" rx="4"/>
+                        <rect fill="currentColor" x="148" y="430" width="384" height="46" rx="4"/>
+                        <rect fill="currentColor" x="204" y="148" width="46" height="384" rx="4"/>
+                        <rect fill="currentColor" x="430" y="148" width="46" height="384" rx="4"/>
+                    </g>
+                </svg>
+                <div>
+                    <p class="ab-tool-name">Cross Grid</p>
+                    <p class="ab-tool-desc">45° 대각선으로 교차하는 마름모 문살 패턴.<br>역동적인 사선의 흐름이 공간에 긴장감을 더합니다.</p>
+                </div>
+            </a>
+            <a href="/src/engine/diamond/diamond.php" class="ab-tool-card">
                 <svg class="ab-tool-icon" width="48" height="48" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
                     <rect fill="currentColor" x="317" y="148" width="46" height="384" rx="4"/>
                     <rect fill="currentColor" x="148" y="317" width="384" height="46" rx="4"/>
@@ -83,11 +124,11 @@ header('Content-Type: text/html; charset=UTF-8');
                     <g transform="rotate(135 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="4"/></g>
                 </svg>
                 <div>
-                    <p class="ab-tool-name">Square Grid</p>
-                    <p class="ab-tool-desc">가로살과 세로살이 직각으로 교차하는 정방형 문살 패턴.<br> 단아하고 절제된 아름다움을 표현합니다.</p>
+                    <p class="ab-tool-name">Diamond Grid</p>
+                    <p class="ab-tool-desc">4방향 살이 대각선을 포함해 방사형으로 교차하는 패턴.<br>화려하고 입체적인 구조감을 연출합니다.</p>
                 </div>
             </a>
-            <a href="/src/engine/sambuntok/sambuntok.php" class="ab-tool-card">
+            <a href="/src/engine/triangle/triangle.php" class="ab-tool-card">
                 <svg class="ab-tool-icon" width="48" height="48" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
                     <rect fill="currentColor" x="317" y="148" width="46" height="384" rx="4"/>
                     <g transform="rotate(60 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="4"/></g>
@@ -95,7 +136,7 @@ header('Content-Type: text/html; charset=UTF-8');
                 </svg>
                 <div>
                     <p class="ab-tool-name">Triangle Grid</p>
-                    <p class="ab-tool-desc">세 방향의 살이 60° 각도로 교차하는 삼각형 문살 패턴.<br> 역동적이고 세련된 인상을 공간에 더합니다.</p>
+                    <p class="ab-tool-desc">세 방향의 살이 60° 각도로 교차하는 삼각형 문살 패턴.<br>역동적이고 세련된 인상을 공간에 더합니다.</p>
                 </div>
             </a>
         </div>
@@ -103,7 +144,7 @@ header('Content-Type: text/html; charset=UTF-8');
 </div>
 
 <!-- INFO — full-width box -->
-<div class="ab-contact-box">
+<div class="ab-contact-box" id="contact">
     <div class="container">
         <p class="ab-section-label">Contact</p>
         <h2 class="ab-section-title">함께 만들어가요.</h2>

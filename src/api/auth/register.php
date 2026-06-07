@@ -34,9 +34,13 @@ try {
     $stmt->execute([$email, $hash]);
     $userId = (int) $pdo->lastInsertId();
     $token  = jwt_encode(['sub' => $userId, 'email' => $email, 'role' => 'u', 'iat' => time(), 'exp' => time() + JWT_EXPIRE]);
-    if (session_status() === PHP_SESSION_NONE) @session_start();
-    $_SESSION['pmok_user_id'] = $userId;
-    $_SESSION['pmok_email']   = $email;
+
+    setcookie('pmok_auth', $token, [
+        'expires'  => time() + JWT_EXPIRE,
+        'path'     => '/',
+        'httponly' => true,
+        'samesite' => 'Lax',
+    ]);
 
     http_response_code(201);
     echo json_encode(['token' => $token, 'user' => ['id' => $userId, 'email' => $email, 'role' => 'u']]);

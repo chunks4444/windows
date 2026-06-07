@@ -11,8 +11,8 @@ $q   = trim($_GET['q'] ?? '');
 $pdo = db();
 
 $editorMap = [
-    'sabunteok' => '/src/engine/Sabunteok/Sabunteok.php',
-    'sambuntok' => '/src/engine/sambuntok/sambuntok.php',
+    'diamond' => '/src/engine/diamond/diamond.php',
+    'triangle' => '/src/engine/triangle/triangle.php',
     'square'    => '/src/engine/square/square.php',
     'cross'     => '/src/engine/cross/cross.php',
     'classic'   => '/src/engine/classic/classic.php',

@@ -246,3 +246,92 @@ body {
     transition: background 0.12s;
 }
 .db-auth-btn:hover { background: #2F7169; }
+
+/* ── 탭 ──────────────────────────────────────── */
+.db-tabs {
+    display: flex;
+    gap: 4px;
+}
+
+.db-tab {
+    height: 36px;
+    padding: 0 18px;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    color: var(--text-3);
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+
+.db-tab.active {
+    background: var(--teal);
+    border-color: var(--teal);
+    color: #fff;
+}
+
+.db-tab:not(.active):hover {
+    border-color: var(--teal-mid);
+    color: var(--teal);
+}
+
+/* ── 보드 썸네일 ──────────────────────────────── */
+.db-board-thumb {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f8f8;
+}
+
+/* ── 보드 모달 패턴 아이템 ───────────────────── */
+.db-board-item {
+    position: relative;
+    width: 140px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: #fff;
+}
+
+.db-board-item img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    display: block;
+}
+
+.db-board-item-name {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-2);
+    padding: 6px 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.db-board-item-remove {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+
+.db-board-item:hover .db-board-item-remove {
+    opacity: 1;
+}

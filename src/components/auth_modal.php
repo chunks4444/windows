@@ -97,7 +97,7 @@ async function authLogin(e) {
         bootstrap.Modal.getInstance(document.getElementById('authModal')).hide();
         authUpdateNav();
         window.dispatchEvent(new CustomEvent('pmokAuthChanged'));
-        if (!window.__pmokGuardedPage) location.href = '/dashboard.php';
+        if (!window.__pmokGuardedPage) location.href = '/src/mypage/dashboard.php';
     } catch {
         authShowError('서버 오류가 발생했습니다.');
     } finally {
@@ -128,7 +128,7 @@ async function authRegister(e) {
         bootstrap.Modal.getInstance(document.getElementById('authModal')).hide();
         authUpdateNav();
         window.dispatchEvent(new CustomEvent('pmokAuthChanged'));
-        if (!window.__pmokGuardedPage) location.href = '/dashboard.php';
+        if (!window.__pmokGuardedPage) location.href = '/src/mypage/dashboard.php';
     } catch {
         authShowError('서버 오류가 발생했습니다.');
     } finally {
@@ -140,17 +140,13 @@ function authSaveSession(token, user) {
     localStorage.setItem('pmok_last_login', Date.now().toString());
     localStorage.setItem(AUTH_TOKEN_KEY, token);
     localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
-    document.cookie = 'pmok_auth=' + token + '; path=/; SameSite=Lax';
 }
 
 function authLogout() {
-    const token = localStorage.getItem(AUTH_TOKEN_KEY);
     localStorage.removeItem(AUTH_TOKEN_KEY);
     localStorage.removeItem(AUTH_USER_KEY);
-    document.cookie = 'pmok_auth=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
     fetch('/src/api/auth/logout.php', {
         method: 'POST',
-        headers: token ? { 'Authorization': 'Bearer ' + token } : {},
         keepalive: true,
     }).finally(() => { location.href = '/'; });
 }
@@ -191,12 +187,51 @@ function authUpdateNav() {
         if (adminMenu)  adminMenu.style.display  = isSuper ? '' : 'none';
         if (adminStats) adminStats.style.display = isSuper ? '' : 'none';
         if (adminLib)   adminLib.style.display   = isSuper ? '' : 'none';
-        const adminMeta  = document.getElementById('navAdminMeta');
-        if (adminMeta)  adminMeta.style.display  = isSuper ? '' : 'none';
+        const adminMeta       = document.getElementById('navAdminMeta');
+        const adminSpaceCards = document.getElementById('navAdminSpaceCards');
+        if (adminMeta)       adminMeta.style.display       = isSuper ? '' : 'none';
+        if (adminSpaceCards) adminSpaceCards.style.display = isSuper ? '' : 'none';
+        loadNavBoards();
     } else {
         loginBtn.style.display = '';
         userMenu.style.display = 'none';
+        const boardSection = document.getElementById('navBoardSection');
+        const boardList    = document.getElementById('navBoardList');
+        if (boardSection) boardSection.style.display = 'none';
+        if (boardList)    boardList.innerHTML = '';
     }
+}
+
+async function loadNavBoards() {
+    const boardSection = document.getElementById('navBoardSection');
+    const boardList    = document.getElementById('navBoardList');
+    if (!boardSection || !boardList) return;
+    const token = authGetToken();
+    if (!token) return;
+    try {
+        const res  = await fetch('/src/api/boards/list.php', {
+            headers: { 'Authorization': 'Bearer ' + token },
+        });
+        const data = await res.json();
+        const boards = data.boards || [];
+        if (!boards.length) {
+            boardSection.style.display = 'none';
+            boardList.innerHTML = '';
+            return;
+        }
+        boardSection.style.display = '';
+        boardList.innerHTML = boards.map(b =>
+            `<li><a class="dropdown-item d-flex align-items-center gap-2" href="/src/mypage/dashboard.php?board=${b.id}">
+                <i class="bi bi-collection" style="font-size:14px;"></i>
+                <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${_escHtml(b.name)}</span>
+                <span style="font-size:10px;color:#aaa;flex-shrink:0;">${b.item_count}</span>
+            </a></li>`
+        ).join('');
+    } catch {}
+}
+
+function _escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 document.addEventListener('DOMContentLoaded', function () {

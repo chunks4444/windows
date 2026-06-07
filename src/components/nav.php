@@ -19,11 +19,11 @@ $currentFile = basename($_SERVER['PHP_SELF']);
 $isSquare     = (stripos($_SERVER['PHP_SELF'], '/square/') !== false);
 $isCross      = (stripos($_SERVER['PHP_SELF'], '/cross/') !== false);
 $isClassic    = (stripos($_SERVER['PHP_SELF'], '/classic/') !== false);
-$isSabunteok  = (!$isSquare && !$isCross && !$isClassic && stripos($currentFile, 'Sabunteok') !== false);
-$isSambuntok  = (stripos($currentFile, 'sambuntok') !== false);
+$isDiamond  = (!$isSquare && !$isCross && !$isClassic && stripos($currentFile, 'diamond') !== false);
+$isTriangle  = (stripos($currentFile, 'triangle') !== false);
 $isIndex      = ($currentFile === 'index.php' || $_SERVER['PHP_SELF'] === '/');
 $isAbout      = (strpos($_SERVER['PHP_SELF'], '/company/') !== false);
-$isLibrary    = (strpos($_SERVER['PHP_SELF'], '/library/') !== false);
+$isLibrary    = (strpos($_SERVER['PHP_SELF'], '/collection/') !== false);
 ?>
 <nav class="pm-navbar navbar navbar-expand-lg fixed-top px-4 py-3">
     <a href="/" class="navbar-brand d-flex align-items-center">
@@ -77,8 +77,8 @@ $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/library/') !== false);
                         </svg>
                         Cross Grid
                     </a></li>
-                    <li><a class="dropdown-item <?= $isSabunteok ? 'active' : '' ?> d-flex align-items-center gap-2"
-                           href="/src/engine/Sabunteok/Sabunteok.php">
+                    <li><a class="dropdown-item <?= $isDiamond ? 'active' : '' ?> d-flex align-items-center gap-2"
+                           href="/src/engine/diamond/diamond.php">
                         <svg width="27" height="27" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
                             <rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/>
                             <rect fill="currentColor" x="148" y="317" width="384" height="46" rx="23"/>
@@ -87,8 +87,8 @@ $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/library/') !== false);
                         </svg>
                         Diamond Grid
                     </a></li>
-                    <li><a class="dropdown-item <?= $isSambuntok ? 'active' : '' ?> d-flex align-items-center gap-2"
-                           href="/src/engine/sambuntok/sambuntok.php">
+                    <li><a class="dropdown-item <?= $isTriangle ? 'active' : '' ?> d-flex align-items-center gap-2"
+                           href="/src/engine/triangle/triangle.php">
                         <svg width="27" height="27" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
                             <rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/>
                             <g transform="rotate(60 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
@@ -97,7 +97,7 @@ $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/library/') !== false);
                         Triangle Grid
                     </a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item d-flex align-items-center gap-2" href="/dashboard.php">
+                    <li><a class="dropdown-item d-flex align-items-center gap-2" href="/src/mypage/dashboard.php">
                         <svg width="27" height="27" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
                             <rect fill="currentColor" x="148" y="204" width="384" height="46" rx="23"/>
                             <rect fill="currentColor" x="148" y="430" width="384" height="46" rx="23"/>
@@ -108,7 +108,18 @@ $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/library/') !== false);
                     </a></li>
                 </ul>
             </li>
-            <li class="nav-item"><a href="/src/library/" class="nav-link <?= $isLibrary ? 'active' : '' ?>">Works</a></li>
+            <li class="nav-item dropdown">
+                <a href="/src/collection/" class="nav-link dropdown-toggle <?= $isLibrary ? 'active' : '' ?>"
+                   data-bs-toggle="dropdown" aria-expanded="false">Collection</a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/src/collection/">전체 컬렉션</a></li>
+                    <li id="navBoardSection" style="display:none;">
+                        <hr class="dropdown-divider">
+                        <span class="dropdown-header" style="font-size:10px;letter-spacing:.06em;color:#aaa;padding:4px 16px 2px;">내 보드</span>
+                    </li>
+                    <div id="navBoardList"></div>
+                </ul>
+            </li>
             <li class="nav-item"><a href="/src/company/" class="nav-link <?= $isAbout ? 'active' : '' ?>">About</a></li>
             <li class="nav-item d-none"><a href="#" class="nav-link">Joiner</a></li>
             <!-- 비로그인 -->
@@ -125,11 +136,13 @@ $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/library/') !== false);
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="/src/mypage/profile.php">프로필</a></li>
                     <li><a class="dropdown-item" href="/src/mypage/company.php">회사 정보</a></li>
+                    <li><a class="dropdown-item" href="/src/collection/">컬렉션 관리</a></li>
                     <li id="navAdminLink" style="display:none;"><hr class="dropdown-divider"></li>
                     <li id="navAdminMenu" style="display:none;"><a class="dropdown-item" href="/src/admin/users.php"><i class="bi bi-shield-lock me-1"></i>회원 관리</a></li>
                     <li id="navAdminStats" style="display:none;"><a class="dropdown-item" href="/src/admin/stats.php"><i class="bi bi-bar-chart-line me-1"></i>접속 통계</a></li>
-                    <li id="navAdminLib" style="display:none;"><a class="dropdown-item" href="/src/admin/library.php"><i class="bi bi-image me-1"></i>라이브러리 관리</a></li>
+                    <li id="navAdminLib" style="display:none;"><a class="dropdown-item" href="/src/admin/collection.php"><i class="bi bi-image me-1"></i>컬렉션 관리</a></li>
                     <li id="navAdminMeta" style="display:none;"><a class="dropdown-item" href="/src/admin/meta.php"><i class="bi bi-search me-1"></i>SEO 메타 관리</a></li>
+                    <li id="navAdminSpaceCards" style="display:none;"><a class="dropdown-item" href="/src/admin/space_cards.php"><i class="bi bi-grid me-1"></i>공간 카드 관리</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="#" onclick="authLogout();return false;">로그아웃</a></li>
                 </ul>
