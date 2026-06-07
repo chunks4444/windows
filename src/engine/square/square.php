@@ -71,8 +71,8 @@ header('Content-Type: text/html; charset=UTF-8');
                     <div class="ctrl">
                         <div class="ctrl-header"><span class="ctrl-label">가로 칸수</span></div>
                         <div class="slider-row">
-                            <input type="range" id="txtCols" min="2" max="30" step="1" value="4">
-                            <input type="number" class="slider-num" id="numCols" min="2" max="30" step="1" value="4">
+                            <input type="range" id="txtCols" min="2" max="30" step="1" value="6">
+                            <input type="number" class="slider-num" id="numCols" min="2" max="30" step="1" value="6">
                         </div>
                     </div>
                     <div class="ctrl">
@@ -105,6 +105,14 @@ header('Content-Type: text/html; charset=UTF-8');
                             <input type="number" class="slider-num" id="numRatio" min="1.0" max="3.0" step="0.1" value="1.0">
                         </div>
                     </div>
+                    </div>
+
+                    <div class="ctrl" style="margin-top:6px;">
+                        <div class="ctrl-header"><span class="ctrl-label">랜덤 패턴</span></div>
+                        <div style="display:flex;gap:6px;">
+                            <button id="btnMondrian" type="button" class="sb-select" style="flex:1;cursor:pointer;">랜덤 생성</button>
+                            <button id="btnMondrianClear" type="button" class="sb-select" style="display:none;cursor:pointer;flex:1;">초기화</button>
+                        </div>
                     </div>
 
                     <div class="sb-sub-title">여분 처리</div>

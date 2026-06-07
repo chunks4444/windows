@@ -44,6 +44,7 @@
 
     // ── 라인 편집 상태 ──────────────────────────────
     let deletedSegs  = new Set();
+    let mondrianLayout = null;
     let addedLines   = [];
     let lineEditMode = null;
     let addLineStart = null;
@@ -998,65 +999,106 @@ async function draw() {
         // 세로살
         // ====================================
 
-        for (let i = 1; i < geo.cols; i++) {
+        if (mondrianLayout) {
+            // ── 몬드리안 BSP 격자 ───────────────────────
+            const { rects, lines } = mondrianLayout;
+            const EPS = 0.5;
 
-                const cx    = geo.frameW + i * (geo.cellW + geo.slatV) - geo.slatV / 2;
-                const left  = cx - geo.slatV / 2;
-                const topY  = geo.frameHTop;
-                const botY  = geo.frameHTop + geo.innerH;
-                const stepH = geo.cellH + geo.slatH;
-
-                // 촉 (항상)
-                ctx.fillStyle = Color_Tenon_Fill;
-                ctx.fillRect(toCanvasX(left), toCanvasY(topY - geo.tenonDepth), geo.slatV * baseScale, geo.tenonDepth * baseScale);
-                ctx.fillRect(toCanvasX(left), toCanvasY(botY), geo.slatV * baseScale, geo.tenonDepth * baseScale);
-
-                for (let j = 0; j < geo.rowsInt; j++) {
-                    const segStartY = topY + j * stepH;
-                    const segEndY   = topY + (j + 1) * stepH;
-                    const segMidY   = (segStartY + segEndY) / 2;
-                    const vsCx = toCanvasX(cx), vsCy = toCanvasY(segMidY);
-                    const vsKey = `${d}:vs:${i}:${j}`;
-                    lastSegMap.set(vsKey, { cx: vsCx, cy: toCanvasY(segStartY), ex: vsCx, ey: toCanvasY(segEndY), mx: vsCx, my: vsCy, normAngle: Math.PI / 2, lineKey: makeLineKey(vsCx, vsCy, Math.PI / 2) });
-                    if (deletedSegs.has(vsKey)) continue;
-
-                    ctx.fillStyle = Color_Slat_Fill;
-                    ctx.fillRect(toCanvasX(left), toCanvasY(segStartY), geo.slatV * baseScale, stepH * baseScale);
-                    drawCenterLine(toCanvasX(cx), toCanvasY(segStartY), toCanvasX(cx), toCanvasY(segEndY));
+            // 채색 셀 먼저
+            for (const rect of rects) {
+                if (rect.color) {
+                    ctx.fillStyle = rect.color;
+                    ctx.fillRect(
+                        toCanvasX(geo.frameW + rect.x),
+                        toCanvasY(geo.frameHTop + rect.y),
+                        rect.w * baseScale,
+                        rect.h * baseScale
+                    );
                 }
             }
 
-            // ====================================
-            // 가로살
-            // ====================================
-
-            for (let j = 1; j < geo.rowsInt; j++) {
-
-                const ry    = geo.frameHTop + j * (geo.cellH + geo.slatH) - geo.slatH / 2;
-                const top   = ry - geo.slatH / 2;
-                const leftX  = geo.frameW;
-                const rightX = geo.frameW + geo.innerW;
-                const stepW  = geo.cellW + geo.slatV;
-
-                // 촉 (항상)
-                ctx.fillStyle = Color_Tenon_Fill;
-                ctx.fillRect(toCanvasX(leftX - geo.tenonDepth), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale);
-                ctx.fillRect(toCanvasX(rightX), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale);
-
-                for (let i = 0; i < geo.cols; i++) {
-                    const segStartX = leftX + i * stepW;
-                    const segEndX   = leftX + (i + 1) * stepW;
-                    const segMidX   = (segStartX + segEndX) / 2;
-                    const hsCy = toCanvasY(ry);
-                    const hsKey = `${d}:hs:${j}:${i}`;
-                    lastSegMap.set(hsKey, { cx: toCanvasX(segStartX), cy: hsCy, ex: toCanvasX(segEndX), ey: hsCy, mx: toCanvasX(segMidX), my: hsCy, normAngle: 0, lineKey: makeLineKey(toCanvasX(segMidX), hsCy, 0) });
-                    if (deletedSegs.has(hsKey)) continue;
-
+            // 살 + 촉 (bars drawn on top of cells)
+            for (const ln of lines) {
+                if (ln.axis === 'v') {
+                    const left = geo.frameW + ln.pos - geo.slatV / 2;
+                    ctx.fillStyle = Color_Tenon_Fill;
+                    if (ln.from < EPS)
+                        ctx.fillRect(toCanvasX(left), toCanvasY(geo.frameHTop - geo.tenonDepth), geo.slatV * baseScale, geo.tenonDepth * baseScale);
+                    if (ln.to > geo.innerH - EPS)
+                        ctx.fillRect(toCanvasX(left), toCanvasY(geo.frameHTop + geo.innerH), geo.slatV * baseScale, geo.tenonDepth * baseScale);
                     ctx.fillStyle = Color_Slat_Fill;
-                    ctx.fillRect(toCanvasX(segStartX), toCanvasY(top), stepW * baseScale, geo.slatH * baseScale);
-                    drawCenterLine(toCanvasX(segStartX), toCanvasY(ry), toCanvasX(segEndX), toCanvasY(ry));
+                    ctx.fillRect(toCanvasX(left), toCanvasY(geo.frameHTop + ln.from), geo.slatV * baseScale, (ln.to - ln.from) * baseScale);
+                } else {
+                    const top = geo.frameHTop + ln.pos - geo.slatH / 2;
+                    ctx.fillStyle = Color_Tenon_Fill;
+                    if (ln.from < EPS)
+                        ctx.fillRect(toCanvasX(geo.frameW - geo.tenonDepth), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale);
+                    if (ln.to > geo.innerW - EPS)
+                        ctx.fillRect(toCanvasX(geo.frameW + geo.innerW), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale);
+                    ctx.fillStyle = Color_Slat_Fill;
+                    ctx.fillRect(toCanvasX(geo.frameW + ln.from), toCanvasY(top), (ln.to - ln.from) * baseScale, geo.slatH * baseScale);
                 }
             }
+        } else {
+            // ── 정자살 균등 격자 ─────────────────────────
+            for (let i = 1; i < geo.cols; i++) {
+
+                    const cx    = geo.frameW + i * (geo.cellW + geo.slatV) - geo.slatV / 2;
+                    const left  = cx - geo.slatV / 2;
+                    const topY  = geo.frameHTop;
+                    const botY  = geo.frameHTop + geo.innerH;
+                    const stepH = geo.cellH + geo.slatH;
+
+                    ctx.fillStyle = Color_Tenon_Fill;
+                    ctx.fillRect(toCanvasX(left), toCanvasY(topY - geo.tenonDepth), geo.slatV * baseScale, geo.tenonDepth * baseScale);
+                    ctx.fillRect(toCanvasX(left), toCanvasY(botY), geo.slatV * baseScale, geo.tenonDepth * baseScale);
+
+                    for (let j = 0; j < geo.rowsInt; j++) {
+                        const segStartY = topY + j * stepH;
+                        const segEndY   = topY + (j + 1) * stepH;
+                        const segMidY   = (segStartY + segEndY) / 2;
+                        const vsCx = toCanvasX(cx), vsCy = toCanvasY(segMidY);
+                        const vsKey = `${d}:vs:${i}:${j}`;
+                        lastSegMap.set(vsKey, { cx: vsCx, cy: toCanvasY(segStartY), ex: vsCx, ey: toCanvasY(segEndY), mx: vsCx, my: vsCy, normAngle: Math.PI / 2, lineKey: makeLineKey(vsCx, vsCy, Math.PI / 2) });
+                        if (deletedSegs.has(vsKey)) continue;
+
+                        ctx.fillStyle = Color_Slat_Fill;
+                        ctx.fillRect(toCanvasX(left), toCanvasY(segStartY), geo.slatV * baseScale, stepH * baseScale);
+                        drawCenterLine(toCanvasX(cx), toCanvasY(segStartY), toCanvasX(cx), toCanvasY(segEndY));
+                    }
+                }
+
+                // ====================================
+                // 가로살
+                // ====================================
+
+                for (let j = 1; j < geo.rowsInt; j++) {
+
+                    const ry    = geo.frameHTop + j * (geo.cellH + geo.slatH) - geo.slatH / 2;
+                    const top   = ry - geo.slatH / 2;
+                    const leftX  = geo.frameW;
+                    const rightX = geo.frameW + geo.innerW;
+                    const stepW  = geo.cellW + geo.slatV;
+
+                    ctx.fillStyle = Color_Tenon_Fill;
+                    ctx.fillRect(toCanvasX(leftX - geo.tenonDepth), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale);
+                    ctx.fillRect(toCanvasX(rightX), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale);
+
+                    for (let i = 0; i < geo.cols; i++) {
+                        const segStartX = leftX + i * stepW;
+                        const segEndX   = leftX + (i + 1) * stepW;
+                        const segMidX   = (segStartX + segEndX) / 2;
+                        const hsCy = toCanvasY(ry);
+                        const hsKey = `${d}:hs:${j}:${i}`;
+                        lastSegMap.set(hsKey, { cx: toCanvasX(segStartX), cy: hsCy, ex: toCanvasX(segEndX), ey: hsCy, mx: toCanvasX(segMidX), my: hsCy, normAngle: 0, lineKey: makeLineKey(toCanvasX(segMidX), hsCy, 0) });
+                        if (deletedSegs.has(hsKey)) continue;
+
+                        ctx.fillStyle = Color_Slat_Fill;
+                        ctx.fillRect(toCanvasX(segStartX), toCanvasY(top), stepW * baseScale, geo.slatH * baseScale);
+                        drawCenterLine(toCanvasX(segStartX), toCanvasY(ry), toCanvasX(segEndX), toCanvasY(ry));
+                    }
+                }
+        }
 
         // 클리핑 해제
         ctx.restore();
@@ -2082,6 +2124,7 @@ async function draw() {
             placementMode,
             doorCornerPositions: doorCornerPositions ? { ...doorCornerPositions } : null,
             placementNaturalSize: placementNaturalSize ? { ...placementNaturalSize } : null,
+            mondrianLayout: mondrianLayout ? JSON.parse(JSON.stringify(mondrianLayout)) : null,
         };
     }
 
@@ -2114,6 +2157,8 @@ async function draw() {
         document.getElementById('btnScale').classList.toggle('cv-btn-active', placementMode);
         frameColorPicker.selectColor(p.frameColor);
         slatColorPicker.selectColor(p.slatColor);
+        mondrianLayout = p.mondrianLayout || null;
+        _updateMondrianBtn();
         updateDoorCountOptions();
         draw();
     }
@@ -2395,6 +2440,70 @@ async function draw() {
     document.getElementById('dmRenameInput').addEventListener('keydown', (e) => {
         if (e.key === 'Enter')  document.getElementById('dmRenameOk').click();
         if (e.key === 'Escape') document.getElementById('dmRenameCancel').click();
+    });
+
+    // ── 몬드리안 랜덤 생성 ────────────────────────────
+    function _updateMondrianBtn() {
+        const btnClear = document.getElementById('btnMondrianClear');
+        if (btnClear) btnClear.style.display = mondrianLayout ? '' : 'none';
+    }
+
+    function generateMondrian() {
+        if (!geo || !geo.innerW || !geo.innerH) return;
+        const W = geo.innerW, H = geo.innerH;
+
+        const rects = [];
+        const lines = []; // {axis:'v'|'h', pos, from, to}
+        const stopProb = [0.05, 0.15, 0.38, 0.62, 0.85];
+
+        function bsp(x, y, w, h, depth) {
+            const minW = W * 0.14, minH = H * 0.11;
+            const canV = w > minW * 2;
+            const canH = h > minH * 2;
+
+            if (!canV && !canH) { rects.push({ x, y, w, h, color: null }); return; }
+            if (depth >= stopProb.length || Math.random() < stopProb[depth]) {
+                rects.push({ x, y, w, h, color: null }); return;
+            }
+
+            // 긴 축 우선, 약간의 편향으로 자연스러운 비대칭 유지
+            const ar = w / h;
+            const pV = canV && (!canH || (ar > 1.3 ? 0.72 : ar < 0.77 ? 0.28 : 0.50));
+            const doV = typeof pV === 'boolean' ? pV : Math.random() < pV;
+
+            if (doV) {
+                const pos = x + minW + Math.random() * (w - minW * 2);
+                lines.push({ axis: 'v', pos, from: y, to: y + h });
+                bsp(x, y, pos - x, h, depth + 1);
+                bsp(pos, y, x + w - pos, h, depth + 1);
+            } else {
+                const pos = y + minH + Math.random() * (h - minH * 2);
+                lines.push({ axis: 'h', pos, from: x, to: x + w });
+                bsp(x, y, w, pos - y, depth + 1);
+                bsp(x, pos, w, y + h - pos, depth + 1);
+            }
+        }
+
+        bsp(0, 0, W, H, 0);
+
+        const moColors = ['#c8102e', '#1c3f94', '#f0c130'];
+        const colorCount = Math.max(1, Math.round(rects.length * (0.18 + Math.random() * 0.22)));
+        const shuffled = [...rects].sort(() => Math.random() - 0.5);
+        const palette = [...moColors].sort(() => Math.random() - 0.5);
+        shuffled.slice(0, colorCount).forEach((rect, i) => {
+            rect.color = palette[i % palette.length];
+        });
+
+        mondrianLayout = { rects, lines };
+        _updateMondrianBtn();
+        draw();
+    }
+
+    document.getElementById('btnMondrian').addEventListener('click', generateMondrian);
+    document.getElementById('btnMondrianClear').addEventListener('click', () => {
+        mondrianLayout = null;
+        _updateMondrianBtn();
+        draw();
     });
 
     loadVersions().then(() => restoreThumbs());
