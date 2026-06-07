@@ -24,7 +24,7 @@ header('Content-Type: text/html; charset=UTF-8');
 
                 <div class="row g-4 mt-5">
                     <div class="col-md-4 text-center">
-                        <div class="service-card service-card--class h-80 p-4">
+                        <div class="service-card service-card--classic h-80 p-4">
                             <div class=" mb-4">
                                 <a href="/src/engine/classic/classic.php" class="pm-symbol-link">
                                     <svg
@@ -67,7 +67,7 @@ header('Content-Type: text/html; charset=UTF-8');
                         </div>
                     </div>
                     <div class="col-md-4 text-center">
-                        <div class="service-card service-card--square h-80 p-4">
+                        <div class="service-card service-card--cross h-80 p-4">
                             <div class=" mb-4">
                                 <a href="/src/engine/cross/cross.php" class="pm-symbol-link">
                                     <svg
