@@ -32,11 +32,13 @@ header('Content-Type: text/html; charset=UTF-8');
                                         height="120"
                                         viewbox="0 0 680 680"
                                         xmlns="http://www.w3.org/2000/svg">
-                                        <rect class="pm-symbol-bar" x="148" y="244" width="384" height="46" rx="0"/>
-                                        <rect class="pm-symbol-bar" x="148" y="390" width="384" height="46" rx="0"/>
-                                        <rect class="pm-symbol-bar" x="148" y="148" width="46" height="384" rx="0"/>
-                                        <rect class="pm-symbol-bar" x="294" y="148" width="46" height="384" rx="0"/>
-                                        <rect class="pm-symbol-bar" x="486" y="148" width="46" height="384" rx="0"/>
+                                        <g transform="rotate(90 340 340)">
+                                            <rect class="pm-symbol-bar" x="148" y="204" width="384" height="46" rx="0"/>
+                                            <rect class="pm-symbol-bar" x="148" y="430" width="384" height="46" rx="0"/>
+                                            <rect class="pm-symbol-bar" x="148" y="148" width="46" height="384" rx="0"/>
+                                            <rect class="pm-symbol-bar" x="294" y="148" width="46" height="384" rx="0"/>
+                                            <rect class="pm-symbol-bar" x="486" y="148" width="46" height="384" rx="0"/>
+                                        </g>
                                     </svg>
                                 </a>
                             </div>
