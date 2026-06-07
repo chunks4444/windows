@@ -225,6 +225,31 @@ $spaceCards = db()->query('SELECT label, image_url, collection_query FROM space_
         </div>
         <!-- home-wrapper -->
 
+        <!-- Process -->
+        <section class="process-section">
+            <div class="container">
+                <div class="process-container">
+                    <div class="process-step">
+                        <span class="process-num">01</span>
+                        <h3 class="process-title">설계</h3>
+                        <p class="process-desc">웹 스튜디오에서 패턴과<br>크기를 직접 디자인</p>
+                    </div>
+                    <div class="process-arrow">→</div>
+                    <div class="process-step">
+                        <span class="process-num">02</span>
+                        <h3 class="process-title">선택</h3>
+                        <p class="process-desc">나만의 도면을 저장하고<br>컬렉션에서 완성</p>
+                    </div>
+                    <div class="process-arrow">→</div>
+                    <div class="process-step">
+                        <span class="process-num">03</span>
+                        <h3 class="process-title">상담</h3>
+                        <p class="process-desc">완성된 설계를 바탕으로<br>전문 공방 제작 의뢰</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- FOOTER -->
         <div class="site-footer border-top px-4 py-4">
             <p class="footer-copy mb-0">©
