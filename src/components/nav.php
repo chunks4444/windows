@@ -142,6 +142,7 @@ $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/collection/') !== false);
                     <li id="navAdminLib" style="display:none;"><a class="dropdown-item" href="/src/admin/collection.php"><i class="bi bi-image me-1"></i>컬렉션 관리</a></li>
                     <li id="navAdminMeta" style="display:none;"><a class="dropdown-item" href="/src/admin/meta.php"><i class="bi bi-search me-1"></i>SEO 메타 관리</a></li>
                     <li id="navAdminSpaceCards" style="display:none;"><a class="dropdown-item" href="/src/admin/space_cards.php"><i class="bi bi-grid me-1"></i>공간 카드 관리</a></li>
+                    <li id="navAdminHeroSlides" style="display:none;"><a class="dropdown-item" href="/src/admin/hero_slides.php"><i class="bi bi-images me-1"></i>슬라이드 관리</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="#" onclick="authLogout();return false;">로그아웃</a></li>
                 </ul>

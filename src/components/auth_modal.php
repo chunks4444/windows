@@ -187,10 +187,12 @@ function authUpdateNav() {
         if (adminMenu)  adminMenu.style.display  = isSuper ? '' : 'none';
         if (adminStats) adminStats.style.display = isSuper ? '' : 'none';
         if (adminLib)   adminLib.style.display   = isSuper ? '' : 'none';
-        const adminMeta       = document.getElementById('navAdminMeta');
-        const adminSpaceCards = document.getElementById('navAdminSpaceCards');
-        if (adminMeta)       adminMeta.style.display       = isSuper ? '' : 'none';
-        if (adminSpaceCards) adminSpaceCards.style.display = isSuper ? '' : 'none';
+        const adminMeta        = document.getElementById('navAdminMeta');
+        const adminSpaceCards  = document.getElementById('navAdminSpaceCards');
+        const adminHeroSlides  = document.getElementById('navAdminHeroSlides');
+        if (adminMeta)        adminMeta.style.display        = isSuper ? '' : 'none';
+        if (adminSpaceCards)  adminSpaceCards.style.display  = isSuper ? '' : 'none';
+        if (adminHeroSlides)  adminHeroSlides.style.display  = isSuper ? '' : 'none';
         loadNavBoards();
     } else {
         loginBtn.style.display = '';

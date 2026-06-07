@@ -1,7 +1,9 @@
 <?php
 header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/src/lib/db.php';
-$spaceCards = db()->query('SELECT label, image_url, collection_query FROM space_cards WHERE is_active=1 ORDER BY sort_order, id')->fetchAll();
+$pdo        = db();
+$heroSlides = $pdo->query('SELECT * FROM hero_slides WHERE is_active=1 ORDER BY sort_order, id')->fetchAll();
+$spaceCards = $pdo->query('SELECT label, image_url, collection_query FROM space_cards WHERE is_active=1 ORDER BY sort_order, id')->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -26,28 +28,28 @@ $spaceCards = db()->query('SELECT label, image_url, collection_query FROM space_
               <div class="container">
                 <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="4500">
                     <div class="carousel-indicators">
-                        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
-                        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
-                        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="4" aria-label="Slide 5"></button>
+                        <?php foreach ($heroSlides as $i => $sl): ?>
+                        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="<?= $i ?>"
+                            <?= $i === 0 ? 'class="active" aria-current="true"' : '' ?>
+                            aria-label="Slide <?= $i + 1 ?>"></button>
+                        <?php endforeach; ?>
                     </div>
                     <div class="carousel-inner">
-                        <div class="carousel-item active">
-                            <img src="https://picsum.photos/seed/chanho1/1600/900" class="hero-slide-img" alt="">
+                        <?php foreach ($heroSlides as $i => $sl): ?>
+                        <div class="carousel-item <?= $i === 0 ? 'active' : '' ?>">
+                            <img src="<?= htmlspecialchars($sl['image_url']) ?>" class="hero-slide-img" alt="<?= htmlspecialchars($sl['title']) ?>">
+                            <?php if ($sl['title'] || $sl['subtitle']): ?>
+                            <div class="hero-slide-caption">
+                                <?php if ($sl['title']): ?>
+                                <h2 class="hero-slide-title"><?= htmlspecialchars($sl['title']) ?></h2>
+                                <?php endif; ?>
+                                <?php if ($sl['subtitle']): ?>
+                                <p class="hero-slide-sub"><?= htmlspecialchars($sl['subtitle']) ?></p>
+                                <?php endif; ?>
+                            </div>
+                            <?php endif; ?>
                         </div>
-                        <div class="carousel-item">
-                            <img src="https://picsum.photos/seed/chanho2/1600/900" class="hero-slide-img" alt="">
-                        </div>
-                        <div class="carousel-item">
-                            <img src="https://picsum.photos/seed/chanho3/1600/900" class="hero-slide-img" alt="">
-                        </div>
-                        <div class="carousel-item">
-                            <img src="https://picsum.photos/seed/chanho4/1600/900" class="hero-slide-img" alt="">
-                        </div>
-                        <div class="carousel-item">
-                            <img src="https://picsum.photos/seed/chanho5/1600/900" class="hero-slide-img" alt="">
-                        </div>
+                        <?php endforeach; ?>
                     </div>
                     <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>

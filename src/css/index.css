@@ -13,11 +13,44 @@
     border-radius: 16px;
 }
 
+.hero-carousel-outer .carousel-item {
+    position: relative;
+}
+
 .hero-slide-img {
     width: 100%;
     height: 46vh;
     object-fit: cover;
     object-position: center 30%;
+    display: block;
+}
+
+.hero-slide-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 32px 40px;
+    background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 100%);
+}
+
+.hero-slide-title {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: clamp(20px, 2.8vw, 34px);
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.02em;
+    margin: 0 0 6px;
+    line-height: 1.3;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.3);
+}
+
+.hero-slide-sub {
+    font-size: clamp(12px, 1.2vw, 15px);
+    color: rgba(255,255,255,0.85);
+    margin: 0;
+    font-weight: 400;
+    letter-spacing: 0.01em;
 }
 
 @media (max-width: 768px) {
