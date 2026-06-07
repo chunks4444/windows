@@ -108,7 +108,15 @@ body { font-weight: 900; }
     box-shadow: 8px 8px 20px #d1d1d1, -8px -8px 20px #ffffff;
 }
 
+.service-card--classic {
+    background-image: url(https://i.pinimg.com/736x/e1/2e/90/e12e901759ab877d5d69bffba8655b52.jpg);
+}
+
 .service-card--square {
+    background-image: url(https://i.pinimg.com/736x/eb/eb/ba/ebebbadeff7623b9372b42c52f01a5de.jpg);
+}
+
+.service-card--cross {
     background-image: url(https://i.pinimg.com/736x/eb/eb/ba/ebebbadeff7623b9372b42c52f01a5de.jpg);
 }
 
