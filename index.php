@@ -26,7 +26,27 @@ header('Content-Type: text/html; charset=UTF-8');
                     <div class="col-md-4 text-center">
                         <div class="service-card service-card--square h-80 p-4">
                             <div class=" mb-4">
-
+                                <a href="/src/engine/classic/classic.php" class="pm-symbol-link">
+                                    <svg
+                                        width="120"
+                                        height="120"
+                                        viewbox="0 0 680 680"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <rect class="pm-symbol-bar" x="148" y="244" width="384" height="46" rx="0"/>
+                                        <rect class="pm-symbol-bar" x="148" y="390" width="384" height="46" rx="0"/>
+                                        <rect class="pm-symbol-bar" x="148" y="148" width="46" height="384" rx="0"/>
+                                        <rect class="pm-symbol-bar" x="294" y="148" width="46" height="384" rx="0"/>
+                                        <rect class="pm-symbol-bar" x="486" y="148" width="46" height="384" rx="0"/>
+                                    </svg>
+                                </a>
+                            </div>
+                            <h4 class="service-title text-center mb-3">Classic Grid</h4>
+                            <p class="service-sub-text text-center mb-0">가로살과 세로살이 일정한 간격으로 교차하여 <br>정사각형 격자를 만드는 문살 형식</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <div class="service-card service-card--square h-80 p-4">
+                            <div class=" mb-4">
                                 <a href="/src/engine/square/square.php" class="pm-symbol-link">
                                     <svg
                                         width="120"
@@ -45,8 +65,30 @@ header('Content-Type: text/html; charset=UTF-8');
                         </div>
                     </div>
                     <div class="col-md-4 text-center">
+                        <div class="service-card service-card--square h-80 p-4">
+                            <div class=" mb-4">
+                                <a href="/src/engine/cross/cross.php" class="pm-symbol-link">
+                                    <svg
+                                        width="120"
+                                        height="120"
+                                        viewbox="0 0 680 680"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <g transform="rotate(45 340 340)">
+                                            <rect class="pm-symbol-bar" x="148" y="204" width="384" height="46" rx="0"/>
+                                            <rect class="pm-symbol-bar" x="148" y="430" width="384" height="46" rx="0"/>
+                                            <rect class="pm-symbol-bar" x="204" y="148" width="46" height="384" rx="0"/>
+                                            <rect class="pm-symbol-bar" x="430" y="148" width="46" height="384" rx="0"/>
+                                        </g>
+                                    </svg>
+                                </a>
+                            </div>
+                            <h4 class="service-title text-center mb-3">Cross Grid</h4>
+                            <p class="service-sub-text text-center mb-0">정자살을 45도 회전하여 사선 방향으로 교차하는 <br>마름모 격자를 만드는 문살 형식</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-center">
                         <div class="service-card service-card--triangle h-80 p-4">
-                            <div class=" mb-4" >
+                            <div class=" mb-4">
                                 <a href="/src/engine/sambuntok/sambuntok.php" class="pm-symbol-link">
                                     <svg
                                         width="120"
@@ -64,10 +106,10 @@ header('Content-Type: text/html; charset=UTF-8');
                                 </a>
                             </div>
                             <h4 class="service-title text-center mb-3">Triangle Grid</h4>
-                            <p class="service-sub-text  text-center mb-0">사선으로 교차하는 문살을 기반으로 구성된 패턴으로, 직선 격자보다 역동적이고 세련된 인상을 제공합니다.</p>
+                            <p class="service-sub-text text-center mb-0">사선으로 교차하는 문살을 기반으로 구성된 패턴으로, 직선 격자보다 역동적이고 세련된 인상을 제공합니다.</p>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 text-center">
                         <div class="service-card service-card--diamond h-80 p-4">
                             <div class="text-center mb-4">
                                 <a href="/src/engine/Sabunteok/Sabunteok.php" class="pm-symbol-link">
@@ -88,8 +130,7 @@ header('Content-Type: text/html; charset=UTF-8');
                                 </a>
                             </div>
                             <h4 class="service-title text-center mb-3">Diamond Grid</h4>
-                            <p class="service-sub-text  text-center mb-0">Transform your data into actionable
-                                insights with our advanced analytics solutions.</p>
+                            <p class="service-sub-text text-center mb-0">Transform your data into actionable insights with our advanced analytics solutions.</p>
                         </div>
                     </div>
                 </div>

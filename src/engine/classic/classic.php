@@ -71,8 +71,8 @@ header('Content-Type: text/html; charset=UTF-8');
                     <div class="ctrl">
                         <div class="ctrl-header"><span class="ctrl-label">가로 칸수</span></div>
                         <div class="slider-row">
-                            <input type="range" id="txtCols" min="2" max="30" step="1" value="4">
-                            <input type="number" class="slider-num" id="numCols" min="2" max="30" step="1" value="4">
+                            <input type="range" id="txtCols" min="2" max="30" step="1" value="12">
+                            <input type="number" class="slider-num" id="numCols" min="2" max="30" step="1" value="12">
                         </div>
                     </div>
                     <div class="ctrl">
@@ -99,21 +99,21 @@ header('Content-Type: text/html; charset=UTF-8');
 
                     <div id="ratioCtrl">
                     <div class="ctrl">
+                        <div class="ctrl-header"><span class="ctrl-label">가로살 배열</span></div>
+                        <select id="txtPattern" class="sb-select">
+                            <option value="2/3/2">2 / 3 / 2</option>
+                            <option value="3/5/3" selected>3 / 5 / 3</option>
+                            <option value="5/7/5">5 / 7 / 5</option>
+                            <option value="7/9/7">7 / 9 / 7</option>
+                        </select>
+                    </div>
+                    <div class="ctrl">
                         <div class="ctrl-header"><span class="ctrl-label">세로 비율</span></div>
                         <div class="slider-row">
-                            <input type="range" id="txtRatio" min="1.0" max="3.0" step="0.1" value="1.0">
-                            <input type="number" class="slider-num" id="numRatio" min="1.0" max="3.0" step="0.1" value="1.0">
+                            <input type="range" id="txtRatio" min="1.0" max="3.0" step="0.1" value="1.2">
+                            <input type="number" class="slider-num" id="numRatio" min="1.0" max="3.0" step="0.1" value="1.2">
                         </div>
                     </div>
-                    </div>
-
-                    <div class="sb-sub-title">여분 처리</div>
-                    <div class="toggle-row">
-                        <span class="toggle-label">세로 자동 맞춤</span>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="chkShrinkH">
-                            <span class="toggle-track"></span>
-                        </label>
                     </div>
 
                     <div class="sb-sub-title">풍판</div>
@@ -537,7 +537,7 @@ header('Content-Type: text/html; charset=UTF-8');
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="/src/js/drawing-sync.js"></script>
-    <script src="/src/js/square.js"></script>
+    <script src="/src/js/classic.js"></script>
 </body>
 
 </html>

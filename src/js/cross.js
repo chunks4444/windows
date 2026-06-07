@@ -190,7 +190,6 @@
 
 
     const txtSlat  = document.getElementById('txtSlat');
-    const txtRatio    = document.getElementById('txtRatio');
 
     const txtDoorType = document.getElementById('txtDoorType');
     const txtDoorCount = document.getElementById('txtDoorCount');
@@ -266,7 +265,7 @@
     }
 
     // ── 렌더링 결과 저장 ───────────────────────────
-    const RENDERS_KEY = 'pmok_square_renders';
+    const RENDERS_KEY = 'pmok_cross_renders';
     const MAX_RENDERS = 9;
     let savedRenders = [];
 
@@ -476,7 +475,7 @@
         else hideRightSidebar();
     });
 
-    const WALLPAPER_ENGINE  = 'square';
+    const WALLPAPER_ENGINE  = 'cross';
     const WALLPAPER_API     = '/src/api/wallpapers/';
     function _wpToken()   { return localStorage.getItem('pmok_auth_token'); }
     function _wpHeaders() { return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _wpToken() }; }
@@ -683,7 +682,7 @@ async function fetchGeometry() {
         frameW:    txtFrame.value,
         frameH:    txtFrameH.value,
         slatT:     txtSlat.value,
-        vRatio:    txtRatio.value,
+        vRatio:    '1.0',
         doorType:  txtDoorType.value,
         doorCount: txtDoorCount.value,
     });
@@ -881,7 +880,7 @@ async function draw() {
         ctx.fillRect(tX(geo.frameW), tY(geo.frameHTop), geo.innerW * baseScale, geo.innerH * baseScale);
     }
 
-    // ====== 1차 루프: 패턴만 그리기 (세로살, 가로살, 사분턱) ======
+    // ====== 1차 루프: 패턴만 그리기 (45° 사선살, 사분턱) ======
     lastSegMap.clear();
     lastNodeList = [];
     for (const d of renderOrder) {
@@ -978,10 +977,6 @@ async function draw() {
             lastDoorHpx   = totalH     * baseScale;
         }
 
-        // ====================================
-        // 세로살
-        // ====================================
-
         // 내경 영역으로 클리핑 — innerH 기준
         const clipH = geo.innerH;
         ctx.save();
@@ -994,69 +989,79 @@ async function draw() {
         );
         ctx.clip();
 
-        // ====================================
-        // 세로살
-        // ====================================
+        {
+            // ====================================
+            // 45° 대각선 — 셀 중심에서 반씩 분리, 한 면씩 삭제 가능
+            // ====================================
+            ctx.strokeStyle = patternBroken ? '#cc0000' : selectedSlatColor;
+            ctx.lineWidth = geo.slatT * baseScale;
+            ctx.lineCap = 'round';
 
-        for (let i = 1; i < geo.cols; i++) {
+            for (let row = 0; row < geo.rowsInt; row++) {
+                for (let col = 0; col < geo.cols; col++) {
+                    const x   = geo.frameW    + col * (geo.cellW + geo.slatV);
+                    const y   = geo.frameHTop + row * (geo.cellH + geo.slatH);
+                    const jx0 = x - geo.slatV / 2;
+                    const jx1 = x + geo.cellW + geo.slatV / 2;
+                    const jy0 = y - geo.slatH / 2;
+                    const jy1 = y + geo.cellH + geo.slatH / 2;
+                    const jxC = (jx0 + jx1) / 2;   // 셀 중심
+                    const jyC = (jy0 + jy1) / 2;
 
-                const cx    = geo.frameW + i * (geo.cellW + geo.slatV) - geo.slatV / 2;
-                const left  = cx - geo.slatV / 2;
-                const topY  = geo.frameHTop;
-                const botY  = geo.frameHTop + geo.innerH;
-                const stepH = geo.cellH + geo.slatH;
+                    if (d === renderOrder[0]) {
+                        lastNodeList.push({ cx: toCanvasX(jx0), cy: toCanvasY(jy0) });
+                        if (col === geo.cols - 1)    lastNodeList.push({ cx: toCanvasX(jx1), cy: toCanvasY(jy0) });
+                        if (row === geo.rowsInt - 1) lastNodeList.push({ cx: toCanvasX(jx0), cy: toCanvasY(jy1) });
+                        if (col === geo.cols - 1 && row === geo.rowsInt - 1) lastNodeList.push({ cx: toCanvasX(jx1), cy: toCanvasY(jy1) });
+                    }
 
-                // 촉 (항상)
-                ctx.fillStyle = Color_Tenon_Fill;
-                ctx.fillRect(toCanvasX(left), toCanvasY(topY - geo.tenonDepth), geo.slatV * baseScale, geo.tenonDepth * baseScale);
-                ctx.fillRect(toCanvasX(left), toCanvasY(botY), geo.slatV * baseScale, geo.tenonDepth * baseScale);
+                    const bsFullLK = makeLineKey((toCanvasX(jx0) + toCanvasX(jx1)) / 2, (toCanvasY(jy0) + toCanvasY(jy1)) / 2, Math.PI / 4);
+                    const fsFullLK = makeLineKey((toCanvasX(jx1) + toCanvasX(jx0)) / 2, (toCanvasY(jy0) + toCanvasY(jy1)) / 2, 3 * Math.PI / 4);
 
-                for (let j = 0; j < geo.rowsInt; j++) {
-                    const segStartY = topY + j * stepH;
-                    const segEndY   = topY + (j + 1) * stepH;
-                    const segMidY   = (segStartY + segEndY) / 2;
-                    const vsCx = toCanvasX(cx), vsCy = toCanvasY(segMidY);
-                    const vsKey = `${d}:vs:${i}:${j}`;
-                    lastSegMap.set(vsKey, { cx: vsCx, cy: toCanvasY(segStartY), ex: vsCx, ey: toCanvasY(segEndY), mx: vsCx, my: vsCy, normAngle: Math.PI / 2, lineKey: makeLineKey(vsCx, vsCy, Math.PI / 2) });
-                    if (deletedSegs.has(vsKey)) continue;
+                    // ─ \ 상반부 (교점→셀중심)
+                    const bsaKey = `${d}:bsa:${row}:${col}`;
+                    const bsaCx = toCanvasX(jx0), bsaCy = toCanvasY(jy0);
+                    const bsaEx = toCanvasX(jxC), bsaEy = toCanvasY(jyC);
+                    lastSegMap.set(bsaKey, { cx: bsaCx, cy: bsaCy, ex: bsaEx, ey: bsaEy, mx: (bsaCx+bsaEx)/2, my: (bsaCy+bsaEy)/2, normAngle: Math.PI/4, lineKey: bsFullLK });
 
-                    ctx.fillStyle = Color_Slat_Fill;
-                    ctx.fillRect(toCanvasX(left), toCanvasY(segStartY), geo.slatV * baseScale, stepH * baseScale);
-                    drawCenterLine(toCanvasX(cx), toCanvasY(segStartY), toCanvasX(cx), toCanvasY(segEndY));
+                    // ─ \ 하반부 (셀중심→교점)
+                    const bsbKey = `${d}:bsb:${row}:${col}`;
+                    const bsbCx = toCanvasX(jxC), bsbCy = toCanvasY(jyC);
+                    const bsbEx = toCanvasX(jx1), bsbEy = toCanvasY(jy1);
+                    lastSegMap.set(bsbKey, { cx: bsbCx, cy: bsbCy, ex: bsbEx, ey: bsbEy, mx: (bsbCx+bsbEx)/2, my: (bsbCy+bsbEy)/2, normAngle: Math.PI/4, lineKey: bsFullLK });
+
+                    const dBsA = !deletedSegs.has(bsaKey), dBsB = !deletedSegs.has(bsbKey);
+                    if (dBsA || dBsB) {
+                        ctx.beginPath();
+                        if (dBsA && dBsB)     { ctx.moveTo(bsaCx, bsaCy); ctx.lineTo(bsbEx, bsbEy); }
+                        else if (dBsA)        { ctx.moveTo(bsaCx, bsaCy); ctx.lineTo(bsaEx, bsaEy); }
+                        else                  { ctx.moveTo(bsbCx, bsbCy); ctx.lineTo(bsbEx, bsbEy); }
+                        ctx.stroke();
+                    }
+
+                    // ─ / 상반부 (교점→셀중심)
+                    const fsaKey = `${d}:fsa:${row}:${col}`;
+                    const fsaCx = toCanvasX(jx1), fsaCy = toCanvasY(jy0);
+                    const fsaEx = toCanvasX(jxC), fsaEy = toCanvasY(jyC);
+                    lastSegMap.set(fsaKey, { cx: fsaCx, cy: fsaCy, ex: fsaEx, ey: fsaEy, mx: (fsaCx+fsaEx)/2, my: (fsaCy+fsaEy)/2, normAngle: 3*Math.PI/4, lineKey: fsFullLK });
+
+                    // ─ / 하반부 (셀중심→교점)
+                    const fsbKey = `${d}:fsb:${row}:${col}`;
+                    const fsbCx = toCanvasX(jxC), fsbCy = toCanvasY(jyC);
+                    const fsbEx = toCanvasX(jx0), fsbEy = toCanvasY(jy1);
+                    lastSegMap.set(fsbKey, { cx: fsbCx, cy: fsbCy, ex: fsbEx, ey: fsbEy, mx: (fsbCx+fsbEx)/2, my: (fsbCy+fsbEy)/2, normAngle: 3*Math.PI/4, lineKey: fsFullLK });
+
+                    const dFsA = !deletedSegs.has(fsaKey), dFsB = !deletedSegs.has(fsbKey);
+                    if (dFsA || dFsB) {
+                        ctx.beginPath();
+                        if (dFsA && dFsB)     { ctx.moveTo(fsaCx, fsaCy); ctx.lineTo(fsbEx, fsbEy); }
+                        else if (dFsA)        { ctx.moveTo(fsaCx, fsaCy); ctx.lineTo(fsaEx, fsaEy); }
+                        else                  { ctx.moveTo(fsbCx, fsbCy); ctx.lineTo(fsbEx, fsbEy); }
+                        ctx.stroke();
+                    }
                 }
             }
-
-            // ====================================
-            // 가로살
-            // ====================================
-
-            for (let j = 1; j < geo.rowsInt; j++) {
-
-                const ry    = geo.frameHTop + j * (geo.cellH + geo.slatH) - geo.slatH / 2;
-                const top   = ry - geo.slatH / 2;
-                const leftX  = geo.frameW;
-                const rightX = geo.frameW + geo.innerW;
-                const stepW  = geo.cellW + geo.slatV;
-
-                // 촉 (항상)
-                ctx.fillStyle = Color_Tenon_Fill;
-                ctx.fillRect(toCanvasX(leftX - geo.tenonDepth), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale);
-                ctx.fillRect(toCanvasX(rightX), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale);
-
-                for (let i = 0; i < geo.cols; i++) {
-                    const segStartX = leftX + i * stepW;
-                    const segEndX   = leftX + (i + 1) * stepW;
-                    const segMidX   = (segStartX + segEndX) / 2;
-                    const hsCy = toCanvasY(ry);
-                    const hsKey = `${d}:hs:${j}:${i}`;
-                    lastSegMap.set(hsKey, { cx: toCanvasX(segStartX), cy: hsCy, ex: toCanvasX(segEndX), ey: hsCy, mx: toCanvasX(segMidX), my: hsCy, normAngle: 0, lineKey: makeLineKey(toCanvasX(segMidX), hsCy, 0) });
-                    if (deletedSegs.has(hsKey)) continue;
-
-                    ctx.fillStyle = Color_Slat_Fill;
-                    ctx.fillRect(toCanvasX(segStartX), toCanvasY(top), stepW * baseScale, geo.slatH * baseScale);
-                    drawCenterLine(toCanvasX(segStartX), toCanvasY(ry), toCanvasX(segEndX), toCanvasY(ry));
-                }
-            }
+        }
 
         // 클리핑 해제
         ctx.restore();
@@ -1081,6 +1086,7 @@ async function draw() {
 
         let adjHSlatCnt = parseInt(p.hSlatCnt) || 0;
         let adjVSlatCnt = parseInt(p.vSlatCnt) || 0;
+        let adjDiag     = [];
         const extraPieces = [];
 
         for (const [, segs] of lineGroups) {
@@ -1117,6 +1123,9 @@ async function draw() {
                 adjHSlatCnt = Math.max(0, adjHSlatCnt - 1);
             } else if (isVSlat) {
                 adjVSlatCnt = Math.max(0, adjVSlatCnt - 1);
+            } else {
+                const m = adjDiag.find(it => it.cnt > 0 && Math.abs(it.len - fullLen) <= tenonLen + 1);
+                if (m) m.cnt = Math.max(0, m.cnt - 1);
             }
 
             let runStart = -1;
@@ -1135,7 +1144,20 @@ async function draw() {
                 adjHSlatCnt++;
             } else if (isVSlat) {
                 adjVSlatCnt++;
+            } else {
+                const m = adjDiag.find(it => Math.abs(it.len - len) <= tenonLen + 1);
+                if (m) m.cnt++;
+                else adjDiag.push({ len, cnt: 1 });
             }
+        });
+
+        addedLines.forEach(ln => {
+            const dx = (ln.nx2 - ln.nx1) * geo.innerW;
+            const dy = (ln.ny2 - ln.ny1) * geo.innerH;
+            const realLen = Math.round(Math.hypot(dx, dy) + tenonLen);
+            const m = adjDiag.find(it => Math.abs(it.len - realLen) <= tenonLen);
+            if (m) m.cnt++;
+            else adjDiag.push({ len: realLen, cnt: 1 });
         });
 
         document.getElementById('spHSlatCnt').textContent = Math.max(0, adjHSlatCnt) + '개';
@@ -1898,6 +1920,7 @@ async function draw() {
     });
 
     document.getElementById('chkShrinkH').addEventListener('change', draw);
+
     // ── 슬라이더 ↔ 인풋창 양방향 동기화 ──────────────────
 
     const syncPairs = [
@@ -1908,12 +1931,7 @@ async function draw() {
         { range: txtFrameH, num: document.getElementById('numFrameH'),  min: 20,   max: 150  },
         { range: txtSlat,   num: document.getElementById('numSlat'),    min: 8,    max: 35   },
         { range: document.getElementById('txtPungpan'), num: document.getElementById('numPungpan'), min: 0, max: 600 },
-        { range: txtRatio, num: document.getElementById('numRatio'), min: 1.0, max: 3.0, step: 0.1 },
     ];
-
-    txtRatio.addEventListener('input', () => {
-
-    });
 
     syncPairs.forEach(({ range, num, min, max }) => {
         range.addEventListener('input', () => {
@@ -1968,12 +1986,12 @@ async function draw() {
         return `${yy}.${mm}.${dd} ${hh}:${mi}`;
     }
 
-    const CREATED_KEY       = 'pmok_square_created';
-    const MODIFIED_KEY      = 'pmok_square_modified';
-    const VERSIONS_KEY      = 'pmok_square_versions';
-    const BG_IMAGE_KEY      = 'pmok_square_bg';
-    const CURRENT_TITLE_KEY = 'pmok_square_current_title';
-    const NAME_KEY          = 'pmok_square_name';
+    const CREATED_KEY       = 'pmok_cross_created';
+    const MODIFIED_KEY      = 'pmok_cross_modified';
+    const VERSIONS_KEY      = 'pmok_cross_versions';
+    const BG_IMAGE_KEY      = 'pmok_cross_bg';
+    const CURRENT_TITLE_KEY = 'pmok_cross_current_title';
+    const NAME_KEY          = 'pmok_cross_name';
     const MAX_VERSIONS      = 20;
 
     let workAccum = 0;
@@ -2068,7 +2086,6 @@ async function draw() {
             frame:     parseInt(txtFrame.value),
             frameH:    parseInt(txtFrameH.value),
             slat:      parseInt(txtSlat.value),
-            vRatio:    parseFloat(txtRatio.value),
             doorType:  txtDoorType.value,
             doorCount: parseInt(txtDoorCount.value),
             pungpanOn: document.getElementById('chkPungpan').checked,
@@ -2098,7 +2115,6 @@ async function draw() {
         setSlider('txtFrame',  'numFrame',  p.frame);
         setSlider('txtFrameH', 'numFrameH', p.frameH);
         setSlider('txtSlat',   'numSlat',   p.slat);
-        setSlider('txtRatio',  'numRatio',  p.vRatio ?? 1.0);
         txtDoorType.value  = p.doorType;
         txtDoorCount.value = p.doorCount;
         document.getElementById('chkPungpan').checked = p.pungpanOn;
@@ -2164,7 +2180,7 @@ async function draw() {
         resumeWorkTimer();
         localStorage.setItem(CURRENT_TITLE_KEY, title);
         const result = await /** @type {any} */ (window.DrawingSync).save(
-            'square', title,
+            'cross', title,
             Number(localStorage.getItem(CREATED_KEY)),
             versions,
             captureThumbnail(),
@@ -2185,7 +2201,7 @@ async function draw() {
     }
 
     async function loadFromDb(title) {
-        const data = await /** @type {any} */ (window.DrawingSync).load('square', title);
+        const data = await /** @type {any} */ (window.DrawingSync).load('cross', title);
         if (!data || !data.versions || !data.versions.length) return false;
         versions      = data.versions;
         currentVerIdx = versions.length - 1;
@@ -2223,7 +2239,7 @@ async function draw() {
             const ok = await loadFromDb(savedTitle);
             if (ok) return;
         } else {
-            const drawings = await /** @type {any} */ (window.DrawingSync).list('square');
+            const drawings = await /** @type {any} */ (window.DrawingSync).list('cross');
             if (drawings.length > 0) {
                 const ok = await loadFromDb(drawings[0].title);
                 if (ok) return;
@@ -2284,7 +2300,7 @@ async function draw() {
     async function refreshDrawingList() {
         const list = document.getElementById('dmList');
         list.innerHTML = '<div class="dm-empty">불러오는 중…</div>';
-        const drawings = await /** @type {any} */ (window.DrawingSync).list('square');
+        const drawings = await /** @type {any} */ (window.DrawingSync).list('cross');
         if (!drawings.length) {
             list.innerHTML = '<div class="dm-empty">저장된 도면이 없습니다</div>';
             return;
@@ -2314,7 +2330,7 @@ async function draw() {
             item.querySelector('.dm-del-btn').addEventListener('click', (e) => {
                 e.stopPropagation();
                 pmConfirm(`"${d.title}" 도면을 삭제하시겠습니까?`, async () => {
-                    await /** @type {any} */ (window.DrawingSync).delete('square', d.title);
+                    await /** @type {any} */ (window.DrawingSync).delete('cross', d.title);
                     if (d.title === document.getElementById('drawingName').value.trim()) startNewDrawing();
                     refreshDrawingList();
                 }, { sub: '모든 버전이 함께 삭제됩니다.' });
@@ -2324,7 +2340,7 @@ async function draw() {
     }
 
     async function openDrawingByTitle(title) {
-        const data = await /** @type {any} */ (window.DrawingSync).load('square', title);
+        const data = await /** @type {any} */ (window.DrawingSync).load('cross', title);
         if (!data || !data.versions || !data.versions.length) { pmAlert('도면을 불러올 수 없습니다.'); return; }
         versions = data.versions; currentVerIdx = versions.length - 1;
         applyParams(versions[currentVerIdx].params);
@@ -2380,7 +2396,7 @@ async function draw() {
     document.getElementById('dmRenameOk').addEventListener('click', async () => {
         const newTitle = document.getElementById('dmRenameInput').value.trim();
         if (!newTitle || newTitle === _renameTarget) { document.getElementById('dmRenameBackdrop').classList.remove('pm-active'); return; }
-        const ok = await /** @type {any} */ (window.DrawingSync).rename('square', _renameTarget, newTitle);
+        const ok = await /** @type {any} */ (window.DrawingSync).rename('cross', _renameTarget, newTitle);
         if (ok) {
             if (_renameTarget === document.getElementById('drawingName').value.trim()) {
                 document.getElementById('drawingName').value = newTitle;
