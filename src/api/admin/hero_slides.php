@@ -60,7 +60,12 @@ if ($action === 'save') {
 
     if (!empty($body['image_data'])) {
         $saved = saveSlideImage($body['image_data']);
-        if ($saved) $image_url = $saved;
+        if ($saved) {
+            $image_url = $saved;
+        } else {
+            echo json_encode(['error' => '이미지 저장 실패 (지원 형식: jpg/png/webp, 최대 15MB)']);
+            exit;
+        }
     }
 
     if ($id) {

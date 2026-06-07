@@ -153,11 +153,26 @@ function previewImage(input) {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = e => {
-        window._hsImageData = e.target.result;
-        const prev = document.getElementById('hsImgPreview');
-        prev.src = e.target.result;
-        prev.classList.add('show');
-        document.getElementById('hsImageUrl').value = '';
+        const img = new Image();
+        img.onload = () => {
+            const MAX_W = 1920, MAX_H = 1080;
+            let w = img.width, h = img.height;
+            if (w > MAX_W || h > MAX_H) {
+                const scale = Math.min(MAX_W / w, MAX_H / h);
+                w = Math.round(w * scale);
+                h = Math.round(h * scale);
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.88);
+            window._hsImageData = dataUrl;
+            const prev = document.getElementById('hsImgPreview');
+            prev.src = dataUrl;
+            prev.classList.add('show');
+            document.getElementById('hsImageUrl').value = '';
+        };
+        img.src = e.target.result;
     };
     reader.readAsDataURL(file);
 }
