@@ -24,7 +24,9 @@ function jwt_decode(string $token): ?array {
 function jwt_from_request(): ?array {
     // 1) httpOnly 쿠키 (브라우저 기본 경로)
     if (!empty($_COOKIE['pmok_auth'])) {
-        return jwt_decode($_COOKIE['pmok_auth']);
+        $decoded = jwt_decode($_COOKIE['pmok_auth']);
+        if ($decoded) return $decoded;
+        // 쿠키가 있지만 만료된 경우 Authorization 헤더로 폴백
     }
 
     // 2) Authorization 헤더 (API 클라이언트 폴백)

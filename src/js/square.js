@@ -689,8 +689,10 @@ async function fetchGeometry() {
         doorCount: txtDoorCount.value,
     });
     try {
+        const _tok = localStorage.getItem('pmok_auth_token');
         const res = await fetch('api/geometry.php', {
             method: 'POST',
+            headers: _tok ? { 'Authorization': 'Bearer ' + _tok } : {},
             body,
             signal: _geoController.signal,
         });
@@ -704,6 +706,15 @@ async function fetchGeometry() {
 async function draw() {
     const data = await fetchGeometry();
     if (!data) return;
+    if (data.error) {
+        if (data.error.includes('인증')) {
+            const el = document.getElementById('authModal');
+            if (el && window.bootstrap) bootstrap.Modal.getOrCreateInstance(el).show();
+        } else {
+            console.error('[draw] geometry error:', data.error);
+        }
+        return;
+    }
     geo = data.geo;
 
     const s = data.specs;
@@ -977,6 +988,51 @@ async function draw() {
             lastBaseScale = baseScale;
             lastDoorWpx   = totalWidth * baseScale;
             lastDoorHpx   = totalH     * baseScale;
+
+            // 라인 편집기 노드
+            const fw = geo.frameW, ft = geo.frameHTop, iw = geo.innerW, ih = geo.innerH;
+            if (mondrianLayout) {
+                // 몬드리안: 4 모서리 + 각 선 끝점 + 교점
+                const { lines } = mondrianLayout;
+                [[fw, ft], [fw + iw, ft], [fw, ft + ih], [fw + iw, ft + ih]].forEach(([rx, ry]) =>
+                    lastNodeList.push({ cx: toCanvasX(rx), cy: toCanvasY(ry) }));
+                for (const ln of lines) {
+                    if (ln.axis === 'v') {
+                        lastNodeList.push({ cx: toCanvasX(fw + ln.pos), cy: toCanvasY(ft + ln.from) });
+                        lastNodeList.push({ cx: toCanvasX(fw + ln.pos), cy: toCanvasY(ft + ln.to) });
+                    } else {
+                        lastNodeList.push({ cx: toCanvasX(fw + ln.from), cy: toCanvasY(ft + ln.pos) });
+                        lastNodeList.push({ cx: toCanvasX(fw + ln.to),   cy: toCanvasY(ft + ln.pos) });
+                    }
+                }
+                const vLines = lines.filter(l => l.axis === 'v');
+                const hLines = lines.filter(l => l.axis === 'h');
+                for (const vl of vLines) {
+                    for (const hl of hLines) {
+                        if (vl.from <= hl.pos + 0.5 && hl.pos - 0.5 <= vl.to &&
+                            hl.from <= vl.pos + 0.5 && vl.pos - 0.5 <= hl.to) {
+                            lastNodeList.push({ cx: toCanvasX(fw + vl.pos), cy: toCanvasY(ft + hl.pos) });
+                        }
+                    }
+                }
+            } else {
+                // 정자살 균등 격자: 세로살 중심 × 가로살 중심 교점
+                const nodeXs = [fw];
+                for (let i = 1; i < geo.cols; i++) {
+                    nodeXs.push(fw + i * (geo.cellW + geo.slatV) - geo.slatV / 2);
+                }
+                nodeXs.push(fw + iw);
+                const nodeYs = [ft];
+                for (let j = 1; j < geo.rowsInt; j++) {
+                    nodeYs.push(ft + j * (geo.cellH + geo.slatH) - geo.slatH / 2);
+                }
+                nodeYs.push(ft + ih);
+                for (const rx of nodeXs) {
+                    for (const ry of nodeYs) {
+                        lastNodeList.push({ cx: toCanvasX(rx), cy: toCanvasY(ry) });
+                    }
+                }
+            }
         }
 
         // ====================================
@@ -2508,6 +2564,7 @@ async function draw() {
     loadVersions().then(() => restoreThumbs());
     window.addEventListener('pmokAuthChanged', () => {
         loadVersions().then(() => restoreThumbs());
+        draw();
     });
 
     // ── 도면 이름 자동 저장 ────────────────────────

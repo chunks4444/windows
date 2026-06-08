@@ -689,8 +689,10 @@ async function fetchGeometry() {
         doorCount: txtDoorCount.value,
     });
     try {
+        const _tok = localStorage.getItem('pmok_auth_token');
         const res = await fetch('api/geometry.php', {
             method: 'POST',
+            headers: _tok ? { 'Authorization': 'Bearer ' + _tok } : {},
             body,
             signal: _geoController.signal,
         });
@@ -702,8 +704,22 @@ async function fetchGeometry() {
 }
 
 async function draw() {
+    try {
+    console.log('[draw] called, logW=', logW, 'logH=', logH);
     const data = await fetchGeometry();
+    console.log('[draw] fetchGeometry result:', data);
     if (!data) return;
+    if (data.error) {
+        console.warn('[draw] error from server:', data.error);
+        if (data.error.includes('인증')) {
+            const el = document.getElementById('authModal');
+            if (el && window.bootstrap) bootstrap.Modal.getOrCreateInstance(el).show();
+            else console.warn('[draw] authModal or bootstrap not found', el, window.bootstrap);
+        } else {
+            console.error('[draw] geometry error:', data.error);
+        }
+        return;
+    }
     geo = data.geo;
 
     const s = data.specs;
@@ -961,6 +977,23 @@ async function draw() {
             lastBaseScale = baseScale;
             lastDoorWpx   = totalWidth * baseScale;
             lastDoorHpx   = totalH     * baseScale;
+
+            // 라인 편집기 노드: 세로살 중심 × 가로살 중심 교점
+            const nodeXs = [geo.frameW];
+            for (let i = 1; i < geo.cols; i++) {
+                nodeXs.push(geo.frameW + i * (geo.cellW + geo.slatV) - geo.slatV / 2);
+            }
+            nodeXs.push(geo.frameW + geo.innerW);
+
+            const nodeYs = [geo.frameHTop];
+            geo.hBarYs.forEach(by => nodeYs.push(geo.frameHTop + by));
+            nodeYs.push(geo.frameHTop + geo.innerH);
+
+            for (const rx of nodeXs) {
+                for (const ry of nodeYs) {
+                    lastNodeList.push({ cx: toCanvasX(rx), cy: toCanvasY(ry) });
+                }
+            }
         }
 
         // ====================================
@@ -1333,6 +1366,7 @@ async function draw() {
         }
     }
     drawRulers();
+    } catch(e) { console.error('[draw] EXCEPTION:', e); }
 }
 
     function drawRulers() {
@@ -2381,6 +2415,7 @@ async function draw() {
     loadVersions().then(() => restoreThumbs());
     window.addEventListener('pmokAuthChanged', () => {
         loadVersions().then(() => restoreThumbs());
+        draw();
     });
 
     // ── 도면 이름 자동 저장 ────────────────────────

@@ -685,8 +685,10 @@ async function fetchGeometry() {
         doorCount: txtDoorCount.value,
     });
     try {
+        const _tok = localStorage.getItem('pmok_auth_token');
         const res = await fetch('api/geometry.php', {
             method: 'POST',
+            headers: _tok ? { 'Authorization': 'Bearer ' + _tok } : {},
             body,
             signal: _geoController.signal,
         });
@@ -700,6 +702,15 @@ async function fetchGeometry() {
 async function draw() {
     const data = await fetchGeometry();
     if (!data) return;
+    if (data.error) {
+        if (data.error.includes('인증')) {
+            const el = document.getElementById('authModal');
+            if (el && window.bootstrap) bootstrap.Modal.getOrCreateInstance(el).show();
+        } else {
+            console.error('[draw] geometry error:', data.error);
+        }
+        return;
+    }
     geo = data.geo;
 
     const s = data.specs;
@@ -2488,6 +2499,7 @@ async function draw() {
     loadVersions().then(() => restoreThumbs());
     window.addEventListener('pmokAuthChanged', () => {
         loadVersions().then(() => restoreThumbs());
+        draw();
     });
 
     // ── 도면 이름 자동 저장 ────────────────────────
