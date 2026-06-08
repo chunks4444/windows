@@ -2392,14 +2392,16 @@ async function draw() {
     });
 
     loadSavedRenders();
+    window.addEventListener('resize', resizeCanvasDebounced);
     if (window.innerWidth < 768) {
         sidebar.classList.add('collapsed');
         btnSidebarTab.classList.add('collapsed');
         rightSidebar.classList.add('collapsed');
         btnRightSidebarTab.classList.add('collapsed');
+        animatePanelResize();
+    } else {
+        resizeCanvas();
     }
-    window.addEventListener('resize', resizeCanvasDebounced);
-    resizeCanvas();
 
     //출력
     btnSavePNG.addEventListener('click', function() {
