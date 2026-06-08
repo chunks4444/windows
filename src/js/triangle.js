@@ -2054,9 +2054,8 @@ async function draw() {
             });
             if (!res.ok) return;
             const data = await res.json();
-            if (!data.wallpapers?.length) { hideRightSidebar(); return; }
+            if (!data.wallpapers?.length) { return; }
             const activeServerId = localStorage.getItem(BG_IMAGE_KEY);
-            showRightSidebar();
             const serverIds   = data.wallpapers.map(w => String(w.id));
             const lastServerId = String(data.wallpapers[data.wallpapers.length - 1].id);
             const targetId = (activeServerId && serverIds.includes(activeServerId))

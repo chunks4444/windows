@@ -1093,30 +1093,36 @@ async function draw() {
                     if (col === geo.cols - 1 && row === geo.rowsInt - 1) lastNodeList.push({ cx: toCanvasX(jx1), cy: toCanvasY(jy1) });
                 }
 
-                // 좌상 → 우하 (\)
+                // 좌상 → 우하 (\) — 반씩 분할하여 독립 삭제 가능
                 const bsCx = toCanvasX(jx0), bsCy = toCanvasY(jy0);
                 const bsEx = toCanvasX(jx1), bsEy = toCanvasY(jy1);
                 const bsMx = (bsCx + bsEx) / 2, bsMy = (bsCy + bsEy) / 2;
-                const bsKey = `${d}:bs:${row}:${col}`;
-                lastSegMap.set(bsKey, { cx: bsCx, cy: bsCy, ex: bsEx, ey: bsEy, mx: bsMx, my: bsMy, normAngle: Math.PI / 4, lineKey: makeLineKey(bsMx, bsMy, Math.PI / 4) });
-                if (!deletedSegs.has(bsKey)) {
-                    ctx.beginPath();
-                    ctx.moveTo(bsCx, bsCy);
-                    ctx.lineTo(bsEx, bsEy);
-                    ctx.stroke();
+                const bsLineKey = makeLineKey(bsMx, bsMy, Math.PI / 4);
+                const bsKey0 = `${d}:bs:${row}:${col}:0`;
+                const bsKey1 = `${d}:bs:${row}:${col}:1`;
+                lastSegMap.set(bsKey0, { cx: bsCx, cy: bsCy, ex: bsMx, ey: bsMy, mx: (bsCx + bsMx) / 2, my: (bsCy + bsMy) / 2, normAngle: Math.PI / 4, lineKey: bsLineKey });
+                lastSegMap.set(bsKey1, { cx: bsMx, cy: bsMy, ex: bsEx, ey: bsEy, mx: (bsMx + bsEx) / 2, my: (bsMy + bsEy) / 2, normAngle: Math.PI / 4, lineKey: bsLineKey });
+                if (!deletedSegs.has(bsKey0)) {
+                    ctx.beginPath(); ctx.moveTo(bsCx, bsCy); ctx.lineTo(bsMx, bsMy); ctx.stroke();
+                }
+                if (!deletedSegs.has(bsKey1)) {
+                    ctx.beginPath(); ctx.moveTo(bsMx, bsMy); ctx.lineTo(bsEx, bsEy); ctx.stroke();
                 }
 
-                // 우상 → 좌하 (/)
+                // 우상 → 좌하 (/) — 반씩 분할하여 독립 삭제 가능
                 const fsCx = toCanvasX(jx1), fsCy = toCanvasY(jy0);
                 const fsEx = toCanvasX(jx0), fsEy = toCanvasY(jy1);
-                const fsMx = (fsCx + fsEx) / 2,         fsMy = (fsCy + fsEy) / 2;
-                const fsKey = `${d}:fs:${row}:${col}`;
-                lastSegMap.set(fsKey, { cx: fsCx, cy: fsCy, ex: fsEx, ey: fsEy, mx: fsMx, my: fsMy, normAngle: 3 * Math.PI / 4, lineKey: makeLineKey(fsMx, fsMy, 3 * Math.PI / 4) });
-                if (!deletedSegs.has(fsKey)) {
-                    ctx.beginPath();
-                    ctx.moveTo(fsCx, fsCy);
-                    ctx.lineTo(fsEx, fsEy);
-                    ctx.stroke();
+                const fsMx = (fsCx + fsEx) / 2, fsMy = (fsCy + fsEy) / 2;
+                const fsLineKey = makeLineKey(fsMx, fsMy, 3 * Math.PI / 4);
+                const fsKey0 = `${d}:fs:${row}:${col}:0`;
+                const fsKey1 = `${d}:fs:${row}:${col}:1`;
+                lastSegMap.set(fsKey0, { cx: fsCx, cy: fsCy, ex: fsMx, ey: fsMy, mx: (fsCx + fsMx) / 2, my: (fsCy + fsMy) / 2, normAngle: 3 * Math.PI / 4, lineKey: fsLineKey });
+                lastSegMap.set(fsKey1, { cx: fsMx, cy: fsMy, ex: fsEx, ey: fsEy, mx: (fsMx + fsEx) / 2, my: (fsMy + fsEy) / 2, normAngle: 3 * Math.PI / 4, lineKey: fsLineKey });
+                if (!deletedSegs.has(fsKey0)) {
+                    ctx.beginPath(); ctx.moveTo(fsCx, fsCy); ctx.lineTo(fsMx, fsMy); ctx.stroke();
+                }
+                if (!deletedSegs.has(fsKey1)) {
+                    ctx.beginPath(); ctx.moveTo(fsMx, fsMy); ctx.lineTo(fsEx, fsEy); ctx.stroke();
                 }
             }
         }
@@ -2101,9 +2107,8 @@ async function draw() {
             });
             if (!res.ok) return;
             const data = await res.json();
-            if (!data.wallpapers?.length) { hideRightSidebar(); return; }
+            if (!data.wallpapers?.length) { return; }
             const activeServerId = localStorage.getItem(BG_IMAGE_KEY);
-            showRightSidebar();
             const serverIds    = data.wallpapers.map(w => String(w.id));
             const lastServerId = String(data.wallpapers[data.wallpapers.length - 1].id);
             const targetId = (activeServerId && serverIds.includes(activeServerId))
