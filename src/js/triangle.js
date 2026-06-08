@@ -2510,6 +2510,12 @@ async function draw() {
         localStorage.setItem(NAME_KEY, drawingNameEl.value);
     });
 
+    if (window.innerWidth < 768) {
+        sidebar.classList.add('collapsed');
+        btnSidebarTab.classList.add('collapsed');
+        rightSidebar.classList.add('collapsed');
+        btnRightSidebarTab.classList.add('collapsed');
+    }
     window.addEventListener('resize', resizeCanvasDebounced);
     resizeCanvas();
 

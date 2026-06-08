@@ -2392,6 +2392,12 @@ async function draw() {
     });
 
     loadSavedRenders();
+    if (window.innerWidth < 768) {
+        sidebar.classList.add('collapsed');
+        btnSidebarTab.classList.add('collapsed');
+        rightSidebar.classList.add('collapsed');
+        btnRightSidebarTab.classList.add('collapsed');
+    }
     window.addEventListener('resize', resizeCanvasDebounced);
     resizeCanvas();
 
