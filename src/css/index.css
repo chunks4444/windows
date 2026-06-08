@@ -92,7 +92,13 @@ body { font-weight: 900; }
     min-height: calc(100vh - 68px);
     display: flex;
     flex-direction: column;
-    padding-bottom: 64px;
+    padding-bottom: 72px;
+}
+
+@media (max-width: 768px) {
+    .home-wrapper {
+        padding-bottom: 80px;
+    }
 }
 
 /* CURATION DIVIDER */
@@ -343,6 +349,8 @@ body { font-weight: 900; }
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 0 24px;
+    height: 56px;
 }
 
 .footer-cta-center {
@@ -363,6 +371,34 @@ body { font-weight: 900; }
     font-weight: 500;
     letter-spacing: 0.01em;
     white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .site-footer {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: auto;
+        padding: 12px 20px;
+        gap: 4px;
+    }
+    .footer-cta-center {
+        position: static;
+        transform: none;
+        flex-direction: column;
+        gap: 2px;
+        text-align: center;
+    }
+    .footer-copy,
+    .footer-link {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-cta-sub {
+        display: none;
+    }
 }
 
 .footer-cta-link {

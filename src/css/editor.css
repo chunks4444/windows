@@ -20,16 +20,15 @@ body {
 
 /* ── CANVAS TITLE OVERLAY (nav 영역에 고정) ── */
 .canvas-title-bar {
-    position: fixed;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    height: 68px;
+    position: absolute;
+    top: 28px;
+    left: 28px;
+    height: auto;
     display: flex;
     align-items: center;
     gap: 8px;
     background: transparent;
-    z-index: 1040;
+    z-index: 10;
     white-space: nowrap;
     pointer-events: auto;
 }

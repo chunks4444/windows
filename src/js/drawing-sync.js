@@ -71,3 +71,36 @@ window.DrawingSync = (function () {
 
     return { save, load, list, rename, delete: del };
 })();
+
+// ── 사이드바 반응형 초기화 ─────────────────────
+(function () {
+    const MOBILE = 768;
+
+    function applyState() {
+        const sidebar    = document.getElementById('sidebar');
+        const tabBtn     = document.getElementById('btnSidebarTab');
+        const rSidebar   = document.getElementById('rightSidebar');
+        const rTabBtn    = document.getElementById('btnRightSidebarTab');
+        if (!sidebar || !tabBtn) return;
+
+        const isMobile = window.innerWidth <= MOBILE;
+
+        if (isMobile) {
+            sidebar.classList.add('collapsed');
+            tabBtn.classList.add('collapsed');
+            if (rSidebar) { rSidebar.classList.add('collapsed'); rTabBtn?.classList.add('collapsed'); }
+        } else {
+            sidebar.classList.remove('collapsed');
+            tabBtn.classList.remove('collapsed');
+            if (rSidebar) { rSidebar.classList.remove('collapsed'); rTabBtn?.classList.remove('collapsed'); }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', applyState);
+
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(applyState, 150);
+    });
+})();

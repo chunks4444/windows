@@ -190,9 +190,11 @@ function authUpdateNav() {
         const adminMeta        = document.getElementById('navAdminMeta');
         const adminSpaceCards  = document.getElementById('navAdminSpaceCards');
         const adminHeroSlides  = document.getElementById('navAdminHeroSlides');
+        const adminWoodTypes   = document.getElementById('navAdminWoodTypes');
         if (adminMeta)        adminMeta.style.display        = isSuper ? '' : 'none';
         if (adminSpaceCards)  adminSpaceCards.style.display  = isSuper ? '' : 'none';
         if (adminHeroSlides)  adminHeroSlides.style.display  = isSuper ? '' : 'none';
+        if (adminWoodTypes)   adminWoodTypes.style.display   = isSuper ? '' : 'none';
         loadNavBoards();
     } else {
         loginBtn.style.display = '';
