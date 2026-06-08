@@ -10,6 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 require_once __DIR__ . '/../../lib/db.php';
 require_once __DIR__ . '/../../lib/jwt.php';
+require_once __DIR__ . '/../../lib/mailer.php';
 
 $body     = json_decode(file_get_contents('php://input'), true);
 $email    = trim($body['email'] ?? '');
@@ -34,6 +35,8 @@ try {
     $stmt->execute([$email, $hash]);
     $userId = (int) $pdo->lastInsertId();
     $token  = jwt_encode(['sub' => $userId, 'email' => $email, 'role' => 'u', 'iat' => time(), 'exp' => time() + JWT_EXPIRE]);
+
+    send_mail($email, '가입을 환영합니다!', 'welcome', ['email' => $email]);
 
     setcookie('pmok_auth', $token, [
         'expires'  => time() + JWT_EXPIRE,

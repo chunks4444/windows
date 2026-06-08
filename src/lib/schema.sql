@@ -191,6 +191,39 @@ INSERT IGNORE INTO space_cards (id, label, image_url, collection_query, sort_ord
 (9,  '주방',   'https://picsum.photos/seed/sp09/600/400', '주방',   8),
 (10, '갤러리', 'https://picsum.photos/seed/sp10/600/400', '갤러리', 9);
 
+-- 사이트 설정 (OAuth 키 등)
+CREATE TABLE IF NOT EXISTS site_config (
+    key_name   VARCHAR(80) NOT NULL,
+    value      TEXT        NOT NULL DEFAULT '',
+    updated_at DATETIME    NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+    PRIMARY KEY (key_name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='사이트 설정 (OAuth 키 등)';
+
+-- SNS OAuth 연결 이력
+CREATE TABLE IF NOT EXISTS user_oauth (
+    id          INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    user_id     INT UNSIGNED NOT NULL,
+    provider    VARCHAR(20)  NOT NULL COMMENT 'google|kakao|naver',
+    created_at  DATETIME     NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_oauth (user_id, provider),
+    KEY idx_oauth_user (user_id),
+    CONSTRAINT fk_oauth_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='SNS OAuth 연결 이력';
+
+-- 비밀번호 재설정 토큰
+CREATE TABLE IF NOT EXISTS password_resets (
+    id         INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    token      CHAR(64)     NOT NULL COMMENT 'bin2hex(random_bytes(32))',
+    user_id    INT UNSIGNED NOT NULL,
+    expires_at DATETIME     NOT NULL,
+    created_at DATETIME     NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_pr_token (token),
+    KEY idx_pr_user (user_id),
+    CONSTRAINT fk_pr_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='비밀번호 재설정 토큰 (1시간 유효)';
+
 -- 도면 버전 테이블 (한 도면의 저장 이력)
 CREATE TABLE IF NOT EXISTS drawing_versions (
     id          INT UNSIGNED    NOT NULL AUTO_INCREMENT COMMENT '버전 고유 ID',

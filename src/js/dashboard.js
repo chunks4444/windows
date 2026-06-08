@@ -123,23 +123,48 @@ function renderCard(d) {
         </div>`;
 }
 
+function showDeleteModal(desc, onConfirm) {
+    const modal   = document.getElementById('dbDeleteModal');
+    const descEl  = document.getElementById('dbDeleteModalDesc');
+    const confirm = document.getElementById('dbDeleteModalConfirm');
+    const cancel  = document.getElementById('dbDeleteModalCancel');
+
+    descEl.textContent = desc;
+    modal.style.display = 'flex';
+
+    function close() {
+        modal.style.display = 'none';
+        confirm.removeEventListener('click', handleConfirm);
+        cancel.removeEventListener('click', close);
+        modal.removeEventListener('click', handleBackdrop);
+    }
+    function handleConfirm() { close(); onConfirm(); }
+    function handleBackdrop(ev) { if (ev.target === modal) close(); }
+
+    confirm.addEventListener('click', handleConfirm);
+    cancel.addEventListener('click', close);
+    modal.addEventListener('click', handleBackdrop);
+}
+
 async function deleteDrawing(e, type, title) {
     e.stopPropagation();
-    if (!confirm(`"${title}" 도면을 삭제할까요?`)) return;
-    const res = await fetch('/src/api/drawings/delete.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', ..._headers() },
-        body: JSON.stringify({ type, title }),
-    });
-    if (res.ok) {
-        e.target.closest('.db-card').remove();
-        const grid = document.querySelector('#dbContent .db-grid');
-        if (grid && !grid.children.length) {
-            document.getElementById('dbContent').innerHTML = '<div class="db-empty">저장된 도면이 없습니다.</div>';
+    const card = e.target.closest('.db-card');
+    showDeleteModal(`"${title}" 도면을 삭제합니다.\n이 작업은 되돌릴 수 없습니다.`, async () => {
+        const res = await fetch('/src/api/drawings/delete.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ..._headers() },
+            body: JSON.stringify({ type, title }),
+        });
+        if (res.ok) {
+            card.remove();
+            const grid = document.querySelector('#dbContent .db-grid');
+            if (grid && !grid.children.length) {
+                document.getElementById('dbContent').innerHTML = '<div class="db-empty">저장된 도면이 없습니다.</div>';
+            }
+        } else {
+            alert('삭제에 실패했습니다.');
         }
-    } else {
-        alert('삭제에 실패했습니다.');
-    }
+    });
 }
 
 function escHtml(str) {
@@ -271,20 +296,22 @@ async function removeBoardItem(e, boardId, patternId, btn) {
 
 async function deleteBoard(e, boardId, boardName) {
     e.stopPropagation();
-    if (!confirm(`"${boardName}" 보드를 삭제할까요?`)) return;
-    const res = await fetch('/src/api/boards/delete.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', ..._headers() },
-        body: JSON.stringify({ board_id: boardId }),
-    });
-    if (res.ok) {
-        e.target.closest('.db-card').remove();
-        boardsLoaded = false;
-        const grid = document.querySelector('#dbBoardsContent .db-grid');
-        if (grid && !grid.children.length) {
-            document.getElementById('dbBoardsContent').innerHTML = '<div class="db-empty">저장된 보드가 없습니다.</div>';
+    const card = e.target.closest('.db-card');
+    showDeleteModal(`"${boardName}" 보드를 삭제합니다.\n이 작업은 되돌릴 수 없습니다.`, async () => {
+        const res = await fetch('/src/api/boards/delete.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ..._headers() },
+            body: JSON.stringify({ board_id: boardId }),
+        });
+        if (res.ok) {
+            card.remove();
+            boardsLoaded = false;
+            const grid = document.querySelector('#dbBoardsContent .db-grid');
+            if (grid && !grid.children.length) {
+                document.getElementById('dbBoardsContent').innerHTML = '<div class="db-empty">저장된 보드가 없습니다.</div>';
+            }
         }
-    }
+    });
 }
 
 document.addEventListener('DOMContentLoaded', async () => {

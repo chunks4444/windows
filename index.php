@@ -264,10 +264,10 @@ $spaceCards = $pdo->query('SELECT label, image_url, collection_query FROM space_
                     <div class="process-step">
                         <span class="process-num">03</span>
                         <i class="bi bi-chat-heart process-icon"></i>
-                        <h3 class="process-title">제작 상담</h3>
-                        <p class="process-desc">완성된 설계를 가지고<br>평목 공방에 제작을 의뢰하세요.</p>
+                        <h3 class="process-title">제작 주문</h3>
+                        <p class="process-desc">완성된 설계를 가지고<br>평목 공방에 제작을 주문하세요.</p>
                         <ul class="process-hints">
-                            <li><i class="bi bi-check2"></i> About 페이지에서 이메일 문의</li>
+                            <li><i class="bi bi-check2"></i> 도면 오른쪽 상단 주문버튼 클릭</li>
                             <li><i class="bi bi-check2"></i> 저장한 도면 기반으로 상담</li>
                             <li><i class="bi bi-check2"></i> 설계·제작·협업 모두 환영</li>
                         </ul>

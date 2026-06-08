@@ -36,6 +36,21 @@ header('Content-Type: text/html; charset=UTF-8');
     </div>
 </div>
 
+<!-- 삭제 확인 모달 -->
+<div id="dbDeleteModal" class="db-delete-modal" style="display:none;" role="dialog" aria-modal="true">
+    <div class="db-delete-modal-box">
+        <div class="db-delete-modal-icon">
+            <i class="bi bi-trash3"></i>
+        </div>
+        <div class="db-delete-modal-title" id="dbDeleteModalTitle">삭제하시겠습니까?</div>
+        <div class="db-delete-modal-desc" id="dbDeleteModalDesc"></div>
+        <div class="db-delete-modal-actions">
+            <button class="db-delete-modal-cancel" id="dbDeleteModalCancel">취소</button>
+            <button class="db-delete-modal-confirm" id="dbDeleteModalConfirm">삭제</button>
+        </div>
+    </div>
+</div>
+
 <!-- 비로그인 -->
 <div class="db-page" id="dbAuthWall" style="display:none;">
     <div class="db-auth-banner">

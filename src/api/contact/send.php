@@ -6,6 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 require_once __DIR__ . '/../../lib/db.php';
+require_once __DIR__ . '/../../lib/mailer.php';
 
 $body    = json_decode(file_get_contents('php://input'), true);
 $name    = trim($body['name']    ?? '');
@@ -39,17 +40,13 @@ if ((int)$cnt->fetchColumn() >= 5) {
     http_response_code(429); echo json_encode(['error' => '잠시 후 다시 시도해주세요.']); exit;
 }
 
-$to      = 'pyeongmok@gmail.com';
-$subjectLine = '=?UTF-8?B?' . base64_encode('[평목 문의] ' . $subject) . '?=';
-$body_text   = "이름: {$name}\n이메일: {$email}\n\n{$message}";
-$headers     = implode("\r\n", [
-    'From: noreply@windows.pyeongmok.com',
-    'Reply-To: ' . $email,
-    'Content-Type: text/plain; charset=UTF-8',
-    'Content-Transfer-Encoding: base64',
-]);
-
-$sent = mail($to, $subjectLine, base64_encode($body_text), $headers);
+$sent = send_mail(
+    'pyeongmok@gmail.com',
+    '[문의] ' . $subject,
+    'contact',
+    compact('name', 'email', 'subject', 'message'),
+    'Reply-To: ' . $email
+);
 
 if (!$sent) {
     http_response_code(500); echo json_encode(['error' => '메일 전송에 실패했습니다. 직접 이메일로 문의해주세요.']); exit;
