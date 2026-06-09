@@ -2174,7 +2174,7 @@ async function draw() {
         document.getElementById('txtFinish').value   = p.finish;
         rotateOn = p.rotate;
         document.getElementById('pungpanCtrl').style.display = p.pungpanOn ? 'block' : 'none';
-        if (p.panX !== undefined) { panX = p.panX; panY = p.panY; scaleFactor = p.scaleFactor; }
+        scaleFactor = 1.0; panX = 0; panY = 0;
         placementMode        = p.placementMode        || false;
         doorCornerPositions  = p.doorCornerPositions  || null;
         placementNaturalSize = p.placementNaturalSize || null;
