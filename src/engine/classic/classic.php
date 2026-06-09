@@ -100,18 +100,56 @@ header('Content-Type: text/html; charset=UTF-8');
                     <div id="ratioCtrl">
                     <div class="ctrl">
                         <div class="ctrl-header"><span class="ctrl-label">가로살 배열</span></div>
-                        <select id="txtPattern" class="sb-select">
-                            <option value="2/3/2">2 / 3 / 2</option>
-                            <option value="3/5/3" selected>3 / 5 / 3</option>
-                            <option value="5/7/5">5 / 7 / 5</option>
-                            <option value="7/9/7">7 / 9 / 7</option>
-                        </select>
+                        <div style="display:flex;gap:6px;align-items:center;">
+                            <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;">
+                                <span style="font-size:10px;color:var(--text-3);font-weight:600;">상</span>
+                                <select id="txtPatternTop" class="sb-select" style="width:100%;">
+                                    <option value="0">0</option>
+                                    <option value="1" style="font-weight:700;">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3" selected style="font-weight:700;">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5" style="font-weight:700;">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7" style="font-weight:700;">7</option>
+                                </select>
+                            </div>
+                            <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;">
+                                <span style="font-size:10px;color:var(--text-3);font-weight:600;">중</span>
+                                <select id="txtPatternMid" class="sb-select" style="width:100%;">
+                                    <option value="0">0</option>
+                                    <option value="1" style="font-weight:700;">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3" style="font-weight:700;">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5" selected style="font-weight:700;">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7" style="font-weight:700;">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9" style="font-weight:700;">9</option>
+                                </select>
+                            </div>
+                            <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;">
+                                <span style="font-size:10px;color:var(--text-3);font-weight:600;">하</span>
+                                <select id="txtPatternBot" class="sb-select" style="width:100%;">
+                                    <option value="0">0</option>
+                                    <option value="1" style="font-weight:700;">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3" selected style="font-weight:700;">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5" style="font-weight:700;">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7" style="font-weight:700;">7</option>
+                                </select>
+                            </div>
+                        </div>
+                        <input type="hidden" id="txtPattern" value="3/5/3">
                     </div>
                     <div class="ctrl">
                         <div class="ctrl-header"><span class="ctrl-label">세로 비율</span></div>
                         <div class="slider-row">
-                            <input type="range" id="txtRatio" min="1.0" max="3.0" step="0.1" value="1.2">
-                            <input type="number" class="slider-num" id="numRatio" min="1.0" max="3.0" step="0.1" value="1.2">
+                            <input type="range" id="txtRatio" min="1.0" max="5.0" step="0.1" value="1.2">
+                            <input type="number" class="slider-num" id="numRatio" min="1.0" max="5.0" step="0.1" value="1.2">
                         </div>
                     </div>
                     </div>

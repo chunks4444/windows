@@ -66,26 +66,31 @@ $spaceCards = $pdo->query('SELECT label, image_url, collection_query FROM space_
 
                 <div class="mt-5 mb-4">
                     <p class="ab-section-label">Studio</p>
-                    <h2 class="ab-section-title">직접 설계해 보세요.</h2>
+                    <h2 class="ab-section-title">나만의 창호를 직접 디자인하세요.</h2>
                     <p class="ab-section-body">평목 스튜디오는 브라우저에서 바로 사용할 수 있는 <strong>창호 설계 도구</strong>입니다.<br>문틀 크기, 살 간격, 패턴을 조정하며 나만의 창호를 완성하면, <strong>평목 공방에서 제작해 드립니다.</strong></p>
                 </div>
 
                 <div class="row g-4">
                     <div class="col-md-4 text-center">
                         <div class="service-card service-card--classic h-80 p-4">
-                            <div class=" mb-4">
+                            <div class="mb-4" style="height:120px;display:flex;align-items:center;justify-content:center;">
                                 <a href="/src/engine/classic/classic.php" class="pm-symbol-link">
                                     <svg
-                                        width="120"
-                                        height="120"
-                                        viewbox="0 0 680 680"
+                                        width="56"
+                                        height="84"
+                                        viewBox="148 52 384 576"
                                         xmlns="http://www.w3.org/2000/svg">
                                         <g transform="rotate(90 340 340)">
                                             <rect class="pm-symbol-bar" x="148" y="204" width="384" height="46" rx="0"/>
                                             <rect class="pm-symbol-bar" x="148" y="430" width="384" height="46" rx="0"/>
                                             <rect class="pm-symbol-bar" x="148" y="148" width="46" height="384" rx="0"/>
-                                            <rect class="pm-symbol-bar" x="294" y="148" width="46" height="384" rx="0"/>
+                                            <rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="0"/>
                                             <rect class="pm-symbol-bar" x="486" y="148" width="46" height="384" rx="0"/>
+                                            <!-- 세로선 인출 (좌우 촉 → 회전 후 상하 인출) -->
+                                            <rect class="pm-symbol-bar" x="100" y="204" width="48" height="46" rx="0"/>
+                                            <rect class="pm-symbol-bar" x="532" y="204" width="48" height="46" rx="0"/>
+                                            <rect class="pm-symbol-bar" x="100" y="430" width="48" height="46" rx="0"/>
+                                            <rect class="pm-symbol-bar" x="532" y="430" width="48" height="46" rx="0"/>
                                         </g>
                                     </svg>
                                 </a>
@@ -187,9 +192,9 @@ $spaceCards = $pdo->query('SELECT label, image_url, collection_query FROM space_
             </div>
 
             <!-- card -->
-            <section class="values-section mt-5">
+            <section class="values-section mt-5 ">
                 <div class="values-inner container">
-                    <div class="values-grid">
+                    <div class="values-grid d-none">
                         <div class="values-item">
                             <h2 class="values-title">당신의 공간에 빛과 바람의 길을 디자인하세요.</h2>
                             <p class="sub-title">문틀 크기와 비율을 조정하면 실제 제작 가능한<br>맞춤 창호 디자인을 실시간으로 확인할 수 있습니다</p>
@@ -206,7 +211,7 @@ $spaceCards = $pdo->query('SELECT label, image_url, collection_query FROM space_
                     <hr class="curation-divider">
                     <div class="mt-5 mb-4">
                         <p class="ab-section-label">큐레이션</p>
-                        <h2 class="ab-section-title">공간별 창호 패턴을 찾아보세요.</h2>
+                        <h2 class="ab-section-title">공간별 창호 디자인을 찾아보세요.</h2>
                         <p class="ab-section-body">중문부터 거실, 카페, 서재까지—<br>원하는 공간을 선택하면 추천 컬렉션을 바로 확인할 수 있습니다.</p>
                     </div>
 
@@ -222,7 +227,6 @@ $spaceCards = $pdo->query('SELECT label, image_url, collection_query FROM space_
                     </div>
                     <?php endif; ?>
 
-                    <hr>
                 </div>
             </section>
             <!-- card -->
@@ -248,7 +252,9 @@ $spaceCards = $pdo->query('SELECT label, image_url, collection_query FROM space_
                             <li><i class="bi bi-check2"></i> 실시간으로 결과 확인</li>
                         </ul>
                     </div>
-                    <div class="process-arrow">→</div>
+                    <div class="process-arrow">
+                        <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </div>
                     <div class="process-step">
                         <span class="process-num">02</span>
                         <i class="bi bi-bookmark-heart process-icon"></i>
@@ -260,7 +266,9 @@ $spaceCards = $pdo->query('SELECT label, image_url, collection_query FROM space_
                             <li><i class="bi bi-check2"></i> 보드에 마음에 드는 패턴 모으기</li>
                         </ul>
                     </div>
-                    <div class="process-arrow">→</div>
+                    <div class="process-arrow">
+                        <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </div>
                     <div class="process-step">
                         <span class="process-num">03</span>
                         <i class="bi bi-chat-heart process-icon"></i>

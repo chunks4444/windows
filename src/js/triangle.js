@@ -609,6 +609,7 @@ let lastSegMap   = new Map();   // segKey → {mx,my,normAngle,cx,cy}
 let lastNodeList = [];
 let lastILeft=0, lastITop=0, lastIW=1, lastIH=1, lastSlatPx=1, lastCellSize=1;
 let lastBaseScale = 1, lastOLeft = 0, lastOTop = 0, lastDoorWpx = 0, lastDoorHpx = 0;
+let _exportCanvas = null;
 
 // 캔버스 좌표 → 내경 mm 좌표 변환
 function canvasToInnerMm(cx, cy) {
@@ -887,14 +888,18 @@ async function draw() {
     if (doorCornerPositions) {
         const W = Math.max(1, Math.ceil(doorNaturalSize.w));
         const H = Math.max(1, Math.ceil(doorNaturalSize.h));
-        if (offCanvas.width !== W || offCanvas.height !== H) {
-            offCanvas.width = W; offCanvas.height = H;
+        const renderDpr = Math.min(scaleFactor * dpr, Math.min(4096 / W, 4096 / H));
+        const offW = Math.round(W * renderDpr);
+        const offH = Math.round(H * renderDpr);
+        if (offCanvas.width !== offW || offCanvas.height !== offH) {
+            offCanvas.width = offW; offCanvas.height = offH;
         }
         ctx.restore();
         const offCtx = offCanvas.getContext('2d');
-        offCtx.clearRect(0, 0, W, H);
+        offCtx.clearRect(0, 0, offW, offH);
         offCtx.save();
-        offCtx.translate(W / 2, H / 2);
+        offCtx.translate(offW / 2, offH / 2);
+        offCtx.scale(renderDpr, renderDpr);
         ctx = offCtx;
     }
 
@@ -1423,6 +1428,14 @@ async function draw() {
             }
         }
     }
+    if (!_exportCanvas || _exportCanvas.width !== canvas.width || _exportCanvas.height !== canvas.height) {
+        _exportCanvas = document.createElement('canvas');
+        _exportCanvas.width = canvas.width;
+        _exportCanvas.height = canvas.height;
+    }
+    const _ec = _exportCanvas.getContext('2d');
+    _ec.clearRect(0, 0, _exportCanvas.width, _exportCanvas.height);
+    _ec.drawImage(canvas, 0, 0);
     drawRulers();
 }
 
@@ -2032,16 +2045,19 @@ async function draw() {
 
     // ── 썸네일 캡처 ────────────────────────────────
     function captureThumbnail() {
-        const src = document.getElementById('doorCanvas');
+        const dpr = window.devicePixelRatio || 1;
+        const R   = Math.round(18 * dpr);
+        const sw  = canvas.width  - R;
+        const sh  = canvas.height - R;
         const W   = 320;
-        const H   = Math.round(W * src.height / src.width);
+        const H   = Math.round(W * sh / sw);
         const tmp = document.createElement('canvas');
         tmp.width  = W;
         tmp.height = H;
-        const ctx  = tmp.getContext('2d');
-        ctx.fillStyle = '#E5E7EA';
-        ctx.fillRect(0, 0, W, H);
-        ctx.drawImage(src, 0, 0, W, H);
+        const tctx = tmp.getContext('2d');
+        tctx.fillStyle = '#E5E7EA';
+        tctx.fillRect(0, 0, W, H);
+        tctx.drawImage(canvas, R, R, sw, sh, 0, 0, W, H);
         return tmp.toDataURL('image/jpeg', 0.65);
     }
 
@@ -2282,6 +2298,7 @@ async function draw() {
             if (result.drawingId) drawingId = result.drawingId;
             btn.classList.add('save-ok');
             setTimeout(() => btn.classList.remove('save-ok'), 1200);
+            pmShowSaveToast();
         } else if (result.reason === 'auth') {
             pmAlert('로그인이 필요합니다. 다시 로그인해 주세요.', { type: 'danger' });
         } else if (result.reason !== 'no_token') {
@@ -2329,16 +2346,41 @@ async function draw() {
             return;
         }
 
-        // 제목이 바뀌면 새 도면 → 버전·작업시간·생성일 초기화
+        // 제목이 바뀌면 새 도면 → 버전·작업시간·생성일·drawingId 초기화
         const prevTitle = localStorage.getItem(CURRENT_TITLE_KEY);
         if (prevTitle && prevTitle !== title) {
             versions      = [];
             currentVerIdx = -1;
+            drawingId     = null;
             const now = Date.now();
             localStorage.setItem(CREATED_KEY, now);
             localStorage.setItem(MODIFIED_KEY, now);
             workAccum  = 0;
             workStart  = Date.now();
+        }
+
+        {
+            const drawings = await /** @type {any} */ (window.DrawingSync).list('triangle');
+            const dup = drawings.find(d => d.title === title && String(d.id) !== String(drawingId));
+            if (dup) {
+                pmConfirm(
+                    `'${title}' 이름의 도면이 이미 있습니다.`,
+                    async () => {
+                        const loaded = await /** @type {any} */ (window.DrawingSync).load('triangle', title);
+                        const base = loaded?.versions ?? [];
+                        const newVer = { savedAt: Math.floor(Date.now() / 1000) * 1000, params: getParams() };
+                        versions = [...base, newVer].slice(-MAX_VERSIONS);
+                        localStorage.setItem(VERSIONS_KEY, JSON.stringify(versions));
+                        currentVerIdx = versions.length - 1;
+                        document.getElementById('verLabel').textContent = 'v' + (currentVerIdx + 1);
+                        renderVerList();
+                        updateModified();
+                        await syncToDb();
+                    },
+                    { sub: '확인하면 기존 도면에 버전이 추가됩니다.', type: 'danger', confirmText: '이어서 저장' }
+                );
+                return;
+            }
         }
 
         versions.push({ savedAt: Math.floor(Date.now() / 1000) * 1000, params: getParams() });
@@ -2450,6 +2492,7 @@ async function draw() {
     function startNewDrawing() {
         versions      = [];
         currentVerIdx = -1;
+        drawingId     = null;
         document.getElementById('drawingName').value    = '';
         document.getElementById('verLabel').textContent = '—';
         const now = Date.now();
@@ -2534,37 +2577,25 @@ async function draw() {
     }
 
     //출력
-    btnSavePNG.addEventListener('click', function() {
-
-        updateModified();
-
-        // 배경 포함 저장용 캔버스 생성
+    function _exportCapture(bgColor) {
         const exportCanvas = document.createElement('canvas');
         const exportCtx = exportCanvas.getContext('2d');
-
-        exportCanvas.width = logW * 2;
+        exportCanvas.width  = logW * 2;
         exportCanvas.height = logH * 2;
+        exportCtx.fillStyle = bgColor;
+        exportCtx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+        exportCtx.drawImage(_exportCanvas || canvas, 0, 0, logW * 2, logH * 2);
+        return exportCanvas;
+    }
 
-        // 배경
-        exportCtx.fillStyle = '#E5E7EA';
-        exportCtx.fillRect(0, 0, logW * 2, logH * 2);
-
-        // 기존 캔버스 복사 (HiDPI → 2x 논리 크기로)
-        exportCtx.drawImage(canvas, 0, 0, logW * 2, logH * 2);
-
-        // 다운로드
+    btnSavePNG.addEventListener('click', function() {
+        updateModified();
+        const exportCanvas = _exportCapture('#E5E7EA');
+        const doorTypeText = txtDoorType.options[txtDoorType.selectedIndex].text;
+        const filename = `창호_${doorTypeText}_${txtDoorCount.value}짝_${txtW.value}x${txtH.value}.png`;
         const link = document.createElement('a');
-
-        const doorTypeText =
-            txtDoorType.options[txtDoorType.selectedIndex].text;
-
-        const filename =
-            `창호_${doorTypeText}_${txtDoorCount.value}짝_${txtW.value}x${txtH.value}.png`;
-
         link.download = filename;
-
         link.href = exportCanvas.toDataURL('image/png');
-
         link.click();
     });
 
@@ -2572,9 +2603,7 @@ async function draw() {
 
         updateModified();
 
-        const {
-            jsPDF
-        } = window.jspdf;
+        const { jsPDF } = window.jspdf;
 
         const pdf = new jsPDF({
             orientation: 'landscape',
@@ -2582,12 +2611,7 @@ async function draw() {
             format: 'a4'
         });
 
-        // 고해상도 캔버스
-        const exportCanvas = document.createElement('canvas');
-        const exportCtx = exportCanvas.getContext('2d');
-
-        exportCanvas.width = logW * 2;
-        exportCanvas.height = logH * 2;
+        const exportCanvas = _exportCapture('#ffffff');
 
         // 배경
         exportCtx.fillStyle = '#ffffff';

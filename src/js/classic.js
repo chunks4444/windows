@@ -52,6 +52,8 @@
     let lastNodeList = [];
     let lastILeft = 0, lastITop = 0, lastIW = 1, lastIH = 1, lastSlatPx = 1, lastCellSize = 1;
     let lastBaseScale = 1, lastOLeft = 0, lastOTop = 0, lastDoorWpx = 0, lastDoorHpx = 0;
+    let _exportCanvas = null;
+    let _activeDrawCtx   = null;
 
 
     function lightenHex(hex, amount) {
@@ -684,7 +686,7 @@ async function fetchGeometry() {
         frameH:    txtFrameH.value,
         slatT:     txtSlat.value,
         vRatio:    txtRatio.value,
-        pattern:   document.getElementById('txtPattern').value,
+        pattern:   `${document.getElementById('txtPatternTop').value}/${document.getElementById('txtPatternMid').value}/${document.getElementById('txtPatternBot').value}`,
         doorType:  txtDoorType.value,
         doorCount: txtDoorCount.value,
     });
@@ -846,19 +848,23 @@ async function draw() {
     if (doorCornerPositions) {
         const W = Math.max(1, Math.ceil(doorNaturalSize.w));
         const H = Math.max(1, Math.ceil(doorNaturalSize.h));
-        if (offCanvas.width !== W || offCanvas.height !== H) {
-            offCanvas.width = W; offCanvas.height = H;
+        // 줌 수준에 비례한 해상도로 렌더링해 확대 시 흐림 방지 (최대 4096px)
+        const renderDpr = Math.min(scaleFactor * dpr, Math.min(4096 / W, 4096 / H));
+        const offW = Math.round(W * renderDpr);
+        const offH = Math.round(H * renderDpr);
+        if (offCanvas.width !== offW || offCanvas.height !== offH) {
+            offCanvas.width = offW; offCanvas.height = offH;
         }
-        // 메인 캔버스의 translate/scale 해제 (배경 이미 그려짐)
         ctx.restore();
         const offCtx = offCanvas.getContext('2d');
-        offCtx.clearRect(0, 0, W, H);
+        offCtx.clearRect(0, 0, offW, offH);
         offCtx.save();
-        // scaleFactor 미적용 — 도어는 baseScale 기준 고정 해상도로 렌더링
-        // 줌은 getOverlayCorners()의 코너 좌표가 scaleFactor를 반영해 처리됨
-        offCtx.translate(W / 2, H / 2);
-        ctx = offCtx; // 드로잉을 오프스크린으로 리다이렉트
+        offCtx.translate(offW / 2, offH / 2);
+        offCtx.scale(renderDpr, renderDpr);
+        ctx = offCtx;
     }
+
+    _activeDrawCtx = ctx; // drawCenterLine이 항상 올바른 ctx를 사용하도록
 
     // 패턴 비율 체크: 셀 크기가 0 이하이거나 내경이 너무 작아 패턴 불가능할 때 레드
     const patternBroken = geo.cellW <= 0 || geo.cellH <= 0 || geo.innerW <= 0 || geo.innerH <= 0;
@@ -1365,6 +1371,14 @@ async function draw() {
             }
         }
     }
+    if (!_exportCanvas || _exportCanvas.width !== canvas.width || _exportCanvas.height !== canvas.height) {
+        _exportCanvas = document.createElement('canvas');
+        _exportCanvas.width = canvas.width;
+        _exportCanvas.height = canvas.height;
+    }
+    const _ec = _exportCanvas.getContext('2d');
+    _ec.clearRect(0, 0, _exportCanvas.width, _exportCanvas.height);
+    _ec.drawImage(canvas, 0, 0);
     drawRulers();
     } catch(e) { console.error('[draw] EXCEPTION:', e); }
 }
@@ -1464,15 +1478,17 @@ async function draw() {
     }
 
     function drawCenterLine(x1, y1, x2, y2) {
-        ctx.save();
-        ctx.strokeStyle = 'rgba(255, 0, 0, 0.4)';
-        ctx.lineWidth = 0.5;
-        ctx.setLineDash([4, 3]);
-        ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x2, y2);
-        ctx.stroke();
-        ctx.restore();
+        const c = _activeDrawCtx;
+        if (!c) return;
+        c.save();
+        c.strokeStyle = 'rgba(255, 0, 0, 0.4)';
+        c.lineWidth = 0.5;
+        c.setLineDash([4, 3]);
+        c.beginPath();
+        c.moveTo(x1, y1);
+        c.lineTo(x2, y2);
+        c.stroke();
+        c.restore();
     }
 
     function clipLineToRect(x1, y1, x2, y2, rx1, ry1, rx2, ry2) {
@@ -1929,7 +1945,9 @@ async function draw() {
         { range: txtRatio, num: document.getElementById('numRatio'), min: 1.0, max: 3.0, step: 0.1 },
     ];
 
-    document.getElementById('txtPattern').addEventListener('change', draw);
+    document.getElementById('txtPatternTop').addEventListener('change', draw);
+    document.getElementById('txtPatternMid').addEventListener('change', draw);
+    document.getElementById('txtPatternBot').addEventListener('change', draw);
 
     syncPairs.forEach(({ range, num, min, max }) => {
         range.addEventListener('input', () => {
@@ -2000,15 +2018,18 @@ async function draw() {
     function resumeWorkTimer() { workStart = Date.now(); }
 
     function captureThumbnail() {
-        const src = document.getElementById('doorCanvas');
+        const dpr = window.devicePixelRatio || 1;
+        const R   = Math.round(18 * dpr);
+        const sw  = canvas.width  - R;
+        const sh  = canvas.height - R;
         const W   = 320;
-        const H   = Math.round(W * src.height / src.width);
+        const H   = Math.round(W * sh / sw);
         const tmp = document.createElement('canvas');
         tmp.width = W; tmp.height = H;
-        const ctx = tmp.getContext('2d');
-        ctx.fillStyle = '#E5E7EA';
-        ctx.fillRect(0, 0, W, H);
-        ctx.drawImage(src, 0, 0, W, H);
+        const tctx = tmp.getContext('2d');
+        tctx.fillStyle = '#E5E7EA';
+        tctx.fillRect(0, 0, W, H);
+        tctx.drawImage(canvas, R, R, sw, sh, 0, 0, W, H);
         return tmp.toDataURL('image/jpeg', 0.65);
     }
 
@@ -2084,7 +2105,7 @@ async function draw() {
             frameH:    parseInt(txtFrameH.value),
             slat:      parseInt(txtSlat.value),
             vRatio:    parseFloat(txtRatio.value),
-            pattern:   document.getElementById('txtPattern').value,
+            pattern:   `${document.getElementById('txtPatternTop').value}/${document.getElementById('txtPatternMid').value}/${document.getElementById('txtPatternBot').value}`,
             doorType:  txtDoorType.value,
             doorCount: parseInt(txtDoorCount.value),
             pungpanOn: document.getElementById('chkPungpan').checked,
@@ -2114,7 +2135,10 @@ async function draw() {
         setSlider('txtFrameH', 'numFrameH', p.frameH);
         setSlider('txtSlat',   'numSlat',   p.slat);
         setSlider('txtRatio',  'numRatio',  p.vRatio ?? 1.2);
-        document.getElementById('txtPattern').value = p.pattern || '3/5/3';
+        const _pp = (p.pattern || '3/5/3').split('/');
+        document.getElementById('txtPatternTop').value = _pp[0] ?? '3';
+        document.getElementById('txtPatternMid').value = _pp[1] ?? '5';
+        document.getElementById('txtPatternBot').value = _pp[2] ?? '3';
         txtDoorType.value  = p.doorType;
         txtDoorCount.value = p.doorCount;
         document.getElementById('chkPungpan').checked = p.pungpanOn;
@@ -2191,6 +2215,7 @@ async function draw() {
             if (result.drawingId) drawingId = result.drawingId;
             btn.classList.add('save-ok');
             setTimeout(() => btn.classList.remove('save-ok'), 1200);
+            pmShowSaveToast();
         } else if (result.reason === 'auth') {
             pmAlert('로그인이 필요합니다. 다시 로그인해 주세요.', { type: 'danger' });
         } else if (result.reason !== 'no_token') {
@@ -2255,7 +2280,8 @@ async function draw() {
 
     async function saveVersion() {
         const badge = document.querySelector('.hdr-title-badge');
-        if (!document.getElementById('drawingName').value.trim()) {
+        const title = document.getElementById('drawingName').value.trim();
+        if (!title) {
             badge.classList.remove('shake');
             void badge.offsetWidth;
             badge.classList.add('shake');
@@ -2263,6 +2289,33 @@ async function draw() {
             document.getElementById('drawingName').focus();
             return;
         }
+
+        // 최초 저장(drawingId 미설정)일 때만 중복 체크
+        {
+            const drawings = await /** @type {any} */ (window.DrawingSync).list('classic');
+            const dup = drawings.find(d => d.title === title && String(d.id) !== String(drawingId));
+            if (dup) {
+                pmConfirm(
+                    `'${title}' 이름의 도면이 이미 있습니다.`,
+                    async () => {
+                        // 기존 DB 버전 이어받아 현재 버전 추가
+                        const loaded = await /** @type {any} */ (window.DrawingSync).load('classic', title);
+                        const base = loaded?.versions ?? [];
+                        const newVer = { savedAt: Math.floor(Date.now() / 1000) * 1000, params: getParams() };
+                        versions = [...base, newVer].slice(-MAX_VERSIONS);
+                        localStorage.setItem(VERSIONS_KEY, JSON.stringify(versions));
+                        currentVerIdx = versions.length - 1;
+                        document.getElementById('verLabel').textContent = 'v' + (currentVerIdx + 1);
+                        renderVerList();
+                        updateModified();
+                        await syncToDb();
+                    },
+                    { sub: '확인하면 기존 도면에 버전이 추가됩니다.', type: 'danger', confirmText: '이어서 저장' }
+                );
+                return;
+            }
+        }
+
         versions.push({ savedAt: Math.floor(Date.now() / 1000) * 1000, params: getParams() });
         if (versions.length > MAX_VERSIONS) versions.shift();
         localStorage.setItem(VERSIONS_KEY, JSON.stringify(versions));
@@ -2363,6 +2416,7 @@ async function draw() {
 
     function startNewDrawing() {
         versions = []; currentVerIdx = -1;
+        drawingId = null;
         document.getElementById('drawingName').value    = '';
         document.getElementById('verLabel').textContent = '—';
         const now = Date.now();
@@ -2438,38 +2492,28 @@ async function draw() {
         resizeCanvas();
     }
 
-    //출력
-    btnSavePNG.addEventListener('click', function() {
-
-        updateModified();
-
-        // 배경 포함 저장용 캔버스 생성
+    function _exportCapture(bgColor) {
         const exportCanvas = document.createElement('canvas');
         const exportCtx = exportCanvas.getContext('2d');
-
-        exportCanvas.width = logW * 2;
+        exportCanvas.width  = logW * 2;
         exportCanvas.height = logH * 2;
+        exportCtx.fillStyle = bgColor;
+        exportCtx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
 
-        // 배경
-        exportCtx.fillStyle = '#E5E7EA';
-        exportCtx.fillRect(0, 0, logW * 2, logH * 2);
+        exportCtx.drawImage(_exportCanvas || canvas, 0, 0, logW * 2, logH * 2);
+        return exportCanvas;
+    }
 
-        // 기존 캔버스 복사 (HiDPI → 2x 논리 크기로)
-        exportCtx.drawImage(canvas, 0, 0, logW * 2, logH * 2);
+    //출력
+    btnSavePNG.addEventListener('click', function() {
+        updateModified();
 
-        // 다운로드
+        const exportCanvas = _exportCapture('#E5E7EA');
+        const doorTypeText = txtDoorType.options[txtDoorType.selectedIndex].text;
+        const filename = `창호_${doorTypeText}_${txtDoorCount.value}짝_${txtW.value}x${txtH.value}.png`;
         const link = document.createElement('a');
-
-        const doorTypeText =
-            txtDoorType.options[txtDoorType.selectedIndex].text;
-
-        const filename =
-            `창호_${doorTypeText}_${txtDoorCount.value}짝_${txtW.value}x${txtH.value}.png`;
-
         link.download = filename;
-
         link.href = exportCanvas.toDataURL('image/png');
-
         link.click();
     });
 
@@ -2477,9 +2521,7 @@ async function draw() {
 
         updateModified();
 
-        const {
-            jsPDF
-        } = window.jspdf;
+        const { jsPDF } = window.jspdf;
 
         const pdf = new jsPDF({
             orientation: 'landscape',
@@ -2487,22 +2529,8 @@ async function draw() {
             format: 'a4'
         });
 
-        // 고해상도 캔버스
-        const exportCanvas = document.createElement('canvas');
-        const exportCtx = exportCanvas.getContext('2d');
-
-        exportCanvas.width = logW * 2;
-        exportCanvas.height = logH * 2;
-
-        // 배경
-        exportCtx.fillStyle = '#ffffff';
-        exportCtx.fillRect(0, 0, logW * 2, logH * 2);
-
-        // 원본 그리기 (HiDPI → 2x 논리 크기로)
-        exportCtx.drawImage(canvas, 0, 0, logW * 2, logH * 2);
-
-        const imgData =
-            exportCanvas.toDataURL('image/png');
+        const exportCanvas = _exportCapture('#ffffff');
+        const imgData = exportCanvas.toDataURL('image/png');
 
         // PDF 사이즈 계산
         const pageWidth = 297;

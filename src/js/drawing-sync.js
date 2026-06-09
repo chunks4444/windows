@@ -72,6 +72,25 @@ window.DrawingSync = (function () {
     return { save, load, list, rename, delete: del };
 })();
 
+// ── 저장 완료 토스트 ──────────────────────────────
+function pmShowSaveToast(msg = '저장을 완료했습니다.') {
+    let el = document.getElementById('pmSaveToast');
+    if (!el) {
+        el = document.createElement('div');
+        el.id = 'pmSaveToast';
+        el.className = 'pm-save-toast';
+        document.body.appendChild(el);
+    }
+    el.textContent = msg;
+    el.classList.remove('pm-save-toast--out');
+    el.classList.add('pm-save-toast--in');
+    clearTimeout(el._hideTimer);
+    el._hideTimer = setTimeout(() => {
+        el.classList.remove('pm-save-toast--in');
+        el.classList.add('pm-save-toast--out');
+    }, 2200);
+}
+
 // ── 사이드바 반응형 초기화 ─────────────────────
 (function () {
     const MOBILE = 768;

@@ -13,7 +13,7 @@ $pungpanOn  = (($_POST['pungpanOn'] ?? '0') === '1');
 $frameW     = max(20,  (int)($_POST['frameW']    ?? 60));
 $frameH     = max(20,  (int)($_POST['frameH']    ?? 60));
 $slatT      = max(8,   (int)($_POST['slatT']     ?? 12));
-$vRatio     = max(1.0, min(3.0, (float)($_POST['vRatio']  ?? 1.2)));
+$vRatio     = max(1.0, min(5.0, (float)($_POST['vRatio']  ?? 1.2)));
 $patternRaw = $_POST['pattern'] ?? '3/5/3';
 $doorType   = in_array($_POST['doorType'] ?? '', ['swing','slide']) ? $_POST['doorType'] : 'swing';
 $doorCount  = max(1, min(4, (int)($_POST['doorCount'] ?? 1)));
@@ -42,9 +42,9 @@ $t = (float)$slatT;
 
 // 패턴 파싱 (상/중/하 가로살 수)
 $pp      = array_map('intval', explode('/', $patternRaw));
-$topBars = max(1, $pp[0] ?? 3);
-$midBars = max(1, $pp[1] ?? 5);
-$botBars = max(1, $pp[2] ?? 3);
+$topBars = max(0, $pp[0] ?? 3);
+$midBars = max(0, $pp[1] ?? 5);
+$botBars = max(0, $pp[2] ?? 3);
 
 // 그룹 높이 (셀 수 = 살 수 + 1)
 $topGroupH = ($topBars + 1) * $cellH + $topBars * $t;
