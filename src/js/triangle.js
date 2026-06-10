@@ -1861,12 +1861,12 @@ async function draw() {
                 const last = data.wallpapers[data.wallpapers.length - 1];
                 await Promise.all(data.wallpapers.map(({ filename, url: src }) =>
                     new Promise(resolve => {
-                        const id = src;
+                        const wpId = src;
                         const imgObj = new Image();
                         imgObj.onload = () => {
-                            thumbImages.push({ id, serverId: null, src, img: imgObj, filename });
-                            addThumbItem(id, src, filename);
-                            if (src === last.url) setActiveThumb(id);
+                            thumbImages.push({ id: wpId, serverId: null, src, img: imgObj, filename });
+                            addThumbItem(wpId, src, filename);
+                            if (src === last.url) setActiveThumb(wpId);
                             resolve();
                         };
                         imgObj.onerror = resolve;
@@ -1875,7 +1875,7 @@ async function draw() {
                 ));
                 draw();
             }
-            return true;
+            return 'wp';
         } catch { return false; }
     }
 
@@ -1890,8 +1890,8 @@ async function draw() {
 
         const collectionId = window.__pmokCollectionDrawingId || null;
         if (collectionId) {
-            const ok = await loadFromCollectionId(collectionId);
-            if (ok) return;
+            const wpLoaded = await loadFromCollectionId(collectionId);
+            if (wpLoaded) return wpLoaded;
         }
 
         versions = []; currentVerIdx = -1;
@@ -2178,17 +2178,17 @@ async function draw() {
     });
 
     loadSavedRenders();
-    loadVersions().then(() => restoreThumbs());
+    loadVersions().then(r => { if (r !== 'wp') restoreThumbs(); });
     window.addEventListener('pageshow', (e) => {
         if (e.persisted) {
             _versionsLoaded = false;
             scaleFactor = 1.0; panX = 0; panY = 0;
-            loadVersions().then(() => restoreThumbs());
+            loadVersions().then(r => { if (r !== 'wp') restoreThumbs(); });
         }
     });
     window.addEventListener('pmokAuthChanged', () => {
         _versionsLoaded = false;
-        loadVersions().then(() => restoreThumbs());
+        loadVersions().then(r => { if (r !== 'wp') restoreThumbs(); });
     });
 
     // ── 도면 이름 자동 저장 ────────────────────────
