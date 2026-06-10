@@ -2,6 +2,8 @@
 // 전통 창호 사분턱 도면 설계기
 // 모든 계산은 클라이언트(JS)에서 처리됩니다.
 header('Content-Type: text/html; charset=UTF-8');
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -533,8 +535,8 @@ header('Content-Type: text/html; charset=UTF-8');
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="/src/js/drawing-sync.js"></script>
-    <script src="/src/js/diamond.js"></script>
+    <script src="/src/js/drawing-sync.js?v=<?= filemtime(__DIR__ . '/../../js/drawing-sync.js') ?>"></script>
+    <script src="/src/js/diamond.js?v=<?= filemtime(__DIR__ . '/../../js/diamond.js') ?>"></script>
 </body>
 
 </html>

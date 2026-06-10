@@ -1,5 +1,7 @@
 ﻿<?php
 header('Content-Type: text/html; charset=UTF-8');
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -526,8 +528,8 @@ header('Content-Type: text/html; charset=UTF-8');
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="/src/js/drawing-sync.js"></script>
-    <script src="/src/js/triangle.js"></script>
+    <script src="/src/js/drawing-sync.js?v=<?= filemtime(__DIR__ . '/../../js/drawing-sync.js') ?>"></script>
+    <script src="/src/js/triangle.js?v=<?= filemtime(__DIR__ . '/../../js/triangle.js') ?>"></script>
 </body>
 
 </html>

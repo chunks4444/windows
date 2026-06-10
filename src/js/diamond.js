@@ -205,6 +205,7 @@
     let isDragging = false;
     let startX, startY;
     let panMode = false;
+    let _versionsLoaded = false;
 
     // ── 공통 모달 유틸리티 ─────────────────────────
     let _pmModalEl = null;
@@ -434,7 +435,7 @@
         canvas.height = ph;
         canvas.style.width  = w + 'px';
         canvas.style.height = h + 'px';
-        draw();
+        if (_versionsLoaded) draw();
     }
 
     let _resizeTimer;
@@ -2062,7 +2063,7 @@ async function draw() {
         if (isSwing && parseInt(txtDoorCount.value) > 2) {
             txtDoorCount.value = '2';
         }
-        draw();
+        if (_versionsLoaded) draw();
     }
 
     txtDoorType.addEventListener('input', updateDoorCountOptions);
@@ -2192,6 +2193,7 @@ async function draw() {
             frameColor: selectedFrameColor,
             slatColor:  selectedSlatColor,
             panX, panY, scaleFactor,
+            _savedView: true,
             placementMode,
             doorCornerPositions: doorCornerPositions ? { ...doorCornerPositions } : null,
             placementNaturalSize: placementNaturalSize ? { ...placementNaturalSize } : null,
@@ -2219,7 +2221,6 @@ async function draw() {
         document.getElementById('txtWood').value    = p.wood || 'hongsong';
         document.getElementById('txtFinish').value  = p.finish;
         document.getElementById('pungpanCtrl').style.display = p.pungpanOn ? 'block' : 'none';
-        scaleFactor = 1.0; panX = 0; panY = 0;
         placementMode        = p.placementMode        || false;
         doorCornerPositions  = p.doorCornerPositions  || null;
         placementNaturalSize = p.placementNaturalSize || null;
@@ -2244,6 +2245,7 @@ async function draw() {
             item.innerHTML = `<span class="ver-num">v${realIdx + 1}</span><span class="ver-date">${fmtDate(ver.savedAt)}</span><span class="ver-del" title="삭제"><i class="bi bi-x-lg"></i></span>`;
             item.addEventListener('click', () => {
                 currentVerIdx = realIdx;
+                if (ver.params.panX !== undefined) { panX = ver.params.panX; panY = ver.params.panY; scaleFactor = ver.params.scaleFactor; }
                 applyParams(ver.params);
                 document.getElementById('verLabel').textContent = 'v' + (realIdx + 1);
                 renderVerList();
@@ -2302,6 +2304,7 @@ async function draw() {
         if (!data || !data.versions || !data.versions.length) return false;
         versions      = data.versions;
         currentVerIdx = versions.length - 1;
+        _versionsLoaded = true;
         applyParams(versions[currentVerIdx].params);
         document.getElementById('drawingName').value    = title;
         document.getElementById('verLabel').textContent = 'v' + (currentVerIdx + 1);
@@ -2324,6 +2327,7 @@ async function draw() {
     }
 
     async function loadVersions() {
+        scaleFactor = 1.0; panX = 0; panY = 0;
         const savedTitle = localStorage.getItem(CURRENT_TITLE_KEY);
 
         // DB 로드 전 먼저 제목 표시
@@ -2343,10 +2347,13 @@ async function draw() {
             }
         }
         try { versions = JSON.parse(localStorage.getItem(VERSIONS_KEY)) || []; } catch(e) { versions = []; }
+        _versionsLoaded = true;
         if (versions.length > 0) {
             currentVerIdx = versions.length - 1;
             document.getElementById('verLabel').textContent = 'v' + (currentVerIdx + 1);
             applyParams(versions[currentVerIdx].params);
+        } else {
+            draw();
         }
         renderVerList();
     }
@@ -2466,7 +2473,9 @@ async function draw() {
         const data = await /** @type {any} */ (window.DrawingSync).load('diamond', title);
         if (!data || !data.versions || !data.versions.length) { pmAlert('도면을 불러올 수 없습니다.'); return; }
         versions = data.versions; currentVerIdx = versions.length - 1;
-        applyParams(versions[currentVerIdx].params);
+        const _p = versions[currentVerIdx].params;
+        if (_p.panX !== undefined) { panX = _p.panX; panY = _p.panY; scaleFactor = _p.scaleFactor; }
+        applyParams(_p);
         document.getElementById('drawingName').value    = title;
         document.getElementById('verLabel').textContent = 'v' + (currentVerIdx + 1);
         localStorage.setItem(VERSIONS_KEY, JSON.stringify(versions));
@@ -2493,9 +2502,12 @@ async function draw() {
         const now = Date.now();
         localStorage.setItem(CREATED_KEY, now); localStorage.setItem(MODIFIED_KEY, now);
         localStorage.removeItem(CURRENT_TITLE_KEY); localStorage.removeItem(NAME_KEY);
+        localStorage.removeItem(VERSIONS_KEY);
         setElText('dateCreated', fmtDate(now));
         setElText('dateModified', fmtDate(now));
+        scaleFactor = 1.0; panX = 0; panY = 0;
         renderVerList(); closeDrawingManager();
+        draw();
     }
 
     let _renameTarget = '';
@@ -2539,8 +2551,8 @@ async function draw() {
 
     loadVersions().then(() => restoreThumbs());
     window.addEventListener('pmokAuthChanged', () => {
+        _versionsLoaded = false;
         loadVersions().then(() => restoreThumbs());
-        draw();
     });
 
     // ── 도면 이름 자동 저장 ────────────────────────
