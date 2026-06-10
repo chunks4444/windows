@@ -8,36 +8,7 @@
     let handlesVisible       = false;
 
     // ── 색상 그룹 ─────────────────────────────────
-    const colorGroups = [
-        {
-            label: '스테인',
-            colors: [
-                { code: '930-00', name: '투명',        hex: '#dec898' },
-                { code: '930-01', name: '노랑',        hex: '#f2aa00' },
-                { code: '930-02', name: '오렌지',      hex: '#e05218' },
-                { code: '930-04', name: '레드브라운',  hex: '#7a1e08' },
-                { code: '930-05', name: '황토브라운',  hex: '#906020' },
-                { code: '930-06', name: '밤색/브라운', hex: '#5a2e10' },
-                { code: '930-08', name: '녹색',        hex: '#2c7030' },
-                { code: '930-10', name: '흑단',        hex: '#222218' },
-                { code: '930-11', name: '회색',        hex: '#888885' },
-            ]
-        },
-        {
-            label: '천연오일',
-            colors: [
-                { code: 'NO-01', name: '자연',    hex: '#e2c98a' },
-                { code: 'NO-02', name: '소나무',  hex: '#c8952a' },
-                { code: 'NO-03', name: '참나무',  hex: '#a06828' },
-                { code: 'NO-04', name: '느티나무',hex: '#8c4e22' },
-                { code: 'NO-05', name: '호두',    hex: '#6a3518' },
-                { code: 'NO-06', name: '체리',    hex: '#7a2e18' },
-                { code: 'NO-07', name: '황칠',    hex: '#b8880a' },
-                { code: 'NO-08', name: '옻칠',    hex: '#1c0c06' },
-                { code: 'NO-09', name: '먹',      hex: '#28241e' },
-            ]
-        }
-    ];
+    const colorGroups = window.__pmokColorGroups || [];
 
     let selectedFrameColor = '#28241e';
     let selectedSlatColor  = '#28241e';
