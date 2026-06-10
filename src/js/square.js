@@ -832,8 +832,8 @@ async function draw() {
                     ctx.fillRect(toCanvasX(rightX), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale);
 
                     for (let i = 0; i < geo.cols; i++) {
-                        const segStartX = leftX + i * stepW;
-                        const segEndX   = leftX + (i + 1) * stepW;
+                        const segStartX = i === 0             ? leftX  : leftX + i * stepW - geo.slatV / 2;
+                        const segEndX   = i === geo.cols - 1  ? rightX : leftX + (i + 1) * stepW - geo.slatV / 2;
                         const segMidX   = (segStartX + segEndX) / 2;
                         const hsCy = toCanvasY(ry);
                         const hsKey = `${d}:hs:${j}:${i}`;
@@ -841,7 +841,7 @@ async function draw() {
                         if (deletedSegs.has(hsKey)) continue;
 
                         ctx.fillStyle = Color_Slat_Fill;
-                        ctx.fillRect(toCanvasX(segStartX), toCanvasY(top), stepW * baseScale, geo.slatH * baseScale);
+                        ctx.fillRect(toCanvasX(segStartX), toCanvasY(top), (segEndX - segStartX) * baseScale, geo.slatH * baseScale);
                         drawCenterLine(toCanvasX(segStartX), toCanvasY(ry), toCanvasX(segEndX), toCanvasY(ry));
                     }
                 }
@@ -1783,6 +1783,8 @@ async function draw() {
             doorCornerPositions: doorCornerPositions ? { ...doorCornerPositions } : null,
             placementNaturalSize: placementNaturalSize ? { ...placementNaturalSize } : null,
             mondrianLayout: mondrianLayout ? JSON.parse(JSON.stringify(mondrianLayout)) : null,
+            deletedSegs: [...deletedSegs],
+            addedLines,
         };
     }
 
@@ -1811,6 +1813,9 @@ async function draw() {
         slatColorPicker.selectColor(p.slatColor);
         mondrianLayout = p.mondrianLayout || null;
         _updateMondrianBtn();
+        deletedSegs  = new Set(p.deletedSegs || []);
+        addedLines   = p.addedLines || [];
+        addLineStart = null;
         updateDoorCountOptions();
         draw();
     }

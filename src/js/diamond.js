@@ -1785,6 +1785,8 @@ async function draw() {
             placementMode,
             doorCornerPositions: doorCornerPositions ? { ...doorCornerPositions } : null,
             placementNaturalSize: placementNaturalSize ? { ...placementNaturalSize } : null,
+            deletedSegs: [...deletedSegs],
+            addedLines,
         };
     }
 
@@ -1807,6 +1809,9 @@ async function draw() {
         placementMode        = p.placementMode        || false;
         doorCornerPositions  = p.doorCornerPositions  || null;
         placementNaturalSize = p.placementNaturalSize || null;
+        deletedSegs  = new Set(p.deletedSegs || []);
+        addedLines   = p.addedLines || [];
+        addLineStart = null;
         document.getElementById('btnScale').classList.toggle('cv-btn-active', placementMode);
         frameColorPicker.selectColor(p.frameColor);
         slatColorPicker.selectColor(p.slatColor);
