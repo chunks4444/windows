@@ -157,13 +157,13 @@ function showDeleteModal(desc, onConfirm) {
     modal.addEventListener('click', handleBackdrop);
 }
 
-function showCopyModal(sourceTitle, onConfirm) {
+function showCopyModal(sourceTitle, onConfirm, { desc, initialValue } = {}) {
     const modal   = document.getElementById('dbCopyModal');
     const input   = document.getElementById('dbCopyModalInput');
     const confirm = document.getElementById('dbCopyModalConfirm');
     const cancel  = document.getElementById('dbCopyModalCancel');
-    document.getElementById('dbCopyModalDesc').textContent = `"${sourceTitle}" 도면의 마지막 버전을 복사합니다.`;
-    input.value = `${sourceTitle} - 복사`;
+    document.getElementById('dbCopyModalDesc').textContent = desc ?? `"${sourceTitle}" 도면의 마지막 버전을 복사합니다.`;
+    input.value = initialValue ?? `${sourceTitle} - 복사`;
     modal.style.display = 'flex';
     setTimeout(() => { input.select(); input.focus(); }, 80);
 
@@ -325,14 +325,18 @@ async function loadBoards() {
 }
 
 function renderBoardCard(b) {
+    const thumb = b.first_image
+        ? `<img src="${escAttr(b.first_image)}" alt="${escAttr(b.name)}" loading="lazy">`
+        : `<div class="db-thumb-placeholder"><i class="bi bi-collection" style="font-size:36px;color:#ccc;"></i></div>`;
     return `
         <div class="db-card" data-board-id="${b.id}" onclick="openBoard(${b.id},'${escAttr(b.name)}')">
+            <button class="db-card-copy" onclick="renameBoard(event,${b.id},'${escAttr(b.name)}')" title="이름 변경">
+                <i class="bi bi-pencil"></i>
+            </button>
             <button class="db-card-delete" onclick="deleteBoard(event,${b.id},'${escAttr(b.name)}')" title="삭제">
                 <i class="bi bi-trash"></i>
             </button>
-            <div class="db-thumb db-board-thumb">
-                <i class="bi bi-collection" style="font-size:36px;color:#ccc;"></i>
-            </div>
+            <div class="db-thumb db-board-thumb">${thumb}</div>
             <div class="db-card-body">
                 <div class="db-card-title">${escHtml(b.name)}</div>
                 <div class="db-card-meta">
@@ -352,20 +356,50 @@ async function openBoard(boardId, boardName) {
     if (!boardName) boardName = data.board?.name || '';
 
     const content = items.length
-        ? items.map(p => `
-            <div class="db-board-item">
+        ? items.map(p => {
+            const cfg = p.drawing_id && p.engine ? TYPE_CONFIG[p.engine] : null;
+            const clickAttr = cfg
+                ? `onclick="openBoardItem(event,${p.drawing_id},'${escAttr(p.engine)}')" style="cursor:pointer;"`
+                : '';
+            return `
+            <div class="db-board-item" ${clickAttr}>
                 <img src="${escAttr(p.image_path)}" alt="${escAttr(p.name_ko)}" loading="lazy">
                 <div class="db-board-item-name">${escHtml(p.name_ko)}</div>
                 <button class="db-board-item-remove" onclick="removeBoardItem(event,${boardId},${p.id},this)" title="제거">
                     <i class="bi bi-x"></i>
                 </button>
-            </div>`).join('')
+            </div>`;
+          }).join('')
         : '<p style="color:#999;padding:20px;">패턴이 없습니다.</p>';
 
     document.getElementById('dbBoardModalTitle').textContent = boardName;
     document.getElementById('dbBoardModalBody').innerHTML    = content;
     document.getElementById('dbBoardModal').style.display    = 'flex';
     document.getElementById('dbBoardModal').dataset.boardId  = boardId;
+}
+
+function openBoardItem(e, drawingId, engine) {
+    e.stopPropagation();
+    const cfg = TYPE_CONFIG[engine];
+    if (!cfg || !drawingId) return;
+    location.href = `${cfg.editorUrl}?drawing_id=${drawingId}`;
+}
+
+async function renameBoard(e, boardId, currentName) {
+    e.stopPropagation();
+    showCopyModal(currentName, async (newName) => {
+        const res = await fetch('/src/api/boards/rename.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ..._headers() },
+            body: JSON.stringify({ board_id: boardId, name: newName }),
+        });
+        if (res.ok) {
+            boardsLoaded = false;
+            loadBoards();
+        } else {
+            alert('이름 변경에 실패했습니다.');
+        }
+    }, { desc: `"${currentName}" 보드 이름을 변경합니다.`, initialValue: currentName });
 }
 
 async function removeBoardItem(e, boardId, patternId, btn) {

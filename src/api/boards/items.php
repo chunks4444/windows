@@ -21,9 +21,10 @@ $board = $stmt->fetch();
 if (!$board) { http_response_code(403); echo json_encode(['error' => '권한이 없습니다.']); exit; }
 
 $stmt = $pdo->prepare('
-    SELECT p.id, p.name_ko, p.image_path
+    SELECT p.id, p.name_ko, p.image_path, p.drawing_id, d.type AS engine
     FROM board_items bi
     JOIN library_patterns p ON p.id = bi.pattern_id
+    LEFT JOIN drawings d ON d.id = p.drawing_id
     WHERE bi.board_id = ?
     ORDER BY bi.created_at DESC
 ');
