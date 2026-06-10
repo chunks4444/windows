@@ -2,6 +2,7 @@
 // 전통 창호 정자살 도면 설계기
 // 모든 계산은 클라이언트(JS)에서 처리됩니다.
 header('Content-Type: text/html; charset=UTF-8');
+require_once __DIR__ . '/../../lib/colors.php';
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Pragma: no-cache');
 ?>
@@ -531,6 +532,7 @@ header('Pragma: no-cache');
     <script>
         window.__pmokOpenDrawing         = <?= isset($_POST['drawing'])    ? json_encode($_POST['drawing'],    JSON_UNESCAPED_UNICODE) : 'null' ?>;
         window.__pmokCollectionDrawingId = <?= isset($_GET['drawing_id']) ? (int)$_GET['drawing_id']          : 'null' ?>;
+        window.__pmokColorGroups         = <?= json_encode(get_color_groups(), JSON_UNESCAPED_UNICODE) ?>;
     </script>
     <script src="/src/js/drawing-sync.js?v=<?= md5_file(__DIR__ . '/../../js/drawing-sync.js') ?>"></script>
     <script src="/src/js/cross.js?v=<?= md5_file(__DIR__ . '/../../js/cross.js') ?>"></script>

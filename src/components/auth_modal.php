@@ -262,11 +262,13 @@ function authUpdateNav() {
         const adminHeroSlides  = document.getElementById('navAdminHeroSlides');
         const adminWoodTypes   = document.getElementById('navAdminWoodTypes');
         const adminOauth       = document.getElementById('navAdminOauth');
+        const adminColors      = document.getElementById('navAdminColors');
         if (adminMeta)        adminMeta.style.display        = isSuper ? '' : 'none';
         if (adminSpaceCards)  adminSpaceCards.style.display  = isSuper ? '' : 'none';
         if (adminHeroSlides)  adminHeroSlides.style.display  = isSuper ? '' : 'none';
         if (adminWoodTypes)   adminWoodTypes.style.display   = isSuper ? '' : 'none';
         if (adminOauth)       adminOauth.style.display       = isSuper ? '' : 'none';
+        if (adminColors)      adminColors.style.display      = isSuper ? '' : 'none';
         loadNavBoards();
     } else {
         loginBtn.style.display = '';

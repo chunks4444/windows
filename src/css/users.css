@@ -72,6 +72,16 @@ tbody td {
 }
 .adm-edit-btn:hover { border-color: var(--teal); color: var(--teal); }
 
+.adm-del-btn {
+    height: 28px; padding: 0 12px;
+    background: #fff; border: 1px solid var(--border-md);
+    border-radius: var(--r-sm);
+    font-family: inherit; font-size: 12px; font-weight: 600;
+    color: #DC2626; cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+}
+.adm-del-btn:hover { background: #FEE2E2; border-color: #DC2626; }
+
 .adm-pagination {
     display: flex; align-items: center; justify-content: center;
     gap: 4px; padding: 16px;
