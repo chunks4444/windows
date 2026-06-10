@@ -1,6 +1,6 @@
 const TYPE_CONFIG = {
     'classic': {
-        label: 'Classic Grid',
+        label: 'Classic Lattice',
         editorUrl: '/src/engine/classic/classic.php',
         titleKey: 'pmok_classic_current_title',
         icon: `<svg class="db-section-icon" viewBox="0 0 680 680" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -15,7 +15,7 @@ const TYPE_CONFIG = {
         newUrl: '/src/engine/classic/classic.php',
     },
     'square': {
-        label: 'Square Grid',
+        label: 'Square Lattice',
         editorUrl: '/src/engine/square/square.php',
         titleKey: 'pmok_square_current_title',
         icon: `<svg class="db-section-icon" viewBox="0 0 680 680" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -27,7 +27,7 @@ const TYPE_CONFIG = {
         newUrl: '/src/engine/square/square.php',
     },
     'cross': {
-        label: 'Cross Grid',
+        label: 'Cross Lattice',
         editorUrl: '/src/engine/cross/cross.php',
         titleKey: 'pmok_cross_current_title',
         icon: `<svg class="db-section-icon" viewBox="0 0 680 680" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -41,7 +41,7 @@ const TYPE_CONFIG = {
         newUrl: '/src/engine/cross/cross.php',
     },
     'triangle': {
-        label: 'Triangle Grid',
+        label: 'Triangle Lattice',
         editorUrl: '/src/engine/triangle/triangle.php',
         titleKey: 'pmok_triangle_current_title',
         icon: `<svg class="db-section-icon" viewBox="0 0 680 680" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -52,7 +52,7 @@ const TYPE_CONFIG = {
         newUrl: '/src/engine/triangle/triangle.php',
     },
     'diamond': {
-        label: 'Diamond Grid',
+        label: 'Diamond Lattice',
         editorUrl: '/src/engine/diamond/diamond.php',
         titleKey: 'pmok_diamond_current_title',
         icon: `<svg class="db-section-icon" viewBox="0 0 680 680" fill="none" xmlns="http://www.w3.org/2000/svg">

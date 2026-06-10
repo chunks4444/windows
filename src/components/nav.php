@@ -54,7 +54,7 @@ $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/collection/') !== false);
                                 <rect fill="currentColor" x="486" y="148" width="46" height="384" rx="23"/>
                             </g>
                         </svg>
-                        Classic Grid
+                        Classic Lattice
                     </a></li>
                     <li><a class="dropdown-item <?= $isSquare ? 'active' : '' ?> d-flex align-items-center gap-2"
                            href="/src/engine/square/square.php">
@@ -64,7 +64,7 @@ $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/collection/') !== false);
                             <rect fill="currentColor" x="204" y="148" width="46" height="384" rx="23"/>
                             <rect fill="currentColor" x="430" y="148" width="46" height="384" rx="23"/>
                         </svg>
-                        Square Grid
+                        Square Lattice
                     </a></li>
                     <li><a class="dropdown-item <?= $isCross ? 'active' : '' ?> d-flex align-items-center gap-2"
                            href="/src/engine/cross/cross.php">
@@ -76,7 +76,7 @@ $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/collection/') !== false);
                                 <rect fill="currentColor" x="430" y="148" width="46" height="384" rx="23"/>
                             </g>
                         </svg>
-                        Cross Grid
+                        Cross Lattice
                     </a></li>
                     <li><a class="dropdown-item <?= $isDiamond ? 'active' : '' ?> d-flex align-items-center gap-2"
                            href="/src/engine/diamond/diamond.php">
@@ -86,7 +86,7 @@ $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/collection/') !== false);
                             <g transform="rotate(45 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
                             <g transform="rotate(135 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
                         </svg>
-                        Diamond Grid
+                        Diamond Lattice
                     </a></li>
                     <li><a class="dropdown-item <?= $isTriangle ? 'active' : '' ?> d-flex align-items-center gap-2"
                            href="/src/engine/triangle/triangle.php">
@@ -95,17 +95,17 @@ $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/collection/') !== false);
                             <g transform="rotate(60 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
                             <g transform="rotate(120 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
                         </svg>
-                        Triangle Grid
+                        Triangle Lattice
                     </a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item d-flex align-items-center gap-2" href="/src/mypage/dashboard.php">
-                        <svg width="27" height="27" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
-                            <rect fill="currentColor" x="148" y="204" width="384" height="46" rx="23"/>
-                            <rect fill="currentColor" x="148" y="430" width="384" height="46" rx="23"/>
-                            <rect fill="currentColor" x="204" y="148" width="46" height="384" rx="23"/>
-                            <rect fill="currentColor" x="430" y="148" width="46" height="384" rx="23"/>
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="3" y="3" width="8" height="8" rx="1.5"/>
+                            <rect x="13" y="3" width="8" height="8" rx="1.5"/>
+                            <rect x="3" y="13" width="8" height="8" rx="1.5"/>
+                            <rect x="13" y="13" width="8" height="8" rx="1.5"/>
                         </svg>
-                        내 도면
+                        Dashboard
                     </a></li>
                 </ul>
             </li>
