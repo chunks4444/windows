@@ -42,7 +42,7 @@ header('Content-Type: text/html; charset=UTF-8');
         <div class="db-delete-modal-icon" style="color:#3A8C82;">
             <i class="bi bi-copy"></i>
         </div>
-        <div class="db-delete-modal-title">도면 복사</div>
+        <div class="db-delete-modal-title" id="dbCopyModalTitle">도면 복사</div>
         <div class="db-delete-modal-desc" id="dbCopyModalDesc"></div>
         <input type="text" id="dbCopyModalInput" class="db-copy-input" maxlength="40" placeholder="복사본 이름 입력…">
         <div class="db-delete-modal-actions">

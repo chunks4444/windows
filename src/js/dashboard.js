@@ -157,11 +157,13 @@ function showDeleteModal(desc, onConfirm) {
     modal.addEventListener('click', handleBackdrop);
 }
 
-function showCopyModal(sourceTitle, onConfirm, { desc, initialValue } = {}) {
+function showCopyModal(sourceTitle, onConfirm, { desc, initialValue, title, confirmText } = {}) {
     const modal   = document.getElementById('dbCopyModal');
     const input   = document.getElementById('dbCopyModalInput');
     const confirm = document.getElementById('dbCopyModalConfirm');
     const cancel  = document.getElementById('dbCopyModalCancel');
+    document.getElementById('dbCopyModalTitle').textContent = title ?? '도면 복사';
+    confirm.textContent = confirmText ?? '복사';
     document.getElementById('dbCopyModalDesc').textContent = desc ?? `"${sourceTitle}" 도면의 마지막 버전을 복사합니다.`;
     input.value = initialValue ?? `${sourceTitle} - 복사`;
     modal.style.display = 'flex';
@@ -399,7 +401,7 @@ async function renameBoard(e, boardId, currentName) {
         } else {
             alert('이름 변경에 실패했습니다.');
         }
-    }, { desc: `"${currentName}" 보드 이름을 변경합니다.`, initialValue: currentName });
+    }, { title: '이름 변경', confirmText: '변경', desc: `"${currentName}" 보드 이름을 변경합니다.`, initialValue: currentName });
 }
 
 async function removeBoardItem(e, boardId, patternId, btn) {
