@@ -11,9 +11,7 @@ require_once __DIR__ . '/../../lib/colors.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php require_once __DIR__ . '/../../lib/meta.php'; meta_tags(); ?>
-    <link rel="stylesheet" href="/src/css/editor.css">
-    <link rel="stylesheet" href="/src/css/sidebar.css">
-    <link rel="stylesheet" href="/src/css/sabunteok.css">
+    <link rel="stylesheet" href="/src/css/engine-common.css">
 </head>
 
 <body class="pm-generator">
@@ -581,6 +579,7 @@ require_once __DIR__ . '/../../lib/colors.php';
         window.__pmokColorGroups         = <?= json_encode(get_color_groups(), JSON_UNESCAPED_UNICODE) ?>;
     </script>
     <script src="/src/js/drawing-sync.js"></script>
+    <script src="/src/js/engine-common.js"></script>
     <script src="/src/js/classic.js"></script>
 </body>
 

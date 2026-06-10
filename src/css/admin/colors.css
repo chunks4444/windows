@@ -1,0 +1,4 @@
+.color-dot { width:28px;height:28px;border-radius:50%;border:1px solid rgba(0,0,0,0.1);display:inline-block;vertical-align:middle; }
+        .adm-table-wrap table td { vertical-align:middle; }
+        .group-header td { background:var(--bg-2,#f5f5f5);font-weight:700;font-size:12px;color:#666;letter-spacing:.05em; }
+        input[type=color] { width:36px;height:28px;padding:2px;border:1px solid #ddd;border-radius:4px;cursor:pointer; }

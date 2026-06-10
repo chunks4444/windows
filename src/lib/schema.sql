@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS drawings (
     id          INT UNSIGNED    NOT NULL AUTO_INCREMENT COMMENT '도면 고유 ID',
     user_id     INT UNSIGNED    NOT NULL COMMENT '소유 사용자 ID (users.id FK)',
-    type        VARCHAR(64)     NOT NULL COMMENT '도면 종류 (예: sambuntok)',
+    type        VARCHAR(64)     NOT NULL COMMENT '도면 종류 (예: classic, square, diamond, cross, triangle)',
     title       VARCHAR(100)    NOT NULL DEFAULT '' COMMENT '도면 제목 (유저가 직접 지정, 버전과 독립 관리)',
     created_at  DATETIME        NOT NULL DEFAULT NOW() COMMENT '최초 작성일시',
     updated_at    DATETIME        NOT NULL DEFAULT NOW() ON UPDATE NOW() COMMENT '최종 저장일시',
@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS contact_log (
 CREATE TABLE IF NOT EXISTS wallpapers (
     id               INT UNSIGNED    NOT NULL AUTO_INCREMENT COMMENT '배경 고유 ID',
     user_id          INT UNSIGNED    NOT NULL COMMENT '소유 사용자 ID (users.id FK)',
-    engine           VARCHAR(64)     NOT NULL DEFAULT '' COMMENT '엔진 구분 (예: sabunteok)',
+    engine           VARCHAR(64)     NOT NULL DEFAULT '' COMMENT '엔진 구분 (예: classic, square, diamond, cross, triangle)',
     drawing_id       INT UNSIGNED    NULL COMMENT '소속 도면 ID (drawings.id FK, nullable)',
     version_saved_at INT UNSIGNED    NULL COMMENT '소속 버전 savedAt (Unix초, nullable)',
     filename         VARCHAR(255)    NOT NULL DEFAULT '' COMMENT '원본 파일명',

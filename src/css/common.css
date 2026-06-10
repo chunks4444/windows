@@ -2,21 +2,35 @@
 
 /* ── Design Tokens ───────────────────────────── */
 :root {
+    /* 색상 */
     --teal:       #3A8C82;
     --teal-mid:   #5AADA2;
     --teal-pale:  #E6F4F2;
     --accent-bg:  #EAF5F3;
     --page-bg:    #F2F3F4;
+    --red:        #cc2200;
+    --gold:       #b8894a;
+
+    /* 텍스트 */
     --text-1:     #1A1F1E;
     --text-2:     #5A6B69;
     --text-3:     #97A8A6;
+
+    /* 테두리 / 입력 */
     --border:     #E0E5E4;
     --border-md:  #C8D4D2;
     --input-bg:   #F4F6F6;
+
+    /* 반경 */
     --r:          8px;
     --r-sm:       6px;
-    --red:        #cc2200;
-    --gold:       #b8894a;
+    --r-xs:       4px;
+
+    /* 엔진 레이아웃 */
+    --sidebar-bg: #FFFFFF;
+    --canvas-bg:  #E5E7EA;
+    --sidebar-w:  230px;
+    --hdr-h:      52px;
 }
 
 /* ── Reset ───────────────────────────────────── */

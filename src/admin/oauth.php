@@ -9,47 +9,8 @@
     <link rel="stylesheet" href="/src/css/dashboard.css">
     <link rel="stylesheet" href="/src/css/users.css">
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
-    <style>
-        .oauth-card {
-            background: #fff;
-            border: 1px solid #eef1f0;
-            border-radius: 12px;
-            padding: 24px 28px;
-            margin-bottom: 16px;
-        }
-        .oauth-card-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 18px;
-        }
-        .oauth-card-logo {
-            width: 28px;
-            height: 28px;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: 800;
-            flex-shrink: 0;
-        }
-        .oauth-logo-google { background: #fff; border: 1px solid #e0e0e0; }
-        .oauth-logo-kakao  { background: #FEE500; color: #191919; }
-        .oauth-logo-naver  { background: #03C75A; color: #fff; }
-        .oauth-card-title  { font-size: 15px; font-weight: 700; color: #1A1F1E; }
-        .oauth-callback    { font-size: 11px; color: #97A8A6; margin-bottom: 16px; background: #F5F8F7; padding: 8px 12px; border-radius: 6px; font-family: monospace; word-break: break-all; }
-        .oauth-field       { margin-bottom: 12px; }
-        .oauth-field label { font-size: 11px; font-weight: 700; color: #7A8C89; letter-spacing: 0.05em; text-transform: uppercase; display: block; margin-bottom: 5px; }
-        .oauth-field input { width: 100%; border: 1.5px solid #E4EDEA; border-radius: 8px; padding: 9px 12px; font-size: 13px; outline: none; font-family: monospace; color: #1A1F1E; transition: border-color .15s; }
-        .oauth-field input:focus { border-color: #3A8C82; }
-        .oauth-save { height: 36px; padding: 0 18px; background: #3A8C82; color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background .15s; }
-        .oauth-save:hover { background: #2F7169; }
-        .oauth-save:disabled { background: #B8C8C4; cursor: not-allowed; }
-        .oauth-status { font-size: 12px; margin-left: 10px; }
-        .oauth-status.ok  { color: #2d7a72; }
-        .oauth-status.err { color: #c0392b; }
-    </style>
+    
+    <link rel="stylesheet" href="/src/css/admin/oauth.css">
 </head>
 <body>
 <?php include __DIR__ . '/../components/nav.php'; ?>
@@ -123,54 +84,6 @@
     </div>
 </div>
 
-<script>
-const TOKEN = () => localStorage.getItem('pmok_auth_token');
-
-async function loadConfig() {
-    const res  = await fetch('/src/api/admin/oauth.php', { headers: { Authorization: 'Bearer ' + TOKEN() } });
-    const data = await res.json();
-    const cfg  = data.config || {};
-    const fill = (id, key) => { if (cfg[key]) document.getElementById(id).value = cfg[key]; };
-    fill('google_client_id',     'oauth_google_client_id');
-    fill('google_client_secret', 'oauth_google_client_secret');
-    fill('kakao_client_id',      'oauth_kakao_client_id');
-    fill('kakao_client_secret',  'oauth_kakao_client_secret');
-    fill('naver_client_id',      'oauth_naver_client_id');
-    fill('naver_client_secret',  'oauth_naver_client_secret');
-}
-
-async function saveProvider(p) {
-    const btn    = event.target;
-    const status = document.getElementById(p + '_status');
-    btn.disabled = true;
-    status.textContent = '';
-    try {
-        const body = {
-            ['oauth_' + p + '_client_id']:     document.getElementById(p + '_client_id').value,
-            ['oauth_' + p + '_client_secret']: document.getElementById(p + '_client_secret').value,
-        };
-        const res  = await fetch('/src/api/admin/oauth.php', {
-            method:  'PUT',
-            headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + TOKEN() },
-            body:    JSON.stringify(body),
-        });
-        const data = await res.json();
-        if (res.ok) { status.className = 'oauth-status ok'; status.textContent = '저장됨'; }
-        else        { status.className = 'oauth-status err'; status.textContent = data.error || '오류'; }
-    } catch {
-        status.className = 'oauth-status err'; status.textContent = '서버 오류';
-    } finally {
-        btn.disabled = false;
-        setTimeout(() => status.textContent = '', 3000);
-    }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    const page = document.getElementById('oauthPage');
-    if (authGetToken()) { page.style.display = ''; loadConfig(); }
-    window.addEventListener('pmokAuthChanged', () => { page.style.display = ''; loadConfig(); });
-    authUpdateNav();
-});
-</script>
+<script src="/src/js/admin/oauth.js"></script>
 </body>
 </html>

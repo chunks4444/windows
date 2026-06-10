@@ -11,9 +11,7 @@ header('Pragma: no-cache');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php require_once __DIR__ . '/../../lib/meta.php'; meta_tags(); ?>
-    <link rel="stylesheet" href="/src/css/editor.css">
-    <link rel="stylesheet" href="/src/css/sidebar.css">
-    <link rel="stylesheet" href="/src/css/triangle.css">
+    <link rel="stylesheet" href="/src/css/engine-common.css">
 </head>
 
 <body class="pm-generator">
@@ -535,6 +533,7 @@ header('Pragma: no-cache');
         window.__pmokColorGroups         = <?= json_encode(get_color_groups(), JSON_UNESCAPED_UNICODE) ?>;
     </script>
     <script src="/src/js/drawing-sync.js?v=<?= md5_file(__DIR__ . '/../../js/drawing-sync.js') ?>"></script>
+    <script src="/src/js/engine-common.js?v=<?= md5_file(__DIR__ . '/../../js/engine-common.js') ?>"></script>
     <script src="/src/js/triangle.js?v=<?= md5_file(__DIR__ . '/../../js/triangle.js') ?>"></script>
 </body>
 
