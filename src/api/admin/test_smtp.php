@@ -45,7 +45,32 @@ fwrite($sock, base64_encode(SMTP_PASS) . "\r\n");
 $auth = fgets($sock, 512);
 echo "[8] 인증 결과: " . $auth;
 
+if (substr(trim($auth),0,3) !== '235') {
+    fwrite($sock, "QUIT\r\n"); fclose($sock);
+    echo "\n✗ 인증 실패\n"; exit;
+}
+echo "\n✓ 인증 성공 — 테스트 메일 발송 중...\n\n";
+
+// 실제 메일 발송
+fwrite($sock, "MAIL FROM:<" . SMTP_USER . ">\r\n");
+echo "[9] MAIL FROM: " . fgets($sock, 512);
+fwrite($sock, "RCPT TO:<" . SMTP_USER . ">\r\n");
+echo "[10] RCPT TO: " . fgets($sock, 512);
+fwrite($sock, "DATA\r\n");
+echo "[11] DATA: " . fgets($sock, 512);
+
+$body = "From: 평목 <" . SMTP_USER . ">\r\n"
+      . "To: " . SMTP_USER . "\r\n"
+      . "Subject: =?UTF-8?B?" . base64_encode("[평목] SMTP 테스트") . "?=\r\n"
+      . "MIME-Version: 1.0\r\n"
+      . "Content-Type: text/plain; charset=UTF-8\r\n"
+      . "\r\n"
+      . "SMTP 테스트 메일입니다.";
+fwrite($sock, $body . "\r\n.\r\n");
+$resp = fgets($sock, 512);
+echo "[12] 발송 결과: " . $resp;
+
 fwrite($sock, "QUIT\r\n");
 fclose($sock);
 
-echo "\n" . (substr(trim($auth),0,3)==='235' ? "✓ 인증 성공" : "✗ 인증 실패") . "\n";
+echo "\n" . (substr(trim($resp),0,3)==='250' ? "✓ 메일 발송 성공" : "✗ 메일 발송 실패") . "\n";
