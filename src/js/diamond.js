@@ -2328,12 +2328,38 @@ async function draw() {
         return true;
     }
 
+    async function loadFromCollectionId(id) {
+        try {
+            const _tok = localStorage.getItem('pmok_auth_token');
+            const res  = await fetch(`/src/api/drawings/load_by_id.php?id=${id}`,
+                _tok ? { headers: { 'Authorization': 'Bearer ' + _tok } } : {}
+            );
+            const data = await res.json();
+            if (!data?.versions?.length) return false;
+            _versionsLoaded = true;
+            versions = []; currentVerIdx = -1; drawingId = null;
+            applyParams(data.versions[0].params);
+            document.getElementById('drawingName').value    = '';
+            document.getElementById('verLabel').textContent = '—';
+            localStorage.removeItem(CURRENT_TITLE_KEY);
+            localStorage.removeItem(NAME_KEY);
+            renderVerList();
+            return true;
+        } catch { return false; }
+    }
+
     async function loadVersions() {
         scaleFactor = 1.0; panX = 0; panY = 0;
 
         const pendingTitle = window.__pmokOpenDrawing || null;
         if (pendingTitle) {
             const ok = await loadFromDb(pendingTitle);
+            if (ok) return;
+        }
+
+        const collectionId = window.__pmokCollectionDrawingId || null;
+        if (collectionId) {
+            const ok = await loadFromCollectionId(collectionId);
             if (ok) return;
         }
 

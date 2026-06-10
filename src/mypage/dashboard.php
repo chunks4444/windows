@@ -36,6 +36,22 @@ header('Content-Type: text/html; charset=UTF-8');
     </div>
 </div>
 
+<!-- 도면 복사 모달 -->
+<div id="dbCopyModal" class="db-delete-modal" style="display:none;" role="dialog" aria-modal="true">
+    <div class="db-delete-modal-box">
+        <div class="db-delete-modal-icon" style="color:#3A8C82;">
+            <i class="bi bi-copy"></i>
+        </div>
+        <div class="db-delete-modal-title">도면 복사</div>
+        <div class="db-delete-modal-desc" id="dbCopyModalDesc"></div>
+        <input type="text" id="dbCopyModalInput" class="db-copy-input" maxlength="40" placeholder="복사본 이름 입력…">
+        <div class="db-delete-modal-actions">
+            <button class="db-delete-modal-cancel" id="dbCopyModalCancel">취소</button>
+            <button class="db-delete-modal-confirm" id="dbCopyModalConfirm" style="background:#3A8C82;">복사</button>
+        </div>
+    </div>
+</div>
+
 <!-- 삭제 확인 모달 -->
 <div id="dbDeleteModal" class="db-delete-modal" style="display:none;" role="dialog" aria-modal="true">
     <div class="db-delete-modal-box">

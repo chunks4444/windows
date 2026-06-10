@@ -27,7 +27,8 @@ $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/collection/') !== false);
 ?>
 <nav class="pm-navbar navbar navbar-expand-lg fixed-top px-4 py-3">
     <a href="/" class="navbar-brand d-flex align-items-center">
-        <img src="https://pyeongmok.com/wp-content/uploads/2024/01/2024_MYEONGMOK_LOGO-e1705317786643.png"
+        <img src="/src/assets/logo.png"
+             srcset="/src/assets/logo.png 1x, /src/assets/logo@2x.png 2x"
              alt="평목" class="pm-nav-logo">
         <span class="pm-nav-tagline"> </span>
     </a>

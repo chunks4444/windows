@@ -107,6 +107,9 @@ function renderCard(d) {
            </div>`;
     return `
         <div class="db-card" onclick="openDrawing('${escAttr(d.type)}', '${escAttr(d.title)}')">
+            <button class="db-card-copy" onclick="copyDrawing(event,'${escAttr(d.type)}','${escAttr(d.title)}')" title="복사">
+                <i class="bi bi-copy"></i>
+            </button>
             <button class="db-card-delete" onclick="deleteDrawing(event,'${escAttr(d.type)}','${escAttr(d.title)}')" title="삭제">
                 <i class="bi bi-trash"></i>
             </button>
@@ -152,6 +155,80 @@ function showDeleteModal(desc, onConfirm) {
     confirm.addEventListener('click', handleConfirm);
     cancel.addEventListener('click', close);
     modal.addEventListener('click', handleBackdrop);
+}
+
+function showCopyModal(sourceTitle, onConfirm) {
+    const modal   = document.getElementById('dbCopyModal');
+    const input   = document.getElementById('dbCopyModalInput');
+    const confirm = document.getElementById('dbCopyModalConfirm');
+    const cancel  = document.getElementById('dbCopyModalCancel');
+    document.getElementById('dbCopyModalDesc').textContent = `"${sourceTitle}" 도면의 마지막 버전을 복사합니다.`;
+    input.value = `${sourceTitle} - 복사`;
+    modal.style.display = 'flex';
+    setTimeout(() => { input.select(); input.focus(); }, 80);
+
+    function close() {
+        modal.style.display = 'none';
+        confirm.removeEventListener('click', handleConfirm);
+        cancel.removeEventListener('click', close);
+        input.removeEventListener('keydown', handleKey);
+        modal.removeEventListener('click', handleBackdrop);
+    }
+    function handleConfirm() {
+        const t = input.value.trim();
+        if (!t) return;
+        close();
+        onConfirm(t);
+    }
+    function handleKey(e) {
+        if (e.key === 'Enter')  handleConfirm();
+        if (e.key === 'Escape') close();
+    }
+    function handleBackdrop(e) { if (e.target === modal) close(); }
+    confirm.addEventListener('click', handleConfirm);
+    cancel.addEventListener('click', close);
+    input.addEventListener('keydown', handleKey);
+    modal.addEventListener('click', handleBackdrop);
+}
+
+async function copyDrawing(e, type, title) {
+    e.stopPropagation();
+    showCopyModal(title, async (newTitle) => {
+        try {
+            // 원본 마지막 버전 로드
+            const loadRes = await fetch(
+                `/src/api/drawings/load.php?type=${encodeURIComponent(type)}&title=${encodeURIComponent(title)}`,
+                { headers: _headers() }
+            );
+            const data = await loadRes.json();
+            if (!data?.versions?.length) { alert('도면을 불러올 수 없습니다.'); return; }
+
+            const last = data.versions[data.versions.length - 1];
+            const now  = Date.now();
+
+            // 새 이름으로 저장
+            const saveRes = await fetch('/src/api/drawings/save.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', ..._headers() },
+                body: JSON.stringify({
+                    type,
+                    title:          newTitle,
+                    created_at:     now,
+                    versions:       [{ savedAt: now, params: last.params }],
+                    thumbnail:      null,
+                    work_time_sec:  0,
+                }),
+            });
+            const result = await saveRes.json();
+            if (saveRes.ok && !result.error) {
+                loadDashboard();
+            } else {
+                alert(result.error || '복사에 실패했습니다.');
+            }
+        } catch {
+            alert('복사 중 오류가 발생했습니다.');
+        }
+    });
 }
 
 async function deleteDrawing(e, type, title) {

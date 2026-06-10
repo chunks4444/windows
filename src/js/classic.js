@@ -136,6 +136,27 @@
     selectedFrameColor = DEFAULT_FRAME_COLOR;
     selectedSlatColor  = DEFAULT_SLAT_COLOR;
 
+    // ── 멀티 슬롯 ─────────────────────────────────────────
+    let slots = [];
+    let activeSlotIdx = 0;
+    let _drawGen = 0;
+    let _suppressDraw = false;
+    let _slotBounds = [];
+
+    function _makeSlot(params) {
+        return {
+            params: params ? { ...params } : {
+                W: 600, H: 1707, cols: 12, frame: 60, frameH: 60, slat: 12,
+                vRatio: 1.2, pattern: '3/5/3', doorType: 'swing', doorCount: 1,
+                pungpanOn: false, pungpan: 0, wood: 'hongsong', finish: 'changhoji',
+                frameColor: DEFAULT_FRAME_COLOR, slatColor: DEFAULT_SLAT_COLOR, name: '',
+            },
+            deletedSegs: new Set(),
+            addedLines:  [],
+        };
+    }
+    slots = [_makeSlot()];
+
     // ── 오프스크린 캔버스 (배치 모드 투시 변환용) ────────
     const offCanvas = document.createElement('canvas');
 
@@ -674,22 +695,25 @@ function snapToNode(cx, cy) {
 
 let _geoController = null;
 
-async function fetchGeometry() {
-    if (_geoController) _geoController.abort();
-    _geoController = new AbortController();
+async function fetchGeometry(p = null) {
+    if (!p) {
+        if (_geoController) _geoController.abort();
+        _geoController = new AbortController();
+    }
+    const controller = p ? new AbortController() : _geoController;
     const body = new URLSearchParams({
-        cols:      txtCols.value,
-        outerW:    txtW.value,
-        outerH:    txtH.value,
-        pungpanH:  document.getElementById('txtPungpan').value || 0,
-        pungpanOn: document.getElementById('chkPungpan').checked ? '1' : '0',
-        frameW:    txtFrame.value,
-        frameH:    txtFrameH.value,
-        slatT:     txtSlat.value,
-        vRatio:    txtRatio.value,
-        pattern:   `${document.getElementById('txtPatternTop').value}/${document.getElementById('txtPatternMid').value}/${document.getElementById('txtPatternBot').value}`,
-        doorType:  txtDoorType.value,
-        doorCount: txtDoorCount.value,
+        cols:      p ? p.cols                             : txtCols.value,
+        outerW:    p ? p.W                                : txtW.value,
+        outerH:    p ? p.H                                : txtH.value,
+        pungpanH:  p ? (p.pungpan || 0)                  : (document.getElementById('txtPungpan').value || 0),
+        pungpanOn: p ? (p.pungpanOn ? '1' : '0')         : (document.getElementById('chkPungpan').checked ? '1' : '0'),
+        frameW:    p ? p.frame                            : txtFrame.value,
+        frameH:    p ? p.frameH                           : txtFrameH.value,
+        slatT:     p ? p.slat                             : txtSlat.value,
+        vRatio:    p ? p.vRatio                           : txtRatio.value,
+        pattern:   p ? p.pattern                          : `${document.getElementById('txtPatternTop').value}/${document.getElementById('txtPatternMid').value}/${document.getElementById('txtPatternBot').value}`,
+        doorType:  p ? p.doorType                         : txtDoorType.value,
+        doorCount: p ? p.doorCount                        : txtDoorCount.value,
     });
     try {
         const _tok = localStorage.getItem('pmok_auth_token');
@@ -697,7 +721,7 @@ async function fetchGeometry() {
             method: 'POST',
             headers: _tok ? { 'Authorization': 'Bearer ' + _tok } : {},
             body,
-            signal: _geoController.signal,
+            signal: controller.signal,
         });
         return res.json();
     } catch (e) {
@@ -1654,13 +1678,29 @@ async function draw() {
                 doorCornerPositions.br = { cx: sp.br.cx + dcx, cy: sp.br.cy + dcy };
                 doorCornerPositions.bl = { cx: sp.bl.cx + dcx, cy: sp.bl.cy + dcy };
             } else if (corner === 'tl') {
-                doorCornerPositions.tl = { cx: sp.tl.cx + dcx, cy: sp.tl.cy + dcy };
+                const nTl = { cx: sp.tl.cx + dcx, cy: sp.tl.cy + dcy };
+                doorCornerPositions.tl = nTl;
+                doorCornerPositions.tr = { cx: sp.br.cx,  cy: nTl.cy   };
+                doorCornerPositions.br = { cx: sp.br.cx,  cy: sp.br.cy };
+                doorCornerPositions.bl = { cx: nTl.cx,    cy: sp.br.cy };
             } else if (corner === 'tr') {
-                doorCornerPositions.tr = { cx: sp.tr.cx + dcx, cy: sp.tr.cy + dcy };
+                const nTr = { cx: sp.tr.cx + dcx, cy: sp.tr.cy + dcy };
+                doorCornerPositions.tl = { cx: sp.bl.cx,  cy: nTr.cy   };
+                doorCornerPositions.tr = nTr;
+                doorCornerPositions.br = { cx: nTr.cx,    cy: sp.bl.cy };
+                doorCornerPositions.bl = { cx: sp.bl.cx,  cy: sp.bl.cy };
             } else if (corner === 'br') {
-                doorCornerPositions.br = { cx: sp.br.cx + dcx, cy: sp.br.cy + dcy };
+                const nBr = { cx: sp.br.cx + dcx, cy: sp.br.cy + dcy };
+                doorCornerPositions.tl = { cx: sp.tl.cx,  cy: sp.tl.cy };
+                doorCornerPositions.tr = { cx: nBr.cx,    cy: sp.tl.cy };
+                doorCornerPositions.br = nBr;
+                doorCornerPositions.bl = { cx: sp.tl.cx,  cy: nBr.cy   };
             } else if (corner === 'bl') {
-                doorCornerPositions.bl = { cx: sp.bl.cx + dcx, cy: sp.bl.cy + dcy };
+                const nBl = { cx: sp.bl.cx + dcx, cy: sp.bl.cy + dcy };
+                doorCornerPositions.tl = { cx: nBl.cx,    cy: sp.tr.cy };
+                doorCornerPositions.tr = { cx: sp.tr.cx,  cy: sp.tr.cy };
+                doorCornerPositions.br = { cx: sp.tr.cx,  cy: nBl.cy   };
+                doorCornerPositions.bl = nBl;
             } else if (corner === 'transform') {
                 const rect_ = canvas.getBoundingClientRect();
                 const mxC = (e.clientX - rect_.left) * (logW / rect_.width);
@@ -2274,6 +2314,26 @@ async function draw() {
         localStorage.setItem(VERSIONS_KEY, JSON.stringify(versions));
     }
 
+    async function loadFromCollectionId(id) {
+        try {
+            const _tok = localStorage.getItem('pmok_auth_token');
+            const res  = await fetch(`/src/api/drawings/load_by_id.php?id=${id}`,
+                _tok ? { headers: { 'Authorization': 'Bearer ' + _tok } } : {}
+            );
+            const data = await res.json();
+            if (!data?.versions?.length) return false;
+            _versionsLoaded = true;
+            versions = []; currentVerIdx = -1; drawingId = null;
+            applyParams(data.versions[0].params);
+            document.getElementById('drawingName').value    = '';
+            document.getElementById('verLabel').textContent = '—';
+            localStorage.removeItem(CURRENT_TITLE_KEY);
+            localStorage.removeItem(NAME_KEY);
+            renderVerList();
+            return true;
+        } catch { return false; }
+    }
+
     async function loadVersions() {
         scaleFactor = 1.0; panX = 0; panY = 0;
         console.log('[LV] start scaleFactor=1.0');
@@ -2283,6 +2343,13 @@ async function draw() {
         if (pendingTitle) {
             const ok = await loadFromDb(pendingTitle);
             if (ok) { _resetStoredView(); return; }
+        }
+
+        // 컬랙션에서 열었을 때 (?drawing_id=ID)
+        const collectionId = window.__pmokCollectionDrawingId || null;
+        if (collectionId) {
+            const ok = await loadFromCollectionId(collectionId);
+            if (ok) return;
         }
 
         // 상단 메뉴 또는 새 도면으로 진입 → 모든 값 초기화

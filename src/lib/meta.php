@@ -14,6 +14,8 @@ function page_meta(): array {
 }
 
 function meta_tags(): void {
+    echo '<link rel="icon" type="image/png" href="/src/assets/favicon.png">' . "\n    ";
+    echo '<link rel="apple-touch-icon" href="/src/assets/apple-touch-icon.png">' . "\n    ";
     $m = page_meta();
     if ($m['title'])       echo '<title>' . htmlspecialchars($m['title'], ENT_QUOTES) . '</title>' . "\n    ";
     if ($m['description']) echo '<meta name="description" content="' . htmlspecialchars($m['description'], ENT_QUOTES) . '">' . "\n    ";
