@@ -1853,6 +1853,28 @@ async function draw() {
             localStorage.removeItem(CURRENT_TITLE_KEY);
             localStorage.removeItem(NAME_KEY);
             renderVerList();
+            // 배경 이미지 복원
+            thumbImages = []; thumbList.innerHTML = '';
+            appBackgroundImage = null; activeThumbId = null;
+            updateClearBgBtn();
+            if (data.wallpapers?.length) {
+                const last = data.wallpapers[data.wallpapers.length - 1];
+                await Promise.all(data.wallpapers.map(({ filename, url: src }) =>
+                    new Promise(resolve => {
+                        const id = src;
+                        const imgObj = new Image();
+                        imgObj.onload = () => {
+                            thumbImages.push({ id, serverId: null, src, img: imgObj, filename });
+                            addThumbItem(id, src, filename);
+                            if (src === last.url) setActiveThumb(id);
+                            resolve();
+                        };
+                        imgObj.onerror = resolve;
+                        imgObj.src = src;
+                    })
+                ));
+                draw();
+            }
             return true;
         } catch { return false; }
     }

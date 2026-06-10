@@ -22,10 +22,17 @@ $row = $stmt->fetch();
 
 if (!$row) { echo json_encode(['versions' => []]); exit; }
 
+$wpStmt = $pdo->prepare(
+    'SELECT filename, filepath AS url FROM wallpapers WHERE drawing_id = ? ORDER BY id ASC'
+);
+$wpStmt->execute([$id]);
+$wallpapers = $wpStmt->fetchAll();
+
 echo json_encode([
-    'type'     => $row['type'],
-    'versions' => [[
+    'type'       => $row['type'],
+    'versions'   => [[
         'savedAt' => (int)(strtotime($row['saved_at']) * 1000),
         'params'  => json_decode($row['params'], true),
     ]],
+    'wallpapers' => $wallpapers,
 ]);
