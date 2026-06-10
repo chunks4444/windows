@@ -7,7 +7,7 @@ define('MAIL_FROM',  'pyeongmok@gmail.com');
 define('SMTP_HOST', 'smtp.gmail.com');
 define('SMTP_PORT', 587);
 define('SMTP_USER', 'pyeongmok@gmail.com');
-define('SMTP_PASS', '&&&chun20662782@@@');
+define('SMTP_PASS', 'cqzz mbki kect zicp');
 
 // ── SMTP 발송 ────────────────────────────────────────────
 function send_mail(string $to, string $subject, string $template, array $vars = [], string $extra_headers = ''): bool {
