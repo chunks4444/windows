@@ -438,7 +438,7 @@
         canvas.height = ph;
         canvas.style.width  = w + 'px';
         canvas.style.height = h + 'px';
-        if (_versionsLoaded) draw();
+        if (_versionsLoaded) { console.log('[RESIZE] draw, scaleFactor=', scaleFactor); draw(); }
     }
 
     let _resizeTimer;
@@ -708,7 +708,9 @@ async function fetchGeometry() {
 
 async function draw() {
     try {
+    console.log('[DRAW before] scaleFactor=', scaleFactor, 'panX=', panX, new Error().stack.split('\n')[2]?.trim());
     const data = await fetchGeometry();
+    console.log('[DRAW after] scaleFactor=', scaleFactor, 'panX=', panX);
     if (!data) return;
     if (data.error) {
         console.warn('[draw] error from server:', data.error);
@@ -2043,7 +2045,9 @@ async function draw() {
         thumbList.innerHTML = '';
         appBackgroundImage = null;
         activeThumbId = null;
+        localStorage.removeItem(BG_IMAGE_KEY);
         updateClearBgBtn();
+        if (!drawingId) return;
         try {
             const vsa = _currentVersionSavedAt();
             const qs  = `drawing_id=${drawingId || 0}&engine=${WALLPAPER_ENGINE}${vsa ? '&version_saved_at=' + vsa : ''}`;
@@ -2079,7 +2083,7 @@ async function draw() {
                     imgObj.src = src;
                 });
             });
-            Promise.all(wallpaperPromises).then(() => draw());
+            Promise.all(wallpaperPromises).then(() => { console.log('[THUMB draw] scaleFactor=', scaleFactor); draw(); });
         } catch(e) {}
     }
 
@@ -2182,7 +2186,7 @@ async function draw() {
             item.innerHTML = `<span class="ver-num">v${realIdx + 1}</span><span class="ver-date">${fmtDate(ver.savedAt)}</span><span class="ver-del" title="삭제"><i class="bi bi-x-lg"></i></span>`;
             item.addEventListener('click', () => {
                 currentVerIdx = realIdx;
-                if (ver.params.panX !== undefined) { panX = ver.params.panX; panY = ver.params.panY; scaleFactor = ver.params.scaleFactor; }
+                scaleFactor = 1.0; panX = 0; panY = 0;
                 applyParams(ver.params);
                 document.getElementById('verLabel').textContent = 'v' + (realIdx + 1);
                 renderVerList();
@@ -2272,35 +2276,25 @@ async function draw() {
 
     async function loadVersions() {
         scaleFactor = 1.0; panX = 0; panY = 0;
-        const savedTitle = localStorage.getItem(CURRENT_TITLE_KEY);
+        console.log('[LV] start scaleFactor=1.0');
 
-        // DB 로드 전 먼저 제목 표시
-        if (savedTitle) {
-            document.getElementById('drawingName').value = savedTitle;
-            localStorage.setItem(NAME_KEY, savedTitle);
-        }
-
-        if (savedTitle) {
-            const ok = await loadFromDb(savedTitle);
+        // 내 도면에서 직접 열었을 때 PHP가 POST 값을 window.__pmokOpenDrawing에 주입
+        const pendingTitle = window.__pmokOpenDrawing || null;
+        if (pendingTitle) {
+            const ok = await loadFromDb(pendingTitle);
             if (ok) { _resetStoredView(); return; }
-        } else {
-            const drawings = await /** @type {any} */ (window.DrawingSync).list('classic');
-            if (drawings.length > 0) {
-                const ok = await loadFromDb(drawings[0].title);
-                if (ok) { _resetStoredView(); return; }
-            }
         }
-        try { versions = JSON.parse(localStorage.getItem(VERSIONS_KEY)) || []; } catch(e) { versions = []; }
+
+        // 상단 메뉴 또는 새 도면으로 진입 → 모든 값 초기화
+        versions = []; currentVerIdx = -1;
+        drawingId = null;
         _versionsLoaded = true;
-        if (versions.length > 0) {
-            currentVerIdx = versions.length - 1;
-            document.getElementById('verLabel').textContent = 'v' + (currentVerIdx + 1);
-            _resetStoredView();
-            applyParams(versions[currentVerIdx].params);
-        } else {
-            draw();
-        }
+        localStorage.removeItem(CURRENT_TITLE_KEY);
+        localStorage.removeItem(NAME_KEY);
+        document.getElementById('drawingName').value = '';
+        document.getElementById('verLabel').textContent = '—';
         renderVerList();
+        draw();
     }
 
     async function saveVersion() {
@@ -2449,9 +2443,13 @@ async function draw() {
         const now = Date.now();
         localStorage.setItem(CREATED_KEY, now); localStorage.setItem(MODIFIED_KEY, now);
         localStorage.removeItem(CURRENT_TITLE_KEY); localStorage.removeItem(NAME_KEY);
+        localStorage.removeItem(BG_IMAGE_KEY);
         setElText('dateCreated', fmtDate(now));
         setElText('dateModified', fmtDate(now));
         scaleFactor = 1.0; panX = 0; panY = 0;
+        thumbImages = []; thumbList.innerHTML = '';
+        appBackgroundImage = null; activeThumbId = null;
+        updateClearBgBtn();
         renderVerList(); closeDrawingManager();
         draw();
     }
@@ -2496,6 +2494,13 @@ async function draw() {
     });
 
     loadVersions().then(() => restoreThumbs());
+    window.addEventListener('pageshow', (e) => {
+        if (e.persisted) {
+            _versionsLoaded = false;
+            scaleFactor = 1.0; panX = 0; panY = 0;
+            loadVersions().then(() => restoreThumbs());
+        }
+    });
     window.addEventListener('pmokAuthChanged', () => {
         _versionsLoaded = false;
         loadVersions().then(() => restoreThumbs());

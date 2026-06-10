@@ -84,8 +84,16 @@ function fmtWorkTime(sec) {
 function openDrawing(type, title) {
     const cfg = TYPE_CONFIG[type];
     if (!cfg) return;
-    localStorage.setItem(cfg.titleKey, title);
-    location.href = cfg.editorUrl;
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = cfg.editorUrl;
+    const input = document.createElement('input');
+    input.type  = 'hidden';
+    input.name  = 'drawing';
+    input.value = title;
+    form.appendChild(input);
+    document.body.appendChild(form);
+    form.submit();
 }
 
 function renderCard(d) {

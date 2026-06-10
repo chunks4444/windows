@@ -528,8 +528,9 @@ header('Pragma: no-cache');
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="/src/js/drawing-sync.js?v=<?= filemtime(__DIR__ . '/../../js/drawing-sync.js') ?>"></script>
-    <script src="/src/js/cross.js?v=<?= filemtime(__DIR__ . '/../../js/cross.js') ?>"></script>
+    <script>window.__pmokOpenDrawing = <?= isset($_POST['drawing']) ? json_encode($_POST['drawing'], JSON_UNESCAPED_UNICODE) : 'null' ?>;</script>
+    <script src="/src/js/drawing-sync.js?v=<?= md5_file(__DIR__ . '/../../js/drawing-sync.js') ?>"></script>
+    <script src="/src/js/cross.js?v=<?= md5_file(__DIR__ . '/../../js/cross.js') ?>"></script>
 </body>
 
 </html>
