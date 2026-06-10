@@ -38,26 +38,6 @@
 
     // ── 오프스크린 캔버스 (배치 모드 투시 변환용) ────────
     const offCanvas = document.createElement('canvas');
-
-        dx0, dy0, dx1, dy1, dx2, dy2
-    ) {
-        const det = sx0*(sy1-sy2) + sx1*(sy2-sy0) + sx2*(sy0-sy1);
-        if (Math.abs(det) < 0.001) return;
-        const a  = (dx0*(sy1-sy2) + dx1*(sy2-sy0) + dx2*(sy0-sy1)) / det;
-        const b  = (dy0*(sy1-sy2) + dy1*(sy2-sy0) + dy2*(sy0-sy1)) / det;
-        const c  = (sx0*(dx1-dx2) + sx1*(dx2-dx0) + sx2*(dx0-dx1)) / det;
-        const d  = (sx0*(dy1-dy2) + sx1*(dy2-dy0) + sx2*(dy0-dy1)) / det;
-        const e  = dx0 - a*sx0 - c*sy0;
-        const f  = dy0 - b*sx0 - d*sy0;
-        tctx.save();
-        tctx.beginPath();
-        tctx.moveTo(dx0, dy0); tctx.lineTo(dx1, dy1); tctx.lineTo(dx2, dy2);
-        tctx.closePath(); tctx.clip();
-        tctx.transform(a, b, c, d, e, f);
-        tctx.drawImage(img, 0, 0);
-        tctx.restore();
-    }
-
     function drawPerspectiveQuad(tctx, img, tl, tr, br, bl) {
         const W = img.width, H = img.height;
         // 삼각형 1: TL-TR-BL
