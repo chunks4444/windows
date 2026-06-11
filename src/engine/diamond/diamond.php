@@ -13,7 +13,7 @@ header('Pragma: no-cache');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php require_once __DIR__ . '/../../lib/meta.php'; meta_tags(); ?>
-    <link rel="stylesheet" href="/src/css/engine-common.css">
+    <link rel="stylesheet" href="/src/css/engine-common.css?v=<?= md5_file(__DIR__ . '/../../css/engine-common.css') ?>">
 </head>
 
 <body class="pm-generator">
