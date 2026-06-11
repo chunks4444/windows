@@ -771,68 +771,88 @@ async function draw() {
             ctx.rect(iLeft - slatPxHalf, iTop - slatPxHalf, iW + slatPxHalf * 2, iH + slatPxHalf * 2);
             ctx.clip();
 
-            const S3    = Math.sqrt(3);
-            const size  = (iW + slatPx) / (geo.cols * S3);
-            const step  = size * S3;
-            const bStep = size * 2;
-            const phase = 0;
+            const S3     = Math.sqrt(3);
+            const size   = iW / (geo.cols * S3);
+            const step   = size * S3;
+            const bStep  = size * 2;
+            const phaseD = -size / 2;
+            const phaseU =  size / 2;
 
-            lastCellSize = step;
+            lastCellSize = size;
 
-            // 세로살
-            for (let k = 0; ; k++) {
-                const x = iLeft + step / 2 + k * step;
+            // 세로살 — 셀 단위 세그먼트
+            for (let n = 0; n <= geo.cols; n++) {
+                const x = iLeft + n * step;
                 if (x > iLeft + iW + slatPxHalf) break;
-                const segKey  = `${d}:v:${k}`;
-                const lineKey = makeLineKey(x, iTop + iH / 2, Math.PI / 2);
-                lastSegMap.set(segKey, { cx: x, cy: iTop, ex: x, ey: iTop + iH, mx: x, my: iTop + iH / 2, normAngle: Math.PI / 2, lineKey });
-                lastNodeList.push({ cx: x, cy: iTop }, { cx: x, cy: iTop + iH });
-                if (deletedSegs.has(segKey)) continue;
-                ctx.beginPath();
-                ctx.moveTo(x, iTop);
-                ctx.lineTo(x, iTop + iH);
-                ctx.stroke();
-            }
-
-            // ↘ 사선살 (slope +1/√3)
-            const drNorm = Math.PI / 6;
-            {
-                const k0 = Math.floor((-iW / S3 - phase) / bStep);
-                for (let k = k0; ; k++) {
-                    const y0 = iTop + phase + k * bStep;
-                    if (y0 > iTop + iH) break;
-                    const x1 = iLeft, y1 = y0, x2 = iLeft + iW, y2 = y0 + iW / S3;
-                    const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
-                    const lineKey = makeLineKey(mx, my, drNorm);
-                    const segKey  = `${d}:dr:${k}`;
-                    lastSegMap.set(segKey, { cx: x1, cy: y1, ex: x2, ey: y2, mx, my, normAngle: drNorm, lineKey });
-                    lastNodeList.push({ cx: x1, cy: y1 }, { cx: x2, cy: y2 });
+                const j0 = Math.floor(-slatPxHalf / size);
+                for (let j = j0; ; j++) {
+                    const y1 = iTop + (j - 0.5) * size;
+                    const y2 = iTop + (j + 0.5) * size;
+                    if (y1 > iTop + iH + slatPxHalf) break;
+                    const mx = x, my = iTop + j * size;
+                    const lineKey = makeLineKey(mx, my, Math.PI / 2);
+                    const segKey  = `${d}:v:${n}:${j}`;
+                    lastSegMap.set(segKey, { cx: x, cy: y1, ex: x, ey: y2, mx, my, normAngle: Math.PI / 2, lineKey });
+                    lastNodeList.push({ cx: x, cy: y1 }, { cx: x, cy: y2 });
                     if (deletedSegs.has(segKey)) continue;
                     ctx.beginPath();
-                    ctx.moveTo(x1, y1);
-                    ctx.lineTo(x2, y2);
+                    ctx.moveTo(x, y1);
+                    ctx.lineTo(x, y2);
                     ctx.stroke();
                 }
             }
 
-            // ↗ 사선살 (slope -1/√3)
+            // ↘ 사선살 (slope +1/√3) — 셀 단위 세그먼트
+            const drNorm = Math.PI / 6;
+            {
+                const k0 = Math.floor((-iW / S3 - phaseD) / bStep);
+                for (let k = k0; ; k++) {
+                    const y0 = iTop + phaseD + k * bStep;
+                    if (y0 > iTop + iH) break;
+                    for (let m = 0; ; m++) {
+                        const x1 = iLeft + m * (step / 2);
+                        if (x1 > iLeft + iW + slatPxHalf) break;
+                        const x2 = iLeft + (m + 1) * (step / 2);
+                        const y1 = y0 + m * (size / 2);
+                        const y2 = y0 + (m + 1) * (size / 2);
+                        const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+                        const lineKey = makeLineKey(mx, my, drNorm);
+                        const segKey  = `${d}:dr:${k}:${m}`;
+                        lastSegMap.set(segKey, { cx: x1, cy: y1, ex: x2, ey: y2, mx, my, normAngle: drNorm, lineKey });
+                        lastNodeList.push({ cx: x1, cy: y1 }, { cx: x2, cy: y2 });
+                        if (deletedSegs.has(segKey)) continue;
+                        ctx.beginPath();
+                        ctx.moveTo(x1, y1);
+                        ctx.lineTo(x2, y2);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            // ↗ 사선살 (slope -1/√3) — 셀 단위 세그먼트
             const urNorm = 5 * Math.PI / 6;
             {
-                const k0 = Math.floor(-phase / bStep);
+                const k0 = Math.floor(-phaseU / bStep);
                 for (let k = k0; ; k++) {
-                    const y0 = iTop + phase + k * bStep;
+                    const y0 = iTop + phaseU + k * bStep;
                     if (y0 > iTop + iH + iW / S3) break;
-                    const x1 = iLeft, y1 = y0, x2 = iLeft + iW, y2 = y0 - iW / S3;
-                    const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
-                    const lineKey = makeLineKey(mx, my, urNorm);
-                    const segKey  = `${d}:ur:${k}`;
-                    lastSegMap.set(segKey, { cx: x1, cy: y1, ex: x2, ey: y2, mx, my, normAngle: urNorm, lineKey });
-                    lastNodeList.push({ cx: x1, cy: y1 }, { cx: x2, cy: y2 });
-                    if (deletedSegs.has(segKey)) continue;
-                    ctx.beginPath();
-                    ctx.moveTo(x1, y1);
-                    ctx.lineTo(x2, y2);
-                    ctx.stroke();
+                    for (let m = 0; ; m++) {
+                        const x1 = iLeft + m * (step / 2);
+                        if (x1 > iLeft + iW + slatPxHalf) break;
+                        const x2 = iLeft + (m + 1) * (step / 2);
+                        const y1 = y0 - m * (size / 2);
+                        const y2 = y0 - (m + 1) * (size / 2);
+                        const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+                        const lineKey = makeLineKey(mx, my, urNorm);
+                        const segKey  = `${d}:ur:${k}:${m}`;
+                        lastSegMap.set(segKey, { cx: x1, cy: y1, ex: x2, ey: y2, mx, my, normAngle: urNorm, lineKey });
+                        lastNodeList.push({ cx: x1, cy: y1 }, { cx: x2, cy: y2 });
+                        if (deletedSegs.has(segKey)) continue;
+                        ctx.beginPath();
+                        ctx.moveTo(x1, y1);
+                        ctx.lineTo(x2, y2);
+                        ctx.stroke();
+                    }
                 }
             }
 

@@ -482,6 +482,12 @@ body { font-weight: 900; }
     background-position: center;
 }
 
+.service-card--hexagon {
+    background-image: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.25)), url(https://i.pinimg.com/736x/0f/1a/f2/0f1af248ae79652e0b6b388b7ddb871d.jpg);
+    background-size: cover;
+    background-position: center;
+}
+
 .custom-badge {
     background: linear-gradient(135deg, #6366f1, #8b5cf6);
     padding: 8px 15px;
@@ -519,6 +525,14 @@ body { font-weight: 900; }
 
 .pm-symbol-link:hover .pm-symbol-bar {
     fill: #cc2200;
+}
+
+.pm-symbol-stroke {
+    stroke: #ffffff;
+}
+
+.pm-symbol-link:hover .pm-symbol-stroke {
+    stroke: #cc2200;
 }
 
 /* VALUES GRID */

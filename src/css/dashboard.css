@@ -61,8 +61,24 @@ body {
 .db-section-icon {
     width: 28px;
     height: 28px;
-    color: var(--teal);
     flex-shrink: 0;
+}
+
+.db-card-engine-icon {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    color: #cc2200;
+}
+
+.db-card-engine-icon svg {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.5s cubic-bezier(.25, .46, .45, .94);
+}
+
+.db-card:hover .db-card-engine-icon svg {
+    transform: rotate(60deg);
 }
 
 .db-section-title {
@@ -205,6 +221,9 @@ body {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+    gap: 6px;
     margin-bottom: 6px;
 }
 

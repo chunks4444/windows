@@ -100,8 +100,12 @@ $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/collection/') !== false);
                     </a></li>
                     <li><a class="dropdown-item <?= $isHexagon ? 'active' : '' ?> d-flex align-items-center gap-2"
                            href="/src/engine/hexagon/hexagon.php">
-                        <svg width="27" height="27" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
-                            <polygon points="340,180 432,233 432,447 340,500 248,447 248,233" fill="none" stroke="currentColor" stroke-width="46" stroke-linejoin="round"/>
+                        <svg width="27" height="27" viewBox="0 0 680 680" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <polyline points="210,265 340,190 470,265" stroke="currentColor" stroke-width="32" stroke-linejoin="round" stroke-linecap="round"/>
+                            <line x1="210" y1="265" x2="210" y2="415" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
+                            <line x1="470" y1="265" x2="470" y2="415" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
+                            <line x1="210" y1="415" x2="340" y2="490" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
+                            <line x1="470" y1="415" x2="340" y2="490" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
                         </svg>
                         Hexagon Lattice
                     </a></li>

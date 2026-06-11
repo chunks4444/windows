@@ -68,7 +68,11 @@ const TYPE_CONFIG = {
         editorUrl: '/src/engine/hexagon/hexagon.php',
         titleKey: 'pmok_hexagon_current_title',
         icon: `<svg class="db-section-icon" viewBox="0 0 680 680" fill="none" xmlns="http://www.w3.org/2000/svg">
-                 <polygon points="340,180 432,233 432,340 340,393 248,340 248,233" fill="none" stroke="currentColor" stroke-width="46" stroke-linejoin="round"/>
+                 <polyline points="210,265 340,190 470,265" stroke="currentColor" stroke-width="32" stroke-linejoin="round" stroke-linecap="round"/>
+                 <line x1="210" y1="265" x2="210" y2="415" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
+                 <line x1="470" y1="265" x2="470" y2="415" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
+                 <line x1="210" y1="415" x2="340" y2="490" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
+                 <line x1="470" y1="415" x2="340" y2="490" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
                </svg>`,
         newUrl: '/src/engine/hexagon/hexagon.php',
     },
@@ -124,7 +128,10 @@ function renderCard(d) {
             </button>
             <div class="db-thumb">${thumb}</div>
             <div class="db-card-body">
-                <div class="db-card-title">${escHtml(d.title)}</div>
+                <div class="db-card-title">
+                    ${cfg.icon ? `<span class="db-card-engine-icon">${cfg.icon}</span>` : ''}
+                    ${escHtml(d.title)}
+                </div>
                 <div class="db-card-meta">
                     <div class="db-card-meta-row">
                         <i class="bi bi-clock"></i>

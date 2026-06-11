@@ -41,7 +41,7 @@ if (!$rotateOn) {
     $innerW   = $outerW - 2 * $frameW;
     $stepX    = $cols > 0 ? $innerW / $cols : 0;
     $rowH     = $stepX * $SQRT3 / 2;
-    $colStepR = $cols > 0 ? ($innerW + $slatT) / $cols : 0;
+    $colStepR = $cols > 0 ? $innerW / $cols : 0;
     $rowHR    = $colStepR > 0 ? $colStepR * 2 / $SQRT3 : 0;
     $availH2  = $outerH - 2 * $frameH - $effectivePungpanInput;
     $rows     = $rowHR > 0 ? max(2, (int)($availH2 / $rowHR) + 1) : 2;
