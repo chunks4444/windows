@@ -63,6 +63,15 @@ const TYPE_CONFIG = {
                </svg>`,
         newUrl: '/src/engine/diamond/diamond.php',
     },
+    'hexagon': {
+        label: 'Hexagon Lattice',
+        editorUrl: '/src/engine/hexagon/hexagon.php',
+        titleKey: 'pmok_hexagon_current_title',
+        icon: `<svg class="db-section-icon" viewBox="0 0 680 680" fill="none" xmlns="http://www.w3.org/2000/svg">
+                 <polygon points="340,180 432,233 432,340 340,393 248,340 248,233" fill="none" stroke="currentColor" stroke-width="46" stroke-linejoin="round"/>
+               </svg>`,
+        newUrl: '/src/engine/hexagon/hexagon.php',
+    },
 };
 
 function fmtDate(ts) {

@@ -21,6 +21,7 @@ $isCross      = (stripos($_SERVER['PHP_SELF'], '/cross/') !== false);
 $isClassic    = (stripos($_SERVER['PHP_SELF'], '/classic/') !== false);
 $isDiamond  = (!$isSquare && !$isCross && !$isClassic && stripos($currentFile, 'diamond') !== false);
 $isTriangle  = (stripos($currentFile, 'triangle') !== false);
+$isHexagon   = (stripos($_SERVER['PHP_SELF'], '/hexagon/') !== false);
 $isIndex      = ($currentFile === 'index.php' || $_SERVER['PHP_SELF'] === '/');
 $isAbout      = (strpos($_SERVER['PHP_SELF'], '/company/') !== false);
 $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/collection/') !== false);
@@ -96,6 +97,13 @@ $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/collection/') !== false);
                             <g transform="rotate(120 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
                         </svg>
                         Triangle Lattice
+                    </a></li>
+                    <li><a class="dropdown-item <?= $isHexagon ? 'active' : '' ?> d-flex align-items-center gap-2"
+                           href="/src/engine/hexagon/hexagon.php">
+                        <svg width="27" height="27" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+                            <polygon points="340,180 432,233 432,447 340,500 248,447 248,233" fill="none" stroke="currentColor" stroke-width="46" stroke-linejoin="round"/>
+                        </svg>
+                        Hexagon Lattice
                     </a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item d-flex align-items-center gap-2" href="/src/mypage/dashboard.php">
