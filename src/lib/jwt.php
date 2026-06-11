@@ -1,5 +1,5 @@
 <?php
-define('JWT_SECRET', 'pmok-windows-secret-2024-!@#$%');
+define('JWT_SECRET', getenv('PMOK_JWT_SECRET') ?: 'pmok-windows-secret-2024-!@#$%');
 define('JWT_EXPIRE', 60 * 60 * 24 * 3); // 3일
 
 function jwt_encode(array $payload): string {

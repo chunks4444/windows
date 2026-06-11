@@ -1,7 +1,6 @@
 <?php
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Headers: Content-Type');
+require_once __DIR__ . '/../../lib/cors.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') exit;
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -12,6 +11,15 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 require_once __DIR__ . '/../../lib/db.php';
 require_once __DIR__ . '/../../lib/jwt.php';
+require_once __DIR__ . '/../../lib/logger.php';
+require_once __DIR__ . '/../../lib/rate_limit.php';
+
+$ip = pm_get_ip();
+if (!rate_limit_check('login:' . $ip, 10, 900)) {
+    http_response_code(429);
+    echo json_encode(['error' => '로그인 시도가 너무 많습니다. 15분 후 다시 시도해주세요.']);
+    exit;
+}
 
 $body     = json_decode(file_get_contents('php://input'), true);
 $email    = trim($body['email'] ?? '');
@@ -41,8 +49,6 @@ try {
         exit;
     }
 
-    require_once __DIR__ . '/../../lib/logger.php';
-    $ip = pm_get_ip();
     $pdo->prepare('UPDATE users SET last_login_at = NOW(), last_login_ip = ? WHERE id = ?')->execute([$ip, $user['id']]);
 
     $token = jwt_encode([
@@ -57,6 +63,7 @@ try {
         'expires'  => time() + JWT_EXPIRE,
         'path'     => '/',
         'httponly' => true,
+        'secure'   => true,
         'samesite' => 'Lax',
     ]);
 

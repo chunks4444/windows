@@ -1,2 +1,3 @@
 RewriteEngine On
 RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+SetEnv PMOK_JWT_SECRET "새로운-강력한-시크릿"

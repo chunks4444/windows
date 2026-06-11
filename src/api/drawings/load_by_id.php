@@ -13,6 +13,7 @@ $stmt = $pdo->prepare(
     'SELECT d.type, v.params, v.saved_at
      FROM drawings d
      JOIN drawing_versions v ON v.drawing_id = d.id
+     JOIN library_patterns lp ON lp.drawing_id = d.id AND lp.is_active = 1
      WHERE d.id = ?
      ORDER BY v.saved_at DESC
      LIMIT 1'

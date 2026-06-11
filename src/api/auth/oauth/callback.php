@@ -68,6 +68,7 @@ setcookie('pmok_auth', $token, [
     'expires'  => time() + JWT_EXPIRE,
     'path'     => '/',
     'httponly' => true,
+    'secure'   => true,
     'samesite' => 'Lax',
 ]);
 

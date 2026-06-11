@@ -1,7 +1,6 @@
 <?php
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Headers: Content-Type, Authorization');
+require_once __DIR__ . '/../../lib/cors.php';
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') exit;
 
 require_once __DIR__ . '/../../lib/jwt.php';

@@ -1,7 +1,6 @@
 <?php
 header('Content-Type: application/json');
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Headers: Content-Type');
+require_once __DIR__ . '/../../lib/cors.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') exit;
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -11,6 +10,13 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 require_once __DIR__ . '/../../lib/db.php';
 require_once __DIR__ . '/../../lib/jwt.php';
 require_once __DIR__ . '/../../lib/mailer.php';
+require_once __DIR__ . '/../../lib/logger.php';
+require_once __DIR__ . '/../../lib/rate_limit.php';
+
+$ip = pm_get_ip();
+if (!rate_limit_check('register:' . $ip, 5, 3600)) {
+    http_response_code(429); echo json_encode(['error' => '잠시 후 다시 시도해주세요.']); exit;
+}
 
 $body     = json_decode(file_get_contents('php://input'), true);
 $email    = trim($body['email'] ?? '');
@@ -42,6 +48,7 @@ try {
         'expires'  => time() + JWT_EXPIRE,
         'path'     => '/',
         'httponly' => true,
+        'secure'   => true,
         'samesite' => 'Lax',
     ]);
 
