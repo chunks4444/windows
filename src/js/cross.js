@@ -12,6 +12,9 @@
 
     let selectedFrameColor = '#28241e';
     let selectedSlatColor  = '#28241e';
+    let faceColorMap       = null;
+    let facePaintMode      = false;
+    let facePaintIsDown    = false;
 
     // ── 라인 편집 상태 ──────────────────────────────
     let deletedSegs  = new Set();
@@ -56,6 +59,9 @@
         hex => { selectedFrameColor = hex; }, selectedFrameColor);
     const slatColorPicker  = buildColorPopup('slatPopup',  'slatPreviewDot',  'slatPreviewName',  'slatPreviewBtn',
         hex => { selectedSlatColor  = hex; }, selectedSlatColor);
+    const faceColorUI = buildFaceColorUI(
+        () => { faceColorMap = null; draw(); }
+    );
     const canvas = document.getElementById('doorCanvas');
     const ctx = canvas.getContext('2d');
     const container = document.getElementById('canvasContainer');
@@ -691,6 +697,8 @@ async function draw() {
         );
         ctx.clip();
 
+        // 면 채색 자리 (살 선 아래 — 비워둠, 살 위에서 그림)
+
         {
             // ====================================
             // 45° 대각선 — 셀 중심에서 반씩 분리, 한 면씩 삭제 가능
@@ -767,6 +775,32 @@ async function draw() {
 
         // 클리핑 해제
         ctx.restore();
+
+        // 코너 다이아몬드 면 채색 — 살 선 위에, cellW/2 크기로 X교차점과 분리
+        if (faceColorMap) {
+            const stepV  = geo.cellW + geo.slatV;
+            const stepH_ = geo.cellH + geo.slatH;
+            const hW = geo.cellW / 2;
+            const hH = geo.cellH / 2;
+            for (let row = 0; row <= geo.rowsInt - 2; row++) {
+                for (let col = 0; col <= geo.cols - 2; col++) {
+                    const _fc = faceColorMap[`corner:${col}:${row}`] ?? null;
+                    if (!_fc) continue;
+                    const kx0 = geo.frameW    + col * stepV  + geo.cellW / 2;
+                    const ky0 = geo.frameHTop + row * stepH_ + geo.cellH / 2;
+                    const xC  = kx0 + stepV / 2;
+                    const yC  = ky0 + stepH_ / 2;
+                    ctx.fillStyle = _fc;
+                    ctx.beginPath();
+                    ctx.moveTo(toCanvasX(xC),      toCanvasY(yC - hH));
+                    ctx.lineTo(toCanvasX(xC + hW), toCanvasY(yC));
+                    ctx.lineTo(toCanvasX(xC),      toCanvasY(yC + hH));
+                    ctx.lineTo(toCanvasX(xC - hW), toCanvasY(yC));
+                    ctx.closePath();
+                    ctx.fill();
+                }
+            }
+        }
 
     }   // ← 1차 루프 끝
 
@@ -1278,6 +1312,12 @@ async function draw() {
     container.addEventListener('mousedown', function(e) {
         if (e.target.closest('.canvas-controls')) return;
         if (lineEditMode) { handleEditClick(e); return; }
+        if (facePaintMode) {
+            facePaintIsDown = true;
+            const coord = screenToCtxCoord(e.clientX, e.clientY);
+            paintFaceCell(coord.x, coord.y, e.button === 2);
+            return;
+        }
         const cornerHit = getHitOverlayCorner(e.clientX, e.clientY);
         const corner = cornerHit === 'center' ? 'move' : cornerHit;
         const sp = () => ({
@@ -1313,6 +1353,11 @@ async function draw() {
         startY = e.clientY - panY;
     });
     window.addEventListener('mousemove', function(e) {
+        if (facePaintIsDown && facePaintMode) {
+            const coord = screenToCtxCoord(e.clientX, e.clientY);
+            paintFaceCell(coord.x, coord.y, false);
+            return;
+        }
         if (overlayDrag) {
             const dcx = (e.clientX - overlayDrag.startMx) / scaleFactor;
             const dcy = (e.clientY - overlayDrag.startMy) / scaleFactor;
@@ -1370,6 +1415,7 @@ async function draw() {
         draw();
     });
     window.addEventListener('mouseup', function() {
+        facePaintIsDown = false;
         if (overlayDrag) {
             overlayDrag = null;
             handlesVisible = false;
@@ -1491,6 +1537,51 @@ async function draw() {
         const t = Math.max(0, Math.min(1, ((px - cx) * dx + (py - cy) * dy) / lenSq));
         return Math.hypot(px - cx - t * dx, py - cy - t * dy);
     }
+
+    function hitTestCell(cx, cy) {
+        if (!geo.cols || !lastBaseScale) return null;
+        if (geo.cols < 2 || geo.rowsInt < 2) return null;
+        const relX = cx - lastILeft, relY = cy - lastITop;
+        if (relX < 0 || relY < 0 || relX > lastIW || relY > lastIH) return null;
+
+        const rx = relX / lastBaseScale;
+        const ry = relY / lastBaseScale;
+        const stepV  = geo.cellW + geo.slatV;
+        const stepH_ = geo.cellH + geo.slatH;
+
+        // 항상 가장 가까운 코너 다이아몬드(큰 흰 마름모 공간)를 반환
+        const offX = geo.cellW + geo.slatV / 2;
+        const offY = geo.cellH + geo.slatH / 2;
+        const col_k = Math.max(0, Math.min(geo.cols    - 2, Math.round((rx - offX) / stepV)));
+        const row_k = Math.max(0, Math.min(geo.rowsInt - 2, Math.round((ry - offY) / stepH_)));
+        return `corner:${col_k}:${row_k}`;
+    }
+
+    function paintFaceCell(cx, cy, isErase) {
+        const key = hitTestCell(cx, cy);
+        if (!key) return;
+        if (isErase) {
+            if (faceColorMap) {
+                delete faceColorMap[key];
+                if (!Object.keys(faceColorMap).length) faceColorMap = null;
+            }
+        } else {
+            if (!faceColorMap) faceColorMap = {};
+            faceColorMap[key] = faceColorUI.getCurrentHex();
+        }
+        faceColorUI.updateClearBtn(!!faceColorMap);
+        draw();
+    }
+
+    const btnFacePaint = document.getElementById('btnFacePaint');
+    if (btnFacePaint) {
+        btnFacePaint.addEventListener('click', () => {
+            facePaintMode = !facePaintMode;
+            btnFacePaint.classList.toggle('cv-btn-active', facePaintMode);
+            canvas.style.cursor = facePaintMode ? 'crosshair' : (panMode ? 'grab' : 'default');
+        });
+    }
+    canvas.addEventListener('contextmenu', e => { if (facePaintMode) e.preventDefault(); });
 
     function handleEditClick(e) {
         const coord = screenToCtxCoord(e.clientX, e.clientY);
@@ -1707,6 +1798,8 @@ async function draw() {
             finish:    document.getElementById('txtFinish').value,
             frameColor: selectedFrameColor,
             slatColor:  selectedSlatColor,
+            faceBrushColor: faceColorUI.getCurrentHex(),
+            faceColorMap:   faceColorMap ? { ...faceColorMap } : null,
             panX, panY, scaleFactor,
             _savedView: true,
             placementMode,
@@ -1742,9 +1835,13 @@ async function draw() {
         document.getElementById('btnScale').classList.toggle('cv-btn-active', placementMode);
         frameColorPicker.selectColor(p.frameColor);
         slatColorPicker.selectColor(p.slatColor);
+        faceColorMap = p.faceColorMap || null;
+        faceColorUI.restoreColor(p.faceBrushColor || null);
+        faceColorUI.updateClearBtn(!!faceColorMap);
         updateDoorCountOptions();
         draw();
     }
+
 
     function renderVerList() {
         const list = document.getElementById('verList');

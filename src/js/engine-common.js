@@ -169,6 +169,33 @@
         return { selectColor };
     }
 
+    function buildFaceColorUI(onClear) {
+        const clearBtn = document.getElementById('btnFaceClear');
+
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => {
+                if (clearBtn) clearBtn.style.display = 'none';
+                onClear();
+            });
+        }
+
+        function getCurrentHex() {
+            const inp = document.getElementById('faceColorInput');
+            return inp ? inp.value : '#c8102e';
+        }
+
+        function updateClearBtn(hasColors) {
+            if (clearBtn) clearBtn.style.display = hasColors ? '' : 'none';
+        }
+
+        function restoreColor(hex) {
+            const inp = document.getElementById('faceColorInput');
+            if (inp && hex) inp.value = hex;
+        }
+
+        return { getCurrentHex, updateClearBtn, restoreColor };
+    }
+
     function closeDrawingManager() {
         document.getElementById('dmBackdrop').classList.remove('pm-active');
     }

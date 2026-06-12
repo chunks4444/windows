@@ -11,6 +11,9 @@
 
     let selectedFrameColor = '#28241e';
     let selectedSlatColor  = '#28241e';
+    let faceColorMap       = null;
+    let facePaintMode      = false;
+    let facePaintIsDown    = false;
 
     let rotateOn  = true;
 
@@ -42,6 +45,9 @@
         hex => { selectedFrameColor = hex; }, selectedFrameColor);
     const slatColorPicker  = buildColorPopup('slatPopup',  'slatPreviewDot',  'slatPreviewName',  'slatPreviewBtn',
         hex => { selectedSlatColor  = hex; }, selectedSlatColor);
+    const faceColorUI = buildFaceColorUI(
+        () => { faceColorMap = null; draw(); }
+    );
     const canvas = document.getElementById('doorCanvas');
     const ctx = canvas.getContext('2d');
     const container = document.getElementById('canvasContainer');
@@ -748,6 +754,14 @@ async function draw() {
                     const offX = (rIdx % 2 === 0) ? width / 2 : 0;
                     const cx = x + offX, cy = y;
                     for (let i = 0; i < 6; i++) {
+                        const _fc = faceColorMap ? (faceColorMap[`tri:${rIdx}:${cIdx}:${i}`] ?? null) : null;
+                        if (_fc) {
+                            const a1 = i * Math.PI / 3, a2 = (i + 1) * Math.PI / 3;
+                            ctx.beginPath(); ctx.moveTo(cx, cy);
+                            ctx.lineTo(cx + size * Math.cos(a1), cy + size * Math.sin(a1));
+                            ctx.lineTo(cx + size * Math.cos(a2), cy + size * Math.sin(a2));
+                            ctx.closePath(); ctx.fillStyle = _fc; ctx.fill();
+                        }
                         const angle = i * Math.PI / 3;
                         const ex = cx + size * Math.cos(angle);
                         const ey = cy + size * Math.sin(angle);
@@ -787,6 +801,14 @@ async function draw() {
                     const offY = (cIdx % 2 === 0) ? width / 2 : 0;
                     const cx = x, cy = y + offY;
                     for (let i = 0; i < 6; i++) {
+                        const _fc = faceColorMap ? (faceColorMap[`tri:${cIdx}:${rowIdx}:${i}`] ?? null) : null;
+                        if (_fc) {
+                            const a1 = i * Math.PI / 3 + Math.PI / 2, a2 = (i + 1) * Math.PI / 3 + Math.PI / 2;
+                            ctx.beginPath(); ctx.moveTo(cx, cy);
+                            ctx.lineTo(cx + size * Math.cos(a1), cy + size * Math.sin(a1));
+                            ctx.lineTo(cx + size * Math.cos(a2), cy + size * Math.sin(a2));
+                            ctx.closePath(); ctx.fillStyle = _fc; ctx.fill();
+                        }
                         const angle = i * Math.PI / 3 + Math.PI / 2;
                         const ex = cx + size * Math.cos(angle);
                         const ey = cy + size * Math.sin(angle);
@@ -1279,6 +1301,68 @@ async function draw() {
         return (best && bestDist < lastCellSize) ? best : null;
     }
 
+    function hitTestCell(px, py) {
+        if (!lastBaseScale || !geo.cols) return null;
+        const iLeft = lastILeft, iTop = lastITop, iW = lastIW, iH = lastIH;
+        const slatPx = lastSlatPx;
+        const S3 = Math.sqrt(3);
+        if (!rotateOn) {
+            const size    = iW / (geo.cols * S3);
+            const width   = size * S3;
+            const rowStep = size * 1.5;
+            const startY  = iTop - slatPx / 2;
+            const rIdx    = Math.round((py - (startY - rowStep)) / rowStep);
+            const offX    = (rIdx % 2 === 0) ? width / 2 : 0;
+            const cIdx    = Math.round((px - (iLeft - width) - offX) / width);
+            const hcy     = startY - rowStep + rIdx * rowStep;
+            const hcx     = iLeft - width + cIdx * width + offX;
+            if (Math.hypot(px - hcx, py - hcy) > size) return null;
+            const angle   = ((Math.atan2(py - hcy, px - hcx) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+            const wedge   = Math.floor(angle / (Math.PI / 3)) % 6;
+            return `tri:${rIdx}:${cIdx}:${wedge}`;
+        } else {
+            const size    = (iW + slatPx) / (geo.cols * 1.5);
+            const width   = size * S3;
+            const colStep = size * 1.5;
+            const startX  = iLeft - slatPx / 2;
+            const cIdx    = Math.round((px - (startX - colStep)) / colStep);
+            const offY    = (cIdx % 2 === 0) ? width / 2 : 0;
+            const rowIdx  = Math.round((py - (iTop - width) - offY) / width);
+            const hcx     = startX - colStep + cIdx * colStep;
+            const hcy     = iTop - width + rowIdx * width + offY;
+            if (Math.hypot(px - hcx, py - hcy) > size) return null;
+            const angle   = ((Math.atan2(py - hcy, px - hcx) - Math.PI / 2 + 2 * Math.PI) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+            const wedge   = Math.floor(angle / (Math.PI / 3)) % 6;
+            return `tri:${cIdx}:${rowIdx}:${wedge}`;
+        }
+    }
+
+    function paintFaceCell(cx, cy, isErase) {
+        const key = hitTestCell(cx, cy);
+        if (!key) return;
+        if (isErase) {
+            if (faceColorMap) {
+                delete faceColorMap[key];
+                if (!Object.keys(faceColorMap).length) faceColorMap = null;
+            }
+        } else {
+            if (!faceColorMap) faceColorMap = {};
+            faceColorMap[key] = faceColorUI.getCurrentHex();
+        }
+        faceColorUI.updateClearBtn(!!faceColorMap);
+        draw();
+    }
+
+    const btnFacePaint = document.getElementById('btnFacePaint');
+    if (btnFacePaint) {
+        btnFacePaint.addEventListener('click', () => {
+            facePaintMode = !facePaintMode;
+            btnFacePaint.classList.toggle('cv-btn-active', facePaintMode);
+            canvas.style.cursor = facePaintMode ? 'crosshair' : (panMode ? 'grab' : 'default');
+        });
+    }
+    canvas.addEventListener('contextmenu', e => { if (facePaintMode) e.preventDefault(); });
+
     function handleEditClick(e) {
         const coord = screenToCtxCoord(e.clientX, e.clientY);
 
@@ -1336,6 +1420,12 @@ async function draw() {
     container.addEventListener('mousedown', function(e) {
         if (e.target.closest('.canvas-controls')) return;
         if (lineEditMode) { handleEditClick(e); return; }
+        if (facePaintMode) {
+            facePaintIsDown = true;
+            const coord = screenToCtxCoord(e.clientX, e.clientY);
+            paintFaceCell(coord.x, coord.y, e.button === 2);
+            return;
+        }
         const cornerHit = getHitOverlayCorner(e.clientX, e.clientY);
         const corner = cornerHit === 'center' ? 'move' : cornerHit;
         const sp = () => ({
@@ -1371,6 +1461,11 @@ async function draw() {
         startY = e.clientY - panY;
     });
     window.addEventListener('mousemove', function(e) {
+        if (facePaintIsDown && facePaintMode) {
+            const coord = screenToCtxCoord(e.clientX, e.clientY);
+            paintFaceCell(coord.x, coord.y, false);
+            return;
+        }
         if (overlayDrag) {
             const dcx = (e.clientX - overlayDrag.startMx) / scaleFactor;
             const dcy = (e.clientY - overlayDrag.startMy) / scaleFactor;
@@ -1426,6 +1521,7 @@ async function draw() {
         draw();
     });
     window.addEventListener('mouseup', function() {
+        facePaintIsDown = false;
         if (overlayDrag) {
             overlayDrag = null;
             handlesVisible = false;
@@ -1733,6 +1829,8 @@ async function draw() {
             finish:    document.getElementById('txtFinish').value,
             frameColor: selectedFrameColor,
             slatColor:  selectedSlatColor,
+            faceBrushColor: faceColorUI.getCurrentHex(),
+            faceColorMap:   faceColorMap ? { ...faceColorMap } : null,
             panX, panY, scaleFactor,
             _savedView: true,
             placementMode,
@@ -1770,9 +1868,13 @@ async function draw() {
         document.getElementById('btnScale').classList.toggle('cv-btn-active', placementMode);
         frameColorPicker.selectColor(p.frameColor);
         slatColorPicker.selectColor(p.slatColor);
+        faceColorMap = p.faceColorMap || null;
+        faceColorUI.restoreColor(p.faceBrushColor || null);
+        faceColorUI.updateClearBtn(!!faceColorMap);
         updateDoorCountOptions();
         draw();
     }
+
 
     function renderVerList() {
         const list = document.getElementById('verList');

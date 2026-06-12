@@ -12,6 +12,9 @@
 
     let selectedFrameColor = '#28241e';
     let selectedSlatColor  = '#28241e';
+    let faceColorMap       = null;
+    let facePaintMode      = false;
+    let facePaintIsDown    = false;
 
     // ── 라인 편집 상태 ──────────────────────────────
     let deletedSegs  = new Set();
@@ -57,6 +60,9 @@
         hex => { selectedFrameColor = hex; }, selectedFrameColor);
     const slatColorPicker  = buildColorPopup('slatPopup',  'slatPreviewDot',  'slatPreviewName',  'slatPreviewBtn',
         hex => { selectedSlatColor  = hex; }, selectedSlatColor);
+    const faceColorUI = buildFaceColorUI(
+        () => { faceColorMap = null; draw(); }
+    );
     const canvas = document.getElementById('doorCanvas');
     const ctx = canvas.getContext('2d');
     const container = document.getElementById('canvasContainer');
@@ -787,6 +793,18 @@ async function draw() {
                 }
             }
         } else {
+            // ── 면 채색 (오른쪽 세로살 + 아래쪽 가로살 포함 — 살은 위에 덮여 그려지므로 지운 살 위치만 색상이 보임)
+            if (faceColorMap) {
+                const stepV = geo.cellW + geo.slatV, stepH = geo.cellH + geo.slatH;
+                for (let row = 0; row < geo.rowsInt; row++) {
+                    for (let col = 0; col < geo.cols; col++) {
+                        const _fc = faceColorMap[`cell:${col}:${row}`] ?? null;
+                        if (!_fc) continue;
+                        ctx.fillStyle = _fc;
+                        ctx.fillRect(toCanvasX(geo.frameW + col * stepV), toCanvasY(geo.frameHTop + row * stepH), stepV * baseScale, stepH * baseScale);
+                    }
+                }
+            }
             // ── 정자살 균등 격자 ─────────────────────────
             for (let i = 1; i < geo.cols; i++) {
 
@@ -1343,6 +1361,12 @@ async function draw() {
     container.addEventListener('mousedown', function(e) {
         if (e.target.closest('.canvas-controls')) return;
         if (lineEditMode) { handleEditClick(e); return; }
+        if (facePaintMode) {
+            facePaintIsDown = true;
+            const coord = screenToCtxCoord(e.clientX, e.clientY);
+            paintFaceCell(coord.x, coord.y, e.button === 2);
+            return;
+        }
         const cornerHit = getHitOverlayCorner(e.clientX, e.clientY);
         const corner = cornerHit === 'center' ? 'move' : cornerHit;
         const sp = () => ({
@@ -1378,6 +1402,11 @@ async function draw() {
         startY = e.clientY - panY;
     });
     window.addEventListener('mousemove', function(e) {
+        if (facePaintIsDown && facePaintMode) {
+            const coord = screenToCtxCoord(e.clientX, e.clientY);
+            paintFaceCell(coord.x, coord.y, false);
+            return;
+        }
         if (overlayDrag) {
             const dcx = (e.clientX - overlayDrag.startMx) / scaleFactor;
             const dcy = (e.clientY - overlayDrag.startMy) / scaleFactor;
@@ -1435,6 +1464,7 @@ async function draw() {
         draw();
     });
     window.addEventListener('mouseup', function() {
+        facePaintIsDown = false;
         if (overlayDrag) {
             overlayDrag = null;
             handlesVisible = false;
@@ -1543,6 +1573,44 @@ async function draw() {
         slatColorPicker.selectColor(DEFAULT_SLAT_COLOR);
         draw();
     });
+
+    function hitTestCell(cx, cy) {
+        if (!geo.cols || !lastBaseScale) return null;
+        const relX = cx - lastILeft, relY = cy - lastITop;
+        if (relX < 0 || relY < 0 || relX > lastIW || relY > lastIH) return null;
+        const stepVpx = (geo.cellW + geo.slatV) * lastBaseScale;
+        const stepHpx = (geo.cellH + geo.slatH) * lastBaseScale;
+        const col = Math.floor(relX / stepVpx);
+        const row = Math.floor(relY / stepHpx);
+        if (col < 0 || col >= geo.cols || row < 0 || row >= geo.rowsInt) return null;
+        return `cell:${col}:${row}`;
+    }
+
+    function paintFaceCell(cx, cy, isErase) {
+        const key = hitTestCell(cx, cy);
+        if (!key) return;
+        if (isErase) {
+            if (faceColorMap) {
+                delete faceColorMap[key];
+                if (!Object.keys(faceColorMap).length) faceColorMap = null;
+            }
+        } else {
+            if (!faceColorMap) faceColorMap = {};
+            faceColorMap[key] = faceColorUI.getCurrentHex();
+        }
+        faceColorUI.updateClearBtn(!!faceColorMap);
+        draw();
+    }
+
+    const btnFacePaint = document.getElementById('btnFacePaint');
+    if (btnFacePaint) {
+        btnFacePaint.addEventListener('click', () => {
+            facePaintMode = !facePaintMode;
+            btnFacePaint.classList.toggle('cv-btn-active', facePaintMode);
+            canvas.style.cursor = facePaintMode ? 'crosshair' : (panMode ? 'grab' : 'default');
+        });
+    }
+    canvas.addEventListener('contextmenu', e => { if (facePaintMode) e.preventDefault(); });
 
     // ── 편집 버튼 ──────────────────────────────────
     const CURSOR_ERASER = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Crect x='5' y='10' width='14' height='9' rx='2' fill='%23fff' stroke='%23555' stroke-width='1.5'/%3E%3Crect x='5' y='10' width='6' height='9' rx='0' fill='%23f87171' stroke='none'/%3E%3Crect x='5' y='10' width='6' height='9' rx='0' fill='none' stroke='%23555' stroke-width='1.5'/%3E%3Cline x1='5' y1='19' x2='19' y2='19' stroke='%23555' stroke-width='1.5'/%3E%3C/svg%3E") 4 20, crosshair`;
@@ -1777,6 +1845,8 @@ async function draw() {
             finish:    document.getElementById('txtFinish').value,
             frameColor: selectedFrameColor,
             slatColor:  selectedSlatColor,
+            faceBrushColor: faceColorUI.getCurrentHex(),
+            faceColorMap:   faceColorMap ? { ...faceColorMap } : null,
             panX, panY, scaleFactor,
             _savedView: true,
             placementMode,
@@ -1811,6 +1881,9 @@ async function draw() {
         document.getElementById('btnScale').classList.toggle('cv-btn-active', placementMode);
         frameColorPicker.selectColor(p.frameColor);
         slatColorPicker.selectColor(p.slatColor);
+        faceColorMap = p.faceColorMap || null;
+        faceColorUI.restoreColor(p.faceBrushColor || null);
+        faceColorUI.updateClearBtn(!!faceColorMap);
         mondrianLayout = p.mondrianLayout || null;
         _updateMondrianBtn();
         deletedSegs  = new Set(p.deletedSegs || []);
@@ -1819,6 +1892,7 @@ async function draw() {
         updateDoorCountOptions();
         draw();
     }
+
 
     function renderVerList() {
         const list = document.getElementById('verList');

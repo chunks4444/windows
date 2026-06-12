@@ -461,6 +461,14 @@ header('Pragma: no-cache');
                             </div>
                         </div>
                     </div>
+                    <div style="margin-top:8px;">
+                        <div class="color-label" style="margin-bottom:4px;">면</div>
+                        <div style="display:flex;gap:6px;align-items:center;">
+                            <input type="color" id="faceColorInput" value="#c8102e" style="width:30px;height:28px;padding:2px;border:1px solid var(--border);border-radius:4px;cursor:pointer;flex-shrink:0;">
+                            <button id="btnFacePaint" type="button" class="sb-select" style="cursor:pointer;flex:1;font-size:11px;">칠하기</button>
+                            <button id="btnFaceClear" type="button" class="sb-select" style="cursor:pointer;flex-shrink:0;padding:0 8px;font-size:11px;display:none;width:auto;">초기화</button>
+                        </div>
+                    </div>
                 </div>
                 <div class="sb-section">
                     <div class="sb-section-title" style="cursor:default;">배경 사진</div>

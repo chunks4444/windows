@@ -12,6 +12,9 @@
 
     let selectedFrameColor = '#28241e';
     let selectedSlatColor  = '#28241e';
+    let faceColorMap       = null;
+    let facePaintMode      = false;
+    let facePaintIsDown    = false;
 
     // ── 라인 편집 상태 ──────────────────────────────
     let deletedSegs  = new Set();
@@ -78,6 +81,9 @@
         hex => { selectedFrameColor = hex; }, selectedFrameColor);
     const slatColorPicker  = buildColorPopup('slatPopup',  'slatPreviewDot',  'slatPreviewName',  'slatPreviewBtn',
         hex => { selectedSlatColor  = hex; }, selectedSlatColor);
+    const faceColorUI = buildFaceColorUI(
+        () => { faceColorMap = null; draw(); }
+    );
     const canvas = document.getElementById('doorCanvas');
     const ctx = canvas.getContext('2d');
     const container = document.getElementById('canvasContainer');
@@ -731,6 +737,27 @@ async function draw() {
         );
         ctx.clip();
 
+        // 면 채색 (오른쪽 세로살 + 아래쪽 가로살 포함해서 그림 — 살은 위에 덮여 그려지므로 지운 살 위치만 색상이 보임)
+        if (faceColorMap) {
+            const stepV = geo.cellW + geo.slatV;
+            const cellBounds = getCellRowBounds(geo);
+            for (let row = 0; row < cellBounds.length; row++) {
+                const cb = cellBounds[row];
+                for (let col = 0; col < geo.cols; col++) {
+                    const _fc = faceColorMap[`cell:${col}:${row}`] ?? null;
+                    if (_fc) {
+                        ctx.fillStyle = _fc;
+                        ctx.fillRect(
+                            toCanvasX(geo.frameW + col * stepV),
+                            toCanvasY(geo.frameHTop + cb.y0),
+                            stepV * baseScale,
+                            (cb.y1 - cb.y0 + geo.slatH) * baseScale
+                        );
+                    }
+                }
+            }
+        }
+
         // ====================================
         // 세로살
         // ====================================
@@ -1294,6 +1321,12 @@ async function draw() {
     container.addEventListener('mousedown', function(e) {
         if (e.target.closest('.canvas-controls')) return;
         if (lineEditMode) { handleEditClick(e); return; }
+        if (facePaintMode) {
+            facePaintIsDown = true;
+            const coord = screenToCtxCoord(e.clientX, e.clientY);
+            paintFaceCell(coord.x, coord.y, e.button === 2);
+            return;
+        }
         const cornerHit = getHitOverlayCorner(e.clientX, e.clientY);
         const corner = cornerHit === 'center' ? 'move' : cornerHit;
         const sp = () => ({
@@ -1329,6 +1362,11 @@ async function draw() {
         startY = e.clientY - panY;
     });
     window.addEventListener('mousemove', function(e) {
+        if (facePaintIsDown && facePaintMode) {
+            const coord = screenToCtxCoord(e.clientX, e.clientY);
+            paintFaceCell(coord.x, coord.y, false);
+            return;
+        }
         if (overlayDrag) {
             const dcx = (e.clientX - overlayDrag.startMx) / scaleFactor;
             const dcy = (e.clientY - overlayDrag.startMy) / scaleFactor;
@@ -1402,6 +1440,7 @@ async function draw() {
         draw();
     });
     window.addEventListener('mouseup', function() {
+        facePaintIsDown = false;
         if (overlayDrag) {
             overlayDrag = null;
             handlesVisible = false;
@@ -1523,6 +1562,60 @@ async function draw() {
         const t = Math.max(0, Math.min(1, ((px - cx) * dx + (py - cy) * dy) / lenSq));
         return Math.hypot(px - cx - t * dx, py - cy - t * dy);
     }
+
+    function getCellRowBounds(g) {
+        const sortedBars = [...g.hBarYs].sort((a, b) => a - b);
+        const bounds = [];
+        let prev = 0;
+        for (const barY of sortedBars) {
+            const barTop = barY - g.slatH / 2;
+            if (barTop > prev + 0.5) bounds.push({ y0: prev, y1: barTop });
+            prev = barY + g.slatH / 2;
+        }
+        if (g.innerH > prev + 0.5) bounds.push({ y0: prev, y1: g.innerH });
+        return bounds;
+    }
+
+    function hitTestCell(cx, cy) {
+        if (!geo.cols || !lastBaseScale || !geo.hBarYs) return null;
+        const relX = cx - lastILeft, relY = cy - lastITop;
+        if (relX < 0 || relY < 0 || relX > lastIW || relY > lastIH) return null;
+        const stepVpx = (geo.cellW + geo.slatV) * lastBaseScale;
+        const col = Math.floor(relX / stepVpx);
+        if (col < 0 || col >= geo.cols) return null;
+        const relYmm = relY / lastBaseScale;
+        const cellBounds = getCellRowBounds(geo);
+        // 각 셀이 아래쪽 살 영역까지 커버 → 살 위치 클릭도 인접 셀로 매핑됨
+        const row = cellBounds.findIndex(b => relYmm >= b.y0 && relYmm < b.y1 + geo.slatH);
+        if (row < 0) return null;
+        return `cell:${col}:${row}`;
+    }
+
+    function paintFaceCell(cx, cy, isErase) {
+        const key = hitTestCell(cx, cy);
+        if (!key) return;
+        if (isErase) {
+            if (faceColorMap) {
+                delete faceColorMap[key];
+                if (!Object.keys(faceColorMap).length) faceColorMap = null;
+            }
+        } else {
+            if (!faceColorMap) faceColorMap = {};
+            faceColorMap[key] = faceColorUI.getCurrentHex();
+        }
+        faceColorUI.updateClearBtn(!!faceColorMap);
+        draw();
+    }
+
+    const btnFacePaint = document.getElementById('btnFacePaint');
+    if (btnFacePaint) {
+        btnFacePaint.addEventListener('click', () => {
+            facePaintMode = !facePaintMode;
+            btnFacePaint.classList.toggle('cv-btn-active', facePaintMode);
+            canvas.style.cursor = facePaintMode ? 'crosshair' : (panMode ? 'grab' : 'default');
+        });
+    }
+    canvas.addEventListener('contextmenu', e => { if (facePaintMode) e.preventDefault(); });
 
     function handleEditClick(e) {
         const coord = screenToCtxCoord(e.clientX, e.clientY);
@@ -1755,6 +1848,8 @@ async function draw() {
             finish:    document.getElementById('txtFinish').value,
             frameColor: selectedFrameColor,
             slatColor:  selectedSlatColor,
+            faceBrushColor: faceColorUI.getCurrentHex(),
+            faceColorMap:   faceColorMap ? { ...faceColorMap } : null,
             panX, panY, scaleFactor,
             _savedView: true,
             placementMode,
@@ -1794,9 +1889,13 @@ async function draw() {
         document.getElementById('btnScale').classList.toggle('cv-btn-active', placementMode);
         frameColorPicker.selectColor(p.frameColor);
         slatColorPicker.selectColor(p.slatColor);
+        faceColorMap = p.faceColorMap || null;
+        faceColorUI.restoreColor(p.faceBrushColor || null);
+        faceColorUI.updateClearBtn(!!faceColorMap);
         updateDoorCountOptions();
         draw();
     }
+
 
     function renderVerList() {
         const list = document.getElementById('verList');
