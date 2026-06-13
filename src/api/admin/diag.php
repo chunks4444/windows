@@ -27,6 +27,19 @@ try {
     $pdo = db();
     $pdo->query("SELECT 1 FROM site_config LIMIT 1");
     $result['steps'][] = 'site_config table OK';
-} catch (Throwable $e) { $result['steps'][] = 'site_config FAIL: ' . $e->getMessage(); }
+} catch (Throwable $e) {
+    // 테이블 없으면 생성
+    try {
+        $pdo->exec("CREATE TABLE IF NOT EXISTS site_config (
+            key_name   VARCHAR(80) NOT NULL,
+            value      TEXT        NOT NULL DEFAULT '',
+            updated_at DATETIME    NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+            PRIMARY KEY (key_name)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+        $result['steps'][] = 'site_config CREATED';
+    } catch (Throwable $e2) {
+        $result['steps'][] = 'site_config CREATE FAIL: ' . $e2->getMessage();
+    }
+}
 
 echo json_encode($result);
