@@ -155,42 +155,22 @@
         overlay.style.display = 'flex';
 
         const _tok = localStorage.getItem('pmok_auth_token');
+        const _renderAbort = new AbortController();
+        const _renderTimer = setTimeout(() => { _renderAbort.abort(); overlay.style.display = 'none'; pmAlert('렌더링 시간이 초과됐습니다. (120초)', { type: 'danger' }); }, 120000);
         fetch('api/render.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', ...(_tok ? { 'Authorization': 'Bearer ' + _tok } : {}) },
-            body: JSON.stringify({
-                image:  composite.toDataURL('image/jpeg', 0.95),
-                prompt
-            })
+            body: JSON.stringify({ image: composite.toDataURL('image/jpeg', 0.95), prompt }),
+            signal: _renderAbort.signal,
         })
-        .then(r => r.json())
+        .then(r => { clearTimeout(_renderTimer); return r.json(); })
         .then(data => {
-            if (data.error) { pmAlert(data.error, { type: 'danger' }); overlay.style.display = 'none'; return; }
-            if (data.image) {
-                overlay.style.display = 'none';
-                const img = new Image();
-                img.onload = () => { saveRender(img.src); showRenderResult(img.src); };
-                img.src = data.image;
-                return;
-            }
-            if (!data.job)  { pmAlert('서버 오류', { type: 'danger' }); overlay.style.display = 'none'; return; }
-            // 폴링 (최대 90초)
-            let pollCount = 0;
-            const poll = setInterval(() => {
-                if (++pollCount > 30) { clearInterval(poll); overlay.style.display = 'none'; pmAlert('렌더링 시간이 초과됐습니다.', { type: 'danger' }); return; }
-                fetch('api/render_poll.php', { method: 'POST', headers: { 'Content-Type': 'application/json', ...(_tok ? { 'Authorization': 'Bearer ' + _tok } : {}) }, body: JSON.stringify({ job: data.job }) })
-                .then(r => r.json())
-                .then(res => {
-                    if (res.status === 'processing') return;
-                    clearInterval(poll);
-                    overlay.style.display = 'none';
-                    if (res.error) { pmAlert(res.error, { type: 'danger' }); return; }
-                    const img = new Image();
-                    img.onload = () => { saveRender(img.src); showRenderResult(img.src); };
-                    img.src = res.image;
-                })
-                .catch(() => { clearInterval(poll); overlay.style.display = 'none'; pmAlert('렌더링 중 오류가 발생했습니다.', { type: 'danger' }); });
-            }, 3000);
+            overlay.style.display = 'none';
+            if (data.error) { pmAlert(data.error, { type: 'danger' }); return; }
+            if (!data.image) { pmAlert('서버 오류', { type: 'danger' }); return; }
+            const img = new Image();
+            img.onload = () => { saveRender(img.src); showRenderResult(img.src); };
+            img.src = data.image;
         })
         .catch(() => { pmAlert('렌더링 중 오류가 발생했습니다.', { type: 'danger' }); overlay.style.display = 'none'; });
     }
