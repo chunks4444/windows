@@ -136,7 +136,7 @@
             return;
         }
 
-        // 배경 + 도면 합성
+        // 배경 + 도면 합성 (multiply 블렌드로 흰 배경 제거)
         const composite = document.createElement('canvas');
         composite.width  = logW;
         composite.height = logH;
@@ -147,9 +147,9 @@
             const dW = bg.width * s, dH = bg.height * s;
             compCtx.drawImage(bg, (logW - dW) / 2, (logH - dH) / 2, dW, dH);
         }
-        compCtx.globalAlpha = 0.92;
+        compCtx.globalCompositeOperation = 'multiply';
         compCtx.drawImage(canvas, 0, 0, logW, logH);
-        compCtx.globalAlpha = 1.0;
+        compCtx.globalCompositeOperation = 'source-over';
 
         const overlay = document.getElementById('renderOverlay');
         overlay.style.display = 'flex';
@@ -172,23 +172,8 @@
             if (!data.image) { pmAlert('서버 오류', { type: 'danger' }); return; }
             const renderedImg = new Image();
             renderedImg.onload = () => {
-                const out = document.createElement('canvas');
-                out.width  = logW; out.height = logH;
-                const ctx = out.getContext('2d');
-                if (appBackgroundImage) {
-                    const bg = appBackgroundImage;
-                    const s  = Math.min(logW / bg.width, logH / bg.height);
-                    const dW = bg.width * s, dH = bg.height * s;
-                    ctx.drawImage(bg, (logW - dW) / 2, (logH - dH) / 2, dW, dH);
-                }
-                const cx = logW / 2 + panX;
-                const cy = logH / 2 + panY;
-                const dw = Math.round(doorNaturalSize.w);
-                const dh = Math.round(doorNaturalSize.h);
-                ctx.drawImage(renderedImg, Math.round(cx - dw/2), Math.round(cy - dh/2), dw, dh);
-                const finalSrc = out.toDataURL('image/jpeg', 0.95);
-                saveRender(finalSrc);
-                showRenderResult(finalSrc);
+                saveRender(renderedImg.src);
+                showRenderResult(renderedImg.src);
             };
             renderedImg.src = data.image;
         })
