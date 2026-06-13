@@ -1,5 +1,9 @@
 <?php
 header('Content-Type: application/json; charset=UTF-8');
+require_once __DIR__ . '/../../lib/cors.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') exit;
+
 require_once __DIR__ . '/../../lib/db.php';
 require_once __DIR__ . '/../../lib/jwt.php';
 
