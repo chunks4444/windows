@@ -24,6 +24,6 @@ file_put_contents("{$jobDir}/{$jobId}.input.json", json_encode(['image' => $imag
 
 // 백그라운드 워커 실행
 $workerPath = __DIR__ . '/render_worker.php';
-exec("/opt/homebrew/bin/php " . escapeshellarg($workerPath) . " " . escapeshellarg($jobId) . " > /dev/null 2>&1 &");
+exec(PHP_BINARY . " " . escapeshellarg($workerPath) . " " . escapeshellarg($jobId) . " > /dev/null 2>&1 &");
 
 echo json_encode(['job' => $jobId]);
