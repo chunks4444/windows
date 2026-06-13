@@ -61,10 +61,19 @@ function ai_prepare_image(string $imageBase64): ?string {
     $src = @imagecreatefromstring(base64_decode($imageBase64));
     if (!$src) return null;
 
+    $srcW = imagesx($src);
+    $srcH = imagesy($src);
+
+    // 비율 유지하여 1024×1024 안에 맞추고 나머지는 흰색 패딩
+    $scale = min(1024 / $srcW, 1024 / $srcH);
+    $dstW  = (int)round($srcW * $scale);
+    $dstH  = (int)round($srcH * $scale);
+    $offX  = (int)round((1024 - $dstW) / 2);
+    $offY  = (int)round((1024 - $dstH) / 2);
+
     $dst = imagecreatetruecolor(1024, 1024);
-    imagealphablending($dst, false);
-    imagesavealpha($dst, true);
-    imagecopyresampled($dst, $src, 0, 0, 0, 0, 1024, 1024, imagesx($src), imagesy($src));
+    imagefill($dst, 0, 0, imagecolorallocate($dst, 255, 255, 255));
+    imagecopyresampled($dst, $src, $offX, $offY, 0, 0, $dstW, $dstH, $srcW, $srcH);
     imagedestroy($src);
 
     ob_start(); imagepng($dst); $pngBytes = ob_get_clean();

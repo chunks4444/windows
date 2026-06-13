@@ -162,18 +162,22 @@
             if (!data.image) { pmAlert('서버 오류', { type: 'danger' }); return; }
             const img = new Image();
             img.onload = () => {
-                // 밝은 픽셀 → 순수 흰색 (multiply 시 완전 투명)
+                // AI 도면: 밝기 → 알파값으로 변환 (어두운 선만 불투명)
                 const tmp = document.createElement('canvas');
                 tmp.width = logW; tmp.height = logH;
                 const tCtx = tmp.getContext('2d');
-                tCtx.drawImage(img, 0, 0, logW, logH);
+                // 서버에서 패딩한 비율 역계산
+                const scl = Math.min(1024/logW, 1024/logH);
+                const fitW = Math.round(logW*scl), fitH = Math.round(logH*scl);
+                const ox = Math.round((1024-fitW)/2), oy = Math.round((1024-fitH)/2);
+                tCtx.drawImage(img, ox, oy, fitW, fitH, 0, 0, logW, logH);
                 const px = tCtx.getImageData(0, 0, logW, logH);
                 for (let i = 0; i < px.data.length; i += 4) {
                     const lum = 0.299*px.data[i] + 0.587*px.data[i+1] + 0.114*px.data[i+2];
-                    if (lum > 180) { px.data[i] = px.data[i+1] = px.data[i+2] = 255; }
+                    px.data[i+3] = Math.max(0, Math.min(255, (255 - lum) * 1.5));
                 }
                 tCtx.putImageData(px, 0, 0);
-                // 배경 위에 AI 질감 도면 multiply 합성
+                // 배경 위에 알파 마스킹된 도면 합성
                 const out = document.createElement('canvas');
                 out.width = logW; out.height = logH;
                 const ctx = out.getContext('2d');
@@ -183,9 +187,7 @@
                     const dW = bg.width * s, dH = bg.height * s;
                     ctx.drawImage(bg, (logW - dW) / 2, (logH - dH) / 2, dW, dH);
                 }
-                ctx.globalCompositeOperation = 'multiply';
                 ctx.drawImage(tmp, 0, 0, logW, logH);
-                ctx.globalCompositeOperation = 'source-over';
                 const finalSrc = out.toDataURL('image/jpeg', 0.95);
                 saveRender(finalSrc);
                 showRenderResult(finalSrc);
