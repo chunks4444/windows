@@ -115,14 +115,25 @@
 
         const dpr = window.devicePixelRatio || 1;
 
-        // 도면만 AI로 전송 (질감 적용), 배경은 JS에서 합성
+        // 도면 영역만 크롭해서 AI로 전송
+        const dpr  = window.devicePixelRatio || 1;
+        const _cx  = logW / 2 + panX;
+        const _cy  = logH / 2 + panY;
+        const _dw  = doorNaturalSize.w;
+        const _dh  = doorNaturalSize.h;
+        const _dl  = _cx - _dw / 2;
+        const _dt  = _cy - _dh / 2;
+        const _PAD = 40, _SIZE = 1024;
+        const _fitScale = Math.min((_SIZE - _PAD*2) / _dw, (_SIZE - _PAD*2) / _dh);
+        const _fitW = _dw * _fitScale, _fitH = _dh * _fitScale;
+        const _offX = (_SIZE - _fitW) / 2,  _offY = (_SIZE - _fitH) / 2;
         const composite = document.createElement('canvas');
-        composite.width  = logW;
-        composite.height = logH;
+        composite.width  = _SIZE;
+        composite.height = _SIZE;
         const compCtx = composite.getContext('2d');
         compCtx.fillStyle = '#ffffff';
-        compCtx.fillRect(0, 0, logW, logH);
-        compCtx.drawImage(canvas, 0, 0, logW, logH);
+        compCtx.fillRect(0, 0, _SIZE, _SIZE);
+        compCtx.drawImage(canvas, _dl*dpr, _dt*dpr, _dw*dpr, _dh*dpr, _offX, _offY, _fitW, _fitH);
 
         // 도면 영역 마스크 (흰색 = 인페인팅 영역, 검정 = 유지)
         const cx = logW / 2 + panX;
@@ -160,32 +171,17 @@
             if (!data.image) { pmAlert('서버 오류', { type: 'danger' }); return; }
             const img = new Image();
             img.onload = () => {
-                // AI 도면: 밝기 → 알파값으로 변환 (어두운 선만 불투명)
-                const tmp = document.createElement('canvas');
-                tmp.width = logW; tmp.height = logH;
-                const tCtx = tmp.getContext('2d');
-                // 서버에서 패딩한 비율 역계산
-                const scl = Math.min(1024/logW, 1024/logH);
-                const fitW = Math.round(logW*scl), fitH = Math.round(logH*scl);
-                const ox = Math.round((1024-fitW)/2), oy = Math.round((1024-fitH)/2);
-                tCtx.drawImage(img, ox, oy, fitW, fitH, 0, 0, logW, logH);
-                const px = tCtx.getImageData(0, 0, logW, logH);
-                for (let i = 0; i < px.data.length; i += 4) {
-                    const lum = 0.299*px.data[i] + 0.587*px.data[i+1] + 0.114*px.data[i+2];
-                    px.data[i+3] = Math.max(0, Math.min(255, (255 - lum) * 1.5));
-                }
-                tCtx.putImageData(px, 0, 0);
-                // 배경 위에 알파 마스킹된 도면 합성
                 const out = document.createElement('canvas');
                 out.width = logW; out.height = logH;
                 const ctx = out.getContext('2d');
                 if (appBackgroundImage) {
                     const bg = appBackgroundImage;
-                    const s = Math.min(logW / bg.width, logH / bg.height);
-                    const dW = bg.width * s, dH = bg.height * s;
-                    ctx.drawImage(bg, (logW - dW) / 2, (logH - dH) / 2, dW, dH);
+                    const s = Math.min(logW/bg.width, logH/bg.height);
+                    const bW = bg.width*s, bH = bg.height*s;
+                    ctx.drawImage(bg, (logW-bW)/2, (logH-bH)/2, bW, bH);
                 }
-                ctx.drawImage(tmp, 0, 0, logW, logH);
+                // AI 질감 도면을 원래 도면 위치/크기에 정확히 합성
+                ctx.drawImage(img, _offX, _offY, _fitW, _fitH, _dl, _dt, _dw, _dh);
                 const finalSrc = out.toDataURL('image/jpeg', 0.95);
                 saveRender(finalSrc);
                 showRenderResult(finalSrc);
