@@ -28,7 +28,7 @@ async function saveRenderConfig() {
     status.textContent = '';
     try {
         const res  = await fetch('/src/api/admin/render_config.php', {
-            method:  'PUT',
+            method:  'POST',
             headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + TOKEN() },
             body:    JSON.stringify({
                 render_quality: document.getElementById('render_quality').value,

@@ -1,5 +1,10 @@
 <?php
 header('Content-Type: application/json; charset=UTF-8');
+set_exception_handler(function(Throwable $e) {
+    if (!headers_sent()) http_response_code(500);
+    echo json_encode(['error' => $e->getMessage()]);
+    exit;
+});
 require_once __DIR__ . '/../../lib/cors.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') exit;
@@ -25,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
+if ($_SERVER['REQUEST_METHOD'] === 'PUT' || $_SERVER['REQUEST_METHOD'] === 'POST') {
     $body    = json_decode(file_get_contents('php://input'), true) ?? [];
     $stmt    = $pdo->prepare("INSERT INTO site_config (key_name, value) VALUES (?, ?) ON DUPLICATE KEY UPDATE value = VALUES(value)");
 
