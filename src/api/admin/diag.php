@@ -23,4 +23,10 @@ try {
     $result['steps'][] = 'jwt OK';
 } catch (Throwable $e) { $result['steps'][] = 'jwt FAIL: ' . $e->getMessage(); }
 
+try {
+    $pdo = db();
+    $pdo->query("SELECT 1 FROM site_config LIMIT 1");
+    $result['steps'][] = 'site_config table OK';
+} catch (Throwable $e) { $result['steps'][] = 'site_config FAIL: ' . $e->getMessage(); }
+
 echo json_encode($result);
