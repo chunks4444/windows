@@ -9,7 +9,8 @@ require_once __DIR__ . '/../../lib/db.php';
 $payload = jwt_from_request();
 if (!$payload) { http_response_code(401); echo json_encode(['error' => '인증이 필요합니다.']); exit; }
 
-$boardId = (int)($_GET['board_id'] ?? 0);
+$_body = json_decode(file_get_contents('php://input'),true) ?? [];
+$boardId = (int)($_body['board_id'] ?? 0);
 if (!$boardId) { http_response_code(422); echo json_encode(['error' => 'board_id가 필요합니다.']); exit; }
 
 $pdo  = db();

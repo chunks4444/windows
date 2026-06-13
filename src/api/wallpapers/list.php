@@ -10,8 +10,9 @@ if (!$payload) {
     http_response_code(401); echo json_encode(['error' => '인증이 필요합니다.']); exit;
 }
 
-$drawingId = (int)($_GET['drawing_id'] ?? 0);
-$engine    = trim($_GET['engine']      ?? '');
+$_body     = json_decode(file_get_contents('php://input'), true) ?? [];
+$drawingId = (int)($_body['drawing_id'] ?? 0);
+$engine    = trim($_body['engine']      ?? '');
 
 if (!$engine) {
     echo json_encode(['wallpapers' => []]); exit;

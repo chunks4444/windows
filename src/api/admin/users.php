@@ -21,12 +21,14 @@ if (!$me || $me['role'] !== 's') {
     http_response_code(403); echo json_encode(['error' => '슈퍼 권한이 필요합니다.']); exit;
 }
 
-// GET: 회원 목록
-if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $page   = max(1, (int)($_GET['page'] ?? 1));
+$_body = json_decode(file_get_contents('php://input'), true) ?? [];
+
+// GET 또는 POST(action 없음): 회원 목록
+if ($_SERVER['REQUEST_METHOD'] === 'GET' || (($_SERVER['REQUEST_METHOD'] === 'POST') && !isset($_body['action']))) {
+    $page   = max(1, (int)($_body['page'] ?? $_GET['page'] ?? 1));
     $limit  = 20;
     $offset = ($page - 1) * $limit;
-    $q      = trim($_GET['q'] ?? '');
+    $q      = trim($_body['q'] ?? $_GET['q'] ?? '');
 
     if ($q) {
         $like    = '%' . $q . '%';

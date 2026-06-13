@@ -15,7 +15,15 @@ if (!$image || !$prompt) {
     exit;
 }
 
-require_once __DIR__ . '/config.php';
-require_once __DIR__ . '/../../../lib/ai_render.php';
+// 작업 ID 생성 및 입력 저장
+$jobId  = bin2hex(random_bytes(16));
+$jobDir = sys_get_temp_dir() . '/pmok_render';
+if (!is_dir($jobDir)) mkdir($jobDir, 0777, true);
 
-echo json_encode(ai_render_openai($image, $prompt));
+file_put_contents("{$jobDir}/{$jobId}.input.json", json_encode(['image' => $image, 'prompt' => $prompt]));
+
+// 백그라운드 워커 실행
+$workerPath = __DIR__ . '/render_worker.php';
+exec("/opt/homebrew/bin/php " . escapeshellarg($workerPath) . " " . escapeshellarg($jobId) . " > /dev/null 2>&1 &");
+
+echo json_encode(['job' => $jobId]);

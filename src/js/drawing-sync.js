@@ -29,12 +29,11 @@ window.DrawingSync = (function () {
     // title 없으면 해당 타입의 도면 목록 반환 { drawings: [] }
     async function load(type, title) {
         if (!_token()) return null;
-        const qs = title
-            ? `type=${encodeURIComponent(type)}&title=${encodeURIComponent(title)}`
-            : `type=${encodeURIComponent(type)}`;
         try {
-            const res  = await fetch('/src/api/drawings/load.php?' + qs, {
-                headers: { 'Authorization': 'Bearer ' + _token() },
+            const res  = await fetch('/src/api/drawings/load.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _token() },
+                body: JSON.stringify(title ? { type, title } : { type }),
             });
             return await res.json();
         } catch { return null; }

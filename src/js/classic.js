@@ -160,7 +160,7 @@
             if (!data.job)  { pmAlert('서버 오류', { type: 'danger' }); overlay.style.display = 'none'; return; }
             // 폴링 시작
             const poll = setInterval(() => {
-                fetch('api/render_poll.php?job=' + data.job, { headers: _authHeader })
+                fetch('api/render_poll.php', { method: 'POST', headers: { 'Content-Type': 'application/json', ..._authHeader }, body: JSON.stringify({ job: data.job }) })
                 .then(r => r.json())
                 .then(res => {
                     if (res.status === 'processing') return;
@@ -1780,8 +1780,10 @@ async function draw() {
         try {
             const vsa = _currentVersionSavedAt();
             const qs  = `drawing_id=${drawingId || 0}&engine=${WALLPAPER_ENGINE}${vsa ? '&version_saved_at=' + vsa : ''}`;
-            const res = await fetch(WALLPAPER_API + 'list.php?' + qs, {
-                headers: { 'Authorization': 'Bearer ' + _wpToken() },
+            const res = await fetch(WALLPAPER_API + 'list.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _wpToken() },
+                body: JSON.stringify({ drawing_id: drawingId || 0, engine: WALLPAPER_ENGINE, version_saved_at: _currentVersionSavedAt() }),
             });
             if (!res.ok) return;
             const data = await res.json();
@@ -2001,9 +2003,7 @@ async function draw() {
     async function loadFromCollectionId(id) {
         try {
             const _tok = localStorage.getItem('pmok_auth_token');
-            const res  = await fetch(`/src/api/drawings/load_by_id.php?id=${id}`,
-                _tok ? { headers: { 'Authorization': 'Bearer ' + _tok } } : {}
-            );
+            const res  = await fetch('/src/api/drawings/load_by_id.php', { method: 'POST', headers: { 'Content-Type': 'application/json', ...(_tok ? { headers: { 'Authorization': 'Bearer ' + _tok } } : {}) }, body: JSON.stringify({ id }) });
             const data = await res.json();
             if (!data?.versions?.length) return false;
             _versionsLoaded = true;

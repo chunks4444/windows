@@ -15,8 +15,11 @@ async function init() {
 async function loadUsers(page) {
     currentPage = page;
     const q    = document.getElementById('admSearch').value.trim();
-    const url  = '/src/api/admin/users.php?page=' + page + (q ? '&q=' + encodeURIComponent(q) : '');
-    const res  = await fetch(url, { headers: { 'Authorization': 'Bearer ' + token() } });
+    const res  = await fetch('/src/api/admin/users.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token() },
+        body: JSON.stringify({ page, q }),
+    });
     const data = await res.json();
     if (!res.ok) return;
 

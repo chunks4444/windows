@@ -5,7 +5,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') exit;
 
 require_once __DIR__ . '/../../lib/db.php';
 
-$id = (int)($_GET['id'] ?? 0);
+$id = (int)((json_decode(file_get_contents('php://input'),true)['id'] ?? 0));
 if (!$id) { http_response_code(422); echo json_encode(['error' => 'id required']); exit; }
 
 $pdo  = db();

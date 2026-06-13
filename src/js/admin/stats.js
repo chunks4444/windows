@@ -17,8 +17,10 @@ async function loadStats(months) {
         b.classList.toggle('active', +b.dataset.m === months);
     });
 
-    const res  = await fetch('/src/api/admin/stats.php?months=' + months, {
-        headers: { 'Authorization': 'Bearer ' + token() }
+    const res  = await fetch('/src/api/admin/stats.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token() },
+        body: JSON.stringify({ months }),
     });
     const data = await res.json();
     if (!res.ok) return;

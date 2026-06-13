@@ -214,10 +214,11 @@ async function copyDrawing(e, type, title) {
     showCopyModal(title, async (newTitle) => {
         try {
             // 원본 마지막 버전 로드
-            const loadRes = await fetch(
-                `/src/api/drawings/load.php?type=${encodeURIComponent(type)}&title=${encodeURIComponent(title)}`,
-                { headers: _headers() }
-            );
+            const loadRes = await fetch('/src/api/drawings/load.php', {
+                method: 'POST',
+                headers: _headers(),
+                body: JSON.stringify({ type, title }),
+            });
             const data = await loadRes.json();
             if (!data?.versions?.length) { alert('도면을 불러올 수 없습니다.'); return; }
 
@@ -368,7 +369,7 @@ function renderBoardCard(b) {
 }
 
 async function openBoard(boardId, boardName) {
-    const res   = await fetch(`/src/api/boards/items.php?board_id=${boardId}`, { headers: _headers() });
+    const res   = await fetch('/src/api/boards/items.php', { method: 'POST', headers: _headers(), body: JSON.stringify({ board_id: boardId }) });
     const data  = await res.json();
     const items = data.items || [];
     if (!boardName) boardName = data.board?.name || '';

@@ -7,7 +7,7 @@ set_exception_handler(function(Throwable $e) {
 });
 require_once __DIR__ . '/../lib/db.php';
 
-$q   = trim($_GET['q'] ?? '');
+$q   = trim((json_decode(file_get_contents('php://input'),true)['q'] ?? ''));
 $pdo = db();
 
 $editorMap = [

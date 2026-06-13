@@ -12,8 +12,9 @@ if (!$payload) {
     http_response_code(401); echo json_encode(['error' => '인증이 필요합니다.']); exit;
 }
 
-$type  = $_GET['type']  ?? '';
-$title = $_GET['title'] ?? '';
+$_body = json_decode(file_get_contents('php://input'), true) ?? [];
+$type  = $_body['type']  ?? '';
+$title = $_body['title'] ?? '';
 
 if (!$type) {
     http_response_code(422); echo json_encode(['error' => 'type 파라미터가 필요합니다.']); exit;

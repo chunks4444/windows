@@ -7,9 +7,12 @@ const likes         = {};
 
 /* ── API ──────────────────────────────────────── */
 async function loadPatterns(q = '') {
-    const url = '/src/api/collection.php' + (q ? '?q=' + encodeURIComponent(q) : '');
     try {
-        const res  = await fetch(url);
+        const res  = await fetch('/src/api/collection.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ q }),
+        });
         const data = await res.json();
         if (data.error) { console.error('library API:', data.error); currentPatterns = []; }
         else { currentPatterns = data.patterns || []; }

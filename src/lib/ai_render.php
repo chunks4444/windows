@@ -18,7 +18,7 @@ function ai_get_render_quality(): string {
         $row = db()->query("SELECT value FROM site_config WHERE key_name = 'render_quality'")->fetch();
         $v = $row ? $row['value'] : 'low';
         $cached = in_array($v, $allowed) ? $v : 'low';
-    } catch (Throwable) {
+    } catch (Throwable $e) {
         $cached = 'low';
     }
     return $cached;

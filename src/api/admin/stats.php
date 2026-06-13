@@ -20,7 +20,7 @@ if (!$me || $me['role'] !== 's') {
     http_response_code(403); echo json_encode(['error' => '슈퍼 권한이 필요합니다.']); exit;
 }
 
-$months = max(1, min(6, (int)($_GET['months'] ?? 6)));
+$months = max(1, min(6, (int)((json_decode(file_get_contents('php://input'),true)['months'] ?? 6))));
 
 // 1. 일별 PV / UV
 $stmt = $pdo->prepare("

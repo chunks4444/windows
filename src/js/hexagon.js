@@ -133,27 +133,34 @@
         const overlay = document.getElementById('renderOverlay');
         overlay.style.display = 'flex';
 
+        const _tok = localStorage.getItem('pmok_auth_token');
         fetch('api/render.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', ...(_tok ? { 'Authorization': 'Bearer ' + _tok } : {}) },
             body: JSON.stringify({
                 image:  composite.toDataURL('image/jpeg', 0.95),
-                mask:   maskCvs.toDataURL('image/png'),
                 prompt
             })
         })
         .then(r => r.json())
         .then(data => {
-            if (data.error) {
-                pmAlert(data.error, { type: 'danger' });
-                return;
-            }
-            const img = new Image();
-            img.onload = () => { saveRender(img.src); showRenderResult(img.src); };
-            img.src = data.image;
+            if (data.error) { pmAlert(data.error, { type: 'danger' }); overlay.style.display = 'none'; return; }
+            if (!data.job)  { pmAlert('서버 오류', { type: 'danger' }); overlay.style.display = 'none'; return; }
+            const poll = setInterval(() => {
+                fetch('api/render_poll.php', { method: 'POST', headers: { 'Content-Type': 'application/json', ...(_tok ? { 'Authorization': 'Bearer ' + _tok } : {}) }, body: JSON.stringify({ job: data.job }) })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.status === 'processing') return;
+                    clearInterval(poll);
+                    overlay.style.display = 'none';
+                    if (res.error) { pmAlert(res.error, { type: 'danger' }); return; }
+                    const img = new Image();
+                    img.onload = () => { saveRender(img.src); showRenderResult(img.src); };
+                    img.src = res.image;
+                });
+            }, 2000);
         })
-        .catch(() => pmAlert('렌더링 중 오류가 발생했습니다.', { type: 'danger' }))
-        .finally(() => { overlay.style.display = 'none'; });
+        .catch(() => { pmAlert('렌더링 중 오류가 발생했습니다.', { type: 'danger' }); overlay.style.display = 'none'; });
     }
 
     function showRenderResult(src) {
@@ -1813,8 +1820,10 @@ async function draw() {
         try {
             const vsa = _currentVersionSavedAt();
             const qs  = `drawing_id=${drawingId || 0}&engine=${WALLPAPER_ENGINE}${vsa ? '&version_saved_at=' + vsa : ''}`;
-            const res = await fetch(WALLPAPER_API + 'list.php?' + qs, {
-                headers: { 'Authorization': 'Bearer ' + _wpToken() },
+            const res = await fetch(WALLPAPER_API + 'list.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _wpToken() },
+                body: JSON.stringify({ drawing_id: drawingId || 0, engine: WALLPAPER_ENGINE, version_saved_at: _currentVersionSavedAt() }),
             });
             if (!res.ok) return;
             const data = await res.json();
@@ -1981,9 +1990,7 @@ async function draw() {
     async function loadFromCollectionId(id) {
         try {
             const _tok = localStorage.getItem('pmok_auth_token');
-            const res  = await fetch(`/src/api/drawings/load_by_id.php?id=${id}`,
-                _tok ? { headers: { 'Authorization': 'Bearer ' + _tok } } : {}
-            );
+            const res  = await fetch('/src/api/drawings/load_by_id.php', { method: 'POST', headers: { 'Content-Type': 'application/json', ...(_tok ? { headers: { 'Authorization': 'Bearer ' + _tok } } : {}) }, body: JSON.stringify({ id }) });
             const data = await res.json();
             if (!data?.versions?.length) return false;
             _versionsLoaded = true;
