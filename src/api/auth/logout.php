@@ -8,7 +8,7 @@ setcookie('pmok_auth', '', [
     'expires'  => time() - 3600,
     'path'     => '/',
     'httponly' => true,
-    'secure'   => true,
+    'secure'   => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
     'samesite' => 'Lax',
 ]);
 

@@ -136,70 +136,69 @@
             return;
         }
 
-        const dpr = window.devicePixelRatio || 1;
-
-        // 전체 합성 캔버스: 배경 먼저, 도면은 셀 배경 없이(투명) 합성
+        // 도면만 전송 (배경 제외)
         const composite = document.createElement('canvas');
         composite.width  = logW;
         composite.height = logH;
         const compCtx = composite.getContext('2d');
-        // 1) 배경 이미지
-        if (appBackgroundImage) {
-            const img = appBackgroundImage;
-            const s = Math.min(logW / img.width, logH / img.height);
-            const dW = img.width * s, dH = img.height * s;
-            compCtx.drawImage(img, (logW - dW) / 2, (logH - dH) / 2, dW, dH);
-        }
-        // 2) 도면 레이어 (canvas에서 흰 셀 배경이 들어간 상태지만 배경 위에 올려 투명도로 블렌드)
-        compCtx.globalAlpha = 0.92;
         compCtx.drawImage(canvas, 0, 0, logW, logH);
-        compCtx.globalAlpha = 1.0;
-
-        // 도면 영역 마스크 (흰색 = 인페인팅 영역, 검정 = 유지)
-        const cx = logW / 2 + panX;
-        const cy = logH / 2 + panY;
-        const dl = Math.max(0, Math.round(cx - doorNaturalSize.w / 2));
-        const dt = Math.max(0, Math.round(cy - doorNaturalSize.h / 2));
-        const dw = Math.min(logW - dl, Math.round(doorNaturalSize.w));
-        const dh = Math.min(logH - dt, Math.round(doorNaturalSize.h));
-
-        const maskCvs = document.createElement('canvas');
-        maskCvs.width  = logW;
-        maskCvs.height = logH;
-        const mCtx = maskCvs.getContext('2d');
-        mCtx.fillStyle = '#000';
-        mCtx.fillRect(0, 0, logW, logH);
-        mCtx.fillStyle = '#fff';
-        mCtx.fillRect(dl, dt, dw, dh);
 
         const overlay = document.getElementById('renderOverlay');
         overlay.style.display = 'flex';
 
+        const _tok = localStorage.getItem('pmok_auth_token');
+        const _authHeader = _tok ? { 'Authorization': 'Bearer ' + _tok } : {};
+
         fetch('api/render.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                image:  composite.toDataURL('image/jpeg', 0.95),
-                mask:   maskCvs.toDataURL('image/png'),
-                prompt
-            })
+            headers: { 'Content-Type': 'application/json', ..._authHeader },
+            body: JSON.stringify({ image: composite.toDataURL('image/jpeg', 0.95), prompt })
         })
         .then(r => r.json())
         .then(data => {
-            if (data.error) {
-                pmAlert(data.error, { type: 'danger' });
-                return;
-            }
-            // 결과를 팝업으로 표시
-            const img = new Image();
-            img.onload = () => {
-                saveRender(img.src);
-                showRenderResult(img.src);
-            };
-            img.src = data.image;
+            if (data.error) { pmAlert(data.error, { type: 'danger' }); overlay.style.display = 'none'; return; }
+            if (!data.job)  { pmAlert('서버 오류', { type: 'danger' }); overlay.style.display = 'none'; return; }
+            // 폴링 시작
+            const poll = setInterval(() => {
+                fetch('api/render_poll.php?job=' + data.job, { headers: _authHeader })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.status === 'processing') return;
+                    clearInterval(poll);
+                    overlay.style.display = 'none';
+                    if (res.error) { pmAlert(res.error, { type: 'danger' }); return; }
+                    const renderedImg = new Image();
+                    renderedImg.onload = () => {
+                        // 렌더링 결과를 배경 위에 합성
+                        const out = document.createElement('canvas');
+                        out.width  = logW;
+                        out.height = logH;
+                        const ctx = out.getContext('2d');
+                        // 1) 배경
+                        if (appBackgroundImage) {
+                            const bg = appBackgroundImage;
+                            const s  = Math.min(logW / bg.width, logH / bg.height);
+                            const dW = bg.width * s, dH = bg.height * s;
+                            ctx.drawImage(bg, (logW - dW) / 2, (logH - dH) / 2, dW, dH);
+                        }
+                        // 2) 렌더링된 도면 (도면이 캔버스에서 차지하는 실제 위치·크기에 맞춰 합성)
+                        const cx = logW / 2 + panX;
+                        const cy = logH / 2 + panY;
+                        const dw = Math.round(doorNaturalSize.w);
+                        const dh = Math.round(doorNaturalSize.h);
+                        const dl = Math.round(cx - dw / 2);
+                        const dt = Math.round(cy - dh / 2);
+                        ctx.drawImage(renderedImg, dl, dt, dw, dh);
+                        const finalSrc = out.toDataURL('image/jpeg', 0.95);
+                        saveRender(finalSrc);
+                        showRenderResult(finalSrc);
+                    };
+                    renderedImg.src = res.image;
+                })
+                .catch(() => { clearInterval(poll); overlay.style.display = 'none'; pmAlert('렌더링 중 오류가 발생했습니다.', { type: 'danger' }); });
+            }, 3000);
         })
-        .catch(() => pmAlert('렌더링 중 오류가 발생했습니다.', { type: 'danger' }))
-        .finally(() => { overlay.style.display = 'none'; });
+        .catch(e => { overlay.style.display = 'none'; pmAlert('렌더링 중 오류: ' + e.message, { type: 'danger' }); });
     }
 
     // ── 렌더링 결과 팝업 ───────────────────────────
@@ -432,11 +431,11 @@ async function draw() {
     if (!data) return;
     if (data.error) {
         console.warn('[draw] error from server:', data.error);
-        if (data.error.includes('인증')) {
+        if (data.error.includes('인증') && !window.__pmokAuthPopupShown) {
+            window.__pmokAuthPopupShown = true;
             const el = document.getElementById('authModal');
             if (el && window.bootstrap) bootstrap.Modal.getOrCreateInstance(el).show();
-            else console.warn('[draw] authModal or bootstrap not found', el, window.bootstrap);
-        } else {
+        } else if (!data.error.includes('인증')) {
             console.error('[draw] geometry error:', data.error);
         }
         return;

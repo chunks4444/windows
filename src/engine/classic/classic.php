@@ -515,7 +515,7 @@ require_once __DIR__ . '/../../lib/colors.php';
                         </button>
                         </div>
                         <div class="rp-thumb-list" id="thumbList"></div>
-                        <textarea id="aiPrompt" class="rp-prompt" placeholder="한국어 또는 영어로 입력&#10;예) 전통 한옥 창호, 따뜻한 실내 조명" rows="3"></textarea>
+                        <textarea id="aiPrompt" class="rp-prompt" placeholder="질감/재질 입력&#10;예) 오래된 참나무 결, 옻칠 마감, 흰 한지" rows="3"></textarea>
                         <button class="rp-ai-btn" onclick="startAISynthesis()">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />

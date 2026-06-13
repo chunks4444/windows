@@ -63,7 +63,7 @@ try {
         'expires'  => time() + JWT_EXPIRE,
         'path'     => '/',
         'httponly' => true,
-        'secure'   => true,
+        'secure'   => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
         'samesite' => 'Lax',
     ]);
 
