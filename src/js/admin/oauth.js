@@ -18,6 +18,7 @@ async function loadRenderConfig() {
     const res  = await fetch('/src/api/admin/render_config.php', { headers: { Authorization: 'Bearer ' + TOKEN() } });
     const data = await res.json();
     if (data.render_quality) document.getElementById('render_quality').value = data.render_quality;
+    if (data.openai_api_key) document.getElementById('openai_api_key').value = data.openai_api_key;
 }
 
 async function saveRenderConfig() {
@@ -29,7 +30,10 @@ async function saveRenderConfig() {
         const res  = await fetch('/src/api/admin/render_config.php', {
             method:  'PUT',
             headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + TOKEN() },
-            body:    JSON.stringify({ render_quality: document.getElementById('render_quality').value }),
+            body:    JSON.stringify({
+                render_quality: document.getElementById('render_quality').value,
+                openai_api_key: document.getElementById('openai_api_key').value,
+            }),
         });
         const data = await res.json();
         if (res.ok) { status.className = 'oauth-status ok';  status.textContent = '저장됨'; }

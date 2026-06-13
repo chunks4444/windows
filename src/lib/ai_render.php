@@ -6,7 +6,15 @@
 
 function ai_get_openai_key(): string {
     if (defined('OPENAI_API_KEY') && OPENAI_API_KEY) return OPENAI_API_KEY;
-    return getenv('OPENAI_API_KEY') ?: '';
+    $env = getenv('OPENAI_API_KEY');
+    if ($env) return $env;
+    try {
+        require_once __DIR__ . '/db.php';
+        $row = db()->query("SELECT value FROM site_config WHERE key_name = 'openai_api_key'")->fetch();
+        return ($row && $row['value']) ? $row['value'] : '';
+    } catch (Throwable $e) {
+        return '';
+    }
 }
 
 function ai_get_render_quality(): string {

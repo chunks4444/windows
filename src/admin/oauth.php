@@ -88,6 +88,10 @@
                 <span class="oauth-card-title">AI 렌더링 품질</span>
             </div>
             <div class="oauth-field">
+                <label>OpenAI API Key</label>
+                <input type="password" id="openai_api_key" placeholder="sk-proj-…" autocomplete="off">
+            </div>
+            <div class="oauth-field">
                 <label>품질 (gpt-image-1 · 1024×1024)</label>
                 <select id="render_quality" style="width:100%;padding:8px 10px;border:1px solid var(--border-md,#ddd);border-radius:6px;font-size:13px;background:#fff;cursor:pointer;">
                     <option value="low">low — ~$0.011/장 &nbsp;(최저가)</option>
