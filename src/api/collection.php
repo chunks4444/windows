@@ -11,11 +11,12 @@ $q   = trim($_GET['q'] ?? '');
 $pdo = db();
 
 $editorMap = [
-    'diamond' => '/src/engine/diamond/diamond.php',
+    'classic'  => '/src/engine/classic/classic.php',
+    'square'   => '/src/engine/square/square.php',
+    'diamond'  => '/src/engine/diamond/diamond.php',
+    'cross'    => '/src/engine/cross/cross.php',
     'triangle' => '/src/engine/triangle/triangle.php',
-    'square'    => '/src/engine/square/square.php',
-    'cross'     => '/src/engine/cross/cross.php',
-    'classic'   => '/src/engine/classic/classic.php',
+    'hexagon'  => '/src/engine/hexagon/hexagon.php',
 ];
 
 if ($q !== '') {

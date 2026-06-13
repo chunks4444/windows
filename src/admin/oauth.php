@@ -81,6 +81,24 @@
             <span class="oauth-status" id="naver_status"></span>
         </div>
 
+        <!-- AI 렌더링 -->
+        <div class="oauth-card" style="margin-top:32px;">
+            <div class="oauth-card-header">
+                <div class="oauth-card-logo" style="background:#10a37f;color:#fff;font-size:11px;font-weight:700;letter-spacing:-.5px;">AI</div>
+                <span class="oauth-card-title">AI 렌더링 품질</span>
+            </div>
+            <div class="oauth-field">
+                <label>이미지 크기 (dall-e-2)</label>
+                <select id="render_size" style="width:100%;padding:8px 10px;border:1px solid var(--border-md,#ddd);border-radius:6px;font-size:13px;background:#fff;cursor:pointer;">
+                    <option value="256x256">256×256 — $0.016/장 &nbsp;(저품질·최저가)</option>
+                    <option value="512x512">512×512 — $0.018/장 &nbsp;(중품질)</option>
+                    <option value="1024x1024">1024×1024 — $0.020/장 &nbsp;(고품질)</option>
+                </select>
+            </div>
+            <button class="oauth-save" onclick="saveRenderConfig()">저장</button>
+            <span class="oauth-status" id="render_status"></span>
+        </div>
+
     </div>
 </div>
 
