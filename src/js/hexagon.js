@@ -145,6 +145,13 @@
         .then(r => r.json())
         .then(data => {
             if (data.error) { pmAlert(data.error, { type: 'danger' }); overlay.style.display = 'none'; return; }
+            if (data.image) {
+                overlay.style.display = 'none';
+                const img = new Image();
+                img.onload = () => { saveRender(img.src); showRenderResult(img.src); };
+                img.src = data.image;
+                return;
+            }
             if (!data.job)  { pmAlert('서버 오류', { type: 'danger' }); overlay.style.display = 'none'; return; }
             const poll = setInterval(() => {
                 fetch('api/render_poll.php', { method: 'POST', headers: { 'Content-Type': 'application/json', ...(_tok ? { 'Authorization': 'Bearer ' + _tok } : {}) }, body: JSON.stringify({ job: data.job }) })

@@ -157,6 +157,7 @@
         .then(r => r.json())
         .then(data => {
             if (data.error) { pmAlert(data.error, { type: 'danger' }); overlay.style.display = 'none'; return; }
+            if (data.image) { handleRenderResult(data); overlay.style.display = 'none'; return; }
             if (!data.job)  { pmAlert('서버 오류', { type: 'danger' }); overlay.style.display = 'none'; return; }
             // 폴링 시작
             const poll = setInterval(() => {
