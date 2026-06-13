@@ -157,44 +157,44 @@
         .then(r => r.json())
         .then(data => {
             if (data.error) { pmAlert(data.error, { type: 'danger' }); overlay.style.display = 'none'; return; }
-            if (data.image) { handleRenderResult(data); overlay.style.display = 'none'; return; }
+            // 동기 폴백(exec 불가) 또는 폴링 결과 공통 처리
+            function applyRenderResult(src) {
+                overlay.style.display = 'none';
+                const renderedImg = new Image();
+                renderedImg.onload = () => {
+                    const out = document.createElement('canvas');
+                    out.width  = logW; out.height = logH;
+                    const ctx = out.getContext('2d');
+                    if (appBackgroundImage) {
+                        const bg = appBackgroundImage;
+                        const s  = Math.min(logW / bg.width, logH / bg.height);
+                        const dW = bg.width * s, dH = bg.height * s;
+                        ctx.drawImage(bg, (logW - dW) / 2, (logH - dH) / 2, dW, dH);
+                    }
+                    const cx = logW / 2 + panX;
+                    const cy = logH / 2 + panY;
+                    const dw = Math.round(doorNaturalSize.w);
+                    const dh = Math.round(doorNaturalSize.h);
+                    ctx.drawImage(renderedImg, Math.round(cx - dw/2), Math.round(cy - dh/2), dw, dh);
+                    const finalSrc = out.toDataURL('image/jpeg', 0.95);
+                    saveRender(finalSrc);
+                    showRenderResult(finalSrc);
+                };
+                renderedImg.src = src;
+            }
+            if (data.image) { applyRenderResult(data.image); return; }
             if (!data.job)  { pmAlert('서버 오류', { type: 'danger' }); overlay.style.display = 'none'; return; }
-            // 폴링 시작
+            // 폴링 시작 (최대 90초)
+            let pollCount = 0;
             const poll = setInterval(() => {
+                if (++pollCount > 30) { clearInterval(poll); overlay.style.display = 'none'; pmAlert('렌더링 시간이 초과됐습니다.', { type: 'danger' }); return; }
                 fetch('api/render_poll.php', { method: 'POST', headers: { 'Content-Type': 'application/json', ..._authHeader }, body: JSON.stringify({ job: data.job }) })
                 .then(r => r.json())
                 .then(res => {
                     if (res.status === 'processing') return;
                     clearInterval(poll);
-                    overlay.style.display = 'none';
-                    if (res.error) { pmAlert(res.error, { type: 'danger' }); return; }
-                    const renderedImg = new Image();
-                    renderedImg.onload = () => {
-                        // 렌더링 결과를 배경 위에 합성
-                        const out = document.createElement('canvas');
-                        out.width  = logW;
-                        out.height = logH;
-                        const ctx = out.getContext('2d');
-                        // 1) 배경
-                        if (appBackgroundImage) {
-                            const bg = appBackgroundImage;
-                            const s  = Math.min(logW / bg.width, logH / bg.height);
-                            const dW = bg.width * s, dH = bg.height * s;
-                            ctx.drawImage(bg, (logW - dW) / 2, (logH - dH) / 2, dW, dH);
-                        }
-                        // 2) 렌더링된 도면 (도면이 캔버스에서 차지하는 실제 위치·크기에 맞춰 합성)
-                        const cx = logW / 2 + panX;
-                        const cy = logH / 2 + panY;
-                        const dw = Math.round(doorNaturalSize.w);
-                        const dh = Math.round(doorNaturalSize.h);
-                        const dl = Math.round(cx - dw / 2);
-                        const dt = Math.round(cy - dh / 2);
-                        ctx.drawImage(renderedImg, dl, dt, dw, dh);
-                        const finalSrc = out.toDataURL('image/jpeg', 0.95);
-                        saveRender(finalSrc);
-                        showRenderResult(finalSrc);
-                    };
-                    renderedImg.src = res.image;
+                    if (res.error) { overlay.style.display = 'none'; pmAlert(res.error, { type: 'danger' }); return; }
+                    applyRenderResult(res.image);
                 })
                 .catch(() => { clearInterval(poll); overlay.style.display = 'none'; pmAlert('렌더링 중 오류가 발생했습니다.', { type: 'danger' }); });
             }, 3000);

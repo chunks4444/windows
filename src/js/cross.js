@@ -172,7 +172,10 @@
                 return;
             }
             if (!data.job)  { pmAlert('서버 오류', { type: 'danger' }); overlay.style.display = 'none'; return; }
+            // 폴링 (최대 90초)
+            let pollCount = 0;
             const poll = setInterval(() => {
+                if (++pollCount > 30) { clearInterval(poll); overlay.style.display = 'none'; pmAlert('렌더링 시간이 초과됐습니다.', { type: 'danger' }); return; }
                 fetch('api/render_poll.php', { method: 'POST', headers: { 'Content-Type': 'application/json', ...(_tok ? { 'Authorization': 'Bearer ' + _tok } : {}) }, body: JSON.stringify({ job: data.job }) })
                 .then(r => r.json())
                 .then(res => {
@@ -183,8 +186,9 @@
                     const img = new Image();
                     img.onload = () => { saveRender(img.src); showRenderResult(img.src); };
                     img.src = res.image;
-                });
-            }, 2000);
+                })
+                .catch(() => { clearInterval(poll); overlay.style.display = 'none'; pmAlert('렌더링 중 오류가 발생했습니다.', { type: 'danger' }); });
+            }, 3000);
         })
         .catch(() => { pmAlert('렌더링 중 오류가 발생했습니다.', { type: 'danger' }); overlay.style.display = 'none'; });
     }
