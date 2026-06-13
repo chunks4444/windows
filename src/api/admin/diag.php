@@ -32,7 +32,7 @@ try {
     try {
         $pdo->exec("CREATE TABLE IF NOT EXISTS site_config (
             key_name   VARCHAR(80) NOT NULL,
-            value      TEXT        NOT NULL DEFAULT '',
+            value      TEXT        NOT NULL,
             updated_at DATETIME    NOT NULL DEFAULT NOW() ON UPDATE NOW(),
             PRIMARY KEY (key_name)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
