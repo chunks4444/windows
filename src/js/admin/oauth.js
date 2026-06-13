@@ -17,7 +17,7 @@ async function loadConfig() {
 async function loadRenderConfig() {
     const res  = await fetch('/src/api/admin/render_config.php', { headers: { Authorization: 'Bearer ' + TOKEN() } });
     const data = await res.json();
-    if (data.render_size) document.getElementById('render_size').value = data.render_size;
+    if (data.render_quality) document.getElementById('render_quality').value = data.render_quality;
 }
 
 async function saveRenderConfig() {
@@ -29,7 +29,7 @@ async function saveRenderConfig() {
         const res  = await fetch('/src/api/admin/render_config.php', {
             method:  'PUT',
             headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + TOKEN() },
-            body:    JSON.stringify({ render_size: document.getElementById('render_size').value }),
+            body:    JSON.stringify({ render_quality: document.getElementById('render_quality').value }),
         });
         const data = await res.json();
         if (res.ok) { status.className = 'oauth-status ok';  status.textContent = '저장됨'; }

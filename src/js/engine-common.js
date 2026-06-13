@@ -331,11 +331,18 @@
             const realIdx = savedRenders.length - 1 - i;
             const item = document.createElement('div');
             item.className = 'render-saved-item';
-            item.innerHTML = `<img src="${r.src}"><span class="render-saved-del"><i class="bi bi-x"></i></span>`;
+            item.innerHTML = `<img src="${r.src}"><span class="render-saved-dl" title="다운로드"><i class="bi bi-download"></i></span><span class="render-saved-del" title="삭제"><i class="bi bi-x"></i></span>`;
             item.querySelector('img').addEventListener('click', () => {
                 const img = new Image();
                 img.onload = () => { appBackgroundImage = img; updateClearBgBtn(); draw(); };
                 img.src = r.src;
+            });
+            item.querySelector('.render-saved-dl').addEventListener('click', (e) => {
+                e.stopPropagation();
+                const link = document.createElement('a');
+                link.download = getExportFilename('png').replace(/\.png$/, '_render.png');
+                link.href = r.src;
+                link.click();
             });
             item.querySelector('.render-saved-del').addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -427,5 +434,13 @@
 
     function updateResetPlacementBtn() {
         btnResetPlacement.style.display = doorCornerPositions ? '' : 'none';
+    }
+
+    function getExportFilename(ext) {
+        const name = (document.getElementById('drawingName')?.value || '').trim() || '창호도면';
+        const ver  = (document.getElementById('verLabel')?.textContent || '').trim();
+        const suffix = ver && ver !== '—' ? `_${ver}` : '';
+        const safe = (name + suffix).replace(/[\\/:*?"<>|]/g, '_');
+        return `${safe}.${ext}`;
     }
 

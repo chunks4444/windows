@@ -1,6 +1,6 @@
 <?php
 /**
- * OpenAI dall-e-2 이미지 편집 공용 함수
+ * OpenAI gpt-image-1 이미지 편집 공용 함수
  * 모든 엔진의 렌더링에서 공통으로 사용
  */
 
@@ -9,17 +9,17 @@ function ai_get_openai_key(): string {
     return getenv('OPENAI_API_KEY') ?: '';
 }
 
-function ai_get_render_size(): string {
+function ai_get_render_quality(): string {
     static $cached = null;
     if ($cached !== null) return $cached;
-    $allowed = ['256x256', '512x512', '1024x1024'];
+    $allowed = ['low', 'medium', 'high'];
     try {
         require_once __DIR__ . '/db.php';
-        $row = db()->query("SELECT value FROM site_config WHERE key_name = 'render_size'")->fetch();
-        $v = $row ? $row['value'] : '512x512';
-        $cached = in_array($v, $allowed) ? $v : '512x512';
+        $row = db()->query("SELECT value FROM site_config WHERE key_name = 'render_quality'")->fetch();
+        $v = $row ? $row['value'] : 'low';
+        $cached = in_array($v, $allowed) ? $v : 'low';
     } catch (Throwable) {
-        $cached = '512x512';
+        $cached = 'low';
     }
     return $cached;
 }
@@ -43,7 +43,7 @@ function ai_translate_ko_en(string $text): string {
 }
 
 /**
- * 이미지 → PNG 임시 파일 생성 (크기는 DB 설정 기반)
+ * 이미지 → 1024×1024 PNG 임시 파일 생성
  * 반환: 임시 파일 경로 또는 null(실패)
  */
 function ai_prepare_image(string $imageBase64): ?string {
@@ -53,13 +53,10 @@ function ai_prepare_image(string $imageBase64): ?string {
     $src = @imagecreatefromstring(base64_decode($imageBase64));
     if (!$src) return null;
 
-    [$w, $h] = explode('x', ai_get_render_size());
-    $w = (int)$w; $h = (int)$h;
-
-    $dst = imagecreatetruecolor($w, $h);
+    $dst = imagecreatetruecolor(1024, 1024);
     imagealphablending($dst, false);
     imagesavealpha($dst, true);
-    imagecopyresampled($dst, $src, 0, 0, 0, 0, $w, $h, imagesx($src), imagesy($src));
+    imagecopyresampled($dst, $src, 0, 0, 0, 0, 1024, 1024, imagesx($src), imagesy($src));
     imagedestroy($src);
 
     ob_start(); imagepng($dst); $pngBytes = ob_get_clean();
@@ -71,7 +68,7 @@ function ai_prepare_image(string $imageBase64): ?string {
 }
 
 /**
- * OpenAI dall-e-2 이미지 편집 실행
+ * OpenAI gpt-image-1 이미지 편집 실행
  *
  * @param string $imageBase64  base64 또는 data URI
  * @param string $prompt       한국어 또는 영어 프롬프트
@@ -99,11 +96,12 @@ function ai_render_openai(string $imageBase64, string $prompt): array {
         CURLOPT_TIMEOUT        => 300,
         CURLOPT_HTTPHEADER     => ['Authorization: Bearer ' . $apiKey],
         CURLOPT_POSTFIELDS     => [
-            'model'  => 'dall-e-2',
-            'prompt' => $fullPrompt,
-            'n'      => '1',
-            'size'   => ai_get_render_size(),
-            'image'  => new CURLFile($tmpImg, 'image/png', 'input.png'),
+            'model'   => 'gpt-image-1',
+            'prompt'  => $fullPrompt,
+            'quality' => ai_get_render_quality(),
+            'n'       => '1',
+            'size'    => '1024x1024',
+            'image'   => new CURLFile($tmpImg, 'image/png', 'input.png'),
         ],
     ]);
     $response = curl_exec($ch);

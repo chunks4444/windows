@@ -2367,7 +2367,7 @@ async function draw() {
         updateModified();
         const exportCanvas = _exportCapture('#E5E7EA');
         const doorTypeText = txtDoorType.options[txtDoorType.selectedIndex].text;
-        const filename = `창호_${doorTypeText}_${txtDoorCount.value}짝_${txtW.value}x${txtH.value}.png`;
+        const filename = getExportFilename('png');
         const link = document.createElement('a');
         link.download = filename;
         link.href = exportCanvas.toDataURL('image/png');
@@ -2423,7 +2423,5 @@ async function draw() {
                 txtDoorType.selectedIndex
             ].text;
 
-        pdf.save(
-            `창호_${doorTypeText}_${txtDoorCount.value}짝_${txtW.value}x${txtH.value}.pdf`
-        );
+        pdf.save(getExportFilename('pdf'));
     });

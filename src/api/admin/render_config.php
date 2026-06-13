@@ -11,18 +11,18 @@ if (!$payload || ($payload['role'] ?? '') !== 's') {
 $pdo = db();
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $row = $pdo->query("SELECT value FROM site_config WHERE key_name = 'render_size'")->fetch();
-    echo json_encode(['render_size' => $row ? $row['value'] : '512x512']);
+    $row = $pdo->query("SELECT value FROM site_config WHERE key_name = 'render_quality'")->fetch();
+    echo json_encode(['render_quality' => $row ? $row['value'] : 'low']);
     exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
-    $body = json_decode(file_get_contents('php://input'), true) ?? [];
-    $allowed = ['256x256', '512x512', '1024x1024'];
-    $size = in_array($body['render_size'] ?? '', $allowed) ? $body['render_size'] : '512x512';
-    $pdo->prepare("INSERT INTO site_config (key_name, value) VALUES ('render_size', ?) ON DUPLICATE KEY UPDATE value = VALUES(value)")
-        ->execute([$size]);
-    echo json_encode(['ok' => true, 'render_size' => $size]);
+    $body    = json_decode(file_get_contents('php://input'), true) ?? [];
+    $allowed = ['low', 'medium', 'high'];
+    $quality = in_array($body['render_quality'] ?? '', $allowed) ? $body['render_quality'] : 'low';
+    $pdo->prepare("INSERT INTO site_config (key_name, value) VALUES ('render_quality', ?) ON DUPLICATE KEY UPDATE value = VALUES(value)")
+        ->execute([$quality]);
+    echo json_encode(['ok' => true, 'render_quality' => $quality]);
     exit;
 }
 
