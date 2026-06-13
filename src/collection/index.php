@@ -31,7 +31,7 @@
     <div class="lib-masonry" id="libMasonry"></div>
 </div>
 
-<script src="/src/js/collection.js"></script>
+<script src="/src/js/collection.js?v=<?= md5_file(__DIR__ . '/../js/collection.js') ?>"></script>
 
 <!-- 보드 모달 -->
 <div id="boardModal" class="bm-backdrop" style="display:none;">
