@@ -417,7 +417,7 @@ async function fetchGeometry(p = null) {
             body,
             signal: controller.signal,
         });
-        return res.json();
+        return await res.json();
     } catch (e) {
         if (e.name === 'AbortError') return null;
         throw e;
@@ -426,9 +426,7 @@ async function fetchGeometry(p = null) {
 
 async function draw() {
     try {
-    console.log('[DRAW before] scaleFactor=', scaleFactor, 'panX=', panX, new Error().stack.split('\n')[2]?.trim());
     const data = await fetchGeometry();
-    console.log('[DRAW after] scaleFactor=', scaleFactor, 'panX=', panX);
     if (!data) return;
     if (data.error) {
         console.warn('[draw] error from server:', data.error);
