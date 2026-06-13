@@ -271,7 +271,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (e.key === 'Enter') createBoard();
     });
     await loadLikes();
-    const q = new URLSearchParams(location.search).get('q') || '';
-    if (q) document.getElementById('libSearch').value = q;
-    loadPatterns(q);
+    const q = new URLSearchParams(location.search).get('q')
+           || sessionStorage.getItem('collectionQ')
+           || '';
+    sessionStorage.removeItem('collectionQ');
+    if (q) {
+        document.getElementById('libSearch').value = q;
+        await loadPatterns(''); // 필터 버튼용 전체 패턴 먼저 로드
+        loadPatterns(q);        // 검색어로 재필터
+    } else {
+        loadPatterns('');
+    }
 });
