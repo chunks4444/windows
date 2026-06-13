@@ -89,7 +89,7 @@
             </div>
             <div class="oauth-field">
                 <label>OpenAI API Key</label>
-                <input type="password" id="openai_api_key" placeholder="sk-proj-…" autocomplete="off">
+                <input type="text" id="openai_api_key" placeholder="sk-proj-…" autocomplete="off" style="font-family:monospace;font-size:11px;">
             </div>
             <div class="oauth-field">
                 <label>품질 (gpt-image-1 · 1024×1024)</label>
