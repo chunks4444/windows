@@ -115,22 +115,14 @@
 
         const dpr = window.devicePixelRatio || 1;
 
-        // 전체 합성 캔버스: 배경 먼저, 도면은 셀 배경 없이(투명) 합성
+        // 도면만 AI로 전송 (질감 적용), 배경은 JS에서 합성
         const composite = document.createElement('canvas');
         composite.width  = logW;
         composite.height = logH;
         const compCtx = composite.getContext('2d');
-        // 1) 배경 이미지
-        if (appBackgroundImage) {
-            const img = appBackgroundImage;
-            const s = Math.min(logW / img.width, logH / img.height);
-            const dW = img.width * s, dH = img.height * s;
-            compCtx.drawImage(img, (logW - dW) / 2, (logH - dH) / 2, dW, dH);
-        }
-        // 2) 도면 레이어 (canvas에서 흰 셀 배경이 들어간 상태지만 배경 위에 올려 투명도로 블렌드)
-        compCtx.globalAlpha = 0.92;
+        compCtx.fillStyle = '#ffffff';
+        compCtx.fillRect(0, 0, logW, logH);
         compCtx.drawImage(canvas, 0, 0, logW, logH);
-        compCtx.globalAlpha = 1.0;
 
         // 도면 영역 마스크 (흰색 = 인페인팅 영역, 검정 = 유지)
         const cx = logW / 2 + panX;
@@ -167,7 +159,24 @@
             if (data.error) { pmAlert(data.error, { type: 'danger' }); return; }
             if (!data.image) { pmAlert('서버 오류', { type: 'danger' }); return; }
             const img = new Image();
-            img.onload = () => { saveRender(img.src); showRenderResult(img.src); };
+            img.onload = () => {
+                // 배경 위에 AI 질감 도면 multiply 합성
+                const out = document.createElement('canvas');
+                out.width = logW; out.height = logH;
+                const ctx = out.getContext('2d');
+                if (appBackgroundImage) {
+                    const bg = appBackgroundImage;
+                    const s = Math.min(logW / bg.width, logH / bg.height);
+                    const dW = bg.width * s, dH = bg.height * s;
+                    ctx.drawImage(bg, (logW - dW) / 2, (logH - dH) / 2, dW, dH);
+                }
+                ctx.globalCompositeOperation = 'multiply';
+                ctx.drawImage(img, 0, 0, logW, logH);
+                ctx.globalCompositeOperation = 'source-over';
+                const finalSrc = out.toDataURL('image/jpeg', 0.95);
+                saveRender(finalSrc);
+                showRenderResult(finalSrc);
+            };
             img.src = data.image;
         })
         .catch(() => { pmAlert('렌더링 중 오류가 발생했습니다.', { type: 'danger' }); overlay.style.display = 'none'; });

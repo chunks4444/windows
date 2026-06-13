@@ -136,20 +136,14 @@
             return;
         }
 
-        // 배경 + 도면 합성 (multiply 블렌드로 흰 배경 제거)
+        // 도면만 AI로 전송 (질감 적용), 배경은 JS에서 합성
         const composite = document.createElement('canvas');
         composite.width  = logW;
         composite.height = logH;
         const compCtx = composite.getContext('2d');
-        if (appBackgroundImage) {
-            const bg = appBackgroundImage;
-            const s  = Math.min(logW / bg.width, logH / bg.height);
-            const dW = bg.width * s, dH = bg.height * s;
-            compCtx.drawImage(bg, (logW - dW) / 2, (logH - dH) / 2, dW, dH);
-        }
-        compCtx.globalCompositeOperation = 'multiply';
+        compCtx.fillStyle = '#ffffff';
+        compCtx.fillRect(0, 0, logW, logH);
         compCtx.drawImage(canvas, 0, 0, logW, logH);
-        compCtx.globalCompositeOperation = 'source-over';
 
         const overlay = document.getElementById('renderOverlay');
         overlay.style.display = 'flex';
@@ -172,8 +166,22 @@
             if (!data.image) { pmAlert('서버 오류', { type: 'danger' }); return; }
             const renderedImg = new Image();
             renderedImg.onload = () => {
-                saveRender(renderedImg.src);
-                showRenderResult(renderedImg.src);
+                // 배경 위에 AI 질감 도면 multiply 합성
+                const out = document.createElement('canvas');
+                out.width = logW; out.height = logH;
+                const ctx = out.getContext('2d');
+                if (appBackgroundImage) {
+                    const bg = appBackgroundImage;
+                    const s = Math.min(logW / bg.width, logH / bg.height);
+                    const dW = bg.width * s, dH = bg.height * s;
+                    ctx.drawImage(bg, (logW - dW) / 2, (logH - dH) / 2, dW, dH);
+                }
+                ctx.globalCompositeOperation = 'multiply';
+                ctx.drawImage(renderedImg, 0, 0, logW, logH);
+                ctx.globalCompositeOperation = 'source-over';
+                const finalSrc = out.toDataURL('image/jpeg', 0.95);
+                saveRender(finalSrc);
+                showRenderResult(finalSrc);
             };
             renderedImg.src = data.image;
         })
