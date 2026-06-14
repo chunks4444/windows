@@ -36,7 +36,7 @@ header('Content-Type: text/html; charset=UTF-8');
 <!-- 회원 관리 페이지 -->
 <div class="db-page" id="adminPage" style="display:none;">
     <div class="db-header">
-        <h1 class="db-title">회원 관리</h1>
+        <h1 class="db-title"><i class="bi bi-shield-lock me-2"></i>회원 관리</h1>
     </div>
 
     <div class="adm-table-wrap">

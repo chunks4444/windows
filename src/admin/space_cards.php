@@ -21,7 +21,7 @@
 
 <div class="db-page" id="scPage" style="display:none;">
     <div class="db-header">
-        <h1 class="db-title">공간 카드 관리</h1>
+        <h1 class="db-title"><i class="bi bi-grid me-2"></i>공간 카드 관리</h1>
         <button class="adm-edit-btn" style="height:32px;padding:0 14px;" onclick="openModal()">
             <i class="bi bi-plus-lg"></i> 추가
         </button>

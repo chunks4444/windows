@@ -17,7 +17,7 @@
 
 <div class="db-page" id="oauthPage" style="display:none;">
     <div class="db-header">
-        <h1 class="db-title">SNS 로그인 설정</h1>
+        <h1 class="db-title"><i class="bi bi-key me-2"></i>SNS 로그인 설정</h1>
     </div>
 
     <div style="max-width:600px;margin:0 auto;">

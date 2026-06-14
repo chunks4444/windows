@@ -21,7 +21,7 @@ header('Content-Type: text/html; charset=UTF-8');
 
 <div class="db-page" id="statsPage" style="display:none;">
     <div class="db-header">
-        <h1 class="db-title">접속 통계</h1>
+        <h1 class="db-title"><i class="bi bi-bar-chart-line me-2"></i>접속 통계</h1>
         <div class="st-month-btns">
             <button class="st-month-btn" data-m="1">1개월</button>
             <button class="st-month-btn" data-m="3">3개월</button>

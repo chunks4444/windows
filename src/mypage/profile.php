@@ -30,7 +30,7 @@ header('Content-Type: text/html; charset=UTF-8');
 <!-- 프로필 폼 -->
 <div class="db-page" id="profilePage" style="display:none;">
     <div class="db-header">
-        <h1 class="db-title">프로필</h1>
+        <h1 class="db-title"><i class="bi bi-person me-2"></i>프로필</h1>
     </div>
 
     <div class="pf-card">

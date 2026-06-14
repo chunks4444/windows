@@ -22,7 +22,7 @@
 <div class="db-page" id="wtPage" style="display:none;">
     <div class="db-header">
         <div>
-            <h1 class="db-title">원가 테이블</h1>
+            <h1 class="db-title"><i class="bi bi-calculator me-2"></i>원가 테이블</h1>
             <p style="font-size:12px;color:var(--text-3);margin:2px 0 0;">목재 종류별 단가 및 가중치를 관리합니다.</p>
         </div>
         <button class="adm-edit-btn" style="height:32px;padding:0 14px;" onclick="openModal()">

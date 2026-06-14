@@ -21,7 +21,7 @@
 
 <div class="db-page" id="libPage" style="display:none;">
     <div class="db-header">
-        <h1 class="db-title">라이브러리 패턴</h1>
+        <h1 class="db-title"><i class="bi bi-image me-2"></i>라이브러리 패턴</h1>
         <div style="display:flex;gap:8px;align-items:center;">
             <div style="display:flex;gap:4px;">
                 <button class="adm-edit-btn lib-status-btn" data-status="all"     style="height:32px;padding:0 12px;" onclick="setStatusFilter('all')">전체</button>

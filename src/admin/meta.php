@@ -17,7 +17,7 @@ header('Content-Type: text/html; charset=UTF-8');
 
 <div class="db-page" id="metaPage" style="display:none;">
     <div class="db-header">
-        <h1 class="db-title">SEO 메타 관리</h1>
+        <h1 class="db-title"><i class="bi bi-search me-2"></i>SEO 메타 관리</h1>
         <button class="adm-edit-btn" style="height:32px;padding:0 14px;" onclick="openAddModal()">
             <i class="bi bi-plus-lg"></i> 추가
         </button>

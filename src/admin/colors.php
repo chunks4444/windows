@@ -19,7 +19,7 @@ header('Content-Type: text/html; charset=UTF-8');
 
 <div class="db-page" id="colorPage" style="display:none;">
     <div class="db-header">
-        <h1 class="db-title">컬러 팔레트 관리</h1>
+        <h1 class="db-title"><i class="bi bi-palette me-2"></i>컬러 팔레트 관리</h1>
         <button class="adm-edit-btn" style="height:32px;padding:0 14px;" onclick="openAddModal()">
             <i class="bi bi-plus-lg"></i> 색상 추가
         </button>

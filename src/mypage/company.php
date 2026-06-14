@@ -30,7 +30,7 @@ header('Content-Type: text/html; charset=UTF-8');
 <!-- 회사정보 폼 -->
 <div class="db-page" id="companyPage" style="display:none;">
     <div class="db-header">
-        <h1 class="db-title">회사 정보</h1>
+        <h1 class="db-title"><i class="bi bi-building me-2"></i>회사 정보</h1>
     </div>
 
     <div class="pf-card">
