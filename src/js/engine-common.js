@@ -53,6 +53,17 @@
     function _wpToken()   { return localStorage.getItem('pmok_auth_token'); }
     function _wpHeaders() { return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _wpToken() }; }
 
+    function _localUserId() {
+        const tok = localStorage.getItem('pmok_auth_token');
+        if (!tok) return null;
+        try { return JSON.parse(atob(tok.split('.')[1])).sub ?? null; } catch { return null; }
+    }
+
+    function _rendersKey() {
+        const uid = _localUserId();
+        return uid ? RENDERS_KEY + '_u' + uid : RENDERS_KEY;
+    }
+
     function addThumbItem(id, src, filename) {
         const item = document.createElement('div');
         item.className = 'rp-thumb-item';
@@ -301,7 +312,7 @@
     }
 
     function loadSavedRenders() {
-        try { savedRenders = JSON.parse(localStorage.getItem(RENDERS_KEY)) || []; } catch(e) { savedRenders = []; }
+        try { savedRenders = JSON.parse(localStorage.getItem(_rendersKey())) || []; } catch(e) { savedRenders = []; }
         renderSavedThumbList();
     }
 
@@ -345,7 +356,7 @@
             item.querySelector('.render-saved-del').addEventListener('click', (e) => {
                 e.stopPropagation();
                 savedRenders.splice(realIdx, 1);
-                try { localStorage.setItem(RENDERS_KEY, JSON.stringify(savedRenders)); } catch(e2) {}
+                try { localStorage.setItem(_rendersKey(), JSON.stringify(savedRenders)); } catch(e2) {}
                 renderSavedThumbList();
             });
             list.appendChild(item);
@@ -362,7 +373,7 @@
         if (savedRenders.length > MAX_RENDERS) savedRenders.shift();
         let ok = false;
         while (!ok && savedRenders.length > 0) {
-            try { localStorage.setItem(RENDERS_KEY, JSON.stringify(savedRenders)); ok = true; }
+            try { localStorage.setItem(_rendersKey(), JSON.stringify(savedRenders)); ok = true; }
             catch(e) { savedRenders.shift(); }
         }
         renderSavedThumbList();
