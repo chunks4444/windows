@@ -61,6 +61,7 @@ header('Content-Type: text/html; charset=UTF-8');
                         <th>최종 접속</th>
                         <th>접속 IP</th>
                         <th>상태</th>
+                        <th>도면</th>
                         <th></th>
                     </tr>
                 </thead>

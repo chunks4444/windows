@@ -31,7 +31,7 @@ async function loadUsers(page) {
 function renderTable(users) {
     const tbody = document.getElementById('admTbody');
     if (!users.length) {
-        tbody.innerHTML = '<tr><td colspan="9" style="padding:40px;text-align:center;color:var(--text-3);">검색 결과가 없습니다.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="10" style="padding:40px;text-align:center;color:var(--text-3);">검색 결과가 없습니다.</td></tr>';
         return;
     }
     tbody.innerHTML = users.map(u => `
@@ -45,6 +45,7 @@ function renderTable(users) {
             <td style="color:var(--text-3);font-size:12px;">${fmtDatetime(u.last_login_at)}</td>
             <td style="color:var(--text-3);font-size:12px;font-family:monospace;">${u.last_login_ip ? esc(u.last_login_ip) : '<span class="adm-null">—</span>'}</td>
             <td>${u.withdrawn_at ? '<span class="adm-withdrawn-badge">탈퇴</span>' : '<span class="adm-active-badge">정상</span>'}</td>
+            <td style="text-align:center;color:var(--text-3);font-size:12px;">${u.drawing_count || 0}</td>
             <td><div class="adm-action-cell">
                 <button class="adm-edit-btn" onclick='openModal(${u.id}, ${JSON.stringify(u)})'>수정</button>
                 ${u.withdrawn_at
