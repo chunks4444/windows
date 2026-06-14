@@ -16,12 +16,8 @@ if (!in_array($provider, ['google', 'kakao', 'naver'], true)) {
 $code  = $_GET['code']  ?? '';
 $state = $_GET['state'] ?? '';
 
-if (!$code) {
-    oauth_fail('인증 요청이 만료되었습니다. [code 없음] error=' . ($_GET['error'] ?? '') . ' desc=' . ($_GET['error_description'] ?? ''));
-}
-if (!oauth_verify_state($state, $provider)) {
-    $hasCookie = isset($_COOKIE['_oauth_st']) ? 'O' : 'X';
-    oauth_fail('인증 요청이 만료되었습니다. [state 불일치] cookie=' . $hasCookie);
+if (!$code || !oauth_verify_state($state, $provider)) {
+    oauth_fail('인증 요청이 만료되었습니다. 다시 시도해 주세요.');
 }
 
 $cfg          = oauth_config($provider);

@@ -67,7 +67,6 @@ header('Content-Type: text/html; charset=UTF-8');
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
 <script src="/src/js/admin/colors.js"></script>
 </body>
 </html>

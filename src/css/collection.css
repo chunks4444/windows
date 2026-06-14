@@ -105,10 +105,9 @@ body { background: var(--page-bg); }
 /* ── 매소너리 그리드 ──────────────────────────── */
 .lib-masonry {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 260px));
+    grid-template-columns: repeat(5, 1fr);
     gap: 12px;
     align-items: start;
-    justify-content: center;
 }
 
 .lib-item {
@@ -443,7 +442,7 @@ body { background: var(--page-bg); }
 
 /* ── 반응형 ──────────────────────────────────── */
 @media (max-width: 900px) {
-    .lib-masonry { grid-template-columns: repeat(auto-fit, minmax(160px, 220px)); }
+    .lib-masonry { grid-template-columns: repeat(3, 1fr); }
 }
 @media (max-width: 600px) {
     .lib-masonry { grid-template-columns: repeat(2, 1fr); gap: 8px; }
