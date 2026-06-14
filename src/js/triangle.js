@@ -170,7 +170,7 @@
                     <div class="render-result-toolbar">
                         <span class="render-result-title">Rendering 결과</span>
                         <div style="display:flex;gap:6px;">
-                            <button class="render-result-apply" id="rrApply">배경 적용</button>
+                            <button class="render-result-apply" id="rrDownload">다운로드</button>
                             <button class="render-result-close" id="rrClose">✕</button>
                         </div>
                     </div>
@@ -178,11 +178,12 @@
                 </div>`;
             document.body.appendChild(pop);
             document.getElementById('rrClose').onclick = () => pop.classList.remove('rr-visible');
-            document.getElementById('rrApply').onclick = () => {
-                const img = new Image();
-                img.onload = () => { appBackgroundImage = img; draw(); };
-                img.src = document.getElementById('rrImg').src;
-                pop.classList.remove('rr-visible');
+            document.getElementById('rrDownload').onclick = () => {
+                const link = document.createElement('a');
+                const base = getExportFilename('png').replace(/\.png$/, '');
+                link.download = `${base}_${savedRenders.length}.png`;
+                link.href = document.getElementById('rrImg').src;
+                link.click();
             };
         }
         document.getElementById('rrImg').src = src;

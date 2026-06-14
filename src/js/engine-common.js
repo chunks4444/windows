@@ -333,9 +333,7 @@
             item.className = 'render-saved-item';
             item.innerHTML = `<img src="${r.src}"><span class="render-saved-dl" title="다운로드"><i class="bi bi-download"></i></span><span class="render-saved-del" title="삭제"><i class="bi bi-x"></i></span>`;
             item.querySelector('img').addEventListener('click', () => {
-                const img = new Image();
-                img.onload = () => { appBackgroundImage = img; updateClearBgBtn(); draw(); };
-                img.src = r.src;
+                showRenderResult(r.src);
             });
             item.querySelector('.render-saved-dl').addEventListener('click', (e) => {
                 e.stopPropagation();
