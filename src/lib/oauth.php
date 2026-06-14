@@ -48,20 +48,25 @@ function oauth_config(string $provider): array {
 
 // ── state CSRF 토큰 ───────────────────────────────────────────
 function oauth_make_state(string $provider): string {
-    if (session_status() === PHP_SESSION_NONE) session_start();
-    $state = bin2hex(random_bytes(16));
-    $_SESSION['oauth_state']    = $state;
-    $_SESSION['oauth_provider'] = $provider;
+    $state  = bin2hex(random_bytes(16));
+    $secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+    setcookie('_oauth_st', $state . ':' . $provider, [
+        'expires'  => time() + 600,
+        'path'     => '/',
+        'httponly' => true,
+        'secure'   => $secure,
+        'samesite' => 'Lax',
+    ]);
     return $state;
 }
 
 function oauth_verify_state(string $state, string $provider): bool {
-    if (session_status() === PHP_SESSION_NONE) session_start();
-    $ok = isset($_SESSION['oauth_state'], $_SESSION['oauth_provider'])
-       && hash_equals($_SESSION['oauth_state'], $state)
-       && $_SESSION['oauth_provider'] === $provider;
-    unset($_SESSION['oauth_state'], $_SESSION['oauth_provider']);
-    return $ok;
+    $cookie = $_COOKIE['_oauth_st'] ?? '';
+    $secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+    setcookie('_oauth_st', '', ['expires' => time() - 3600, 'path' => '/', 'secure' => $secure, 'samesite' => 'Lax']);
+    if (!$cookie) return false;
+    [$s, $p] = explode(':', $cookie, 2) + ['', ''];
+    return $p === $provider && hash_equals($s, $state);
 }
 
 // ── Access Token 교환 ─────────────────────────────────────────
