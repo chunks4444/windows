@@ -21,9 +21,10 @@ if (!$code || !oauth_verify_state($state, $provider)) {
 }
 
 $cfg          = oauth_config($provider);
-$access_token = oauth_get_token($cfg, $code, $provider);
+$tokenError   = null;
+$access_token = oauth_get_token($cfg, $code, $provider, $tokenError);
 if (!$access_token) {
-    oauth_fail('인증 토큰을 가져오지 못했습니다.');
+    oauth_fail('인증 토큰 오류: ' . ($tokenError ?? '알 수 없는 오류'));
 }
 
 $email = oauth_get_email($provider, $cfg, $access_token);

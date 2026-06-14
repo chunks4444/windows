@@ -65,7 +65,7 @@ function oauth_verify_state(string $state, string $provider): bool {
 }
 
 // ── Access Token 교환 ─────────────────────────────────────────
-function oauth_get_token(array $cfg, string $code, string $provider): ?string {
+function oauth_get_token(array $cfg, string $code, string $provider, ?string &$error = null): ?string {
     $params = [
         'grant_type'   => 'authorization_code',
         'client_id'    => $cfg['client_id'],
@@ -85,6 +85,9 @@ function oauth_get_token(array $cfg, string $code, string $provider): ?string {
     $res  = curl_exec($ch);
     curl_close($ch);
     $data = json_decode($res, true);
+    if (!isset($data['access_token'])) {
+        $error = ($data['error_description'] ?? $data['error'] ?? 'unknown');
+    }
     return $data['access_token'] ?? null;
 }
 
