@@ -3,7 +3,7 @@ require_once __DIR__ . '/../../../lib/oauth.php';
 require_once __DIR__ . '/../../../lib/db.php';
 require_once __DIR__ . '/../../../lib/jwt.php';
 
-function oauth_fail(string $msg): never {
+function oauth_fail(string $msg): void {
     header('Location: /?oauth_error=' . urlencode($msg));
     exit;
 }

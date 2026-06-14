@@ -9,33 +9,37 @@ function oauth_config(string $provider): array {
         $rows = db()->query("SELECT key_name, value FROM site_config WHERE key_name LIKE 'oauth_%'")->fetchAll();
         foreach ($rows as $r) $cfg[$r['key_name']] = $r['value'];
     }
-    return match ($provider) {
-        'google' => [
-            'auth_url'      => 'https://accounts.google.com/o/oauth2/v2/auth',
-            'token_url'     => 'https://oauth2.googleapis.com/token',
-            'userinfo_url'  => 'https://www.googleapis.com/oauth2/v3/userinfo',
-            'client_id'     => $cfg['oauth_google_client_id']     ?? '',
-            'client_secret' => $cfg['oauth_google_client_secret'] ?? '',
-            'scope'         => 'openid email profile',
-        ],
-        'kakao' => [
-            'auth_url'      => 'https://kauth.kakao.com/oauth/authorize',
-            'token_url'     => 'https://kauth.kakao.com/oauth/token',
-            'userinfo_url'  => 'https://kapi.kakao.com/v2/user/me',
-            'client_id'     => $cfg['oauth_kakao_client_id']     ?? '',
-            'client_secret' => $cfg['oauth_kakao_client_secret'] ?? '',
-            'scope'         => 'account_email profile_nickname',
-        ],
-        'naver' => [
-            'auth_url'      => 'https://nid.naver.com/oauth2.0/authorize',
-            'token_url'     => 'https://nid.naver.com/oauth2.0/token',
-            'userinfo_url'  => 'https://openapi.naver.com/v1/nid/me',
-            'client_id'     => $cfg['oauth_naver_client_id']     ?? '',
-            'client_secret' => $cfg['oauth_naver_client_secret'] ?? '',
-            'scope'         => '',
-        ],
-        default => throw new InvalidArgumentException("Unknown provider: $provider"),
-    };
+    switch ($provider) {
+        case 'google':
+            return [
+                'auth_url'      => 'https://accounts.google.com/o/oauth2/v2/auth',
+                'token_url'     => 'https://oauth2.googleapis.com/token',
+                'userinfo_url'  => 'https://www.googleapis.com/oauth2/v3/userinfo',
+                'client_id'     => $cfg['oauth_google_client_id']     ?? '',
+                'client_secret' => $cfg['oauth_google_client_secret'] ?? '',
+                'scope'         => 'openid email profile',
+            ];
+        case 'kakao':
+            return [
+                'auth_url'      => 'https://kauth.kakao.com/oauth/authorize',
+                'token_url'     => 'https://kauth.kakao.com/oauth/token',
+                'userinfo_url'  => 'https://kapi.kakao.com/v2/user/me',
+                'client_id'     => $cfg['oauth_kakao_client_id']     ?? '',
+                'client_secret' => $cfg['oauth_kakao_client_secret'] ?? '',
+                'scope'         => 'account_email profile_nickname',
+            ];
+        case 'naver':
+            return [
+                'auth_url'      => 'https://nid.naver.com/oauth2.0/authorize',
+                'token_url'     => 'https://nid.naver.com/oauth2.0/token',
+                'userinfo_url'  => 'https://openapi.naver.com/v1/nid/me',
+                'client_id'     => $cfg['oauth_naver_client_id']     ?? '',
+                'client_secret' => $cfg['oauth_naver_client_secret'] ?? '',
+                'scope'         => '',
+            ];
+        default:
+            throw new InvalidArgumentException("Unknown provider: $provider");
+    }
 }
 
 // ── state CSRF 토큰 ───────────────────────────────────────────
@@ -92,10 +96,10 @@ function oauth_get_email(string $provider, array $cfg, string $access_token): ?s
     curl_close($ch);
     $data = json_decode($res, true);
 
-    return match ($provider) {
-        'google' => $data['email'] ?? null,
-        'kakao'  => $data['kakao_account']['email'] ?? null,
-        'naver'  => $data['response']['email'] ?? null,
-        default  => null,
-    };
+    switch ($provider) {
+        case 'google': return $data['email'] ?? null;
+        case 'kakao':  return $data['kakao_account']['email'] ?? null;
+        case 'naver':  return $data['response']['email'] ?? null;
+        default:       return null;
+    }
 }
