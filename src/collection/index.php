@@ -29,6 +29,12 @@
 
 <div class="lib-main">
     <div class="lib-masonry" id="libMasonry"></div>
+    <div id="libLoadMore" style="display:none;text-align:center;padding:24px 0;">
+        <button class="lib-loadmore-btn" onclick="loadNextPage()">
+            <span id="libLoadMoreText">더 보기</span>
+            <span id="libLoadMoreSpinner" style="display:none;"></span>
+        </button>
+    </div>
 </div>
 
 <script src="/src/js/collection.js?v=<?= md5_file(__DIR__ . '/../js/collection.js') ?>"></script>

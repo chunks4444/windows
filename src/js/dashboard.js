@@ -292,6 +292,64 @@ function switchTab(tab) {
 function _token() { return localStorage.getItem('pmok_auth_token'); }
 function _headers() { return { 'Authorization': 'Bearer ' + _token() }; }
 
+/* ── 도면 페이징 상태 */
+let drawingsPage     = 1;
+let drawingsHasMore  = true;
+let drawingsLoading  = false;
+let drawingsObserver = null;
+
+function setDrawingsLoadMore(visible, loading = false) {
+    let wrap = document.getElementById('dbLoadMore');
+    if (!wrap) return;
+    const btn     = wrap.querySelector('.db-loadmore-btn');
+    const text    = wrap.querySelector('.db-loadmore-text');
+    const spinner = wrap.querySelector('.db-loadmore-spinner');
+    wrap.style.display    = visible || loading ? 'block' : 'none';
+    btn.disabled          = loading;
+    text.style.display    = loading ? 'none' : '';
+    spinner.style.display = loading ? 'inline-block' : 'none';
+}
+
+function setupDrawingsObserver() {
+    drawingsObserver?.disconnect();
+    const wrap = document.getElementById('dbLoadMore');
+    if (!wrap) return;
+    drawingsObserver = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting && drawingsHasMore && !drawingsLoading) loadMoreDrawings();
+    }, { rootMargin: '400px' });
+    drawingsObserver.observe(wrap);
+}
+
+async function loadMoreDrawings() {
+    if (drawingsLoading || !drawingsHasMore) return;
+    drawingsLoading = true;
+    setDrawingsLoadMore(true, true);
+
+    try {
+        const res  = await fetch(`/src/api/drawings/dashboard.php?page=${drawingsPage}`, { headers: _headers() });
+        const data = await res.json();
+
+        if (!res.ok || data.error) { drawingsLoading = false; setDrawingsLoadMore(drawingsHasMore); return; }
+
+        const drawings = data.drawings || [];
+        drawingsHasMore = !!data.has_more;
+        drawingsPage++;
+
+        if (drawings.length) {
+            let grid = document.querySelector('#dbContent .db-grid');
+            if (!grid) {
+                document.getElementById('dbContent').innerHTML = '<div class="db-grid"></div>';
+                grid = document.querySelector('#dbContent .db-grid');
+            }
+            grid.insertAdjacentHTML('beforeend', drawings.map(renderCard).join(''));
+        }
+    } catch(e) {}
+
+    drawingsLoading = false;
+    setDrawingsLoadMore(drawingsHasMore, false);
+    if (!drawingsHasMore) drawingsObserver?.disconnect();
+}
+
 async function loadDashboard() {
     if (!_token()) {
         document.getElementById('dbAuthWall').style.display = '';
@@ -299,10 +357,12 @@ async function loadDashboard() {
     }
 
     document.getElementById('dbPage').style.display = '';
-    document.getElementById('dbContent').innerHTML = '<div class="db-loading">불러오는 중…</div>';
+    document.getElementById('dbContent').innerHTML  = '<div class="db-loading">불러오는 중…</div>';
+    drawingsPage    = 1;
+    drawingsHasMore = true;
 
     try {
-        const res  = await fetch('/src/api/drawings/dashboard.php', { headers: _headers() });
+        const res  = await fetch('/src/api/drawings/dashboard.php?page=1', { headers: _headers() });
         const data = await res.json();
 
         if (!res.ok || data.error) {
@@ -311,11 +371,25 @@ async function loadDashboard() {
         }
 
         const drawings = data.drawings || [];
+        drawingsHasMore = !!data.has_more;
+        drawingsPage    = 2;
+
         if (!drawings.length) {
             document.getElementById('dbContent').innerHTML = '<div class="db-empty">저장된 도면이 없습니다.</div>';
             return;
         }
-        document.getElementById('dbContent').innerHTML = `<div class="db-grid">${drawings.map(renderCard).join('')}</div>`;
+
+        document.getElementById('dbContent').innerHTML =
+            `<div class="db-grid">${drawings.map(renderCard).join('')}</div>` +
+            `<div id="dbLoadMore" style="display:none;text-align:center;padding:24px 0;">
+                <button class="db-loadmore-btn" onclick="loadMoreDrawings()">
+                    <span class="db-loadmore-text">더 보기</span>
+                    <span class="db-loadmore-spinner" style="display:none;"></span>
+                </button>
+             </div>`;
+
+        setDrawingsLoadMore(drawingsHasMore);
+        setupDrawingsObserver();
     } catch (e) {
         document.getElementById('dbContent').innerHTML = '<div class="db-loading">오류가 발생했습니다.</div>';
     }

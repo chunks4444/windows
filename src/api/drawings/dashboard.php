@@ -12,6 +12,10 @@ if (!$payload) {
     http_response_code(401); echo json_encode(['error' => '인증이 필요합니다.']); exit;
 }
 
-$drawings = Drawing::list_all((int) $payload['sub']);
+$limit    = 20;
+$page     = max(1, (int)($_GET['page'] ?? 1));
+$drawings = Drawing::list_all((int)$payload['sub'], $page, $limit + 1);
+$has_more = count($drawings) > $limit;
+if ($has_more) array_pop($drawings);
 
-echo json_encode(['drawings' => $drawings]);
+echo json_encode(['drawings' => $drawings, 'has_more' => $has_more]);

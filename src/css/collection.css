@@ -440,6 +440,36 @@ body { background: var(--page-bg); }
     transform: translateX(-50%) translateY(0);
 }
 
+/* ── 더 보기 버튼 ────────────────────────────── */
+.lib-loadmore-btn {
+    height: 40px;
+    padding: 0 28px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    color: var(--text-2);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.12s, border-color 0.12s;
+}
+.lib-loadmore-btn:hover { background: var(--teal); border-color: var(--teal); color: #fff; }
+.lib-loadmore-btn:disabled { opacity: 0.5; cursor: default; }
+
+#libLoadMoreSpinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: libSpin 0.6s linear infinite;
+}
+@keyframes libSpin { to { transform: rotate(360deg); } }
+
 /* ── 반응형 ──────────────────────────────────── */
 @media (max-width: 900px) {
     .lib-masonry { grid-template-columns: repeat(3, 1fr); }

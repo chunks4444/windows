@@ -1,44 +1,111 @@
-/* ── 상태 ──────────────────────────────────────── */
-let allPatterns     = [];
-let currentPatterns = [];
-let activeFilter    = 'all';
-let searchTimer     = null;
-const likes         = {};
+/* ── 상태 ─────────────────────────────────────── */
+let allKeywords    = [];
+let loadedPatterns = [];
+let currentPage    = 1;
+let hasMore        = true;
+let isLoading      = false;
+let currentQ       = '';
+const likes        = {};
+let activeFilter   = 'all';
+let searchTimer    = null;
+let scrollObserver = null;
 
 /* ── API ──────────────────────────────────────── */
-async function loadPatterns(q = '') {
+async function fetchPage(q, page) {
     try {
         const res  = await fetch('/src/api/collection.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ q }),
+            body: JSON.stringify({ q, page }),
         });
         const data = await res.json();
-        if (data.error) { console.error('library API:', data.error); currentPatterns = []; }
-        else { currentPatterns = data.patterns || []; }
-        if (!q) allPatterns = [...currentPatterns];
+        if (data.error) { console.error('collection API:', data.error); return { patterns: [], has_more: false }; }
+        return data;
     } catch(e) {
-        console.error('library fetch error:', e);
-        currentPatterns = [];
+        console.error('collection fetch error:', e);
+        return { patterns: [], has_more: false };
     }
-    applyAndRender();
 }
 
-/* ── 렌더링 ──────────────────────────────────── */
-function applyAndRender() {
-    let patterns = activeFilter === 'liked'
-        ? allPatterns.filter(p => !!likes[p.id])
-        : currentPatterns;
+/* ── 그리드 초기화 후 로드 ────────────────────── */
+function resetAndLoad(q) {
+    currentQ       = q;
+    currentPage    = 1;
+    hasMore        = true;
+    loadedPatterns = [];
+    document.getElementById('libMasonry').innerHTML = '';
+    setLoadMore(false);
+    setupObserver();
+    loadNextPage();
+}
+
+/* ── 다음 페이지 로드 (무한스크롤 + 더보기 공용) */
+async function loadNextPage() {
+    if (isLoading || !hasMore) return;
+    isLoading = true;
+    setLoadMore(false, true); // 버튼 로딩 상태
+
+    const data     = await fetchPage(currentQ, currentPage);
+    const patterns = data.patterns || [];
+
+    if (currentPage === 1 && Array.isArray(data.keywords)) {
+        allKeywords = data.keywords;
+        buildFilterButtons();
+    }
+
+    loadedPatterns = [...loadedPatterns, ...patterns];
+    hasMore        = !!data.has_more;
+    currentPage++;
 
     const masonry = document.getElementById('libMasonry');
-    if (!patterns.length) {
+    if (!patterns.length && currentPage === 2) {
         masonry.innerHTML = '<p style="color:var(--text-3);font-size:13px;grid-column:1/-1;padding:40px 0;text-align:center;">검색 결과가 없습니다.</p>';
+    } else {
+        masonry.insertAdjacentHTML('beforeend', patterns.map(buildCard).join(''));
+    }
+
+    isLoading = false;
+    setLoadMore(hasMore, false);
+    if (!hasMore) scrollObserver?.disconnect();
+}
+
+/* ── 더보기 버튼 상태 ─────────────────────────── */
+function setLoadMore(visible, loading = false) {
+    const wrap    = document.getElementById('libLoadMore');
+    const btn     = wrap.querySelector('.lib-loadmore-btn');
+    const text    = document.getElementById('libLoadMoreText');
+    const spinner = document.getElementById('libLoadMoreSpinner');
+    wrap.style.display          = visible || loading ? 'block' : 'none';
+    btn.disabled                = loading;
+    text.style.display          = loading ? 'none' : '';
+    spinner.style.display       = loading ? 'inline-block' : 'none';
+}
+
+/* ── 무한 스크롤 옵저버 ───────────────────────── */
+function setupObserver() {
+    scrollObserver?.disconnect();
+    const btn = document.querySelector('#libLoadMore .lib-loadmore-btn');
+    if (!btn) return;
+    scrollObserver = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting && hasMore && !isLoading) loadNextPage();
+    }, { rootMargin: '400px' });
+    scrollObserver.observe(document.getElementById('libLoadMore'));
+}
+
+/* ── 좋아요 필터 렌더 ─────────────────────────── */
+function renderLiked() {
+    scrollObserver?.disconnect();
+    setLoadMore(false);
+    const masonry  = document.getElementById('libMasonry');
+    const patterns = loadedPatterns.filter(p => !!likes[p.id]);
+    if (!patterns.length) {
+        masonry.innerHTML = '<p style="color:var(--text-3);font-size:13px;grid-column:1/-1;padding:40px 0;text-align:center;">좋아요한 패턴이 없습니다.</p>';
         return;
     }
     masonry.innerHTML = patterns.map(buildCard).join('');
-    buildFilterButtons();
 }
 
+/* ── 카드 HTML ────────────────────────────────── */
 function buildCard(p) {
     const imgHtml = p.image_path
         ? `<img src="${esc(p.image_path)}" alt="${esc(p.name_ko)}" loading="lazy" style="width:100%;height:100%;object-fit:cover;">`
@@ -80,9 +147,7 @@ function buildCard(p) {
 function buildFilterButtons() {
     const container = document.getElementById('libFilters');
     const existing  = new Set([...container.querySelectorAll('.lib-filter-btn')].map(b => b.dataset.filter));
-
-    const keywords = [...new Set(allPatterns.flatMap(p => p.keywords || []))].sort();
-    keywords.forEach(kw => {
+    allKeywords.forEach(kw => {
         if (existing.has(kw)) return;
         const btn = document.createElement('button');
         btn.className      = 'lib-filter-btn';
@@ -100,12 +165,12 @@ function bindFilterBtns() {
             document.querySelectorAll('.lib-filter-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             activeFilter = btn.dataset.filter;
-            if (activeFilter === 'all') {
-                loadPatterns(document.getElementById('libSearch').value.trim());
-            } else if (activeFilter === 'liked') {
-                applyAndRender();
+            if (activeFilter === 'liked') {
+                renderLiked();
+            } else if (activeFilter === 'all') {
+                resetAndLoad(document.getElementById('libSearch').value.trim());
             } else {
-                loadPatterns(activeFilter);
+                resetAndLoad(activeFilter);
             }
         };
     });
@@ -114,12 +179,11 @@ function bindFilterBtns() {
 /* ── 검색 ─────────────────────────────────────── */
 document.getElementById('libSearch').addEventListener('input', e => {
     clearTimeout(searchTimer);
-    const q = e.target.value.trim();
     searchTimer = setTimeout(() => {
         activeFilter = 'all';
         document.querySelectorAll('.lib-filter-btn').forEach(b => b.classList.remove('active'));
         document.querySelector('[data-filter="all"]').classList.add('active');
-        loadPatterns(q);
+        resetAndLoad(e.target.value.trim());
     }, 300);
 });
 
@@ -162,7 +226,7 @@ async function toggleLike(e, id) {
         icon.className = 'bi bi-heart';
         btn.classList.remove('liked');
     }
-    if (activeFilter === 'liked') applyAndRender();
+    if (activeFilter === 'liked') renderLiked();
 }
 
 /* ── 보드 모달 ────────────────────────────────── */
@@ -262,6 +326,7 @@ function esc(str) {
     return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
+/* ── 초기화 ───────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', async () => {
     bindFilterBtns();
     document.getElementById('boardModal').addEventListener('click', e => {
@@ -270,26 +335,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('boardNameInput').addEventListener('keydown', e => {
         if (e.key === 'Enter') createBoard();
     });
+
     await loadLikes();
+
     const q = new URLSearchParams(location.search).get('q')
            || sessionStorage.getItem('collectionQ')
            || '';
     sessionStorage.removeItem('collectionQ');
-    if (q) {
-        document.getElementById('libSearch').value = q;
-        try {
-            const [allData, filteredData] = await Promise.all([
-                fetch('/src/api/collection.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ q: '' }) }).then(r => r.json()),
-                fetch('/src/api/collection.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ q }) }).then(r => r.json()),
-            ]);
-            allPatterns     = allData.patterns || [];
-            currentPatterns = filteredData.patterns || [];
-        } catch(e) {
-            console.error('library fetch error:', e);
-            currentPatterns = [];
-        }
-        applyAndRender();
-    } else {
-        loadPatterns('');
-    }
+
+    if (q) document.getElementById('libSearch').value = q;
+    resetAndLoad(q);
 });

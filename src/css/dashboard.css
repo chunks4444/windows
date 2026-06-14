@@ -456,3 +456,33 @@ body {
 .db-board-item:hover .db-board-item-remove {
     opacity: 1;
 }
+
+/* ── 더 보기 버튼 */
+.db-loadmore-btn {
+    height: 40px;
+    padding: 0 28px;
+    border-radius: 999px;
+    border: 1px solid var(--border-1, #e5e7ea);
+    background: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+    color: var(--text-2, #5a6b69);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.12s, border-color 0.12s;
+}
+.db-loadmore-btn:hover { background: var(--teal, #3A8C82); border-color: var(--teal, #3A8C82); color: #fff; }
+.db-loadmore-btn:disabled { opacity: 0.5; cursor: default; }
+
+.db-loadmore-spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: dbSpin 0.6s linear infinite;
+}
+@keyframes dbSpin { to { transform: rotate(360deg); } }

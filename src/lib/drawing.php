@@ -74,18 +74,20 @@ class Drawing {
     }
 
     // 유저의 전체 도면 목록 (타입 무관, 대시보드용) - 버전 수 포함
-    static function list_all(int $userId): array {
-        $pdo  = db();
-        $stmt = $pdo->prepare(
+    static function list_all(int $userId, int $page = 1, int $limit = 20): array {
+        $pdo    = db();
+        $offset = ($page - 1) * $limit;
+        $stmt   = $pdo->prepare(
             'SELECT d.id, d.type, d.title, d.thumbnail, d.work_time_sec, d.created_at, d.updated_at,
                     COUNT(v.id) AS version_count
              FROM drawings d
              LEFT JOIN drawing_versions v ON v.drawing_id = d.id
              WHERE d.user_id = ?
              GROUP BY d.id
-             ORDER BY d.updated_at DESC'
+             ORDER BY d.updated_at DESC
+             LIMIT ? OFFSET ?'
         );
-        $stmt->execute([$userId]);
+        $stmt->execute([$userId, $limit, $offset]);
         return $stmt->fetchAll();
     }
 
