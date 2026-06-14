@@ -277,8 +277,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     sessionStorage.removeItem('collectionQ');
     if (q) {
         document.getElementById('libSearch').value = q;
-        await loadPatterns(''); // 필터 버튼용 전체 패턴 먼저 로드
-        loadPatterns(q);        // 검색어로 재필터
+        try {
+            const [allData, filteredData] = await Promise.all([
+                fetch('/src/api/collection.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ q: '' }) }).then(r => r.json()),
+                fetch('/src/api/collection.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ q }) }).then(r => r.json()),
+            ]);
+            allPatterns     = allData.patterns || [];
+            currentPatterns = filteredData.patterns || [];
+        } catch(e) {
+            console.error('library fetch error:', e);
+            currentPatterns = [];
+        }
+        applyAndRender();
     } else {
         loadPatterns('');
     }
