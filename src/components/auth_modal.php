@@ -372,7 +372,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const oauthToken = params.get('oauth_token');
     if (oauthToken) {
         try {
-            const payload = JSON.parse(atob(oauthToken.split('.')[1]));
+            const raw     = oauthToken.split('.')[1];
+            const b64     = raw.replace(/-/g, '+').replace(/_/g, '/');
+            const padded  = b64.padEnd(b64.length + (4 - b64.length % 4) % 4, '=');
+            const payload = JSON.parse(atob(padded));
             authSaveSession(oauthToken, { id: payload.sub, email: payload.email, role: payload.role });
             authUpdateNav();
             history.replaceState(null, '', location.pathname);

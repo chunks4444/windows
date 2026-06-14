@@ -49,6 +49,7 @@ if (!$user) {
 } else {
     $userId = (int) $user['id'];
     $role   = $user['role'];
+    $pdo->prepare('UPDATE users SET last_login_at = NOW() WHERE id = ?')->execute([$userId]);
 }
 
 // oauth 연결 기록
