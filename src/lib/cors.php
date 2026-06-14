@@ -3,6 +3,7 @@ $_cors_origin  = $_SERVER['HTTP_ORIGIN'] ?? '';
 $_cors_allowed = [
     'https://windows.pyeongmok.com',
     'https://www.windows.pyeongmok.com',
+    'http://w.pyeongmok.com',
     'http://localhost',
     'http://127.0.0.1',
 ];

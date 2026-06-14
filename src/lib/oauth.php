@@ -1,5 +1,9 @@
 <?php
-define('OAUTH_CALLBACK_URL', 'https://windows.pyeongmok.com/src/api/auth/oauth/callback.php');
+if (!defined('OAUTH_CALLBACK_URL')) {
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host   = $_SERVER['HTTP_HOST'] ?? 'windows.pyeongmok.com';
+    define('OAUTH_CALLBACK_URL', $scheme . '://' . $host . '/src/api/auth/oauth/callback.php');
+}
 
 // ── DB에서 OAuth 키 로드 ──────────────────────────────────────
 function oauth_config(string $provider): array {
