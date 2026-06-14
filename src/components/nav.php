@@ -149,6 +149,7 @@ $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/collection/') !== false);
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="/src/mypage/profile.php">프로필</a></li>
                     <li><a class="dropdown-item" href="/src/mypage/company.php">회사 정보</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="authLogout();return false;">로그아웃</a></li>
                     <li id="navAdminLink" style="display:none;"><hr class="dropdown-divider"></li>
                     <li id="navAdminMenu" style="display:none;"><a class="dropdown-item" href="/src/admin/users.php"><i class="bi bi-shield-lock me-1"></i>회원 관리</a></li>
                     <li id="navAdminStats" style="display:none;"><a class="dropdown-item" href="/src/admin/stats.php"><i class="bi bi-bar-chart-line me-1"></i>접속 통계</a></li>
@@ -159,8 +160,6 @@ $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/collection/') !== false);
                     <li id="navAdminWoodTypes" style="display:none;"><a class="dropdown-item" href="/src/admin/cost_table.php"><i class="bi bi-calculator me-1"></i>원가 테이블</a></li>
                     <li id="navAdminOauth" style="display:none;"><a class="dropdown-item" href="/src/admin/oauth.php"><i class="bi bi-key me-1"></i>SNS 로그인 설정</a></li>
                     <li id="navAdminColors" style="display:none;"><a class="dropdown-item" href="/src/admin/colors.php"><i class="bi bi-palette me-1"></i>컬러 팔레트 관리</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="#" onclick="authLogout();return false;">로그아웃</a></li>
                 </ul>
             </li>
         </ul>
