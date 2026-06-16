@@ -41,7 +41,7 @@ $isGuide      = (strpos($_SERVER['PHP_SELF'], '/guide/') !== false);
     </button>
     <div class="collapse navbar-collapse justify-content-end" id="pmNavMenu">
         <ul class="navbar-nav gap-3">
-            <li class="nav-item d-none"><a href="#" class="nav-link">Works</a></li>
+            <li class="nav-item"><a href="/src/work/" class="nav-link">Works</a></li>
             <li class="nav-item dropdown">
                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Studio</a>
                 <ul class="dropdown-menu">
@@ -185,6 +185,7 @@ $isGuide      = (strpos($_SERVER['PHP_SELF'], '/guide/') !== false);
                     <li id="navAdminOauth" style="display:none;"><a class="dropdown-item" href="/src/admin/oauth.php"><i class="bi bi-key me-1"></i>SNS 로그인 설정</a></li>
                     <li id="navAdminColors" style="display:none;"><a class="dropdown-item" href="/src/admin/colors.php"><i class="bi bi-palette me-1"></i>컬러 팔레트 관리</a></li>
                     <li id="navAdminFaq" style="display:none;"><a class="dropdown-item" href="/src/admin/faq.php"><i class="bi bi-question-circle me-1"></i>FAQ 관리</a></li>
+                    <li id="navAdminWorks" style="display:none;"><a class="dropdown-item" href="/src/admin/works.php"><i class="bi bi-images me-1"></i>Works 관리</a></li>
                 </ul>
             </li>
         </ul>

@@ -292,6 +292,8 @@ function authUpdateNav() {
         if (adminColors)      adminColors.style.display      = isSuper ? '' : 'none';
         const adminFaq         = document.getElementById('navAdminFaq');
         if (adminFaq)         adminFaq.style.display         = isSuper ? '' : 'none';
+        const adminWorks       = document.getElementById('navAdminWorks');
+        if (adminWorks)       adminWorks.style.display       = isSuper ? '' : 'none';
         loadNavBoards();
     } else {
         loginBtn.style.display = '';

@@ -343,12 +343,12 @@
 /* 브레드크럼 */
 .guide-breadcrumb {
     display: flex; align-items: center; gap: 6px;
-    font-size: 12px; color: var(--text-3);
+    font-size: 12px; font-weight: 700; color: var(--text-2);
     margin-bottom: 28px;
 }
-.guide-breadcrumb a { color: var(--text-3); text-decoration: none; }
+.guide-breadcrumb a { color: var(--text-2); text-decoration: none; }
 .guide-breadcrumb a:hover { color: var(--teal); }
-.guide-breadcrumb .sep { font-size: 10px; }
+.guide-breadcrumb .sep { font-size: 10px; font-weight: 400; color: var(--text-3); }
 
 /* 제목 */
 .guide-article h1 {
@@ -452,16 +452,13 @@
 }
 .guide-pager-btn {
     flex: 1; display: flex; flex-direction: column;
-    padding: 16px 20px;
-    border: 1px solid var(--border); border-radius: 10px;
-    text-decoration: none; background: #fff;
-    transition: border-color .15s, box-shadow .15s;
+    padding: 8px 0;
+    border: none; border-radius: 0;
+    text-decoration: none; background: transparent;
+    transition: color .15s;
     color: inherit;
 }
-.guide-pager-btn:hover {
-    border-color: var(--teal);
-    box-shadow: 0 0 0 3px var(--teal-pale);
-}
+.guide-pager-btn:hover { color: var(--teal); }
 .guide-pager-btn.next { align-items: flex-end; }
 .pager-label { font-size: 11px; color: var(--text-3); margin-bottom: 4px; }
 .pager-title { font-size: 13px; font-weight: 600; color: var(--text-1); }

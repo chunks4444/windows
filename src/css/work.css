@@ -1,0 +1,90 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    background: #f0ede8;
+    font-family: 'Inter', -apple-system, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    user-select: none;
+}
+
+/* ── 가로 스크롤 트랙 ── */
+.work-track {
+    position: fixed;
+    top: 68px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    padding: 0;
+    overflow-x: scroll;
+    overflow-y: visible;
+    scrollbar-width: none;
+    cursor: grab;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+}
+.work-track::-webkit-scrollbar { display: none; }
+
+/* ── 타이틀 카드 ── */
+.work-title-card {
+    background: #f5c800;
+    aspect-ratio: 1 / 1;
+    height: 44vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.work-title-card span {
+    font-size: clamp(48px, 7vw, 96px);
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: -0.02em;
+}
+
+/* ── 카드 ── */
+.work-item {
+    flex-shrink: 0;
+    width: auto;
+    will-change: transform;
+    cursor: pointer;
+    transition: transform 0.05s linear;
+    scroll-snap-align: center;
+}
+
+.work-item img {
+    height: 44vh;
+    width: auto;
+    display: block;
+    pointer-events: none;
+}
+
+/* ── 하단 라벨 ── */
+.work-label {
+    position: fixed;
+    bottom: 44px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.work-label.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+.work-label-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111;
+    letter-spacing: -0.2px;
+    margin-bottom: 4px;
+}
+.work-label-desc {
+    font-size: 12px;
+    color: #888;
+}

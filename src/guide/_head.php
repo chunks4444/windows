@@ -8,7 +8,7 @@ $guide_nav = [
         'title' => '평목 소개', 'icon' => 'bi-info-circle',
         'bg' => '#E6F4F2', 'color' => '#3A8C82',
         'articles' => [
-            ['file' => 'intro.php',           'title' => '평목이란?'],
+            ['file' => 'intro.php',           'title' => '평목 스튜디오란?'],
             ['file' => 'getting-started.php', 'title' => '시작하기'],
         ],
     ],

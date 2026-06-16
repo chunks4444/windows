@@ -248,6 +248,19 @@ CREATE TABLE IF NOT EXISTS color_swatches (
     KEY idx_color_group (group_name, sort_order)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='엔진 공통 컬러 팔레트';
 
+-- 완성 작품 갤러리
+CREATE TABLE IF NOT EXISTS works (
+    id          INT UNSIGNED      NOT NULL AUTO_INCREMENT,
+    title       VARCHAR(100)      NOT NULL DEFAULT '',
+    description VARCHAR(300)      NOT NULL DEFAULT '',
+    image_url   VARCHAR(500)      NOT NULL DEFAULT '',
+    sort_order  SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    is_active   TINYINT(1)        NOT NULL DEFAULT 1,
+    created_at  DATETIME          NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (id),
+    KEY idx_works_sort (sort_order, is_active)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='완성 작품 갤러리';
+
 -- FAQ
 CREATE TABLE IF NOT EXISTS faqs (
     id          INT UNSIGNED      NOT NULL AUTO_INCREMENT,

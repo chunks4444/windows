@@ -1,12 +1,12 @@
 <?php
 $guide_current = 'intro.php';
-$guide_title   = '평목이란?';
+$guide_title   = '평목 스튜디오란?';
 $guide_prev    = null;
 $guide_next    = ['href' => 'getting-started.php', 'title' => '시작하기'];
 include __DIR__ . '/_head.php';
 ?>
 
-<h1>평목이란?</h1>
+<h1>평목 스튜디오란?</h1>
 <p class="guide-lead">
     평목(平木)은 전통 한국 창호 도면을 브라우저에서 실시간으로 설계하고 내보낼 수 있는 온라인 스튜디오입니다.
     별도 프로그램 설치 없이 6가지 격자 패턴 엔진과 AI 렌더링 기능을 사용할 수 있습니다.

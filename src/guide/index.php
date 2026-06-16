@@ -30,7 +30,7 @@
             <div class="guide-cat-icon" style="background:#E6F4F2;color:#3A8C82;">
                 <i class="bi bi-info-circle-fill"></i>
             </div>
-            <div class="guide-cat-title">평목 소개</div>
+            <div class="guide-cat-title">평목 스튜디오란?</div>
             <div class="guide-cat-desc">평목이 무엇인지, 어떻게 시작하는지 알아보세요.</div>
             <div class="guide-cat-count">2개 아티클</div>
         </a>
@@ -39,7 +39,7 @@
             <div class="guide-cat-icon" style="background:#FFF0EE;color:#cc2200;">
                 <i class="bi bi-pencil-square"></i>
             </div>
-            <div class="guide-cat-title">스튜디오 사용법</div>
+            <div class="guide-cat-title">스튜디오란?</div>
             <div class="guide-cat-desc">6가지 격자 패턴 엔진의 상세 사용 방법을 안내합니다.</div>
             <div class="guide-cat-count">6개 아티클</div>
         </a>
