@@ -248,6 +248,18 @@ CREATE TABLE IF NOT EXISTS color_swatches (
     KEY idx_color_group (group_name, sort_order)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='엔진 공통 컬러 팔레트';
 
+-- FAQ
+CREATE TABLE IF NOT EXISTS faqs (
+    id          INT UNSIGNED      NOT NULL AUTO_INCREMENT,
+    question    VARCHAR(255)      NOT NULL DEFAULT '' COMMENT '질문',
+    answer      TEXT              NOT NULL COMMENT '답변',
+    sort_order  SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    is_active   TINYINT(1)        NOT NULL DEFAULT 1,
+    created_at  DATETIME          NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (id),
+    KEY idx_faqs_sort (sort_order, is_active)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='자주 묻는 질문';
+
 -- 초기 데이터 (스테인)
 INSERT IGNORE INTO color_swatches (group_name, sort_order, code, name, hex) VALUES
 ('스테인', 1,  '930-00', '투명',        '#dec898'),

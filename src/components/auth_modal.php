@@ -105,6 +105,21 @@
     </div>
 </div>
 
+<!-- WELCOME MODAL -->
+<div class="modal fade" id="welcomeModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:400px;">
+        <div class="modal-content border-0" style="border-radius:16px;box-shadow:0 8px 16px rgba(0,0,0,0.06),0 24px 64px rgba(0,0,0,0.14);overflow:hidden;text-align:center;">
+            <div class="modal-body px-5 py-5">
+                <div style="font-size:40px;margin-bottom:20px;">🎉</div>
+                <h4 style="font-family:'Noto Sans KR',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-bottom:10px;">평목에 오신 것을 환영합니다!</h4>
+                <p id="welcomeEmail" style="font-size:13px;color:#888;margin-bottom:6px;"></p>
+                <p style="font-size:13px;color:#555;line-height:1.8;margin-bottom:32px;">이제 창호를 직접 설계하고,<br>AI로 공간에 적용된 모습까지 확인해 보세요.</p>
+                <button class="auth-submit" onclick="welcomeGo()" style="max-width:240px;margin:0 auto;">스튜디오 시작하기</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <link rel="stylesheet" href="/src/css/auth_modal.css">
 
 <script>
@@ -198,12 +213,18 @@ async function authRegister(e) {
         bootstrap.Modal.getInstance(document.getElementById('authModal')).hide();
         authUpdateNav();
         window.dispatchEvent(new CustomEvent('pmokAuthChanged'));
-        if (!window.__pmokGuardedPage) location.href = '/src/mypage/dashboard.php';
+        document.getElementById('welcomeEmail').textContent = data.user.email;
+        new bootstrap.Modal(document.getElementById('welcomeModal')).show();
     } catch {
         authShowError('서버 오류가 발생했습니다.');
     } finally {
         btn.disabled = false;
     }
+}
+
+function welcomeGo() {
+    bootstrap.Modal.getInstance(document.getElementById('welcomeModal')).hide();
+    location.href = '/src/mypage/dashboard.php';
 }
 
 function authSaveSession(token, user) {
@@ -269,6 +290,8 @@ function authUpdateNav() {
         if (adminWoodTypes)   adminWoodTypes.style.display   = isSuper ? '' : 'none';
         if (adminOauth)       adminOauth.style.display       = isSuper ? '' : 'none';
         if (adminColors)      adminColors.style.display      = isSuper ? '' : 'none';
+        const adminFaq         = document.getElementById('navAdminFaq');
+        if (adminFaq)         adminFaq.style.display         = isSuper ? '' : 'none';
         loadNavBoards();
     } else {
         loginBtn.style.display = '';

@@ -1106,7 +1106,7 @@ async function draw() {
         const rDpr = window.devicePixelRatio || 1;
         if (!lastBaseScale) return;
 
-        const R    = 18;
+        const R    = 22;
         const mmPx = lastBaseScale * scaleFactor;
 
         let step;
@@ -1154,7 +1154,7 @@ async function draw() {
             rCtx.font         = '8px sans-serif';
             rCtx.textBaseline = 'top';
             rCtx.textAlign    = mm === 0 ? 'left' : 'center';
-            rCtx.fillText(mm, mm === 0 ? x + 2 : x, 2);
+            rCtx.fillText(mm, mm === 0 ? x + 2 : x, 6);
         }
 
         // 세로 눈금자 — 바깥 진하게, 문 범위 밝게
@@ -1728,7 +1728,7 @@ async function draw() {
 
     function captureThumbnail() {
         const dpr = window.devicePixelRatio || 1;
-        const R   = Math.round(18 * dpr);
+        const R   = Math.round(22 * dpr);
         const sw  = canvas.width  - R;
         const sh  = canvas.height - R;
         const W   = 320;

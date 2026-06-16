@@ -392,6 +392,8 @@ body {
     .ab-info-grid { grid-template-columns: repeat(2, 1fr); }
     .ab-contact-cols { grid-template-columns: 1fr; }
     .ab-contact-map { height: 220px; }
+    .ct-row-2 { grid-template-columns: 1fr; }
+    #contactModal .modal-body { padding: 16px; }
 }
 @media (max-width: 640px) {
     .ab-gallery { grid-template-columns: 1fr; }

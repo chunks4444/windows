@@ -5,6 +5,7 @@ body { padding-top: 68px; }
 .pm-navbar {
     background: #fff;
     font-family: 'Noto Sans KR', -apple-system, sans-serif;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
 }
 .pm-navbar .navbar-brand { text-decoration: none; color: inherit; }
 .pm-nav-logo {
@@ -38,8 +39,10 @@ body { padding-top: 68px; }
     font-weight: 400;
     padding: 10px 18px;
 }
-.pm-navbar .dropdown-item svg { transition: transform .5s cubic-bezier(.25,.46,.45,.94); }
-.pm-navbar .dropdown-item:hover svg { transform: rotate(45deg); }
+.pm-navbar .dropdown-item svg,
+.pm-navbar .dropdown-item i.bi { transition: transform .5s cubic-bezier(.25,.46,.45,.94); }
+.pm-navbar .dropdown-item:hover svg,
+.pm-navbar .dropdown-item:hover i.bi { transform: rotate(45deg); }
 .pm-navbar .dropdown-item:hover { background: rgba(12,12,11,0.04); color: #cc2200; }
 .pm-navbar .dropdown-item.active { font-weight: 600; color: #cc2200; background: none; }
 @media (max-width: 768px) {

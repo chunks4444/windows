@@ -209,8 +209,11 @@
     padding: 0 6px; flex-shrink: 0;
 }
 
+/* ── 가이드 페이지 전용 ──────────────────────── */
+.pm-navbar { border-bottom: 1px solid rgba(0,0,0,0.08); }
+
 /* ── 가이드 랜딩 ─────────────────────────────── */
-.guide-landing { min-height: calc(100vh - 68px); background: var(--page-bg); }
+.guide-landing { min-height: calc(100vh - 68px); background: #fff; }
 
 .guide-hero {
     background: linear-gradient(135deg, #1A1F1E 0%, #2B3432 100%);
@@ -331,7 +334,7 @@
 /* ── 본문 영역 ───────────────────────────────── */
 .guide-main {
     flex: 1;
-    background: var(--page-bg);
+    background: #fff;
     padding: 48px 60px 100px;
     min-width: 0;
 }

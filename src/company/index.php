@@ -32,7 +32,7 @@ header('Content-Type: text/html; charset=UTF-8');
 </section>
 
 <!-- PHILOSOPHY — full-width box -->
-<div class="ab-phil-box">
+<div class="ab-phil-box" id="philosophy">
     <div class="container">
         <p class="ab-section-label">Philosophy</p>
         <div class="ab-phil-cols">
@@ -70,7 +70,7 @@ header('Content-Type: text/html; charset=UTF-8');
 
 <!-- STUDIO -->
 <div class="container">
-    <section class="ab-section">
+    <section class="ab-section" id="studio">
         <p class="ab-section-label">Studio</p>
         <h2 class="ab-section-title">직접 설계해 보세요.</h2>
         <p class="ab-section-body">평목 스튜디오는 브라우저에서 바로 사용할 수 있는 <strong>창호 설계 도구</strong>입니다. <br>문틀 크기, 살 간격, 패턴을 조정하며 나만의 창호를 완성해 보세요.</p>

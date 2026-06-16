@@ -25,6 +25,7 @@ $isHexagon   = (stripos($_SERVER['PHP_SELF'], '/hexagon/') !== false);
 $isIndex      = ($currentFile === 'index.php' || $_SERVER['PHP_SELF'] === '/');
 $isAbout      = (strpos($_SERVER['PHP_SELF'], '/company/') !== false);
 $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/collection/') !== false);
+$isGuide      = (strpos($_SERVER['PHP_SELF'], '/guide/') !== false);
 ?>
 <nav class="pm-navbar navbar navbar-expand-lg fixed-top px-4 py-3">
     <a href="/" class="navbar-brand d-flex align-items-center">
@@ -125,7 +126,7 @@ $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/collection/') !== false);
                 <a href="/src/collection/" class="nav-link dropdown-toggle <?= $isLibrary ? 'active' : '' ?>"
                    data-bs-toggle="dropdown" aria-expanded="false">Collection</a>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="/src/collection/">전체 컬렉션</a></li>
+                    <li><a class="dropdown-item d-flex align-items-center gap-2" href="/src/collection/"><i class="bi bi-collection"></i>전체 컬렉션</a></li>
                     <li id="navBoardSection" style="display:none;">
                         <hr class="dropdown-divider">
                         <span class="dropdown-header" style="font-size:10px;letter-spacing:.06em;color:#aaa;padding:4px 16px 2px;">내 보드</span>
@@ -133,8 +134,29 @@ $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/collection/') !== false);
                     <div id="navBoardList"></div>
                 </ul>
             </li>
-            <li class="nav-item"><a href="/src/guide/" class="nav-link">Guide</a></li>
-            <li class="nav-item"><a href="/src/company/" class="nav-link <?= $isAbout ? 'active' : '' ?>">About</a></li>
+            <li class="nav-item dropdown">
+                <a href="/src/guide/" class="nav-link dropdown-toggle <?= $isGuide ? 'active' : '' ?>" data-bs-toggle="dropdown" aria-expanded="false">Guide</a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/src/guide/"><i class="bi bi-book me-2"></i>가이드 홈</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="/src/guide/intro.php"><i class="bi bi-info-circle me-2"></i>스튜디오 소개</a></li>
+                    <li><a class="dropdown-item" href="/src/guide/studio-classic.php"><i class="bi bi-pencil-square me-2"></i>스튜디오 사용법</a></li>
+                    <li><a class="dropdown-item" href="/src/guide/drawing.php"><i class="bi bi-folder2-open me-2"></i>도면 관리</a></li>
+                    <li><a class="dropdown-item" href="/src/guide/render.php"><i class="bi bi-stars me-2"></i>AI 렌더링</a></li>
+                    <li><a class="dropdown-item" href="/src/guide/collection.php"><i class="bi bi-collection-fill me-2"></i>컬렉션</a></li>
+                    <li><a class="dropdown-item" href="/src/guide/account.php"><i class="bi bi-person-gear me-2"></i>계정 설정</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="/#faqAccordion"><i class="bi bi-question-circle me-2"></i>FAQ</a></li>
+                </ul>
+            </li>
+            <li class="nav-item dropdown">
+                <a href="/src/company/" class="nav-link dropdown-toggle <?= $isAbout ? 'active' : '' ?>" data-bs-toggle="dropdown" aria-expanded="false">About</a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/src/company/"><i class="bi bi-book me-2"></i>평목 소개</a></li>
+                    <li><a class="dropdown-item" href="/src/company/#studio"><i class="bi bi-pencil-square me-2"></i>스튜디오</a></li>
+                    <li><a class="dropdown-item" href="/src/company/#contact"><i class="bi bi-envelope me-2"></i>문의, 제작 상담, 협업 제안</a></li>
+                </ul>
+            </li>
             <li class="nav-item d-none"><a href="#" class="nav-link">Joiner</a></li>
             <!-- 비로그인 -->
             <li class="nav-item" id="navLoginBtn">
@@ -162,6 +184,7 @@ $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/collection/') !== false);
                     <li id="navAdminWoodTypes" style="display:none;"><a class="dropdown-item" href="/src/admin/cost_table.php"><i class="bi bi-calculator me-1"></i>원가 테이블</a></li>
                     <li id="navAdminOauth" style="display:none;"><a class="dropdown-item" href="/src/admin/oauth.php"><i class="bi bi-key me-1"></i>SNS 로그인 설정</a></li>
                     <li id="navAdminColors" style="display:none;"><a class="dropdown-item" href="/src/admin/colors.php"><i class="bi bi-palette me-1"></i>컬러 팔레트 관리</a></li>
+                    <li id="navAdminFaq" style="display:none;"><a class="dropdown-item" href="/src/admin/faq.php"><i class="bi bi-question-circle me-1"></i>FAQ 관리</a></li>
                 </ul>
             </li>
         </ul>
