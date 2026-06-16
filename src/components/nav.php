@@ -133,6 +133,7 @@ $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/collection/') !== false);
                     <div id="navBoardList"></div>
                 </ul>
             </li>
+            <li class="nav-item"><a href="/src/guide/" class="nav-link">Guide</a></li>
             <li class="nav-item"><a href="/src/company/" class="nav-link <?= $isAbout ? 'active' : '' ?>">About</a></li>
             <li class="nav-item d-none"><a href="#" class="nav-link">Joiner</a></li>
             <!-- 비로그인 -->
