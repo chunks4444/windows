@@ -8,7 +8,7 @@ async function init() {
     const user = authGetUser();
     if (!user || user.role !== 's') { location.href = '/'; return; }
     document.getElementById('statsPage').style.display = '';
-    await loadStats(6);
+    await Promise.all([loadStats(6), loadExportLogs()]);
 }
 
 async function loadStats(months) {
@@ -88,6 +88,44 @@ function renderTopUsers(users) {
             <td style="color:var(--text-3);font-size:11px;font-family:monospace;">${u.ips ? esc(u.ips) : '—'}</td>
         </tr>
     `).join('') || '<tr><td colspan="5" style="padding:20px;text-align:center;color:var(--text-3);">데이터 없음</td></tr>';
+}
+
+async function loadExportLogs() {
+    const res  = await fetch('/src/api/admin/export_logs.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token() },
+        body: JSON.stringify({ limit: 100 }),
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    renderExportSummary(data.summary || []);
+    renderExportLogs(data.logs || []);
+}
+
+function renderExportSummary(summary) {
+    const el = document.getElementById('exportSummaryBadges');
+    if (!el) return;
+    const totals = {};
+    summary.forEach(r => {
+        const key = r.engine + ' ' + r.format.toUpperCase();
+        totals[key] = (totals[key] || 0) + (+r.cnt);
+    });
+    el.innerHTML = Object.entries(totals).map(([k, v]) =>
+        `<span style="font-size:11px;padding:2px 8px;border-radius:10px;background:var(--accent-bg);color:var(--text-2);">${esc(k)} <strong>${v}</strong></span>`
+    ).join('');
+}
+
+function renderExportLogs(logs) {
+    document.getElementById('exportLogsTbody').innerHTML = logs.map(r => `
+        <tr>
+            <td style="font-size:11px;color:var(--text-3);white-space:nowrap;">${r.created_at.slice(0,16)}</td>
+            <td style="font-size:12px;">${esc(r.email || '—')}</td>
+            <td><span style="font-size:11px;padding:1px 6px;border-radius:8px;background:var(--accent-bg);color:var(--text-2);">${esc(r.engine)}</span></td>
+            <td><span style="font-size:11px;font-weight:600;color:${r.format==='pdf'?'#e05218':'#3a8c82'};">${r.format.toUpperCase()}</span></td>
+            <td style="font-size:12px;color:var(--text-2);">${esc(r.drawing_name || '—')}</td>
+            <td style="font-size:11px;color:var(--text-3);font-family:monospace;">${esc(r.version || '—')}</td>
+        </tr>
+    `).join('') || '<tr><td colspan="6" style="padding:20px;text-align:center;color:var(--text-3);">기록 없음</td></tr>';
 }
 
 function esc(str) {

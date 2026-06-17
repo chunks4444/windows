@@ -82,6 +82,18 @@ header('Content-Type: text/html; charset=UTF-8');
             </table>
         </div>
     </div>
+
+    <!-- 내보내기 기록 -->
+    <div class="st-panel" style="margin-top:24px;">
+        <div class="st-panel-head" style="display:flex;align-items:center;justify-content:space-between;">
+            <span class="st-panel-title">내보내기 기록 (최근 100건)</span>
+            <div id="exportSummaryBadges" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+        </div>
+        <table>
+            <thead><tr><th>일시</th><th>이메일</th><th>엔진</th><th>형식</th><th>도면명</th><th>버전</th></tr></thead>
+            <tbody id="exportLogsTbody"></tbody>
+        </table>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>

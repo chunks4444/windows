@@ -2376,6 +2376,7 @@ async function draw() {
         link.download = filename;
         link.href = exportCanvas.toDataURL('image/png');
         link.click();
+        DrawingSync.logExport(drawingId, WALLPAPER_ENGINE, 'png', document.getElementById('drawingName')?.value.trim() || '', document.getElementById('verLabel')?.textContent.trim() || '');
     });
 
     btnSavePDF.addEventListener('click', function() {
@@ -2428,4 +2429,5 @@ async function draw() {
             ].text;
 
         pdf.save(getExportFilename('pdf'));
+        DrawingSync.logExport(drawingId, WALLPAPER_ENGINE, 'pdf', document.getElementById('drawingName')?.value.trim() || '', document.getElementById('verLabel')?.textContent.trim() || '');
     });

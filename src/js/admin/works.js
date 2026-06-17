@@ -1,7 +1,7 @@
 const API = '/src/api/admin/works.php';
 function _h() { return { 'Authorization': 'Bearer ' + localStorage.getItem('pmok_auth_token'), 'Content-Type': 'application/json' }; }
 
-let works = [], dragSrc;
+let works = [], dragSrc, quillDesc;
 
 async function loadWorks() {
     const res  = await fetch(API, { headers: _h() });
@@ -19,7 +19,7 @@ function render() {
                 ? `<img class="work-thumb" src="${esc(w.image_url)}" alt="">`
                 : `<div class="work-thumb-empty"><i class="bi bi-image"></i></div>`}</td>
             <td><strong>${esc(w.title)}</strong></td>
-            <td style="color:var(--text-3);font-size:12px;">${esc(w.description)}</td>
+            <td style="color:var(--text-3);font-size:12px;">${esc(w.description.replace(/<[^>]*>/g,''))}</td>
             <td><span class="${w.is_active ? 'adm-active-badge' : 'adm-withdrawn-badge'}">${w.is_active ? '노출' : '숨김'}</span></td>
             <td>
                 <div class="adm-action-cell">
@@ -39,9 +39,9 @@ function esc(s) {
 function openModal(id) {
     const w = id ? works.find(x => x.id == id) : null;
     document.getElementById('worksModalTitle').textContent = w ? '작품 수정' : '작품 추가';
-    document.getElementById('workId').value          = w?.id ?? '';
-    document.getElementById('workTitle').value       = w?.title ?? '';
-    document.getElementById('workDescription').value = w?.description ?? '';
+    document.getElementById('workId').value    = w?.id ?? '';
+    document.getElementById('workTitle').value = w?.title ?? '';
+    quillDesc.root.innerHTML = w?.description ?? '';
     document.getElementById('workImageUrl').value    = w?.image_url ?? '';
     const prev = document.getElementById('workImgPreview');
     if (w?.image_url) { prev.src = w.image_url; prev.classList.add('show'); }
@@ -90,7 +90,7 @@ async function saveWork() {
         action:      'save',
         id:          parseInt(document.getElementById('workId').value) || 0,
         title:       document.getElementById('workTitle').value.trim(),
-        description: document.getElementById('workDescription').value.trim(),
+        description: quillDesc.root.innerHTML.trim(),
         image_url:   document.getElementById('workImageUrl').value.trim(),
         panel_bg:    document.getElementById('workPanelBg').value,
         title_color: document.getElementById('workTitleColor').value,
@@ -133,6 +133,19 @@ function bindDrag() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    quillDesc = new Quill('#workDescEditor', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                ['bold', 'italic', 'underline'],
+                [{ list: 'ordered' }, { list: 'bullet' }],
+                ['link'],
+                ['clean'],
+            ],
+        },
+        placeholder: '작품 설명을 입력하세요.',
+    });
+
     document.getElementById('worksModalOverlay').addEventListener('click', e => {
         if (e.target === e.currentTarget) closeModal();
     });

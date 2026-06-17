@@ -68,7 +68,16 @@ window.DrawingSync = (function () {
         } catch { return false; }
     }
 
-    return { save, load, list, rename, delete: del };
+    function logExport(drawingId, engine, format, drawingName, version) {
+        if (!_token()) return;
+        fetch('/src/api/drawings/export_log.php', {
+            method: 'POST',
+            headers: _headers(),
+            body: JSON.stringify({ drawing_id: drawingId || null, engine, format, drawing_name: drawingName || '', version: version || '' }),
+        }).catch(() => {});
+    }
+
+    return { save, load, list, rename, delete: del, logExport };
 })();
 
 // ── 저장 완료 토스트 ──────────────────────────────

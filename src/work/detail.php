@@ -70,7 +70,7 @@ $total = count($images);
         <div class="wd-info">
             <h1 class="wd-title" style="color:<?= $titleColor ?>"><?= htmlspecialchars($work['title']) ?></h1>
             <?php if ($work['description']): ?>
-            <p class="wd-location" style="color:<?= $descColor ?>"><?= htmlspecialchars($work['description']) ?></p>
+            <div class="wd-location" style="color:<?= $descColor ?>"><?= $work['description'] ?></div>
             <?php endif; ?>
             <?php if ($total > 1): ?>
             <div class="wd-counter">

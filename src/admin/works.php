@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php define('BOOTSTRAP_LOADED', true); ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
     <link rel="stylesheet" href="/src/css/dashboard.css">
     <link rel="stylesheet" href="/src/css/users.css">
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
@@ -20,6 +21,9 @@
         .work-img-preview.show { display:block; }
         .work-upload-label { display:block; padding:10px; border:1.5px dashed var(--border-md); border-radius:8px; text-align:center; cursor:pointer; color:var(--text-3); font-size:13px; margin-bottom:6px; }
         .work-upload-label:hover { border-color:var(--teal); color:var(--teal); }
+        #workDescEditor { height:140px; background:#fff; font-size:13px; }
+        .ql-toolbar { border-color:var(--border-md) !important; border-radius:var(--r-sm) var(--r-sm) 0 0; }
+        .ql-container { border-color:var(--border-md) !important; border-radius:0 0 var(--r-sm) var(--r-sm); font-family:inherit; }
     </style>
 </head>
 <body>
@@ -101,7 +105,7 @@
             </div>
             <div class="adm-mfield">
                 <label>설명</label>
-                <input id="workDescription" type="text" placeholder="예: 경기도 양평 한옥 중문" maxlength="300">
+                <div id="workDescEditor"></div>
             </div>
             <div class="adm-mfield">
                 <label>패널 색상</label>
@@ -141,6 +145,7 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 <script src="/src/js/admin/works.js"></script>
 <script>
 // 패널 색상 로드
