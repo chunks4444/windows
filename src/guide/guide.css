@@ -288,6 +288,8 @@
     max-width: 1280px;
     margin: 0 auto;
     width: 100%;
+    border-left: 1px solid var(--border, #E0E5E4);
+    border-right: 1px solid var(--border, #E0E5E4);
 }
 
 .guide-sidebar {
