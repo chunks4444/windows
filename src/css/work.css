@@ -164,7 +164,7 @@ body { background: var(--page-bg, #F2F3F4); }
     transition: box-shadow .25s ease;
     pointer-events: none;
 }
-.wk-card:hover::after { box-shadow: inset 0 0 0 2.5px var(--teal, #3A8C82); }
+.wk-card:hover::after { box-shadow: inset 0 0 0 2.5px #fff; }
 
 /* 빈 상태 */
 .wk-empty {
