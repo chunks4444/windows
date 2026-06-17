@@ -212,12 +212,19 @@
 /* ── 가이드 페이지 전용 ──────────────────────── */
 .pm-navbar { border-bottom: 1px solid rgba(0,0,0,0.08); }
 
+body:has(.guide-wrap) {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
 /* ── 가이드 랜딩 ─────────────────────────────── */
 .guide-landing {
-    min-height: calc(100vh - 68px);
+    flex: 1;
     background: #fff;
     max-width: 1280px;
     margin: 0 auto;
+    width: 100%;
 }
 
 .guide-hero {
@@ -284,7 +291,7 @@
 /* ── 아티클 레이아웃 ─────────────────────────── */
 .guide-wrap {
     display: flex;
-    min-height: calc(100vh - 68px);
+    flex: 1;
     max-width: 1280px;
     margin: 0 auto;
     width: 100%;
