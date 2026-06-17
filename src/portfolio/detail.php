@@ -93,6 +93,7 @@ $desc  = strip_tags($work['description'] ?? '');
 
     <!-- ── 정보 바 ── -->
     <div class="wd-info-bar">
+      <div class="wd-info-bar-inner">
         <div class="wd-info-left">
             <a href="/src/portfolio/" class="wd-back">
                 <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
@@ -115,8 +116,8 @@ $desc  = strip_tags($work['description'] ?? '');
             </svg>
         </a>
         <?php endif; ?>
+      </div>
     </div>
-
 
 </div>
 

@@ -19,6 +19,7 @@ function render() {
                 ? `<img class="work-thumb" src="${esc(w.image_url)}" alt="">`
                 : `<div class="work-thumb-empty"><i class="bi bi-image"></i></div>`}</td>
             <td><strong>${esc(w.title)}</strong></td>
+            <td style="color:var(--text-3);font-size:12px;">${esc(w.description || '')}</td>
             <td><span class="${w.is_active ? 'adm-active-badge' : 'adm-withdrawn-badge'}">${w.is_active ? '노출' : '숨김'}</span></td>
             <td>
                 <div class="adm-action-cell">
@@ -40,6 +41,7 @@ function openModal(id) {
     document.getElementById('worksModalTitle').textContent = w ? '작품 수정' : '작품 추가';
     document.getElementById('workId').value    = w?.id ?? '';
     document.getElementById('workTitle').value = w?.title ?? '';
+    document.getElementById('workDesc').value  = w?.description ?? '';
     document.getElementById('workImageUrl').value    = w?.image_url ?? '';
     const prev = document.getElementById('workImgPreview');
     if (w?.image_url) { prev.src = w.image_url; prev.classList.add('show'); }
@@ -88,6 +90,7 @@ async function saveWork() {
         action:      'save',
         id:          parseInt(document.getElementById('workId').value) || 0,
         title:       document.getElementById('workTitle').value.trim(),
+        description: document.getElementById('workDesc').value.trim(),
         image_url:   document.getElementById('workImageUrl').value.trim(),
         panel_bg:    document.getElementById('workPanelBg').value,
         title_color: document.getElementById('workTitleColor').value,

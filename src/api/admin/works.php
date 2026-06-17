@@ -51,9 +51,10 @@ function saveWorkImage(string $dataUrl): ?string {
 }
 
 if ($action === 'save') {
-    $id        = (int)($body['id'] ?? 0);
-    $title     = trim($body['title'] ?? '');
-    $image_url = trim($body['image_url'] ?? '');
+    $id          = (int)($body['id'] ?? 0);
+    $title       = trim($body['title'] ?? '');
+    $description = trim($body['description'] ?? '');
+    $image_url   = trim($body['image_url'] ?? '');
 
     if (!empty($body['image_data'])) {
         $saved = saveWorkImage($body['image_data']);
@@ -66,12 +67,12 @@ if ($action === 'save') {
     $desc_color  = preg_match('/^#[0-9a-fA-F]{3,6}$/', $body['desc_color']  ?? '') ? $body['desc_color']  : '#888888';
 
     if ($id) {
-        $pdo->prepare('UPDATE works SET title=?, image_url=?, panel_bg=?, title_color=?, desc_color=? WHERE id=?')
-            ->execute([$title, $image_url, $panel_bg, $title_color, $desc_color, $id]);
+        $pdo->prepare('UPDATE works SET title=?, description=?, image_url=?, panel_bg=?, title_color=?, desc_color=? WHERE id=?')
+            ->execute([$title, $description, $image_url, $panel_bg, $title_color, $desc_color, $id]);
     } else {
         $maxOrder = (int)$pdo->query('SELECT COALESCE(MAX(sort_order),0) FROM works')->fetchColumn();
-        $pdo->prepare('INSERT INTO works (title, image_url, sort_order, panel_bg, title_color, desc_color) VALUES (?,?,?,?,?,?)')
-            ->execute([$title, $image_url, $maxOrder + 1, $panel_bg, $title_color, $desc_color]);
+        $pdo->prepare('INSERT INTO works (title, description, image_url, sort_order, panel_bg, title_color, desc_color) VALUES (?,?,?,?,?,?,?)')
+            ->execute([$title, $description, $image_url, $maxOrder + 1, $panel_bg, $title_color, $desc_color]);
         $id = (int)$pdo->lastInsertId();
     }
     $stmt = $pdo->prepare('SELECT * FROM works WHERE id=?');

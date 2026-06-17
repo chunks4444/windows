@@ -77,6 +77,7 @@
                     <th style="width:32px;"></th>
                     <th style="width:96px;">이미지</th>
                     <th>제목</th>
+                    <th>설명</th>
                     <th style="width:72px;">상태</th>
                     <th style="width:160px;"></th>
                 </tr>
@@ -108,6 +109,10 @@
             <div class="adm-mfield">
                 <label>제목</label>
                 <input id="workTitle" type="text" placeholder="예: 한옥 중문 정자살" maxlength="100">
+            </div>
+            <div class="adm-mfield">
+                <label>설명 <span style="font-size:11px;color:var(--text-3);font-weight:400;">(카드 호버 시 표시)</span></label>
+                <textarea id="workDesc" rows="2" maxlength="300" placeholder="예: 경기도 양평" style="resize:vertical;padding:8px 10px;border:1px solid var(--border-md);border-radius:var(--r-sm);background:var(--input-bg);font-family:inherit;font-size:13px;color:var(--text-1);outline:none;width:100%;"></textarea>
             </div>
             <div class="adm-mfield">
                 <label>패널 색상</label>
