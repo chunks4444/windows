@@ -78,6 +78,18 @@ header('Content-Type: text/html; charset=UTF-8');
 </div>
 
 <script src="/src/js/dashboard.js"></script>
+<script>
+if (location.hash === '#boards') {
+    const observer = new MutationObserver(() => {
+        const page = document.getElementById('dbPage');
+        if (page && page.style.display !== 'none') {
+            switchTab('boards');
+            observer.disconnect();
+        }
+    });
+    observer.observe(document.getElementById('dbPage'), { attributes: true, attributeFilter: ['style'] });
+}
+</script>
 
 </body>
 </html>
