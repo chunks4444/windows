@@ -26,7 +26,7 @@ $isIndex      = ($currentFile === 'index.php' || $_SERVER['PHP_SELF'] === '/');
 $isAbout      = (strpos($_SERVER['PHP_SELF'], '/company/') !== false);
 $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/collection/') !== false);
 $isGuide      = (strpos($_SERVER['PHP_SELF'], '/guide/') !== false);
-$isWork       = (strpos($_SERVER['PHP_SELF'], '/work/') !== false);
+$isWork       = (strpos($_SERVER['PHP_SELF'], '/portfolio/') !== false);
 ?>
 <nav class="pm-navbar navbar navbar-expand-lg fixed-top px-4 py-3">
     <a href="/" class="navbar-brand d-flex align-items-center">
@@ -134,7 +134,7 @@ $isWork       = (strpos($_SERVER['PHP_SELF'], '/work/') !== false);
                     <div id="navBoardList"></div>
                 </ul>
             </li>
-            <li class="nav-item"><a href="/src/work/" class="nav-link <?= $isWork ? 'active' : '' ?>">Works</a></li>
+            <li class="nav-item"><a href="/src/portfolio/" class="nav-link <?= $isWork ? 'active' : '' ?>">Portfolio</a></li>
             <li class="nav-item dropdown">
                 <a href="/src/guide/" class="nav-link dropdown-toggle <?= $isGuide ? 'active' : '' ?>" data-bs-toggle="dropdown" aria-expanded="false">Guide</a>
                 <ul class="dropdown-menu">

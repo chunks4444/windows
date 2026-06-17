@@ -266,42 +266,55 @@ $faqs       = $pdo->query('SELECT * FROM faqs WHERE is_active=1 ORDER BY sort_or
                 <div class="process-container">
                     <div class="process-step">
                         <span class="process-num">01</span>
-                        <i class="bi bi-pencil-square process-icon"></i>
-                        <h3 class="process-title">패턴 설계</h3>
-                        <p class="process-desc">상단 Studio 메뉴에서 원하는<br>창호 패턴을 선택하세요.</p>
-                        <ul class="process-hints">
-                            <li><i class="bi bi-check2"></i> 문틀 가로·세로 크기 입력</li>
-                            <li><i class="bi bi-check2"></i> 살 간격·두께 슬라이더 조정</li>
-                            <li><i class="bi bi-check2"></i> 실시간으로 결과 확인</li>
-                        </ul>
-                    </div>
-                    <div class="process-arrow">
-                        <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                        <div class="process-step-body">
+                            <i class="bi bi-pencil-square process-icon"></i>
+                            <h3 class="process-title">패턴 설계</h3>
+                            <p class="process-desc">상단 Studio 메뉴에서 원하는 창호 패턴을 선택하세요.</p>
+                            <ul class="process-hints">
+                                <li><i class="bi bi-check2"></i> 문틀 가로·세로 크기 입력</li>
+                                <li><i class="bi bi-check2"></i> 살 간격·두께 슬라이더 조정</li>
+                                <li><i class="bi bi-check2"></i> 실시간으로 결과 확인</li>
+                            </ul>
+                        </div>
                     </div>
                     <div class="process-step">
                         <span class="process-num">02</span>
-                        <i class="bi bi-bookmark-heart process-icon"></i>
-                        <h3 class="process-title">저장 & 탐색</h3>
-                        <p class="process-desc">완성된 도면을 저장하고<br>컬렉션에서 영감을 찾아보세요.</p>
-                        <ul class="process-hints">
-                            <li><i class="bi bi-check2"></i> 도면 저장 후 내 도면에서 관리</li>
-                            <li><i class="bi bi-check2"></i> 컬렉션에서 다양한 패턴 탐색</li>
-                            <li><i class="bi bi-check2"></i> 보드에 마음에 드는 패턴 모으기</li>
-                        </ul>
-                    </div>
-                    <div class="process-arrow">
-                        <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                        <div class="process-step-body">
+                            <i class="bi bi-bookmark-heart process-icon"></i>
+                            <h3 class="process-title">저장 & 탐색</h3>
+                            <p class="process-desc">완성된 도면을 저장하고 컬렉션에서 영감을 찾아보세요.</p>
+                            <ul class="process-hints">
+                                <li><i class="bi bi-check2"></i> 도면 저장 후 내 도면에서 관리</li>
+                                <li><i class="bi bi-check2"></i> 컬렉션에서 다양한 패턴 탐색</li>
+                                <li><i class="bi bi-check2"></i> 보드에 마음에 드는 패턴 모으기</li>
+                            </ul>
+                        </div>
                     </div>
                     <div class="process-step">
                         <span class="process-num">03</span>
-                        <i class="bi bi-chat-heart process-icon"></i>
-                        <h3 class="process-title">제작 주문</h3>
-                        <p class="process-desc">완성된 설계를 가지고<br>평목 공방에 제작을 주문하세요.</p>
-                        <ul class="process-hints">
-                            <li><i class="bi bi-check2"></i> 도면 오른쪽 상단 주문버튼 클릭</li>
-                            <li><i class="bi bi-check2"></i> 저장한 도면 기반으로 상담</li>
-                            <li><i class="bi bi-check2"></i> 설계·제작·협업 모두 환영</li>
-                        </ul>
+                        <div class="process-step-body">
+                            <i class="bi bi-file-earmark-image process-icon"></i>
+                            <h3 class="process-title">렌더링 & 내보내기</h3>
+                            <p class="process-desc">완성된 도면을 PNG·PDF로 내보내거나 AI 렌더링으로 실제 공간에 배치해 검토하세요.</p>
+                            <ul class="process-hints">
+                                <li><i class="bi bi-check2"></i> PNG·PDF 고해상도 내보내기</li>
+                                <li><i class="bi bi-check2"></i> AI 렌더링으로 공간 시각화</li>
+                                <li><i class="bi bi-check2"></i> 배경 이미지와 도면 합성 확인</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="process-step">
+                        <span class="process-num">04</span>
+                        <div class="process-step-body">
+                            <i class="bi bi-chat-heart process-icon"></i>
+                            <h3 class="process-title">제작 주문</h3>
+                            <p class="process-desc">완성된 설계를 가지고 평목 공방에 제작을 주문하세요.</p>
+                            <ul class="process-hints">
+                                <li><i class="bi bi-check2"></i> 도면 오른쪽 상단 주문버튼 클릭</li>
+                                <li><i class="bi bi-check2"></i> 저장한 도면 기반으로 상담</li>
+                                <li><i class="bi bi-check2"></i> 설계·제작·협업 모두 환영</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>

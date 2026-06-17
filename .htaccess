@@ -1,3 +1,7 @@
 RewriteEngine On
 RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+# /src/work/ → /src/portfolio/ 리다이렉트
+RewriteRule ^src/work/detail\.php$ /src/portfolio/detail.php [R=301,L,QSA]
+RewriteRule ^src/work/?$ /src/portfolio/ [R=301,L]
 SetEnv PMOK_JWT_SECRET "새로운-강력한-시크릿"

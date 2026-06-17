@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php define('BOOTSTRAP_LOADED', true); ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
     <link rel="stylesheet" href="/src/css/dashboard.css">
     <link rel="stylesheet" href="/src/css/users.css">
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
@@ -21,9 +20,6 @@
         .work-img-preview.show { display:block; }
         .work-upload-label { display:block; padding:10px; border:1.5px dashed var(--border-md); border-radius:8px; text-align:center; cursor:pointer; color:var(--text-3); font-size:13px; margin-bottom:6px; }
         .work-upload-label:hover { border-color:var(--teal); color:var(--teal); }
-        #workDescEditor { height:140px; background:#fff; font-size:13px; }
-        .ql-toolbar { border-color:var(--border-md) !important; border-radius:var(--r-sm) var(--r-sm) 0 0; }
-        .ql-container { border-color:var(--border-md) !important; border-radius:0 0 var(--r-sm) var(--r-sm); font-family:inherit; }
     </style>
 </head>
 <body>
@@ -39,6 +35,17 @@
         <button class="adm-edit-btn" style="height:32px;padding:0 14px;" onclick="openModal()">
             <i class="bi bi-plus-lg"></i> 추가
         </button>
+    </div>
+
+    <!-- 필터 태그 관리 -->
+    <div style="background:var(--card-bg);border:1px solid var(--border-md);border-radius:10px;padding:18px 20px;margin-bottom:24px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div style="font-size:13px;font-weight:600;color:var(--text-1);">필터 태그 관리</div>
+            <button class="adm-edit-btn" style="height:28px;padding:0 12px;font-size:12px;" onclick="openTagModal()">
+                <i class="bi bi-plus-lg"></i> 태그 추가
+            </button>
+        </div>
+        <div id="tagList" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
     </div>
 
     <!-- 상세 페이지 패널 색상 설정 -->
@@ -70,7 +77,6 @@
                     <th style="width:32px;"></th>
                     <th style="width:96px;">이미지</th>
                     <th>제목</th>
-                    <th>설명</th>
                     <th style="width:72px;">상태</th>
                     <th style="width:160px;"></th>
                 </tr>
@@ -102,10 +108,6 @@
             <div class="adm-mfield">
                 <label>제목</label>
                 <input id="workTitle" type="text" placeholder="예: 한옥 중문 정자살" maxlength="100">
-            </div>
-            <div class="adm-mfield">
-                <label>설명</label>
-                <div id="workDescEditor"></div>
             </div>
             <div class="adm-mfield">
                 <label>패널 색상</label>
@@ -145,8 +147,100 @@
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 <script src="/src/js/admin/works.js"></script>
+
+<!-- 태그 편집 모달 -->
+<div class="adm-modal-overlay" id="tagModalOverlay">
+    <div class="adm-modal" style="max-width:360px;">
+        <div class="adm-modal-head">
+            <h3 id="tagModalTitle">태그 추가</h3>
+            <button class="adm-modal-close" onclick="closeTagModal()">&#x2715;</button>
+        </div>
+        <div class="adm-modal-body">
+            <input type="hidden" id="tagId">
+            <div class="adm-mfield">
+                <label>태그 이름</label>
+                <input id="tagName" type="text" placeholder="예: 중문" maxlength="50">
+            </div>
+        </div>
+        <div class="adm-modal-foot">
+            <button class="adm-btn-cancel" onclick="closeTagModal()">취소</button>
+            <button class="adm-btn-save" onclick="saveTag()">저장</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const TAG_API = '/src/api/admin/work_tags.php';
+let tags = [];
+
+function _h() { return { 'Authorization': 'Bearer ' + localStorage.getItem('pmok_auth_token'), 'Content-Type': 'application/json' }; }
+
+async function loadTags() {
+    const res  = await fetch(TAG_API, { headers: _h() });
+    const data = await res.json();
+    tags = data.tags || [];
+    renderTags();
+}
+
+function renderTags() {
+    document.getElementById('tagList').innerHTML = tags.map(t => `
+        <div style="display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;
+             border:1.5px solid ${t.is_active ? 'var(--teal)' : 'var(--border-md)'};
+             background:${t.is_active ? 'var(--teal-pale)' : 'var(--input-bg)'};font-size:12px;">
+            <span style="font-weight:600;color:${t.is_active ? 'var(--teal)' : 'var(--text-3)'};">${esc(t.name)}</span>
+            <button onclick="openTagModal(${t.id})" style="border:none;background:none;cursor:pointer;color:var(--text-3);padding:0;font-size:13px;line-height:1;" title="수정">✎</button>
+            <button onclick="toggleTag(${t.id})" style="border:none;background:none;cursor:pointer;color:var(--text-3);padding:0;font-size:12px;line-height:1;" title="${t.is_active ? '숨김' : '표시'}">${t.is_active ? '●' : '○'}</button>
+            <button onclick="deleteTag(${t.id})" style="border:none;background:none;cursor:pointer;color:#c00;padding:0;font-size:13px;line-height:1;" title="삭제">✕</button>
+        </div>`).join('');
+}
+
+function esc(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function openTagModal(id) {
+    const t = id ? tags.find(x => x.id == id) : null;
+    document.getElementById('tagModalTitle').textContent = t ? '태그 수정' : '태그 추가';
+    document.getElementById('tagId').value   = t?.id ?? '';
+    document.getElementById('tagName').value = t?.name ?? '';
+    document.getElementById('tagModalOverlay').classList.add('open');
+    setTimeout(() => document.getElementById('tagName').focus(), 50);
+}
+
+function closeTagModal() {
+    document.getElementById('tagModalOverlay').classList.remove('open');
+}
+
+async function saveTag() {
+    const body = { action: 'save', id: parseInt(document.getElementById('tagId').value) || 0, name: document.getElementById('tagName').value.trim() };
+    const res  = await fetch(TAG_API, { method: 'POST', headers: _h(), body: JSON.stringify(body) });
+    const data = await res.json();
+    if (data.ok) { closeTagModal(); loadTags(); }
+    else alert(data.error || '저장 실패');
+}
+
+async function toggleTag(id) {
+    await fetch(TAG_API, { method: 'POST', headers: _h(), body: JSON.stringify({ action: 'toggle', id }) });
+    loadTags();
+}
+
+async function deleteTag(id) {
+    if (!confirm('태그를 삭제할까요?')) return;
+    await fetch(TAG_API, { method: 'POST', headers: _h(), body: JSON.stringify({ action: 'delete', id }) });
+    loadTags();
+}
+
+document.getElementById('tagModalOverlay').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeTagModal();
+});
+document.getElementById('tagName').addEventListener('keydown', e => {
+    if (e.key === 'Enter') saveTag();
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const user = JSON.parse(localStorage.getItem('pmok_auth_user') || 'null');
+    if (user?.role === 's') loadTags();
+});
+</script>
 <script>
 // 패널 색상 로드
 async function loadColors() {

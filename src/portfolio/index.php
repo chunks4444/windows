@@ -57,7 +57,24 @@ if ((int)$pdo->query('SELECT COUNT(*) FROM work_images')->fetchColumn() === 0) {
 $works = $pdo->query('SELECT * FROM works WHERE is_active=1 ORDER BY sort_order, id')->fetchAll();
 $total = count($works);
 
-$tags = ['전체','중문','거실','카페','서재','현관','다실','침실','갤러리','한옥','파티션'];
+// 태그 테이블 생성 + 시드
+$pdo->exec("
+CREATE TABLE IF NOT EXISTS work_tags (
+    id         INT UNSIGNED      NOT NULL AUTO_INCREMENT,
+    name       VARCHAR(50)       NOT NULL DEFAULT '',
+    sort_order SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    is_active  TINYINT(1)        NOT NULL DEFAULT 1,
+    created_at DATETIME          NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (id),
+    KEY idx_wt_sort (sort_order, is_active)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+");
+if ((int)$pdo->query('SELECT COUNT(*) FROM work_tags')->fetchColumn() === 0) {
+    $ts = $pdo->prepare('INSERT INTO work_tags (name, sort_order) VALUES (?,?)');
+    foreach (['중문','거실','카페','서재','현관','다실','침실','갤러리','한옥','파티션'] as $i => $t)
+        $ts->execute([$t, $i]);
+}
+$tags = $pdo->query('SELECT name FROM work_tags WHERE is_active=1 ORDER BY sort_order, id')->fetchAll(PDO::FETCH_COLUMN);
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -108,7 +125,7 @@ $tags = ['전체','중문','거실','카페','서재','현관','다실','침실'
                  data-title="<?= htmlspecialchars($w['title']) ?>"
                  data-desc="<?= htmlspecialchars($desc) ?>"
                  role="button"
-                 onclick="location.href='/src/work/detail.php?id=<?= $w['id'] ?>'">
+                 onclick="location.href='/src/portfolio/detail.php?id=<?= $w['id'] ?>'">
                 <img src="<?= htmlspecialchars($w['image_url']) ?>"
                      alt="<?= htmlspecialchars($w['title']) ?>"
                      loading="lazy">
