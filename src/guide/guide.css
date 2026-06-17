@@ -228,7 +228,7 @@ body:has(.guide-wrap) {
 }
 
 .guide-hero {
-    background: linear-gradient(135deg, #1A1F1E 0%, #2B3432 100%);
+    background: linear-gradient(135deg, #4f8ef7 0%, #2ec4d6 45%, #2ed68a 100%);
     padding: 72px 24px 60px;
     text-align: center;
     color: #fff;
@@ -241,10 +241,11 @@ body:has(.guide-wrap) {
 }
 .guide-hero p {
     font-size: 14px;
-    color: rgba(255,255,255,.55);
+    color: #fff;
     line-height: 1.7;
 }
 
+/* ── 카테고리 카드 ────────────────────────────── */
 .guide-categories {
     max-width: 960px;
     margin: 0 auto;
