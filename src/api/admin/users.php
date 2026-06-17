@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || (($_SERVER['REQUEST_METHOD'] === 'PO
     $offset = ($page - 1) * $limit;
     $q      = trim($_body['q'] ?? $_GET['q'] ?? '');
 
-    $cols = 'id, email, role, name, phone, company, created_at, last_login_at, last_login_ip, withdrawn_at, (SELECT COUNT(*) FROM drawings WHERE user_id = users.id) AS drawing_count';
+    $cols = 'id, email, role, name, phone, company, created_at, last_login_at, last_login_ip, withdrawn_at, (SELECT COUNT(*) FROM drawings WHERE user_id = users.id) AS drawing_count, (SELECT COUNT(*) FROM drawing_export_logs WHERE user_id = users.id) AS export_count';
 
     if ($q) {
         $like    = '%' . $q . '%';

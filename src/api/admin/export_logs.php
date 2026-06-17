@@ -21,12 +21,28 @@ try {
     echo json_encode(['logs' => [], 'summary' => []]); exit;
 }
 
-$body  = json_decode(file_get_contents('php://input'), true) ?? [];
-$limit = max(1, min(200, (int)($body['limit'] ?? 100)));
+$body   = json_decode(file_get_contents('php://input'), true) ?? [];
+$limit  = max(1, min(200, (int)($body['limit'] ?? 100)));
+$userId = isset($body['user_id']) ? (int)$body['user_id'] : null;
+
+if ($userId) {
+    $logs = $pdo->prepare("
+        SELECT el.id, el.user_id, u.email, el.drawing_id, el.engine, el.format,
+               el.drawing_name, el.version, el.created_at
+        FROM drawing_export_logs el
+        LEFT JOIN users u ON u.id = el.user_id
+        WHERE el.user_id = ?
+        ORDER BY el.created_at DESC
+        LIMIT ?
+    ");
+    $logs->execute([$userId, $limit]);
+    echo json_encode(['logs' => $logs->fetchAll(), 'summary' => []]);
+    exit;
+}
 
 $logs = $pdo->prepare("
     SELECT el.id, el.user_id, u.email, el.drawing_id, el.engine, el.format,
-           el.drawing_name, el.created_at
+           el.drawing_name, el.version, el.created_at
     FROM drawing_export_logs el
     LEFT JOIN users u ON u.id = el.user_id
     ORDER BY el.created_at DESC

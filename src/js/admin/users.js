@@ -46,6 +46,12 @@ function renderTable(users) {
             <td style="color:var(--text-3);font-size:12px;font-family:monospace;">${u.last_login_ip ? esc(u.last_login_ip) : '<span class="adm-null">—</span>'}</td>
             <td>${u.withdrawn_at ? '<span class="adm-withdrawn-badge">탈퇴</span>' : '<span class="adm-active-badge">정상</span>'}</td>
             <td style="text-align:center;color:var(--text-3);font-size:12px;">${u.drawing_count || 0}</td>
+            <td style="text-align:center;">
+                ${+u.export_count > 0
+                    ? `<button class="adm-edit-btn" style="height:24px;padding:0 8px;font-size:11px;" onclick="openExportModal(${u.id}, '${esc(u.email)}')">${u.export_count}</button>`
+                    : `<span style="color:var(--text-3);font-size:12px;">0</span>`
+                }
+            </td>
             <td><div class="adm-action-cell">
                 <button class="adm-edit-btn" onclick='openModal(${u.id}, ${JSON.stringify(u)})'>수정</button>
                 ${u.withdrawn_at
@@ -150,6 +156,38 @@ function esc(str) {
 // 오버레이 클릭 시 닫기
 document.getElementById('admModalOverlay').addEventListener('click', function(e) {
     if (e.target === this) closeModal();
+});
+
+async function openExportModal(userId, email) {
+    document.getElementById('exportModalTitle').textContent = `내보내기 내역 — ${email}`;
+    document.getElementById('exportModalTbody').innerHTML = '<tr><td colspan="5" style="padding:20px;text-align:center;color:var(--text-3);">로딩 중…</td></tr>';
+    document.getElementById('exportModalOverlay').classList.add('open');
+
+    const res  = await fetch('/src/api/admin/export_logs.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token() },
+        body: JSON.stringify({ user_id: userId, limit: 100 }),
+    });
+    const data = await res.json();
+    const logs = data.logs || [];
+
+    document.getElementById('exportModalTbody').innerHTML = logs.map(r => `
+        <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px 14px;color:var(--text-3);white-space:nowrap;">${r.created_at.slice(0,16)}</td>
+            <td style="padding:8px 14px;"><span style="font-size:11px;padding:1px 6px;border-radius:8px;background:var(--accent-bg);color:var(--text-2);">${esc(r.engine)}</span></td>
+            <td style="padding:8px 14px;font-weight:600;color:${r.format==='pdf'?'#e05218':'#3a8c82'};">${r.format.toUpperCase()}</td>
+            <td style="padding:8px 14px;color:var(--text-2);">${esc(r.drawing_name || '—')}</td>
+            <td style="padding:8px 14px;color:var(--text-3);font-family:monospace;">${esc(r.version || '—')}</td>
+        </tr>
+    `).join('') || '<tr><td colspan="5" style="padding:20px;text-align:center;color:var(--text-3);">내역 없음</td></tr>';
+}
+
+function closeExportModal() {
+    document.getElementById('exportModalOverlay').classList.remove('open');
+}
+
+document.getElementById('exportModalOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeExportModal();
 });
 
 document.addEventListener('DOMContentLoaded', init);

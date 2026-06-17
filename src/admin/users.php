@@ -62,6 +62,7 @@ header('Content-Type: text/html; charset=UTF-8');
                         <th>접속 IP</th>
                         <th>상태</th>
                         <th>도면</th>
+                        <th>내보내기</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -114,6 +115,33 @@ header('Content-Type: text/html; charset=UTF-8');
         <div class="adm-modal-foot">
             <button class="adm-btn-cancel" onclick="closeModal()">취소</button>
             <button class="adm-btn-save" id="admSaveBtn" onclick="saveUser()">저장</button>
+        </div>
+    </div>
+</div>
+
+<!-- 내보내기 내역 모달 -->
+<div class="adm-modal-overlay" id="exportModalOverlay">
+    <div class="adm-modal" style="max-width:640px;">
+        <div class="adm-modal-head">
+            <h3 id="exportModalTitle">내보내기 내역</h3>
+            <button class="adm-modal-close" onclick="closeExportModal()">&#x2715;</button>
+        </div>
+        <div class="adm-modal-body" style="padding:0;max-height:420px;overflow-y:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:12px;">
+                <thead style="position:sticky;top:0;background:var(--card-bg);z-index:1;">
+                    <tr>
+                        <th style="padding:10px 14px;text-align:left;border-bottom:1px solid var(--border-md);color:var(--text-3);font-weight:500;">일시</th>
+                        <th style="padding:10px 14px;text-align:left;border-bottom:1px solid var(--border-md);color:var(--text-3);font-weight:500;">엔진</th>
+                        <th style="padding:10px 14px;text-align:left;border-bottom:1px solid var(--border-md);color:var(--text-3);font-weight:500;">형식</th>
+                        <th style="padding:10px 14px;text-align:left;border-bottom:1px solid var(--border-md);color:var(--text-3);font-weight:500;">도면명</th>
+                        <th style="padding:10px 14px;text-align:left;border-bottom:1px solid var(--border-md);color:var(--text-3);font-weight:500;">버전</th>
+                    </tr>
+                </thead>
+                <tbody id="exportModalTbody"></tbody>
+            </table>
+        </div>
+        <div class="adm-modal-foot">
+            <button class="adm-btn-cancel" onclick="closeExportModal()">닫기</button>
         </div>
     </div>
 </div>
