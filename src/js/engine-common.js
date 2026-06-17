@@ -453,3 +453,20 @@
         return `${safe}.${ext}`;
     }
 
+
+// 관리자 전용 섹션 표시
+(function () {
+    function jwtRole(tok) {
+        try { return JSON.parse(atob(tok.split('.')[1])).role; } catch(e) { return null; }
+    }
+    function showAdminSections() {
+        const tok  = localStorage.getItem('pmok_auth_token');
+        const role = tok ? jwtRole(tok) : null;
+        const show = role === 's' || role === 'm';
+        document.querySelectorAll('.admin-only').forEach(el => {
+            el.style.display = show ? '' : 'none';
+        });
+    }
+    document.addEventListener('DOMContentLoaded', showAdminSections);
+    window.addEventListener('pmokAuthChanged', showAdminSections);
+})();
