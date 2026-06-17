@@ -12,7 +12,12 @@ if ($id) {
 }
 if (!$work) { header('Location: /src/work/'); exit; }
 
-// 이미지 목록 (work_images 우선, 없으면 works.image_url fallback)
+// 아이템별 패널 색상
+$panelBg    = htmlspecialchars($work['panel_bg']    ?: '#111111');
+$titleColor = htmlspecialchars($work['title_color'] ?: '#ffffff');
+$descColor  = htmlspecialchars($work['desc_color']  ?: '#888888');
+
+// 이미지 목록
 try {
     $imgStmt = $pdo->prepare('SELECT image_url FROM work_images WHERE work_id=? ORDER BY sort_order, id');
     $imgStmt->execute([$id]);
@@ -25,6 +30,8 @@ $next = $pdo->prepare('SELECT id,title FROM works WHERE is_active=1 AND (sort_or
 $next->execute([$work['sort_order'], $work['sort_order'], $work['id']]);
 $next = $next->fetch();
 if (!$next) $next = $pdo->query('SELECT id,title FROM works WHERE is_active=1 ORDER BY sort_order ASC, id ASC LIMIT 1')->fetch();
+
+$total = count($images);
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -32,87 +39,139 @@ if (!$next) $next = $pdo->query('SELECT id,title FROM works WHERE is_active=1 OR
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($work['title']) ?> — 평목</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <?php define('BOOTSTRAP_LOADED', true); ?>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/src/css/work-detail.css">
 </head>
 <body>
-
-<!-- Works 로고 -->
-<header class="wd-header">
-    <a href="/src/work/" class="wd-header-logo">Works</a>
-</header>
+<?php require_once __DIR__ . '/../components/nav.php'; ?>
 
 <div class="wd-layout">
 
-    <!-- 좌측: 가로 스크롤 이미지 -->
-    <div class="wd-left-col" id="wdLeftCol">
+    <!-- 좌측: 이미지 갤러리 -->
+    <div class="wd-left" id="wdLeft">
         <?php foreach ($images as $i => $img): ?>
         <div class="wd-image-slot">
             <img src="<?= htmlspecialchars($img) ?>"
                  alt="<?= htmlspecialchars($work['title']) ?> <?= $i+1 ?>">
         </div>
         <?php endforeach; ?>
+    </div>
+
+    <!-- 우측: 정보 패널 -->
+    <div class="wd-right" style="background:<?= $panelBg ?>">
+        <a href="/src/work/" class="wd-back">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Works
+        </a>
+
+        <div class="wd-info">
+            <h1 class="wd-title" style="color:<?= $titleColor ?>"><?= htmlspecialchars($work['title']) ?></h1>
+            <?php if ($work['description']): ?>
+            <p class="wd-location" style="color:<?= $descColor ?>"><?= htmlspecialchars($work['description']) ?></p>
+            <?php endif; ?>
+            <?php if ($total > 1): ?>
+            <div class="wd-counter">
+                <strong id="wdCurrent">01</strong> / <?= sprintf('%02d', $total) ?>
+            </div>
+            <?php endif; ?>
+        </div>
+
         <?php if ($next && $next['id'] !== $work['id']): ?>
-        <a class="wd-next-slot" href="/src/work/detail.php?id=<?= $next['id'] ?>">
-            <span class="wd-next-slot__label">next</span>
-            <span class="wd-next-slot__title"><?= htmlspecialchars($next['title']) ?></span>
+        <a class="wd-next" href="/src/work/detail.php?id=<?= $next['id'] ?>">
+            <div>
+                <span class="wd-next-label">next</span>
+                <span class="wd-next-title"><?= htmlspecialchars($next['title']) ?></span>
+            </div>
+            <span class="wd-next-arrow">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <path d="M4 9H14M14 9L9 4M14 9L9 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </span>
         </a>
         <?php endif; ?>
     </div>
 
-    <!-- 우측: 고정 레드 패널 -->
-    <div class="wd-right-col">
-        <div class="wd-right-inner">
-            <h1 class="wd-title"><?= htmlspecialchars($work['title']) ?></h1>
-            <?php if ($work['description']): ?>
-            <p class="wd-sub"><?= htmlspecialchars($work['description']) ?></p>
-            <?php endif; ?>
-            <!-- 이미지 카운터 -->
-            <?php if (count($images) > 1): ?>
-            <div class="wd-counter">
-                <span id="wdCurrent">1</span> / <span><?= count($images) ?></span>
-            </div>
-            <?php endif; ?>
-        </div>
-    </div>
-
 </div>
+
+<?php if ($total > 1): ?>
+<div class="wd-scroll-hint">
+    <svg width="54" height="33" viewBox="0 0 36 22" fill="none">
+        <rect x="13" y="1" width="10" height="16" rx="5" stroke="currentColor" stroke-width="1.5"/>
+        <rect x="17" y="4" width="2" height="4" rx="1" fill="currentColor" class="wd-wheel"/>
+        <g id="wdPrev" style="cursor:pointer">
+            <rect x="0" y="0" width="12" height="22" fill="transparent"/>
+            <path d="M5 11 L1 11 M1 11 L4 8 M1 11 L4 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+        <g id="wdNext" style="cursor:pointer">
+            <rect x="24" y="0" width="12" height="22" fill="transparent"/>
+            <path d="M31 11 L35 11 M35 11 L32 8 M35 11 L32 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+    </svg>
+</div>
+<?php endif; ?>
 
 <script>
 (function () {
-    const col     = document.getElementById('wdLeftCol');
-    const counter = document.getElementById('wdCurrent');
+    const col     = document.getElementById('wdLeft');
+    const current = document.getElementById('wdCurrent');
     const slots   = col.querySelectorAll('.wd-image-slot');
+    const total   = slots.length;
 
-    /* ── 드래그 스크롤 ── */
-    let isDragging = false, startX, startScroll, dragMoved = false;
+    function getIdx() {
+        return Math.round(col.scrollLeft / col.clientWidth);
+    }
+
+    function goTo(idx) {
+        idx = Math.max(0, Math.min(total - 1, idx));
+        col.scrollTo({ left: slots[idx].offsetLeft, behavior: 'smooth' });
+    }
+
+    function updateActive() {
+        const idx = getIdx();
+        slots.forEach((s, i) => s.classList.toggle('active', i === idx));
+        if (current) current.textContent = String(idx + 1).padStart(2, '0');
+    }
+
+    col.addEventListener('scroll', () => requestAnimationFrame(updateActive));
+    updateActive();
+
+    document.getElementById('wdPrev')?.addEventListener('click', () => goTo(getIdx() - 1));
+    document.getElementById('wdNext')?.addEventListener('click', () => goTo(getIdx() + 1));
+
+    window.addEventListener('keydown', e => {
+        if (e.key === 'ArrowLeft')  goTo(getIdx() - 1);
+        if (e.key === 'ArrowRight') goTo(getIdx() + 1);
+    });
+
+    let wheelTimer;
+    col.addEventListener('wheel', e => {
+        e.preventDefault();
+        col.style.scrollSnapType = 'none';
+        col.scrollLeft += e.deltaY + e.deltaX;
+        clearTimeout(wheelTimer);
+        wheelTimer = setTimeout(() => { col.style.scrollSnapType = ''; }, 80);
+    }, { passive: false });
+
+    let isDragging = false, startX, startScroll;
     col.addEventListener('mousedown', e => {
-        isDragging = true; dragMoved = false;
-        startX = e.pageX; startScroll = col.scrollLeft;
-        col.style.cursor = 'grabbing';
+        isDragging = true; startX = e.pageX; startScroll = col.scrollLeft;
+        col.classList.add('grabbing');
+        col.style.scrollSnapType = 'none';
     });
     window.addEventListener('mousemove', e => {
         if (!isDragging) return;
-        if (Math.abs(e.pageX - startX) > 5) dragMoved = true;
         col.scrollLeft = startScroll - (e.pageX - startX);
     });
     window.addEventListener('mouseup', () => {
+        if (!isDragging) return;
         isDragging = false;
-        col.style.cursor = 'grab';
+        col.classList.remove('grabbing');
+        col.style.scrollSnapType = '';
     });
 
-    /* ── 카운터 업데이트 ── */
-    if (counter && slots.length) {
-        col.addEventListener('scroll', () => {
-            const mid = col.scrollLeft + col.clientWidth / 2;
-            let closest = 0, minDist = Infinity;
-            slots.forEach((s, i) => {
-                const d = Math.abs(s.offsetLeft + s.offsetWidth / 2 - mid);
-                if (d < minDist) { minDist = d; closest = i; }
-            });
-            counter.textContent = closest + 1;
-        });
-    }
 })();
 </script>
 </body>

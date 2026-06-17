@@ -47,6 +47,9 @@ function openModal(id) {
     if (w?.image_url) { prev.src = w.image_url; prev.classList.add('show'); }
     else              { prev.src = ''; prev.classList.remove('show'); }
     document.getElementById('workImgFile').value = '';
+    document.getElementById('workPanelBg').value    = w?.panel_bg    || '#111111';
+    document.getElementById('workTitleColor').value = w?.title_color || '#ffffff';
+    document.getElementById('workDescColor').value  = w?.desc_color  || '#888888';
     window._workImageData = null;
     document.getElementById('worksModalOverlay').classList.add('open');
 }
@@ -89,6 +92,9 @@ async function saveWork() {
         title:       document.getElementById('workTitle').value.trim(),
         description: document.getElementById('workDescription').value.trim(),
         image_url:   document.getElementById('workImageUrl').value.trim(),
+        panel_bg:    document.getElementById('workPanelBg').value,
+        title_color: document.getElementById('workTitleColor').value,
+        desc_color:  document.getElementById('workDescColor').value,
     };
     if (window._workImageData) body.image_data = window._workImageData;
     const res  = await fetch(API, { method: 'POST', headers: _h(), body: JSON.stringify(body) });

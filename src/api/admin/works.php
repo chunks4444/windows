@@ -62,13 +62,17 @@ if ($action === 'save') {
         else { echo json_encode(['error' => '이미지 저장 실패']); exit; }
     }
 
+    $panel_bg    = preg_match('/^#[0-9a-fA-F]{3,6}$/', $body['panel_bg']    ?? '') ? $body['panel_bg']    : '#111111';
+    $title_color = preg_match('/^#[0-9a-fA-F]{3,6}$/', $body['title_color'] ?? '') ? $body['title_color'] : '#ffffff';
+    $desc_color  = preg_match('/^#[0-9a-fA-F]{3,6}$/', $body['desc_color']  ?? '') ? $body['desc_color']  : '#888888';
+
     if ($id) {
-        $pdo->prepare('UPDATE works SET title=?, description=?, image_url=? WHERE id=?')
-            ->execute([$title, $description, $image_url, $id]);
+        $pdo->prepare('UPDATE works SET title=?, description=?, image_url=?, panel_bg=?, title_color=?, desc_color=? WHERE id=?')
+            ->execute([$title, $description, $image_url, $panel_bg, $title_color, $desc_color, $id]);
     } else {
         $maxOrder = (int)$pdo->query('SELECT COALESCE(MAX(sort_order),0) FROM works')->fetchColumn();
-        $pdo->prepare('INSERT INTO works (title, description, image_url, sort_order) VALUES (?,?,?,?)')
-            ->execute([$title, $description, $image_url, $maxOrder + 1]);
+        $pdo->prepare('INSERT INTO works (title, description, image_url, sort_order, panel_bg, title_color, desc_color) VALUES (?,?,?,?,?,?,?)')
+            ->execute([$title, $description, $image_url, $maxOrder + 1, $panel_bg, $title_color, $desc_color]);
         $id = (int)$pdo->lastInsertId();
     }
     $stmt = $pdo->prepare('SELECT * FROM works WHERE id=?');
@@ -91,6 +95,41 @@ if ($action === 'toggle') {
 
 if ($action === 'reorder') {
     $stmt = $pdo->prepare('UPDATE works SET sort_order=? WHERE id=?');
+    foreach (($body['ids'] ?? []) as $i => $id) $stmt->execute([$i, (int)$id]);
+    echo json_encode(['ok' => true]);
+    exit;
+}
+
+/* ── work_images 관리 ── */
+if ($action === 'get_images') {
+    $stmt = $pdo->prepare('SELECT id, image_url, sort_order FROM work_images WHERE work_id=? ORDER BY sort_order, id');
+    $stmt->execute([(int)($body['work_id'] ?? 0)]);
+    echo json_encode(['images' => $stmt->fetchAll()]);
+    exit;
+}
+
+if ($action === 'add_image') {
+    $work_id   = (int)($body['work_id'] ?? 0);
+    $image_url = trim($body['image_url'] ?? '');
+    if (!empty($body['image_data'])) {
+        $saved = saveWorkImage($body['image_data']);
+        if ($saved) $image_url = $saved;
+    }
+    if (!$work_id || !$image_url) { echo json_encode(['error' => '필수값 누락']); exit; }
+    $maxOrder = (int)$pdo->prepare('SELECT COALESCE(MAX(sort_order),0) FROM work_images WHERE work_id=?')->execute([$work_id]) ? $pdo->query("SELECT COALESCE(MAX(sort_order),0) FROM work_images WHERE work_id=$work_id")->fetchColumn() : 0;
+    $pdo->prepare('INSERT INTO work_images (work_id, image_url, sort_order) VALUES (?,?,?)')->execute([$work_id, $image_url, $maxOrder + 1]);
+    echo json_encode(['ok' => true, 'id' => $pdo->lastInsertId(), 'image_url' => $image_url]);
+    exit;
+}
+
+if ($action === 'delete_image') {
+    $pdo->prepare('DELETE FROM work_images WHERE id=?')->execute([(int)($body['id'] ?? 0)]);
+    echo json_encode(['ok' => true]);
+    exit;
+}
+
+if ($action === 'reorder_images') {
+    $stmt = $pdo->prepare('UPDATE work_images SET sort_order=? WHERE id=?');
     foreach (($body['ids'] ?? []) as $i => $id) $stmt->execute([$i, (int)$id]);
     echo json_encode(['ok' => true]);
     exit;

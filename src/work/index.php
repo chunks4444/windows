@@ -17,6 +17,17 @@ CREATE TABLE IF NOT EXISTS works (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 ");
 
+$pdo->exec("
+CREATE TABLE IF NOT EXISTS work_images (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    work_id INT UNSIGNED NOT NULL,
+    image_url VARCHAR(500) NOT NULL DEFAULT '',
+    sort_order SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    PRIMARY KEY (id),
+    KEY idx_work_images_work (work_id, sort_order)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+");
+
 if ((int)$pdo->query('SELECT COUNT(*) FROM works')->fetchColumn() === 0) {
     $stmt = $pdo->prepare('INSERT INTO works (title, description, image_url, sort_order) VALUES (?,?,?,?)');
     foreach ([
@@ -29,6 +40,27 @@ if ((int)$pdo->query('SELECT COUNT(*) FROM works')->fetchColumn() === 0) {
         ['침실 여닫이창',    '부산 해운대',  'https://picsum.photos/seed/w7/500/710', 6],
         ['갤러리 파티션',    '서울 종로',    'https://picsum.photos/seed/w8/500/680', 7],
     ] as $s) $stmt->execute($s);
+}
+
+// 전체 작품 다중 이미지 시드 (최초 1회)
+if ((int)$pdo->query('SELECT COUNT(*) FROM work_images')->fetchColumn() === 0) {
+    $works_all = $pdo->query('SELECT id, sort_order FROM works WHERE is_active=1 ORDER BY sort_order, id')->fetchAll();
+    $imgStmt   = $pdo->prepare('INSERT INTO work_images (work_id, image_url, sort_order) VALUES (?,?,?)');
+    // 가로(L)/세로(P) 섞은 5장 세트 (작품별 고유 seed)
+    $sizes = [
+        [600, 800],  // P
+        [800, 600],  // L
+        [600, 800],  // P
+        [800, 500],  // L
+        [500, 700],  // P
+    ];
+    foreach ($works_all as $w) {
+        $pfx = 'wi' . $w['id'];
+        foreach ($sizes as $j => [$width, $height]) {
+            $url = "https://picsum.photos/seed/{$pfx}_{$j}/{$width}/{$height}";
+            $imgStmt->execute([$w['id'], $url, $j]);
+        }
+    }
 }
 
 $works = $pdo->query('SELECT * FROM works WHERE is_active=1 ORDER BY sort_order, id')->fetchAll();
@@ -47,8 +79,8 @@ $works = $pdo->query('SELECT * FROM works WHERE is_active=1 ORDER BY sort_order,
 <?php include __DIR__ . '/../components/nav.php'; ?>
 
 <div class="work-track" id="workTrack">
-    <div class="work-item work-title-card" data-base-y="0" data-title="" data-desc="">
-        <span>WORKS</span>
+    <div class="work-item" data-base-y="0" data-title="" data-desc="">
+        <div class="work-title-card"><span>WORKS</span></div>
     </div>
     <?php
     // 카드별 세로 오프셋 (춤추는 효과)
@@ -65,7 +97,25 @@ $works = $pdo->query('SELECT * FROM works WHERE is_active=1 ORDER BY sort_order,
 <!-- 제목 표시 영역 -->
 <div class="work-label" id="workLabel">
     <div class="work-label-title" id="workLabelTitle"></div>
-    <div class="work-label-desc"  id="workLabelDesc"></div>
+</div>
+
+<!-- 스크롤 힌트 -->
+<div class="scroll-hint" id="scrollHint">
+    <svg width="54" height="33" viewBox="0 0 36 22" fill="none">
+        <!-- 마우스 아이콘 (중앙, 비클릭) -->
+        <rect x="13" y="1" width="10" height="16" rx="5" stroke="currentColor" stroke-width="1.5" pointer-events="none"/>
+        <rect x="17" y="4" width="2" height="4" rx="1" fill="currentColor" class="scroll-wheel" pointer-events="none"/>
+        <!-- 왼쪽 화살표 -->
+        <g id="hintLeft" style="cursor:pointer">
+            <rect x="0" y="0" width="12" height="22" fill="transparent"/>
+            <path d="M5 11 L1 11 M1 11 L4 8 M1 11 L4 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+        <!-- 오른쪽 화살표 -->
+        <g id="hintRight" style="cursor:pointer">
+            <rect x="24" y="0" width="12" height="22" fill="transparent"/>
+            <path d="M31 11 L35 11 M35 11 L32 8 M35 11 L32 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+    </svg>
 </div>
 
 <script>
@@ -74,33 +124,23 @@ $works = $pdo->query('SELECT * FROM works WHERE is_active=1 ORDER BY sort_order,
     const items  = document.querySelectorAll('.work-item');
     const label  = document.getElementById('workLabel');
     const lTitle = document.getElementById('workLabelTitle');
-    const lDesc  = document.getElementById('workLabelDesc');
-
-    /* ── 카드 Y 오프셋 (스크롤 위치 기반) ── */
-    function updatePositions() {
-        const mid = track.scrollLeft + window.innerWidth / 2;
-        items.forEach(item => {
-                item.style.transform = '';
-        });
-    }
 
     /* ── 중앙 카드 라벨 ── */
     function updateLabel() {
-        const mid = track.scrollLeft + window.innerWidth / 2;
+        const center = track.scrollLeft + window.innerWidth / 2;
         let closest = null, minDist = Infinity;
         items.forEach(item => {
-            const d = Math.abs(item.offsetLeft + item.offsetWidth / 2 - mid);
-            if (d < minDist) { minDist = d; closest = item; }
+            const dist = Math.abs(item.offsetLeft + item.offsetWidth / 2 - center);
+            if (dist < minDist) { minDist = dist; closest = item; }
         });
         if (closest) {
             lTitle.textContent = closest.dataset.title;
-            lDesc.textContent  = closest.dataset.desc;
-            label.classList.add('visible');
+            label.classList.toggle('visible', !!(closest.dataset.title));
         }
     }
 
     track.addEventListener('scroll', () => {
-        requestAnimationFrame(() => { updatePositions(); updateLabel(); });
+        requestAnimationFrame(updateLabel);
     });
 
     /* ── 카드 클릭 → 상세 페이지 ── */
@@ -113,12 +153,14 @@ $works = $pdo->query('SELECT * FROM works WHERE is_active=1 ORDER BY sort_order,
         item.style.cursor = 'pointer';
     });
 
-    /* ── 드래그 스크롤 ── */
+    /* ── 마우스 드래그 스크롤 ── */
     let isDragging = false, startX, startScroll;
+
     track.addEventListener('mousedown', e => {
         isDragging = true; dragMoved = false;
         startX = e.pageX; startScroll = track.scrollLeft;
         track.style.cursor = 'grabbing';
+        track.style.scrollSnapType = 'none';
     });
     window.addEventListener('mousemove', e => {
         if (!isDragging) return;
@@ -126,37 +168,54 @@ $works = $pdo->query('SELECT * FROM works WHERE is_active=1 ORDER BY sort_order,
         track.scrollLeft = startScroll - (e.pageX - startX);
     });
     window.addEventListener('mouseup', () => {
+        if (!isDragging) return;
         isDragging = false;
         track.style.cursor = 'grab';
+        track.style.scrollSnapType = '';
     });
 
-    /* ── 좌우 패딩: 첫·끝 카드가 중앙에 올 수 있도록 ── */
-    function setSnapPadding() {
-        const first = items[0];
-        const last  = items[items.length - 1];
-        if (!first || !last) return;
-        const vw   = window.innerWidth;
-        const padL = (vw - first.offsetWidth) / 2;
-        const padR = (vw - last.offsetWidth)  / 2;
-        track.style.paddingLeft  = Math.max(0, padL) + 'px';
-        track.style.paddingRight = Math.max(0, padR) + 'px';
-        // 첫 번째 카드 중앙 정렬로 초기 스크롤
-        track.scrollLeft = 0;
+    /* ── 화살표 클릭 → 카드 이동 ── */
+    function scrollByCard(dir) {
+        const cardW = items[0].offsetWidth + 16;
+        track.scrollBy({ left: dir * cardW, behavior: 'smooth' });
     }
+    document.getElementById('hintLeft').addEventListener('click',  () => scrollByCard(-1));
+    document.getElementById('hintRight').addEventListener('click', () => scrollByCard(1));
 
-    // 이미지 로드 후 패딩 계산
-    let loaded = 0;
-    const allImgs = track.querySelectorAll('img');
-    function onLoad() { loaded++; if (loaded === allImgs.length) setSnapPadding(); }
-    allImgs.forEach(img => {
-        if (img.complete) onLoad();
-        else { img.addEventListener('load', onLoad); img.addEventListener('error', onLoad); }
-    });
-    setTimeout(setSnapPadding, 600);
-    window.addEventListener('resize', setSnapPadding);
+    /* ── 마우스 휠 → 가로 스크롤 ── */
+    const hint = document.getElementById('scrollHint');
+    let wheelTimer;
+    track.addEventListener('wheel', e => {
+        e.preventDefault();
+        track.style.scrollSnapType = 'none';
+        track.scrollLeft += e.deltaY + e.deltaX;
+        clearTimeout(wheelTimer);
+        wheelTimer = setTimeout(() => { track.style.scrollSnapType = ''; }, 80);
+    }, { passive: false });
+
+    /* ── 오토플레이 ── */
+    let autoTimer;
+    function autoNext() {
+        const cardW = items[0].offsetWidth + 16;
+        const maxScroll = track.scrollWidth - track.clientWidth;
+        if (track.scrollLeft >= maxScroll - 1) {
+            track.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+            track.scrollBy({ left: cardW, behavior: 'smooth' });
+        }
+    }
+    function startAuto() { setTimeout(autoNext, 800); autoTimer = setInterval(autoNext, 2000); }
+    function stopAuto()  { clearInterval(autoTimer); }
+
+    startAuto();
+    track.addEventListener('mouseenter', stopAuto);
+    track.addEventListener('mouseleave', startAuto);
+    track.addEventListener('touchstart', stopAuto,  { passive: true });
+    track.addEventListener('touchend',   () => setTimeout(startAuto, 1500));
+
+    window.addEventListener('resize', updateLabel);
 
     /* ── 초기화 ── */
-    updatePositions();
     updateLabel();
 })();
 </script>
