@@ -6,6 +6,27 @@
 
 body { background: var(--page-bg); }
 
+/* ── 페이지 히어로 ───────────────────────────── */
+.lib-hero {
+    background: var(--page-bg);
+    border-bottom: 1px solid var(--border);
+    padding: 2.5rem 0 0;
+}
+.lib-hero-inner {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 0 24px 1.75rem;
+}
+.lib-hero-label {
+    display: inline-block;
+    font-size: var(--fs-12); font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--teal);
+    margin-bottom: .5rem;
+}
+.lib-hero-sub {
+    font-size: var(--fs-16); color: var(--text-2);
+}
+
 /* ── 검색/필터 바 ─────────────────────────────── */
 .lib-toolbar {
     position: sticky;
@@ -43,13 +64,13 @@ body { background: var(--page-bg); }
     border: none;
     outline: none;
     background: transparent;
-    font-size: 13px;
+    font-size: var(--fs-14);
     font-family: inherit;
     color: var(--text-1);
     width: 100%;
 }
 
-.lib-search i { color: var(--text-3); font-size: 14px; }
+.lib-search i { color: var(--text-3); font-size: var(--fs-16); }
 
 .lib-filters {
     display: flex;
@@ -69,7 +90,7 @@ body { background: var(--page-bg); }
     border-radius: 999px;
     border: 1px solid var(--border);
     background: #fff;
-    font-size: 12px;
+    font-size: var(--fs-13);
     font-weight: 500;
     font-family: inherit;
     color: var(--text-2);
@@ -91,7 +112,7 @@ body { background: var(--page-bg); }
 }
 
 .lib-filter-like { gap: 5px; }
-.lib-filter-like i { font-size: 11px; color: #e03; }
+.lib-filter-like i { font-size: var(--fs-12); color: #e03; }
 .lib-filter-like.active i,
 .lib-filter-like:hover i { color: #fff; }
 
@@ -105,7 +126,7 @@ body { background: var(--page-bg); }
 /* ── 매소너리 그리드 ──────────────────────────── */
 .lib-masonry {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 12px;
     align-items: start;
 }
@@ -183,7 +204,7 @@ body { background: var(--page-bg); }
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 15px;
+    font-size: var(--fs-16);
     cursor: pointer;
     transition: background 0.12s, color 0.12s, transform 0.12s;
 }
@@ -199,13 +220,7 @@ body { background: var(--page-bg); }
 }
 
 .lib-overlay-title {
-    color: #fff;
-    font-size: 13px;
-    font-weight: 600;
-    text-align: center;
-    letter-spacing: -0.2px;
-    text-shadow: 0 1px 4px rgba(0,0,0,0.4);
-    width: 100%;
+    display: none;
 }
 
 .lib-overlay-actions {
@@ -220,7 +235,7 @@ body { background: var(--page-bg); }
     padding: 0 14px;
     border-radius: 999px;
     border: none;
-    font-size: 12px;
+    font-size: var(--fs-13);
     font-weight: 600;
     font-family: inherit;
     cursor: pointer;
@@ -236,7 +251,7 @@ body { background: var(--page-bg); }
     background: var(--red);
     color: #fff;
 }
-.lib-btn-primary:hover { background: #aa1a00; }
+.lib-btn-primary:hover { background: var(--red-dark); }
 
 .lib-btn-secondary {
     background: rgba(255,255,255,0.9);
@@ -250,7 +265,7 @@ body { background: var(--page-bg); }
 }
 
 .lib-card-name {
-    font-size: 13px;
+    font-size: var(--fs-14);
     font-weight: 600;
     color: var(--text-1);
     letter-spacing: -0.2px;
@@ -261,7 +276,7 @@ body { background: var(--page-bg); }
 }
 
 .lib-card-sub {
-    font-size: 11px;
+    font-size: var(--fs-12);
     color: var(--text-3);
     white-space: nowrap;
     overflow: hidden;
@@ -270,7 +285,7 @@ body { background: var(--page-bg); }
 
 /* ── 섹션 타이틀 ──────────────────────────────── */
 .lib-section-title {
-    font-size: 11px;
+    font-size: var(--fs-12);
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -309,7 +324,7 @@ body { background: var(--page-bg); }
 }
 
 .bm-title {
-    font-size: 14px;
+    font-size: var(--fs-16);
     font-weight: 700;
     color: var(--text-1);
     letter-spacing: -0.3px;
@@ -319,7 +334,7 @@ body { background: var(--page-bg); }
     background: none;
     border: none;
     color: var(--text-3);
-    font-size: 16px;
+    font-size: var(--fs-16);
     cursor: pointer;
     padding: 2px;
     display: flex;
@@ -340,7 +355,7 @@ body { background: var(--page-bg); }
     padding: 24px 18px;
     text-align: center;
     color: var(--text-3);
-    font-size: 12px;
+    font-size: var(--fs-13);
 }
 
 .bm-board-row {
@@ -362,21 +377,21 @@ body { background: var(--page-bg); }
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: var(--fs-16);
     flex-shrink: 0;
 }
 
 .bm-board-info { flex: 1; min-width: 0; }
 .bm-board-name {
-    font-size: 13px;
+    font-size: var(--fs-14);
     font-weight: 600;
     color: var(--text-1);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
-.bm-board-count { font-size: 11px; color: var(--text-3); margin-top: 1px; }
-.bm-board-plus { color: var(--text-3); font-size: 18px; }
+.bm-board-count { font-size: var(--fs-12); color: var(--text-3); margin-top: 1px; }
+.bm-board-plus { color: var(--text-3); font-size: var(--fs-18); }
 
 .bm-divider { border: none; border-top: 1px solid var(--border); }
 
@@ -392,7 +407,7 @@ body { background: var(--page-bg); }
     border: 1px solid var(--border);
     border-radius: var(--r-sm);
     padding: 0 12px;
-    font-size: 13px;
+    font-size: var(--fs-14);
     font-family: inherit;
     color: var(--text-1);
     background: var(--page-bg);
@@ -408,14 +423,14 @@ body { background: var(--page-bg); }
     color: #fff;
     border: none;
     border-radius: var(--r-sm);
-    font-size: 13px;
+    font-size: var(--fs-14);
     font-weight: 600;
     font-family: inherit;
     cursor: pointer;
     white-space: nowrap;
     transition: background 0.12s;
 }
-.bm-create-btn:hover { background: #2F7169; }
+.bm-create-btn:hover { background: var(--teal-dark); }
 
 /* ── 토스트 ──────────────────────────────────── */
 .lib-toast {
@@ -425,7 +440,7 @@ body { background: var(--page-bg); }
     transform: translateX(-50%) translateY(12px);
     background: var(--text-1);
     color: #fff;
-    font-size: 13px;
+    font-size: var(--fs-14);
     font-weight: 500;
     padding: 10px 20px;
     border-radius: 999px;
@@ -447,7 +462,7 @@ body { background: var(--page-bg); }
     border-radius: 999px;
     border: 1px solid var(--border);
     background: #fff;
-    font-size: 13px;
+    font-size: var(--fs-14);
     font-weight: 600;
     font-family: inherit;
     color: var(--text-2);

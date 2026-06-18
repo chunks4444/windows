@@ -3,4 +3,4 @@
         tr.dragging { opacity:.4; }
         tr.drag-over td { background:var(--accent-bg); }
         .num-input { text-align:right; }
-        .notes-cell { font-size:12px; color:var(--text-3); max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .notes-cell { font-size: var(--fs-13); color:var(--text-3); max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }

@@ -10,7 +10,7 @@
     background: none;
     border: none;
     padding: 4px 0 10px;
-    font-size: 15px;
+    font-size: var(--fs-16);
     font-weight: 700;
     color: #c4cdc9;
     border-bottom: 2px solid transparent;
@@ -19,8 +19,8 @@
     transition: color .18s, border-color .18s;
 }
 .auth-tab.active {
-    color: #1A1F1E;
-    border-bottom-color: #3A8C82;
+    color: var(--text-1);
+    border-bottom-color: var(--teal);
 }
 .auth-tab:hover:not(.active) {
     color: #6b7b78;
@@ -38,8 +38,8 @@
     background: none;
     border: none;
     padding: 4px 0 10px;
-    font-size: 12px;
-    color: #3A8C82;
+    font-size: var(--fs-13);
+    color: var(--teal);
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -60,7 +60,7 @@
     margin-bottom: 14px;
 }
 .auth-field label {
-    font-size: 11px;
+    font-size: var(--fs-12);
     font-weight: 700;
     color: #7A8C89;
     letter-spacing: 0.06em;
@@ -70,8 +70,8 @@
     border: 1.5px solid #E4EDEA;
     border-radius: 10px;
     padding: 11px 14px;
-    font-size: 14px;
-    color: #1A1F1E;
+    font-size: var(--fs-16);
+    color: var(--text-1);
     outline: none;
     background: #F8FAF9;
     font-family: inherit;
@@ -81,7 +81,7 @@
     color: #B8C8C4;
 }
 .auth-field input:focus {
-    border-color: #3A8C82;
+    border-color: var(--teal);
     background: #fff;
     box-shadow: 0 0 0 3px rgba(58,140,130,.10);
 }
@@ -91,11 +91,11 @@
     width: 100%;
     height: 44px;
     margin-top: 6px;
-    background: #3A8C82;
+    background: var(--teal);
     color: #fff;
     border: none;
     border-radius: 10px;
-    font-size: 14px;
+    font-size: var(--fs-16);
     font-weight: 700;
     cursor: pointer;
     font-family: inherit;
@@ -108,7 +108,7 @@
     box-shadow: 0 2px 8px rgba(58,140,130,.25);
 }
 .auth-submit:hover {
-    background: #2F7169;
+    background: var(--teal-dark);
     box-shadow: 0 4px 14px rgba(58,140,130,.32);
     transform: translateY(-1px);
 }
@@ -132,21 +132,21 @@
     background: none;
     border: none;
     padding: 0;
-    font-size: 12px;
+    font-size: var(--fs-13);
     color: #A8BAB7;
     cursor: pointer;
     font-family: inherit;
     transition: color .15s;
 }
 .auth-forgot-link button:hover {
-    color: #3A8C82;
+    color: var(--teal);
 }
 
 /* ── 알림 박스 ── */
 .auth-notice {
     border-radius: 8px;
     padding: 11px 14px;
-    font-size: 13px;
+    font-size: var(--fs-14);
     line-height: 1.6;
     margin-bottom: 16px;
     display: flex;
@@ -155,7 +155,7 @@
 }
 .auth-notice-error {
     background: #FFF2F0;
-    color: #C0392B;
+    color: var(--danger);
     border: 1px solid #F5C6C0;
 }
 .auth-notice-success {
@@ -166,7 +166,7 @@
 
 /* ── forgot 안내 텍스트 ── */
 .auth-hint {
-    font-size: 13px;
+    font-size: var(--fs-14);
     color: #7A8C89;
     line-height: 1.75;
     margin: 0 0 20px;
@@ -186,12 +186,12 @@
     gap: 9px;
     height: 44px;
     border-radius: 10px;
-    font-size: 13px;
+    font-size: var(--fs-14);
     font-weight: 600;
     text-decoration: none;
     border: 1.5px solid #E4EDEA;
     background: #fff;
-    color: #1A1F1E;
+    color: var(--text-1);
     letter-spacing: -0.2px;
     transition: background .15s, border-color .15s;
     font-family: inherit;
@@ -199,27 +199,27 @@
 .auth-sns-btn:hover {
     background: #F5F8F7;
     border-color: #C8D8D4;
-    color: #1A1F1E;
+    color: var(--text-1);
     text-decoration: none;
 }
 .auth-sns-kakao {
-    background: #FEE500;
-    border-color: #FEE500;
+    background: var(--kakao);
+    border-color: var(--kakao);
     color: #191919;
 }
 .auth-sns-kakao:hover {
-    background: #F5DA00;
-    border-color: #F5DA00;
+    background: var(--kakao-dark);
+    border-color: var(--kakao-dark);
     color: #191919;
 }
 .auth-sns-naver {
-    background: #03C75A;
-    border-color: #03C75A;
+    background: var(--naver);
+    border-color: var(--naver);
     color: #fff;
 }
 .auth-sns-naver:hover {
-    background: #02B350;
-    border-color: #02B350;
+    background: var(--naver-dark);
+    border-color: var(--naver-dark);
     color: #fff;
 }
 
@@ -230,7 +230,7 @@
     gap: 10px;
     margin: 16px 0 14px;
     color: #C4CDC9;
-    font-size: 11px;
+    font-size: var(--fs-12);
     font-weight: 600;
     letter-spacing: 0.05em;
 }
@@ -244,7 +244,7 @@
 
 /* ── reset 안내 텍스트 ── */
 .auth-reset-hint {
-    font-size: 13px;
+    font-size: var(--fs-14);
     color: #7A8C89;
     margin: 0 0 18px;
     line-height: 1.6;

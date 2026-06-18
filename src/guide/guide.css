@@ -170,7 +170,7 @@
 .guid-label-callout {
     display: flex; align-items: flex-start; gap: 8px;
     padding: 8px 0;
-    font-size: 12px; color: var(--text-2);
+    font-size: 12px; color: var(--text-1); font-weight: 400;
 }
 .guid-label-callout .num {
     flex-shrink: 0;
@@ -203,7 +203,7 @@
 }
 .guide-flow-step .step-icon { font-size: 20px; display: block; margin-bottom: 6px; }
 .guide-flow-step .step-title { font-weight: 700; color: var(--text-1); margin-bottom: 2px; }
-.guide-flow-step .step-desc { color: var(--text-3); font-size: 11px; }
+.guide-flow-step .step-desc { color: var(--text-1); font-weight: 400; font-size: 11px; }
 .guide-flow-arrow {
     color: var(--text-3); font-size: 16px;
     padding: 0 6px; flex-shrink: 0;
@@ -230,6 +230,8 @@ body:has(.guide-wrap) {
 .guide-hero {
     background: linear-gradient(135deg, #4f8ef7 0%, #2ec4d6 45%, #2ed68a 100%);
     padding: 72px 24px 60px;
+    margin: 24px 24px 0;
+    border-radius: 16px;
     text-align: center;
     color: #fff;
 }
@@ -247,7 +249,7 @@ body:has(.guide-wrap) {
 
 /* ── 카테고리 카드 ────────────────────────────── */
 .guide-categories {
-    max-width: 960px;
+    max-width: 1280px;
     margin: 0 auto;
     padding: 48px 24px 80px;
     display: grid;
@@ -281,7 +283,7 @@ body:has(.guide-wrap) {
     color: var(--text-1); margin-bottom: 6px;
 }
 .guide-cat-desc {
-    font-size: 12px; color: var(--text-3);
+    font-size: 12px; color: var(--text-1);
     line-height: 1.65; margin-bottom: 14px;
 }
 .guide-cat-count {
@@ -336,7 +338,7 @@ body:has(.guide-wrap) {
 .gs-link {
     display: block;
     padding: 7px 20px 7px 28px;
-    font-size: 13px; color: var(--text-2);
+    font-size: 13px; color: var(--text-1);
     text-decoration: none;
     transition: background .1s, color .1s;
     border-right: 2px solid transparent;
@@ -375,7 +377,7 @@ body:has(.guide-wrap) {
     margin-bottom: 14px;
 }
 .guide-lead {
-    font-size: 15px; color: var(--text-2);
+    font-size: 15px; color: var(--text-1); font-weight: 400;
     line-height: 1.75; margin-bottom: 36px;
     padding-bottom: 32px;
     border-bottom: 1px solid var(--border);
@@ -394,14 +396,14 @@ body:has(.guide-wrap) {
 
 /* 문단 / 목록 */
 .guide-article p {
-    font-size: 14px; color: var(--text-2);
+    font-size: 14px; color: var(--text-1); font-weight: 400;
     line-height: 1.8; margin-bottom: 12px;
 }
 .guide-article ul, .guide-article ol {
     padding-left: 22px; margin-bottom: 16px;
 }
 .guide-article li {
-    font-size: 14px; color: var(--text-2);
+    font-size: 14px; color: var(--text-1); font-weight: 400;
     line-height: 1.8; margin-bottom: 4px;
 }
 .guide-article strong { color: var(--text-1); font-weight: 600; }
@@ -413,7 +415,7 @@ body:has(.guide-wrap) {
     position: relative;
     padding: 14px 0 14px 48px;
     border-bottom: 1px solid var(--border);
-    font-size: 14px; color: var(--text-2); line-height: 1.75;
+    font-size: 14px; color: var(--text-1); font-weight: 400; line-height: 1.75;
 }
 .guide-steps > li:last-child { border-bottom: none; }
 .guide-steps > li::before {
@@ -433,7 +435,7 @@ body:has(.guide-wrap) {
     margin: 20px 0; font-size: 13px; line-height: 1.7;
 }
 .guide-tip  { background: var(--teal-pale);  color: #1e5e58; border-left: 3px solid var(--teal); }
-.guide-note { background: var(--page-bg);    color: var(--text-2); border-left: 3px solid var(--border-md); }
+.guide-note { background: var(--page-bg);    color: var(--text-1); border-left: 3px solid var(--border-md); }
 .guide-warn { background: #FFF2F0; color: #8B2A16; border-left: 3px solid var(--red); }
 .guide-tip i, .guide-note i, .guide-warn i { flex-shrink: 0; font-size: 15px; margin-top: 1px; }
 
@@ -454,10 +456,10 @@ body:has(.guide-wrap) {
 .guide-table th {
     background: #F4F6F6; text-align: left;
     padding: 9px 14px; font-weight: 600;
-    color: var(--text-2); border-bottom: 2px solid var(--border);
+    color: var(--text-1); border-bottom: 2px solid var(--border);
 }
 .guide-table td {
-    padding: 9px 14px; color: var(--text-2);
+    padding: 9px 14px; color: var(--text-1); font-weight: 400;
     border-bottom: 1px solid var(--border);
 }
 .guide-table tr:last-child td { border-bottom: none; }

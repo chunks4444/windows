@@ -6,7 +6,7 @@
 }
 
 body {
-    font-family: 'Inter', -apple-system, sans-serif;
+    font-family: 'Noto Sans KR', 'Inter', -apple-system, sans-serif;
     background: #fff;
 }
 
@@ -38,7 +38,7 @@ body {
     padding: 80px 0 72px;
 }
 .ab-hero-label {
-    font-size: 11px;
+    font-size: var(--fs-12);
     font-weight: 600;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -47,7 +47,7 @@ body {
 }
 .ab-hero-title {
     font-family: 'Noto Sans KR', sans-serif;
-    font-size: clamp(32px, 5vw, 64px);
+    font-size: clamp(var(--fs-32), 5vw, 4rem);
     font-weight: 700;
     line-height: 1.25;
     letter-spacing: -0.02em;
@@ -56,7 +56,7 @@ body {
 }
 .ab-hero-title em { font-style: normal; color: #fff; }
 .ab-hero-desc {
-    font-size: 15px;
+    font-size: var(--fs-16);
     font-weight: 400;
     line-height: 1.9;
     color: #fff;
@@ -80,7 +80,7 @@ body {
     transform: translateX(-50%);
 }
 .ab-section-label {
-    font-size: 11px;
+    font-size: var(--fs-12);
     font-weight: 600;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -89,16 +89,16 @@ body {
 }
 .ab-section-title {
     font-family: 'Noto Sans KR', sans-serif;
-    font-size: clamp(22px, 3vw, 32px);
+    font-size: clamp(var(--fs-22), 3vw, var(--fs-32));
     font-weight: 700;
     line-height: 1.4;
     letter-spacing: -0.01em;
     margin-bottom: 24px;
 }
-.ab-section-body {
-    font-size: 14px;
+\.ab-section-body {
+    font-size: var(--fs-16);
     line-height: 1.9;
-    color: var(--text-2);
+    color: var(--text-1);
     word-break: keep-all;
 }
 
@@ -132,7 +132,7 @@ body {
     max-width: 600px;
 }
 .ab-phil-text p {
-    font-size: 16px;
+    font-size: var(--fs-16);
     line-height: 2.0;
     color: var(--text-1);
     margin-bottom: 28px;
@@ -141,7 +141,7 @@ body {
 .ab-phil-text p:last-child { margin-bottom: 0; }
 .ab-phil-num {
     display: block;
-    font-size: 28px;
+    font-size: var(--fs-28);
     font-weight: 700;
     color: var(--text-1);
     margin-bottom: 16px;
@@ -149,14 +149,14 @@ body {
 }
 .ab-phil-name {
     font-family: 'Noto Sans KR', sans-serif;
-    font-size: 17px;
+    font-size: var(--fs-16);
     font-weight: 700;
     margin-bottom: 12px;
 }
 .ab-phil-desc {
-    font-size: 13px;
+    font-size: var(--fs-14);
     line-height: 1.8;
-    color: var(--text-2);
+    color: var(--text-1);
     word-break: keep-all;
     margin: 0;
 }
@@ -188,14 +188,14 @@ body {
 .ab-tool-card:hover .ab-tool-icon { opacity: 1; }
 .ab-tool-name {
     font-family: 'Noto Sans KR', sans-serif;
-    font-size: 16px;
+    font-size: var(--fs-16);
     font-weight: 700;
     margin-bottom: 8px;
 }
 .ab-tool-desc {
-    font-size: 13px;
+    font-size: var(--fs-14);
     line-height: 1.8;
-    color: var(--text-2);
+    color: var(--text-1);
     margin: 0;
     word-break: keep-all;
 }
@@ -214,7 +214,7 @@ body {
     padding-right: 32px;
 }
 .ab-info-label {
-    font-size: 11px;
+    font-size: var(--fs-12);
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -222,7 +222,7 @@ body {
     margin-bottom: 10px;
 }
 .ab-info-value {
-    font-size: 14px;
+    font-size: var(--fs-16);
     font-weight: 500;
     line-height: 1.6;
     color: var(--text-1);
@@ -270,14 +270,14 @@ body {
     border-bottom: 1px solid var(--border);
 }
 .ab-contact-row dt {
-    font-size: 11px;
+    font-size: var(--fs-12);
     font-weight: 600;
     letter-spacing: 0.05em;
     color: var(--text-3);
     padding-top: 2px;
 }
 .ab-contact-row dd {
-    font-size: 14px;
+    font-size: var(--fs-16);
     color: var(--text-1);
     margin: 0;
     line-height: 1.6;
@@ -291,10 +291,10 @@ body {
     height: 40px; padding: 0 20px;
     background: var(--red); color: #fff; border: none;
     border-radius: 4px; font-family: inherit;
-    font-size: 13px; font-weight: 600; cursor: pointer;
+    font-size: var(--fs-14); font-weight: 600; cursor: pointer;
     transition: background .15s;
 }
-.ab-contact-btn:hover { background: #a81d00; }
+.ab-contact-btn:hover { background: var(--red-dark); }
 
 /* ── CONTACT MODAL ───────────────────────────── */
 #contactModal .modal-content {
@@ -307,14 +307,14 @@ body {
 }
 #contactModal .modal-title {
     font-family: 'Noto Sans KR', sans-serif;
-    font-size: 15px; font-weight: 700;
+    font-size: var(--fs-16); font-weight: 700;
 }
 #contactModal .modal-body { padding: 24px; }
 .ct-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
-.ct-field label { font-size: 11px; font-weight: 700; color: #666; letter-spacing: .03em; }
+.ct-field label { font-size: var(--fs-12); font-weight: 700; color: #666; letter-spacing: .03em; }
 .ct-field input, .ct-field textarea {
     border: 1px solid #e0e0e0; border-radius: 4px;
-    padding: 9px 12px; font-size: 13px;
+    padding: 9px 12px; font-size: var(--fs-14);
     font-family: inherit; outline: none;
     transition: border-color .15s; resize: none;
 }
@@ -324,21 +324,21 @@ body {
     width: 100%; height: 40px; margin-top: 4px;
     background: var(--red); color: #fff; border: none;
     border-radius: 4px; font-family: inherit;
-    font-size: 13px; font-weight: 600; cursor: pointer;
+    font-size: var(--fs-14); font-weight: 600; cursor: pointer;
     transition: background .15s;
 }
-.ct-submit:hover { background: #a81d00; }
+.ct-submit:hover { background: var(--red-dark); }
 .ct-submit:disabled { background: #999; cursor: not-allowed; }
 .ct-error {
     background: #fff3f0; border-left: 3px solid #e05218;
-    padding: 9px 12px; font-size: 12px; color: #c0392b;
+    padding: 9px 12px; font-size: var(--fs-13); color: var(--danger);
     margin-bottom: 14px; border-radius: 2px;
 }
 .ct-success {
     text-align: center; padding: 32px 0 16px;
-    font-size: 14px; color: var(--text-2); line-height: 1.8;
+    font-size: var(--fs-16); color: var(--text-1); line-height: 1.8;
 }
-.ct-success strong { display: block; font-size: 16px; color: var(--text-1); margin-bottom: 8px; }
+.ct-success strong { display: block; font-size: var(--fs-16); color: var(--text-1); margin-bottom: 8px; }
 
 /* ── GALLERY ─────────────────────────────────── */
 .ab-gallery {
@@ -369,13 +369,13 @@ body {
     align-items: center;
 }
 .ab-footer-copy {
-    font-size: 11px;
+    font-size: var(--fs-12);
     font-weight: 300;
     color: var(--text-3);
     margin: 0;
 }
 .ab-footer-link {
-    font-size: 11px;
+    font-size: var(--fs-12);
     color: var(--text-3);
     text-decoration: none;
     transition: color 0.2s;

@@ -13,6 +13,14 @@
 
 <?php include __DIR__ . '/../components/nav.php'; ?>
 
+<!-- 페이지 히어로 -->
+<div class="lib-hero">
+    <div class="lib-hero-inner">
+        <p class="lib-hero-label">Collection</p>
+        <p class="lib-hero-sub">평목 스튜디오에서 제작된 창호 격자 패턴을 둘러보세요.</p>
+    </div>
+</div>
+
 <!-- 검색 / 필터 바 -->
 <div class="lib-toolbar">
     <div class="lib-toolbar-inner">

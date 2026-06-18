@@ -18,22 +18,22 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 13px;
+            font-size: var(--fs-14);
             font-weight: 800;
             flex-shrink: 0;
         }
         .oauth-logo-google { background: #fff; border: 1px solid #e0e0e0; }
-        .oauth-logo-kakao  { background: #FEE500; color: #191919; }
-        .oauth-logo-naver  { background: #03C75A; color: #fff; }
-        .oauth-card-title  { font-size: 15px; font-weight: 700; color: #1A1F1E; }
-        .oauth-callback    { font-size: 11px; color: #97A8A6; margin-bottom: 16px; background: #F5F8F7; padding: 8px 12px; border-radius: 6px; font-family: monospace; word-break: break-all; }
+        .oauth-logo-kakao  { background: var(--kakao); color: #191919; }
+        .oauth-logo-naver  { background: var(--naver); color: #fff; }
+        .oauth-card-title  { font-size: var(--fs-16); font-weight: 700; color: var(--text-1); }
+        .oauth-callback    { font-size: var(--fs-12); color: #97A8A6; margin-bottom: 16px; background: #F5F8F7; padding: 8px 12px; border-radius: 6px; font-family: monospace; word-break: break-all; }
         .oauth-field       { margin-bottom: 12px; }
-        .oauth-field label { font-size: 11px; font-weight: 700; color: #7A8C89; letter-spacing: 0.05em; text-transform: uppercase; display: block; margin-bottom: 5px; }
-        .oauth-field input { width: 100%; border: 1.5px solid #E4EDEA; border-radius: 8px; padding: 9px 12px; font-size: 13px; outline: none; font-family: monospace; color: #1A1F1E; transition: border-color .15s; }
-        .oauth-field input:focus { border-color: #3A8C82; }
-        .oauth-save { height: 36px; padding: 0 18px; background: #3A8C82; color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background .15s; }
-        .oauth-save:hover { background: #2F7169; }
+        .oauth-field label { font-size: var(--fs-12); font-weight: 700; color: #7A8C89; letter-spacing: 0.05em; text-transform: uppercase; display: block; margin-bottom: 5px; }
+        .oauth-field input { width: 100%; border: 1.5px solid #E4EDEA; border-radius: 8px; padding: 9px 12px; font-size: var(--fs-14); outline: none; font-family: monospace; color: var(--text-1); transition: border-color .15s; }
+        .oauth-field input:focus { border-color: var(--teal); }
+        .oauth-save { height: 36px; padding: 0 18px; background: var(--teal); color: #fff; border: none; border-radius: 8px; font-size: var(--fs-14); font-weight: 600; cursor: pointer; transition: background .15s; }
+        .oauth-save:hover { background: var(--teal-dark); }
         .oauth-save:disabled { background: #B8C8C4; cursor: not-allowed; }
-        .oauth-status { font-size: 12px; margin-left: 10px; }
+        .oauth-status { font-size: var(--fs-13); margin-left: 10px; }
         .oauth-status.ok  { color: #2d7a72; }
-        .oauth-status.err { color: #c0392b; }
+        .oauth-status.err { color: var(--danger); }

@@ -3,6 +3,27 @@ body {
     min-height: 100vh;
 }
 
+/* ── 페이지 히어로 ───────────────────────────── */
+.lib-hero {
+    background: var(--page-bg);
+    border-bottom: 1px solid var(--border);
+    padding: 2.5rem 0 0;
+}
+.lib-hero-inner {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 0 24px 1.75rem;
+}
+.lib-hero-label {
+    display: inline-block;
+    font-size: var(--fs-12); font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--teal);
+    margin-bottom: .5rem;
+}
+.lib-hero-sub {
+    font-size: var(--fs-16); color: var(--text-2);
+}
+
 /* ── 페이지 레이아웃 ──────────────────────────── */
 .db-page {
     max-width: 1320px;
@@ -19,7 +40,7 @@ body {
 }
 
 .db-title {
-    font-size: 20px;
+    font-size: var(--fs-18);
     font-weight: 700;
     color: var(--text-1);
     letter-spacing: -0.4px;
@@ -35,7 +56,7 @@ body {
     color: #fff;
     border: none;
     border-radius: var(--r-sm);
-    font-size: 13px;
+    font-size: var(--fs-14);
     font-weight: 600;
     font-family: inherit;
     cursor: pointer;
@@ -44,14 +65,14 @@ body {
     transition: background 0.12s;
     white-space: nowrap;
 }
-.db-new-btn:hover { background: #2F7169; }
+.db-new-btn:hover { background: var(--teal-dark); }
 
 
 .db-card-engine-icon {
     display: flex;
     align-items: center;
     flex-shrink: 0;
-    color: #cc2200;
+    color: var(--red);
 }
 
 .db-card-engine-icon svg {
@@ -68,9 +89,12 @@ body {
 /* ── 카드 그리드 ──────────────────────────────── */
 .db-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 16px;
 }
+@media (max-width: 1024px) { .db-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 768px)  { .db-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px)  { .db-grid { grid-template-columns: 1fr; } }
 
 .db-card {
     background: #fff;
@@ -102,25 +126,25 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 13px;
+    font-size: var(--fs-14);
     cursor: pointer;
     opacity: 0;
     transition: opacity 0.15s, background 0.15s, color 0.15s;
 }
 .db-card:hover .db-card-copy { opacity: 1; }
-.db-card-copy:hover { background: #D1FAF0; color: #3A8C82; }
+.db-card-copy:hover { background: #D1FAF0; color: var(--teal); }
 
 .db-copy-input {
     width: 100%;
     padding: 8px 10px;
     border: 1px solid #ddd;
     border-radius: 6px;
-    font-size: 13px;
+    font-size: var(--fs-14);
     margin: 8px 0 4px;
     box-sizing: border-box;
     outline: none;
 }
-.db-copy-input:focus { border-color: #3A8C82; }
+.db-copy-input:focus { border-color: var(--teal); }
 
 .db-card-delete {
     position: absolute;
@@ -136,7 +160,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 13px;
+    font-size: var(--fs-14);
     cursor: pointer;
     opacity: 0;
     transition: opacity 0.15s, background 0.15s, color 0.15s;
@@ -147,8 +171,8 @@ body {
 }
 
 .db-card-delete:hover {
-    background: #FEE2E2;
-    color: #DC2626;
+    background: var(--danger-pale);
+    color: var(--danger);
 }
 
 /* ── 썸네일 ──────────────────────────────────── */
@@ -182,7 +206,7 @@ body {
 }
 
 .db-card-title {
-    font-size: 14px;
+    font-size: var(--fs-16);
     font-weight: 600;
     color: var(--text-1);
     letter-spacing: -0.3px;
@@ -205,11 +229,11 @@ body {
     display: flex;
     align-items: center;
     gap: 5px;
-    font-size: 11px;
+    font-size: var(--fs-12);
     color: var(--text-3);
 }
 
-.db-card-meta-row i { font-size: 10px; flex-shrink: 0; }
+.db-card-meta-row i { font-size: var(--fs-12); flex-shrink: 0; }
 .db-card-meta-row strong { color: var(--text-2); font-weight: 500; }
 
 /* ── 빈 상태 ─────────────────────────────────── */
@@ -218,7 +242,7 @@ body {
     padding: 40px 24px;
     text-align: center;
     color: var(--text-3);
-    font-size: 13px;
+    font-size: var(--fs-14);
     background: #fff;
     border-radius: var(--r);
     border: 1px dashed var(--border-md);
@@ -230,7 +254,7 @@ body {
     padding: 40px;
     text-align: center;
     color: var(--text-3);
-    font-size: 13px;
+    font-size: var(--fs-14);
 }
 
 /* ── 로그인 유도 배너 ────────────────────────── */
@@ -244,7 +268,7 @@ body {
 }
 
 .db-auth-banner p {
-    font-size: 15px;
+    font-size: var(--fs-16);
     font-weight: 600;
     color: var(--text-1);
     margin-bottom: 16px;
@@ -260,13 +284,13 @@ body {
     color: #fff;
     border: none;
     border-radius: var(--r-sm);
-    font-size: 13px;
+    font-size: var(--fs-14);
     font-weight: 600;
     font-family: inherit;
     cursor: pointer;
     transition: background 0.12s;
 }
-.db-auth-btn:hover { background: #2F7169; }
+.db-auth-btn:hover { background: var(--teal-dark); }
 
 /* ── 탭 ──────────────────────────────────────── */
 .db-tabs {
@@ -280,7 +304,7 @@ body {
     background: none;
     border: 1px solid var(--border);
     border-radius: var(--r-sm);
-    font-size: 13px;
+    font-size: var(--fs-14);
     font-weight: 600;
     font-family: inherit;
     color: var(--text-3);
@@ -336,17 +360,17 @@ body {
     width: 56px;
     height: 56px;
     border-radius: 50%;
-    background: #FEE2E2;
-    color: #DC2626;
+    background: var(--danger-pale);
+    color: var(--danger);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 22px;
+    font-size: var(--fs-22);
     margin: 0 auto 16px;
 }
 
 .db-delete-modal-title {
-    font-size: 16px;
+    font-size: var(--fs-16);
     font-weight: 700;
     color: var(--text-1);
     letter-spacing: -0.4px;
@@ -354,7 +378,7 @@ body {
 }
 
 .db-delete-modal-desc {
-    font-size: 13px;
+    font-size: var(--fs-14);
     color: var(--text-3);
     line-height: 1.6;
     margin-bottom: 24px;
@@ -373,7 +397,7 @@ body {
     height: 40px;
     border-radius: var(--r-sm);
     border: none;
-    font-size: 13px;
+    font-size: var(--fs-14);
     font-weight: 600;
     font-family: inherit;
     cursor: pointer;
@@ -392,11 +416,11 @@ body {
 }
 
 .db-delete-modal-confirm {
-    background: #DC2626;
+    background: var(--danger);
     color: #fff;
 }
 .db-delete-modal-confirm:hover {
-    background: #B91C1C;
+    background: var(--danger-dark);
 }
 
 /* ── 보드 썸네일 ──────────────────────────────── */
@@ -425,7 +449,7 @@ body {
 }
 
 .db-board-item-name {
-    font-size: 11px;
+    font-size: var(--fs-12);
     font-weight: 500;
     color: var(--text-2);
     padding: 6px 8px;
@@ -447,7 +471,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
+    font-size: var(--fs-13);
     cursor: pointer;
     opacity: 0;
     transition: opacity 0.15s;
@@ -464,7 +488,7 @@ body {
     border-radius: 999px;
     border: 1px solid var(--border-1, #e5e7ea);
     background: #fff;
-    font-size: 13px;
+    font-size: var(--fs-14);
     font-weight: 600;
     font-family: inherit;
     color: var(--text-2, #5a6b69);
@@ -474,7 +498,7 @@ body {
     gap: 8px;
     transition: background 0.12s, border-color 0.12s;
 }
-.db-loadmore-btn:hover { background: var(--teal, #3A8C82); border-color: var(--teal, #3A8C82); color: #fff; }
+.db-loadmore-btn:hover { background: var(--teal, var(--teal)); border-color: var(--teal, var(--teal)); color: #fff; }
 .db-loadmore-btn:disabled { opacity: 0.5; cursor: default; }
 
 .db-loadmore-spinner {

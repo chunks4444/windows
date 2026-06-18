@@ -2,17 +2,19 @@
 
 /* ── Design Tokens ───────────────────────────── */
 :root {
-    /* 색상 */
-    --teal:       #3A8C82;
-    --teal-mid:   #5AADA2;
-    --teal-pale:  #E6F4F2;
-    --accent-bg:  #EAF5F3;
-    --page-bg:    #F2F3F4;
-    --red:        #cc2200;
-    --gold:       #b8894a;
+    /* 브랜드 */
+    --teal:         #3A8C82;
+    --teal-dark:    #2F7169;
+    --teal-mid:     #5AADA2;
+    --teal-pale:    #E6F4F2;
+    --accent-bg:    #EAF5F3;
+    --page-bg:      #F2F3F4;
+    --red:          #CC2200;
+    --red-dark:     #A81D00;
+    --gold:         #b8894a;
 
     /* 텍스트 */
-    --text-1:     #1A1F1E;
+    --text-1:     rgba(0, 0, 0, 0.95);
     --text-2:     #5A6B69;
     --text-3:     #97A8A6;
 
@@ -20,6 +22,33 @@
     --border:     #E0E5E4;
     --border-md:  #C8D4D2;
     --input-bg:   #F4F6F6;
+
+    /* 상태 */
+    --danger:       #DC2626;
+    --danger-dark:  #B91C1C;
+    --danger-pale:  #FEE2E2;
+    --success:      #15803D;
+    --success-pale: #DCFCE7;
+    --warning:      #B45309;
+    --warning-pale: #FEF3C7;
+    --purple:       #6D28D9;
+    --purple-pale:  #EDE9FE;
+
+    /* SNS 인증 */
+    --kakao:        #FEE500;
+    --kakao-dark:   #F5DA00;
+    --naver:        #03C75A;
+    --naver-dark:   #02B350;
+
+    /* 폰트 크기 스케일 (1rem = 16px) */
+    --fs-12:  0.75rem;     /* 12px — 배지, 메타 */
+    --fs-13:  0.8125rem;   /* 13px — 보조 텍스트 */
+    --fs-14:  0.875rem;    /* 14px — 본문, 버튼 */
+    --fs-16:  1rem;        /* 16px — 카드 제목, 레이블 */
+    --fs-18:  1.125rem;    /* 18px — 아이콘, 중간 헤딩 */
+    --fs-22:  1.375rem;    /* 22px — 섹션 헤딩 */
+    --fs-28:  1.75rem;     /* 28px — 큰 헤딩 */
+    --fs-32:  2rem;        /* 32px — 히어로 */
 
     /* 반경 */
     --r:          8px;
@@ -38,8 +67,8 @@
 
 /* ── Base ────────────────────────────────────── */
 body {
-    font-family: 'Noto Sans KR', -apple-system, 'Malgun Gothic', sans-serif;
-    font-size: 13px;
+    font-family: 'Noto Sans KR', 'Inter', -apple-system, sans-serif;
+    font-size: var(--fs-14);
     font-weight: 400;
     line-height: 1.5;
     letter-spacing: -0.2px;

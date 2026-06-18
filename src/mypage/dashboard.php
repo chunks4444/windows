@@ -14,6 +14,14 @@ header('Content-Type: text/html; charset=UTF-8');
 
 <?php include __DIR__ . '/../components/nav.php'; ?>
 
+<!-- 페이지 히어로 -->
+<div class="lib-hero">
+    <div class="lib-hero-inner">
+        <p class="lib-hero-label">My Page</p>
+        <p class="lib-hero-sub">저장한 도면과 보드를 관리하세요.</p>
+    </div>
+</div>
+
 <div class="db-page" id="dbPage" style="display:none;">
     <div class="db-header">
         <div class="db-tabs">

@@ -15,7 +15,7 @@
 }
 
 .pf-section-title {
-    font-size: 13px;
+    font-size: var(--fs-14);
     font-weight: 700;
     color: var(--text-2);
     letter-spacing: 0.04em;
@@ -30,7 +30,7 @@
 }
 
 .pf-email {
-    font-size: 14px;
+    font-size: var(--fs-16);
     font-weight: 500;
     color: var(--text-1);
 }
@@ -39,16 +39,16 @@
     display: inline-block;
     padding: 2px 8px;
     border-radius: 99px;
-    font-size: 11px;
+    font-size: var(--fs-12);
     font-weight: 700;
     letter-spacing: 0.03em;
     background: var(--border);
     color: var(--text-2);
 }
 
-.pf-role-badge[data-role="s"] { background: #FEF3C7; color: #B45309; }
-.pf-role-badge[data-role="m"] { background: #EDE9FE; color: #6D28D9; }
-.pf-role-badge[data-role="a"] { background: #DCFCE7; color: #15803D; }
+.pf-role-badge[data-role="s"] { background: var(--warning-pale); color: var(--warning); }
+.pf-role-badge[data-role="m"] { background: var(--purple-pale); color: var(--purple); }
+.pf-role-badge[data-role="a"] { background: var(--success-pale); color: var(--success); }
 .pf-role-badge[data-role="u"] { background: var(--border); color: var(--text-2); }
 
 .pf-field {
@@ -63,7 +63,7 @@
 }
 
 .pf-label {
-    font-size: 12px;
+    font-size: var(--fs-13);
     font-weight: 600;
     color: var(--text-2);
 }
@@ -75,7 +75,7 @@
     border-radius: var(--r-sm);
     background: var(--input-bg);
     font-family: inherit;
-    font-size: 13px;
+    font-size: var(--fs-14);
     color: var(--text-1);
     outline: none;
     transition: border-color 0.15s;
@@ -145,7 +145,7 @@
     border: 1px solid var(--border-md);
     border-radius: var(--r-sm);
     font-family: inherit;
-    font-size: 12px;
+    font-size: var(--fs-13);
     font-weight: 600;
     cursor: pointer;
     white-space: nowrap;
@@ -171,14 +171,14 @@
     border: none;
     border-radius: var(--r-sm);
     font-family: inherit;
-    font-size: 13px;
+    font-size: var(--fs-14);
     font-weight: 600;
     cursor: pointer;
     transition: background 0.12s;
 }
 
 .pf-btn-save:hover:not(:disabled) {
-    background: #2F7169;
+    background: var(--teal-dark);
 }
 
 .pf-btn-save:disabled {
@@ -189,7 +189,7 @@
 .pf-alert {
     padding: 10px 14px;
     border-radius: var(--r-sm);
-    font-size: 13px;
+    font-size: var(--fs-14);
     margin-bottom: 16px;
 }
 
@@ -199,6 +199,6 @@
 }
 
 .pf-alert--error {
-    background: #FEE2E2;
-    color: #DC2626;
+    background: var(--danger-pale);
+    color: var(--danger);
 }

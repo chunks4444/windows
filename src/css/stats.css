@@ -4,9 +4,9 @@
     background:#fff; border:1px solid var(--border); border-radius:var(--r);
     padding:20px 24px;
 }
-.st-card-label { font-size:11px; font-weight:700; color:var(--text-2); letter-spacing:.04em; text-transform:uppercase; margin-bottom:6px; }
-.st-card-value { font-size:26px; font-weight:700; color:var(--text-1); letter-spacing:-.5px; }
-.st-card-sub   { font-size:11px; color:var(--text-3); margin-top:4px; }
+.st-card-label { font-size: var(--fs-12); font-weight:700; color:var(--text-2); letter-spacing:.04em; text-transform:uppercase; margin-bottom:6px; }
+.st-card-value { font-size: var(--fs-28); font-weight:700; color:var(--text-1); letter-spacing:-.5px; }
+.st-card-sub   { font-size: var(--fs-12); color:var(--text-3); margin-top:4px; }
 
 .st-panel {
     background:#fff; border:1px solid var(--border); border-radius:var(--r);
@@ -16,7 +16,7 @@
     display:flex; align-items:center; justify-content:space-between;
     padding:14px 20px; border-bottom:1px solid var(--border);
 }
-.st-panel-title { font-size:13px; font-weight:700; color:var(--text-1); }
+.st-panel-title { font-size: var(--fs-14); font-weight:700; color:var(--text-1); }
 .st-panel-body  { padding:20px; }
 .st-chart-wrap  { position:relative; height:260px; }
 
@@ -24,7 +24,7 @@
 .st-month-btn {
     height:28px; padding:0 12px; background:#fff;
     border:1px solid var(--border-md); border-radius:var(--r-sm);
-    font-family:inherit; font-size:12px; font-weight:600;
+    font-family:inherit; font-size: var(--fs-13); font-weight:600;
     color:var(--text-2); cursor:pointer;
     transition:border-color .15s, color .15s, background .15s;
 }
@@ -36,19 +36,19 @@
 
 table { width:100%; border-collapse:collapse; }
 thead th {
-    padding:9px 14px; font-size:11px; font-weight:700; color:var(--text-2);
+    padding:9px 14px; font-size: var(--fs-12); font-weight:700; color:var(--text-2);
     letter-spacing:.04em; text-transform:uppercase;
     background:var(--input-bg); border-bottom:1px solid var(--border);
     white-space:nowrap;
 }
 tbody tr { border-bottom:1px solid var(--border); }
 tbody tr:last-child { border-bottom:none; }
-tbody td { padding:9px 14px; font-size:13px; color:var(--text-1); vertical-align:middle; }
-.st-rank { font-size:12px; color:var(--text-3); font-weight:700; }
-.st-page { font-size:12px; color:var(--text-2); font-family:monospace; word-break:break-all; }
+tbody td { padding:9px 14px; font-size: var(--fs-14); color:var(--text-1); vertical-align:middle; }
+.st-rank { font-size: var(--fs-13); color:var(--text-3); font-weight:700; }
+.st-page { font-size: var(--fs-13); color:var(--text-2); font-family:monospace; word-break:break-all; }
 .st-num  { font-weight:600; }
 
-.role-badge { display:inline-block; padding:2px 7px; border-radius:99px; font-size:11px; font-weight:700; background:var(--border); color:var(--text-2); }
-.role-badge[data-role="s"] { background:#FEF3C7; color:#B45309; }
-.role-badge[data-role="m"] { background:#EDE9FE; color:#6D28D9; }
-.role-badge[data-role="a"] { background:#DCFCE7; color:#15803D; }
+.role-badge { display:inline-block; padding:2px 7px; border-radius:99px; font-size: var(--fs-12); font-weight:700; background:var(--border); color:var(--text-2); }
+.role-badge[data-role="s"] { background:var(--warning-pale); color:var(--warning); }
+.role-badge[data-role="m"] { background:var(--purple-pale); color:var(--purple); }
+.role-badge[data-role="a"] { background:var(--success-pale); color:var(--success); }

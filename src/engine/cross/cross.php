@@ -358,6 +358,12 @@ header('Pragma: no-cache');
                             <div id="verList"></div>
                         </div>
                     </div>
+                    <button class="title-group-btn save-btn" id="btnSave" title="저장">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 4H17L20 7V20H5V4Z"/><path d="M8 4V9H15V4"/><path d="M9 15H15"/>
+                        </svg>
+                        <span>저장</span>
+                    </button>
                 </div>
             </div>
 
@@ -384,14 +390,6 @@ header('Pragma: no-cache');
             <div class="sb-inner-right">
                 <div class="sb-section">
                     <div style="display:flex;gap:6px;">
-                        <button class="hbtn" id="btnSave" style="flex:1;justify-content:center;">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
-                                <path d="M5 4H17L20 7V20H5V4Z" stroke="currentColor" stroke-width="2" />
-                                <path d="M8 4V10H16V4" stroke="currentColor" stroke-width="2" />
-                                <path d="M9 15H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                            </svg>
-                            저장
-                        </button>
                         <button class="hbtn hbtn-primary" style="flex:1;justify-content:center;">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
                                 <path d="M7 3H14L19 8V20H7V3Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />

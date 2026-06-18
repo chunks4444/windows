@@ -74,7 +74,7 @@ html, body {
     z-index: 10;
 }
 .wd-arrow:hover {
-    background: var(--teal, #3A8C82);
+    background: var(--teal, var(--teal));
     color: #fff;
     box-shadow: 0 4px 16px rgba(58,140,130,.3);
 }
@@ -84,7 +84,7 @@ html, body {
 
 /* 슬라이드 카운터 */
 .wd-counter {
-    font-size: .72rem;
+    font-size: var(--fs-13);
     color: var(--text-3, #97A8A6);
     letter-spacing: .06em;
     text-align: center;
@@ -129,7 +129,7 @@ html, body {
 }
 .wd-thumb:hover { opacity: .8; }
 .wd-thumb.active {
-    border-color: var(--teal, #3A8C82);
+    border-color: var(--teal, var(--teal));
     opacity: 1;
 }
 
@@ -161,37 +161,37 @@ html, body {
 .wd-back {
     flex-shrink: 0;
     display: inline-flex; align-items: center; gap: .35rem;
-    font-size: .75rem; font-weight: 700; letter-spacing: .08em;
+    font-size: var(--fs-13); font-weight: 700; letter-spacing: .08em;
     text-transform: uppercase;
     color: var(--text-3, #97A8A6);
     text-decoration: none;
     transition: color .18s;
     white-space: nowrap;
 }
-.wd-back:hover { color: var(--teal, #3A8C82); }
+.wd-back:hover { color: var(--teal, var(--teal)); }
 .wd-divider { width: 1px; height: 18px; background: var(--border, #E0E5E4); flex-shrink: 0; }
 .wd-title {
-    font-size: .82rem; font-weight: 400;
+    font-size: var(--fs-14); font-weight: 400;
     color: var(--text-1, #1A1F1E);
     letter-spacing: -.01em;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .wd-desc {
-    font-size: .8rem; color: var(--text-3, #97A8A6);
+    font-size: var(--fs-14); color: var(--text-3, #97A8A6);
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .wd-next-link {
     flex-shrink: 0;
     display: inline-flex; align-items: center; gap: .5rem;
-    font-size: .8rem; font-weight: 600;
+    font-size: var(--fs-14); font-weight: 600;
     color: var(--text-2, #5A6B69);
     text-decoration: none;
     transition: color .18s;
     white-space: nowrap;
 }
-.wd-next-link:hover { color: var(--teal, #3A8C82); }
+.wd-next-link:hover { color: var(--teal, var(--teal)); }
 .wd-next-label {
-    font-size: .68rem; font-weight: 700; letter-spacing: .08em;
+    font-size: var(--fs-12); font-weight: 700; letter-spacing: .08em;
     text-transform: uppercase; color: var(--text-3, #97A8A6);
     margin-right: .25rem;
 }

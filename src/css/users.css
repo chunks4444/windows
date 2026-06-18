@@ -25,16 +25,16 @@
 }
 .adm-search input {
     border: none; background: none; outline: none;
-    font-family: inherit; font-size: 13px; color: var(--text-1);
+    font-family: inherit; font-size: var(--fs-14); color: var(--text-1);
     width: 100%;
 }
 .adm-search input::placeholder { color: var(--text-3); }
-.adm-total { font-size: 12px; color: var(--text-3); }
+.adm-total { font-size: var(--fs-13); color: var(--text-3); }
 
 table { width: 100%; border-collapse: collapse; }
 thead th {
     padding: 11px 16px;
-    font-size: 11px; font-weight: 700; color: var(--text-2);
+    font-size: var(--fs-12); font-weight: 700; color: var(--text-2);
     letter-spacing: 0.04em; text-transform: uppercase;
     background: var(--input-bg);
     border-bottom: 1px solid var(--border);
@@ -45,28 +45,28 @@ tbody tr:last-child { border-bottom: none; }
 tbody tr:hover { background: var(--accent-bg); }
 tbody td {
     padding: 11px 16px;
-    font-size: 13px; color: var(--text-1);
+    font-size: var(--fs-14); color: var(--text-1);
     vertical-align: middle;
 }
-.adm-id { color: var(--text-3); font-size: 12px; }
+.adm-id { color: var(--text-3); font-size: var(--fs-13); }
 .adm-email { font-weight: 500; }
-.adm-null { color: var(--text-3); font-size: 12px; }
+.adm-null { color: var(--text-3); font-size: var(--fs-13); }
 
 .role-badge {
     display: inline-block; padding: 2px 8px;
-    border-radius: 99px; font-size: 11px; font-weight: 700;
+    border-radius: 99px; font-size: var(--fs-12); font-weight: 700;
     background: var(--border); color: var(--text-2);
 }
-.role-badge[data-role="s"] { background: #FEF3C7; color: #B45309; }
-.role-badge[data-role="m"] { background: #EDE9FE; color: #6D28D9; }
-.role-badge[data-role="a"] { background: #DCFCE7; color: #15803D; }
+.role-badge[data-role="s"] { background: var(--warning-pale); color: var(--warning); }
+.role-badge[data-role="m"] { background: var(--purple-pale); color: var(--purple); }
+.role-badge[data-role="a"] { background: var(--success-pale); color: var(--success); }
 .role-badge[data-role="u"] { background: var(--border); color: var(--text-2); }
 
 .adm-edit-btn {
     height: 28px; padding: 0 12px;
     background: #fff; border: 1px solid var(--border-md);
     border-radius: var(--r-sm);
-    font-family: inherit; font-size: 12px; font-weight: 600;
+    font-family: inherit; font-size: var(--fs-13); font-weight: 600;
     color: var(--text-2); cursor: pointer;
     transition: border-color 0.15s, color 0.15s;
 }
@@ -76,11 +76,11 @@ tbody td {
     height: 28px; padding: 0 12px;
     background: #fff; border: 1px solid var(--border-md);
     border-radius: var(--r-sm);
-    font-family: inherit; font-size: 12px; font-weight: 600;
-    color: #DC2626; cursor: pointer;
+    font-family: inherit; font-size: var(--fs-13); font-weight: 600;
+    color: var(--danger); cursor: pointer;
     transition: border-color 0.15s, background 0.15s;
 }
-.adm-del-btn:hover { background: #FEE2E2; border-color: #DC2626; }
+.adm-del-btn:hover { background: var(--danger-pale); border-color: var(--danger); }
 
 .adm-pagination {
     display: flex; align-items: center; justify-content: center;
@@ -90,7 +90,7 @@ tbody td {
     min-width: 32px; height: 32px; padding: 0 8px;
     background: #fff; border: 1px solid var(--border);
     border-radius: var(--r-sm);
-    font-family: inherit; font-size: 12px; font-weight: 500;
+    font-family: inherit; font-size: var(--fs-13); font-weight: 500;
     color: var(--text-2); cursor: pointer;
     transition: border-color 0.15s, color 0.15s, background 0.15s;
 }
@@ -115,19 +115,19 @@ tbody td {
     padding: 18px 24px 14px;
     border-bottom: 1px solid var(--border);
 }
-.adm-modal-head h3 { font-size: 15px; font-weight: 700; }
+.adm-modal-head h3 { font-size: var(--fs-16); font-weight: 700; }
 .adm-modal-close {
     background: none; border: none; cursor: pointer;
-    color: var(--text-3); font-size: 18px; line-height: 1;
+    color: var(--text-3); font-size: var(--fs-18); line-height: 1;
     padding: 0;
 }
 .adm-modal-body { padding: 20px 24px 24px; }
 .adm-mfield { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
-.adm-mfield label { font-size: 11px; font-weight: 700; color: var(--text-2); letter-spacing: 0.04em; text-transform: uppercase; }
+.adm-mfield label { font-size: var(--fs-12); font-weight: 700; color: var(--text-2); letter-spacing: 0.04em; text-transform: uppercase; }
 .adm-mfield input, .adm-mfield select {
     height: 38px; padding: 0 10px;
     border: 1px solid var(--border-md); border-radius: var(--r-sm);
-    background: var(--input-bg); font-family: inherit; font-size: 13px;
+    background: var(--input-bg); font-family: inherit; font-size: var(--fs-14);
     color: var(--text-1); outline: none;
     transition: border-color 0.15s;
 }
@@ -140,38 +140,38 @@ tbody td {
 .adm-btn-cancel {
     height: 36px; padding: 0 16px; background: #fff;
     border: 1px solid var(--border-md); border-radius: var(--r-sm);
-    font-family: inherit; font-size: 13px; font-weight: 600;
+    font-family: inherit; font-size: var(--fs-14); font-weight: 600;
     color: var(--text-2); cursor: pointer;
 }
 .adm-btn-save {
     height: 36px; padding: 0 20px; background: var(--teal);
     border: none; border-radius: var(--r-sm);
-    font-family: inherit; font-size: 13px; font-weight: 600;
+    font-family: inherit; font-size: var(--fs-14); font-weight: 600;
     color: #fff; cursor: pointer; transition: background 0.12s;
 }
-.adm-btn-save:hover:not(:disabled) { background: #2F7169; }
+.adm-btn-save:hover:not(:disabled) { background: var(--teal-dark); }
 .adm-btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
-.adm-alert { padding: 8px 12px; border-radius: var(--r-sm); font-size: 12px; margin-bottom: 12px; }
-.adm-alert-error { background: #FEE2E2; color: #DC2626; }
+.adm-alert { padding: 8px 12px; border-radius: var(--r-sm); font-size: var(--fs-13); margin-bottom: 12px; }
+.adm-alert-error { background: var(--danger-pale); color: var(--danger); }
 .adm-alert-success { background: var(--teal-pale); color: var(--teal); }
-.adm-active-badge    { display:inline-block; padding:2px 8px; border-radius:99px; font-size:11px; font-weight:700; background:#DCFCE7; color:#15803D; }
-.adm-withdrawn-badge { display:inline-block; padding:2px 8px; border-radius:99px; font-size:11px; font-weight:700; background:#FEE2E2; color:#DC2626; }
+.adm-active-badge    { display:inline-block; padding:2px 8px; border-radius:99px; font-size: var(--fs-12); font-weight:700; background:var(--success-pale); color:var(--success); }
+.adm-withdrawn-badge { display:inline-block; padding:2px 8px; border-radius:99px; font-size: var(--fs-12); font-weight:700; background:var(--danger-pale); color:var(--danger); }
 .adm-action-cell     { display:flex; gap:6px; align-items:center; }
 .adm-withdraw-btn {
     height: 28px; padding: 0 10px;
     background: #fff; border: 1px solid #FECACA;
     border-radius: var(--r-sm);
-    font-family: inherit; font-size: 12px; font-weight: 600;
-    color: #DC2626; cursor: pointer;
+    font-family: inherit; font-size: var(--fs-13); font-weight: 600;
+    color: var(--danger); cursor: pointer;
     transition: background 0.15s, border-color 0.15s;
 }
-.adm-withdraw-btn:hover { background: #FEE2E2; }
+.adm-withdraw-btn:hover { background: var(--danger-pale); }
 .adm-restore-btn {
     height: 28px; padding: 0 10px;
     background: #fff; border: 1px solid #BBF7D0;
     border-radius: var(--r-sm);
-    font-family: inherit; font-size: 12px; font-weight: 600;
-    color: #15803D; cursor: pointer;
+    font-family: inherit; font-size: var(--fs-13); font-weight: 600;
+    color: var(--success); cursor: pointer;
     transition: background 0.15s, border-color 0.15s;
 }
-.adm-restore-btn:hover { background: #DCFCE7; }
+.adm-restore-btn:hover { background: var(--success-pale); }
