@@ -35,7 +35,7 @@ body {
     position: relative;
     z-index: 1;
     width: 100%;
-    padding: 68px 0 61px;
+    padding: 61px 0 55px;
 }
 .ab-hero-label {
     font-size: var(--fs-12);
