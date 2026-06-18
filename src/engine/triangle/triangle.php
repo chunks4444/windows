@@ -121,10 +121,17 @@ header('Pragma: no-cache');
                 </div>
 
                 <div class="sb-section">
-                    <div class="toggle-row" style="margin-bottom:0;">
+                    <div class="toggle-row">
                         <span class="toggle-label">패턴 세로 방향</span>
                         <label class="toggle-switch">
                             <input type="checkbox" id="chkRotate" checked>
+                            <span class="toggle-track"></span>
+                        </label>
+                    </div>
+                    <div class="toggle-row" style="margin-bottom:0;">
+                        <span class="toggle-label">치수 표기</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="chkDimension" checked>
                             <span class="toggle-track"></span>
                         </label>
                     </div>

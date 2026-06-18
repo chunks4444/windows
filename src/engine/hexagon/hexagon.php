@@ -130,6 +130,16 @@ header('Pragma: no-cache');
                     </div>
                 </div>
 
+                <div class="sb-section">
+                    <div class="toggle-row" style="margin-bottom:0;">
+                        <span class="toggle-label">치수 표기</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="chkDimension" checked>
+                            <span class="toggle-track"></span>
+                        </label>
+                    </div>
+                </div>
+
                 <!-- ── 제작 시방서 ────────────────── -->
                 <div class="sb-section sb-collapsed admin-only" style="display:none">
                     <div class="sb-section-title">제작 시방서</div>

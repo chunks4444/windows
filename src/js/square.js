@@ -27,6 +27,7 @@
     let lastNodeList = [];
     let lastILeft = 0, lastITop = 0, lastIW = 1, lastIH = 1, lastSlatPx = 1, lastCellSize = 1;
     let lastBaseScale = 1, lastOLeft = 0, lastOTop = 0, lastDoorWpx = 0, lastDoorHpx = 0;
+    let showDimensions = true;
     let _exportCanvas = null;
 
 
@@ -1162,7 +1163,44 @@ async function draw() {
     _ec.clearRect(0, 0, _exportCanvas.width, _exportCanvas.height);
     _ec.drawImage(canvas, 0, 0);
     drawRulers();
+    drawDimensions();
 }
+
+    function drawDimensions() {
+        if (!showDimensions) return;
+        if (!lastBaseScale || !lastDoorWpx || !lastDoorHpx) return;
+        const rCtx = canvas.getContext('2d');
+        const ox = logW / 2 + panX + lastOLeft * scaleFactor;
+        const oy = logH / 2 + panY + lastOTop  * scaleFactor;
+        const dW = lastDoorWpx * scaleFactor;
+        const dH = lastDoorHpx * scaleFactor;
+        const wMm = Math.round(lastDoorWpx / lastBaseScale);
+        const hMm = Math.round(lastDoorHpx / lastBaseScale);
+        rCtx.save();
+        rCtx.setTransform(window.devicePixelRatio||1, 0, 0, window.devicePixelRatio||1, 0, 0);
+        const GAP=24, TICK=5, ITICK=12, R=3;
+        const color = 'rgba(50,50,50,0.7)';
+        rCtx.strokeStyle = color; rCtx.fillStyle = color;
+        rCtx.lineWidth = 1; rCtx.font = '15px -apple-system,sans-serif';
+        function dot(x,y){rCtx.beginPath();rCtx.arc(x,y,R,0,Math.PI*2);rCtx.fill();}
+        const bY = oy+dH+GAP;
+        rCtx.beginPath();
+        rCtx.moveTo(ox,bY-ITICK);rCtx.lineTo(ox,bY+TICK);
+        rCtx.moveTo(ox+dW,bY-ITICK);rCtx.lineTo(ox+dW,bY+TICK);
+        rCtx.moveTo(ox,bY);rCtx.lineTo(ox+dW,bY);
+        rCtx.stroke(); dot(ox,bY); dot(ox+dW,bY);
+        rCtx.textAlign='center';rCtx.textBaseline='top';
+        rCtx.fillText(wMm+'mm',ox+dW/2,bY+TICK+3);
+        const rX = ox+dW+GAP;
+        rCtx.beginPath();
+        rCtx.moveTo(rX-ITICK,oy);rCtx.lineTo(rX+TICK,oy);
+        rCtx.moveTo(rX-ITICK,oy+dH);rCtx.lineTo(rX+TICK,oy+dH);
+        rCtx.moveTo(rX,oy);rCtx.lineTo(rX,oy+dH);
+        rCtx.stroke(); dot(rX,oy); dot(rX,oy+dH);
+        rCtx.textAlign='left';rCtx.textBaseline='middle';
+        rCtx.fillText(hMm+'mm',rX+TICK+3,oy+dH/2);
+        rCtx.restore();
+    }
 
     function drawRulers() {
         const rCtx = canvas.getContext('2d');
@@ -1692,7 +1730,8 @@ async function draw() {
         draw();
     });
 
-    document.getElementById('chkShrinkH').addEventListener('change', draw);
+document.getElementById('chkDimension').addEventListener('change', e => { showDimensions = e.target.checked; draw(); });
+        document.getElementById('chkShrinkH').addEventListener('change', draw);
     // ── 슬라이더 ↔ 인풋창 양방향 동기화 ──────────────────
 
     const syncPairs = [

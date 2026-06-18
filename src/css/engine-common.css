@@ -1108,8 +1108,8 @@ input[type="range"]::-moz-range-thumb {
     box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
-.toggle-switch input:checked + .toggle-track { background: var(--teal); }
-.toggle-switch input:checked + .toggle-track::after { transform: translateX(16px); }
+.toggle-switch input:checked + .toggle-track { background: rgba(255,255,255,0.45); }
+.toggle-switch input:checked + .toggle-track::after { transform: translateX(16px); background: #fff; }
 
 /* ── SPEC LIST ────────────────────────── */
 .spec-grid { display: flex; flex-direction: column; gap: 3px; }
@@ -1141,16 +1141,19 @@ input[type="range"]::-moz-range-thumb {
     height: 36px;
     border: none;
     border-radius: var(--r-sm);
-    background: transparent;
-    padding: 0 12px;
+    background: var(--sidebar-bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(255,255,255,0.5)' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 10px center;
+    padding: 0 28px 0 12px;
     font-size: var(--fs-13);
     font-family: inherit;
     color: var(--text-1);
     outline: none;
+    appearance: none;
+    -webkit-appearance: none;
     transition: background .15s ease;
 }
 
-.sb-select:focus { outline: none; }
+.sb-select:focus { outline: none; background-color: var(--sidebar-bg); }
+.sb-select option { background: var(--sidebar-bg); color: var(--text-1); }
 
 #btnFacePaint {
     background: var(--sidebar-bg);
