@@ -1138,7 +1138,7 @@ async function draw() {
         if (false && showDimensions && lastDoorWpx > 0) {
             const _sf  = scaleFactor;
             const GAP  = 24 / _sf, TICK = 5 / _sf, ITICK = 12 / _sf;
-            const R    = 3  / _sf, lw   = 1 / _sf, fs    = 15 / _sf;
+            const R    = 3  / _sf, lw   = 1 / _sf, fs    = 13 / _sf;
             const dL = offsetX, dR = offsetX + totalWidth * baseScale;
             const dT = offsetY, dB = offsetY + totalH * baseScale;
             ctx.save();
@@ -1173,7 +1173,7 @@ async function draw() {
         if (showDimensions && totalWidth > 0) {
             const _sf  = scaleFactor;
             const GAP  = 24 / _sf, TICK = 5 / _sf, ITICK = 12 / _sf;
-            const R    = 3  / _sf, lw   = 1 / _sf, fs    = 15 / _sf;
+            const R    = 3  / _sf, lw   = 1 / _sf, fs    = 13 / _sf;
             const dL = offsetX, dR = offsetX + totalWidth * baseScale;
             const dT = offsetY, dB = offsetY + totalH * baseScale;
             ctx.save();
