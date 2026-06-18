@@ -1023,6 +1023,38 @@ async function draw() {
         const _c = getOverlayCorners();
         drawPerspectiveQuad(ctx, offCanvas, _c.tl, _c.tr, _c.br, _c.bl);
     } else {
+        if (showDimensions && totalWidth > 0) {
+            const _sf  = scaleFactor;
+            const GAP  = 24 / _sf, TICK = 5 / _sf, ITICK = 12 / _sf;
+            const R    = 3  / _sf, lw   = 1 / _sf, fs    = 15 / _sf;
+            const dL = offsetX, dR = offsetX + totalWidth * baseScale;
+            const dT = offsetY, dB = offsetY + totalH * baseScale;
+            ctx.save();
+            ctx.strokeStyle = 'rgba(50,50,50,0.7)';
+            ctx.fillStyle   = 'rgba(50,50,50,0.7)';
+            ctx.lineWidth   = lw;
+            ctx.font        = `${fs}px -apple-system,sans-serif`;
+            const _dot = (x, y) => { ctx.beginPath(); ctx.arc(x, y, R, 0, Math.PI * 2); ctx.fill(); };
+            const bY = dB + GAP;
+            ctx.beginPath();
+            ctx.moveTo(dL, bY - ITICK); ctx.lineTo(dL, bY + TICK);
+            ctx.moveTo(dR, bY - ITICK); ctx.lineTo(dR, bY + TICK);
+            ctx.moveTo(dL, bY);         ctx.lineTo(dR, bY);
+            ctx.stroke();
+            _dot(dL, bY); _dot(dR, bY);
+            ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+            ctx.fillText(`${Math.round(totalWidth)}mm`, (dL + dR) / 2, bY + TICK + 3 / _sf);
+            const rX = dR + GAP;
+            ctx.beginPath();
+            ctx.moveTo(rX - ITICK, dT); ctx.lineTo(rX + TICK, dT);
+            ctx.moveTo(rX - ITICK, dB); ctx.lineTo(rX + TICK, dB);
+            ctx.moveTo(rX, dT);         ctx.lineTo(rX, dB);
+            ctx.stroke();
+            _dot(rX, dT); _dot(rX, dB);
+            ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+            ctx.fillText(`${Math.round(totalH)}mm`, rX + TICK + 3 / _sf, (dT + dB) / 2);
+            ctx.restore();
+        }
         ctx.restore();
     }
 
@@ -1101,7 +1133,6 @@ async function draw() {
     _ec.clearRect(0, 0, _exportCanvas.width, _exportCanvas.height);
     _ec.drawImage(canvas, 0, 0);
     drawRulers();
-    drawDimensions();
     } catch(e) { console.error('[draw] EXCEPTION:', e); }
 }
 
