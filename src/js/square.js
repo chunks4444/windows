@@ -1084,6 +1084,40 @@ async function draw() {
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         const _c = getOverlayCorners();
         drawPerspectiveQuad(ctx, offCanvas, _c.tl, _c.tr, _c.br, _c.bl);
+        if (showDimensions && lastDoorWpx > 0) {
+            const _sf  = scaleFactor;
+            const GAP  = 24 / _sf, TICK = 5 / _sf, ITICK = 12 / _sf;
+            const R    = 3  / _sf, lw   = 1 / _sf, fs    = 15 / _sf;
+            const dL = offsetX, dR = offsetX + totalWidth * baseScale;
+            const dT = offsetY, dB = offsetY + totalH * baseScale;
+            ctx.save();
+            ctx.translate(logW / 2 + panX, logH / 2 + panY);
+            ctx.scale(scaleFactor, scaleFactor);
+            ctx.strokeStyle = 'rgba(50,50,50,0.7)';
+            ctx.fillStyle   = 'rgba(50,50,50,0.7)';
+            ctx.lineWidth   = lw;
+            ctx.font        = `${fs}px -apple-system,sans-serif`;
+            const _dot2 = (x, y) => { ctx.beginPath(); ctx.arc(x, y, R, 0, Math.PI * 2); ctx.fill(); };
+            const bY = dB + GAP;
+            ctx.beginPath();
+            ctx.moveTo(dL, bY - ITICK); ctx.lineTo(dL, bY + TICK);
+            ctx.moveTo(dR, bY - ITICK); ctx.lineTo(dR, bY + TICK);
+            ctx.moveTo(dL, bY);         ctx.lineTo(dR, bY);
+            ctx.stroke();
+            _dot2(dL, bY); _dot2(dR, bY);
+            ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+            ctx.fillText(`${Math.round(totalWidth)}mm`, (dL + dR) / 2, bY + TICK + 3 / _sf);
+            const rX = dR + GAP;
+            ctx.beginPath();
+            ctx.moveTo(rX - ITICK, dT); ctx.lineTo(rX + TICK, dT);
+            ctx.moveTo(rX - ITICK, dB); ctx.lineTo(rX + TICK, dB);
+            ctx.moveTo(rX, dT);         ctx.lineTo(rX, dB);
+            ctx.stroke();
+            _dot2(rX, dT); _dot2(rX, dB);
+            ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+            ctx.fillText(`${Math.round(totalH)}mm`, rX + TICK + 3 / _sf, (dT + dB) / 2);
+            ctx.restore();
+        }
     } else {
         if (showDimensions && totalWidth > 0) {
             const _sf  = scaleFactor;
