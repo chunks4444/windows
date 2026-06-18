@@ -185,7 +185,7 @@ header('Pragma: no-cache');
 
                 <!-- ── 부재 목록 ──────────────────── -->
                 <div class="sb-section sb-collapsed admin-only" style="display:none">
-                    <div class="sb-section-title">부재 목록<small>(정치수에 살두께 곱하기 2)</small></div>
+                    <div class="sb-section-title">부재 목록<small>(내경에 살두께 × 2)</small></div>
 
                     <div class="slat-group">
                         <div class="slat-group-title">울거미</div>
