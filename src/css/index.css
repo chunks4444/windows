@@ -19,7 +19,7 @@
 
 .hero-slide-img {
     width: 100%;
-    height: 46vh;
+    height: 550px;
     object-fit: cover;
     object-position: center 30%;
     display: block;
@@ -55,7 +55,7 @@
 
 @media (max-width: 768px) {
     .hero-slide-img {
-        height: 32vh;
+        height: 260px;
     }
 }
 
