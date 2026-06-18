@@ -887,7 +887,7 @@ canvas:active { cursor: grabbing; }
     transition: background 0.15s;
 }
 
-.sidebar-tab:hover { background: var(--input-bg); }
+.sidebar-tab:hover { background: rgba(0,0,0,0.35); }
 .sidebar-tab:hover svg { color: #111; }
 
 .sidebar-tab svg {
