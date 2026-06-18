@@ -190,6 +190,7 @@ $isWork       = (strpos($_SERVER['PHP_SELF'], '/portfolio/') !== false);
                     <li id="navAdminColors" style="display:none;"><a class="dropdown-item" href="/src/admin/colors.php"><i class="bi bi-palette me-1"></i>컬러 팔레트 관리</a></li>
                     <li id="navAdminFaq" style="display:none;"><a class="dropdown-item" href="/src/admin/faq.php"><i class="bi bi-question-circle me-1"></i>FAQ 관리</a></li>
                     <li id="navAdminWorks" style="display:none;"><a class="dropdown-item" href="/src/admin/works.php"><i class="bi bi-images me-1"></i>Works 관리</a></li>
+                    <li id="navAdminStudioCards" style="display:none;"><a class="dropdown-item" href="/src/admin/studio_cards.php"><i class="bi bi-grid-1x2 me-1"></i>스튜디오 카드 관리</a></li>
                 </ul>
             </li>
         </ul>
