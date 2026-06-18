@@ -61,11 +61,12 @@ function closeModal() {
 function previewImage(input) {
     const file = input.files[0];
     if (!file) return;
+    if (!['image/jpeg', 'image/png'].includes(file.type)) { alert('PNG 또는 JPG 파일만 업로드할 수 있습니다.'); input.value = ''; return; }
     const reader = new FileReader();
     reader.onload = e => {
         const img = new Image();
         img.onload = () => {
-            const MAX = 2400;
+            const MAX = 1024;
             let w = img.width, h = img.height;
             if (w > MAX || h > MAX) {
                 const scale = Math.min(MAX / w, MAX / h);

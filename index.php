@@ -2,9 +2,15 @@
 header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/src/lib/db.php';
 $pdo        = db();
-$heroSlides = $pdo->query('SELECT * FROM hero_slides WHERE is_active=1 ORDER BY sort_order, id')->fetchAll();
-$spaceCards = $pdo->query('SELECT label, image_url, collection_query FROM space_cards WHERE is_active=1 ORDER BY sort_order, id')->fetchAll();
-$faqs       = $pdo->query('SELECT * FROM faqs WHERE is_active=1 ORDER BY sort_order, id')->fetchAll();
+$heroSlides   = $pdo->query('SELECT * FROM hero_slides WHERE is_active=1 ORDER BY sort_order, id')->fetchAll();
+$spaceCards   = $pdo->query('SELECT label, image_url, collection_query FROM space_cards WHERE is_active=1 ORDER BY sort_order, id')->fetchAll();
+$faqs         = $pdo->query('SELECT * FROM faqs WHERE is_active=1 ORDER BY sort_order, id')->fetchAll();
+// 스튜디오 카드 (테이블 없으면 빈 배열)
+try {
+    $studioCards = $pdo->query('SELECT * FROM studio_cards WHERE is_active=1 ORDER BY sort_order, id')->fetchAll();
+} catch (Exception $e) {
+    $studioCards = [];
+}
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -71,148 +77,47 @@ $faqs       = $pdo->query('SELECT * FROM faqs WHERE is_active=1 ORDER BY sort_or
                     <p class="ab-section-body">평목 스튜디오는 브라우저에서 바로 사용할 수 있는 <strong>창호 설계 도구</strong>입니다.<br>문틀 크기, 살 간격, 패턴을 조정하며 나만의 창호를 완성하면, <strong>평목 공방에서 제작해 드립니다.</strong></p>
                 </div>
 
+                <?php
+                $svgIcons = [
+                    'classic' => '<svg width="56" height="84" viewBox="148 52 384 576" xmlns="http://www.w3.org/2000/svg"><g transform="rotate(90 340 340)"><rect class="pm-symbol-bar" x="148" y="204" width="384" height="46" rx="0"/><rect class="pm-symbol-bar" x="148" y="430" width="384" height="46" rx="0"/><rect class="pm-symbol-bar" x="148" y="148" width="46" height="384" rx="0"/><rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="0"/><rect class="pm-symbol-bar" x="486" y="148" width="46" height="384" rx="0"/><rect class="pm-symbol-bar" x="100" y="204" width="48" height="46" rx="0"/><rect class="pm-symbol-bar" x="532" y="204" width="48" height="46" rx="0"/><rect class="pm-symbol-bar" x="100" y="430" width="48" height="46" rx="0"/><rect class="pm-symbol-bar" x="532" y="430" width="48" height="46" rx="0"/></g></svg>',
+                    'square'  => '<svg width="120" height="120" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg"><rect class="pm-symbol-bar" x="148" y="204" width="384" height="46" rx="0"/><rect class="pm-symbol-bar" x="148" y="430" width="384" height="46" rx="0"/><rect class="pm-symbol-bar" x="204" y="148" width="46" height="384" rx="0"/><rect class="pm-symbol-bar" x="430" y="148" width="46" height="384" rx="0"/></svg>',
+                    'cross'   => '<svg width="120" height="120" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg"><g transform="rotate(45 340 340)"><rect class="pm-symbol-bar" x="148" y="204" width="384" height="46" rx="0"/><rect class="pm-symbol-bar" x="148" y="430" width="384" height="46" rx="0"/><rect class="pm-symbol-bar" x="204" y="148" width="46" height="384" rx="0"/><rect class="pm-symbol-bar" x="430" y="148" width="46" height="384" rx="0"/></g></svg>',
+                    'triangle'=> '<svg width="120" height="120" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg"><rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="0"/><g transform="rotate(60 340 340)"><rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="0"/></g><g transform="rotate(120 340 340)"><rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="0"/></g></svg>',
+                    'diamond' => '<svg width="120" height="120" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg"><rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="0"/><rect class="pm-symbol-bar" x="148" y="317" width="384" height="46" rx="0"/><g transform="rotate(45 340 340)"><rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="0"/></g><g transform="rotate(135 340 340)"><rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="0"/></g></svg>',
+                    'hexagon' => '<svg width="120" height="120" viewBox="0 0 680 680" fill="none" xmlns="http://www.w3.org/2000/svg"><polyline points="210,265 340,190 470,265" stroke-width="32" stroke-linejoin="round" stroke-linecap="round" class="pm-symbol-stroke"/><line x1="210" y1="265" x2="210" y2="415" stroke-width="32" stroke-linecap="round" class="pm-symbol-stroke"/><line x1="470" y1="265" x2="470" y2="415" stroke-width="32" stroke-linecap="round" class="pm-symbol-stroke"/><line x1="210" y1="415" x2="340" y2="490" stroke-width="32" stroke-linecap="round" class="pm-symbol-stroke"/><line x1="470" y1="415" x2="340" y2="490" stroke-width="32" stroke-linecap="round" class="pm-symbol-stroke"/></svg>',
+                ];
+                // DB 데이터를 engine_key로 인덱싱
+                $cardsByKey = [];
+                foreach ($studioCards as $sc) $cardsByKey[$sc['engine_key']] = $sc;
+                // 기본값 (DB 없을 때)
+                $defaultCards = [
+                    ['engine_key'=>'classic',  'title'=>'Classic Lattice',  'description'=>'전통 창호의 기본이 되는 격자 문살 패턴.<br>균형 잡힌 비례와 절제된 구조가 특징입니다.',          'image_url'=>''],
+                    ['engine_key'=>'square',   'title'=>'Square Lattice',   'description'=>'가로살과 세로살이 직각으로 교차하는 정방형 문살 패턴.<br>단아하고 절제된 아름다움을 표현합니다.',   'image_url'=>''],
+                    ['engine_key'=>'cross',    'title'=>'Cross Lattice',    'description'=>'45° 대각선으로 교차하는 마름모 문살 패턴.<br>역동적인 사선의 흐름이 공간에 긴장감을 더합니다.', 'image_url'=>''],
+                    ['engine_key'=>'triangle', 'title'=>'Triangle Lattice', 'description'=>'세 방향의 살이 60° 각도로 교차하는 삼각형 문살 패턴.<br>역동적이고 세련된 인상을 공간에 더합니다.','image_url'=>''],
+                    ['engine_key'=>'diamond',  'title'=>'Diamond Lattice',  'description'=>'4방향 살이 대각선을 포함해 방사형으로 교차하는 패턴.<br>화려하고 입체적인 구조감을 연출합니다.',   'image_url'=>''],
+                    ['engine_key'=>'hexagon',  'title'=>'Hexagon Lattice',  'description'=>'세 방향의 살이 서로 맞물려 육각형 눈을 이루는 어금육모 패턴.<br>자연의 벌집 구조를 닮은 단정하고 견고한 전통미를 담아냅니다.','image_url'=>''],
+                ];
+                $renderCards = !empty($studioCards) ? $studioCards : $defaultCards;
+                ?>
                 <div class="row g-4">
+                <?php foreach ($renderCards as $sc):
+                    $key   = $sc['engine_key'];
+                    $bg    = !empty($sc['image_url']) ? 'style="background-image:linear-gradient(rgba(0,0,0,0.25),rgba(0,0,0,0.25)),url(' . htmlspecialchars($sc['image_url']) . ');background-size:cover;background-position:center;"' : '';
+                ?>
                     <div class="col-md-4 text-center">
-                        <div class="service-card service-card--classic h-80 p-4">
+                        <div class="service-card service-card--<?= htmlspecialchars($key) ?> h-80 p-4" <?= $bg ?>>
                             <div class="mb-4" style="height:120px;display:flex;align-items:center;justify-content:center;">
-                                <a href="/src/engine/classic/classic.php" class="pm-symbol-link">
-                                    <svg
-                                        width="56"
-                                        height="84"
-                                        viewBox="148 52 384 576"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <g transform="rotate(90 340 340)">
-                                            <rect class="pm-symbol-bar" x="148" y="204" width="384" height="46" rx="0"/>
-                                            <rect class="pm-symbol-bar" x="148" y="430" width="384" height="46" rx="0"/>
-                                            <rect class="pm-symbol-bar" x="148" y="148" width="46" height="384" rx="0"/>
-                                            <rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="0"/>
-                                            <rect class="pm-symbol-bar" x="486" y="148" width="46" height="384" rx="0"/>
-                                            <!-- 세로선 인출 (좌우 촉 → 회전 후 상하 인출) -->
-                                            <rect class="pm-symbol-bar" x="100" y="204" width="48" height="46" rx="0"/>
-                                            <rect class="pm-symbol-bar" x="532" y="204" width="48" height="46" rx="0"/>
-                                            <rect class="pm-symbol-bar" x="100" y="430" width="48" height="46" rx="0"/>
-                                            <rect class="pm-symbol-bar" x="532" y="430" width="48" height="46" rx="0"/>
-                                        </g>
-                                    </svg>
+                                <a href="/src/engine/<?= htmlspecialchars($key) ?>/<?= htmlspecialchars($key) ?>.php" class="pm-symbol-link">
+                                    <?= $svgIcons[$key] ?? '' ?>
                                 </a>
                             </div>
-                            <h4 class="service-title text-center mb-3">Classic Lattice</h4>
-                            <p class="service-sub-text text-center mb-0">전통 창호의 기본이 되는 격자 문살 패턴.<br>균형 잡힌 비례와 절제된 구조가 특징입니다.</p>
+                            <h4 class="service-title text-center mb-3"><?= htmlspecialchars($sc['title']) ?></h4>
+                            <p class="service-sub-text text-center mb-0"><?= $sc['description'] ?></p>
                         </div>
                     </div>
-                    <div class="col-md-4 text-center">
-                        <div class="service-card service-card--square h-80 p-4">
-                            <div class=" mb-4">
-                                <a href="/src/engine/square/square.php" class="pm-symbol-link">
-                                    <svg
-                                        width="120"
-                                        height="120"
-                                        viewbox="0 0 680 680"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <rect class="pm-symbol-bar" x="148" y="204" width="384" height="46" rx="0"/>
-                                        <rect class="pm-symbol-bar" x="148" y="430" width="384" height="46" rx="0"/>
-                                        <rect class="pm-symbol-bar" x="204" y="148" width="46" height="384" rx="0"/>
-                                        <rect class="pm-symbol-bar" x="430" y="148" width="46" height="384" rx="0"/>
-                                    </svg>
-                                </a>
-                            </div>
-                            <h4 class="service-title text-center mb-3">Square Lattice</h4>
-                            <p class="service-sub-text text-center mb-0">가로살과 세로살이 직각으로 교차하는 정방형 문살 패턴.<br>단아하고 절제된 아름다움을 표현합니다.</p>
-                        </div>
-                    </div>
-                    <div class="col-md-4 text-center">
-                        <div class="service-card service-card--cross h-80 p-4">
-                            <div class=" mb-4">
-                                <a href="/src/engine/cross/cross.php" class="pm-symbol-link">
-                                    <svg
-                                        width="120"
-                                        height="120"
-                                        viewbox="0 0 680 680"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <g transform="rotate(45 340 340)">
-                                            <rect class="pm-symbol-bar" x="148" y="204" width="384" height="46" rx="0"/>
-                                            <rect class="pm-symbol-bar" x="148" y="430" width="384" height="46" rx="0"/>
-                                            <rect class="pm-symbol-bar" x="204" y="148" width="46" height="384" rx="0"/>
-                                            <rect class="pm-symbol-bar" x="430" y="148" width="46" height="384" rx="0"/>
-                                        </g>
-                                    </svg>
-                                </a>
-                            </div>
-                            <h4 class="service-title text-center mb-3">Cross Lattice</h4>
-                            <p class="service-sub-text text-center mb-0">45° 대각선으로 교차하는 마름모 문살 패턴.<br>역동적인 사선의 흐름이 공간에 긴장감을 더합니다.</p>
-                        </div>
-                    </div>
-                    <div class="col-md-4 text-center">
-                        <div class="service-card service-card--triangle h-80 p-4">
-                            <div class=" mb-4">
-                                <a href="/src/engine/triangle/triangle.php" class="pm-symbol-link">
-                                    <svg
-                                        width="120"
-                                        height="120"
-                                        viewbox="0 0 680 680"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="0"/>
-                                        <g transform="rotate(60 340 340)">
-                                            <rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="0"/>
-                                        </g>
-                                        <g transform="rotate(120 340 340)">
-                                            <rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="0"/>
-                                        </g>
-                                    </svg>
-                                </a>
-                            </div>
-                            <h4 class="service-title text-center mb-3">Triangle Lattice</h4>
-                            <p class="service-sub-text text-center mb-0">세 방향의 살이 60° 각도로 교차하는 삼각형 문살 패턴.<br>역동적이고 세련된 인상을 공간에 더합니다.</p>
-                        </div>
-                    </div>
-                    <div class="col-md-4 text-center">
-                        <div class="service-card service-card--diamond h-80 p-4">
-                            <div class="text-center mb-4">
-                                <a href="/src/engine/diamond/diamond.php" class="pm-symbol-link">
-                                    <svg
-                                        width="120"
-                                        height="120"
-                                        viewbox="0 0 680 680"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="0"/>
-                                        <rect class="pm-symbol-bar" x="148" y="317" width="384" height="46" rx="0"/>
-                                        <g transform="rotate(45 340 340)">
-                                            <rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="0"/>
-                                        </g>
-                                        <g transform="rotate(135 340 340)">
-                                            <rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="0"/>
-                                        </g>
-                                    </svg>
-                                </a>
-                            </div>
-                            <h4 class="service-title text-center mb-3">Diamond Lattice</h4>
-                            <p class="service-sub-text text-center mb-0">4방향 살이 대각선을 포함해 방사형으로 교차하는 패턴.<br>화려하고 입체적인 구조감을 연출합니다.</p>
-                        </div>
-                    </div>
-                    <div class="col-md-4 text-center">
-                        <div class="service-card service-card--hexagon h-80 p-4">
-                            <div class="text-center mb-4">
-                                <a href="/src/engine/hexagon/hexagon.php" class="pm-symbol-link">
-                                    <svg
-                                        width="120"
-                                        height="120"
-                                        viewBox="0 0 680 680"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <polyline points="210,265 340,190 470,265" stroke-width="32" stroke-linejoin="round" stroke-linecap="round" class="pm-symbol-stroke"/>
-                                        <line x1="210" y1="265" x2="210" y2="415" stroke-width="32" stroke-linecap="round" class="pm-symbol-stroke"/>
-                                        <line x1="470" y1="265" x2="470" y2="415" stroke-width="32" stroke-linecap="round" class="pm-symbol-stroke"/>
-                                        <line x1="210" y1="415" x2="340" y2="490" stroke-width="32" stroke-linecap="round" class="pm-symbol-stroke"/>
-                                        <line x1="470" y1="415" x2="340" y2="490" stroke-width="32" stroke-linecap="round" class="pm-symbol-stroke"/>
-                                    </svg>
-                                </a>
-                            </div>
-                            <h4 class="service-title text-center mb-3">Hexagon Lattice</h4>
-                            <p class="service-sub-text text-center mb-0">세 방향의 살이 서로 맞물려 육각형 눈을 이루는 어금육모 패턴.<br>자연의 벌집 구조를 닮은 단정하고 견고한 전통미를 담아냅니다.</p>
-                        </div>
-                    </div>
+                <?php endforeach; ?>
                 </div>
-            </div>
 
             <!-- card -->
             <section class="values-section mt-5 ">

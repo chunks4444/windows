@@ -151,11 +151,22 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('lpImgFile').addEventListener('change', e => {
         const file = e.target.files[0];
         if (!file) return;
+        if (!['image/jpeg', 'image/png'].includes(file.type)) { alert('PNG 또는 JPG 파일만 업로드할 수 있습니다.'); return; }
         const reader = new FileReader();
         reader.onload = ev => {
-            pendingImg = ev.target.result;
-            document.getElementById('lpImgPreview').src = pendingImg;
-            document.getElementById('lpImgPreview').classList.add('show');
+            const img = new Image();
+            img.onload = () => {
+                const MAX = 1024;
+                let w = img.width, h = img.height;
+                if (w > MAX || h > MAX) { const s = Math.min(MAX/w, MAX/h); w = Math.round(w*s); h = Math.round(h*s); }
+                const canvas = document.createElement('canvas');
+                canvas.width = w; canvas.height = h;
+                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                pendingImg = canvas.toDataURL('image/jpeg', 0.92);
+                document.getElementById('lpImgPreview').src = pendingImg;
+                document.getElementById('lpImgPreview').classList.add('show');
+            };
+            img.src = ev.target.result;
         };
         reader.readAsDataURL(file);
     });

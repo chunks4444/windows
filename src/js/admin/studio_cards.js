@@ -1,4 +1,4 @@
-const API = '/src/api/admin/space_cards.php';
+const API = '/src/api/admin/studio_cards.php';
 function _h() { return { 'Authorization': 'Bearer ' + localStorage.getItem('pmok_auth_token'), 'Content-Type': 'application/json' }; }
 
 let cards = [], dragSrc;
@@ -8,24 +8,30 @@ async function loadCards() {
     const data = await res.json();
     if (!res.ok) { document.getElementById('scAuthWall').style.display = ''; return; }
     cards = data.cards || [];
+    if (cards.length === 0) {
+        await fetch(API, { method: 'POST', headers: _h(), body: JSON.stringify({ action: 'init_defaults' }) });
+        return loadCards();
+    }
     render();
 }
+
+const ENGINE_LABELS = { classic: 'Classic', square: 'Square', cross: 'Cross', triangle: 'Triangle', diamond: 'Diamond', hexagon: 'Hexagon' };
 
 function render() {
     document.getElementById('scBody').innerHTML = cards.map(c => `
         <tr data-id="${c.id}" draggable="true">
-            <td style="text-align:center;"><span class="drag-handle"><i class="bi bi-grip-vertical"></i></span></td>
+            <td style="text-align:center;cursor:grab;"><i class="bi bi-grip-vertical" style="color:var(--text-3);"></i></td>
             <td>${c.image_url
-                ? `<img class="sc-thumb" src="${esc(c.image_url)}" alt="">`
-                : `<div class="sc-thumb-empty"><i class="bi bi-image"></i></div>`}</td>
-            <td><strong>${esc(c.label)}</strong></td>
-            <td style="color:var(--text-3);">${esc(c.collection_query)}</td>
+                ? `<img src="${esc(c.image_url)}" style="width:72px;height:48px;object-fit:cover;border-radius:4px;">`
+                : `<div style="width:72px;height:48px;background:var(--page-bg);border-radius:4px;display:flex;align-items:center;justify-content:center;color:var(--text-3);font-size:18px;"><i class="bi bi-image"></i></div>`}</td>
+            <td><strong>${esc(ENGINE_LABELS[c.engine_key] || c.engine_key)}</strong></td>
+            <td>${esc(c.title)}</td>
+            <td style="color:var(--text-3);font-size:var(--fs-13);max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(c.description || '')}</td>
             <td><span class="${c.is_active ? 'adm-active-badge' : 'adm-withdrawn-badge'}">${c.is_active ? '노출' : '숨김'}</span></td>
             <td>
-                <div class="adm-action-cell">
-                    <button class="adm-edit-btn" style="height:28px;padding:0 10px;font-size:12px;" onclick="openModal(${c.id})">수정</button>
+                <div style="display:flex;gap:6px;">
+                    <button class="adm-edit-btn" style="height:28px;padding:0 10px;font-size:var(--fs-13);" onclick="openModal(${c.id})">수정</button>
                     <button class="adm-withdraw-btn" onclick="toggleCard(${c.id})">${c.is_active ? '숨김' : '표시'}</button>
-                    <button class="adm-withdraw-btn" style="background:#c00;color:#fff;" onclick="deleteCard(${c.id},'${esc(c.label)}')">삭제</button>
                 </div>
             </td>
         </tr>`).join('');
@@ -37,17 +43,21 @@ function esc(s) {
 }
 
 function openModal(id) {
-    const c = id ? cards.find(x => x.id == id) : null;
-    document.getElementById('scModalTitle').textContent = c ? '공간 카드 수정' : '공간 카드 추가';
-    document.getElementById('scId').value       = c?.id ?? '';
-    document.getElementById('scLabel').value    = c?.label ?? '';
-    document.getElementById('scQuery').value    = c?.collection_query ?? '';
-    document.getElementById('scImageUrl').value = c?.image_url ?? '';
-    const prev = document.getElementById('scImgPreview');
-    if (c?.image_url) { prev.src = c.image_url; prev.classList.add('show'); }
-    else              { prev.src = ''; prev.classList.remove('show'); }
-    document.getElementById('scImgFile').value = '';
+    const c = cards.find(x => x.id == id);
+    if (!c) return;
+    document.getElementById('scId').value          = c.id;
+    document.getElementById('scEngineKey').value   = c.engine_key;
+    document.getElementById('scEngineLabel').textContent = ENGINE_LABELS[c.engine_key] || c.engine_key;
+    document.getElementById('scTitle').value       = c.title;
+    document.getElementById('scDesc').value        = c.description || '';
+    document.getElementById('scImageUrl').value    = c.image_url || '';
+    document.getElementById('scImgFile').value     = '';
     window._scImageData = null;
+
+    const prev = document.getElementById('scImgPreview');
+    if (c.image_url) { prev.src = c.image_url; prev.classList.add('show'); }
+    else { prev.src = ''; prev.classList.remove('show'); }
+
     document.getElementById('scModalOverlay').classList.add('open');
 }
 
@@ -63,21 +73,16 @@ function previewImage(input) {
     reader.onload = e => {
         const img = new Image();
         img.onload = () => {
-            const MAX_W = 1200, MAX_H = 800;
+            const MAX = 1200;
             let w = img.width, h = img.height;
-            if (w > MAX_W || h > MAX_H) {
-                const scale = Math.min(MAX_W / w, MAX_H / h);
-                w = Math.round(w * scale);
-                h = Math.round(h * scale);
-            }
+            if (w > MAX || h > MAX) { const s = Math.min(MAX/w, MAX/h); w = Math.round(w*s); h = Math.round(h*s); }
             const canvas = document.createElement('canvas');
             canvas.width = w; canvas.height = h;
             canvas.getContext('2d').drawImage(img, 0, 0, w, h);
             const dataUrl = canvas.toDataURL('image/jpeg', 0.88);
             window._scImageData = dataUrl;
             const prev = document.getElementById('scImgPreview');
-            prev.src = dataUrl;
-            prev.classList.add('show');
+            prev.src = dataUrl; prev.classList.add('show');
             document.getElementById('scImageUrl').value = '';
         };
         img.src = e.target.result;
@@ -87,24 +92,18 @@ function previewImage(input) {
 
 async function saveCard() {
     const body = {
-        action:           'save',
-        id:               parseInt(document.getElementById('scId').value) || 0,
-        label:            document.getElementById('scLabel').value.trim(),
-        image_url:        document.getElementById('scImageUrl').value.trim(),
-        collection_query: document.getElementById('scQuery').value.trim(),
-        is_active:        1,
+        action:      'save',
+        id:          parseInt(document.getElementById('scId').value) || 0,
+        engine_key:  document.getElementById('scEngineKey').value,
+        title:       document.getElementById('scTitle').value.trim(),
+        description: document.getElementById('scDesc').value.trim(),
+        image_url:   document.getElementById('scImageUrl').value.trim(),
     };
     if (window._scImageData) body.image_data = window._scImageData;
     const res  = await fetch(API, { method: 'POST', headers: _h(), body: JSON.stringify(body) });
     const data = await res.json();
     if (data.ok) { closeModal(); loadCards(); }
     else alert(data.error || '저장 실패');
-}
-
-async function deleteCard(id, label) {
-    if (!confirm(`"${label}" 카드를 삭제할까요?`)) return;
-    await fetch(API, { method: 'POST', headers: _h(), body: JSON.stringify({ action: 'delete', id }) });
-    loadCards();
 }
 
 async function toggleCard(id) {
@@ -119,8 +118,7 @@ function bindDrag() {
         tr.addEventListener('dragover',  e => { e.preventDefault(); tr.classList.add('drag-over'); });
         tr.addEventListener('dragleave', () => tr.classList.remove('drag-over'));
         tr.addEventListener('drop', async e => {
-            e.preventDefault();
-            tr.classList.remove('drag-over');
+            e.preventDefault(); tr.classList.remove('drag-over');
             if (dragSrc === tr) return;
             tr.parentNode.insertBefore(dragSrc, tr.nextSibling);
             const ids = [...tr.parentNode.querySelectorAll('tr')].map(r => +r.dataset.id);
