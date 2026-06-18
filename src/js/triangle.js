@@ -1093,7 +1093,7 @@ async function draw() {
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         const _c = getOverlayCorners();
         drawPerspectiveQuad(ctx, offCanvas, _c.tl, _c.tr, _c.br, _c.bl);
-        if (showDimensions && lastDoorWpx > 0) {
+        if (false && showDimensions && lastDoorWpx > 0) {
             const _sf  = scaleFactor;
             const GAP  = 24 / _sf, TICK = 5 / _sf, ITICK = 12 / _sf;
             const R    = 3  / _sf, lw   = 1 / _sf, fs    = 15 / _sf;
