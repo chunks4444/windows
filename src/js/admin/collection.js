@@ -152,6 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const file = e.target.files[0];
         if (!file) return;
         if (!['image/jpeg', 'image/png'].includes(file.type)) { alert('PNG 또는 JPG 파일만 업로드할 수 있습니다.'); return; }
+        if (file.size > 1400 * 1024) { alert('파일 크기는 1400KB 이하여야 합니다.'); return; }
         const reader = new FileReader();
         reader.onload = ev => {
             const img = new Image();

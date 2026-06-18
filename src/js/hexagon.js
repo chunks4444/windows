@@ -272,6 +272,7 @@
         const files = Array.from(e.target.files);
         files.forEach(file => {
             if (!['image/jpeg', 'image/png'].includes(file.type)) { alert('PNG 또는 JPG 파일만 업로드할 수 있습니다.'); return; }
+            if (file.size > 700 * 1024) { alert('파일 크기는 700KB 이하여야 합니다.'); return; }
             const reader = new FileReader();
             reader.onload = function(event) {
                 compressImage(event.target.result, async function(dataUrl) {

@@ -59,6 +59,7 @@ function previewImage(input) {
     const file = input.files[0];
     if (!file) return;
     if (!['image/jpeg', 'image/png'].includes(file.type)) { alert('PNG 또는 JPG 파일만 업로드할 수 있습니다.'); input.value = ''; return; }
+    if (file.size > 1400 * 1024) { alert('파일 크기는 1400KB 이하여야 합니다.'); input.value = ''; return; }
     const reader = new FileReader();
     reader.onload = e => {
         const img = new Image();
