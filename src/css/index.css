@@ -31,7 +31,7 @@
     left: 0;
     right: 0;
     padding: 32px 40px;
-    background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 100%);
+    background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 100%);
 }
 
 .hero-slide-title {
@@ -142,7 +142,7 @@ body { font-weight: 900; }
 .space-card-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 55%);
+    background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 55%);
     display: flex;
     align-items: flex-end;
     padding: 14px 16px;
@@ -452,38 +452,38 @@ body { font-weight: 900; }
 }
 
 .service-card--classic {
-    background-image: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url(https://i.pinimg.com/1200x/e1/2e/90/e12e901759ab877d5d69bffba8655b52.jpg);
+    background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(https://i.pinimg.com/1200x/e1/2e/90/e12e901759ab877d5d69bffba8655b52.jpg);
     background-size: cover;
     background-position: center;
 }
 
 .service-card--square {
-    background-image: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url(
+    background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(
       https://i.pinimg.com/1200x/08/7b/66/087b6692e574a76cfda2561c5e53c319.jpg);
     background-size: cover;
     background-position: center;
 }
 
 .service-card--cross {
-    background-image: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url(https://www.windoor.co.kr/news/photo/201105/20110517_2_1447.jpg);
+    background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(https://www.windoor.co.kr/news/photo/201105/20110517_2_1447.jpg);
     background-size: cover;
     background-position: center;
 }
 
 .service-card--triangle {
-    background-image: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url(https://i.pinimg.com/736x/eb/39/7c/eb397c9ef2482d34fdbfe0c5aaafffd3.jpg);
+    background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(https://i.pinimg.com/736x/eb/39/7c/eb397c9ef2482d34fdbfe0c5aaafffd3.jpg);
     background-size: cover;
     background-position: center;
 }
 
 .service-card--diamond {
-    background-image: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url(https://i.pinimg.com/736x/0f/1a/f2/0f1af248ae79652e0b6b388b7ddb871d.jpg);
+    background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(https://i.pinimg.com/736x/0f/1a/f2/0f1af248ae79652e0b6b388b7ddb871d.jpg);
     background-size: cover;
     background-position: center;
 }
 
 .service-card--hexagon {
-    background-image: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url(https://i.pinimg.com/736x/0f/1a/f2/0f1af248ae79652e0b6b388b7ddb871d.jpg);
+    background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(https://i.pinimg.com/736x/0f/1a/f2/0f1af248ae79652e0b6b388b7ddb871d.jpg);
     background-size: cover;
     background-position: center;
 }
