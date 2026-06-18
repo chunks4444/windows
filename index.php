@@ -208,7 +208,7 @@ $faqs       = $pdo->query('SELECT * FROM faqs WHERE is_active=1 ORDER BY sort_or
                                 </a>
                             </div>
                             <h4 class="service-title text-center mb-3">Hexagon Lattice</h4>
-                            <p class="service-sub-text text-center mb-0">세 방향의 살이 서로 맞물려 균일한 육각형 눈을 이루는 어금육모 패턴.<br>자연의 벌집 구조를 닮은 단정하고 견고한 전통미를 담아냅니다.</p>
+                            <p class="service-sub-text text-center mb-0">세 방향의 살이 서로 맞물려 육각형 눈을 이루는 어금육모 패턴.<br>자연의 벌집 구조를 닮은 단정하고 견고한 전통미를 담아냅니다.</p>
                         </div>
                     </div>
                 </div>
