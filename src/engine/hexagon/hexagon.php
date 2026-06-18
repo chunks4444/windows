@@ -12,11 +12,13 @@ header('Pragma: no-cache');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php require_once __DIR__ . '/../../lib/meta.php'; meta_tags(); ?>
     <link rel="stylesheet" href="/src/css/engine-common.css?v=<?= md5_file(__DIR__ . '/../../css/engine-common.css') ?>">
+
 </head>
 
 <body class="pm-generator">
 
     <?php include __DIR__ . '/../../components/nav.php'; ?>
+    <style>.pm-navbar,.pm-navbar .nav-link,.pm-navbar .navbar-brand{color:#fff!important;}.pm-navbar .dropdown-item{color:#fff!important;}</style>
     <?php include __DIR__ . '/../../components/auth_guard.php'; ?>
     <input type="file" id="aiFileUploader" accept="image/*" multiple style="display: none;">
     <!-- MAIN -->
@@ -248,16 +250,6 @@ header('Pragma: no-cache');
 
             <!-- 캔버스 컨트롤 버튼 (우측 중앙) -->
             <div class="canvas-controls">
-                <!-- 핸드(팬) -->
-                <button class="cv-btn" id="btnPan" title="이동 (팬)">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M18 11V6a2 2 0 0 0-4 0v5"/>
-                        <path d="M14 10V4a2 2 0 0 0-4 0v6"/>
-                        <path d="M10 10.5V6a2 2 0 0 0-4 0v8.5"/>
-                        <path d="M18 8a2 2 0 0 1 4 0v6a8 8 0 0 1-8 8h-2c-2.76 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/>
-                    </svg>
-                </button>
-                <div class="cv-sep"></div>
                 <button class="cv-btn" id="btnZoomIn" title="확대">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
                         <circle cx="11" cy="11" r="7"/>
@@ -273,7 +265,17 @@ header('Pragma: no-cache');
                         <line x1="16.5" y1="16.5" x2="21" y2="21"/>
                     </svg>
                 </button>
-                <button class="cv-btn" id="btnScale" title="모서리 변형">
+                <div class="cv-sep"></div>
+                <!-- 핸드(팬) -->
+                <button class="cv-btn" id="btnPan" title="이동">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 11V6a2 2 0 0 0-4 0v5"/>
+                        <path d="M14 10V4a2 2 0 0 0-4 0v6"/>
+                        <path d="M10 10.5V6a2 2 0 0 0-4 0v8.5"/>
+                        <path d="M18 8a2 2 0 0 1 4 0v6a8 8 0 0 1-8 8h-2c-2.76 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/>
+                    </svg>
+                </button>
+                <button class="cv-btn" id="btnScale" title="스케일/이동/변형">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="2" y="2" width="14" height="14" rx="1"/>
                         <circle cx="19" cy="19" r="3" fill="currentColor" stroke="none"/>
@@ -442,7 +444,7 @@ header('Pragma: no-cache');
                     <div style="margin-top:8px;">
                         <div class="color-label" style="margin-bottom:4px;">면</div>
                         <div style="display:flex;gap:6px;align-items:center;">
-                            <input type="color" id="faceColorInput" value="#c8102e" style="width:30px;height:28px;padding:2px;border:1px solid var(--border);border-radius:4px;cursor:pointer;flex-shrink:0;">
+                            <input type="color" id="faceColorInput" value="#c8102e" style="width:30px;height:28px;padding:2px;border:none;border-radius:4px;cursor:pointer;flex-shrink:0;">
                             <button id="btnFacePaint" type="button" class="sb-select" style="cursor:pointer;flex:1;font-size:11px;">칠하기</button>
                             <button id="btnFaceClear" type="button" class="sb-select" style="cursor:pointer;flex-shrink:0;padding:0 8px;font-size:11px;display:none;width:auto;">초기화</button>
                         </div>

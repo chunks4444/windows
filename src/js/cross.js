@@ -1136,10 +1136,10 @@ async function draw() {
         rCtx.save();
         rCtx.setTransform(rDpr, 0, 0, rDpr, 0, 0);
 
-        const BG_IN  = 'rgba(195,197,197,0.97)';
-        const BG_OUT = 'rgba(252,252,252,0.97)';
-        const LINE   = '#bbb';
-        const LBL    = '#888';
+        const BG_IN  = 'rgba(150,150,150,0.95)';
+        const BG_OUT = 'rgba(173,173,173,0.95)';
+        const LINE   = 'rgba(255,255,255,0.7)';
+        const LBL    = '#ffffff';
         const ZERO   = '#3A8C82';
 
         // 문 범위 (스크린 좌표)
