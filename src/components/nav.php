@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../lib/logger.php';
+require_once __DIR__ . '/../lib/meta.php';
 
 // 상단 네비게이션 공통 컴포넌트
 // 포함하는 페이지에서 Bootstrap CSS/JS가 없으면 자동으로 로드합니다.
@@ -10,8 +11,8 @@ if (!defined('BOOTSTRAP_LOADED')) {
 echo '<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">';
 ?>
 <title>평목 - DESIGN IN REAL TIME</title>
-<link rel="stylesheet" href="/src/css/common.css">
-<link rel="stylesheet" href="/src/css/nav.css">
+<?php css_tag('/src/css/common.css'); ?>
+<?php css_tag('/src/css/nav.css'); ?>
 
 <?php
 // 현재 페이지 파일명으로 active 항목 판별

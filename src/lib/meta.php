@@ -1,4 +1,14 @@
 <?php
+function css_url(string $path): string {
+    $abs = $_SERVER['DOCUMENT_ROOT'] . $path;
+    $v = file_exists($abs) ? filemtime($abs) : 0;
+    return $path . '?v=' . $v;
+}
+
+function css_tag(string $path): void {
+    echo '<link rel="stylesheet" href="' . css_url($path) . '">' . "\n    ";
+}
+
 function page_meta(): array {
     static $cache = null;
     if ($cache !== null) return $cache;

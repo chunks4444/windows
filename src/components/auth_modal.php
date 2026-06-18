@@ -120,7 +120,8 @@
     </div>
 </div>
 
-<link rel="stylesheet" href="/src/css/auth_modal.css">
+<?php require_once __DIR__ . '/../lib/meta.php'; ?>
+<?php css_tag('/src/css/auth_modal.css'); ?>
 
 <script>
 const AUTH_TOKEN_KEY = 'pmok_auth_token';

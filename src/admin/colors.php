@@ -8,11 +8,12 @@ header('Content-Type: text/html; charset=UTF-8');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php define('BOOTSTRAP_LOADED', true); ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/src/css/dashboard.css">
-    <link rel="stylesheet" href="/src/css/users.css">
+    <?php require_once __DIR__ . '/../lib/meta.php'; ?>
+<?php css_tag('/src/css/dashboard.css'); ?>
+    <?php css_tag('/src/css/users.css'); ?>
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
     
-    <link rel="stylesheet" href="/src/css/admin/colors.css">
+    <?php css_tag('/src/css/admin/colors.css'); ?>
 </head>
 <body>
 <?php include __DIR__ . '/../components/nav.php'; ?>

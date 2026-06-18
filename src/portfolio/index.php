@@ -84,7 +84,7 @@ $tags = $pdo->query('SELECT name FROM work_tags WHERE is_active=1 ORDER BY sort_
     <?php require_once __DIR__ . '/../lib/meta.php'; meta_tags(); ?>
     <?php define('BOOTSTRAP_LOADED', true); ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/src/css/work.css">
+    <?php css_tag('/src/css/work.css'); ?>
 </head>
 <body>
 <?php include __DIR__ . '/../components/nav.php'; ?>
