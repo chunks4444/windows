@@ -786,7 +786,7 @@
 // 모바일 화면에서는 좌/우 사이드바를 기본적으로 접어둠
 (function () {
     document.addEventListener('DOMContentLoaded', () => {
-        if (!window.matchMedia('(max-width: 1024px)').matches) return;
+        if (!window.matchMedia('(max-width: 1100px)').matches) return;
         if (sidebar && !sidebar.classList.contains('collapsed')) {
             sidebar.classList.add('collapsed');
             if (btnSidebarTab) btnSidebarTab.classList.add('collapsed');
@@ -797,4 +797,17 @@
         }
         resizeCanvasDebounced();
     });
+})();
+
+// 회전(가로↔세로) 직후 레이아웃이 아직 안 정착된 상태에서 캔버스가 다시 그려지는 문제 보정
+(function () {
+    function delayedResize() {
+        resizeCanvasDebounced();
+        setTimeout(resizeCanvasDebounced, 120);
+        setTimeout(resizeCanvasDebounced, 350);
+    }
+    window.addEventListener('orientationchange', delayedResize);
+    if (window.screen && window.screen.orientation) {
+        window.screen.orientation.addEventListener('change', delayedResize);
+    }
 })();
