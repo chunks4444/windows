@@ -68,7 +68,7 @@ class Drawing {
     // 유저의 타입별 도면 목록 (썸네일 + 메타, 버전 미포함)
     static function list(int $userId, string $type): array {
         $pdo  = db();
-        $stmt = $pdo->prepare('SELECT id, title, thumbnail, work_time_sec, created_at, updated_at FROM drawings WHERE user_id = ? AND type = ? ORDER BY updated_at DESC');
+        $stmt = $pdo->prepare('SELECT id, title, thumbnail, work_time_sec, created_at, updated_at, locked_at FROM drawings WHERE user_id = ? AND type = ? ORDER BY updated_at DESC');
         $stmt->execute([$userId, $type]);
         return $stmt->fetchAll();
     }
@@ -78,7 +78,7 @@ class Drawing {
         $pdo    = db();
         $offset = ($page - 1) * $limit;
         $stmt   = $pdo->prepare(
-            'SELECT d.id, d.type, d.title, d.thumbnail, d.work_time_sec, d.created_at, d.updated_at,
+            'SELECT d.id, d.type, d.title, d.thumbnail, d.work_time_sec, d.created_at, d.updated_at, d.locked_at,
                     COUNT(v.id) AS version_count
              FROM drawings d
              LEFT JOIN drawing_versions v ON v.drawing_id = d.id
@@ -97,5 +97,21 @@ class Drawing {
         $stmt = $pdo->prepare('DELETE FROM drawings WHERE user_id = ? AND type = ? AND title = ?');
         $stmt->execute([$userId, $type, $title]);
         return $stmt->rowCount() > 0;
+    }
+
+    // 견적요청 중인 도면인지 확인 (잠금 여부)
+    static function is_locked(int $userId, string $type, string $title): bool {
+        $pdo  = db();
+        $stmt = $pdo->prepare('SELECT locked_at FROM drawings WHERE user_id = ? AND type = ? AND title = ?');
+        $stmt->execute([$userId, $type, $title]);
+        $row = $stmt->fetch();
+        return $row && $row['locked_at'] !== null;
+    }
+
+    // 견적요청 접수 시 해당 도면 잠금
+    static function lock(int $drawingId, int $userId): void {
+        $pdo = db();
+        $pdo->prepare('UPDATE drawings SET locked_at = NOW() WHERE id = ? AND user_id = ?')
+            ->execute([$drawingId, $userId]);
     }
 }

@@ -8,6 +8,7 @@
 -- ALTER TABLE users ADD COLUMN role ENUM('s','m','a','u') NOT NULL DEFAULT 'u' COMMENT '권한: s=슈퍼, m=관리자, a=작가, u=회원' AFTER email;
 -- ALTER TABLE users ADD COLUMN last_login_at DATETIME NULL COMMENT '최종 접속일시' AFTER created_at;
 -- ALTER TABLE users ADD COLUMN withdrawn_at DATETIME NULL COMMENT '탈퇴일시 (NULL=정상, NOT NULL=탈퇴)' AFTER last_login_at;
+-- ALTER TABLE drawings ADD COLUMN locked_at DATETIME NULL COMMENT '잠금일시 (NULL=편집가능, 견적요청 중이면 잠김)' AFTER work_time_sec;
 
 -- 접속 통계 (6개월 rolling)
 CREATE TABLE IF NOT EXISTS page_views (
@@ -51,6 +52,7 @@ CREATE TABLE IF NOT EXISTS drawings (
     updated_at    DATETIME        NOT NULL DEFAULT NOW() ON UPDATE NOW() COMMENT '최종 저장일시',
     thumbnail     MEDIUMTEXT      NULL COMMENT '썸네일 이미지 (data:image/jpeg;base64,…)',
     work_time_sec INT UNSIGNED    NOT NULL DEFAULT 0 COMMENT '누적 작업 시간(초)',
+    locked_at     DATETIME        NULL COMMENT '잠금일시 (NULL=편집가능, 견적요청 중이면 잠김)',
     PRIMARY KEY (id),
     UNIQUE KEY uq_drawings_user_type_title (user_id, type, title),
     KEY idx_drawings_user_type (user_id, type),
@@ -295,22 +297,38 @@ INSERT IGNORE INTO color_swatches (group_name, sort_order, code, name, hex) VALU
 ('천연오일', 8, 'NO-08', '옻칠',    '#1c0c06'),
 ('천연오일', 9, 'NO-09', '먹',      '#28241e');
 
+-- 기존 DB에 컬럼 추가할 경우 아래 ALTER 실행 (orders 테이블에 납기/배송/썸네일/버전 필드 추가)
+-- ALTER TABLE orders ADD COLUMN version_label       VARCHAR(50)  NULL COMMENT '주문 시점 도면 버전 표시 텍스트' AFTER title;
+-- ALTER TABLE orders ADD COLUMN thumbnail            MEDIUMTEXT   NULL COMMENT '주문 시점 도면 썸네일 (data:image/jpeg;base64,…)' AFTER version_label;
+-- ALTER TABLE orders ADD COLUMN due_date             DATE         NULL COMMENT '납기 희망일' AFTER company_name;
+-- ALTER TABLE orders ADD COLUMN ship_zipcode         VARCHAR(10)  NULL COMMENT '배송지 우편번호' AFTER due_date;
+-- ALTER TABLE orders ADD COLUMN ship_address         VARCHAR(255) NULL COMMENT '배송지 주소' AFTER ship_zipcode;
+-- ALTER TABLE orders ADD COLUMN ship_address_detail  VARCHAR(100) NULL COMMENT '배송지 상세주소' AFTER ship_address;
+-- ALTER TABLE orders ADD COLUMN ship_phone           VARCHAR(30)  NULL COMMENT '배송지 연락처' AFTER ship_address_detail;
+
 -- 제작 주문 (엔진 페이지의 "주문" 버튼에서 생성)
 -- customer_name/customer_phone/company_name은 주문 시점 users 테이블 값의 스냅샷
 -- (이후 프로필이 바뀌어도 주문 당시 정보가 보존되도록)
 CREATE TABLE IF NOT EXISTS orders (
-    id             INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '주문 고유 ID',
-    user_id        INT UNSIGNED NOT NULL COMMENT '주문자 user_id (users.id FK)',
-    drawing_id     INT UNSIGNED NULL COMMENT '연결된 도면 ID (drawings.id FK, 저장 전 도면이면 NULL)',
-    engine         VARCHAR(64)  NOT NULL COMMENT '엔진 종류 (square/classic/cross/diamond/triangle/hexagon)',
-    title          VARCHAR(100) NOT NULL DEFAULT '' COMMENT '주문 시점 도면 제목',
-    customer_name  VARCHAR(100) NOT NULL COMMENT '주문 시점 이름 (스냅샷)',
-    customer_phone VARCHAR(30)  NOT NULL COMMENT '주문 시점 연락처 (스냅샷)',
-    company_name   VARCHAR(100) NULL COMMENT '주문 시점 회사명 (스냅샷)',
-    memo           TEXT         NULL COMMENT '요청사항',
-    spec_json      MEDIUMTEXT   NULL COMMENT '주문 시점 도면 사양 스냅샷 (JSON)',
-    status         ENUM('pending','confirmed','done','cancelled') NOT NULL DEFAULT 'pending' COMMENT '처리 상태',
-    created_at     DATETIME     NOT NULL DEFAULT NOW() COMMENT '주문 접수일시',
+    id                  INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '주문 고유 ID',
+    user_id             INT UNSIGNED NOT NULL COMMENT '주문자 user_id (users.id FK)',
+    drawing_id          INT UNSIGNED NULL COMMENT '연결된 도면 ID (drawings.id FK, 저장 전 도면이면 NULL)',
+    engine              VARCHAR(64)  NOT NULL COMMENT '엔진 종류 (square/classic/cross/diamond/triangle/hexagon)',
+    title               VARCHAR(100) NOT NULL DEFAULT '' COMMENT '주문 시점 도면 제목',
+    version_label       VARCHAR(50)  NULL COMMENT '주문 시점 도면 버전 표시 텍스트',
+    thumbnail           MEDIUMTEXT   NULL COMMENT '주문 시점 도면 썸네일 (data:image/jpeg;base64,…)',
+    customer_name       VARCHAR(100) NOT NULL COMMENT '주문 시점 이름 (스냅샷)',
+    customer_phone      VARCHAR(30)  NOT NULL COMMENT '주문 시점 연락처 (스냅샷)',
+    company_name        VARCHAR(100) NULL COMMENT '주문 시점 회사명 (스냅샷)',
+    due_date            DATE         NULL COMMENT '납기 희망일',
+    ship_zipcode        VARCHAR(10)  NULL COMMENT '배송지 우편번호',
+    ship_address        VARCHAR(255) NULL COMMENT '배송지 주소',
+    ship_address_detail VARCHAR(100) NULL COMMENT '배송지 상세주소',
+    ship_phone          VARCHAR(30)  NULL COMMENT '배송지 연락처',
+    memo                TEXT         NULL COMMENT '요청사항',
+    spec_json           MEDIUMTEXT   NULL COMMENT '주문 시점 도면 사양 스냅샷 (JSON)',
+    status              ENUM('pending','confirmed','done','cancelled') NOT NULL DEFAULT 'pending' COMMENT '처리 상태',
+    created_at          DATETIME     NOT NULL DEFAULT NOW() COMMENT '주문 접수일시',
     PRIMARY KEY (id),
     KEY idx_orders_user (user_id),
     KEY idx_orders_status_created (status, created_at),

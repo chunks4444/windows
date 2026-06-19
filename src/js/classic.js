@@ -1716,6 +1716,9 @@ async function draw() {
             getSpec:      getParams,
             getDrawingId: () => drawingId,
             getTitle:     () => document.getElementById('drawingName')?.value.trim(),
+            getThumbnail:    captureThumbnail,
+            getVersionLabel: () => document.getElementById('verLabel')?.textContent.trim(),
+            onLocked:        () => { isDrawingLocked = true; updateLockBanner(true); },
         });
     });
 
@@ -1847,6 +1850,7 @@ async function draw() {
     let workAccum = 0;
     let workStart = Date.now();
     let drawingId = null;
+    let isDrawingLocked = false;
 
     function pauseWorkTimer() { workAccum += Math.floor((Date.now() - workStart) / 1000); }
     function resumeWorkTimer() { workStart = Date.now(); }
@@ -2084,6 +2088,8 @@ async function draw() {
         localStorage.setItem(NAME_KEY,          title);
         if (data.drawing) {
             drawingId = data.drawing.id ?? null;
+            isDrawingLocked = !!data.drawing.locked_at;
+            updateLockBanner(isDrawingLocked);
             const cAt = new Date(data.drawing.created_at).getTime();
             const uAt = new Date(data.drawing.updated_at).getTime();
             localStorage.setItem(CREATED_KEY,  cAt);
@@ -2175,6 +2181,10 @@ async function draw() {
     }
 
     async function saveVersion() {
+        if (isDrawingLocked) {
+            pmAlert('이 도면은 견적요청 중이라 편집할 수 없습니다.', { type: 'danger' });
+            return;
+        }
         const badge = document.querySelector('.hdr-title-badge');
         const title = document.getElementById('drawingName').value.trim();
         if (!title) {
@@ -2252,7 +2262,7 @@ async function draw() {
             item.className = 'dm-item' + (d.title === curTitle ? ' dm-active' : '');
             item.innerHTML = `
                 <div class="dm-item-info">
-                    <div class="dm-title">${escHtml(d.title)}</div>
+                    <div class="dm-title">${escHtml(d.title)}${d.locked_at ? ' <i class="bi bi-lock-fill dm-lock-icon" title="견적요청 중"></i>' : ''}</div>
                     <div class="dm-date">${fmtDate(new Date(d.updated_at).getTime())}</div>
                 </div>
                 <div class="dm-actions">
@@ -2269,6 +2279,7 @@ async function draw() {
             });
             item.querySelector('.dm-del-btn').addEventListener('click', (e) => {
                 e.stopPropagation();
+                if (d.locked_at) { pmAlert('이 도면은 견적요청 중이라 삭제할 수 없습니다.', { type: 'danger' }); return; }
                 pmConfirm(`"${d.title}" 도면을 삭제하시겠습니까?`, async () => {
                     await /** @type {any} */ (window.DrawingSync).delete('classic', d.title);
                     if (d.title === document.getElementById('drawingName').value.trim()) startNewDrawing();
@@ -2293,6 +2304,8 @@ async function draw() {
         localStorage.setItem(NAME_KEY, title);
         if (data.drawing) {
             drawingId = data.drawing.id ?? null;
+            isDrawingLocked = !!data.drawing.locked_at;
+            updateLockBanner(isDrawingLocked);
             const cAt = new Date(data.drawing.created_at).getTime();
             const uAt = new Date(data.drawing.updated_at).getTime();
             localStorage.setItem(CREATED_KEY, cAt); localStorage.setItem(MODIFIED_KEY, uAt);
@@ -2307,6 +2320,8 @@ async function draw() {
     function startNewDrawing() {
         versions = []; currentVerIdx = -1;
         drawingId = null;
+        isDrawingLocked = false;
+        updateLockBanner(false);
         document.getElementById('drawingName').value    = '';
         document.getElementById('verLabel').textContent = '—';
         const now = Date.now();

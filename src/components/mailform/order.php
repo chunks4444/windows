@@ -17,8 +17,16 @@
       <!-- 본문 -->
       <tr>
         <td style="padding:36px 32px 24px;">
-          <p style="font-size:20px;font-weight:700;color:#1A1F1E;margin:0 0 20px;letter-spacing:-0.5px;">새 주문이 접수되었습니다 (#<?= (int)$orderId ?>)</p>
+          <p style="font-size:14px;font-weight:600;color:#97A8A6;margin:0 0 4px;letter-spacing:-0.2px;">새 견적요청이 접수되었습니다</p>
+          <p style="font-size:34px;font-weight:800;color:#3A8C82;margin:0 0 20px;letter-spacing:-0.5px;">요청번호 #<?= (int)$orderId ?></p>
+          <?php if (!empty($thumbnail)): ?>
+          <img src="<?= htmlspecialchars($thumbnail) ?>" alt="도면 미리보기" style="display:block;width:100%;max-width:496px;border-radius:8px;margin-bottom:20px;background:#F2F3F4;">
+          <?php endif; ?>
           <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+            <tr>
+              <td style="width:72px;padding:10px 0;border-bottom:1px solid #f0f2f1;font-size:12px;color:#97A8A6;font-weight:600;vertical-align:top;">요청일</td>
+              <td style="padding:10px 0 10px 16px;border-bottom:1px solid #f0f2f1;font-size:14px;color:#1A1F1E;"><?= htmlspecialchars($orderDate) ?></td>
+            </tr>
             <tr>
               <td style="width:72px;padding:10px 0;border-bottom:1px solid #f0f2f1;font-size:12px;color:#97A8A6;font-weight:600;vertical-align:top;">이름</td>
               <td style="padding:10px 0 10px 16px;border-bottom:1px solid #f0f2f1;font-size:14px;color:#1A1F1E;"><?= htmlspecialchars($name) ?></td>
@@ -43,7 +51,23 @@
             <?php endif; ?>
             <tr>
               <td style="width:72px;padding:10px 0;border-bottom:1px solid #f0f2f1;font-size:12px;color:#97A8A6;font-weight:600;vertical-align:top;">도면</td>
-              <td style="padding:10px 0 10px 16px;border-bottom:1px solid #f0f2f1;font-size:14px;color:#1A1F1E;"><?= htmlspecialchars($title ?: '(제목 없음)') ?> <span style="color:#97A8A6;">(<?= htmlspecialchars($engine) ?>)</span></td>
+              <td style="padding:10px 0 10px 16px;border-bottom:1px solid #f0f2f1;font-size:14px;color:#1A1F1E;">
+                <?= htmlspecialchars($title ?: '(제목 없음)') ?> <span style="color:#97A8A6;">(<?= htmlspecialchars($engine) ?><?= !empty($version) ? ' · ' . htmlspecialchars($version) : '' ?>)</span>
+              </td>
+            </tr>
+            <tr>
+              <td style="width:72px;padding:10px 0;border-bottom:1px solid #f0f2f1;font-size:12px;color:#97A8A6;font-weight:600;vertical-align:top;">납기 희망일</td>
+              <td style="padding:10px 0 10px 16px;border-bottom:1px solid #f0f2f1;font-size:14px;color:#1A1F1E;"><?= htmlspecialchars($dueDate) ?></td>
+            </tr>
+            <tr>
+              <td style="width:72px;padding:10px 0;border-bottom:1px solid #f0f2f1;font-size:12px;color:#97A8A6;font-weight:600;vertical-align:top;">배송지</td>
+              <td style="padding:10px 0 10px 16px;border-bottom:1px solid #f0f2f1;font-size:14px;color:#1A1F1E;">
+                <?= !empty($shipZip) ? '(' . htmlspecialchars($shipZip) . ') ' : '' ?><?= htmlspecialchars($shipAddr) ?>
+              </td>
+            </tr>
+            <tr>
+              <td style="width:72px;padding:10px 0;border-bottom:1px solid #f0f2f1;font-size:12px;color:#97A8A6;font-weight:600;vertical-align:top;">배송지 연락처</td>
+              <td style="padding:10px 0 10px 16px;border-bottom:1px solid #f0f2f1;font-size:14px;color:#1A1F1E;"><?= htmlspecialchars($shipPhone) ?></td>
             </tr>
             <?php if (!empty($memo)): ?>
             <tr>
@@ -62,7 +86,7 @@
       <tr>
         <td style="padding:20px 32px 28px;">
           <p style="font-size:11px;color:#97A8A6;line-height:1.7;margin:0;">
-            <?= SITE_NAME ?> 도면 설계기에서 자동 발송된 주문 메일입니다.
+            <?= SITE_NAME ?> 도면 설계기에서 자동 발송된 견적요청 메일입니다.
           </p>
         </td>
       </tr>

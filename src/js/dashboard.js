@@ -118,8 +118,12 @@ function renderCard(d) {
                  <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
              </svg>
            </div>`;
+    const lockedBadge = d.locked_at
+        ? `<div class="db-quote-badge"><i class="bi bi-lock-fill"></i> 견적요청중</div>`
+        : '';
     return `
         <div class="db-card" onclick="openDrawing('${escAttr(d.type)}', '${escAttr(d.title)}')">
+            ${lockedBadge}
             <button class="db-card-copy" onclick="copyDrawing(event,'${escAttr(d.type)}','${escAttr(d.title)}')" title="복사">
                 <i class="bi bi-copy"></i>
             </button>
@@ -266,7 +270,8 @@ async function deleteDrawing(e, type, title) {
                 document.getElementById('dbContent').innerHTML = '<div class="db-empty">저장된 도면이 없습니다.</div>';
             }
         } else {
-            alert('삭제에 실패했습니다.');
+            const data = await res.json().catch(() => ({}));
+            alert(data.error || '삭제에 실패했습니다.');
         }
     });
 }

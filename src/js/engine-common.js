@@ -3,6 +3,26 @@
         return ver ? Math.floor(ver.savedAt / 1000) : null;
     }
 
+    // 견적요청 중인 도면을 열었을 때 표시되는 잠금 배지 (뷰만 가능, 편집/저장/삭제는 서버에서도 차단됨)
+    function updateLockBanner(isLocked) {
+        const group = document.querySelector('.title-btn-group');
+        if (!group) return;
+        let badge = document.getElementById('lockBanner');
+        if (isLocked) {
+            if (!badge) {
+                badge = document.createElement('span');
+                badge.id = 'lockBanner';
+                badge.className = 'lock-banner';
+                badge.innerHTML = '<i class="bi bi-lock-fill"></i> 견적요청 중 · 편집 불가';
+                group.insertBefore(badge, group.firstChild);
+            }
+        } else if (badge) {
+            badge.remove();
+        }
+        const nameInput = document.getElementById('drawingName');
+        if (nameInput) nameInput.readOnly = !!isLocked;
+    }
+
     function _pmGetEl() {
         if (_pmModalEl) return _pmModalEl;
         const el = document.createElement('div');
@@ -340,12 +360,23 @@
         document.getElementById('pmConfirmBtn').onclick = () => { _pmHide(); onConfirm(); };
     }
 
-    // ── 주문 모달 ────────────────────────────────────
+    // ── 견적요청 모달 ────────────────────────────────────
     function _orderHide() {
         document.getElementById('orderBackdrop')?.classList.remove('pm-active');
     }
 
-    function openOrderModal({ engine, getSpec, getDrawingId, getTitle }) {
+    function _orderOpenPostcode() {
+        new daum.Postcode({
+            oncomplete(data) {
+                document.getElementById('orderShipZipcode').value       = data.zonecode;
+                document.getElementById('orderShipAddress').value       = data.roadAddress || data.autoRoadAddress || data.jibunAddress;
+                document.getElementById('orderShipAddressDetail').value = '';
+                document.getElementById('orderShipAddressDetail').focus();
+            }
+        }).open();
+    }
+
+    function openOrderModal({ engine, getSpec, getDrawingId, getTitle, getThumbnail, getVersionLabel, onLocked }) {
         const token = localStorage.getItem('pmok_auth_token');
         if (!token) {
             const el = document.getElementById('authModal');
@@ -362,13 +393,14 @@
 
             if (!user.name || !user.phone) {
                 pmConfirm(
-                    '주문하려면 프로필에 이름과 연락처를 먼저 입력해주세요.',
+                    '견적요청하려면 프로필에 이름과 연락처를 먼저 입력해주세요.',
                     () => { location.href = '/src/mypage/profile.php'; },
                     { sub: '프로필 페이지에서 입력 후 다시 시도해주세요.', type: 'ok', confirmText: '프로필로 이동' }
                 );
                 return;
             }
 
+            document.getElementById('orderDate').textContent      = new Date().toISOString().slice(0, 10);
             document.getElementById('orderCustName').textContent  = user.name;
             document.getElementById('orderCustPhone').textContent = user.phone;
             const companyRow = document.getElementById('orderCompanyRow');
@@ -378,28 +410,63 @@
             } else {
                 companyRow.style.display = 'none';
             }
-            document.getElementById('orderDrawingTitle').textContent = getTitle() || '(제목 없음)';
+            document.getElementById('orderDrawingTitle').textContent   = getTitle() || '(제목 없음)';
+            document.getElementById('orderDrawingVersion').textContent = (getVersionLabel && getVersionLabel()) || '—';
+
+            const thumbImg = document.getElementById('orderThumbImg');
+            const thumbSrc = getThumbnail ? getThumbnail() : null;
+            thumbImg.style.display = thumbSrc ? '' : 'none';
+            if (thumbSrc) thumbImg.src = thumbSrc;
+
+            const dueDateEl = document.getElementById('orderDueDate');
+            dueDateEl.min   = new Date().toISOString().slice(0, 10);
+            dueDateEl.value = '';
+
+            document.getElementById('orderShipZipcode').value       = user.zipcode        || '';
+            document.getElementById('orderShipAddress').value       = user.address        || '';
+            document.getElementById('orderShipAddressDetail').value = user.address_detail || '';
+            document.getElementById('orderShipPhone').value         = user.phone          || '';
             document.getElementById('orderMemo').value = '';
+
+            document.getElementById('orderZipSearchBtn').onclick = _orderOpenPostcode;
 
             document.getElementById('orderBackdrop').classList.add('pm-active');
 
             document.getElementById('orderSubmitBtn').onclick = () => {
-                const memo = document.getElementById('orderMemo').value.trim();
+                const dueDate   = dueDateEl.value;
+                const shipZip   = document.getElementById('orderShipZipcode').value.trim();
+                const shipAddr  = document.getElementById('orderShipAddress').value.trim();
+                const shipAddr2 = document.getElementById('orderShipAddressDetail').value.trim();
+                const shipPhone = document.getElementById('orderShipPhone').value.trim();
+                const memo      = document.getElementById('orderMemo').value.trim();
+
+                if (!dueDate)        { pmAlert('납기 희망일을 선택해주세요.',     { type: 'danger' }); return; }
+                if (!shipAddr)       { pmAlert('배송지 주소를 입력해주세요.',     { type: 'danger' }); return; }
+                if (!shipPhone)      { pmAlert('배송지 연락처를 입력해주세요.',   { type: 'danger' }); return; }
+
                 fetch('/src/api/orders/create.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
                     body: JSON.stringify({
                         engine,
-                        drawing_id: getDrawingId() || null,
-                        title:      getTitle() || '',
+                        drawing_id:          getDrawingId() || null,
+                        title:               getTitle() || '',
+                        version_label:       (getVersionLabel && getVersionLabel()) || '',
+                        thumbnail:           thumbSrc || null,
+                        due_date:            dueDate,
+                        ship_zipcode:        shipZip,
+                        ship_address:        shipAddr,
+                        ship_address_detail: shipAddr2,
+                        ship_phone:          shipPhone,
                         memo,
-                        spec:       getSpec(),
+                        spec:                getSpec(),
                     }),
                 }).then(r => r.json()).then(data => {
                     if (data.error) { pmAlert(data.error, { type: 'danger' }); return; }
                     _orderHide();
-                    pmAlert('주문이 접수되었습니다.', { sub: '담당자가 확인 후 연락드립니다.' });
-                }).catch(() => pmAlert('주문 접수에 실패했습니다.', { type: 'danger' }));
+                    if (getDrawingId()) onLocked && onLocked();
+                    pmAlert('견적요청이 접수되었습니다.', { sub: '담당자가 확인 후 연락드립니다.' });
+                }).catch(() => pmAlert('견적요청 접수에 실패했습니다.', { type: 'danger' }));
             };
         }).catch(() => pmAlert('프로필 정보를 불러오지 못했습니다.', { type: 'danger' }));
     }

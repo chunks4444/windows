@@ -416,7 +416,7 @@ header('Pragma: no-cache');
                                 <path d="M10 12L11.8 13.8L15 10.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                 <path d="M10 17H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                             </svg>
-                            주문
+                            견적요청
                         </button>
                     </div>
                 </div>

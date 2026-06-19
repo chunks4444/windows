@@ -23,6 +23,10 @@ if (!$type || !$title) {
     http_response_code(422); echo json_encode(['error' => 'type, title 필드가 필요합니다.']); exit;
 }
 
+if (Drawing::is_locked((int) $payload['sub'], $type, $title)) {
+    http_response_code(423); echo json_encode(['error' => '이 도면은 견적요청 중이라 삭제할 수 없습니다.']); exit;
+}
+
 $ok = Drawing::delete((int) $payload['sub'], $type, $title);
 
 if (!$ok) {

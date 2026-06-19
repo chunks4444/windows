@@ -112,6 +112,23 @@ body {
     transform: translateY(-2px);
 }
 
+.db-quote-badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    background: #E08A00;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: -0.1px;
+}
+
 .db-card-copy {
     position: absolute;
     top: 8px;

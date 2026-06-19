@@ -95,6 +95,20 @@ body.pm-generator .pm-navbar .dropdown-menu { background: var(--sidebar-bg) !imp
 }
 .title-btn-group .hdr-title-badge:focus-within { border-color: transparent; }
 
+.lock-banner {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 0 10px;
+    height: 26px;
+    font-size: var(--fs-12);
+    font-weight: 700;
+    color: #FFB020;
+    white-space: nowrap;
+    border-right: 1px solid rgba(255,255,255,0.15);
+    border-radius: 20px 0 0 20px;
+}
+
 .title-group-btn {
     height: 26px;
     padding: 0 10px;
@@ -721,12 +735,12 @@ canvas:active { cursor: grabbing; }
 .pm-btn-ok      { background: var(--teal); border-color: var(--teal); color: #fff; }
 .pm-btn-ok:hover      { background: var(--teal-dark); border-color: var(--teal-dark); }
 
-/* ── 주문 모달 ──────────────────────────────── */
+/* ── 견적요청 모달 ──────────────────────────────── */
 .order-modal {
     background: #fff;
     border-radius: 14px;
     box-shadow: 0 24px 64px rgba(0,0,0,0.22), 0 4px 16px rgba(0,0,0,0.1);
-    width: 360px;
+    width: 480px;
     max-width: calc(100vw - 32px);
     padding: 24px;
     transform: scale(0.9) translateY(12px);
@@ -738,10 +752,75 @@ canvas:active { cursor: grabbing; }
     opacity: 1;
 }
 .order-modal-title { font-size: var(--fs-16); font-weight: 700; color: var(--text-1); letter-spacing: -0.2px; }
-.order-modal-body { margin-top: 16px; display: flex; flex-direction: column; gap: 10px; }
+.order-modal-body {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding-right: 2px;
+}
+.order-top-row { display: flex; gap: 14px; }
+.order-top-info { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 8px; min-width: 0; }
 .order-info-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .order-info-label { font-size: var(--fs-12); color: var(--text-3); font-weight: 600; flex-shrink: 0; }
-.order-info-val { font-size: var(--fs-13); color: var(--text-1); font-weight: 600; text-align: right; }
+.order-info-val { font-size: var(--fs-13); color: var(--text-1); font-weight: 600; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.order-modal-divider { border: none; border-top: 1px solid #ECEFEE; margin: 2px 0; }
+
+.order-thumb-wrap {
+    width: 140px;
+    height: 140px;
+    flex-shrink: 0;
+    border-radius: var(--r-sm);
+    background: #F2F3F4;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.order-thumb-img { width: 100%; height: 100%; object-fit: contain; }
+
+.order-field { display: flex; flex-direction: column; gap: 6px; }
+.order-field-label { font-size: var(--fs-12); color: var(--text-3); font-weight: 600; }
+.order-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.order-zip-row { display: flex; gap: 6px; }
+.order-zip-row .rp-prompt { flex: 1; max-width: 160px; }
+.order-zip-btn {
+    flex-shrink: 0;
+    height: 36px;
+    padding: 0 12px;
+    border-radius: var(--r-sm);
+    border: 1px solid rgba(255,255,255,0.25);
+    background: var(--sidebar-bg);
+    color: #fff;
+    font-size: var(--fs-12);
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+}
+.order-zip-btn:hover { background: #111; }
+
+/* 견적요청 모달 안 입력창은 밝은 회색 배경 + 검정 글자 (흰 카드 위에서 가독성) */
+.order-modal input.rp-prompt,
+.order-modal textarea.rp-prompt {
+    background: #F2F3F4;
+    color: #1A1F1E;
+    border: 1px solid #E2E5E4;
+}
+.order-modal input.rp-prompt::placeholder,
+.order-modal textarea.rp-prompt::placeholder {
+    color: #97A8A6;
+}
+.order-modal input.rp-prompt:focus,
+.order-modal textarea.rp-prompt:focus {
+    border-color: var(--teal);
+    background: #fff;
+}
+.order-modal input.rp-prompt[readonly] {
+    color: #5A6664;
+    cursor: default;
+}
 
 /* ── 도면 목록 모달 ──────────────────────────── */
 .dm-modal {
@@ -801,6 +880,7 @@ canvas:active { cursor: grabbing; }
 }
 .dm-item.dm-active .dm-title { color: var(--teal); }
 .dm-date { font-size: var(--fs-12); color: var(--text-3); margin-top: 1px; }
+.dm-lock-icon { color: #E08A00; font-size: 11px; margin-left: 3px; }
 .dm-actions {
     display: flex;
     gap: 2px;
