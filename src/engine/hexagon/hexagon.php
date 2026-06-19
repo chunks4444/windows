@@ -461,8 +461,8 @@ header('Pragma: no-cache');
                         </div>
                     </div>
                     <div style="display:flex;gap:6px;margin-top:6px;">
-                        <button id="btnFacePaint" type="button" class="sb-select" style="cursor:pointer;flex:1;font-size:11px;">면컬러 칠하기</button>
-                        <button id="btnFaceClear" type="button" class="sb-select" style="cursor:pointer;flex-shrink:0;padding:0 8px;font-size:11px;display:none;width:auto;">초기화</button>
+                        <button id="btnFacePaint" type="button" class="hbtn" style="flex:1;justify-content:center;font-size:11px;">면컬러 칠하기</button>
+                        <button id="btnFaceClear" type="button" class="hbtn" style="flex-shrink:0;padding:0 8px;font-size:11px;display:none;width:auto;justify-content:center;">초기화</button>
                     </div>
                 </div>
                 <div class="sb-section">

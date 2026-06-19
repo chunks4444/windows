@@ -367,9 +367,6 @@ function snapToNode(cx, cy) {
 let _geoController = null;
 
 async function fetchGeometry() {
-    if (_isPanning && _geoCache) return _geoCache;
-    if (_geoController) _geoController.abort();
-    _geoController = new AbortController();
     const body = new URLSearchParams({
         cols:      txtCols.value,
         outerW:    txtW.value,
@@ -383,6 +380,10 @@ async function fetchGeometry() {
         doorType:  txtDoorType.value,
         doorCount: txtDoorCount.value,
     });
+    const sig = body.toString();
+    if (_geoCache && _geoCache.sig === sig) return _geoCache.data;
+    if (_geoController) _geoController.abort();
+    _geoController = new AbortController();
     try {
         const _tok = localStorage.getItem('pmok_auth_token');
         const res = await fetch('api/geometry.php', {
@@ -391,7 +392,9 @@ async function fetchGeometry() {
             body,
             signal: _geoController.signal,
         });
-        return res.json();
+        const data = await res.json();
+        _geoCache = { sig, data };
+        return data;
     } catch (e) {
         if (e.name === 'AbortError') return null;
         throw e;
@@ -400,10 +403,9 @@ async function fetchGeometry() {
 
 let _panRaf = null;
 let _geoCache = null;
-let _isPanning = false;
 function drawPan() {
     if (_panRaf) return;
-    _panRaf = requestAnimationFrame(() => { _panRaf = null; _isPanning = true; draw().finally(() => { _isPanning = false; }); });
+    _panRaf = requestAnimationFrame(() => { _panRaf = null; draw(); });
 }
 
 async function draw() {

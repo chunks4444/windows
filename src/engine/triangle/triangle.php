@@ -67,8 +67,8 @@ header('Pragma: no-cache');
                     <div class="ctrl">
                         <div class="ctrl-header"><span class="ctrl-label" id="lblCols">가로 칸수</span></div>
                         <div class="slider-row">
-                            <input type="range" id="txtCols" min="2" max="30" step="1" value="4">
-                            <input type="number" class="slider-num" id="numCols" min="2" max="30" step="1" value="4">
+                            <input type="range" id="txtCols" min="2" max="30" step="2" value="4">
+                            <input type="number" class="slider-num" id="numCols" min="2" max="30" step="2" value="4">
                         </div>
                     </div>
                     <hr class="sb-divider">
@@ -460,8 +460,8 @@ header('Pragma: no-cache');
                         </div>
                     </div>
                     <div style="display:flex;gap:6px;margin-top:6px;">
-                        <button id="btnFacePaint" type="button" class="sb-select" style="cursor:pointer;flex:1;font-size:11px;">면컬러 칠하기</button>
-                        <button id="btnFaceClear" type="button" class="sb-select" style="cursor:pointer;flex-shrink:0;padding:0 8px;font-size:11px;display:none;width:auto;">초기화</button>
+                        <button id="btnFacePaint" type="button" class="hbtn" style="flex:1;justify-content:center;font-size:11px;">면컬러 칠하기</button>
+                        <button id="btnFaceClear" type="button" class="hbtn" style="flex-shrink:0;padding:0 8px;font-size:11px;display:none;width:auto;justify-content:center;">초기화</button>
                     </div>
                 </div>
                 <div class="sb-section">

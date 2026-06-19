@@ -18,7 +18,15 @@
 
     // ── 라인 편집 상태 ──────────────────────────────
     let deletedSegs  = new Set();
-    let mondrianLayout = null;
+    let mondrianLayout = null; // rects/lines는 innerW·innerH 대비 0~1 비율로 저장 (가로/세로폭이 바뀌어도 형태 유지)
+    function mondrianRectPx(r, iw, ih) {
+        return { x: r.x * iw, y: r.y * ih, w: r.w * iw, h: r.h * ih, color: r.color };
+    }
+    function mondrianLinePx(l, iw, ih) {
+        return l.axis === 'v'
+            ? { axis: 'v', pos: l.pos * iw, from: l.from * ih, to: l.to * ih }
+            : { axis: 'h', pos: l.pos * ih, from: l.from * iw, to: l.to * iw };
+    }
     let addedLines   = [];
     let lineEditMode = null;
     let addLineStart = null;
@@ -369,9 +377,6 @@ function snapToNode(cx, cy) {
 let _geoController = null;
 
 async function fetchGeometry() {
-    if (_isPanning && _geoCache) return _geoCache;
-    if (_geoController) _geoController.abort();
-    _geoController = new AbortController();
     const body = new URLSearchParams({
         cols:      txtCols.value,
         outerW:    txtW.value,
@@ -385,6 +390,10 @@ async function fetchGeometry() {
         doorType:  txtDoorType.value,
         doorCount: txtDoorCount.value,
     });
+    const sig = body.toString();
+    if (_geoCache && _geoCache.sig === sig) return _geoCache.data;
+    if (_geoController) _geoController.abort();
+    _geoController = new AbortController();
     try {
         const _tok = localStorage.getItem('pmok_auth_token');
         const res = await fetch('api/geometry.php', {
@@ -393,7 +402,9 @@ async function fetchGeometry() {
             body,
             signal: _geoController.signal,
         });
-        return res.json();
+        const data = await res.json();
+        _geoCache = { sig, data };
+        return data;
     } catch (e) {
         if (e.name === 'AbortError') return null;
         throw e;
@@ -402,10 +413,9 @@ async function fetchGeometry() {
 
 let _panRaf = null;
 let _geoCache = null;
-let _isPanning = false;
 function drawPan() {
     if (_panRaf) return;
-    _panRaf = requestAnimationFrame(() => { _panRaf = null; _isPanning = true; draw().finally(() => { _isPanning = false; }); });
+    _panRaf = requestAnimationFrame(() => { _panRaf = null; draw(); });
 }
 
 async function draw() {
@@ -698,7 +708,7 @@ async function draw() {
             const fw = geo.frameW, ft = geo.frameHTop, iw = geo.innerW, ih = geo.innerH;
             if (mondrianLayout) {
                 // 몬드리안: 4 모서리 + 각 선 끝점 + 교점
-                const { lines } = mondrianLayout;
+                const lines = mondrianLayout.lines.map(l => mondrianLinePx(l, iw, ih));
                 [[fw, ft], [fw + iw, ft], [fw, ft + ih], [fw + iw, ft + ih]].forEach(([rx, ry]) =>
                     lastNodeList.push({ cx: toCanvasX(rx), cy: toCanvasY(ry) }));
                 for (const ln of lines) {
@@ -762,7 +772,8 @@ async function draw() {
 
         if (mondrianLayout) {
             // ── 몬드리안 BSP 격자 ───────────────────────
-            const { rects, lines } = mondrianLayout;
+            const rects = mondrianLayout.rects.map(r => mondrianRectPx(r, geo.innerW, geo.innerH));
+            const lines = mondrianLayout.lines.map(l => mondrianLinePx(l, geo.innerW, geo.innerH));
             const EPS = 0.5;
 
             // 채색 셀 먼저
@@ -1998,6 +2009,10 @@ document.getElementById('chkDimension').addEventListener('change', e => { showDi
         faceColorUI.restoreColor(p.faceBrushColor || null);
         faceColorUI.updateClearBtn(!!faceColorMap);
         mondrianLayout = p.mondrianLayout || null;
+        // 구버전 저장본은 rects/lines가 절대 좌표(px)였음 — 비율(0~1) 형식이 아니면 호환되지 않으므로 무시
+        if (mondrianLayout && mondrianLayout.rects.some(r => r.w > 2 || r.h > 2)) {
+            mondrianLayout = null;
+        }
         _updateMondrianBtn();
         deletedSegs  = new Set(p.deletedSegs || []);
         addedLines   = p.addedLines || [];
@@ -2406,7 +2421,12 @@ document.getElementById('chkDimension').addEventListener('change', e => { showDi
             rect.color = palette[i % palette.length];
         });
 
-        mondrianLayout = { rects, lines };
+        mondrianLayout = {
+            rects: rects.map(r => ({ x: r.x / W, y: r.y / H, w: r.w / W, h: r.h / H, color: r.color })),
+            lines: lines.map(l => l.axis === 'v'
+                ? { axis: 'v', pos: l.pos / W, from: l.from / H, to: l.to / H }
+                : { axis: 'h', pos: l.pos / H, from: l.from / W, to: l.to / W }),
+        };
         _updateMondrianBtn();
         draw();
     }

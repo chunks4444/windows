@@ -400,9 +400,6 @@ function normToCtx(nx, ny) {
 let _geoController = null;
 
 async function fetchGeometry() {
-    if (_isPanning && _geoCache) return _geoCache;
-    if (_geoController) _geoController.abort();
-    _geoController = new AbortController();
     const body = new URLSearchParams({
         cols:      txtCols.value,
         outerW:    txtW.value,
@@ -416,6 +413,10 @@ async function fetchGeometry() {
         doorType:  txtDoorType.value,
         doorCount: txtDoorCount.value,
     });
+    const sig = body.toString();
+    if (_geoCache && _geoCache.sig === sig) return _geoCache.data;
+    if (_geoController) _geoController.abort();
+    _geoController = new AbortController();
     try {
         const _tok = localStorage.getItem('pmok_auth_token');
         const res = await fetch('api/geometry.php', {
@@ -424,7 +425,9 @@ async function fetchGeometry() {
             body,
             signal: _geoController.signal,
         });
-        return res.json();
+        const data = await res.json();
+        _geoCache = { sig, data };
+        return data;
     } catch (e) {
         if (e.name === 'AbortError') return null;
         throw e;
@@ -433,10 +436,9 @@ async function fetchGeometry() {
 
 let _panRaf = null;
 let _geoCache = null;
-let _isPanning = false;
 function drawPan() {
     if (_panRaf) return;
-    _panRaf = requestAnimationFrame(() => { _panRaf = null; _isPanning = true; draw().finally(() => { _isPanning = false; }); });
+    _panRaf = requestAnimationFrame(() => { _panRaf = null; draw(); });
 }
 
 async function draw() {
@@ -1795,7 +1797,6 @@ async function draw() {
     const syncPairs = [
         { range: txtW,      num: document.getElementById('numW'),       min: 400,  max: 3000 },
         { range: txtH,      num: document.getElementById('numH'),       min: 400,  max: 3000 },
-        { range: txtCols,   num: document.getElementById('numCols'),    min: 2,    max: 30   },
         { range: txtFrame,  num: document.getElementById('numFrame'),   min: 20,   max: 150  },
         { range: txtFrameH, num: document.getElementById('numFrameH'),  min: 20,   max: 150  },
         { range: txtSlat,   num: document.getElementById('numSlat'),    min: 8,    max: 35   },
@@ -1826,6 +1827,27 @@ async function draw() {
         num.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') num.blur();
         });
+    });
+
+    // 가로 칸수는 짝수만 허용 (삼각형 패턴이 좌우 한 쌍으로 맞물려야 함)
+    const numCols = document.getElementById('numCols');
+    const snapColsEven = (v) => Math.min(30, Math.max(2, Math.round(v / 2) * 2));
+    txtCols.addEventListener('input', () => {
+        const v = snapColsEven(parseInt(txtCols.value));
+        txtCols.value = v;
+        numCols.value = v;
+        draw();
+    });
+    numCols.addEventListener('blur', () => {
+        let v = parseInt(numCols.value);
+        if (isNaN(v)) v = parseInt(txtCols.value);
+        v = snapColsEven(v);
+        txtCols.value = v;
+        numCols.value = v;
+        draw();
+    });
+    numCols.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') numCols.blur();
     });
 
     txtDoorType.addEventListener('input', updateDoorCountOptions);

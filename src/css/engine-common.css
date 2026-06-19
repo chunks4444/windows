@@ -1147,7 +1147,7 @@ input[type="range"]::-moz-range-thumb {
 .spec-unit { font-size: var(--fs-12); font-weight: 400; color: rgba(255,255,255,0.55); margin-left: 0; letter-spacing: 0; }
 
 /* ── SELECT ──────────────────────────────── */
-.sb-select { display: none; }
+select.sb-select { display: none; }
 
 /* ── CUSTOM SELECT ───────────────────────── */
 .cs-wrap { position: relative; width: 100%; }
@@ -1191,14 +1191,6 @@ input[type="range"]::-moz-range-thumb {
 }
 .cs-option:hover { background: rgba(255,255,255,0.08); }
 .cs-option.active { color: #fff; font-weight: 700; }
-
-#btnFacePaint {
-    background: var(--sidebar-bg);
-    color: rgba(255,255,255,0.9);
-    border: 1px solid var(--border);
-    border-radius: var(--r-sm);
-}
-#btnFacePaint:hover { background: #111; color: #fff; }
 
 input[type="color"] {
     -webkit-appearance: none;

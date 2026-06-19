@@ -120,8 +120,8 @@ header('Pragma: no-cache');
                     <div class="ctrl" style="margin-top:6px;">
                         <div class="ctrl-header"><span class="ctrl-label">랜덤 패턴</span></div>
                         <div style="display:flex;gap:6px;width:100%;">
-                            <button id="btnMondrian" type="button" class="sb-select" style="flex:1;cursor:pointer;border:1px solid var(--border);">랜덤 생성</button>
-                            <button id="btnMondrianClear" type="button" class="sb-select" style="display:none;cursor:pointer;flex:1;border:1px solid var(--border);">초기화</button>
+                            <button id="btnMondrian" type="button" class="hbtn" style="flex:1;justify-content:center;">랜덤 생성</button>
+                            <button id="btnMondrianClear" type="button" class="hbtn" style="display:none;flex:1;justify-content:center;">초기화</button>
                         </div>
                     </div>
 
@@ -482,8 +482,8 @@ header('Pragma: no-cache');
                         </div>
                     </div>
                     <div style="display:flex;gap:6px;margin-top:6px;">
-                        <button id="btnFacePaint" type="button" class="sb-select" style="cursor:pointer;flex:1;font-size:11px;">면컬러 칠하기</button>
-                        <button id="btnFaceClear" type="button" class="sb-select" style="cursor:pointer;flex-shrink:0;padding:0 8px;font-size:11px;display:none;width:auto;">초기화</button>
+                        <button id="btnFacePaint" type="button" class="hbtn" style="flex:1;justify-content:center;font-size:11px;">면컬러 칠하기</button>
+                        <button id="btnFaceClear" type="button" class="hbtn" style="flex-shrink:0;padding:0 8px;font-size:11px;display:none;width:auto;justify-content:center;">초기화</button>
                     </div>
                 </div>
                 <div class="sb-section">

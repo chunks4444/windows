@@ -108,7 +108,7 @@ require_once __DIR__ . '/../../lib/colors.php';
                         <div class="ctrl">
                         <div style="display:flex;gap:6px;align-items:center;">
                             <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;">
-                                <span style="font-size:10px;color:var(--text-3);font-weight:600;">가로살 상</span>
+                                <span style="font-size:var(--fs-12);color:var(--text-3);font-weight:600;">가로살 상</span>
                                 <select id="txtPatternTop" class="sb-select" style="width:100%;">
                                     <option value="0">0</option>
                                     <option value="1" style="font-weight:700;">1</option>
@@ -121,7 +121,7 @@ require_once __DIR__ . '/../../lib/colors.php';
                                 </select>
                             </div>
                             <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;">
-                                <span style="font-size:10px;color:var(--text-3);font-weight:600;">가로살 중</span>
+                                <span style="font-size:var(--fs-12);color:var(--text-3);font-weight:600;">가로살 중</span>
                                 <select id="txtPatternMid" class="sb-select" style="width:100%;">
                                     <option value="0">0</option>
                                     <option value="1" style="font-weight:700;">1</option>
@@ -136,7 +136,7 @@ require_once __DIR__ . '/../../lib/colors.php';
                                 </select>
                             </div>
                             <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;">
-                                <span style="font-size:10px;color:var(--text-3);font-weight:600;">가로살 하</span>
+                                <span style="font-size:var(--fs-12);color:var(--text-3);font-weight:600;">가로살 하</span>
                                 <select id="txtPatternBot" class="sb-select" style="width:100%;">
                                     <option value="0">0</option>
                                     <option value="1" style="font-weight:700;">1</option>
@@ -512,8 +512,8 @@ require_once __DIR__ . '/../../lib/colors.php';
                         </div>
                     </div>
                     <div style="display:flex;gap:6px;margin-top:6px;">
-                        <button id="btnFacePaint" type="button" class="sb-select" style="cursor:pointer;flex:1;font-size:11px;">면컬러 칠하기</button>
-                        <button id="btnFaceClear" type="button" class="sb-select" style="cursor:pointer;flex-shrink:0;padding:0 8px;font-size:11px;display:none;width:auto;">초기화</button>
+                        <button id="btnFacePaint" type="button" class="hbtn" style="flex:1;justify-content:center;font-size:11px;">면컬러 칠하기</button>
+                        <button id="btnFaceClear" type="button" class="hbtn" style="flex-shrink:0;padding:0 8px;font-size:11px;display:none;width:auto;justify-content:center;">초기화</button>
                     </div>
                 </div>
                 <div class="sb-section">
