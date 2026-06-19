@@ -384,11 +384,11 @@ body {
 
 /* ── RESPONSIVE ───────────────────────────────── */
 @media (max-width: 900px) {
+    .container { padding-left: 32px; padding-right: 32px; }
     .ab-info-grid { grid-template-columns: repeat(2, 1fr); }
     .ab-gallery { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 768px) {
-    .container { padding-left: 32px; padding-right: 32px; }
     .ab-hero   { padding: 64px 0 56px; }
     .ab-section { padding: 56px 0; }
     .ab-phil-cols { grid-template-columns: 1fr; gap: 40px; }
