@@ -50,6 +50,8 @@ require_once __DIR__ . '/../../lib/colors.php';
                         </div>
                     </div>
 
+                    <hr class="sb-divider">
+
                     <div class="ctrl">
                         <div class="ctrl-header"><span class="ctrl-label">문 가로폭</span></div>
                         <div class="slider-row">
@@ -58,14 +60,15 @@ require_once __DIR__ . '/../../lib/colors.php';
                         </div>
                     </div>
                     <div class="ctrl">
-                        <div class="ctrl-header"><span class="ctrl-label">세로높이</span></div>
+                        <div class="ctrl-header"><span class="ctrl-label">문 세로높이</span></div>
                         <div class="slider-row">
                             <input type="range" id="txtH" min="400" max="3000" step="1" value="1707">
                             <input type="number" class="slider-num" id="numH" min="400" max="3000" step="1" value="1707">
                         </div>
                     </div>
 
-                    <div class="sb-sub-title">창살 설정</div>
+                    <hr class="sb-divider">
+
                     <div class="ctrl">
                         <div class="ctrl-header"><span class="ctrl-label">가로 칸수</span></div>
                         <div class="slider-row">
@@ -73,34 +76,39 @@ require_once __DIR__ . '/../../lib/colors.php';
                             <input type="number" class="slider-num" id="numCols" min="2" max="30" step="1" value="12">
                         </div>
                     </div>
+                    <hr class="sb-divider">
+
                     <div class="ctrl">
-                        <div class="ctrl-header"><span class="ctrl-label">좌우울거미 두께</span></div>
+                        <div class="ctrl-header"><span class="ctrl-label">좌우 울거미 두께</span></div>
                         <div class="slider-row">
                             <input type="range" id="txtFrame" min="20" max="150" step="1" value="60">
                             <input type="number" class="slider-num" id="numFrame" min="20" max="150" step="1" value="60">
                         </div>
                     </div>
                     <div class="ctrl">
-                        <div class="ctrl-header"><span class="ctrl-label">상하울거미 두께</span></div>
+                        <div class="ctrl-header"><span class="ctrl-label">상하 울거미 두께</span></div>
                         <div class="slider-row">
                             <input type="range" id="txtFrameH" min="20" max="150" step="1" value="60">
                             <input type="number" class="slider-num" id="numFrameH" min="20" max="150" step="1" value="60">
                         </div>
                     </div>
+                    <hr class="sb-divider">
+
                     <div class="ctrl">
-                        <div class="ctrl-header"><span class="ctrl-label">창살 두께</span></div>
+                        <div class="ctrl-header"><span class="ctrl-label">살 두께</span></div>
                         <div class="slider-row">
                             <input type="range" id="txtSlat" min="8" max="35" step="1" value="12">
                             <input type="number" class="slider-num" id="numSlat" min="8" max="35" step="1" value="12">
                         </div>
                     </div>
 
+                    <hr class="sb-divider">
+
                     <div id="ratioCtrl">
-                    <div class="ctrl">
-                        <div class="ctrl-header"><span class="ctrl-label">가로살 배열</span></div>
+                        <div class="ctrl">
                         <div style="display:flex;gap:6px;align-items:center;">
                             <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;">
-                                <span style="font-size:10px;color:var(--text-3);font-weight:600;">상</span>
+                                <span style="font-size:10px;color:var(--text-3);font-weight:600;">가로살 상</span>
                                 <select id="txtPatternTop" class="sb-select" style="width:100%;">
                                     <option value="0">0</option>
                                     <option value="1" style="font-weight:700;">1</option>
@@ -113,7 +121,7 @@ require_once __DIR__ . '/../../lib/colors.php';
                                 </select>
                             </div>
                             <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;">
-                                <span style="font-size:10px;color:var(--text-3);font-weight:600;">중</span>
+                                <span style="font-size:10px;color:var(--text-3);font-weight:600;">가로살 중</span>
                                 <select id="txtPatternMid" class="sb-select" style="width:100%;">
                                     <option value="0">0</option>
                                     <option value="1" style="font-weight:700;">1</option>
@@ -128,7 +136,7 @@ require_once __DIR__ . '/../../lib/colors.php';
                                 </select>
                             </div>
                             <div style="display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;">
-                                <span style="font-size:10px;color:var(--text-3);font-weight:600;">하</span>
+                                <span style="font-size:10px;color:var(--text-3);font-weight:600;">가로살 하</span>
                                 <select id="txtPatternBot" class="sb-select" style="width:100%;">
                                     <option value="0">0</option>
                                     <option value="1" style="font-weight:700;">1</option>
@@ -143,16 +151,19 @@ require_once __DIR__ . '/../../lib/colors.php';
                         </div>
                         <input type="hidden" id="txtPattern" value="3/5/3">
                     </div>
-                    <div class="ctrl">
-                        <div class="ctrl-header"><span class="ctrl-label">세로 비율</span></div>
-                        <div class="slider-row">
-                            <input type="range" id="txtRatio" min="1.0" max="5.0" step="0.1" value="1.2">
-                            <input type="number" class="slider-num" id="numRatio" min="1.0" max="5.0" step="0.1" value="1.2">
+                        <hr class="sb-divider">
+
+                        <div class="ctrl">
+                            <div class="ctrl-header"><span class="ctrl-label">세로 비율</span></div>
+                            <div class="slider-row">
+                                <input type="range" id="txtRatio" min="1.0" max="5.0" step="0.1" value="1.2">
+                                <input type="number" class="slider-num" id="numRatio" min="1.0" max="5.0" step="0.1" value="1.2">
+                            </div>
                         </div>
                     </div>
-                    </div>
 
-                    <div class="sb-sub-title">풍판</div>
+                    <hr class="sb-divider">
+
                     <div class="toggle-row">
                         <span class="toggle-label">풍판 사용</span>
                         <label class="toggle-switch">
@@ -168,7 +179,8 @@ require_once __DIR__ . '/../../lib/colors.php';
                         </div>
                     </div>
 
-                    <div class="sb-sub-title">표시 설정</div>
+                    <hr class="sb-divider">
+
                     <div class="toggle-row" style="margin-bottom:0;">
                         <span class="toggle-label">치수 표기</span>
                         <label class="toggle-switch">
@@ -262,7 +274,7 @@ require_once __DIR__ . '/../../lib/colors.php';
                     </div>
 
                     <div class="slat-group">
-                        <div class="slat-group-title">가로살 · 세로살(내경에 살두께 곱하기 2)</div>
+                        <div class="slat-group-title">가로살 · 세로살(내경에 살두께 X 2)</div>
                         <div class="diag-list">
                             <div class="slat-row">
                                 <span class="slat-len" id="spHSlatLen">—</span><span class="slat-len-unit">mm</span>
@@ -442,8 +454,8 @@ require_once __DIR__ . '/../../lib/colors.php';
         <div class="controls-right" id="rightSidebar">
             <div class="sb-inner-right">
                 <div class="sb-section">
-                    <div style="display:flex;gap:6px;">
-                        <button class="hbtn hbtn-primary" style="flex:1;justify-content:center;">
+                    <div style="display:flex;gap:6px;width:100%;">
+                        <button class="hbtn hbtn-primary" style="flex:1;justify-content:center;width:100%;">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
                                 <path d="M7 3H14L19 8V20H7V3Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
                                 <path d="M14 3V8H19" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
@@ -457,7 +469,6 @@ require_once __DIR__ . '/../../lib/colors.php';
                 <div class="sb-section">
                     <div class="sb-section-title" style="cursor:default;">마감</div>
                     <div class="ctrl">
-                        <div class="ctrl-header"><span class="ctrl-label">목재</span></div>
                         <select id="txtWood" class="sb-select">
                             <option value="hongsong">홍송</option>
                             <option value="sonamuPine">소나무</option>
@@ -465,28 +476,28 @@ require_once __DIR__ . '/../../lib/colors.php';
                         </select>
                     </div>
                     <div class="ctrl">
-                        <div class="ctrl-header"><span class="ctrl-label">내부 마감</span></div>
                         <select id="txtFinish" class="sb-select">
                             <option value="changhoji">창호지</option>
                             <option value="glass">유리</option>
                             <option value="acrylic">아크릴</option>
                         </select>
                     </div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
-                        <div>
-                            <div class="color-label" style="margin-bottom:4px;">울거미</div>
+                    <hr class="sb-divider">
+                    <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">
+                        <div style="display:flex;align-items:center;justify-content:space-between;">
+                            <span class="color-label">울거미 컬러</span>
                             <div class="color-picker-wrap">
-                                <button class="color-preview-btn" id="framePreviewBtn" style="width:100%;">
+                                <button class="color-preview-btn" id="framePreviewBtn">
                                     <span class="color-preview-dot" id="framePreviewDot"></span>
                                     <span id="framePreviewName">—</span>
                                 </button>
                                 <div class="color-popup" id="framePopup"></div>
                             </div>
                         </div>
-                        <div>
-                            <div class="color-label" style="margin-bottom:4px;">살</div>
+                        <div style="display:flex;align-items:center;justify-content:space-between;">
+                            <span class="color-label">살 컬러</span>
                             <div class="color-picker-wrap">
-                                <button class="color-preview-btn" id="slatPreviewBtn" style="width:100%;">
+                                <button class="color-preview-btn" id="slatPreviewBtn">
                                     <span class="color-preview-dot" id="slatPreviewDot"></span>
                                     <span id="slatPreviewName">—</span>
                                 </button>
@@ -494,13 +505,16 @@ require_once __DIR__ . '/../../lib/colors.php';
                             </div>
                         </div>
                     </div>
-                    <div style="margin-top:8px;">
-                        <div class="color-label" style="margin-bottom:4px;">면</div>
-                        <div style="display:flex;gap:6px;align-items:center;">
-                            <input type="color" id="faceColorInput" value="#c8102e" style="width:30px;height:28px;padding:2px;border:none;border-radius:4px;cursor:pointer;flex-shrink:0;">
-                            <button id="btnFacePaint" type="button" class="sb-select" style="cursor:pointer;flex:1;font-size:11px;">칠하기</button>
-                            <button id="btnFaceClear" type="button" class="sb-select" style="cursor:pointer;flex-shrink:0;padding:0 8px;font-size:11px;display:none;width:auto;">초기화</button>
+                    <div style="margin-top:8px;display:flex;align-items:center;justify-content:space-between;">
+                        <span class="color-label">면 컬러</span>
+                        <div class="color-preview-btn" style="gap:5px;">
+                            <input type="color" id="faceColorInput" value="#c8102e" style="width:14px;height:14px;padding:0;border:none;border-radius:3px;cursor:pointer;flex-shrink:0;">
+                            <span id="faceColorCode">#c8102e</span>
                         </div>
+                    </div>
+                    <div style="display:flex;gap:6px;margin-top:6px;">
+                        <button id="btnFacePaint" type="button" class="sb-select" style="cursor:pointer;flex:1;font-size:11px;">면컬러 칠하기</button>
+                        <button id="btnFaceClear" type="button" class="sb-select" style="cursor:pointer;flex-shrink:0;padding:0 8px;font-size:11px;display:none;width:auto;">초기화</button>
                     </div>
                 </div>
                 <div class="sb-section">

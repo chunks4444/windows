@@ -1272,7 +1272,7 @@ async function draw() {
             rCtx.lineWidth   = mm === 0 ? 1 : 0.5;
             rCtx.beginPath(); rCtx.moveTo(x, R - 8); rCtx.lineTo(x, R); rCtx.stroke();
             rCtx.fillStyle    = mm === 0 ? ZERO : LBL;
-            rCtx.font         = '8px sans-serif';
+            rCtx.font         = '10px sans-serif';
             rCtx.textBaseline = 'top';
             rCtx.textAlign    = mm === 0 ? 'left' : 'center';
             rCtx.fillText(mm, mm === 0 ? x + 2 : x, 6);
@@ -1298,7 +1298,7 @@ async function draw() {
             rCtx.translate(R / 2, y);
             rCtx.rotate(-Math.PI / 2);
             rCtx.fillStyle    = mm === 0 ? ZERO : LBL;
-            rCtx.font         = '8px sans-serif';
+            rCtx.font         = '10px sans-serif';
             rCtx.textAlign    = 'center';
             rCtx.textBaseline = 'middle';
             rCtx.fillText(mm, 0, 0);

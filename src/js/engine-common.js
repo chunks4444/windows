@@ -125,7 +125,7 @@
 
         function updatePreview(color) {
             dot.style.background = color.hex;
-            nameEl.textContent   = color.name;
+            nameEl.textContent   = color.hex;
         }
 
         const allColors = colorGroups.flatMap(g => g.colors);
@@ -182,6 +182,14 @@
 
     function buildFaceColorUI(onClear) {
         const clearBtn = document.getElementById('btnFaceClear');
+        const inp      = document.getElementById('faceColorInput');
+        const codeEl   = document.getElementById('faceColorCode');
+
+        function syncCode() {
+            if (codeEl && inp) codeEl.textContent = inp.value;
+        }
+
+        if (inp) inp.addEventListener('input', syncCode);
 
         if (clearBtn) {
             clearBtn.addEventListener('click', () => {
@@ -191,7 +199,6 @@
         }
 
         function getCurrentHex() {
-            const inp = document.getElementById('faceColorInput');
             return inp ? inp.value : '#c8102e';
         }
 
@@ -200,8 +207,7 @@
         }
 
         function restoreColor(hex) {
-            const inp = document.getElementById('faceColorInput');
-            if (inp && hex) inp.value = hex;
+            if (inp && hex) { inp.value = hex; syncCode(); }
         }
 
         return { getCurrentHex, updateClearBtn, restoreColor };
@@ -453,6 +459,86 @@
         return `${safe}.${ext}`;
     }
 
+
+// 커스텀 셀렉트
+(function () {
+    const CHEVRON = `<svg width="10" height="6" viewBox="0 0 10 6" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l4 4 4-4"/></svg>`;
+    const proto   = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, 'value');
+
+    function initOne(sel) {
+        if (sel._csInited) return;
+        sel._csInited = true;
+
+        const wrap     = document.createElement('div');
+        wrap.className = 'cs-wrap';
+
+        const trigger  = document.createElement('div');
+        trigger.className = 'cs-trigger';
+        const label    = document.createElement('span');
+        trigger.appendChild(label);
+        trigger.insertAdjacentHTML('beforeend', CHEVRON);
+
+        const dropdown = document.createElement('div');
+        dropdown.className = 'cs-dropdown';
+
+        function buildOptions() {
+            dropdown.innerHTML = '';
+            Array.from(sel.options).forEach(opt => {
+                const item = document.createElement('div');
+                item.className = 'cs-option' + (opt.value === proto.get.call(sel) ? ' active' : '');
+                item.textContent = opt.text;
+                item.dataset.value = opt.value;
+                item.addEventListener('click', e => {
+                    e.stopPropagation();
+                    proto.set.call(sel, opt.value);
+                    sel.dispatchEvent(new Event('change', { bubbles: true }));
+                    sel.dispatchEvent(new Event('input',  { bubbles: true }));
+                    syncDisplay();
+                    wrap.classList.remove('open');
+                });
+                dropdown.appendChild(item);
+            });
+        }
+
+        function syncDisplay() {
+            const cur = sel.options[sel.selectedIndex];
+            label.textContent = cur ? cur.text : '';
+            dropdown.querySelectorAll('.cs-option').forEach(item => {
+                item.classList.toggle('active', item.dataset.value === proto.get.call(sel));
+            });
+        }
+
+        // 프로그래밍 방식 .value 변경 감지
+        Object.defineProperty(sel, 'value', {
+            get: () => proto.get.call(sel),
+            set: (val) => { proto.set.call(sel, val); syncDisplay(); },
+            configurable: true,
+        });
+
+        trigger.addEventListener('click', e => {
+            e.stopPropagation();
+            const isOpen = wrap.classList.contains('open');
+            document.querySelectorAll('.cs-wrap.open').forEach(w => w.classList.remove('open'));
+            if (!isOpen) { buildOptions(); syncDisplay(); wrap.classList.add('open'); }
+        });
+
+        wrap.appendChild(trigger);
+        wrap.appendChild(dropdown);
+        sel.parentNode.insertBefore(wrap, sel);
+
+        buildOptions();
+        syncDisplay();
+    }
+
+    function initCustomSelects() {
+        document.querySelectorAll('select.sb-select').forEach(initOne);
+    }
+
+    document.addEventListener('DOMContentLoaded', initCustomSelects);
+    document.addEventListener('click', () => {
+        document.querySelectorAll('.cs-wrap.open').forEach(w => w.classList.remove('open'));
+    });
+})();
 
 // 관리자 전용 섹션 표시
 (function () {

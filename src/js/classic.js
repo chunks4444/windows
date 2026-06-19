@@ -114,7 +114,7 @@
     let logW = 0, logH = 0;
     let isDragging = false;
     let startX, startY;
-    let panMode = false;
+    let panMode = true;
     let _versionsLoaded = false;
 
     // ── 공통 모달 유틸리티 ─────────────────────────
@@ -1025,7 +1025,7 @@ async function draw() {
         if (false && showDimensions && lastDoorWpx > 0) {
             const _sf  = scaleFactor;
             const GAP  = 24 / _sf, TICK = 5 / _sf, ITICK = 12 / _sf;
-            const R    = 3  / _sf, lw   = 1 / _sf, fs    = 13 / _sf;
+            const R    = 3  / _sf, lw   = 1 / _sf, fs    = 14 / _sf;
             const dL = offsetX, dR = offsetX + totalWidth * baseScale;
             const dT = offsetY, dB = offsetY + totalH * baseScale;
             ctx.save();
@@ -1060,7 +1060,7 @@ async function draw() {
         if (showDimensions && totalWidth > 0) {
             const _sf  = scaleFactor;
             const GAP  = 24 / _sf, TICK = 5 / _sf, ITICK = 12 / _sf;
-            const R    = 3  / _sf, lw   = 1 / _sf, fs    = 13 / _sf;
+            const R    = 3  / _sf, lw   = 1 / _sf, fs    = 14 / _sf;
             const dL = offsetX, dR = offsetX + totalWidth * baseScale;
             const dT = offsetY, dB = offsetY + totalH * baseScale;
             ctx.save();
@@ -1185,7 +1185,7 @@ async function draw() {
         const GAP=24, TICK=5, ITICK=12, R=3;
         const color = 'rgba(50,50,50,0.7)';
         rCtx.strokeStyle = color; rCtx.fillStyle = color;
-        rCtx.lineWidth = 1; rCtx.font = '15px -apple-system,sans-serif';
+        rCtx.lineWidth = 1; rCtx.font = '17px -apple-system,sans-serif';
         function dot(x,y){rCtx.beginPath();rCtx.arc(x,y,R,0,Math.PI*2);rCtx.fill();}
         const bY = oy+dH+GAP;
         rCtx.beginPath();
@@ -1256,7 +1256,7 @@ async function draw() {
             rCtx.lineWidth   = mm === 0 ? 1 : 0.5;
             rCtx.beginPath(); rCtx.moveTo(x, R - 8); rCtx.lineTo(x, R); rCtx.stroke();
             rCtx.fillStyle    = mm === 0 ? ZERO : LBL;
-            rCtx.font         = '8px sans-serif';
+            rCtx.font         = '10px sans-serif';
             rCtx.textBaseline = 'top';
             rCtx.textAlign    = mm === 0 ? 'left' : 'center';
             rCtx.fillText(mm, mm === 0 ? x + 2 : x, 6);
@@ -1282,7 +1282,7 @@ async function draw() {
             rCtx.translate(R / 2, y);
             rCtx.rotate(-Math.PI / 2);
             rCtx.fillStyle    = mm === 0 ? ZERO : LBL;
-            rCtx.font         = '8px sans-serif';
+            rCtx.font         = '10px sans-serif';
             rCtx.textAlign    = 'center';
             rCtx.textBaseline = 'middle';
             rCtx.fillText(mm, 0, 0);
@@ -1738,6 +1738,7 @@ async function draw() {
         }
     }
 
+    document.getElementById('btnPan').classList.add('cv-btn-active');
     document.getElementById('btnPan').addEventListener('click', setPanMode);
     document.getElementById('btnEditDelete').addEventListener('click', () => setEditMode('delete'));
     document.getElementById('btnEditAdd').addEventListener('click', () => setEditMode('add'));

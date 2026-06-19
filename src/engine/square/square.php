@@ -52,6 +52,8 @@ header('Pragma: no-cache');
                         </div>
                     </div>
 
+                    <hr class="sb-divider">
+
                     <div class="ctrl">
                         <div class="ctrl-header"><span class="ctrl-label">문 가로폭</span></div>
                         <div class="slider-row">
@@ -60,14 +62,14 @@ header('Pragma: no-cache');
                         </div>
                     </div>
                     <div class="ctrl">
-                        <div class="ctrl-header"><span class="ctrl-label">세로높이</span></div>
+                        <div class="ctrl-header"><span class="ctrl-label">문 세로높이</span></div>
                         <div class="slider-row">
                             <input type="range" id="txtH" min="400" max="3000" step="1" value="1707">
                             <input type="number" class="slider-num" id="numH" min="400" max="3000" step="1" value="1707">
                         </div>
                     </div>
 
-                    <div class="sb-sub-title">창살 설정</div>
+                    <hr class="sb-divider">
                     <div class="ctrl">
                         <div class="ctrl-header"><span class="ctrl-label">가로 칸수</span></div>
                         <div class="slider-row">
@@ -75,27 +77,33 @@ header('Pragma: no-cache');
                             <input type="number" class="slider-num" id="numCols" min="2" max="30" step="1" value="6">
                         </div>
                     </div>
+                    <hr class="sb-divider">
+
                     <div class="ctrl">
-                        <div class="ctrl-header"><span class="ctrl-label">좌우울거미 두께</span></div>
+                        <div class="ctrl-header"><span class="ctrl-label">좌우 울거미 두께</span></div>
                         <div class="slider-row">
                             <input type="range" id="txtFrame" min="20" max="150" step="1" value="60">
                             <input type="number" class="slider-num" id="numFrame" min="20" max="150" step="1" value="60">
                         </div>
                     </div>
                     <div class="ctrl">
-                        <div class="ctrl-header"><span class="ctrl-label">상하울거미 두께</span></div>
+                        <div class="ctrl-header"><span class="ctrl-label">상하 울거미 두께</span></div>
                         <div class="slider-row">
                             <input type="range" id="txtFrameH" min="20" max="150" step="1" value="60">
                             <input type="number" class="slider-num" id="numFrameH" min="20" max="150" step="1" value="60">
                         </div>
                     </div>
+                    <hr class="sb-divider">
+
                     <div class="ctrl">
-                        <div class="ctrl-header"><span class="ctrl-label">창살 두께</span></div>
+                        <div class="ctrl-header"><span class="ctrl-label">살 두께</span></div>
                         <div class="slider-row">
                             <input type="range" id="txtSlat" min="8" max="35" step="1" value="12">
                             <input type="number" class="slider-num" id="numSlat" min="8" max="35" step="1" value="12">
                         </div>
                     </div>
+
+                    <hr class="sb-divider">
 
                     <div id="ratioCtrl">
                     <div class="ctrl">
@@ -107,15 +115,17 @@ header('Pragma: no-cache');
                     </div>
                     </div>
 
+                    <hr class="sb-divider">
+
                     <div class="ctrl" style="margin-top:6px;">
                         <div class="ctrl-header"><span class="ctrl-label">랜덤 패턴</span></div>
-                        <div style="display:flex;gap:6px;">
+                        <div style="display:flex;gap:6px;width:100%;">
                             <button id="btnMondrian" type="button" class="sb-select" style="flex:1;cursor:pointer;border:1px solid var(--border);">랜덤 생성</button>
                             <button id="btnMondrianClear" type="button" class="sb-select" style="display:none;cursor:pointer;flex:1;border:1px solid var(--border);">초기화</button>
                         </div>
                     </div>
 
-                    <div class="sb-sub-title">여분 처리</div>
+                    <hr class="sb-divider">
                     <div class="toggle-row">
                         <span class="toggle-label">세로 자동 맞춤</span>
                         <label class="toggle-switch">
@@ -124,7 +134,7 @@ header('Pragma: no-cache');
                         </label>
                     </div>
 
-                    <div class="sb-sub-title">풍판</div>
+                    <hr class="sb-divider">
                     <div class="toggle-row">
                         <span class="toggle-label">풍판 사용</span>
                         <label class="toggle-switch">
@@ -140,7 +150,7 @@ header('Pragma: no-cache');
                         </div>
                     </div>
 
-                    <div class="sb-sub-title">표시 설정</div>
+                    <hr class="sb-divider">
                     <div class="toggle-row" style="margin-bottom:0;">
                         <span class="toggle-label">치수 표기</span>
                         <label class="toggle-switch">
@@ -414,8 +424,8 @@ header('Pragma: no-cache');
         <div class="controls-right" id="rightSidebar">
             <div class="sb-inner-right">
                 <div class="sb-section">
-                    <div style="display:flex;gap:6px;">
-                        <button class="hbtn hbtn-primary" style="flex:1;justify-content:center;">
+                    <div style="display:flex;gap:6px;width:100%;">
+                        <button class="hbtn hbtn-primary" style="flex:1;justify-content:center;width:100%;">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
                                 <path d="M7 3H14L19 8V20H7V3Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
                                 <path d="M14 3V8H19" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
@@ -429,7 +439,6 @@ header('Pragma: no-cache');
                 <div class="sb-section">
                     <div class="sb-section-title" style="cursor:default;">마감</div>
                     <div class="ctrl">
-                        <div class="ctrl-header"><span class="ctrl-label">목재</span></div>
                         <select id="txtWood" class="sb-select">
                             <option value="hongsong">홍송</option>
                             <option value="sonamuPine">소나무</option>
@@ -437,28 +446,28 @@ header('Pragma: no-cache');
                         </select>
                     </div>
                     <div class="ctrl">
-                        <div class="ctrl-header"><span class="ctrl-label">내부 마감</span></div>
                         <select id="txtFinish" class="sb-select">
                             <option value="changhoji">창호지</option>
                             <option value="glass">유리</option>
                             <option value="acrylic">아크릴</option>
                         </select>
                     </div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
-                        <div>
-                            <div class="color-label" style="margin-bottom:4px;">울거미</div>
+                    <hr class="sb-divider">
+                    <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">
+                        <div style="display:flex;align-items:center;justify-content:space-between;">
+                            <span class="color-label">울거미 컬러</span>
                             <div class="color-picker-wrap">
-                                <button class="color-preview-btn" id="framePreviewBtn" style="width:100%;">
+                                <button class="color-preview-btn" id="framePreviewBtn">
                                     <span class="color-preview-dot" id="framePreviewDot"></span>
                                     <span id="framePreviewName">—</span>
                                 </button>
                                 <div class="color-popup" id="framePopup"></div>
                             </div>
                         </div>
-                        <div>
-                            <div class="color-label" style="margin-bottom:4px;">살</div>
+                        <div style="display:flex;align-items:center;justify-content:space-between;">
+                            <span class="color-label">살 컬러</span>
                             <div class="color-picker-wrap">
-                                <button class="color-preview-btn" id="slatPreviewBtn" style="width:100%;">
+                                <button class="color-preview-btn" id="slatPreviewBtn">
                                     <span class="color-preview-dot" id="slatPreviewDot"></span>
                                     <span id="slatPreviewName">—</span>
                                 </button>
@@ -466,19 +475,22 @@ header('Pragma: no-cache');
                             </div>
                         </div>
                     </div>
-                    <div style="margin-top:8px;">
-                        <div class="color-label" style="margin-bottom:4px;">면</div>
-                        <div style="display:flex;gap:6px;align-items:center;">
-                            <input type="color" id="faceColorInput" value="#c8102e" style="width:30px;height:28px;padding:2px;border:none;border-radius:4px;cursor:pointer;flex-shrink:0;">
-                            <button id="btnFacePaint" type="button" class="sb-select" style="cursor:pointer;flex:1;font-size:11px;">칠하기</button>
-                            <button id="btnFaceClear" type="button" class="sb-select" style="cursor:pointer;flex-shrink:0;padding:0 8px;font-size:11px;display:none;width:auto;">초기화</button>
+                    <div style="margin-top:8px;display:flex;align-items:center;justify-content:space-between;">
+                        <span class="color-label">면 컬러</span>
+                        <div class="color-preview-btn" style="gap:5px;">
+                            <input type="color" id="faceColorInput" value="#c8102e" style="width:14px;height:14px;padding:0;border:none;border-radius:3px;cursor:pointer;flex-shrink:0;">
+                            <span id="faceColorCode">#c8102e</span>
                         </div>
+                    </div>
+                    <div style="display:flex;gap:6px;margin-top:6px;">
+                        <button id="btnFacePaint" type="button" class="sb-select" style="cursor:pointer;flex:1;font-size:11px;">면컬러 칠하기</button>
+                        <button id="btnFaceClear" type="button" class="sb-select" style="cursor:pointer;flex-shrink:0;padding:0 8px;font-size:11px;display:none;width:auto;">초기화</button>
                     </div>
                 </div>
                 <div class="sb-section">
                     <div class="sb-section-title" style="cursor:default;">배경 사진</div>
                     <div style="display:flex;flex-direction:column;gap:8px;">
-                        <div style="display:flex;gap:6px;">
+                        <div style="display:flex;gap:6px;width:100%;">
                         <button class="rp-add-btn" id="btnAddThumb" style="flex:1;">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -504,7 +516,7 @@ header('Pragma: no-cache');
                 </div>
                 <div class="sb-section">
                     <div class="sb-section-title" style="cursor:default;">내보내기</div>
-                    <div style="display:flex;gap:6px;">
+                    <div style="display:flex;gap:6px;width:100%;">
                         <button class="hbtn" id="btnSavePNG" style="flex:1;justify-content:center;">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M12 3v13M7 11l5 5 5-5" />
