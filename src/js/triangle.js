@@ -1304,11 +1304,11 @@ async function draw() {
         const mmPx = lastBaseScale * scaleFactor;
 
         let step;
-        if      (mmPx >= 5)    step = 5;
-        else if (mmPx >= 2)    step = 10;
-        else if (mmPx >= 0.8)  step = 25;
-        else if (mmPx >= 0.35) step = 50;
-        else                   step = 100;
+        if      (mmPx >= 8)   step = 1;
+        else if (mmPx >= 3)   step = 5;
+        else if (mmPx >= 1)   step = 10;
+        else if (mmPx >= 0.4) step = 50;
+        else                  step = 100;
 
         const ox = logW / 2 + panX + lastOLeft * scaleFactor;
         const oy = logH / 2 + panY + lastOTop  * scaleFactor;
