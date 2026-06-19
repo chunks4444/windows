@@ -295,6 +295,8 @@ function authUpdateNav() {
         if (adminFaq)         adminFaq.style.display         = isSuper ? '' : 'none';
         const adminWorks       = document.getElementById('navAdminWorks');
         if (adminWorks)       adminWorks.style.display       = isSuper ? '' : 'none';
+        const adminBlog        = document.getElementById('navAdminBlog');
+        if (adminBlog)        adminBlog.style.display        = isSuper ? '' : 'none';
         const adminStudioCards = document.getElementById('navAdminStudioCards');
         if (adminStudioCards) adminStudioCards.style.display = isSuper ? '' : 'none';
         loadNavBoards();

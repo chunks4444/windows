@@ -2,7 +2,7 @@
 $guide_current = 'account.php';
 $guide_title   = '프로필 & 회사 정보';
 $guide_prev    = ['href' => 'collection.php', 'title' => '컬렉션 & 내 보드'];
-$guide_next    = null;
+$guide_next    = ['href' => 'order.php', 'title' => '주문 안내'];
 include __DIR__ . '/_head.php';
 ?>
 

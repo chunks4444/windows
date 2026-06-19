@@ -21,7 +21,7 @@ body {
     margin-bottom: .5rem;
 }
 .lib-hero-sub {
-    font-size: var(--fs-16); color: var(--text-2);
+    font-size: var(--fs-13); font-weight: 700; color: var(--text-2);
 }
 
 /* ── 페이지 레이아웃 ──────────────────────────── */

@@ -282,6 +282,22 @@ try {
                         </div>
                         <i class="bi bi-arrow-right guide-card-arrow"></i>
                     </a>
+                    <a href="/src/guide/order.php" class="guide-card">
+                        <div class="guide-card-icon" style="background:#FDF0E6;color:#B8662F;"><i class="bi bi-cart-check"></i></div>
+                        <div class="guide-card-body">
+                            <div class="guide-card-title">주문</div>
+                            <div class="guide-card-desc">콘텐츠 준비 중입니다.</div>
+                        </div>
+                        <i class="bi bi-arrow-right guide-card-arrow"></i>
+                    </a>
+                    <a href="/src/guide/delivery.php" class="guide-card">
+                        <div class="guide-card-icon" style="background:#EAF3FB;color:#2E6FA8;"><i class="bi bi-truck"></i></div>
+                        <div class="guide-card-body">
+                            <div class="guide-card-title">배송</div>
+                            <div class="guide-card-desc">콘텐츠 준비 중입니다.</div>
+                        </div>
+                        <i class="bi bi-arrow-right guide-card-arrow"></i>
+                    </a>
                 </div>
             </div>
         </section>

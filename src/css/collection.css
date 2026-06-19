@@ -24,7 +24,7 @@ body { background: var(--page-bg); }
     margin-bottom: .5rem;
 }
 .lib-hero-sub {
-    font-size: var(--fs-16); color: var(--text-2);
+    font-size: var(--fs-13); font-weight: 700; color: var(--text-2);
 }
 
 /* ── 검색/필터 바 ─────────────────────────────── */

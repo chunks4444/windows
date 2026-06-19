@@ -26,8 +26,9 @@ $isHexagon   = (stripos($_SERVER['PHP_SELF'], '/hexagon/') !== false);
 $isIndex      = ($currentFile === 'index.php' || $_SERVER['PHP_SELF'] === '/');
 $isAbout      = (strpos($_SERVER['PHP_SELF'], '/company/') !== false);
 $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/collection/') !== false);
-$isGuide      = (strpos($_SERVER['PHP_SELF'], '/guide/') !== false);
 $isWork       = (strpos($_SERVER['PHP_SELF'], '/portfolio/') !== false);
+$isBlog       = (strpos($_SERVER['PHP_SELF'], '/blog/') !== false);
+$isGuide      = (strpos($_SERVER['PHP_SELF'], '/guide/') !== false || $isBlog);
 ?>
 <nav class="pm-navbar navbar navbar-expand-lg fixed-top px-4 py-3">
     <a href="/" class="navbar-brand d-flex align-items-center">
@@ -139,6 +140,8 @@ $isWork       = (strpos($_SERVER['PHP_SELF'], '/portfolio/') !== false);
             <li class="nav-item dropdown">
                 <a href="/src/guide/" class="nav-link dropdown-toggle <?= $isGuide ? 'active' : '' ?>" data-bs-toggle="dropdown" aria-expanded="false">Guide</a>
                 <ul class="dropdown-menu">
+                    <li><a class="dropdown-item <?= $isBlog ? 'active' : '' ?>" href="/src/blog/"><i class="bi bi-journal-text me-2"></i>블로그</a></li>
+                    <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="/src/guide/"><i class="bi bi-book me-2"></i>가이드 홈</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="/src/guide/intro.php"><i class="bi bi-info-circle me-2"></i>스튜디오 소개</a></li>
@@ -147,6 +150,8 @@ $isWork       = (strpos($_SERVER['PHP_SELF'], '/portfolio/') !== false);
                     <li><a class="dropdown-item" href="/src/guide/render.php"><i class="bi bi-stars me-2"></i>AI 렌더링</a></li>
                     <li><a class="dropdown-item" href="/src/guide/collection.php"><i class="bi bi-collection-fill me-2"></i>컬렉션</a></li>
                     <li><a class="dropdown-item" href="/src/guide/account.php"><i class="bi bi-person-gear me-2"></i>계정 설정</a></li>
+                    <li><a class="dropdown-item" href="/src/guide/order.php"><i class="bi bi-cart-check me-2"></i>주문</a></li>
+                    <li><a class="dropdown-item" href="/src/guide/delivery.php"><i class="bi bi-truck me-2"></i>배송</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="/#faqAccordion"><i class="bi bi-question-circle me-2"></i>FAQ</a></li>
                 </ul>
@@ -190,6 +195,7 @@ $isWork       = (strpos($_SERVER['PHP_SELF'], '/portfolio/') !== false);
                     <li id="navAdminColors" style="display:none;"><a class="dropdown-item" href="/src/admin/colors.php"><i class="bi bi-palette me-1"></i>컬러 팔레트 관리</a></li>
                     <li id="navAdminFaq" style="display:none;"><a class="dropdown-item" href="/src/admin/faq.php"><i class="bi bi-question-circle me-1"></i>FAQ 관리</a></li>
                     <li id="navAdminWorks" style="display:none;"><a class="dropdown-item" href="/src/admin/works.php"><i class="bi bi-images me-1"></i>Works 관리</a></li>
+                    <li id="navAdminBlog" style="display:none;"><a class="dropdown-item" href="/src/admin/blog.php"><i class="bi bi-journal-text me-1"></i>블로그 관리</a></li>
                     <li id="navAdminStudioCards" style="display:none;"><a class="dropdown-item" href="/src/admin/studio_cards.php"><i class="bi bi-grid-1x2 me-1"></i>스튜디오 카드 관리</a></li>
                 </ul>
             </li>

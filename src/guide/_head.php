@@ -53,6 +53,20 @@ $guide_nav = [
             ['file' => 'account.php', 'title' => '프로필 & 회사 정보'],
         ],
     ],
+    [
+        'title' => '주문', 'icon' => 'bi-cart-check',
+        'bg' => '#FDF0E6', 'color' => '#B8662F',
+        'articles' => [
+            ['file' => 'order.php', 'title' => '주문 안내'],
+        ],
+    ],
+    [
+        'title' => '배송', 'icon' => 'bi-truck',
+        'bg' => '#EAF3FB', 'color' => '#2E6FA8',
+        'articles' => [
+            ['file' => 'delivery.php', 'title' => '배송 안내'],
+        ],
+    ],
 ];
 
 // 현재 섹션 찾기

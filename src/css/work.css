@@ -32,7 +32,7 @@ body { background: var(--page-bg, #F2F3F4); }
     line-height: 1.2; margin-bottom: .5rem;
 }
 .wk-hero-sub {
-    font-size: var(--fs-16); color: var(--text-2, #5A6B69); margin-bottom: 1.75rem;
+    font-size: var(--fs-13); font-weight: 700; color: var(--text-2, #5A6B69); margin-bottom: 1.75rem;
 }
 .wk-count-badge {
     display: inline-flex; align-items: center; gap: .35rem;

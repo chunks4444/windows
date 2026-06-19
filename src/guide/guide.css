@@ -228,23 +228,20 @@ body:has(.guide-wrap) {
 }
 
 .guide-hero {
-    background: linear-gradient(135deg, #4f8ef7 0%, #2ec4d6 45%, #2ed68a 100%);
-    padding: 72px 24px 60px;
-    margin: 24px 24px 0;
-    border-radius: 16px;
-    text-align: center;
-    color: #fff;
+    border-bottom: 1px solid var(--border, #E0E5E4);
+    padding: 2.5rem 0;
 }
-.guide-hero h1 {
-    font-size: 34px;
-    font-weight: 800;
-    letter-spacing: -1px;
-    margin-bottom: 10px;
+.guide-hero-inner {
+    max-width: 1280px; margin: 0 auto; padding: 0 24px;
 }
-.guide-hero p {
-    font-size: 14px;
-    color: #fff;
-    line-height: 1.7;
+.guide-hero-label {
+    display: inline-block;
+    font-size: var(--fs-12); font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--teal);
+    margin-bottom: .5rem;
+}
+.guide-hero-sub {
+    font-size: var(--fs-13); font-weight: 700; color: var(--text-2);
 }
 
 /* ── 카테고리 카드 ────────────────────────────── */
@@ -498,7 +495,6 @@ body:has(.guide-wrap) {
     }
     .guide-main { padding: 28px 20px 60px; }
     .guide-article h1 { font-size: 22px; }
-    .guide-hero h1 { font-size: 24px; }
 }
 @media (max-width: 480px) {
     .guide-categories { grid-template-columns: 1fr; gap: 12px; }

@@ -20,8 +20,10 @@
 
     <!-- 히어로 -->
     <div class="guide-hero">
-        <h1>평목 가이드</h1>
-        <p>전통 창호 도면 설계부터 AI 렌더링까지,<br>평목 스튜디오의 모든 기능을 안내합니다.</p>
+        <div class="guide-hero-inner">
+            <p class="guide-hero-label">Guide</p>
+            <p class="guide-hero-sub">전통 창호 도면 설계부터 AI 렌더링까지, 평목 스튜디오의 모든 기능을 안내합니다.</p>
+        </div>
     </div>
 
     <!-- 카테고리 카드 -->
@@ -78,6 +80,24 @@
             </div>
             <div class="guide-cat-title">계정 설정</div>
             <div class="guide-cat-desc">프로필, 비밀번호, 회사 정보를 관리하는 방법을 안내합니다.</div>
+            <div class="guide-cat-count">1개 아티클</div>
+        </a>
+
+        <a href="/src/guide/order.php" class="guide-cat-card">
+            <div class="guide-cat-icon" style="background:#FDF0E6;color:#B8662F;">
+                <i class="bi bi-cart-check"></i>
+            </div>
+            <div class="guide-cat-title">주문</div>
+            <div class="guide-cat-desc">콘텐츠 준비 중입니다.</div>
+            <div class="guide-cat-count">1개 아티클</div>
+        </a>
+
+        <a href="/src/guide/delivery.php" class="guide-cat-card">
+            <div class="guide-cat-icon" style="background:#EAF3FB;color:#2E6FA8;">
+                <i class="bi bi-truck"></i>
+            </div>
+            <div class="guide-cat-title">배송</div>
+            <div class="guide-cat-desc">콘텐츠 준비 중입니다.</div>
             <div class="guide-cat-count">1개 아티클</div>
         </a>
 
