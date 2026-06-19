@@ -102,8 +102,35 @@ $specs = [
 $pungpanVisible = $pungpanOn && $effectivePungpanH > 0;
 $ppPanelH = $pungpanVisible ? ($effectivePungpanH - $frameH) : 0;
 
-$hSlatCnt = max(0, $rows - 1);
-$vSlatCnt = max(0, $cols - 1);
+// 셀 하나의 대각 길이 (촉 제외)
+$cellDiag = sqrt(pow($stepW, 2) + pow($stepH, 2));
+
+// ↘ 방향: r-c = d, ↗ 방향: r+c = s 로 그룹핑
+$groups = [];
+for ($r = 0; $r < $rows; $r++) {
+    for ($c = 0; $c < $cols; $c++) {
+        $bs = $r - $c; // ↘
+        $fs = $r + $c; // ↗
+        $groups['bs'][$bs] = ($groups['bs'][$bs] ?? 0) + 1;
+        $groups['fs'][$fs] = ($groups['fs'][$fs] ?? 0) + 1;
+    }
+}
+
+// 방향별 그룹을 길이 기준으로 합산
+$lenMap = [];
+foreach (['bs', 'fs'] as $dir) {
+    foreach ($groups[$dir] as $k) {
+        $len = (int)round($k * $cellDiag + 2 * $slatT);
+        $lenMap[$len] = ($lenMap[$len] ?? 0) + 1;
+    }
+}
+
+// doorCount 곱하고 길이 내림차순 정렬
+$diagList = [];
+krsort($lenMap);
+foreach ($lenMap as $len => $cnt) {
+    $diagList[] = ['len' => $len, 'cnt' => $cnt * $doorCount];
+}
 
 $parts = [
     'frVLen'         => (string)round($outerH + 2 * $slatT),
@@ -114,10 +141,11 @@ $parts = [
     'pungpanCnt'     => $doorCount . '개',
     'ppHLen'         => (string)round($innerW + 2 * $slatT),
     'ppVLen'         => (string)round($ppPanelH + 2 * $slatT),
-    'hSlatLen'       => (string)round($innerW + 2 * $tenonDepth),
-    'hSlatCnt'       => ($hSlatCnt * $doorCount) . '개',
-    'vSlatLen'       => (string)round($innerH + 2 * $tenonDepth),
-    'vSlatCnt'       => ($vSlatCnt * $doorCount) . '개',
+    'hSlatLen'       => '',
+    'hSlatCnt'       => '',
+    'vSlatLen'       => '',
+    'vSlatCnt'       => '',
+    'diagList'       => $diagList,
 ];
 
 echo json_encode(['geo' => $geo, 'specs' => $specs, 'parts' => $parts]);

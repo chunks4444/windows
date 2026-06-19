@@ -140,7 +140,7 @@ $parts = [
                             ? (string)round($innerH + 2 * $tenonDepth)
                             : (string)round($innerW + 2 * $tenonDepth),
     'hSlatCnt'       => $rotateOn
-                            ? ($cols * $doorCount) . '개'
+                            ? (max(0, $cols - 1) * $doorCount) . '개'
                             : (max(0, $rows - 1) * $doorCount) . '개',
     'diagList'       => [],
 ];

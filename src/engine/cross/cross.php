@@ -221,16 +221,11 @@ header('Pragma: no-cache');
                     </div>
 
                     <div class="slat-group">
-                        <div class="slat-group-title">가로살 · 세로살(내경에 살두께 곱하기 2)</div>
-                        <div class="diag-list">
-                            <div class="slat-row">
-                                <span class="slat-len" id="spHSlatLen">—</span><span class="slat-len-unit">mm</span>
-                                <span class="slat-cnt" id="spHSlatCnt">—</span>
-                            </div>
-                            <div class="slat-row">
-                                <span class="slat-len" id="spVSlatLen">—</span><span class="slat-len-unit">mm</span>
-                                <span class="slat-cnt" id="spVSlatCnt">—</span>
-                            </div>
+                        <div class="slat-group-title">사선살</div>
+                        <div id="spDiagList"></div>
+                        <div style="display:none">
+                            <span id="spHSlatLen"></span><span id="spHSlatCnt"></span>
+                            <span id="spVSlatLen"></span><span id="spVSlatCnt"></span>
                         </div>
                     </div>
 

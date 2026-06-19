@@ -465,10 +465,14 @@ async function draw() {
         ppGroup.style.display = 'none';
     }
 
-    document.getElementById('spHSlatLen').textContent = p.hSlatLen;
-    document.getElementById('spHSlatCnt').textContent = p.hSlatCnt;
-    document.getElementById('spVSlatLen').textContent = p.vSlatLen;
-    document.getElementById('spVSlatCnt').textContent = p.vSlatCnt;
+    const diagListEl = document.getElementById('spDiagList');
+    diagListEl.innerHTML = '';
+    (p.diagList || []).forEach(({ len, cnt }) => {
+        const el = document.createElement('div');
+        el.className = 'slat-row';
+        el.innerHTML = `<span class="slat-len">${len}<span class="slat-len-unit">mm</span></span><span class="slat-cnt">${cnt}개</span>`;
+        diagListEl.appendChild(el);
+    });
 
 
     // draw() 안에서 ctx를 재할당 가능하도록 로컬 변수로 섀도잉
