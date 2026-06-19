@@ -265,7 +265,7 @@ body.pm-generator .pm-navbar .dropdown-menu { background: var(--sidebar-bg) !imp
     padding-top: 10px;
 }
 
-canvas { display: block; width: 100%; height: 100%; cursor: grab; margin-top: 4px; }
+canvas { display: block; width: 100%; height: 100%; cursor: grab; margin-top: 4px; touch-action: none; }
 canvas:active { cursor: grabbing; }
 
 /* ── CANVAS CONTROLS ─────────────────────── */
@@ -1223,6 +1223,17 @@ input[type="range"]::-moz-range-thumb {
 
 .toggle-switch input:checked + .toggle-track { background: rgba(255,255,255,0.45); }
 .toggle-switch input:checked + .toggle-track::after { transform: translateX(16px); background: #fff; }
+
+/* ── 터치 기기(아이패드 등) 터치 타겟 확대 ──────────── */
+@media (pointer: coarse) {
+    .sidebar-tab { width: 28px; }
+
+    .slider-num { width: 60px; height: 38px; }
+
+    .toggle-switch { width: 46px; height: 26px; }
+    .toggle-track::after { width: 20px; height: 20px; }
+    .toggle-switch input:checked + .toggle-track::after { transform: translateX(20px); }
+}
 
 /* ── SPEC LIST ────────────────────────── */
 .spec-grid { display: flex; flex-direction: column; gap: 3px; }

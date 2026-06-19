@@ -692,3 +692,93 @@
     document.addEventListener('DOMContentLoaded', showAdminSections);
     window.addEventListener('pmokAuthChanged', showAdminSections);
 })();
+
+// 캔버스 터치 지원 (아이패드 등): 한 손가락 팬, 두 손가락 핀치줌, 탭으로 세그먼트 토글
+(function () {
+    const TAP_THRESHOLD = 8; // px
+
+    let touchMode  = null;  // 'pan' | 'pinch' | null
+    let startCX, startCY, startPanX, startPanY, moved;
+    let startDist, startScale;
+
+    function clientToLogical(clientX, clientY) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+            x: (clientX - rect.left) * (logW / rect.width),
+            y: (clientY - rect.top)  * (logH / rect.height),
+        };
+    }
+
+    function onTouchStart(e) {
+        e.preventDefault();
+        if (e.touches.length === 1) {
+            const t = e.touches[0];
+            touchMode = 'pan';
+            startCX = t.clientX; startCY = t.clientY;
+            startPanX = panX; startPanY = panY;
+            moved = false;
+        } else if (e.touches.length === 2) {
+            const [t0, t1] = e.touches;
+            touchMode  = 'pinch';
+            startDist  = Math.hypot(t1.clientX - t0.clientX, t1.clientY - t0.clientY);
+            startScale = scaleFactor;
+            moved = true;
+        }
+    }
+
+    function onTouchMove(e) {
+        e.preventDefault();
+        if (touchMode === 'pinch' && e.touches.length === 2) {
+            const [t0, t1] = e.touches;
+            const dist = Math.hypot(t1.clientX - t0.clientX, t1.clientY - t0.clientY);
+            const midClientX = (t0.clientX + t1.clientX) / 2;
+            const midClientY = (t0.clientY + t1.clientY) / 2;
+            const mid = clientToLogical(midClientX, midClientY);
+
+            const prevScale = scaleFactor;
+            let newScale = startScale * (dist / startDist);
+            newScale = Math.max(0.3, Math.min(newScale, 20));
+
+            const worldX = (mid.x - logW / 2 - panX) / prevScale;
+            const worldY = (mid.y - logH / 2 - panY) / prevScale;
+
+            scaleFactor = newScale;
+            panX = mid.x - logW / 2 - worldX * scaleFactor;
+            panY = mid.y - logH / 2 - worldY * scaleFactor;
+            draw();
+        } else if (touchMode === 'pan' && e.touches.length === 1) {
+            const t  = e.touches[0];
+            const dx = t.clientX - startCX;
+            const dy = t.clientY - startCY;
+            if (!moved && Math.hypot(dx, dy) > TAP_THRESHOLD) moved = true;
+            if (!lineEditMode) {
+                panX = startPanX + dx;
+                panY = startPanY + dy;
+                draw();
+            }
+        }
+    }
+
+    function onTouchEnd(e) {
+        if (touchMode === 'pan' && !moved && lineEditMode && e.changedTouches.length === 1) {
+            const t = e.changedTouches[0];
+            handleEditClick({ clientX: t.clientX, clientY: t.clientY });
+        }
+        if (e.touches.length === 0) touchMode = null;
+        else if (e.touches.length === 1) {
+            const t = e.touches[0];
+            touchMode = 'pan';
+            startCX = t.clientX; startCY = t.clientY;
+            startPanX = panX; startPanY = panY;
+            moved = true;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (!container) return;
+        container.addEventListener('touchstart', onTouchStart, { passive: false });
+        container.addEventListener('touchmove',  onTouchMove,  { passive: false });
+        container.addEventListener('touchend',   onTouchEnd,   { passive: false });
+        container.addEventListener('touchcancel', onTouchEnd,  { passive: false });
+    });
+})();
