@@ -373,6 +373,7 @@ function snapToNode(cx, cy) {
 let _geoController = null;
 
 async function fetchGeometry(p = null) {
+    if (!p && _isPanning && _geoCache) return _geoCache;
     if (!p) {
         if (_geoController) _geoController.abort();
         _geoController = new AbortController();
@@ -400,7 +401,7 @@ async function fetchGeometry(p = null) {
             body,
             signal: controller.signal,
         });
-        return await res.json();
+        const _r = await res.json(); if (!p) _geoCache = _r; return _r;
     } catch (e) {
         if (e.name === 'AbortError') return null;
         throw e;
@@ -408,9 +409,11 @@ async function fetchGeometry(p = null) {
 }
 
 let _panRaf = null;
+let _geoCache = null;
+let _isPanning = false;
 function drawPan() {
     if (_panRaf) return;
-    _panRaf = requestAnimationFrame(() => { _panRaf = null; draw(); });
+    _panRaf = requestAnimationFrame(() => { _panRaf = null; _isPanning = true; draw().finally(() => { _isPanning = false; }); });
 }
 
 async function draw() {

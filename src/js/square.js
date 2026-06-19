@@ -369,6 +369,7 @@ function snapToNode(cx, cy) {
 let _geoController = null;
 
 async function fetchGeometry() {
+    if (_isPanning && _geoCache) return _geoCache;
     if (_geoController) _geoController.abort();
     _geoController = new AbortController();
     const body = new URLSearchParams({
@@ -400,9 +401,11 @@ async function fetchGeometry() {
 }
 
 let _panRaf = null;
+let _geoCache = null;
+let _isPanning = false;
 function drawPan() {
     if (_panRaf) return;
-    _panRaf = requestAnimationFrame(() => { _panRaf = null; draw(); });
+    _panRaf = requestAnimationFrame(() => { _panRaf = null; _isPanning = true; draw().finally(() => { _isPanning = false; }); });
 }
 
 async function draw() {
