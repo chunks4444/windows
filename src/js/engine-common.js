@@ -782,3 +782,19 @@
         container.addEventListener('touchcancel', onTouchEnd,  { passive: false });
     });
 })();
+
+// 모바일 화면에서는 좌/우 사이드바를 기본적으로 접어둠
+(function () {
+    document.addEventListener('DOMContentLoaded', () => {
+        if (!window.matchMedia('(max-width: 768px)').matches) return;
+        if (sidebar && !sidebar.classList.contains('collapsed')) {
+            sidebar.classList.add('collapsed');
+            btnSidebarTab?.classList.add('collapsed');
+        }
+        if (rightSidebar && !rightSidebar.classList.contains('collapsed')) {
+            rightSidebar.classList.add('collapsed');
+            btnRightSidebarTab?.classList.add('collapsed');
+        }
+        resizeCanvasDebounced();
+    });
+})();
