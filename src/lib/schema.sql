@@ -294,3 +294,26 @@ INSERT IGNORE INTO color_swatches (group_name, sort_order, code, name, hex) VALU
 ('천연오일', 7, 'NO-07', '황칠',    '#b8880a'),
 ('천연오일', 8, 'NO-08', '옻칠',    '#1c0c06'),
 ('천연오일', 9, 'NO-09', '먹',      '#28241e');
+
+-- 제작 주문 (엔진 페이지의 "주문" 버튼에서 생성)
+-- customer_name/customer_phone/company_name은 주문 시점 users 테이블 값의 스냅샷
+-- (이후 프로필이 바뀌어도 주문 당시 정보가 보존되도록)
+CREATE TABLE IF NOT EXISTS orders (
+    id             INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '주문 고유 ID',
+    user_id        INT UNSIGNED NOT NULL COMMENT '주문자 user_id (users.id FK)',
+    drawing_id     INT UNSIGNED NULL COMMENT '연결된 도면 ID (drawings.id FK, 저장 전 도면이면 NULL)',
+    engine         VARCHAR(64)  NOT NULL COMMENT '엔진 종류 (square/classic/cross/diamond/triangle/hexagon)',
+    title          VARCHAR(100) NOT NULL DEFAULT '' COMMENT '주문 시점 도면 제목',
+    customer_name  VARCHAR(100) NOT NULL COMMENT '주문 시점 이름 (스냅샷)',
+    customer_phone VARCHAR(30)  NOT NULL COMMENT '주문 시점 연락처 (스냅샷)',
+    company_name   VARCHAR(100) NULL COMMENT '주문 시점 회사명 (스냅샷)',
+    memo           TEXT         NULL COMMENT '요청사항',
+    spec_json      MEDIUMTEXT   NULL COMMENT '주문 시점 도면 사양 스냅샷 (JSON)',
+    status         ENUM('pending','confirmed','done','cancelled') NOT NULL DEFAULT 'pending' COMMENT '처리 상태',
+    created_at     DATETIME     NOT NULL DEFAULT NOW() COMMENT '주문 접수일시',
+    PRIMARY KEY (id),
+    KEY idx_orders_user (user_id),
+    KEY idx_orders_status_created (status, created_at),
+    CONSTRAINT fk_orders_user     FOREIGN KEY (user_id)    REFERENCES users (id)    ON DELETE CASCADE,
+    CONSTRAINT fk_orders_drawing FOREIGN KEY (drawing_id) REFERENCES drawings (id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='제작 주문';

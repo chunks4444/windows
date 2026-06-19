@@ -413,6 +413,8 @@ async function fetchGeometry() {
         doorType:  txtDoorType.value,
         doorCount: txtDoorCount.value,
     });
+    // ⚠️ 건드리지 말 것: 줌/팬/스케일은 이 캐시 덕분에 서버 호출이 없음.
+    // 캐시를 빼거나 채우는 코드를 빠뜨리면 매 프레임 geometry.php 호출로 회귀함 (운영서버 줌/드래그 무거움 버그 원인이었음).
     const sig = body.toString();
     if (_geoCache && _geoCache.sig === sig) return _geoCache.data;
     if (_geoController) _geoController.abort();
@@ -1506,6 +1508,15 @@ async function draw() {
         });
     }
     canvas.addEventListener('contextmenu', e => { if (facePaintMode) e.preventDefault(); });
+
+    document.getElementById('btnOrder')?.addEventListener('click', () => {
+        openOrderModal({
+            engine:       WALLPAPER_ENGINE,
+            getSpec:      getParams,
+            getDrawingId: () => drawingId,
+            getTitle:     () => document.getElementById('drawingName')?.value.trim(),
+        });
+    });
 
     function handleEditClick(e) {
         const coord = screenToCtxCoord(e.clientX, e.clientY);

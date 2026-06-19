@@ -403,7 +403,7 @@ header('Pragma: no-cache');
             <div class="sb-inner-right">
                 <div class="sb-section">
                     <div style="display:flex;gap:6px;width:100%;">
-                        <button class="hbtn hbtn-primary" style="flex:1;justify-content:center;width:100%;">
+                        <button class="hbtn hbtn-primary" id="btnOrder" style="flex:1;justify-content:center;width:100%;">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
                                 <path d="M7 3H14L19 8V20H7V3Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
                                 <path d="M14 3V8H19" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
@@ -544,6 +544,8 @@ header('Pragma: no-cache');
             </div>
         </div>
     </div>
+
+    <?php include __DIR__ . '/../../components/order_modal.php'; ?>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>

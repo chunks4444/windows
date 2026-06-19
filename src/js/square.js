@@ -390,6 +390,8 @@ async function fetchGeometry() {
         doorType:  txtDoorType.value,
         doorCount: txtDoorCount.value,
     });
+    // ⚠️ 건드리지 말 것: 줌/팬/스케일은 이 캐시 덕분에 서버 호출이 없음.
+    // 캐시를 빼거나 채우는 코드를 빠뜨리면 매 프레임 geometry.php 호출로 회귀함 (운영서버 줌/드래그 무거움 버그 원인이었음).
     const sig = body.toString();
     if (_geoCache && _geoCache.sig === sig) return _geoCache.data;
     if (_geoController) _geoController.abort();
@@ -1732,6 +1734,15 @@ async function draw() {
         });
     }
     canvas.addEventListener('contextmenu', e => { if (facePaintMode) e.preventDefault(); });
+
+    document.getElementById('btnOrder')?.addEventListener('click', () => {
+        openOrderModal({
+            engine:       WALLPAPER_ENGINE,
+            getSpec:      getParams,
+            getDrawingId: () => drawingId,
+            getTitle:     () => document.getElementById('drawingName')?.value.trim(),
+        });
+    });
 
     // ── 편집 버튼 ──────────────────────────────────
     const CURSOR_ERASER = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Crect x='5' y='10' width='14' height='9' rx='2' fill='%23fff' stroke='%23555' stroke-width='1.5'/%3E%3Crect x='5' y='10' width='6' height='9' rx='0' fill='%23f87171' stroke='none'/%3E%3Crect x='5' y='10' width='6' height='9' rx='0' fill='none' stroke='%23555' stroke-width='1.5'/%3E%3Cline x1='5' y1='19' x2='19' y2='19' stroke='%23555' stroke-width='1.5'/%3E%3C/svg%3E") 4 20, crosshair`;

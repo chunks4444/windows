@@ -340,6 +340,75 @@
         document.getElementById('pmConfirmBtn').onclick = () => { _pmHide(); onConfirm(); };
     }
 
+    // ── 주문 모달 ────────────────────────────────────
+    function _orderHide() {
+        document.getElementById('orderBackdrop')?.classList.remove('pm-active');
+    }
+
+    function openOrderModal({ engine, getSpec, getDrawingId, getTitle }) {
+        const token = localStorage.getItem('pmok_auth_token');
+        if (!token) {
+            const el = document.getElementById('authModal');
+            if (el && window.bootstrap) bootstrap.Modal.getOrCreateInstance(el).show();
+            return;
+        }
+        const headers = { Authorization: 'Bearer ' + token };
+        Promise.all([
+            fetch('/src/api/auth/profile.php', { headers }).then(r => r.json()),
+            fetch('/src/api/auth/company.php', { headers }).then(r => r.json()),
+        ]).then(([profileRes, companyRes]) => {
+            const user    = profileRes.user    || {};
+            const company = companyRes.company || {};
+
+            if (!user.name || !user.phone) {
+                pmConfirm(
+                    '주문하려면 프로필에 이름과 연락처를 먼저 입력해주세요.',
+                    () => { location.href = '/src/mypage/profile.php'; },
+                    { sub: '프로필 페이지에서 입력 후 다시 시도해주세요.', type: 'ok', confirmText: '프로필로 이동' }
+                );
+                return;
+            }
+
+            document.getElementById('orderCustName').textContent  = user.name;
+            document.getElementById('orderCustPhone').textContent = user.phone;
+            const companyRow = document.getElementById('orderCompanyRow');
+            if (company.company_name) {
+                document.getElementById('orderCustCompany').textContent = company.company_name;
+                companyRow.style.display = '';
+            } else {
+                companyRow.style.display = 'none';
+            }
+            document.getElementById('orderDrawingTitle').textContent = getTitle() || '(제목 없음)';
+            document.getElementById('orderMemo').value = '';
+
+            document.getElementById('orderBackdrop').classList.add('pm-active');
+
+            document.getElementById('orderSubmitBtn').onclick = () => {
+                const memo = document.getElementById('orderMemo').value.trim();
+                fetch('/src/api/orders/create.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+                    body: JSON.stringify({
+                        engine,
+                        drawing_id: getDrawingId() || null,
+                        title:      getTitle() || '',
+                        memo,
+                        spec:       getSpec(),
+                    }),
+                }).then(r => r.json()).then(data => {
+                    if (data.error) { pmAlert(data.error, { type: 'danger' }); return; }
+                    _orderHide();
+                    pmAlert('주문이 접수되었습니다.', { sub: '담당자가 확인 후 연락드립니다.' });
+                }).catch(() => pmAlert('주문 접수에 실패했습니다.', { type: 'danger' }));
+            };
+        }).catch(() => pmAlert('프로필 정보를 불러오지 못했습니다.', { type: 'danger' }));
+    }
+
+    document.getElementById('orderCancelBtn')?.addEventListener('click', _orderHide);
+    document.getElementById('orderBackdrop')?.addEventListener('click', (e) => {
+        if (e.target.id === 'orderBackdrop') _orderHide();
+    });
+
     function renderSavedThumbList() {
         const list = document.getElementById('renderSavedList');
         if (!list) return;

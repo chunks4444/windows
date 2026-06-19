@@ -721,6 +721,28 @@ canvas:active { cursor: grabbing; }
 .pm-btn-ok      { background: var(--teal); border-color: var(--teal); color: #fff; }
 .pm-btn-ok:hover      { background: var(--teal-dark); border-color: var(--teal-dark); }
 
+/* ── 주문 모달 ──────────────────────────────── */
+.order-modal {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.22), 0 4px 16px rgba(0,0,0,0.1);
+    width: 360px;
+    max-width: calc(100vw - 32px);
+    padding: 24px;
+    transform: scale(0.9) translateY(12px);
+    opacity: 0;
+    transition: transform 0.22s cubic-bezier(.34,1.4,.64,1), opacity 0.18s ease;
+}
+.pm-modal-backdrop.pm-active .order-modal {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+.order-modal-title { font-size: var(--fs-16); font-weight: 700; color: var(--text-1); letter-spacing: -0.2px; }
+.order-modal-body { margin-top: 16px; display: flex; flex-direction: column; gap: 10px; }
+.order-info-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.order-info-label { font-size: var(--fs-12); color: var(--text-3); font-weight: 600; flex-shrink: 0; }
+.order-info-val { font-size: var(--fs-13); color: var(--text-1); font-weight: 600; text-align: right; }
+
 /* ── 도면 목록 모달 ──────────────────────────── */
 .dm-modal {
     background: #fff;
