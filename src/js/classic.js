@@ -114,7 +114,7 @@
     let logW = 0, logH = 0;
     let isDragging = false;
     let startX, startY;
-    let panMode = true;
+    let panMode = false;
     let _versionsLoaded = false;
 
     // ── 공통 모달 유틸리티 ─────────────────────────
@@ -1439,6 +1439,7 @@ async function draw() {
             overlayDrag = { corner: 'move', startPositions: sp(), startMx: e.clientX, startMy: e.clientY };
             return;
         }
+        if (!panMode) return;
         isDragging = true;
         startX = e.clientX - panX;
         startY = e.clientY - panY;
@@ -1737,7 +1738,6 @@ async function draw() {
         }
     }
 
-    document.getElementById('btnPan').classList.add('cv-btn-active');
     document.getElementById('btnPan').addEventListener('click', setPanMode);
     document.getElementById('btnEditDelete').addEventListener('click', () => setEditMode('delete'));
     document.getElementById('btnEditAdd').addEventListener('click', () => setEditMode('add'));

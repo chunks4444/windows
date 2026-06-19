@@ -279,7 +279,6 @@ header('Pragma: no-cache');
         </div>
 
         <div class="canvas-area" id="canvasContainer">
-            <div class="zoom-hint">휠: 확대/축소 &nbsp;·&nbsp; 드래그: 이동</div>
 
             <!-- 캔버스 컨트롤 버튼 -->
             <div class="canvas-controls">
