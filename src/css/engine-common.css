@@ -20,7 +20,7 @@ body.pm-generator .pm-navbar .dropdown-menu { background: var(--sidebar-bg) !imp
 /* ── CANVAS TITLE OVERLAY (nav 영역에 고정) ── */
 .canvas-title-bar {
     position: absolute;
-    top: 34px;
+    bottom: 34px;
     left: 34px;
     height: auto;
     display: flex;
@@ -272,7 +272,7 @@ canvas:active { cursor: grabbing; }
 .canvas-controls {
     position: absolute;
     right: 34px;
-    top: 34px;
+    bottom: 34px;
     transform: none;
     display: flex;
     flex-direction: row;
@@ -304,8 +304,8 @@ canvas:active { cursor: grabbing; }
     content: attr(title);
     position: absolute;
     right: 0;
-    top: calc(100% + 10px);
-    transform: translateY(-2px) scale(0.95);
+    bottom: calc(100% + 10px);
+    transform: translateY(2px) scale(0.95);
     background: rgba(20,20,20,0.92);
     color: #fff;
     padding: 5px 10px;
@@ -326,10 +326,10 @@ canvas:active { cursor: grabbing; }
     content: '';
     position: absolute;
     right: 8px;
-    top: calc(100% + 4px);
+    bottom: calc(100% + 4px);
     transform: none;
     border: 5px solid transparent;
-    border-bottom-color: rgba(20,20,20,0.92);
+    border-top-color: rgba(20,20,20,0.92);
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.18s ease;
