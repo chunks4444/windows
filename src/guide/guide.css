@@ -485,6 +485,7 @@ body:has(.guide-wrap) {
 @media (max-width: 900px) {
     .guide-categories { grid-template-columns: repeat(2, 1fr); }
     .guide-main { padding: 32px 28px 60px; }
+    .guide-sidebar { width: 200px; }
 }
 @media (max-width: 768px) {
     .guide-wrap { flex-direction: column; }
