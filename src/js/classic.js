@@ -407,6 +407,12 @@ async function fetchGeometry(p = null) {
     }
 }
 
+let _panRaf = null;
+function drawPan() {
+    if (_panRaf) return;
+    _panRaf = requestAnimationFrame(() => { _panRaf = null; draw(); });
+}
+
 async function draw() {
     try {
     const data = await fetchGeometry();
@@ -466,7 +472,6 @@ async function draw() {
     document.getElementById('spHSlatCnt').textContent = p.hSlatCnt;
     document.getElementById('spVSlatLen').textContent = p.vSlatLen;
     document.getElementById('spVSlatCnt').textContent = p.vSlatCnt;
-
 
     // draw() 안에서 ctx를 재할당 가능하도록 로컬 변수로 섀도잉
     let ctx = canvas.getContext('2d');
@@ -1520,7 +1525,7 @@ async function draw() {
         if (!isDragging) return;
         panX = e.clientX - startX;
         panY = e.clientY - startY;
-        draw();
+        drawPan();
     });
     window.addEventListener('mouseup', function() {
         facePaintIsDown = false;

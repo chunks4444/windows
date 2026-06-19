@@ -395,6 +395,12 @@ async function fetchGeometry() {
     }
 }
 
+let _panRaf = null;
+function drawPan() {
+    if (_panRaf) return;
+    _panRaf = requestAnimationFrame(() => { _panRaf = null; draw(); });
+}
+
 async function draw() {
     const data = await fetchGeometry();
     if (!data) return;
@@ -1569,7 +1575,7 @@ async function draw() {
         if (!isDragging) return;
         panX = e.clientX - startX;
         panY = e.clientY - startY;
-        draw();
+        drawPan();
     });
     window.addEventListener('mouseup', function() {
         facePaintIsDown = false;
