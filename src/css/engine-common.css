@@ -1169,7 +1169,7 @@ input[type="range"]::-moz-range-thumb {
     border-radius: var(--r-xs);
     background: var(--input-bg);
     color: var(--text-1);
-    font-size: var(--fs-13);
+    font-size: var(--fs-12);
     font-weight: 600;
     font-family: inherit;
     letter-spacing: -0.2px;
