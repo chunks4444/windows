@@ -31,14 +31,12 @@ header('Pragma: no-cache');
                     <div class="sb-section-title">문 설정</div>
                     <div class="door-row">
                         <div class="ctrl">
-                            <div class="ctrl-header"><span class="ctrl-label">문 종류</span></div>
                             <select id="txtDoorType" class="sb-select">
                                 <option value="swing">여닫이</option>
                                 <option value="slide">미서기</option>
                             </select>
                         </div>
                         <div class="ctrl">
-                            <div class="ctrl-header"><span class="ctrl-label">문 짝수</span></div>
                             <select id="txtDoorCount" class="sb-select">
                                 <option value="1">1짝</option>
                                 <option value="2">2짝</option>
@@ -48,19 +46,18 @@ header('Pragma: no-cache');
                         </div>
                     </div>
 
-                    <div class="sb-sub-title">문 치수</div>
                     <div class="ctrl">
-                        <div class="ctrl-header"><span class="ctrl-label">가로폭</span></div>
+                        <div class="ctrl-header"><span class="ctrl-label">문 가로폭</span></div>
                         <div class="slider-row">
-                            <input type="range" id="txtW" min="400" max="1500" step="1" value="600">
-                            <input type="number" class="slider-num" id="numW" min="400" max="1500" step="1" value="600">
+                            <input type="range" id="txtW" min="400" max="3000" step="1" value="600">
+                            <input type="number" class="slider-num" id="numW" min="400" max="3000" step="1" value="600">
                         </div>
                     </div>
                     <div class="ctrl">
                         <div class="ctrl-header"><span class="ctrl-label">세로높이</span></div>
                         <div class="slider-row">
-                            <input type="range" id="txtH" min="400" max="2600" step="1" value="1707">
-                            <input type="number" class="slider-num" id="numH" min="400" max="2600" step="1" value="1707">
+                            <input type="range" id="txtH" min="400" max="3000" step="1" value="1707">
+                            <input type="number" class="slider-num" id="numH" min="400" max="3000" step="1" value="1707">
                         </div>
                     </div>
 
@@ -118,9 +115,8 @@ header('Pragma: no-cache');
                             <input type="number" class="slider-num" id="numPungpan" min="0" max="600" step="1" value="0">
                         </div>
                     </div>
-                </div>
 
-                <div class="sb-section">
+                    <div class="sb-sub-title">표시 설정</div>
                     <div class="toggle-row">
                         <span class="toggle-label">패턴 세로 방향</span>
                         <label class="toggle-switch">

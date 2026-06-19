@@ -201,7 +201,7 @@ foreach ($rawGroups as $len => $cnt) {
     $sorted[] = ['len' => (int)$len, 'cnt' => (int)$cnt];
 }
 
-$MERGE_TOL = 2 * $slatT;
+$MERGE_TOL = 20;
 $merged = [];
 foreach ($sorted as $item) {
     if (!empty($merged)) {

@@ -441,7 +441,7 @@ async function draw() {
         const effectivePungpan = pungpanOn ? pungpanInput : 0;
         const rawTarget = Math.round(geo.frameH * 2 + geo.innerH) + effectivePungpan;
         // 유효한 값이고 슬라이더 범위 안에 있을 때만 조정
-        if (Number.isFinite(rawTarget) && rawTarget >= 400 && rawTarget <= 2600) {
+        if (Number.isFinite(rawTarget) && rawTarget >= 400 && rawTarget <= 3000) {
             const currentH = parseInt(txtH.value);
             if (rawTarget !== currentH) {
                 setSlider('txtH', 'numH', rawTarget);
@@ -1800,8 +1800,8 @@ document.getElementById('chkDimension').addEventListener('change', e => { showDi
     // ── 슬라이더 ↔ 인풋창 양방향 동기화 ──────────────────
 
     const syncPairs = [
-        { range: txtW,      num: document.getElementById('numW'),       min: 400,  max: 2600 },
-        { range: txtH,      num: document.getElementById('numH'),       min: 400,  max: 2600 },
+        { range: txtW,      num: document.getElementById('numW'),       min: 400,  max: 3000 },
+        { range: txtH,      num: document.getElementById('numH'),       min: 400,  max: 3000 },
         { range: txtCols,   num: document.getElementById('numCols'),    min: 2,    max: 30   },
         { range: txtFrame,  num: document.getElementById('numFrame'),   min: 20,   max: 150  },
         { range: txtFrameH, num: document.getElementById('numFrameH'),  min: 20,   max: 150  },

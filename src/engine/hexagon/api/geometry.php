@@ -5,7 +5,7 @@ header('Content-Type: application/json; charset=UTF-8');
 require_once __DIR__ . '/../../../lib/jwt.php';
 if (!jwt_from_request()) { http_response_code(401); echo json_encode(['error' => '인증이 필요합니다.']); exit; }
 
-$cols      = max(2,   (int)($_POST['cols']      ?? 4));
+$cols      = max(1,   (int)($_POST['cols']      ?? 3));
 $outerW    = max(400, (int)($_POST['outerW']    ?? 600));
 $outerH    = max(400, (int)($_POST['outerH']    ?? 1707));
 $pungpanH  = max(0,   (int)($_POST['pungpanH']  ?? 0));
@@ -126,17 +126,93 @@ $specs = [
 $pungpanVisible = $pungpanOn && $effectivePungpanH > 0;
 $ppPanelH = $pungpanVisible ? ($effectivePungpanH - $frameH) : 0;
 
-// ── 육모살 단살 길이·수량 계산 ─────────────────────
-// 각 육각형 변 하나의 길이 = 외접원반지름(size)
-$hexSize = $rotateOn
-    ? (($innerW + $slatT) / max(1, $cols * 1.5))
-    : ($innerW / max(1, $cols * $SQRT3));
+// ── 육모살 세로살·사선살 수량 계산 ──────────────────────────
+// JS hexagon.js: rotateOn=true 고정 (pointy-top), size = iW/(cols*√3), bStep = 2*size
+$hexSize = $innerW / max(1, $cols * $SQRT3);
 
-$hexEdgeLen = (int)round($hexSize + 2 * $slatT);
+function calcGroupsHexDR(float $iW, float $iH, float $hexSize, float $sT): array {
+    $S3    = sqrt(3);
+    $bStep = 2.0 * $hexSize;
+    $phase = -$hexSize / 2.0;
+    $g     = [];
+    $k0    = (int)floor((-$iW / $S3 - $phase) / $bStep);
+    for ($k = $k0; ; $k++) {
+        $y0 = $phase + $k * $bStep;
+        if ($y0 > $iH + 0.5) break;
+        $x1 = $y0 < 0.0 ? -$y0 * $S3 : 0.0;
+        $y1 = $y0 < 0.0 ? 0.0         : $y0;
+        $yR = $y0 + $iW / $S3;
+        if ($yR <= $iH + 0.5) { $x2 = $iW; $y2 = $yR; }
+        else                   { $x2 = ($iH - $y0) * $S3; $y2 = $iH; }
+        if ($x1 > $iW + 0.5 || $x2 < -0.5 || $x1 > $x2 + 0.5) continue;
+        $seg = sqrt(($x2 - $x1) ** 2 + ($y2 - $y1) ** 2);
+        if ($seg < 0.5) continue;
+        $k2 = (string)(int)round($seg + 2 * $sT);
+        $g[$k2] = ($g[$k2] ?? 0) + 1;
+    }
+    return $g;
+}
 
-// 격자 내 육각형 수 추정 후 변 수 계산 (육각형 1개당 고유 변 ≈ 3개)
-$numHex  = max(1, $cols) * max(1, $rows);
-$numEdge = (int)round($numHex * 3) * $doorCount;
+function calcGroupsHexUR(float $iW, float $iH, float $hexSize, float $sT): array {
+    $S3    = sqrt(3);
+    $bStep = 2.0 * $hexSize;
+    $phase = $hexSize / 2.0;
+    $g     = [];
+    $k0    = (int)floor(-$phase / $bStep);
+    for ($k = $k0; ; $k++) {
+        $y0 = $phase + $k * $bStep;
+        if ($y0 <= 0.5) continue;
+        if ($y0 - $iW / $S3 >= $iH - 0.5) break;
+        $x1 = $y0 >= $iH - 0.5 ? ($y0 - $iH) * $S3 : 0.0;
+        $y1 = $y0 >= $iH - 0.5 ? $iH              : $y0;
+        $yAtRight = $y0 - $iW / $S3;
+        if ($yAtRight >= 0.5) { $x2 = $iW; $y2 = $yAtRight; }
+        else                   { $x2 = $y0 * $S3; $y2 = 0.0; }
+        if ($x1 > $iW + 0.5 || $x2 < -0.5) continue;
+        $seg = sqrt(($x2 - $x1) ** 2 + ($y2 - $y1) ** 2);
+        if ($seg < 0.5) continue;
+        $k2 = (string)(int)round($seg + 2 * $sT);
+        $g[$k2] = ($g[$k2] ?? 0) + 1;
+    }
+    return $g;
+}
+
+$rawGroups = [];
+foreach ([
+    calcGroupsHexDR((float)$innerW, (float)$innerH, (float)$hexSize, (float)$slatT),
+    calcGroupsHexUR((float)$innerW, (float)$innerH, (float)$hexSize, (float)$slatT),
+] as $gMap) {
+    foreach ($gMap as $len => $cnt) {
+        $rawGroups[$len] = ($rawGroups[$len] ?? 0) + $cnt;
+    }
+}
+
+uksort($rawGroups, function($a, $b) { return (int)$a - (int)$b; });
+$sorted = [];
+foreach ($rawGroups as $len => $cnt) {
+    $sorted[] = ['len' => (int)$len, 'cnt' => (int)$cnt];
+}
+
+$MERGE_TOL = 20;
+$merged = [];
+foreach ($sorted as $item) {
+    if (!empty($merged)) {
+        $last = &$merged[count($merged) - 1];
+        if ($item['len'] - $last['len'] <= $MERGE_TOL) {
+            $last['cnt'] += $item['cnt'];
+            $last['len']  = max($last['len'], $item['len']);
+            unset($last);
+            continue;
+        }
+        unset($last);
+    }
+    $merged[] = $item;
+}
+
+usort($merged, function($a, $b) { return $b['len'] - $a['len']; });
+$diagList = array_map(function($item) use ($doorCount) {
+    return ['len' => $item['len'], 'cnt' => $item['cnt'] * $doorCount];
+}, $merged);
 
 $parts = [
     'frVLen'         => (string)round($outerH + 2 * $slatT),
@@ -147,10 +223,10 @@ $parts = [
     'pungpanCnt'     => $doorCount . '개',
     'ppHLen'         => (string)round($innerW + 2 * $slatT),
     'ppVLen'         => (string)round($ppPanelH + 2 * $slatT),
-    'dirTitle'       => '육모살',
-    'hSlatLen'       => (string)$hexEdgeLen,
-    'hSlatCnt'       => $numEdge . '개',
-    'diagList'       => [],
+    'dirTitle'       => '세로부재',
+    'hSlatLen'       => (string)round($innerH + 2 * $tenonDepth),
+    'hSlatCnt'       => (max(0, $cols - 1) * $doorCount) . '개',
+    'diagList'       => $diagList,
 ];
 
 echo json_encode(['geo' => $geo, 'specs' => $specs, 'parts' => $parts]);

@@ -1771,8 +1771,8 @@ async function draw() {
     // ── 슬라이더 ↔ 인풋창 양방향 동기화 ──────────────────
 
     const syncPairs = [
-        { range: txtW,      num: document.getElementById('numW'),       min: 400,  max: 2600 },
-        { range: txtH,      num: document.getElementById('numH'),       min: 400,  max: 2600 },
+        { range: txtW,      num: document.getElementById('numW'),       min: 400,  max: 3000 },
+        { range: txtH,      num: document.getElementById('numH'),       min: 400,  max: 3000 },
         { range: txtCols,   num: document.getElementById('numCols'),    min: 2,    max: 30   },
         { range: txtFrame,  num: document.getElementById('numFrame'),   min: 20,   max: 150  },
         { range: txtFrameH, num: document.getElementById('numFrameH'),  min: 20,   max: 150  },

@@ -473,7 +473,7 @@ async function draw() {
         const effectivePungpan = pungpanOn ? pungpanInput : 0;
         const rawTarget = Math.round(geo.frameH * 2 + geo.innerH) + effectivePungpan;
         // 유효한 값이고 슬라이더 범위 안에 있을 때만 조정
-        if (Number.isFinite(rawTarget) && rawTarget >= 400 && rawTarget <= 2600) {
+        if (Number.isFinite(rawTarget) && rawTarget >= 400 && rawTarget <= 3000) {
             const currentH = parseInt(txtH.value);
             if (rawTarget !== currentH) {
                 setSlider('txtH', 'numH', rawTarget);
@@ -503,7 +503,14 @@ async function draw() {
     document.getElementById('spHSlatLen').textContent = p.hSlatLen;
     document.getElementById('spHSlatCnt').textContent = p.hSlatCnt;
 
-    const diagListEl = null; // hexagon uses no diagList section
+    const diagListEl = document.getElementById('spDiagList');
+    diagListEl.innerHTML = '';
+    p.diagList.forEach(({ len, cnt }) => {
+        const el = document.createElement('div');
+        el.className = 'slat-row';
+        el.innerHTML = `<span class="slat-len">${len}<span class="slat-len-unit">mm</span></span><span class="slat-cnt">${cnt}개</span>`;
+        diagListEl.appendChild(el);
+    });
 
     // draw() 안에서 ctx를 재할당 가능하도록 로컬 변수로 섀도잉
     let ctx = canvas.getContext('2d');
@@ -996,6 +1003,16 @@ async function draw() {
         // 세로/가로부재 업데이트
         document.getElementById('spHSlatCnt').textContent =
             Math.max(0, adjStraightCnt) + '개';
+
+        adjDiag = adjDiag.filter(item => item.cnt > 0);
+        adjDiag.sort((a, b) => b.len - a.len);
+        diagListEl.innerHTML = '';
+        adjDiag.forEach(({ len, cnt }) => {
+            const el = document.createElement('div');
+            el.className = 'slat-row';
+            el.innerHTML = `<span class="slat-len">${len}<span class="slat-len-unit">mm</span></span><span class="slat-cnt">${cnt}개</span>`;
+            diagListEl.appendChild(el);
+        });
     }
 
     // ====== 추가 선 그리기 ======
@@ -1799,33 +1816,42 @@ document.getElementById('chkDimension').addEventListener('change', e => { showDi
 
     // ── 슬라이더 ↔ 인풋창 양방향 동기화 ──────────────────
 
+    const toOdd = v => v % 2 === 0 ? v - 1 : v;
+
     const syncPairs = [
-        { range: txtW,      num: document.getElementById('numW'),       min: 400,  max: 2600 },
-        { range: txtH,      num: document.getElementById('numH'),       min: 400,  max: 2600 },
-        { range: txtCols,   num: document.getElementById('numCols'),    min: 2,    max: 30   },
+        { range: txtW,      num: document.getElementById('numW'),       min: 400,  max: 3000 },
+        { range: txtH,      num: document.getElementById('numH'),       min: 400,  max: 3000 },
+        { range: txtCols,   num: document.getElementById('numCols'),    min: 1,    max: 29,  snapFn: toOdd },
         { range: txtFrame,  num: document.getElementById('numFrame'),   min: 20,   max: 150  },
         { range: txtFrameH, num: document.getElementById('numFrameH'),  min: 20,   max: 150  },
         { range: txtSlat,   num: document.getElementById('numSlat'),    min: 8,    max: 35   },
         { range: document.getElementById('txtPungpan'), num: document.getElementById('numPungpan'), min: 0, max: 600 },
     ];
 
-    syncPairs.forEach(({ range, num, min, max }) => {
+    syncPairs.forEach(({ range, num, min, max, snapFn }) => {
+        const snap = v => {
+            let r = snapFn ? snapFn(v) : v;
+            return Math.min(max, Math.max(min, r));
+        };
         range.addEventListener('input', () => {
-            num.value = range.value;
+            const v = snap(parseInt(range.value));
+            range.value = v;
+            num.value   = v;
             draw();
         });
         num.addEventListener('input', () => {
             const v = parseInt(num.value);
             if (isNaN(v)) return;
-            if (v >= min && v <= max) {
-                range.value = v;
+            const sv = snap(v);
+            if (sv >= min && sv <= max) {
+                range.value = sv;
                 draw();
             }
         });
         num.addEventListener('blur', () => {
             let v = parseInt(num.value);
             if (isNaN(v)) v = parseInt(range.value);
-            v = Math.min(max, Math.max(min, v));
+            v = snap(v);
             range.value = v;
             num.value   = v;
             draw();
@@ -1996,7 +2022,7 @@ document.getElementById('chkDimension').addEventListener('change', e => { showDi
         document.getElementById('drawingName').value = p.name || '';
         setSlider('txtW',      'numW',      p.W);
         setSlider('txtH',      'numH',      p.H);
-        setSlider('txtCols',   'numCols',   p.cols);
+        setSlider('txtCols',   'numCols',   toOdd(Math.max(1, parseInt(p.cols) || 3)));
         setSlider('txtFrame',  'numFrame',  p.frame);
         setSlider('txtFrameH', 'numFrameH', p.frameH);
         setSlider('txtSlat',   'numSlat',   p.slat);

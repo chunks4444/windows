@@ -37,14 +37,12 @@ header('Pragma: no-cache');
 
                     <div class="door-row">
                         <div class="ctrl">
-                            <div class="ctrl-header"><span class="ctrl-label">문 종류</span></div>
                             <select id="txtDoorType" class="sb-select">
                                 <option value="swing">여닫이</option>
                                 <option value="slide">미서기</option>
                             </select>
                         </div>
                         <div class="ctrl">
-                            <div class="ctrl-header"><span class="ctrl-label">문 짝수</span></div>
                             <select id="txtDoorCount" class="sb-select">
                                 <option value="1">1짝</option>
                                 <option value="2">2짝</option>
@@ -54,19 +52,18 @@ header('Pragma: no-cache');
                         </div>
                     </div>
 
-                    <div class="sb-sub-title">문 치수</div>
                     <div class="ctrl">
-                        <div class="ctrl-header"><span class="ctrl-label">가로폭</span></div>
+                        <div class="ctrl-header"><span class="ctrl-label">문 가로폭</span></div>
                         <div class="slider-row">
-                            <input type="range" id="txtW" min="400" max="1500" step="1" value="600">
-                            <input type="number" class="slider-num" id="numW" min="400" max="1500" step="1" value="600">
+                            <input type="range" id="txtW" min="400" max="3000" step="1" value="600">
+                            <input type="number" class="slider-num" id="numW" min="400" max="3000" step="1" value="600">
                         </div>
                     </div>
                     <div class="ctrl">
                         <div class="ctrl-header"><span class="ctrl-label">세로높이</span></div>
                         <div class="slider-row">
-                            <input type="range" id="txtH" min="400" max="2600" step="1" value="1707">
-                            <input type="number" class="slider-num" id="numH" min="400" max="2600" step="1" value="1707">
+                            <input type="range" id="txtH" min="400" max="3000" step="1" value="1707">
+                            <input type="number" class="slider-num" id="numH" min="400" max="3000" step="1" value="1707">
                         </div>
                     </div>
 
@@ -113,8 +110,8 @@ header('Pragma: no-cache');
                     <div class="ctrl" style="margin-top:6px;">
                         <div class="ctrl-header"><span class="ctrl-label">랜덤 패턴</span></div>
                         <div style="display:flex;gap:6px;">
-                            <button id="btnMondrian" type="button" class="sb-select" style="flex:1;cursor:pointer;">랜덤 생성</button>
-                            <button id="btnMondrianClear" type="button" class="sb-select" style="display:none;cursor:pointer;flex:1;">초기화</button>
+                            <button id="btnMondrian" type="button" class="sb-select" style="flex:1;cursor:pointer;border:1px solid var(--border);">랜덤 생성</button>
+                            <button id="btnMondrianClear" type="button" class="sb-select" style="display:none;cursor:pointer;flex:1;border:1px solid var(--border);">초기화</button>
                         </div>
                     </div>
 
@@ -142,10 +139,8 @@ header('Pragma: no-cache');
                             <input type="number" class="slider-num" id="numPungpan" min="0" max="600" step="1" value="0">
                         </div>
                     </div>
-                </div>
 
-
-                <div class="sb-section">
+                    <div class="sb-sub-title">표시 설정</div>
                     <div class="toggle-row" style="margin-bottom:0;">
                         <span class="toggle-label">치수 표기</span>
                         <label class="toggle-switch">

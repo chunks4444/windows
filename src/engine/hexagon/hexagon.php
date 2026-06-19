@@ -31,14 +31,12 @@ header('Pragma: no-cache');
                     <div class="sb-section-title">문 설정</div>
                     <div class="door-row">
                         <div class="ctrl">
-                            <div class="ctrl-header"><span class="ctrl-label">문 종류</span></div>
                             <select id="txtDoorType" class="sb-select">
                                 <option value="swing">여닫이</option>
                                 <option value="slide">미서기</option>
                             </select>
                         </div>
                         <div class="ctrl">
-                            <div class="ctrl-header"><span class="ctrl-label">문 짝수</span></div>
                             <select id="txtDoorCount" class="sb-select">
                                 <option value="1">1짝</option>
                                 <option value="2">2짝</option>
@@ -48,19 +46,18 @@ header('Pragma: no-cache');
                         </div>
                     </div>
 
-                    <div class="sb-sub-title">문 치수</div>
                     <div class="ctrl">
-                        <div class="ctrl-header"><span class="ctrl-label">가로폭</span></div>
+                        <div class="ctrl-header"><span class="ctrl-label">문 가로폭</span></div>
                         <div class="slider-row">
-                            <input type="range" id="txtW" min="400" max="1500" step="1" value="600">
-                            <input type="number" class="slider-num" id="numW" min="400" max="1500" step="1" value="600">
+                            <input type="range" id="txtW" min="400" max="3000" step="1" value="600">
+                            <input type="number" class="slider-num" id="numW" min="400" max="3000" step="1" value="600">
                         </div>
                     </div>
                     <div class="ctrl">
                         <div class="ctrl-header"><span class="ctrl-label">세로높이</span></div>
                         <div class="slider-row">
-                            <input type="range" id="txtH" min="400" max="2600" step="1" value="1707">
-                            <input type="number" class="slider-num" id="numH" min="400" max="2600" step="1" value="1707">
+                            <input type="range" id="txtH" min="400" max="3000" step="1" value="1707">
+                            <input type="number" class="slider-num" id="numH" min="400" max="3000" step="1" value="1707">
                         </div>
                     </div>
 
@@ -68,8 +65,8 @@ header('Pragma: no-cache');
                     <div class="ctrl">
                         <div class="ctrl-header"><span class="ctrl-label" id="lblCols">가로 칸수</span></div>
                         <div class="slider-row">
-                            <input type="range" id="txtCols" min="2" max="30" step="1" value="4">
-                            <input type="number" class="slider-num" id="numCols" min="2" max="30" step="1" value="4">
+                            <input type="range" id="txtCols" min="1" max="29" step="2" value="3">
+                            <input type="number" class="slider-num" id="numCols" min="1" max="29" step="2" value="3">
                         </div>
                     </div>
                     <div class="ctrl">
@@ -118,19 +115,15 @@ header('Pragma: no-cache');
                             <input type="number" class="slider-num" id="numPungpan" min="0" max="600" step="1" value="0">
                         </div>
                     </div>
-                </div>
 
-                <div class="sb-section">
-                    <div class="toggle-row" style="margin-bottom:0;">
+                    <div class="sb-sub-title">표시 설정</div>
+                    <div class="toggle-row">
                         <span class="toggle-label">패턴 세로 방향</span>
                         <label class="toggle-switch">
                             <input type="checkbox" id="chkRotate" checked>
                             <span class="toggle-track"></span>
                         </label>
                     </div>
-                </div>
-
-                <div class="sb-section">
                     <div class="toggle-row" style="margin-bottom:0;">
                         <span class="toggle-label">치수 표기</span>
                         <label class="toggle-switch">
@@ -227,11 +220,16 @@ header('Pragma: no-cache');
                     </div>
 
                     <div class="slat-group">
-                        <div class="slat-group-title" id="dirSlatGroupTitle">가로부재</div>
+                        <div class="slat-group-title" id="dirSlatGroupTitle">세로부재</div>
                         <div class="slat-row">
                             <span class="slat-len" id="spHSlatLen">—</span><span class="slat-len-unit">mm</span>
                             <span class="slat-cnt" id="spHSlatCnt">—</span>
                         </div>
+                    </div>
+
+                    <div class="slat-group">
+                        <div class="slat-group-title">사선살</div>
+                        <div id="spDiagList" class="diag-list"></div>
                     </div>
 
                 </div>
