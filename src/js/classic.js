@@ -1439,7 +1439,6 @@ async function draw() {
             overlayDrag = { corner: 'move', startPositions: sp(), startMx: e.clientX, startMy: e.clientY };
             return;
         }
-        if (!panMode) return;
         isDragging = true;
         startX = e.clientX - panX;
         startY = e.clientY - panY;
