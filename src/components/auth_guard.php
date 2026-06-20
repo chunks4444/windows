@@ -4,11 +4,11 @@
 $_guardRole = $authRequireRole ?? null;
 ?>
 <script>
-(function () {
+window.addEventListener('load', function () {
     var token = localStorage.getItem('pmok_auth_token');
 
     <?php if ($_guardRole): ?>
-    // 역할 필요 페이지 — 토큰 없거나 역할 불일치 시 항상 홈으로
+    // 역할 필요 페이지 — 페이지가 다 그려진 뒤 검사, 토큰 없거나 역할 불일치 시 홈으로
     if (!token) { location.replace('/'); return; }
     try {
         var _u = JSON.parse(localStorage.getItem('pmok_auth_user') || 'null');
@@ -16,16 +16,14 @@ $_guardRole = $authRequireRole ?? null;
     } catch (e) { location.replace('/'); }
 
     <?php else: ?>
-    // 로그인 필요 페이지 — 모달을 띄우고, 로그인하면 이 페이지에 그대로 머무름
+    // 로그인 필요 페이지 — 모달을 띄우고, 로그인하면 이 페이지로 그대로 복귀
     if (!token) {
-        window.__pmokGuardedPage = true;
-        document.addEventListener('DOMContentLoaded', function () {
-            var el = document.getElementById('authModal');
-            if (el && window.bootstrap) {
-                bootstrap.Modal.getOrCreateInstance(el).show();
-            }
-        });
+        try { sessionStorage.setItem('pmok_return_url', location.href); } catch (e) {}
+        var el = document.getElementById('authModal');
+        if (el && window.bootstrap) {
+            bootstrap.Modal.getOrCreateInstance(el).show();
+        }
     }
     <?php endif; ?>
-})();
+});
 </script>

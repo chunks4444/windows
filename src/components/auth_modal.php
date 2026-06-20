@@ -168,20 +168,25 @@ function authHideSuccess() {
 // 로그인 성공 시 같은 자리에서 onLoggedIn을 이어서 실행한다 (페이지 이동 없음).
 function pmokRequireAuth(onLoggedIn) {
     if (authGetToken()) { onLoggedIn(); return true; }
-    window.__pmokGuardedPage = true;
     window.__pmokAuthSuccessCallback = onLoggedIn;
+    try { sessionStorage.setItem('pmok_return_url', location.href); } catch (e) {}
     var el = document.getElementById('authModal');
     if (el && window.bootstrap) bootstrap.Modal.getOrCreateInstance(el).show();
     return false;
 }
 
 // 로그인 성공 직후 공통 후처리: 대기 중인 동작이 있으면 그걸 이어서 실행,
-// 없고 가드된 페이지라면 그 자리에 머무름, 그 외(직접 로그인 클릭)엔 대시보드로 이동.
+// 없고 저장된 복귀 URL이 있으면 그 페이지로 이동, 그 외(직접 로그인 클릭)엔 대시보드로 이동.
 function pmokAfterLogin() {
     var cb = window.__pmokAuthSuccessCallback;
     window.__pmokAuthSuccessCallback = null;
     if (cb) { cb(); return; }
-    if (!window.__pmokGuardedPage) location.href = '/src/mypage/dashboard.php';
+    var returnUrl = null;
+    try {
+        returnUrl = sessionStorage.getItem('pmok_return_url');
+        sessionStorage.removeItem('pmok_return_url');
+    } catch (e) {}
+    location.href = returnUrl || '/src/mypage/dashboard.php';
 }
 
 async function authLogin(e) {
