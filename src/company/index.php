@@ -1,5 +1,13 @@
 <?php
 header('Content-Type: text/html; charset=UTF-8');
+require_once __DIR__ . '/../lib/db.php';
+try {
+    $studioCards = db()->query('SELECT * FROM studio_cards WHERE is_active=1 ORDER BY sort_order, id')->fetchAll();
+} catch (Exception $e) {
+    $studioCards = [];
+}
+$cardsByKey = [];
+foreach ($studioCards as $sc) $cardsByKey[$sc['engine_key']] = $sc;
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -86,8 +94,8 @@ header('Content-Type: text/html; charset=UTF-8');
                     </g>
                 </svg>
                 <div>
-                    <p class="ab-tool-name">Classic Lattice</p>
-                    <p class="ab-tool-desc">전통 창호의 기본이 되는 격자 문살 패턴.<br>균형 잡힌 비례와 절제된 구조가 특징입니다.</p>
+                    <p class="ab-tool-name"><?= htmlspecialchars($cardsByKey['classic']['title'] ?? 'Classic Lattice') ?></p>
+                    <p class="ab-tool-desc"><?= $cardsByKey['classic']['description'] ?? '전통 창호의 기본이 되는 격자 문살 패턴.<br>균형 잡힌 비례와 절제된 구조가 특징입니다.' ?></p>
                 </div>
             </a>
             <a href="/src/engine/square/square.php" class="ab-tool-card">
@@ -98,8 +106,8 @@ header('Content-Type: text/html; charset=UTF-8');
                     <rect fill="currentColor" x="430" y="148" width="46" height="384" rx="4"/>
                 </svg>
                 <div>
-                    <p class="ab-tool-name">Square Lattice</p>
-                    <p class="ab-tool-desc">가로살과 세로살이 직각으로 교차하는 정방형 문살 패턴.<br>단아하고 절제된 아름다움을 표현합니다.</p>
+                    <p class="ab-tool-name"><?= htmlspecialchars($cardsByKey['square']['title'] ?? 'Square Lattice') ?></p>
+                    <p class="ab-tool-desc"><?= $cardsByKey['square']['description'] ?? '가로살과 세로살이 직각으로 교차하는 정방형 문살 패턴.<br>단아하고 절제된 아름다움을 표현합니다.' ?></p>
                 </div>
             </a>
             <a href="/src/engine/cross/cross.php" class="ab-tool-card">
@@ -112,8 +120,8 @@ header('Content-Type: text/html; charset=UTF-8');
                     </g>
                 </svg>
                 <div>
-                    <p class="ab-tool-name">Cross Lattice</p>
-                    <p class="ab-tool-desc">45° 대각선으로 교차하는 마름모 문살 패턴.<br>역동적인 사선의 흐름이 공간에 긴장감을 더합니다.</p>
+                    <p class="ab-tool-name"><?= htmlspecialchars($cardsByKey['cross']['title'] ?? 'Cross Lattice') ?></p>
+                    <p class="ab-tool-desc"><?= $cardsByKey['cross']['description'] ?? '45° 대각선으로 교차하는 마름모 문살 패턴.<br>역동적인 사선의 흐름이 공간에 긴장감을 더합니다.' ?></p>
                 </div>
             </a>
             <a href="/src/engine/diamond/diamond.php" class="ab-tool-card">
@@ -124,8 +132,8 @@ header('Content-Type: text/html; charset=UTF-8');
                     <g transform="rotate(135 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="4"/></g>
                 </svg>
                 <div>
-                    <p class="ab-tool-name">Diamond Lattice</p>
-                    <p class="ab-tool-desc">4방향 살이 대각선을 포함해 방사형으로 교차하는 패턴.<br>화려하고 입체적인 구조감을 연출합니다.</p>
+                    <p class="ab-tool-name"><?= htmlspecialchars($cardsByKey['diamond']['title'] ?? 'Diamond Lattice') ?></p>
+                    <p class="ab-tool-desc"><?= $cardsByKey['diamond']['description'] ?? '4방향 살이 대각선을 포함해 방사형으로 교차하는 패턴.<br>화려하고 입체적인 구조감을 연출합니다.' ?></p>
                 </div>
             </a>
             <a href="/src/engine/triangle/triangle.php" class="ab-tool-card">
@@ -135,8 +143,21 @@ header('Content-Type: text/html; charset=UTF-8');
                     <g transform="rotate(120 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="4"/></g>
                 </svg>
                 <div>
-                    <p class="ab-tool-name">Triangle Lattice</p>
-                    <p class="ab-tool-desc">세 방향의 살이 60° 각도로 교차하는 삼각형 문살 패턴.<br>역동적이고 세련된 인상을 공간에 더합니다.</p>
+                    <p class="ab-tool-name"><?= htmlspecialchars($cardsByKey['triangle']['title'] ?? 'Triangle Lattice') ?></p>
+                    <p class="ab-tool-desc"><?= $cardsByKey['triangle']['description'] ?? '세 방향의 살이 60° 각도로 교차하는 삼각형 문살 패턴.<br>역동적이고 세련된 인상을 공간에 더합니다.' ?></p>
+                </div>
+            </a>
+            <a href="/src/engine/hexagon/hexagon.php" class="ab-tool-card">
+                <svg class="ab-tool-icon" width="48" height="48" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+                    <polyline points="210,265 340,190 470,265" fill="none" stroke="currentColor" stroke-width="46" stroke-linejoin="round" stroke-linecap="round"/>
+                    <line x1="210" y1="265" x2="210" y2="415" stroke="currentColor" stroke-width="46" stroke-linecap="round"/>
+                    <line x1="470" y1="265" x2="470" y2="415" stroke="currentColor" stroke-width="46" stroke-linecap="round"/>
+                    <line x1="210" y1="415" x2="340" y2="490" stroke="currentColor" stroke-width="46" stroke-linecap="round"/>
+                    <line x1="470" y1="415" x2="340" y2="490" stroke="currentColor" stroke-width="46" stroke-linecap="round"/>
+                </svg>
+                <div>
+                    <p class="ab-tool-name"><?= htmlspecialchars($cardsByKey['hexagon']['title'] ?? 'Hexagon Lattice') ?></p>
+                    <p class="ab-tool-desc"><?= $cardsByKey['hexagon']['description'] ?? '세 방향의 살이 서로 맞물려 육각형 눈을 이루는 어금육모 패턴.<br>자연의 벌집 구조를 닮은 단정하고 견고한 전통미를 담아냅니다.' ?></p>
                 </div>
             </a>
         </div>
