@@ -454,7 +454,7 @@ body { font-weight: 900; }
 
 .service-card:hover {
     transform: translateY(-10px);
-    box-shadow: 8px 8px 20px #d1d1d1, -8px -8px 20px #ffffff;
+    box-shadow: none;
 }
 
 .service-card--classic,
@@ -489,7 +489,7 @@ body { font-weight: 900; }
     transition: transform .5s cubic-bezier(.25, .46, .45, .94), fill .25s;
 }
 
-.pm-symbol-link:hover svg {
+.service-card:hover .pm-symbol-link svg {
     transform: rotate(45deg);
     filter:
         drop-shadow(1px 0 0 #fff)
@@ -502,7 +502,7 @@ body { font-weight: 900; }
     fill: rgba(0, 0, 0, 0.9);
 }
 
-.pm-symbol-link:hover .pm-symbol-bar {
+.service-card:hover .pm-symbol-bar {
     fill: var(--red);
 }
 
@@ -510,7 +510,7 @@ body { font-weight: 900; }
     stroke: rgba(0, 0, 0, 0.9);
 }
 
-.pm-symbol-link:hover .pm-symbol-stroke {
+.service-card:hover .pm-symbol-stroke {
     stroke: var(--red);
 }
 
