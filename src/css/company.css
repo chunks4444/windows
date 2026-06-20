@@ -363,27 +363,6 @@ body {
 }
 .ab-gallery-item:hover img { transform: scale(1.04); }
 
-/* ── FOOTER ───────────────────────────────────── */
-.ab-footer {
-    padding: 32px 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.ab-footer-copy {
-    font-size: var(--fs-12);
-    font-weight: 300;
-    color: var(--text-3);
-    margin: 0;
-}
-.ab-footer-link {
-    font-size: var(--fs-12);
-    color: var(--text-3);
-    text-decoration: none;
-    transition: color 0.2s;
-}
-.ab-footer-link:hover { color: var(--gold); }
-
 /* ── RESPONSIVE ───────────────────────────────── */
 @media (max-width: 900px) {
     .container { padding-left: 32px; padding-right: 32px; }

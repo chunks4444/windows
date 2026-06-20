@@ -103,5 +103,6 @@ if (location.hash === '#boards') {
 }
 </script>
 
+<?php include __DIR__ . '/../components/footer.php'; ?>
 </body>
 </html>

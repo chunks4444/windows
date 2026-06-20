@@ -117,5 +117,6 @@ header('Content-Type: text/html; charset=UTF-8');
 
 <script src="/src/js/company.js"></script>
 
+<?php include __DIR__ . '/../components/footer.php'; ?>
 </body>
 </html>

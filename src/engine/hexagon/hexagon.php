@@ -1,6 +1,8 @@
 ﻿<?php
 header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../../lib/colors.php';
+require_once __DIR__ . '/../../lib/engine_settings.php';
+$cfg = get_engine_settings('hexagon');
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Pragma: no-cache');
 ?>
@@ -32,16 +34,16 @@ header('Pragma: no-cache');
                     <div class="door-row">
                         <div class="ctrl">
                             <select id="txtDoorType" class="sb-select">
-                                <option value="swing">여닫이</option>
-                                <option value="slide">미서기</option>
+                                <option value="swing" <?= $cfg['doorType'] === 'swing' ? 'selected' : '' ?>>여닫이</option>
+                                <option value="slide" <?= $cfg['doorType'] === 'slide' ? 'selected' : '' ?>>미서기</option>
                             </select>
                         </div>
                         <div class="ctrl">
                             <select id="txtDoorCount" class="sb-select">
-                                <option value="1">1짝</option>
-                                <option value="2">2짝</option>
-                                <option value="3">3짝</option>
-                                <option value="4">4짝</option>
+                                <option value="1" <?= $cfg['doorCount'] === '1' ? 'selected' : '' ?>>1짝</option>
+                                <option value="2" <?= $cfg['doorCount'] === '2' ? 'selected' : '' ?>>2짝</option>
+                                <option value="3" <?= $cfg['doorCount'] === '3' ? 'selected' : '' ?>>3짝</option>
+                                <option value="4" <?= $cfg['doorCount'] === '4' ? 'selected' : '' ?>>4짝</option>
                             </select>
                         </div>
                     </div>
@@ -51,15 +53,15 @@ header('Pragma: no-cache');
                     <div class="ctrl">
                         <div class="ctrl-header"><span class="ctrl-label">문 가로폭</span></div>
                         <div class="slider-row">
-                            <input type="range" id="txtW" min="400" max="3000" step="1" value="600">
-                            <input type="number" class="slider-num" id="numW" min="400" max="3000" step="1" value="600">
+                            <input type="range" id="txtW" min="400" max="3000" step="1" value="<?= htmlspecialchars($cfg['W']) ?>">
+                            <input type="number" class="slider-num" id="numW" min="400" max="3000" step="1" value="<?= htmlspecialchars($cfg['W']) ?>">
                         </div>
                     </div>
                     <div class="ctrl">
                         <div class="ctrl-header"><span class="ctrl-label">문 세로높이</span></div>
                         <div class="slider-row">
-                            <input type="range" id="txtH" min="400" max="3000" step="1" value="1707">
-                            <input type="number" class="slider-num" id="numH" min="400" max="3000" step="1" value="1707">
+                            <input type="range" id="txtH" min="400" max="3000" step="1" value="<?= htmlspecialchars($cfg['H']) ?>">
+                            <input type="number" class="slider-num" id="numH" min="400" max="3000" step="1" value="<?= htmlspecialchars($cfg['H']) ?>">
                         </div>
                     </div>
 
@@ -67,8 +69,8 @@ header('Pragma: no-cache');
                     <div class="ctrl">
                         <div class="ctrl-header"><span class="ctrl-label" id="lblCols">가로 칸수</span></div>
                         <div class="slider-row">
-                            <input type="range" id="txtCols" min="1" max="29" step="2" value="3">
-                            <input type="number" class="slider-num" id="numCols" min="1" max="29" step="2" value="3">
+                            <input type="range" id="txtCols" min="1" max="29" step="2" value="<?= htmlspecialchars($cfg['cols']) ?>">
+                            <input type="number" class="slider-num" id="numCols" min="1" max="29" step="2" value="<?= htmlspecialchars($cfg['cols']) ?>">
                         </div>
                     </div>
                     <hr class="sb-divider">
@@ -76,15 +78,15 @@ header('Pragma: no-cache');
                     <div class="ctrl">
                         <div class="ctrl-header"><span class="ctrl-label">좌우 울거미 두께</span></div>
                         <div class="slider-row">
-                            <input type="range" id="txtFrame" min="20" max="150" step="1" value="60">
-                            <input type="number" class="slider-num" id="numFrame" min="20" max="150" step="1" value="60">
+                            <input type="range" id="txtFrame" min="20" max="150" step="1" value="<?= htmlspecialchars($cfg['frame']) ?>">
+                            <input type="number" class="slider-num" id="numFrame" min="20" max="150" step="1" value="<?= htmlspecialchars($cfg['frame']) ?>">
                         </div>
                     </div>
                     <div class="ctrl">
                         <div class="ctrl-header"><span class="ctrl-label">상하 울거미 두께</span></div>
                         <div class="slider-row">
-                            <input type="range" id="txtFrameH" min="20" max="150" step="1" value="60">
-                            <input type="number" class="slider-num" id="numFrameH" min="20" max="150" step="1" value="60">
+                            <input type="range" id="txtFrameH" min="20" max="150" step="1" value="<?= htmlspecialchars($cfg['frameH']) ?>">
+                            <input type="number" class="slider-num" id="numFrameH" min="20" max="150" step="1" value="<?= htmlspecialchars($cfg['frameH']) ?>">
                         </div>
                     </div>
                     <hr class="sb-divider">
@@ -92,8 +94,8 @@ header('Pragma: no-cache');
                     <div class="ctrl">
                         <div class="ctrl-header"><span class="ctrl-label">살 두께</span></div>
                         <div class="slider-row">
-                            <input type="range" id="txtSlat" min="8" max="35" step="1" value="12">
-                            <input type="number" class="slider-num" id="numSlat" min="8" max="35" step="1" value="12">
+                            <input type="range" id="txtSlat" min="8" max="35" step="1" value="<?= htmlspecialchars($cfg['slat']) ?>">
+                            <input type="number" class="slider-num" id="numSlat" min="8" max="35" step="1" value="<?= htmlspecialchars($cfg['slat']) ?>">
                         </div>
                     </div>
 
@@ -101,7 +103,7 @@ header('Pragma: no-cache');
                     <div class="toggle-row">
                         <span class="toggle-label">세로 자동 맞춤</span>
                         <label class="toggle-switch">
-                            <input type="checkbox" id="chkShrinkH">
+                            <input type="checkbox" id="chkShrinkH" <?= $cfg['shrinkH'] === '1' ? 'checked' : '' ?>>
                             <span class="toggle-track"></span>
                         </label>
                     </div>
@@ -110,15 +112,15 @@ header('Pragma: no-cache');
                     <div class="toggle-row">
                         <span class="toggle-label">풍판 사용</span>
                         <label class="toggle-switch">
-                            <input type="checkbox" id="chkPungpan">
+                            <input type="checkbox" id="chkPungpan" <?= $cfg['pungpanOn'] === '1' ? 'checked' : '' ?>>
                             <span class="toggle-track"></span>
                         </label>
                     </div>
-                    <div class="ctrl" id="pungpanCtrl" style="display:none;">
+                    <div class="ctrl" id="pungpanCtrl" style="display:<?= $cfg['pungpanOn'] === '1' ? 'block' : 'none' ?>;">
                         <div class="ctrl-header"><span class="ctrl-label">풍판 높이</span></div>
                         <div class="slider-row">
-                            <input type="range" id="txtPungpan" min="0" max="600" step="1" value="0">
-                            <input type="number" class="slider-num" id="numPungpan" min="0" max="600" step="1" value="0">
+                            <input type="range" id="txtPungpan" min="0" max="600" step="1" value="<?= htmlspecialchars($cfg['pungpan']) ?>">
+                            <input type="number" class="slider-num" id="numPungpan" min="0" max="600" step="1" value="<?= htmlspecialchars($cfg['pungpan']) ?>">
                         </div>
                     </div>
 
@@ -126,14 +128,14 @@ header('Pragma: no-cache');
                     <div class="toggle-row">
                         <span class="toggle-label">패턴 세로 방향</span>
                         <label class="toggle-switch">
-                            <input type="checkbox" id="chkRotate" checked>
+                            <input type="checkbox" id="chkRotate" <?= $cfg['rotate'] === '1' ? 'checked' : '' ?>>
                             <span class="toggle-track"></span>
                         </label>
                     </div>
                     <div class="toggle-row" style="margin-bottom:0;">
                         <span class="toggle-label">치수 표기</span>
                         <label class="toggle-switch">
-                            <input type="checkbox" id="chkDimension" checked>
+                            <input type="checkbox" id="chkDimension" <?= $cfg['dimensionOn'] === '1' ? 'checked' : '' ?>>
                             <span class="toggle-track"></span>
                         </label>
                     </div>
@@ -588,6 +590,7 @@ header('Pragma: no-cache');
         window.__pmokOpenDrawing         = <?= isset($_POST['drawing'])    ? json_encode($_POST['drawing'],    JSON_UNESCAPED_UNICODE) : 'null' ?>;
         window.__pmokCollectionDrawingId = <?= isset($_GET['drawing_id']) ? (int)$_GET['drawing_id']          : 'null' ?>;
         window.__pmokColorGroups         = <?= json_encode(get_color_groups(), JSON_UNESCAPED_UNICODE) ?>;
+        window.__pmokEngineLayout        = <?= json_encode(['gap' => (float)$cfg['gap'], 'basePadding' => (float)$cfg['basePadding']], JSON_UNESCAPED_UNICODE) ?>;
     </script>
     <script src="/src/js/drawing-sync.js?v=<?= md5_file(__DIR__ . '/../../js/drawing-sync.js') ?>"></script>
     <script src="/src/js/engine-common.js?v=<?= md5_file(__DIR__ . '/../../js/engine-common.js') ?>"></script>

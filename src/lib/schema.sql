@@ -343,3 +343,14 @@ CREATE TABLE IF NOT EXISTS orders (
     CONSTRAINT fk_orders_user     FOREIGN KEY (user_id)    REFERENCES users (id)    ON DELETE CASCADE,
     CONSTRAINT fk_orders_drawing FOREIGN KEY (drawing_id) REFERENCES drawings (id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='제작 주문';
+-- ============================================================
+
+-- 엔진별 기본 설정값 (좌측 패널 슬라이더 기본값 + gap/basePadding 같은 레이아웃 상수)
+-- 어드민에서 관리. 행이 없으면 src/lib/engine_settings.php의 하드코딩 fallback 값 사용
+CREATE TABLE IF NOT EXISTS engine_settings (
+    engine        VARCHAR(20)  NOT NULL COMMENT '엔진명 (classic/square/cross/diamond/triangle/hexagon)',
+    setting_key   VARCHAR(40)  NOT NULL COMMENT '설정 키 (예: W, H, cols, gap, basePadding)',
+    setting_value VARCHAR(255) NOT NULL COMMENT '설정 값',
+    updated_at    DATETIME     NOT NULL DEFAULT NOW() ON UPDATE NOW() COMMENT '수정일시',
+    PRIMARY KEY (engine, setting_key)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='엔진별 기본 설정값';

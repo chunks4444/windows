@@ -85,3 +85,66 @@ body:not(.pm-generator) .container,
 body:not(.pm-generator) .container-lg,
 body:not(.pm-generator) .container-xl,
 body:not(.pm-generator) .container-xxl { max-width: 1280px; }
+
+/* ── 글로벌 푸터 (엔진/관리자 페이지 제외 전체 화면 공용) ───── */
+.global-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 20px 24px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    background: #fff;
+}
+
+.global-footer .footer-cta-center {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.global-footer .footer-cta-sub {
+    font-size: var(--fs-12);
+    color: #333;
+    margin: 0;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+}
+
+.global-footer .footer-cta-link {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: var(--fs-14);
+    font-weight: 700;
+    color: #111;
+    text-decoration: none;
+    letter-spacing: -0.01em;
+    transition: color 0.2s;
+}
+
+.global-footer .footer-cta-link:hover { color: var(--red); }
+
+.global-footer .footer-copy {
+    font-size: var(--fs-12);
+    font-weight: 300;
+    color: rgba(0, 0, 0, 0.6);
+    margin: 0;
+}
+
+.global-footer .footer-link {
+    font-size: var(--fs-12);
+    color: rgba(0, 0, 0, 0.4);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.global-footer .footer-link:hover { color: var(--gold); }
+
+@media (max-width: 768px) {
+    .global-footer {
+        flex-direction: column;
+        text-align: center;
+        padding: 16px 20px;
+    }
+}

@@ -174,5 +174,6 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
     });
 })();
 </script>
+<?php include __DIR__ . '/../components/footer.php'; ?>
 </body>
 </html>

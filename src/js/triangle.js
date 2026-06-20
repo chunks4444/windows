@@ -561,12 +561,12 @@ async function draw() {
 
 
 
-    const basePadding = 60;
+    const basePadding = window.__pmokEngineLayout?.basePadding ?? 60;
 
     const doorType = txtDoorType.value;
     const doorCount = parseInt(txtDoorCount.value);
     lastDrawnDoorCount = doorCount;
-    const gap = 2;
+    const gap = window.__pmokEngineLayout?.gap ?? 2;
     const overlap = geo.frameW;
     const doorPanelOffsetX = [];
 

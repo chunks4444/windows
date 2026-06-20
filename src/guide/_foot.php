@@ -25,5 +25,6 @@
 </main>
 </div><!-- .guide-wrap -->
 
+<?php include __DIR__ . '/../components/footer.php'; ?>
 </body>
 </html>

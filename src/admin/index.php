@@ -99,6 +99,10 @@
             <div class="adm-home-icon"><i class="bi bi-shield-lock"></i></div>
             <div><div class="adm-home-title">회원 관리</div><div class="adm-home-desc">가입 회원 목록/권한</div></div>
         </a>
+        <a href="/src/admin/engine_settings.php" class="adm-home-card">
+            <div class="adm-home-icon"><i class="bi bi-sliders"></i></div>
+            <div><div class="adm-home-title">엔진 기본값 관리</div><div class="adm-home-desc">엔진별 슬라이더 기본값/레이아웃 상수</div></div>
+        </a>
     </div>
 </div>
 

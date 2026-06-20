@@ -219,13 +219,7 @@ foreach ($studioCards as $sc) $cardsByKey[$sc['engine_key']] = $sc;
     </div>
 </div>
 
-<!-- FOOTER -->
-<div class="container">
-    <div class="ab-footer">
-        <p class="ab-footer-copy">© <?= date('Y') ?> 평목(平木). All rights reserved.</p>
-        <a href="https://pyeongmok.com" class="ab-footer-link">pyeongmok.com</a>
-    </div>
-</div>
+<?php include __DIR__ . '/../components/footer.php'; ?>
 
 <!-- CONTACT MODAL -->
 <div class="modal fade" id="contactModal" tabindex="-1" aria-hidden="true">

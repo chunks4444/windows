@@ -66,5 +66,6 @@
 <!-- 토스트 -->
 <div id="libToast" class="lib-toast"></div>
 
+<?php include __DIR__ . '/../components/footer.php'; ?>
 </body>
 </html>

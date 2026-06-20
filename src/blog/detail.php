@@ -82,5 +82,6 @@ $metaDesc = $post['summary'] ?: mb_substr(strip_tags($post['content']), 0, 120);
     </nav>
     <?php endif; ?>
 </div>
+<?php include __DIR__ . '/../components/footer.php'; ?>
 </body>
 </html>
