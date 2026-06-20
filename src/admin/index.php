@@ -51,6 +51,10 @@
             <div class="adm-home-icon"><i class="bi bi-journal-text"></i></div>
             <div><div class="adm-home-title">블로그 관리</div><div class="adm-home-desc">창호 이야기 글</div></div>
         </a>
+        <a href="/src/admin/svg_motifs.php" class="adm-home-card">
+            <div class="adm-home-icon"><i class="bi bi-flower1"></i></div>
+            <div><div class="adm-home-title">문양(SVG) 라이브러리</div><div class="adm-home-desc">엔진 삽입용 꽃살 문양</div></div>
+        </a>
         <a href="/src/admin/faq.php" class="adm-home-card">
             <div class="adm-home-icon"><i class="bi bi-question-circle"></i></div>
             <div><div class="adm-home-title">FAQ 관리</div><div class="adm-home-desc">자주 묻는 질문</div></div>

@@ -711,7 +711,7 @@
     }
 
     function onTouchStart(e) {
-        ignoreGesture = !!e.target.closest('.canvas-controls');
+        ignoreGesture = !!(e.target.closest('.canvas-controls') || e.target.closest('.canvas-title-bar'));
         if (ignoreGesture) { touchMode = null; return; }
         e.preventDefault();
         if (e.touches.length === 1) {
@@ -818,4 +818,276 @@
     if (window.screen && window.screen.orientation) {
         window.screen.orientation.addEventListener('change', delayedResize);
     }
+})();
+
+// ── SVG 문양 삽입 (꽃살 등 장식 문양) — 6개 엔진 공용 ──────
+// baseScale: 삽입 시 자동으로 맞춘 기준 크기(로직단위/원본px), scaleMul: 슬라이더(1.0 = 100% = 처음 삽입된 크기)
+let svgInserts       = []; // [{ id, url, cx, cy, baseScale, scaleMul, rotation, w, h }] cx/cy는 로직 좌표
+let selectedInsertId = null;
+const _motifImgCache = new Map();
+
+function _loadMotifImg(url) {
+    if (_motifImgCache.has(url)) return _motifImgCache.get(url);
+    const img = new Image();
+    img.onload = () => draw();
+    img.src = url;
+    _motifImgCache.set(url, img);
+    return img;
+}
+
+// 이전 형식(절대 scale만 있던 도면) 호환: scaleMul 없으면 현재 scale을 baseScale로 고정
+function _normalizeInsert(ins) {
+    if (ins.scaleMul === undefined) {
+        ins.baseScale = ins.scale ?? ins.baseScale ?? 1;
+        ins.scaleMul  = 1;
+    }
+    return ins;
+}
+
+function addSvgInsert(url, naturalW, naturalH) {
+    const w = naturalW || 100, h = naturalH || 100;
+    const targetSize = Math.min(logW, logH) * 0.25;
+    const baseScale = targetSize / Math.max(w, h);
+    const id = 'ins_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+    svgInserts.push({ id, url, cx: 0, cy: 0, baseScale, scaleMul: 1, rotation: 0, w, h });
+    selectedInsertId = id;
+    _loadMotifImg(url);
+    renderSvgInsertPanel();
+    draw();
+}
+
+function duplicateSelectedInsert() {
+    const ins = svgInserts.find(i => i.id === selectedInsertId);
+    if (!ins) return;
+    const id = 'ins_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+    const offset = Math.min(logW, logH) * 0.04;
+    svgInserts.push({ ...ins, id, cx: ins.cx + offset, cy: ins.cy + offset });
+    selectedInsertId = id;
+    renderSvgInsertPanel();
+    draw();
+}
+
+function selectSvgInsert(id) {
+    selectedInsertId = id;
+    renderSvgInsertPanel();
+    draw();
+}
+
+function removeSelectedInsert() {
+    if (!selectedInsertId) return;
+    svgInserts = svgInserts.filter(i => i.id !== selectedInsertId);
+    selectedInsertId = null;
+    renderSvgInsertPanel();
+    draw();
+}
+
+function updateSelectedInsert(patch) {
+    const ins = svgInserts.find(i => i.id === selectedInsertId);
+    if (!ins) return;
+    Object.assign(ins, patch);
+    draw();
+}
+
+function renderSvgInsertPanel() {
+    const panel = document.getElementById('svgInsertControls');
+    if (!panel) return;
+    const ins = svgInserts.find(i => i.id === selectedInsertId);
+    panel.style.display = ins ? '' : 'none';
+    if (!ins) return;
+    _normalizeInsert(ins);
+    const scaleEl = document.getElementById('svgInsertScale');
+    const rotEl   = document.getElementById('svgInsertRotation');
+    if (scaleEl) scaleEl.value = Math.round(ins.scaleMul * 100);
+    if (rotEl)   rotEl.value   = ins.rotation;
+}
+
+// ctx/canvas/logW/logH/panX/panY/scaleFactor/draw 는 각 엔진 스크립트의 전역을 그대로 참조
+function drawSvgInserts() {
+    if (!svgInserts.length) return;
+    const ox = logW / 2 + panX, oy = logH / 2 + panY;
+    svgInserts.forEach(ins => {
+        _normalizeInsert(ins);
+        const img = _loadMotifImg(ins.url);
+        if (!img.complete || !img.naturalWidth) return;
+        const x = ox + ins.cx * scaleFactor;
+        const y = oy + ins.cy * scaleFactor;
+        const renderScale = ins.baseScale * ins.scaleMul;
+        const w = ins.w * renderScale * scaleFactor;
+        const h = ins.h * renderScale * scaleFactor;
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(ins.rotation * Math.PI / 180);
+        ctx.drawImage(img, -w / 2, -h / 2, w, h);
+        if (ins.id === selectedInsertId) {
+            ctx.setLineDash([5, 4]);
+            ctx.strokeStyle = '#3A8C82';
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(-w / 2, -h / 2, w, h);
+            ctx.setLineDash([]);
+        }
+        ctx.restore();
+    });
+}
+
+(function () {
+    function toLogical(clientX, clientY) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+            x: (clientX - rect.left) * (logW / rect.width),
+            y: (clientY - rect.top)  * (logH / rect.height),
+        };
+    }
+
+    function hitTestInsert(clientX, clientY) {
+        const p  = toLogical(clientX, clientY);
+        const ox = logW / 2 + panX, oy = logH / 2 + panY;
+        for (let i = svgInserts.length - 1; i >= 0; i--) {
+            const ins = svgInserts[i];
+            _normalizeInsert(ins);
+            const x = ox + ins.cx * scaleFactor;
+            const y = oy + ins.cy * scaleFactor;
+            const r = Math.max(ins.w, ins.h) * ins.baseScale * ins.scaleMul * scaleFactor / 2;
+            if (Math.hypot(p.x - x, p.y - y) <= r) return ins;
+        }
+        return null;
+    }
+
+    let insertDrag = null; // { id, startCx, startCy, startClientX, startClientY }
+
+    function onDown(clientX, clientY, targetEl) {
+        // 캔버스 자체(또는 컨테이너 빈 배경)를 클릭한 경우만 처리. 제목바/줌툴바 등
+        // 캔버스 위에 떠 있는 다른 UI를 클릭한 경우는 절대 가로채지 않음.
+        if (targetEl !== canvas && targetEl !== container) return false;
+        const hit = hitTestInsert(clientX, clientY);
+        if (!hit) {
+            if (selectedInsertId) selectSvgInsert(null);
+            return false;
+        }
+        selectSvgInsert(hit.id);
+        insertDrag = { id: hit.id, startCx: hit.cx, startCy: hit.cy, startClientX: clientX, startClientY: clientY };
+        return true;
+    }
+
+    function onMove(clientX, clientY) {
+        if (!insertDrag) return false;
+        const ins = svgInserts.find(i => i.id === insertDrag.id);
+        if (!ins) { insertDrag = null; return false; }
+        const dcx = (clientX - insertDrag.startClientX) / scaleFactor;
+        const dcy = (clientY - insertDrag.startClientY) / scaleFactor;
+        let cx = insertDrag.startCx + dcx;
+        let cy = insertDrag.startCy + dcy;
+        const snapped = typeof snapToNode === 'function' ? snapToNode(cx, cy) : null;
+        if (snapped) { cx = snapped.cx; cy = snapped.cy; }
+        ins.cx = cx; ins.cy = cy;
+        draw();
+        return true;
+    }
+
+    function onUp() {
+        const had = !!insertDrag;
+        insertDrag = null;
+        return had;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (!container) return;
+
+        // 마우스: 캡처 단계에서 먼저 검사해 엔진 자체 mousedown(팬 등)보다 우선권을 가짐
+        container.addEventListener('mousedown', e => {
+            if (onDown(e.clientX, e.clientY, e.target)) e.stopImmediatePropagation();
+        }, { capture: true });
+        window.addEventListener('mousemove', e => {
+            if (onMove(e.clientX, e.clientY)) e.stopImmediatePropagation();
+        }, { capture: true });
+        window.addEventListener('mouseup', () => { onUp(); }, { capture: true });
+
+        // 터치: 기존 터치 핸들러(팬/핀치)보다 먼저 처리되도록 캡처 단계 사용
+        container.addEventListener('touchstart', e => {
+            if (e.touches.length !== 1) return;
+            const t = e.touches[0];
+            if (onDown(t.clientX, t.clientY, e.target)) e.stopImmediatePropagation();
+        }, { capture: true, passive: true });
+        container.addEventListener('touchmove', e => {
+            if (e.touches.length !== 1 || !insertDrag) return;
+            const t = e.touches[0];
+            if (onMove(t.clientX, t.clientY)) e.stopImmediatePropagation();
+        }, { capture: true, passive: true });
+        container.addEventListener('touchend', () => { onUp(); }, { capture: true });
+    });
+})();
+
+(function () {
+    function openLibraryPicker() {
+        const modal = document.getElementById('svgPickerModal');
+        const grid  = document.getElementById('svgPickerGrid');
+        if (!modal || !grid) return;
+        grid.innerHTML = '<div style="grid-column:1/-1;font-size:12px;color:var(--text-3);">불러오는 중…</div>';
+        modal.style.display = 'flex';
+        fetch('/src/api/svg_motifs.php').then(r => r.json()).then(data => {
+            const motifs = data.motifs || [];
+            if (!motifs.length) { grid.innerHTML = '<div style="grid-column:1/-1;font-size:12px;color:var(--text-3);">등록된 문양이 없습니다.</div>'; return; }
+            grid.innerHTML = motifs.map(m => `
+                <div class="svg-picker-item" data-url="${m.svg_url}" title="${m.name}">
+                    <img src="${m.svg_url}" alt="${m.name}">
+                    <span>${m.name}</span>
+                </div>`).join('');
+            grid.querySelectorAll('.svg-picker-item').forEach(el => {
+                el.addEventListener('click', () => {
+                    closeLibraryPicker();
+                    const img = new Image();
+                    img.onload = () => addSvgInsert(el.dataset.url, img.naturalWidth, img.naturalHeight);
+                    img.onerror = () => addSvgInsert(el.dataset.url, 100, 100);
+                    img.src = el.dataset.url;
+                });
+            });
+        }).catch(() => { grid.innerHTML = '<div style="grid-column:1/-1;font-size:12px;color:var(--text-3);">불러오기 실패</div>'; });
+    }
+
+    function closeLibraryPicker() {
+        const modal = document.getElementById('svgPickerModal');
+        if (modal) modal.style.display = 'none';
+    }
+
+    function handleSvgFileUpload(input) {
+        const file = input.files[0];
+        if (!file) return;
+        if (!/\.svg$/i.test(file.name) && file.type !== 'image/svg+xml') {
+            alert('SVG 파일만 업로드할 수 있습니다.');
+            input.value = '';
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = async e => {
+            const res = await fetch('/src/api/uploads/svg_insert.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('pmok_auth_token') },
+                body: JSON.stringify({ svg_data: e.target.result }),
+            });
+            const data = await res.json();
+            input.value = '';
+            if (!data.ok) { alert(data.error || '업로드 실패'); return; }
+            const img = new Image();
+            img.onload = () => addSvgInsert(data.url, img.naturalWidth, img.naturalHeight);
+            img.onerror = () => addSvgInsert(data.url, 100, 100);
+            img.src = data.url;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    window.openSvgLibraryPicker  = openLibraryPicker;
+    window.closeSvgLibraryPicker = closeLibraryPicker;
+    window.handleSvgFileUpload   = handleSvgFileUpload;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const scaleEl = document.getElementById('svgInsertScale');
+        const rotEl   = document.getElementById('svgInsertRotation');
+        const delBtn  = document.getElementById('btnSvgInsertDelete');
+        const dupBtn  = document.getElementById('btnSvgInsertDuplicate');
+        if (scaleEl) scaleEl.addEventListener('input', e => updateSelectedInsert({ scaleMul: (+e.target.value || 100) / 100 }));
+        if (rotEl)   rotEl.addEventListener('input', e => updateSelectedInsert({ rotation: +e.target.value || 0 }));
+        if (delBtn)  delBtn.addEventListener('click', removeSelectedInsert);
+        if (dupBtn)  dupBtn.addEventListener('click', duplicateSelectedInsert);
+        const pickerModal = document.getElementById('svgPickerModal');
+        if (pickerModal) pickerModal.addEventListener('click', e => { if (e.target === pickerModal) closeLibraryPicker(); });
+    });
 })();

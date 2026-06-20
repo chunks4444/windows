@@ -1168,6 +1168,7 @@ async function draw() {
             }
         }
     }
+    drawSvgInserts();
     if (!_exportCanvas || _exportCanvas.width !== canvas.width || _exportCanvas.height !== canvas.height) {
         _exportCanvas = document.createElement('canvas');
         _exportCanvas.width = canvas.width;
@@ -1412,7 +1413,7 @@ async function draw() {
     }
 
     container.addEventListener('mousedown', function(e) {
-        if (e.target.closest('.canvas-controls')) return;
+        if (e.target.closest('.canvas-controls') || e.target.closest('.canvas-title-bar')) return;
         if (lineEditMode) { handleEditClick(e); return; }
         if (facePaintMode) {
             facePaintIsDown = true;
@@ -1542,6 +1543,7 @@ async function draw() {
         isDragging = false;
     });
     container.addEventListener('wheel', function(e) {
+        if (e.target.closest('.canvas-title-bar') || e.target.closest('.canvas-controls')) return;
         e.preventDefault();
         const intensity = 0.1;
         if (e.deltaY < 0) scaleFactor *= (1 + intensity);
@@ -1966,6 +1968,7 @@ async function draw() {
             placementNaturalSize: placementNaturalSize ? { ...placementNaturalSize } : null,
             deletedSegs: [...deletedSegs],
             addedLines,
+            svgInserts,
         };
     }
 
@@ -1995,6 +1998,10 @@ async function draw() {
         deletedSegs  = new Set(p.deletedSegs || []);
         addedLines   = p.addedLines || [];
         addLineStart = null;
+        svgInserts       = p.svgInserts || [];
+        selectedInsertId = null;
+        svgInserts.forEach(ins => _loadMotifImg(ins.url));
+        renderSvgInsertPanel();
         document.getElementById('btnScale').classList.toggle('cv-btn-active', placementMode);
         frameColorPicker.selectColor(p.frameColor);
         slatColorPicker.selectColor(p.slatColor);

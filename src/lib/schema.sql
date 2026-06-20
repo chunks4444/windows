@@ -305,6 +305,10 @@ INSERT IGNORE INTO color_swatches (group_name, sort_order, code, name, hex) VALU
 -- ALTER TABLE orders ADD COLUMN ship_address         VARCHAR(255) NULL COMMENT '배송지 주소' AFTER ship_zipcode;
 -- ALTER TABLE orders ADD COLUMN ship_address_detail  VARCHAR(100) NULL COMMENT '배송지 상세주소' AFTER ship_address;
 -- ALTER TABLE orders ADD COLUMN ship_phone           VARCHAR(30)  NULL COMMENT '배송지 연락처' AFTER ship_address_detail;
+-- ALTER TABLE orders ADD COLUMN estimated_price       DECIMAL(12,2) NULL COMMENT '주문 시점 클라이언트 실시간 추정가 (참고용)' AFTER spec_json;
+-- ALTER TABLE orders ADD COLUMN final_price           DECIMAL(12,2) NULL COMMENT '서버가 계산/확정한 공식 가격' AFTER estimated_price;
+-- ALTER TABLE orders ADD COLUMN price_breakdown       MEDIUMTEXT    NULL COMMENT '항목별 가격 산출 내역 (JSON)' AFTER final_price;
+-- ALTER TABLE orders ADD COLUMN price_formula_version VARCHAR(20)   NULL COMMENT '계산에 사용된 가격 공식 버전' AFTER price_breakdown;
 
 -- 제작 주문 (엔진 페이지의 "주문" 버튼에서 생성)
 -- customer_name/customer_phone/company_name은 주문 시점 users 테이블 값의 스냅샷
@@ -327,6 +331,10 @@ CREATE TABLE IF NOT EXISTS orders (
     ship_phone          VARCHAR(30)  NULL COMMENT '배송지 연락처',
     memo                TEXT         NULL COMMENT '요청사항',
     spec_json           MEDIUMTEXT   NULL COMMENT '주문 시점 도면 사양 스냅샷 (JSON)',
+    estimated_price     DECIMAL(12,2) NULL COMMENT '주문 시점 클라이언트 실시간 추정가 (참고용)',
+    final_price         DECIMAL(12,2) NULL COMMENT '서버가 계산/확정한 공식 가격',
+    price_breakdown     MEDIUMTEXT   NULL COMMENT '항목별 가격 산출 내역 (JSON)',
+    price_formula_version VARCHAR(20) NULL COMMENT '계산에 사용된 가격 공식 버전',
     status              ENUM('pending','confirmed','done','cancelled') NOT NULL DEFAULT 'pending' COMMENT '처리 상태',
     created_at          DATETIME     NOT NULL DEFAULT NOW() COMMENT '주문 접수일시',
     PRIMARY KEY (id),

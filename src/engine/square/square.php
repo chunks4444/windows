@@ -514,6 +514,32 @@ header('Pragma: no-cache');
                     </div>
                 </div>
                 <div class="sb-section">
+                    <div class="sb-section-title" style="cursor:default;">문양 삽입</div>
+                    <div class="svg-insert-actions">
+                        <button class="hbtn" onclick="openSvgLibraryPicker()">
+                            <i class="bi bi-flower1"></i> 라이브러리
+                        </button>
+                        <button class="hbtn" onclick="document.getElementById('svgFileInput').click()">
+                            <i class="bi bi-upload"></i> 업로드
+                        </button>
+                        <input type="file" id="svgFileInput" accept="image/svg+xml,.svg" style="display:none;" onchange="handleSvgFileUpload(this)">
+                    </div>
+                    <div id="svgInsertControls" style="display:none;">
+                        <div class="svg-insert-row">
+                            <label>크기</label>
+                            <input type="range" id="svgInsertScale" min="10" max="300" step="1" value="100">
+                        </div>
+                        <div class="svg-insert-row">
+                            <label>회전</label>
+                            <input type="range" id="svgInsertRotation" min="0" max="360" step="1" value="0">
+                        </div>
+                        <div class="svg-insert-actions" style="margin-top:6px;">
+                            <button type="button" class="hbtn" id="btnSvgInsertDuplicate"><i class="bi bi-copy"></i> 복사</button>
+                            <button type="button" class="svg-insert-delete" id="btnSvgInsertDelete">삭제</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="sb-section">
                     <div class="sb-section-title" style="cursor:default;">내보내기</div>
                     <div style="display:flex;gap:6px;width:100%;">
                         <button class="hbtn" id="btnSavePNG" style="flex:1;justify-content:center;">
@@ -565,6 +591,16 @@ header('Pragma: no-cache');
                 <button class="pm-btn-cancel" id="dmRenameCancel">취소</button>
                 <button class="pm-btn-ok" id="dmRenameOk">변경</button>
             </div>
+        </div>
+    </div>
+
+    <div id="svgPickerModal">
+        <div class="svg-picker-box">
+            <div class="svg-picker-head">
+                <h3>문양 라이브러리</h3>
+                <button class="svg-picker-close" onclick="closeSvgLibraryPicker()">&#x2715;</button>
+            </div>
+            <div id="svgPickerGrid"></div>
         </div>
     </div>
 
