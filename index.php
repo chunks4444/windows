@@ -33,7 +33,7 @@ try {
             <!-- Hero Carousel -->
             <div class="hero-carousel-outer">
               <div class="container">
-                <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="4500">
+                <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="4500" data-bs-touch="false">
                     <div class="carousel-indicators">
                         <?php foreach ($heroSlides as $i => $sl): ?>
                         <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="<?= $i ?>"

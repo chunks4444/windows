@@ -700,6 +700,7 @@
     let touchMode  = null;  // 'pan' | 'pinch' | null
     let startCX, startCY, startPanX, startPanY, moved;
     let startDist, startScale;
+    let ignoreGesture = false; // 캔버스 컨트롤 버튼 위에서 시작한 터치는 무시
 
     function clientToLogical(clientX, clientY) {
         const rect = canvas.getBoundingClientRect();
@@ -710,6 +711,8 @@
     }
 
     function onTouchStart(e) {
+        ignoreGesture = !!e.target.closest('.canvas-controls');
+        if (ignoreGesture) { touchMode = null; return; }
         e.preventDefault();
         if (e.touches.length === 1) {
             const t = e.touches[0];
@@ -727,6 +730,7 @@
     }
 
     function onTouchMove(e) {
+        if (ignoreGesture) return;
         e.preventDefault();
         if (touchMode === 'pinch' && e.touches.length === 2) {
             const [t0, t1] = e.touches;
@@ -760,6 +764,10 @@
     }
 
     function onTouchEnd(e) {
+        if (ignoreGesture) {
+            if (e.touches.length === 0) ignoreGesture = false;
+            return;
+        }
         if (touchMode === 'pan' && !moved && lineEditMode && e.changedTouches.length === 1) {
             const t = e.changedTouches[0];
             handleEditClick({ clientX: t.clientX, clientY: t.clientY });
