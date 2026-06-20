@@ -309,6 +309,16 @@ let deletedSegs = new Set();  // 삭제된 세그먼트 key (쌍으로 관리)
 let addedLines   = [];
 let lineEditMode = null;
 let addLineStart = null;
+let lastDrawnDoorCount = 1;
+
+// 문짝 수가 늘어날 때, 0번 문짝(기준)의 편집 패턴을 새로 생기는 문짝에 복사
+function cloneDoorPatternToNewDoors(oldCount, newCount) {
+    if (newCount <= oldCount) return;
+    const templateKeys = [...deletedSegs].filter(k => k.startsWith('0:'));
+    for (let d = oldCount; d < newCount; d++) {
+        templateKeys.forEach(k => deletedSegs.add(d + k.slice(k.indexOf(':'))));
+    }
+}
 
 let lastSegMap   = new Map();   // segKey → {mx,my,normAngle,cx,cy}
 let lastNodeList = [];
@@ -555,8 +565,10 @@ async function draw() {
 
     const doorType = txtDoorType.value;
     const doorCount = parseInt(txtDoorCount.value);
+    lastDrawnDoorCount = doorCount;
     const gap = 2;
     const overlap = geo.frameW;
+    const doorPanelOffsetX = [];
 
     // 전체 가로폭(짝수 포함) 기준으로 baseScale 계산
     let totalWidth;
@@ -717,6 +729,8 @@ async function draw() {
                 }
             }
         }
+
+        doorPanelOffsetX[d] = panelOffsetX;
 
         const toCanvasX = (realX) =>
             offsetX +
@@ -969,22 +983,29 @@ async function draw() {
         });
     }
 
-    // ====== 추가 선 그리기 ======
+    // ====== 추가 선 그리기 (모든 문짝에 동일하게 복제) ======
     if (addedLines.length > 0) {
         ctx.save();
         ctx.strokeStyle = patternBroken ? '#cc0000' : selectedSlatColor;
         ctx.lineWidth   = lastSlatPx;
         ctx.lineCap     = 'round';
         ctx.setLineDash([]);
-        addedLines.forEach((ln, idx) => {
-            const p1 = normToCtx(ln.nx1, ln.ny1);
-            const p2 = normToCtx(ln.nx2, ln.ny2);
-            lastSegMap.set(`added:${idx}`, { mx: (p1.x + p2.x) / 2, my: (p1.y + p2.y) / 2, normAngle: 0 });
-            ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.stroke();
-        });
+        for (const d of renderOrder) {
+            const px = doorPanelOffsetX[d];
+            const toX = rx => offsetX + (px + rx) * baseScale;
+            const toY = ry => offsetY + ry * baseScale;
+            addedLines.forEach((ln, idx) => {
+                const x1 = toX(geo.frameW + ln.nx1 * geo.innerW);
+                const y1 = toY(geo.frameHTop + ln.ny1 * geo.innerH);
+                const x2 = toX(geo.frameW + ln.nx2 * geo.innerW);
+                const y2 = toY(geo.frameHTop + ln.ny2 * geo.innerH);
+                lastSegMap.set(`added:${d}:${idx}`, { mx: (x1 + x2) / 2, my: (y1 + y2) / 2, normAngle: 0 });
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+            });
+        }
         ctx.restore();
     }
 
@@ -1533,7 +1554,7 @@ async function draw() {
             }
             if (!bestKey || bestDist > lastCellSize * 1.2) return;
             if (bestKey.startsWith('added:')) {
-                const idx = parseInt(bestKey.split(':')[1]);
+                const idx = parseInt(bestKey.split(':')[2]);
                 addedLines.splice(idx, 1);
             } else {
                 const seg = lastSegMap.get(bestKey);
@@ -1867,7 +1888,10 @@ async function draw() {
     });
 
     txtDoorType.addEventListener('input', updateDoorCountOptions);
-    txtDoorCount.addEventListener('input', draw);
+    txtDoorCount.addEventListener('input', () => {
+        cloneDoorPatternToNewDoors(lastDrawnDoorCount, parseInt(txtDoorCount.value));
+        draw();
+    });
     document.getElementById('chkRotate').addEventListener('change', e => {
         rotateOn = e.target.checked;
         draw();
