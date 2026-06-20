@@ -87,13 +87,24 @@ body:not(.pm-generator) .container-xl,
 body:not(.pm-generator) .container-xxl { max-width: 1280px; }
 
 /* ── 글로벌 푸터 (엔진/관리자 페이지 제외 전체 화면 공용) ───── */
+/* 화면 하단에 고정 — 콘텐츠가 가려지지 않도록 body에 padding-bottom 보정 */
+body:has(.global-footer) {
+    padding-bottom: 56px;
+}
+
 .global-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 10px;
-    padding: 20px 24px;
+    height: 56px;
+    padding: 0 24px;
     border-top: 1px solid rgba(0, 0, 0, 0.08);
     background: #fff;
 }
@@ -142,9 +153,24 @@ body:not(.pm-generator) .container-xxl { max-width: 1280px; }
 .global-footer .footer-link:hover { color: var(--gold); }
 
 @media (max-width: 768px) {
+    body:has(.global-footer) {
+        padding-bottom: 76px;
+    }
     .global-footer {
         flex-direction: column;
-        text-align: center;
-        padding: 16px 20px;
+        justify-content: center;
+        height: auto;
+        padding: 10px 20px;
+        gap: 2px;
+    }
+    .global-footer .footer-copy,
+    .global-footer .footer-link {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .global-footer .footer-cta-sub {
+        display: none;
     }
 }
