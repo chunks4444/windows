@@ -66,6 +66,9 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 /* ── Base ────────────────────────────────────── */
+html {
+    overscroll-behavior-y: auto;
+}
 body {
     font-family: 'Noto Sans KR', 'Inter', -apple-system, sans-serif;
     font-size: var(--fs-14);
@@ -75,6 +78,7 @@ body {
     word-break: keep-all;
     -webkit-font-smoothing: antialiased;
     color: var(--text-1);
+    -webkit-overflow-scrolling: touch;
 }
 
 body:not(.pm-generator) .container,
