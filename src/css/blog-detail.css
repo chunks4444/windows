@@ -2,11 +2,6 @@
 
 body { background: var(--page-bg, #F2F3F4); }
 
-.pm-navbar {
-    background: var(--page-bg, #F2F3F4) !important;
-    border-bottom-color: transparent !important;
-}
-
 .bd-page {
     min-height: calc(100vh - 68px);
     max-width: 1200px;

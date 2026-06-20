@@ -3,11 +3,6 @@
 /* body padding-top:68px → nav.css 에서 처리 */
 body { background: var(--page-bg, #F2F3F4); }
 
-.pm-navbar {
-    background: var(--page-bg, #F2F3F4) !important;
-    border-bottom-color: transparent !important;
-}
-
 /* ── 페이지 래퍼 ──────────────────────────────────────────── */
 .wk-page { min-height: calc(100vh - 68px); }
 

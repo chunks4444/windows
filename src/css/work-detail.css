@@ -7,11 +7,6 @@ html, body {
     color: var(--text-1, #1A1F1E);
 }
 
-.pm-navbar {
-    background: var(--page-bg, #F2F3F4) !important;
-    border-bottom-color: transparent !important;
-}
-
 /* ── 전체 래퍼 ────────────────────────────────────────── */
 .wd-page {
     min-height: calc(100vh - 68px);

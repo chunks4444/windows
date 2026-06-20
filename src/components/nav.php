@@ -184,19 +184,7 @@ $isGuide      = (strpos($_SERVER['PHP_SELF'], '/guide/') !== false || $isBlog);
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="#" onclick="authLogout();return false;"><i class="bi bi-box-arrow-right me-1"></i>로그아웃</a></li>
                     <li id="navAdminLink" style="display:none;"><hr class="dropdown-divider"></li>
-                    <li id="navAdminMenu" style="display:none;"><a class="dropdown-item" href="/src/admin/users.php"><i class="bi bi-shield-lock me-1"></i>회원 관리</a></li>
-                    <li id="navAdminStats" style="display:none;"><a class="dropdown-item" href="/src/admin/stats.php"><i class="bi bi-bar-chart-line me-1"></i>접속 통계</a></li>
-                    <li id="navAdminLib" style="display:none;"><a class="dropdown-item" href="/src/admin/collection.php"><i class="bi bi-image me-1"></i>컬렉션 관리</a></li>
-                    <li id="navAdminMeta" style="display:none;"><a class="dropdown-item" href="/src/admin/meta.php"><i class="bi bi-search me-1"></i>SEO 메타 관리</a></li>
-                    <li id="navAdminSpaceCards" style="display:none;"><a class="dropdown-item" href="/src/admin/space_cards.php"><i class="bi bi-grid me-1"></i>공간 카드 관리</a></li>
-                    <li id="navAdminHeroSlides" style="display:none;"><a class="dropdown-item" href="/src/admin/hero_slides.php"><i class="bi bi-images me-1"></i>슬라이드 관리</a></li>
-                    <li id="navAdminWoodTypes" style="display:none;"><a class="dropdown-item" href="/src/admin/cost_table.php"><i class="bi bi-calculator me-1"></i>원가 테이블</a></li>
-                    <li id="navAdminOauth" style="display:none;"><a class="dropdown-item" href="/src/admin/oauth.php"><i class="bi bi-key me-1"></i>SNS 로그인 설정</a></li>
-                    <li id="navAdminColors" style="display:none;"><a class="dropdown-item" href="/src/admin/colors.php"><i class="bi bi-palette me-1"></i>컬러 팔레트 관리</a></li>
-                    <li id="navAdminFaq" style="display:none;"><a class="dropdown-item" href="/src/admin/faq.php"><i class="bi bi-question-circle me-1"></i>FAQ 관리</a></li>
-                    <li id="navAdminWorks" style="display:none;"><a class="dropdown-item" href="/src/admin/works.php"><i class="bi bi-images me-1"></i>Works 관리</a></li>
-                    <li id="navAdminBlog" style="display:none;"><a class="dropdown-item" href="/src/admin/blog.php"><i class="bi bi-journal-text me-1"></i>블로그 관리</a></li>
-                    <li id="navAdminStudioCards" style="display:none;"><a class="dropdown-item" href="/src/admin/studio_cards.php"><i class="bi bi-grid-1x2 me-1"></i>스튜디오 카드 관리</a></li>
+                    <li id="navAdminMenu" style="display:none;"><a class="dropdown-item" href="/src/admin/"><i class="bi bi-speedometer2 me-1"></i>어드민</a></li>
                 </ul>
             </li>
         </ul>

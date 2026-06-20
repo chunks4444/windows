@@ -11,6 +11,12 @@ try {
 } catch (Exception $e) {
     $studioCards = [];
 }
+// 최신 블로그 글 3개 (테이블 없으면 빈 배열)
+try {
+    $latestPosts = $pdo->query('SELECT * FROM blog_posts WHERE is_active=1 ORDER BY created_at DESC, id DESC LIMIT 3')->fetchAll();
+} catch (Exception $e) {
+    $latestPosts = [];
+}
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -224,6 +230,40 @@ try {
                 </div>
             </div>
         </section>
+
+        <!-- Blog -->
+        <?php if ($latestPosts): ?>
+        <section class="home-blog-section">
+            <div class="container">
+                <div class="mb-4 d-flex align-items-end justify-content-between flex-wrap gap-2">
+                    <div>
+                        <p class="ab-section-label">블로그</p>
+                        <h2 class="ab-section-title">창호 이야기</h2>
+                        <p class="ab-section-body">평목 공방이 전하는 창호와 한옥 살창 이야기.</p>
+                    </div>
+                    <a href="/src/blog/" class="home-blog-more">전체 보기 <i class="bi bi-arrow-right"></i></a>
+                </div>
+                <div class="home-blog-grid">
+                    <?php foreach ($latestPosts as $p): ?>
+                    <a href="/src/blog/detail.php?id=<?= $p['id'] ?>" class="home-blog-card">
+                        <?php if ($p['thumbnail_url']): ?>
+                        <div class="home-blog-card-thumb">
+                            <img src="<?= htmlspecialchars($p['thumbnail_url']) ?>" alt="<?= htmlspecialchars($p['title']) ?>" loading="lazy">
+                        </div>
+                        <?php endif; ?>
+                        <div class="home-blog-card-body">
+                            <div class="home-blog-card-title"><?= htmlspecialchars($p['title']) ?></div>
+                            <?php if ($p['summary']): ?>
+                            <div class="home-blog-card-summary"><?= htmlspecialchars($p['summary']) ?></div>
+                            <?php endif; ?>
+                            <time class="home-blog-card-date"><?= date('Y.m.d', strtotime($p['created_at'])) ?></time>
+                        </div>
+                    </a>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </section>
+        <?php endif; ?>
 
         <!-- Guide -->
         <section class="guide-section">

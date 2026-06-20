@@ -168,7 +168,8 @@ function bindFilterBtns() {
             if (activeFilter === 'liked') {
                 renderLiked();
             } else if (activeFilter === 'all') {
-                resetAndLoad(document.getElementById('libSearch').value.trim());
+                document.getElementById('libSearch').value = '';
+                resetAndLoad('');
             } else {
                 resetAndLoad(activeFilter);
             }
