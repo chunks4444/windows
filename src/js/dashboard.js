@@ -182,6 +182,7 @@ function showCopyModal(sourceTitle, onConfirm, { desc, initialValue, title, conf
     const input   = document.getElementById('dbCopyModalInput');
     const confirm = document.getElementById('dbCopyModalConfirm');
     const cancel  = document.getElementById('dbCopyModalCancel');
+    const closeX  = document.getElementById('dbCopyModalClose');
     document.getElementById('dbCopyModalTitle').textContent = title ?? '도면 복사';
     confirm.textContent = confirmText ?? '복사';
     document.getElementById('dbCopyModalDesc').textContent = desc ?? `"${sourceTitle}" 도면의 마지막 버전을 복사합니다.`;
@@ -189,12 +190,13 @@ function showCopyModal(sourceTitle, onConfirm, { desc, initialValue, title, conf
     modal.style.display = 'flex';
     setTimeout(() => { input.select(); input.focus(); }, 80);
 
+    // 편집 중 실수로 닫히지 않도록 X 버튼/취소 버튼으로만 닫음 (배경 클릭·Esc로는 안 닫힘)
     function close() {
         modal.style.display = 'none';
         confirm.removeEventListener('click', handleConfirm);
         cancel.removeEventListener('click', close);
+        closeX.removeEventListener('click', close);
         input.removeEventListener('keydown', handleKey);
-        modal.removeEventListener('click', handleBackdrop);
     }
     function handleConfirm() {
         const t = input.value.trim();
@@ -203,14 +205,12 @@ function showCopyModal(sourceTitle, onConfirm, { desc, initialValue, title, conf
         onConfirm(t);
     }
     function handleKey(e) {
-        if (e.key === 'Enter')  handleConfirm();
-        if (e.key === 'Escape') close();
+        if (e.key === 'Enter') handleConfirm();
     }
-    function handleBackdrop(e) { if (e.target === modal) close(); }
     confirm.addEventListener('click', handleConfirm);
     cancel.addEventListener('click', close);
+    closeX.addEventListener('click', close);
     input.addEventListener('keydown', handleKey);
-    modal.addEventListener('click', handleBackdrop);
 }
 
 async function copyDrawing(e, type, title) {

@@ -359,6 +359,7 @@ body {
 }
 
 .db-delete-modal-box {
+    position: relative;
     background: #fff;
     border-radius: 16px;
     padding: 32px 28px 24px;
@@ -367,6 +368,18 @@ body {
     text-align: center;
     animation: dbModalSlideUp 0.18s cubic-bezier(0.34, 1.2, 0.64, 1);
 }
+
+.db-delete-modal-close {
+    position: absolute;
+    top: 12px; right: 12px;
+    width: 28px; height: 28px;
+    border: none; background: none;
+    color: var(--text-3); font-size: var(--fs-16);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; border-radius: 50%;
+    transition: background .15s, color .15s;
+}
+.db-delete-modal-close:hover { background: var(--page-bg); color: var(--text-1); }
 
 @keyframes dbModalSlideUp {
     from { opacity: 0; transform: translateY(16px) scale(0.97); }

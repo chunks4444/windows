@@ -48,6 +48,9 @@ header('Content-Type: text/html; charset=UTF-8');
 <!-- 도면 복사 모달 -->
 <div id="dbCopyModal" class="db-delete-modal" style="display:none;" role="dialog" aria-modal="true">
     <div class="db-delete-modal-box">
+        <button type="button" class="db-delete-modal-close" id="dbCopyModalClose" aria-label="닫기">
+            <i class="bi bi-x-lg"></i>
+        </button>
         <div class="db-delete-modal-icon" style="color:#3A8C82;">
             <i class="bi bi-copy"></i>
         </div>

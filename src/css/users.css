@@ -102,18 +102,23 @@ tbody td {
     display: none; position: fixed; inset: 0;
     background: rgba(0,0,0,0.35); z-index: 1050;
     align-items: center; justify-content: center;
+    padding: 24px;
 }
 .adm-modal-overlay.open { display: flex; }
 .adm-modal {
     background: #fff; border-radius: var(--r);
     width: 100%; max-width: 440px;
+    max-height: 100%;
     box-shadow: 0 8px 40px rgba(0,0,0,0.16);
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 .adm-modal-head {
     display: flex; align-items: center; justify-content: space-between;
     padding: 18px 24px 14px;
     border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
 }
 .adm-modal-head h3 { font-size: var(--fs-16); font-weight: 700; }
 .adm-modal-close {
@@ -121,7 +126,7 @@ tbody td {
     color: var(--text-3); font-size: var(--fs-18); line-height: 1;
     padding: 0;
 }
-.adm-modal-body { padding: 20px 24px 24px; }
+.adm-modal-body { padding: 20px 24px 24px; overflow-y: auto; flex: 1; min-height: 0; }
 .adm-mfield { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
 .adm-mfield label { font-size: var(--fs-12); font-weight: 700; color: var(--text-2); letter-spacing: 0.04em; text-transform: uppercase; }
 .adm-mfield input, .adm-mfield select {
@@ -136,6 +141,7 @@ tbody td {
 .adm-modal-foot {
     display: flex; justify-content: flex-end; gap: 8px;
     padding: 14px 24px; border-top: 1px solid var(--border);
+    flex-shrink: 0;
 }
 .adm-btn-cancel {
     height: 36px; padding: 0 16px; background: #fff;
