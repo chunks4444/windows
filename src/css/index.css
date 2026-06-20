@@ -56,6 +56,11 @@
     .hero-slide-img {
         height: 260px;
     }
+
+    .home-wrapper .container {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
 }
 
 /* STUDIO 섹션 헤더 */
