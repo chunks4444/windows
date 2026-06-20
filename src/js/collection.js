@@ -205,8 +205,13 @@ async function toggleLike(e, id) {
     e.stopPropagation(); e.preventDefault();
     const btn   = e.currentTarget;
     const token = authToken();
-    if (!token) { alert('로그인이 필요합니다.'); return; }
+    if (!token) { pmokRequireAuth(() => toggleLikeFor(btn, id)); return; }
+    await toggleLikeFor(btn, id);
+}
 
+async function toggleLikeFor(btn, id) {
+    const token = authToken();
+    if (!token) return;
     try {
         const res  = await fetch('/src/api/collection_likes.php', {
             method:  'POST',
@@ -240,7 +245,11 @@ function _authHeaders() {
 
 async function openBoardModal(e, id, name) {
     e.stopPropagation(); e.preventDefault();
-    if (!authToken()) { alert('로그인이 필요합니다.'); return; }
+    if (!authToken()) { pmokRequireAuth(() => openBoardModalFor(id, name)); return; }
+    await openBoardModalFor(id, name);
+}
+
+async function openBoardModalFor(id, name) {
     boardTarget = { id, name };
     document.getElementById('boardModal').style.display = 'flex';
     await fetchAndRenderBoards();

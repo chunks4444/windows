@@ -163,6 +163,27 @@ function authHideSuccess() {
     document.getElementById('authSuccess').style.display = 'none';
 }
 
+// 로그인이 필요한 동작을 호출하는 공용 헬퍼.
+// 이미 로그인 상태면 즉시 onLoggedIn 실행, 아니면 로그인 모달을 띄우고
+// 로그인 성공 시 같은 자리에서 onLoggedIn을 이어서 실행한다 (페이지 이동 없음).
+function pmokRequireAuth(onLoggedIn) {
+    if (authGetToken()) { onLoggedIn(); return true; }
+    window.__pmokGuardedPage = true;
+    window.__pmokAuthSuccessCallback = onLoggedIn;
+    var el = document.getElementById('authModal');
+    if (el && window.bootstrap) bootstrap.Modal.getOrCreateInstance(el).show();
+    return false;
+}
+
+// 로그인 성공 직후 공통 후처리: 대기 중인 동작이 있으면 그걸 이어서 실행,
+// 없고 가드된 페이지라면 그 자리에 머무름, 그 외(직접 로그인 클릭)엔 대시보드로 이동.
+function pmokAfterLogin() {
+    var cb = window.__pmokAuthSuccessCallback;
+    window.__pmokAuthSuccessCallback = null;
+    if (cb) { cb(); return; }
+    if (!window.__pmokGuardedPage) location.href = '/src/mypage/dashboard.php';
+}
+
 async function authLogin(e) {
     e.preventDefault();
     authHideError();
@@ -183,7 +204,7 @@ async function authLogin(e) {
         bootstrap.Modal.getInstance(document.getElementById('authModal')).hide();
         authUpdateNav();
         window.dispatchEvent(new CustomEvent('pmokAuthChanged'));
-        if (!window.__pmokGuardedPage) location.href = '/src/mypage/dashboard.php';
+        pmokAfterLogin();
     } catch {
         authShowError('서버 오류가 발생했습니다.');
     } finally {
@@ -225,7 +246,7 @@ async function authRegister(e) {
 
 function welcomeGo() {
     bootstrap.Modal.getInstance(document.getElementById('welcomeModal')).hide();
-    location.href = '/src/mypage/dashboard.php';
+    pmokAfterLogin();
 }
 
 function authSaveSession(token, user) {
@@ -410,7 +431,7 @@ document.addEventListener('DOMContentLoaded', function () {
             authUpdateNav();
             history.replaceState(null, '', location.pathname);
             window.dispatchEvent(new CustomEvent('pmokAuthChanged'));
-            if (!window.__pmokGuardedPage) location.href = '/src/mypage/dashboard.php';
+            pmokAfterLogin();
         } catch {}
     }
 

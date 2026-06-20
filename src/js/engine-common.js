@@ -376,13 +376,13 @@
         }).open();
     }
 
-    function openOrderModal({ engine, getSpec, getDrawingId, getTitle, getThumbnail, getVersionLabel, onLocked }) {
+    function openOrderModal(opts) {
         const token = localStorage.getItem('pmok_auth_token');
         if (!token) {
-            const el = document.getElementById('authModal');
-            if (el && window.bootstrap) bootstrap.Modal.getOrCreateInstance(el).show();
+            pmokRequireAuth(() => openOrderModal(opts));
             return;
         }
+        const { engine, getSpec, getDrawingId, getTitle, getThumbnail, getVersionLabel, onLocked } = opts;
         const headers = { Authorization: 'Bearer ' + token };
         Promise.all([
             fetch('/src/api/auth/profile.php', { headers }).then(r => r.json()),
