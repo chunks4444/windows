@@ -16,23 +16,15 @@ $_guardRole = $authRequireRole ?? null;
     } catch (e) { location.replace('/'); }
 
     <?php else: ?>
-    // 로그인 필요 페이지 — 외부/직접 접근이면 홈으로, 내부 접근이면 모달
+    // 로그인 필요 페이지 — 모달을 띄우고, 로그인하면 이 페이지에 그대로 머무름
     if (!token) {
-        var ref = document.referrer;
-        var isInternal = ref && (function () {
-            try { return new URL(ref).origin === location.origin; } catch (e) { return false; }
-        })();
-        if (!isInternal) {
-            location.replace('/');
-        } else {
-            window.__pmokGuardedPage = true;
-            document.addEventListener('DOMContentLoaded', function () {
-                var el = document.getElementById('authModal');
-                if (el && window.bootstrap) {
-                    bootstrap.Modal.getOrCreateInstance(el).show();
-                }
-            });
-        }
+        window.__pmokGuardedPage = true;
+        document.addEventListener('DOMContentLoaded', function () {
+            var el = document.getElementById('authModal');
+            if (el && window.bootstrap) {
+                bootstrap.Modal.getOrCreateInstance(el).show();
+            }
+        });
     }
     <?php endif; ?>
 })();
