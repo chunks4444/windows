@@ -50,11 +50,21 @@ function openModal(id) {
     document.getElementById('postImgFile').value = '';
     window._postThumbData = null;
     document.getElementById('blogModalOverlay').classList.add('open');
+    document.getElementById('blogModalOverlay').classList.remove('fullscreen-active');
+    document.getElementById('blogInfoSection').classList.remove('collapsed');
     setTimeout(() => quill.focus(), 50);
 }
 
 function closeModal() {
     document.getElementById('blogModalOverlay').classList.remove('open');
+}
+
+function toggleModalFullscreen() {
+    document.getElementById('blogModalOverlay').classList.toggle('fullscreen-active');
+}
+
+function toggleInfoSection() {
+    document.getElementById('blogInfoSection').classList.toggle('collapsed');
 }
 
 function fileToResizedDataUrl(file, maxDim) {

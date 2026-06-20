@@ -22,6 +22,18 @@
         #postContentEditor { height:320px; background:#fff; font-size:13px; }
         .ql-toolbar { border-color:var(--border-md) !important; border-radius:var(--r-sm) var(--r-sm) 0 0; }
         .ql-container { border-color:var(--border-md) !important; border-radius:0 0 var(--r-sm) var(--r-sm); font-family:inherit; }
+        .adm-modal-fullscreen-btn { background:none; border:none; cursor:pointer; color:var(--text-3); font-size:16px; line-height:1; padding:0; margin-right:14px; }
+        .adm-modal-fullscreen-btn:hover { color:var(--text-1); }
+        #blogModalOverlay.fullscreen-active { padding:0; }
+        #blogModalOverlay.fullscreen-active .adm-modal { max-width:100%; width:100%; height:100%; max-height:100%; border-radius:0; }
+        #blogModalOverlay.fullscreen-active #postContentEditor { height:calc(100vh - 220px); }
+        .blog-info-section { border:1px solid var(--border-md); border-radius:var(--r-sm); margin-bottom:14px; }
+        .blog-info-toggle { width:100%; display:flex; align-items:center; gap:8px; background:var(--input-bg); border:none; padding:10px 12px; font-size:12px; font-weight:700; color:var(--text-2); letter-spacing:0.04em; text-transform:uppercase; cursor:pointer; border-radius:var(--r-sm); }
+        .blog-info-toggle i { transition:transform .2s ease; }
+        .blog-info-body { padding:14px 12px 2px; }
+        .blog-info-section.collapsed .blog-info-toggle { border-radius:var(--r-sm); }
+        .blog-info-section.collapsed .blog-info-toggle i { transform:rotate(-90deg); }
+        .blog-info-section.collapsed .blog-info-body { display:none; }
     </style>
 </head>
 <body>
@@ -63,27 +75,39 @@
     <div class="adm-modal" style="max-width:1280px;width:92vw;">
         <div class="adm-modal-head">
             <h3 id="blogModalTitle">글 추가</h3>
-            <button class="adm-modal-close" onclick="closeModal()">&#x2715;</button>
+            <div style="display:flex;align-items:center;">
+                <button class="adm-modal-fullscreen-btn" id="blogModalFullscreenBtn" onclick="toggleModalFullscreen()" title="전체화면">
+                    <i class="bi bi-arrows-fullscreen"></i>
+                </button>
+                <button class="adm-modal-close" onclick="closeModal()">&#x2715;</button>
+            </div>
         </div>
         <div class="adm-modal-body">
             <input type="hidden" id="postId">
-            <div class="adm-mfield">
-                <label>타이틀 이미지 <span style="font-size:11px;color:var(--text-3);font-weight:400;">(상세페이지 제목 하단 + 목록 썸네일)</span></label>
-                <img id="postImgPreview" class="blog-img-preview" src="" alt="">
-                <label class="blog-upload-label" for="postImgFile">
-                    <i class="bi bi-upload"></i> 이미지 업로드
-                </label>
-                <input type="file" id="postImgFile" accept="image/*" style="display:none;" onchange="previewImage(this)">
-                <input id="postThumbUrl" type="text" placeholder="또는 https://... URL 직접 입력"
-                    style="height:38px;padding:0 10px;border:1px solid var(--border-md);border-radius:var(--r-sm);background:var(--input-bg);font-family:inherit;font-size:13px;color:var(--text-1);outline:none;width:100%;">
-            </div>
-            <div class="adm-mfield">
-                <label>제목</label>
-                <input id="postTitle" type="text" placeholder="예: 한옥 살창, 사계절을 담다" maxlength="150">
-            </div>
-            <div class="adm-mfield">
-                <label>요약 <span style="font-size:11px;color:var(--text-3);font-weight:400;">(목록 카드 / 검색결과 설명)</span></label>
-                <textarea id="postSummary" class="blog-textarea" rows="2" maxlength="300" placeholder="목록과 검색엔진에 노출될 한 줄 요약"></textarea>
+            <div class="blog-info-section" id="blogInfoSection">
+                <button type="button" class="blog-info-toggle" onclick="toggleInfoSection()">
+                    <i class="bi bi-chevron-down" id="blogInfoToggleIcon"></i> 제목 / 이미지 / 요약
+                </button>
+                <div class="blog-info-body" id="blogInfoBody">
+                    <div class="adm-mfield">
+                        <label>타이틀 이미지 <span style="font-size:11px;color:var(--text-3);font-weight:400;">(상세페이지 제목 하단 + 목록 썸네일)</span></label>
+                        <img id="postImgPreview" class="blog-img-preview" src="" alt="">
+                        <label class="blog-upload-label" for="postImgFile">
+                            <i class="bi bi-upload"></i> 이미지 업로드
+                        </label>
+                        <input type="file" id="postImgFile" accept="image/*" style="display:none;" onchange="previewImage(this)">
+                        <input id="postThumbUrl" type="text" placeholder="또는 https://... URL 직접 입력"
+                            style="height:38px;padding:0 10px;border:1px solid var(--border-md);border-radius:var(--r-sm);background:var(--input-bg);font-family:inherit;font-size:13px;color:var(--text-1);outline:none;width:100%;">
+                    </div>
+                    <div class="adm-mfield">
+                        <label>제목</label>
+                        <input id="postTitle" type="text" placeholder="예: 한옥 살창, 사계절을 담다" maxlength="150">
+                    </div>
+                    <div class="adm-mfield">
+                        <label>요약 <span style="font-size:11px;color:var(--text-3);font-weight:400;">(목록 카드 / 검색결과 설명)</span></label>
+                        <textarea id="postSummary" class="blog-textarea" rows="2" maxlength="300" placeholder="목록과 검색엔진에 노출될 한 줄 요약"></textarea>
+                    </div>
+                </div>
             </div>
             <div class="adm-mfield">
                 <label>본문</label>
