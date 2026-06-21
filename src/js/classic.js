@@ -2256,7 +2256,7 @@ async function draw() {
         }
 
         const saveBtn = document.getElementById('btnSave');
-        saveBtn.classList.add('save-busy');
+        saveBtn.classList.add('save-busy'); saveBtn.disabled = true;
         try {
             // 최초 저장(drawingId 미설정)일 때만 중복 체크
             const drawings = await /** @type {any} */ (window.DrawingSync).list('classic');
@@ -2265,7 +2265,7 @@ async function draw() {
                 pmConfirm(
                     `'${title}' 이름의 도면이 이미 있습니다.`,
                     async () => {
-                        saveBtn.classList.add('save-busy');
+                        saveBtn.classList.add('save-busy'); saveBtn.disabled = true;
                         try {
                             // 기존 DB 버전 이어받아 현재 버전 추가
                             const loaded = await /** @type {any} */ (window.DrawingSync).load('classic', title);
@@ -2279,7 +2279,7 @@ async function draw() {
                             updateModified();
                             await syncToDb();
                         } finally {
-                            saveBtn.classList.remove('save-busy');
+                            saveBtn.classList.remove('save-busy'); saveBtn.disabled = false;
                         }
                     },
                     { sub: '확인하면 기존 도면에 버전이 추가됩니다.', type: 'danger', confirmText: '이어서 저장' }
@@ -2296,7 +2296,7 @@ async function draw() {
             updateModified();
             await syncToDb();
         } finally {
-            saveBtn.classList.remove('save-busy');
+            saveBtn.classList.remove('save-busy'); saveBtn.disabled = false;
         }
     }
 

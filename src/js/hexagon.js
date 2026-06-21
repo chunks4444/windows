@@ -2353,7 +2353,7 @@ document.getElementById('chkDimension').addEventListener('change', e => { showDi
         }
 
         const saveBtn = document.getElementById('btnSave');
-        saveBtn.classList.add('save-busy');
+        saveBtn.classList.add('save-busy'); saveBtn.disabled = true;
         try {
             const drawings = await /** @type {any} */ (window.DrawingSync).list('hexagon');
             const dup = drawings.find(d => d.title === title && String(d.id) !== String(drawingId));
@@ -2361,7 +2361,7 @@ document.getElementById('chkDimension').addEventListener('change', e => { showDi
                 pmConfirm(
                     `'${title}' 이름의 도면이 이미 있습니다.`,
                     async () => {
-                        saveBtn.classList.add('save-busy');
+                        saveBtn.classList.add('save-busy'); saveBtn.disabled = true;
                         try {
                             const loaded = await /** @type {any} */ (window.DrawingSync).load('hexagon', title);
                             const base = loaded?.versions ?? [];
@@ -2374,7 +2374,7 @@ document.getElementById('chkDimension').addEventListener('change', e => { showDi
                             updateModified();
                             await syncToDb();
                         } finally {
-                            saveBtn.classList.remove('save-busy');
+                            saveBtn.classList.remove('save-busy'); saveBtn.disabled = false;
                         }
                     },
                     { sub: '확인하면 기존 도면에 버전이 추가됩니다.', type: 'danger', confirmText: '이어서 저장' }
@@ -2391,7 +2391,7 @@ document.getElementById('chkDimension').addEventListener('change', e => { showDi
             updateModified();
             await syncToDb();
         } finally {
-            saveBtn.classList.remove('save-busy');
+            saveBtn.classList.remove('save-busy'); saveBtn.disabled = false;
         }
     }
 
