@@ -5,6 +5,8 @@ header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../../lib/colors.php';
 require_once __DIR__ . '/../../lib/engine_settings.php';
 $cfg = get_engine_settings('classic');
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
 ?>
 <!DOCTYPE html>
 <html lang="ko">

@@ -2255,40 +2255,49 @@ async function draw() {
             return;
         }
 
-        // 최초 저장(drawingId 미설정)일 때만 중복 체크
-        {
+        const saveBtn = document.getElementById('btnSave');
+        saveBtn.classList.add('save-busy');
+        try {
+            // 최초 저장(drawingId 미설정)일 때만 중복 체크
             const drawings = await /** @type {any} */ (window.DrawingSync).list('classic');
             const dup = drawings.find(d => d.title === title && String(d.id) !== String(drawingId));
             if (dup) {
                 pmConfirm(
                     `'${title}' 이름의 도면이 이미 있습니다.`,
                     async () => {
-                        // 기존 DB 버전 이어받아 현재 버전 추가
-                        const loaded = await /** @type {any} */ (window.DrawingSync).load('classic', title);
-                        const base = loaded?.versions ?? [];
-                        const newVer = { savedAt: Math.floor(Date.now() / 1000) * 1000, params: getParams() };
-                        versions = [...base, newVer].slice(-MAX_VERSIONS);
-                        localStorage.setItem(VERSIONS_KEY, JSON.stringify(versions));
-                        currentVerIdx = versions.length - 1;
-                        document.getElementById('verLabel').textContent = 'v' + (currentVerIdx + 1);
-                        renderVerList();
-                        updateModified();
-                        await syncToDb();
+                        saveBtn.classList.add('save-busy');
+                        try {
+                            // 기존 DB 버전 이어받아 현재 버전 추가
+                            const loaded = await /** @type {any} */ (window.DrawingSync).load('classic', title);
+                            const base = loaded?.versions ?? [];
+                            const newVer = { savedAt: Math.floor(Date.now() / 1000) * 1000, params: getParams() };
+                            versions = [...base, newVer].slice(-MAX_VERSIONS);
+                            localStorage.setItem(VERSIONS_KEY, JSON.stringify(versions));
+                            currentVerIdx = versions.length - 1;
+                            document.getElementById('verLabel').textContent = 'v' + (currentVerIdx + 1);
+                            renderVerList();
+                            updateModified();
+                            await syncToDb();
+                        } finally {
+                            saveBtn.classList.remove('save-busy');
+                        }
                     },
                     { sub: '확인하면 기존 도면에 버전이 추가됩니다.', type: 'danger', confirmText: '이어서 저장' }
                 );
                 return;
             }
-        }
 
-        versions.push({ savedAt: Math.floor(Date.now() / 1000) * 1000, params: getParams() });
-        if (versions.length > MAX_VERSIONS) versions.shift();
-        localStorage.setItem(VERSIONS_KEY, JSON.stringify(versions));
-        currentVerIdx = versions.length - 1;
-        document.getElementById('verLabel').textContent = 'v' + (currentVerIdx + 1);
-        renderVerList();
-        updateModified();
-        await syncToDb();
+            versions.push({ savedAt: Math.floor(Date.now() / 1000) * 1000, params: getParams() });
+            if (versions.length > MAX_VERSIONS) versions.shift();
+            localStorage.setItem(VERSIONS_KEY, JSON.stringify(versions));
+            currentVerIdx = versions.length - 1;
+            document.getElementById('verLabel').textContent = 'v' + (currentVerIdx + 1);
+            renderVerList();
+            updateModified();
+            await syncToDb();
+        } finally {
+            saveBtn.classList.remove('save-busy');
+        }
     }
 
     document.getElementById('btnSave').addEventListener('click', saveVersion);
