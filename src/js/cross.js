@@ -548,9 +548,10 @@ async function draw() {
     const pungpanH = parseInt(document.getElementById('txtPungpan').value) || 0;
     const totalH   = geo.outerH;  // 외경 고정
 
+    const dimPad = showDimensions ? 90 : 0; // 치수선/문짝 라벨이 잘리지 않도록 추가 여백
     const baseScale = Math.min(
-        (logW - basePadding * 2) / totalWidth,
-        (logH - basePadding * 2) / totalH
+        (logW - basePadding * 2 - dimPad) / totalWidth,
+        (logH - basePadding * 2 - dimPad) / totalH
     );
 
     const renderOrder = [...Array(doorCount).keys()];
@@ -1367,6 +1368,14 @@ async function draw() {
         rCtx.beginPath();
         rCtx.moveTo(R, 0); rCtx.lineTo(R, R); rCtx.lineTo(0, R);
         rCtx.stroke();
+
+        if (showDimensions && geo.outerW) {
+            rCtx.fillStyle = '#fff';
+            rCtx.font = '12px -apple-system, sans-serif';
+            rCtx.textAlign = 'left';
+            rCtx.textBaseline = 'top';
+            rCtx.fillText(`• 문짝: ${Math.round(geo.outerW)} x ${Math.round(geo.outerH)}mm`, R + 16, R + 16);
+        }
 
         rCtx.restore();
     }
