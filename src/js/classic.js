@@ -106,7 +106,6 @@
     
     const txtFrame = document.getElementById('txtFrame');
     const txtFrameH = document.getElementById('txtFrameH');
-    const txtFrameThick = document.getElementById('txtFrameThick');
 
 
     const txtSlat  = document.getElementById('txtSlat');
@@ -388,7 +387,7 @@ async function fetchGeometry(p = null) {
         cols:      p ? p.cols                             : txtCols.value,
         frameOpeningW: p ? p.W                            : txtW.value,
         frameOpeningH: p ? p.H                            : txtH.value,
-        frameThick:    p ? (p.frameThick ?? 30)           : txtFrameThick.value,
+        frameThick:    window.__pmokEngineLayout?.frameThick ?? 30,
         frameGap:      p ? (p.frameGap ?? 2)               : (window.__pmokEngineLayout?.frameGap ?? 2),
         pungpanH:  p ? (p.pungpan || 0)                  : (document.getElementById('txtPungpan').value || 0),
         pungpanOn: p ? (p.pungpanOn ? '1' : '0')         : (document.getElementById('chkPungpan').checked ? '1' : '0'),
@@ -1075,8 +1074,10 @@ async function draw() {
             const _sf  = scaleFactor;
             const GAP  = 24 / _sf, TICK = 5 / _sf, ITICK = 12 / _sf;
             const R    = 3  / _sf, lw   = 1 / _sf, fs    = 14 / _sf;
-            const dL = offsetX, dR = offsetX + totalWidth * baseScale;
-            const dT = offsetY, dB = offsetY + totalH * baseScale;
+            const mFrame = (geo.frameThick + geo.frameGap) * baseScale;
+            const extra  = 30 * baseScale;
+            const dL = offsetX - mFrame, dR = offsetX + totalWidth * baseScale + mFrame;
+            const dT = offsetY - mFrame, dB = offsetY + totalH * baseScale + mFrame;
             ctx.save();
             ctx.translate(logW / 2 + panX, logH / 2 + panY);
             ctx.scale(scaleFactor, scaleFactor);
@@ -1085,7 +1086,7 @@ async function draw() {
             ctx.lineWidth   = lw;
             ctx.font        = `${fs}px -apple-system,sans-serif`;
             const _dot2 = (x, y) => { ctx.beginPath(); ctx.arc(x, y, R, 0, Math.PI * 2); ctx.fill(); };
-            const bY = dB + GAP;
+            const bY = dB + extra + GAP;
             ctx.beginPath();
             ctx.moveTo(dL, bY - ITICK); ctx.lineTo(dL, bY + TICK);
             ctx.moveTo(dR, bY - ITICK); ctx.lineTo(dR, bY + TICK);
@@ -1093,8 +1094,8 @@ async function draw() {
             ctx.stroke();
             _dot2(dL, bY); _dot2(dR, bY);
             ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-            ctx.fillText(`${Math.round(totalWidth)}mm`, (dL + dR) / 2, bY + TICK + 3 / _sf);
-            const rX = dR + GAP;
+            ctx.fillText(`${Math.round(geo.frameOpeningW)}mm`, (dL + dR) / 2, bY + TICK + 3 / _sf);
+            const rX = dR + extra + GAP;
             ctx.beginPath();
             ctx.moveTo(rX - ITICK, dT); ctx.lineTo(rX + TICK, dT);
             ctx.moveTo(rX - ITICK, dB); ctx.lineTo(rX + TICK, dB);
@@ -1102,7 +1103,7 @@ async function draw() {
             ctx.stroke();
             _dot2(rX, dT); _dot2(rX, dB);
             ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-            ctx.fillText(`${Math.round(totalH)}mm`, rX + TICK + 3 / _sf, (dT + dB) / 2);
+            ctx.fillText(`${Math.round(geo.frameOpeningH)}mm`, rX + TICK + 3 / _sf, (dT + dB) / 2);
             ctx.restore();
         }
     } else {
@@ -1110,15 +1111,17 @@ async function draw() {
             const _sf  = scaleFactor;
             const GAP  = 24 / _sf, TICK = 5 / _sf, ITICK = 12 / _sf;
             const R    = 3  / _sf, lw   = 1 / _sf, fs    = 14 / _sf;
-            const dL = offsetX, dR = offsetX + totalWidth * baseScale;
-            const dT = offsetY, dB = offsetY + totalH * baseScale;
+            const mFrame = (geo.frameThick + geo.frameGap) * baseScale;
+            const extra  = 30 * baseScale;
+            const dL = offsetX - mFrame, dR = offsetX + totalWidth * baseScale + mFrame;
+            const dT = offsetY - mFrame, dB = offsetY + totalH * baseScale + mFrame;
             ctx.save();
             ctx.strokeStyle = 'rgba(50,50,50,0.7)';
             ctx.fillStyle   = 'rgba(50,50,50,0.7)';
             ctx.lineWidth   = lw;
             ctx.font        = `${fs}px -apple-system,sans-serif`;
             const _dot = (x, y) => { ctx.beginPath(); ctx.arc(x, y, R, 0, Math.PI * 2); ctx.fill(); };
-            const bY = dB + GAP;
+            const bY = dB + extra + GAP;
             ctx.beginPath();
             ctx.moveTo(dL, bY - ITICK); ctx.lineTo(dL, bY + TICK);
             ctx.moveTo(dR, bY - ITICK); ctx.lineTo(dR, bY + TICK);
@@ -1126,8 +1129,8 @@ async function draw() {
             ctx.stroke();
             _dot(dL, bY); _dot(dR, bY);
             ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-            ctx.fillText(`${Math.round(totalWidth)}mm`, (dL + dR) / 2, bY + TICK + 3 / _sf);
-            const rX = dR + GAP;
+            ctx.fillText(`${Math.round(geo.frameOpeningW)}mm`, (dL + dR) / 2, bY + TICK + 3 / _sf);
+            const rX = dR + extra + GAP;
             ctx.beginPath();
             ctx.moveTo(rX - ITICK, dT); ctx.lineTo(rX + TICK, dT);
             ctx.moveTo(rX - ITICK, dB); ctx.lineTo(rX + TICK, dB);
@@ -1135,7 +1138,7 @@ async function draw() {
             ctx.stroke();
             _dot(rX, dT); _dot(rX, dB);
             ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-            ctx.fillText(`${Math.round(totalH)}mm`, rX + TICK + 3 / _sf, (dT + dB) / 2);
+            ctx.fillText(`${Math.round(geo.frameOpeningH)}mm`, rX + TICK + 3 / _sf, (dT + dB) / 2);
             ctx.restore();
         }
         ctx.restore();
@@ -1837,7 +1840,6 @@ async function draw() {
         { range: txtCols,   num: document.getElementById('numCols'),    min: 2,    max: 30   },
         { range: txtFrame,  num: document.getElementById('numFrame'),   min: 20,   max: 150  },
         { range: txtFrameH, num: document.getElementById('numFrameH'),  min: 20,   max: 150  },
-        { range: txtFrameThick, num: document.getElementById('numFrameThick'), min: 20, max: 150 },
         { range: txtSlat,   num: document.getElementById('numSlat'),    min: 8,    max: 35   },
         { range: document.getElementById('txtPungpan'), num: document.getElementById('numPungpan'), min: 0, max: 600 },
         { range: txtRatio, num: document.getElementById('numRatio'), min: 1.0, max: 3.0, step: 0.1 },
@@ -1989,7 +1991,6 @@ async function draw() {
             cols:      parseInt(txtCols.value),
             frame:     parseInt(txtFrame.value),
             frameH:    parseInt(txtFrameH.value),
-            frameThick: parseInt(txtFrameThick.value),
             slat:      parseInt(txtSlat.value),
             vRatio:    parseFloat(txtRatio.value),
             pattern:   `${document.getElementById('txtPatternTop').value}/${document.getElementById('txtPatternMid').value}/${document.getElementById('txtPatternBot').value}`,
@@ -2021,7 +2022,6 @@ async function draw() {
         setSlider('txtCols',   'numCols',   p.cols);
         setSlider('txtFrame',  'numFrame',  p.frame);
         setSlider('txtFrameH', 'numFrameH', p.frameH);
-        setSlider('txtFrameThick', 'numFrameThick', p.frameThick ?? 30);
         setSlider('txtSlat',   'numSlat',   p.slat);
         setSlider('txtRatio',  'numRatio',  p.vRatio ?? 1.2);
         const _pp = (p.pattern || '3/5/3').split('/');
