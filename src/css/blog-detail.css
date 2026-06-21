@@ -51,7 +51,7 @@ body { background: var(--page-bg, #F2F3F4); }
 /* ── 본문 ───────────────────────────────────────────────── */
 .bd-body {
     max-width: 720px;
-    margin: 0 auto;
+    margin: 0;
     font-size: var(--fs-16);
     line-height: 1.7;
     color: var(--text-1);
