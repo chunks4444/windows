@@ -2118,7 +2118,7 @@ async function draw() {
             captureThumbnail(),
             workAccum
         );
-        if (!result) return;
+        if (!result) { pmHideSaveToast(); return; }
         const btn = document.getElementById('btnSave');
         if (result.ok) {
             if (result.drawingId) drawingId = result.drawingId;
@@ -2126,10 +2126,14 @@ async function draw() {
             setTimeout(() => btn.classList.remove('save-ok'), 1200);
             pmShowSaveToast();
         } else if (result.reason === 'auth') {
+            pmHideSaveToast();
             pmAlert('로그인이 필요합니다. 다시 로그인해 주세요.', { type: 'danger' });
         } else if (result.reason !== 'no_token') {
+            pmHideSaveToast();
             btn.classList.add('save-err');
             setTimeout(() => btn.classList.remove('save-err'), 1200);
+        } else {
+            pmHideSaveToast();
         }
     }
 
@@ -2256,7 +2260,7 @@ async function draw() {
         }
 
         const saveBtn = document.getElementById('btnSave');
-        saveBtn.classList.add('save-busy'); saveBtn.disabled = true;
+        saveBtn.classList.add('save-busy'); saveBtn.disabled = true; pmShowSaveToast('저장 중...', true);
         try {
             // 최초 저장(drawingId 미설정)일 때만 중복 체크
             const drawings = await /** @type {any} */ (window.DrawingSync).list('classic');
@@ -2265,7 +2269,7 @@ async function draw() {
                 pmConfirm(
                     `'${title}' 이름의 도면이 이미 있습니다.`,
                     async () => {
-                        saveBtn.classList.add('save-busy'); saveBtn.disabled = true;
+                        saveBtn.classList.add('save-busy'); saveBtn.disabled = true; pmShowSaveToast('저장 중...', true);
                         try {
                             // 기존 DB 버전 이어받아 현재 버전 추가
                             const loaded = await /** @type {any} */ (window.DrawingSync).load('classic', title);
@@ -2284,6 +2288,7 @@ async function draw() {
                     },
                     { sub: '확인하면 기존 도면에 버전이 추가됩니다.', type: 'danger', confirmText: '이어서 저장' }
                 );
+                pmHideSaveToast();
                 return;
             }
 

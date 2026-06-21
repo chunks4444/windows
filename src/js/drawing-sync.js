@@ -81,22 +81,33 @@ window.DrawingSync = (function () {
 })();
 
 // ── 저장 완료 토스트 ──────────────────────────────
-function pmShowSaveToast(msg = '저장을 완료했습니다.') {
+function pmShowSaveToast(msg = '저장을 완료했습니다.', sticky = false) {
     let el = document.getElementById('pmSaveToast');
     if (!el) {
         el = document.createElement('div');
         el.id = 'pmSaveToast';
         el.className = 'pm-save-toast';
-        document.body.appendChild(el);
+        const anchor = document.querySelector('.canvas-title-bar') || document.body;
+        anchor.appendChild(el);
     }
     el.textContent = msg;
     el.classList.remove('pm-save-toast--out');
     el.classList.add('pm-save-toast--in');
     clearTimeout(el._hideTimer);
-    el._hideTimer = setTimeout(() => {
-        el.classList.remove('pm-save-toast--in');
-        el.classList.add('pm-save-toast--out');
-    }, 2200);
+    if (!sticky) {
+        el._hideTimer = setTimeout(() => {
+            el.classList.remove('pm-save-toast--in');
+            el.classList.add('pm-save-toast--out');
+        }, 2200);
+    }
+}
+
+function pmHideSaveToast() {
+    const el = document.getElementById('pmSaveToast');
+    if (!el) return;
+    clearTimeout(el._hideTimer);
+    el.classList.remove('pm-save-toast--in');
+    el.classList.add('pm-save-toast--out');
 }
 
 // ── 사이드바 반응형 초기화 ─────────────────────
