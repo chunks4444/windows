@@ -31,6 +31,7 @@
 </div>
 
 <div class="db-page" id="faqPage" style="display:none;">
+    <div class="adm-breadcrumb"><a href="/src/admin/">어드민</a><span class="adm-breadcrumb-sep">/</span>FAQ 관리</div>
     <div class="db-header">
         <h1 class="db-title"><i class="bi bi-question-circle me-2"></i>FAQ 관리</h1>
         <button class="adm-edit-btn" style="height:32px;padding:0 14px;" onclick="openModal()">

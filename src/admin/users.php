@@ -36,6 +36,7 @@ header('Content-Type: text/html; charset=UTF-8');
 
 <!-- 회원 관리 페이지 -->
 <div class="db-page" id="adminPage" style="display:none;">
+    <div class="adm-breadcrumb"><a href="/src/admin/">어드민</a><span class="adm-breadcrumb-sep">/</span>회원 관리</div>
     <div class="db-header">
         <h1 class="db-title"><i class="bi bi-shield-lock me-2"></i>회원 관리</h1>
     </div>
@@ -44,7 +45,7 @@ header('Content-Type: text/html; charset=UTF-8');
         <div class="adm-toolbar">
             <div class="adm-search">
                 <i class="bi bi-search" style="color:var(--text-3);font-size:12px;flex-shrink:0;"></i>
-                <input type="text" id="admSearch" placeholder="이메일 또는 이름 검색" oninput="onSearchInput()">
+                <input type="text" id="admSearch" placeholder="이메일, 이름 또는 회사명 검색" oninput="onSearchInput()">
             </div>
             <span class="adm-total" id="admTotal"></span>
         </div>
@@ -64,6 +65,7 @@ header('Content-Type: text/html; charset=UTF-8');
                         <th>상태</th>
                         <th>도면</th>
                         <th>내보내기</th>
+                        <th>회사정보</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -72,6 +74,59 @@ header('Content-Type: text/html; charset=UTF-8');
         </div>
 
         <div class="adm-pagination" id="admPagination"></div>
+    </div>
+</div>
+
+<!-- 회사정보 모달 -->
+<div class="adm-modal-overlay" id="companyModalOverlay">
+    <div class="adm-modal" style="max-width:560px;">
+        <div class="adm-modal-head">
+            <h3>회사정보 수정</h3>
+            <button class="adm-modal-close" onclick="closeCompanyModal()">&#x2715;</button>
+        </div>
+        <div class="adm-modal-body">
+            <div id="companyModalAlert" style="display:none;"></div>
+            <div class="adm-mfield">
+                <label>회사명</label>
+                <input type="text" id="cmName" placeholder="(주)평목" maxlength="100">
+            </div>
+            <div class="adm-mfield">
+                <label>사업자등록번호</label>
+                <input type="text" id="cmBizNo" placeholder="000-00-00000" maxlength="20">
+            </div>
+            <div class="adm-mfield">
+                <label>업태</label>
+                <input type="text" id="cmBizType" placeholder="제조업" maxlength="100">
+            </div>
+            <div class="adm-mfield">
+                <label>업종</label>
+                <input type="text" id="cmBizCat" placeholder="목재가구" maxlength="100">
+            </div>
+            <div class="adm-mfield">
+                <label>대표자명</label>
+                <input type="text" id="cmCeo" placeholder="홍길동" maxlength="100">
+            </div>
+            <div class="adm-mfield">
+                <label>대표 연락처</label>
+                <input type="text" id="cmPhone" placeholder="02-0000-0000" maxlength="30">
+            </div>
+            <div class="adm-mfield">
+                <label>우편번호</label>
+                <input type="text" id="cmZipcode" placeholder="우편번호" maxlength="10">
+            </div>
+            <div class="adm-mfield">
+                <label>주소</label>
+                <input type="text" id="cmAddress" placeholder="도로명 주소" maxlength="255">
+            </div>
+            <div class="adm-mfield" style="margin-bottom:0;">
+                <label>상세 주소</label>
+                <input type="text" id="cmAddressDetail" placeholder="층/호 등" maxlength="100">
+            </div>
+        </div>
+        <div class="adm-modal-foot">
+            <button class="adm-btn-cancel" onclick="closeCompanyModal()">취소</button>
+            <button class="adm-btn-save" id="companySaveBtn" onclick="saveCompany()">저장</button>
+        </div>
     </div>
 </div>
 

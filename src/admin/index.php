@@ -28,6 +28,12 @@
         }
         .adm-home-title { font-size:14px; font-weight:700; color:var(--text-1); margin-bottom:2px; }
         .adm-home-desc { font-size:12px; color:var(--text-3); }
+        .adm-section { margin-bottom:36px; }
+        .adm-section-title {
+            font-size:13px; font-weight:700; color:var(--teal);
+            letter-spacing:.03em; margin:0 0 12px; padding-bottom:8px;
+            border-bottom:1px solid var(--border-md);
+        }
     </style>
 </head>
 <body>
@@ -42,67 +48,96 @@
         <h1 class="db-title"><i class="bi bi-speedometer2 me-2"></i>관리자</h1>
     </div>
 
-    <div class="adm-home-grid">
-        <a href="/src/admin/works.php" class="adm-home-card">
-            <div class="adm-home-icon"><i class="bi bi-images"></i></div>
-            <div><div class="adm-home-title">Works 관리</div><div class="adm-home-desc">포트폴리오 작품</div></div>
-        </a>
-        <a href="/src/admin/blog.php" class="adm-home-card">
-            <div class="adm-home-icon"><i class="bi bi-journal-text"></i></div>
-            <div><div class="adm-home-title">블로그 관리</div><div class="adm-home-desc">창호 이야기 글</div></div>
-        </a>
-        <a href="/src/admin/svg_motifs.php" class="adm-home-card">
-            <div class="adm-home-icon"><i class="bi bi-flower1"></i></div>
-            <div><div class="adm-home-title">문양(SVG) 라이브러리</div><div class="adm-home-desc">엔진 삽입용 꽃살 문양</div></div>
-        </a>
-        <a href="/src/admin/faq.php" class="adm-home-card">
-            <div class="adm-home-icon"><i class="bi bi-question-circle"></i></div>
-            <div><div class="adm-home-title">FAQ 관리</div><div class="adm-home-desc">자주 묻는 질문</div></div>
-        </a>
-        <a href="/src/admin/collection.php" class="adm-home-card">
-            <div class="adm-home-icon"><i class="bi bi-image"></i></div>
-            <div><div class="adm-home-title">컬렉션 관리</div><div class="adm-home-desc">공개 패턴 라이브러리</div></div>
-        </a>
-        <a href="/src/admin/hero_slides.php" class="adm-home-card">
-            <div class="adm-home-icon"><i class="bi bi-images"></i></div>
-            <div><div class="adm-home-title">슬라이드 관리</div><div class="adm-home-desc">메인 히어로 캐러셀</div></div>
-        </a>
-        <a href="/src/admin/space_cards.php" class="adm-home-card">
-            <div class="adm-home-icon"><i class="bi bi-grid"></i></div>
-            <div><div class="adm-home-title">공간 카드 관리</div><div class="adm-home-desc">메인 공간 큐레이션</div></div>
-        </a>
-        <a href="/src/admin/studio_cards.php" class="adm-home-card">
-            <div class="adm-home-icon"><i class="bi bi-grid-1x2"></i></div>
-            <div><div class="adm-home-title">스튜디오 카드 관리</div><div class="adm-home-desc">메인 스튜디오 소개</div></div>
-        </a>
-        <a href="/src/admin/cost_table.php" class="adm-home-card">
-            <div class="adm-home-icon"><i class="bi bi-calculator"></i></div>
-            <div><div class="adm-home-title">원가 테이블</div><div class="adm-home-desc">견적 산출 원가</div></div>
-        </a>
-        <a href="/src/admin/colors.php" class="adm-home-card">
-            <div class="adm-home-icon"><i class="bi bi-palette"></i></div>
-            <div><div class="adm-home-title">컬러 팔레트 관리</div><div class="adm-home-desc">창호 색상 옵션</div></div>
-        </a>
-        <a href="/src/admin/meta.php" class="adm-home-card">
-            <div class="adm-home-icon"><i class="bi bi-search"></i></div>
-            <div><div class="adm-home-title">SEO 메타 관리</div><div class="adm-home-desc">페이지별 title/description</div></div>
-        </a>
-        <a href="/src/admin/oauth.php" class="adm-home-card">
-            <div class="adm-home-icon"><i class="bi bi-key"></i></div>
-            <div><div class="adm-home-title">SNS 로그인 설정</div><div class="adm-home-desc">Google/Kakao/Naver</div></div>
-        </a>
-        <a href="/src/admin/stats.php" class="adm-home-card">
-            <div class="adm-home-icon"><i class="bi bi-bar-chart-line"></i></div>
-            <div><div class="adm-home-title">접속 통계</div><div class="adm-home-desc">방문자/페이지뷰</div></div>
-        </a>
-        <a href="/src/admin/users.php" class="adm-home-card">
-            <div class="adm-home-icon"><i class="bi bi-shield-lock"></i></div>
-            <div><div class="adm-home-title">회원 관리</div><div class="adm-home-desc">가입 회원 목록/권한</div></div>
-        </a>
-        <a href="/src/admin/engine_settings.php" class="adm-home-card">
-            <div class="adm-home-icon"><i class="bi bi-sliders"></i></div>
-            <div><div class="adm-home-title">엔진 기본값 관리</div><div class="adm-home-desc">엔진별 슬라이더 기본값/레이아웃 상수</div></div>
-        </a>
+    <div class="adm-section">
+        <h2 class="adm-section-title">콘텐츠 관리</h2>
+        <div class="adm-home-grid">
+            <a href="/src/admin/works.php" class="adm-home-card">
+                <div class="adm-home-icon"><i class="bi bi-images"></i></div>
+                <div><div class="adm-home-title">Works 관리</div><div class="adm-home-desc">포트폴리오 작품</div></div>
+            </a>
+            <a href="/src/admin/blog.php" class="adm-home-card">
+                <div class="adm-home-icon"><i class="bi bi-journal-text"></i></div>
+                <div><div class="adm-home-title">블로그 관리</div><div class="adm-home-desc">창호 이야기 글</div></div>
+            </a>
+            <a href="/src/admin/svg_motifs.php" class="adm-home-card">
+                <div class="adm-home-icon"><i class="bi bi-flower1"></i></div>
+                <div><div class="adm-home-title">문양(SVG) 라이브러리</div><div class="adm-home-desc">엔진 삽입용 꽃살 문양</div></div>
+            </a>
+            <a href="/src/admin/faq.php" class="adm-home-card">
+                <div class="adm-home-icon"><i class="bi bi-question-circle"></i></div>
+                <div><div class="adm-home-title">FAQ 관리</div><div class="adm-home-desc">자주 묻는 질문</div></div>
+            </a>
+            <a href="/src/admin/collection.php" class="adm-home-card">
+                <div class="adm-home-icon"><i class="bi bi-image"></i></div>
+                <div><div class="adm-home-title">컬렉션 관리</div><div class="adm-home-desc">공개 패턴 라이브러리</div></div>
+            </a>
+            <a href="/src/admin/hero_slides.php" class="adm-home-card">
+                <div class="adm-home-icon"><i class="bi bi-images"></i></div>
+                <div><div class="adm-home-title">슬라이드 관리</div><div class="adm-home-desc">메인 히어로 캐러셀</div></div>
+            </a>
+            <a href="/src/admin/space_cards.php" class="adm-home-card">
+                <div class="adm-home-icon"><i class="bi bi-grid"></i></div>
+                <div><div class="adm-home-title">공간 카드 관리</div><div class="adm-home-desc">메인 공간 큐레이션</div></div>
+            </a>
+            <a href="/src/admin/studio_cards.php" class="adm-home-card">
+                <div class="adm-home-icon"><i class="bi bi-grid-1x2"></i></div>
+                <div><div class="adm-home-title">스튜디오 카드 관리</div><div class="adm-home-desc">메인 스튜디오 소개</div></div>
+            </a>
+            <a href="/src/admin/colors.php" class="adm-home-card">
+                <div class="adm-home-icon"><i class="bi bi-palette"></i></div>
+                <div><div class="adm-home-title">컬러 팔레트 관리</div><div class="adm-home-desc">창호 색상 옵션</div></div>
+            </a>
+        </div>
+    </div>
+
+    <div class="adm-section">
+        <h2 class="adm-section-title">설정값 관리</h2>
+        <div class="adm-home-grid">
+            <a href="/src/admin/cost_table.php" class="adm-home-card">
+                <div class="adm-home-icon"><i class="bi bi-calculator"></i></div>
+                <div><div class="adm-home-title">원가 테이블</div><div class="adm-home-desc">견적 산출 원가</div></div>
+            </a>
+            <a href="/src/admin/meta.php" class="adm-home-card">
+                <div class="adm-home-icon"><i class="bi bi-search"></i></div>
+                <div><div class="adm-home-title">SEO 메타 관리</div><div class="adm-home-desc">페이지별 title/description</div></div>
+            </a>
+            <a href="/src/admin/oauth.php" class="adm-home-card">
+                <div class="adm-home-icon"><i class="bi bi-key"></i></div>
+                <div><div class="adm-home-title">SNS 로그인 설정</div><div class="adm-home-desc">Google/Kakao/Naver</div></div>
+            </a>
+            <a href="/src/admin/mail_settings.php" class="adm-home-card">
+                <div class="adm-home-icon"><i class="bi bi-envelope"></i></div>
+                <div><div class="adm-home-title">메일 발송 설정</div><div class="adm-home-desc">SMTP 계정/영업·회원 발신주소</div></div>
+            </a>
+            <a href="/src/admin/render_settings.php" class="adm-home-card">
+                <div class="adm-home-icon"><i class="bi bi-stars"></i></div>
+                <div><div class="adm-home-title">AI 렌더링 설정</div><div class="adm-home-desc">OpenAI API Key/품질</div></div>
+            </a>
+            <a href="/src/admin/engine_settings.php" class="adm-home-card">
+                <div class="adm-home-icon"><i class="bi bi-sliders"></i></div>
+                <div><div class="adm-home-title">엔진 기본값 관리</div><div class="adm-home-desc">엔진별 슬라이더 기본값/레이아웃 상수</div></div>
+            </a>
+        </div>
+    </div>
+
+    <div class="adm-section">
+        <h2 class="adm-section-title">회원 관리</h2>
+        <div class="adm-home-grid">
+            <a href="/src/admin/users.php" class="adm-home-card">
+                <div class="adm-home-icon"><i class="bi bi-shield-lock"></i></div>
+                <div><div class="adm-home-title">회원 목록/권한</div><div class="adm-home-desc">가입 회원 목록/권한 관리</div></div>
+            </a>
+        </div>
+    </div>
+
+    <div class="adm-section">
+        <h2 class="adm-section-title">통계</h2>
+        <div class="adm-home-grid">
+            <a href="/src/admin/stats.php" class="adm-home-card">
+                <div class="adm-home-icon"><i class="bi bi-bar-chart-line"></i></div>
+                <div><div class="adm-home-title">접속 통계</div><div class="adm-home-desc">방문자/페이지뷰</div></div>
+            </a>
+        </div>
     </div>
 </div>
 

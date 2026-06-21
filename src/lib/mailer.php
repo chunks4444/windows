@@ -1,16 +1,40 @@
 <?php
 define('SITE_URL',   'https://windows.pyeongmok.com');
 define('SITE_NAME',  '평목');
-define('MAIL_FROM',  'pyeongmok@gmail.com');
 
-// ── SMTP 설정 ─────────────────────────────────────────────
+// ── SMTP 서버 ─────────────────────────────────────────────
 define('SMTP_HOST', 'smtp.gmail.com');
 define('SMTP_PORT', 587);
-define('SMTP_USER', 'pyeongmok@gmail.com');
-define('SMTP_PASS', 'cqzz mbki kect zicp');
+
+// ── 메일 계정/주소 설정 (site_config 테이블, 관리자 페이지에서 수정) ──
+// mail_smtp_user/mail_smtp_pass: SMTP 로그인 계정/앱 비밀번호
+// mail_sales : 영업(문의·견적) 메일   mail_member : 회원(가입·비밀번호) 메일
+function mail_config(): array {
+    static $cfg = null;
+    if ($cfg !== null) return $cfg;
+    $cfg = [
+        'mail_smtp_user' => 'pyeongmok@gmail.com',
+        'mail_smtp_pass' => '',
+        'mail_sales'     => 'pyeongmok@gmail.com',
+        'mail_member'    => 'pyeongmok@gmail.com',
+    ];
+    try {
+        require_once __DIR__ . '/db.php';
+        $rows = db()->query("SELECT key_name, value FROM site_config WHERE key_name LIKE 'mail_%'")->fetchAll();
+        foreach ($rows as $r) {
+            if ($r['value'] !== '') $cfg[$r['key_name']] = $r['value'];
+        }
+    } catch (Throwable $e) {}
+    return $cfg;
+}
+
+function mail_address(string $type = 'sales'): string {
+    $cfg = mail_config();
+    return $type === 'member' ? $cfg['mail_member'] : $cfg['mail_sales'];
+}
 
 // ── SMTP 발송 ────────────────────────────────────────────
-function send_mail(string $to, string $subject, string $template, array $vars = [], string $extra_headers = ''): bool {
+function send_mail(string $to, string $subject, string $template, array $vars = [], string $extra_headers = '', string $fromType = 'sales'): bool {
     $tpl = __DIR__ . '/../components/mailform/' . $template . '.php';
     if (!file_exists($tpl)) return false;
 
@@ -19,13 +43,16 @@ function send_mail(string $to, string $subject, string $template, array $vars = 
     include $tpl;
     $html = ob_get_clean();
 
-    // 앱 비밀번호 미설정 시 fallback
-    if (!SMTP_PASS) return _mail_fallback($to, $subject, $html, $extra_headers);
+    $cfg  = mail_config();
+    $from = $fromType === 'member' ? $cfg['mail_member'] : $cfg['mail_sales'];
 
-    return _smtp_send(SMTP_USER, $to, $subject, $html, $extra_headers);
+    // 앱 비밀번호 미설정 시 fallback
+    if (!$cfg['mail_smtp_pass']) return _mail_fallback($to, $subject, $html, $from, $extra_headers);
+
+    return _smtp_send($cfg['mail_smtp_user'], $cfg['mail_smtp_pass'], $from, $to, $subject, $html, $extra_headers);
 }
 
-function _smtp_send(string $from, string $to, string $subject, string $html, string $extra_headers = ''): bool {
+function _smtp_send(string $authUser, string $authPass, string $from, string $to, string $subject, string $html, string $extra_headers = ''): bool {
     $sock = @stream_socket_client('tcp://' . SMTP_HOST . ':' . SMTP_PORT, $errno, $errstr, 10);
     if (!$sock) return false;
     stream_set_timeout($sock, 10);
@@ -50,9 +77,9 @@ function _smtp_send(string $from, string $to, string $subject, string $html, str
 
     $send('AUTH LOGIN');
     $read();
-    $send(base64_encode(SMTP_USER));
+    $send(base64_encode($authUser));
     $read();
-    $send(base64_encode(SMTP_PASS));
+    $send(base64_encode($authPass));
     $auth = $read();
     if (substr(trim($auth), 0, 3) !== '235') { fclose($sock); return false; }
 
@@ -81,10 +108,10 @@ function _smtp_send(string $from, string $to, string $subject, string $html, str
     return substr(trim($resp), 0, 3) === '250';
 }
 
-function _mail_fallback(string $to, string $subject, string $html, string $extra_headers = ''): bool {
+function _mail_fallback(string $to, string $subject, string $html, string $from, string $extra_headers = ''): bool {
     $subj_enc = '=?UTF-8?B?' . base64_encode('[' . SITE_NAME . '] ' . $subject) . '?=';
     $parts    = [
-        'From: ' . SITE_NAME . ' <' . MAIL_FROM . '>',
+        'From: ' . SITE_NAME . ' <' . $from . '>',
         'MIME-Version: 1.0',
         'Content-Type: text/html; charset=UTF-8',
         'Content-Transfer-Encoding: base64',

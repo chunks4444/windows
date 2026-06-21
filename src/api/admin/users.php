@@ -30,14 +30,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || (($_SERVER['REQUEST_METHOD'] === 'PO
     $offset = ($page - 1) * $limit;
     $q      = trim($_body['q'] ?? $_GET['q'] ?? '');
 
-    $cols = 'id, email, role, name, phone, company, created_at, last_login_at, last_login_ip, withdrawn_at, (SELECT COUNT(*) FROM drawings WHERE user_id = users.id) AS drawing_count, (SELECT COUNT(*) FROM drawing_export_logs WHERE user_id = users.id) AS export_count';
+    $cols = 'id, email, role, name, phone, company, created_at, last_login_at, last_login_ip, withdrawn_at,
+        company_name, company_biz_no, company_biz_type, company_biz_category, company_ceo, company_phone,
+        company_zipcode, company_address, company_address_detail,
+        (SELECT COUNT(*) FROM drawings WHERE user_id = users.id) AS drawing_count, (SELECT COUNT(*) FROM drawing_export_logs WHERE user_id = users.id) AS export_count';
 
     if ($q) {
         $like    = '%' . $q . '%';
-        $stmt    = $pdo->prepare("SELECT $cols FROM users WHERE email LIKE ? OR name LIKE ? ORDER BY id DESC LIMIT ? OFFSET ?");
-        $stmt->execute([$like, $like, $limit, $offset]);
-        $cntStmt = $pdo->prepare('SELECT COUNT(*) FROM users WHERE email LIKE ? OR name LIKE ?');
-        $cntStmt->execute([$like, $like]);
+        $stmt    = $pdo->prepare("SELECT $cols FROM users WHERE email LIKE ? OR name LIKE ? OR company_name LIKE ? ORDER BY id DESC LIMIT ? OFFSET ?");
+        $stmt->execute([$like, $like, $like, $limit, $offset]);
+        $cntStmt = $pdo->prepare('SELECT COUNT(*) FROM users WHERE email LIKE ? OR name LIKE ? OR company_name LIKE ?');
+        $cntStmt->execute([$like, $like, $like]);
     } else {
         $stmt    = $pdo->prepare("SELECT $cols FROM users ORDER BY id DESC LIMIT ? OFFSET ?");
         $stmt->execute([$limit, $offset]);
@@ -62,6 +65,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     $phone     = array_key_exists('phone',     $body) ? trim($body['phone']) : null;
     $withdrawn = array_key_exists('withdrawn', $body) ? (bool)$body['withdrawn'] : null;
 
+    $companyFields = [
+        'company_name', 'company_biz_no', 'company_biz_type', 'company_biz_category',
+        'company_ceo', 'company_phone', 'company_zipcode', 'company_address', 'company_address_detail',
+    ];
+
     if (!$userId) {
         http_response_code(422); echo json_encode(['error' => '대상 사용자가 없습니다.']); exit;
     }
@@ -74,6 +82,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     if ($name      !== null) { $sets[] = 'name = ?';          $binds[] = $name  ?: null; }
     if ($phone     !== null) { $sets[] = 'phone = ?';         $binds[] = $phone ?: null; }
     if ($withdrawn !== null) { $sets[] = 'withdrawn_at = ?';  $binds[] = $withdrawn ? date('Y-m-d H:i:s') : null; }
+    foreach ($companyFields as $f) {
+        if (array_key_exists($f, $body)) {
+            $v = trim((string) $body[$f]);
+            if (mb_strlen($v) > 255) {
+                http_response_code(422); echo json_encode(['error' => '입력값이 너무 깁니다.']); exit;
+            }
+            $sets[] = "$f = ?"; $binds[] = $v ?: null;
+        }
+    }
 
     if (!$sets) {
         http_response_code(422); echo json_encode(['error' => '변경할 내용이 없습니다.']); exit;

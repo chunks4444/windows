@@ -21,6 +21,7 @@
 </div>
 
 <div class="db-page" id="hsPage" style="display:none;">
+    <div class="adm-breadcrumb"><a href="/src/admin/">어드민</a><span class="adm-breadcrumb-sep">/</span>히어로 슬라이드 관리</div>
     <div class="db-header">
         <h1 class="db-title"><i class="bi bi-images me-2"></i>히어로 슬라이드 관리</h1>
         <button class="adm-edit-btn" style="height:32px;padding:0 14px;" onclick="openModal()">

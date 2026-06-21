@@ -21,6 +21,7 @@
 </div>
 
 <div class="db-page" id="wtPage" style="display:none;">
+    <div class="adm-breadcrumb"><a href="/src/admin/">어드민</a><span class="adm-breadcrumb-sep">/</span>원가 테이블</div>
     <div class="db-header">
         <div>
             <h1 class="db-title"><i class="bi bi-calculator me-2"></i>원가 테이블</h1>

@@ -21,6 +21,7 @@
 </div>
 
 <div class="db-page" id="scPage" style="display:none;">
+    <div class="adm-breadcrumb"><a href="/src/admin/">어드민</a><span class="adm-breadcrumb-sep">/</span>공간 카드 관리</div>
     <div class="db-header">
         <h1 class="db-title"><i class="bi bi-grid me-2"></i>공간 카드 관리</h1>
         <button class="adm-edit-btn" style="height:32px;padding:0 14px;" onclick="openModal()">

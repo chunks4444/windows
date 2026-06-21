@@ -19,6 +19,7 @@ header('Content-Type: text/html; charset=UTF-8');
 <?php include __DIR__ . '/../components/nav.php'; ?>
 
 <div class="db-page" id="colorPage" style="display:none;">
+    <div class="adm-breadcrumb"><a href="/src/admin/">어드민</a><span class="adm-breadcrumb-sep">/</span>컬러 팔레트 관리</div>
     <div class="db-header">
         <h1 class="db-title"><i class="bi bi-palette me-2"></i>컬러 팔레트 관리</h1>
         <button class="adm-edit-btn" style="height:32px;padding:0 14px;" onclick="openAddModal()">

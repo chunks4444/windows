@@ -20,6 +20,7 @@
 </div>
 
 <div class="db-page" id="scPage" style="display:none;">
+    <div class="adm-breadcrumb"><a href="/src/admin/">어드민</a><span class="adm-breadcrumb-sep">/</span>스튜디오 카드 관리</div>
     <div class="db-header">
         <h1 class="db-title"><i class="bi bi-grid-1x2 me-2"></i>스튜디오 카드 관리</h1>
     </div>

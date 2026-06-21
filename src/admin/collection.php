@@ -21,6 +21,7 @@
 </div>
 
 <div class="db-page" id="libPage" style="display:none;">
+    <div class="adm-breadcrumb"><a href="/src/admin/">어드민</a><span class="adm-breadcrumb-sep">/</span>라이브러리 패턴</div>
     <div class="db-header">
         <h1 class="db-title"><i class="bi bi-image me-2"></i>라이브러리 패턴</h1>
         <div style="display:flex;gap:8px;align-items:center;">

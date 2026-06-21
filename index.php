@@ -109,9 +109,10 @@ try {
                 <div class="row g-4">
                 <?php foreach ($renderCards as $sc):
                     $key   = $sc['engine_key'];
+                    $hasBg = !empty($sc['image_url']);
                 ?>
                     <div class="col-md-4 text-center">
-                        <div class="service-card service-card--<?= htmlspecialchars($key) ?> h-80 p-4">
+                        <div class="service-card service-card--<?= htmlspecialchars($key) ?><?= $hasBg ? ' has-bg-image' : '' ?> h-80 p-4"<?= $hasBg ? ' style="--card-bg-image:url(\'' . htmlspecialchars($sc['image_url']) . '\')"' : '' ?>>
                             <div class="mb-4" style="height:120px;display:flex;align-items:center;justify-content:center;">
                                 <a href="/src/engine/<?= htmlspecialchars($key) ?>/<?= htmlspecialchars($key) ?>.php" class="pm-symbol-link">
                                     <?= $svgIcons[$key] ?? '' ?>

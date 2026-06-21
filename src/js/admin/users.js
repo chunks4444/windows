@@ -2,6 +2,7 @@ const ROLE_MAP  = { s: '슈퍼', m: '관리자', a: '작가', u: '회원' };
 let currentPage = 1;
 let searchTimer = null;
 let editingId   = null;
+let companyId   = null;
 
 function token() { return localStorage.getItem('pmok_auth_token'); }
 
@@ -31,7 +32,7 @@ async function loadUsers(page) {
 function renderTable(users) {
     const tbody = document.getElementById('admTbody');
     if (!users.length) {
-        tbody.innerHTML = '<tr><td colspan="10" style="padding:40px;text-align:center;color:var(--text-3);">검색 결과가 없습니다.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="11" style="padding:40px;text-align:center;color:var(--text-3);">검색 결과가 없습니다.</td></tr>';
         return;
     }
     tbody.innerHTML = users.map(u => `
@@ -51,6 +52,9 @@ function renderTable(users) {
                     ? `<button class="adm-edit-btn" style="height:24px;padding:0 8px;font-size:11px;" onclick="openExportModal(${u.id}, '${esc(u.email)}')">${u.export_count}</button>`
                     : `<span style="color:var(--text-3);font-size:12px;">0</span>`
                 }
+            </td>
+            <td style="text-align:center;">
+                <button class="adm-edit-btn" style="height:24px;padding:0 8px;font-size:11px;" onclick='openCompanyModal(${u.id}, ${JSON.stringify(u)})'>${u.company_name ? esc(u.company_name) : '입력'}</button>
             </td>
             <td><div class="adm-action-cell">
                 <button class="adm-edit-btn" onclick='openModal(${u.id}, ${JSON.stringify(u)})'>수정</button>
@@ -143,6 +147,64 @@ async function saveUser() {
         btn.disabled = false; btn.textContent = '저장';
     }
 }
+
+function openCompanyModal(id, u) {
+    companyId = id;
+    document.getElementById('cmName').value          = u.company_name           || '';
+    document.getElementById('cmBizNo').value         = u.company_biz_no         || '';
+    document.getElementById('cmBizType').value       = u.company_biz_type       || '';
+    document.getElementById('cmBizCat').value        = u.company_biz_category   || '';
+    document.getElementById('cmCeo').value           = u.company_ceo           || '';
+    document.getElementById('cmPhone').value          = u.company_phone         || '';
+    document.getElementById('cmZipcode').value        = u.company_zipcode       || '';
+    document.getElementById('cmAddress').value        = u.company_address       || '';
+    document.getElementById('cmAddressDetail').value  = u.company_address_detail || '';
+    document.getElementById('companyModalAlert').style.display = 'none';
+    document.getElementById('companyModalOverlay').classList.add('open');
+}
+
+function closeCompanyModal() {
+    document.getElementById('companyModalOverlay').classList.remove('open');
+    companyId = null;
+}
+
+async function saveCompany() {
+    const btn = document.getElementById('companySaveBtn');
+    btn.disabled = true; btn.textContent = '저장 중…';
+    try {
+        const res  = await fetch('/src/api/admin/users.php', {
+            method:  'PUT',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token() },
+            body: JSON.stringify({
+                id:                     companyId,
+                company_name:           document.getElementById('cmName').value.trim(),
+                company_biz_no:         document.getElementById('cmBizNo').value.trim(),
+                company_biz_type:       document.getElementById('cmBizType').value.trim(),
+                company_biz_category:   document.getElementById('cmBizCat').value.trim(),
+                company_ceo:            document.getElementById('cmCeo').value.trim(),
+                company_phone:          document.getElementById('cmPhone').value.trim(),
+                company_zipcode:        document.getElementById('cmZipcode').value.trim(),
+                company_address:        document.getElementById('cmAddress').value.trim(),
+                company_address_detail: document.getElementById('cmAddressDetail').value.trim(),
+            }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || '오류가 발생했습니다.');
+        closeCompanyModal();
+        await loadUsers(currentPage);
+    } catch (err) {
+        const el = document.getElementById('companyModalAlert');
+        el.textContent = err.message;
+        el.className   = 'adm-alert adm-alert-error';
+        el.style.display = '';
+    } finally {
+        btn.disabled = false; btn.textContent = '저장';
+    }
+}
+
+document.getElementById('companyModalOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeCompanyModal();
+});
 
 function fmtDatetime(dt) {
     if (!dt) return '<span class="adm-null">—</span>';

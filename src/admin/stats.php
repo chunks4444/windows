@@ -21,6 +21,7 @@ header('Content-Type: text/html; charset=UTF-8');
 </div>
 
 <div class="db-page" id="statsPage" style="display:none;">
+    <div class="adm-breadcrumb"><a href="/src/admin/">어드민</a><span class="adm-breadcrumb-sep">/</span>접속 통계</div>
     <div class="db-header">
         <h1 class="db-title"><i class="bi bi-bar-chart-line me-2"></i>접속 통계</h1>
         <div class="st-month-btns">

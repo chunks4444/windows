@@ -444,6 +444,7 @@ body { font-weight: 900; }
 
 /* SERVICE CARDS */
 .service-card {
+    position: relative;
     transition: all 0.3s ease;
     border: none;
     border-radius: 15px;
@@ -455,6 +456,22 @@ body { font-weight: 900; }
 .service-card:hover {
     transform: translateY(-10px);
     box-shadow: none;
+}
+
+.service-card.has-bg-image::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(rgba(255, 255, 255, .55), rgba(255, 255, 255, .55)), var(--card-bg-image);
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity .4s ease;
+    pointer-events: none;
+}
+
+.service-card.has-bg-image:hover::before {
+    opacity: 1;
 }
 
 .service-card--classic,

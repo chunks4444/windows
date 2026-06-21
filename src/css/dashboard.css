@@ -39,6 +39,15 @@ body {
     gap: 16px;
 }
 
+.adm-breadcrumb {
+    font-size: var(--fs-12);
+    color: var(--text-3);
+    margin-bottom: 10px;
+}
+.adm-breadcrumb a { color: var(--text-3); text-decoration: none; }
+.adm-breadcrumb a:hover { color: var(--teal); }
+.adm-breadcrumb-sep { margin: 0 6px; }
+
 .db-title {
     font-size: var(--fs-18);
     font-weight: 700;

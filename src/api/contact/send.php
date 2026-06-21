@@ -41,11 +41,12 @@ if ((int)$cnt->fetchColumn() >= 5) {
 }
 
 $sent = send_mail(
-    'pyeongmok@gmail.com',
+    mail_address('sales'),
     '[문의] ' . $subject,
     'contact',
     compact('name', 'email', 'subject', 'message'),
-    'Reply-To: ' . $email
+    'Reply-To: ' . $email,
+    'sales'
 );
 
 if (!$sent) {

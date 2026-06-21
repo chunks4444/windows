@@ -27,7 +27,7 @@ if ($user) {
     $pdo->prepare('DELETE FROM password_resets WHERE user_id = ?')->execute([$user['id']]);
     $pdo->prepare('INSERT INTO password_resets (token, user_id, expires_at) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 1 HOUR))')
         ->execute([$token, $user['id']]);
-    send_mail($email, '비밀번호 재설정', 'reset', ['token' => $token, 'email' => $email]);
+    send_mail($email, '비밀번호 재설정', 'reset', ['token' => $token, 'email' => $email], '', 'member');
 }
 
 // 이메일 존재 여부를 노출하지 않음
