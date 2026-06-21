@@ -62,6 +62,15 @@ function openModal(id) {
     document.getElementById('scModalOverlay').classList.add('open');
 }
 
+function onImageUrlInput(input) {
+    document.getElementById('scRemoveImgBtn').style.display = input.value.trim() ? '' : 'none';
+    if (input.value.trim()) {
+        window._scImageData = null;
+        const prev = document.getElementById('scImgPreview');
+        prev.src = input.value.trim(); prev.classList.add('show');
+    }
+}
+
 function removeImage() {
     window._scImageData = null;
     document.getElementById('scImageUrl').value = '';

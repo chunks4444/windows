@@ -75,7 +75,7 @@
                     </button>
                 </div>
                 <input type="file" id="scImgFile" accept="image/jpeg,image/png" style="display:none;" onchange="previewImage(this)">
-                <input id="scImageUrl" type="text" placeholder="또는 https://... URL 직접 입력"
+                <input id="scImageUrl" type="text" placeholder="또는 https://... URL 직접 입력" oninput="onImageUrlInput(this)"
                     style="margin-top:6px;height:38px;padding:0 10px;border:1px solid var(--border-md);border-radius:var(--r-sm);background:var(--input-bg);font-family:inherit;font-size:var(--fs-14);color:var(--text-1);outline:none;width:100%;">
             </div>
         </div>
