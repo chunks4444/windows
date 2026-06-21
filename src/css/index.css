@@ -462,7 +462,7 @@ body { font-weight: 900; }
     content: '';
     position: absolute;
     inset: 0;
-    background-image: linear-gradient(rgba(255, 255, 255, .55), rgba(255, 255, 255, .55)), var(--card-bg-image);
+    background-image: var(--card-bg-image);
     background-size: cover;
     background-position: center;
     opacity: 0;
@@ -472,6 +472,11 @@ body { font-weight: 900; }
 
 .service-card.has-bg-image:hover::before {
     opacity: 1;
+}
+
+.service-card.has-bg-image:hover .service-title,
+.service-card.has-bg-image:hover .service-sub-text {
+    text-shadow: 0 1px 3px rgba(255, 255, 255, .9), 0 0 8px rgba(255, 255, 255, .8);
 }
 
 .service-card--classic,
