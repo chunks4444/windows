@@ -446,7 +446,7 @@ body { font-weight: 900; }
 .service-card {
     position: relative;
     transition: all 0.3s ease;
-    border: none;
+    border: 1px solid transparent;
     border-radius: 15px;
     overflow: hidden;
     background: linear-gradient(145deg, #ffffff, #f3f3f3);
@@ -455,6 +455,7 @@ body { font-weight: 900; }
 
 .service-card:hover {
     transform: translateY(-10px);
+    border-color: #000;
     box-shadow: none;
 }
 
