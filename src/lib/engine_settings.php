@@ -10,6 +10,8 @@ function engine_setting_defaults(string $engine): array {
         'H'           => '1707',
         'frame'       => '60',
         'frameH'      => '60',
+        'frameThick'  => '30',
+        'frameGap'    => '2',
         'slat'        => '12',
         'pungpanOn'   => '0',
         'pungpan'     => '0',

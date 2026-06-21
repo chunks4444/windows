@@ -106,6 +106,7 @@
     
     const txtFrame = document.getElementById('txtFrame');
     const txtFrameH = document.getElementById('txtFrameH');
+    const txtFrameThick = document.getElementById('txtFrameThick');
 
 
     const txtSlat  = document.getElementById('txtSlat');
@@ -385,8 +386,10 @@ let _geoController = null;
 async function fetchGeometry(p = null) {
     const body = new URLSearchParams({
         cols:      p ? p.cols                             : txtCols.value,
-        outerW:    p ? p.W                                : txtW.value,
-        outerH:    p ? p.H                                : txtH.value,
+        frameOpeningW: p ? p.W                            : txtW.value,
+        frameOpeningH: p ? p.H                            : txtH.value,
+        frameThick:    p ? (p.frameThick ?? 30)           : txtFrameThick.value,
+        frameGap:      p ? (p.frameGap ?? 2)               : (window.__pmokEngineLayout?.frameGap ?? 2),
         pungpanH:  p ? (p.pungpan || 0)                  : (document.getElementById('txtPungpan').value || 0),
         pungpanOn: p ? (p.pungpanOn ? '1' : '0')         : (document.getElementById('chkPungpan').checked ? '1' : '0'),
         frameW:    p ? p.frame                            : txtFrame.value,
@@ -446,6 +449,8 @@ async function draw() {
     geo = data.geo;
 
     const s = data.specs;
+    document.getElementById('spFrameOpeningW').innerText = s.frameOpeningW;
+    document.getElementById('spFrameOpeningH').innerText = s.frameOpeningH;
     document.getElementById('spOuterW').innerText     = s.outerW;
     document.getElementById('spOuterH').innerText     = s.outerH;
     document.getElementById('spInnerW').innerText     = s.innerW;
@@ -584,6 +589,19 @@ async function draw() {
         offCtx.translate(offW / 2, offH / 2);
         offCtx.scale(renderDpr, renderDpr);
         ctx = offCtx;
+    }
+
+    // ====== 문틀(벽 개구부) 화이트 윤곽선 — 채움 없이 선만 ======
+    {
+        const m = (geo.frameThick + geo.frameGap) * baseScale;
+        ctx.save();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(
+            offsetX - m, offsetY - m,
+            totalWidth * baseScale + 2 * m, totalH * baseScale + 2 * m
+        );
+        ctx.restore();
     }
 
     _activeDrawCtx = ctx; // drawCenterLine이 항상 올바른 ctx를 사용하도록
@@ -1206,12 +1224,14 @@ async function draw() {
         if (!showDimensions) return;
         if (!lastBaseScale || !lastDoorWpx || !lastDoorHpx) return;
         const rCtx = canvas.getContext('2d');
-        const ox = logW / 2 + panX + lastOLeft * scaleFactor;
-        const oy = logH / 2 + panY + lastOTop  * scaleFactor;
-        const dW = lastDoorWpx * scaleFactor;
-        const dH = lastDoorHpx * scaleFactor;
-        const wMm = Math.round(lastDoorWpx / lastBaseScale);
-        const hMm = Math.round(lastDoorHpx / lastBaseScale);
+        const mFrame = (geo.frameThick + geo.frameGap) * lastBaseScale * scaleFactor;
+        const extra = 30 * lastBaseScale * scaleFactor;
+        const ox = logW / 2 + panX + lastOLeft * scaleFactor - mFrame - extra;
+        const oy = logH / 2 + panY + lastOTop  * scaleFactor - mFrame - extra;
+        const dW = lastDoorWpx * scaleFactor + 2 * mFrame;
+        const dH = lastDoorHpx * scaleFactor + 2 * mFrame;
+        const wMm = Math.round(geo.frameOpeningW);
+        const hMm = Math.round(geo.frameOpeningH);
         rCtx.save();
         rCtx.setTransform(window.devicePixelRatio||1, 0, 0, window.devicePixelRatio||1, 0, 0);
         const GAP=24, TICK=5, ITICK=12, R=3;
@@ -1805,10 +1825,6 @@ async function draw() {
         if (!chkPungpan.checked) {
             document.getElementById('txtPungpan').value = 0;
             document.getElementById('numPungpan').value = 0;
-            await draw();
-            const newH = Math.round(geo.actualPatternH);
-            txtH.value = newH;
-            document.getElementById('numH').value = newH;
         }
         draw();
     });
@@ -1821,6 +1837,7 @@ async function draw() {
         { range: txtCols,   num: document.getElementById('numCols'),    min: 2,    max: 30   },
         { range: txtFrame,  num: document.getElementById('numFrame'),   min: 20,   max: 150  },
         { range: txtFrameH, num: document.getElementById('numFrameH'),  min: 20,   max: 150  },
+        { range: txtFrameThick, num: document.getElementById('numFrameThick'), min: 20, max: 150 },
         { range: txtSlat,   num: document.getElementById('numSlat'),    min: 8,    max: 35   },
         { range: document.getElementById('txtPungpan'), num: document.getElementById('numPungpan'), min: 0, max: 600 },
         { range: txtRatio, num: document.getElementById('numRatio'), min: 1.0, max: 3.0, step: 0.1 },
@@ -1972,6 +1989,7 @@ async function draw() {
             cols:      parseInt(txtCols.value),
             frame:     parseInt(txtFrame.value),
             frameH:    parseInt(txtFrameH.value),
+            frameThick: parseInt(txtFrameThick.value),
             slat:      parseInt(txtSlat.value),
             vRatio:    parseFloat(txtRatio.value),
             pattern:   `${document.getElementById('txtPatternTop').value}/${document.getElementById('txtPatternMid').value}/${document.getElementById('txtPatternBot').value}`,
@@ -2003,6 +2021,7 @@ async function draw() {
         setSlider('txtCols',   'numCols',   p.cols);
         setSlider('txtFrame',  'numFrame',  p.frame);
         setSlider('txtFrameH', 'numFrameH', p.frameH);
+        setSlider('txtFrameThick', 'numFrameThick', p.frameThick ?? 30);
         setSlider('txtSlat',   'numSlat',   p.slat);
         setSlider('txtRatio',  'numRatio',  p.vRatio ?? 1.2);
         const _pp = (p.pattern || '3/5/3').split('/');

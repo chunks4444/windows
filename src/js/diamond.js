@@ -84,6 +84,7 @@
     
     const txtFrame = document.getElementById('txtFrame');
     const txtFrameH = document.getElementById('txtFrameH');
+    const txtFrameThick = document.getElementById('txtFrameThick');
 
 
     const txtSlat = document.getElementById('txtSlat');
@@ -378,8 +379,10 @@ let _geoController = null;
 async function fetchGeometry() {
     const body = new URLSearchParams({
         cols:      txtCols.value,
-        outerW:    txtW.value,
-        outerH:    txtH.value,
+        frameOpeningW: txtW.value,
+        frameOpeningH: txtH.value,
+        frameThick:    txtFrameThick.value,
+        frameGap:      window.__pmokEngineLayout?.frameGap ?? 2,
         pungpanH:  document.getElementById('txtPungpan').value || 0,
         pungpanOn: document.getElementById('chkPungpan').checked ? '1' : '0',
         frameW:    txtFrame.value,
@@ -433,6 +436,8 @@ async function draw() {
     geo = data.geo;
 
     const s = data.specs;
+    document.getElementById('spFrameOpeningW').innerText = s.frameOpeningW;
+    document.getElementById('spFrameOpeningH').innerText = s.frameOpeningH;
     document.getElementById('spOuterW').innerText     = s.outerW;
     document.getElementById('spOuterH').innerText     = s.outerH;
     document.getElementById('spInnerW').innerText     = s.innerW;
@@ -596,6 +601,19 @@ async function draw() {
         offCtx.translate(offW / 2, offH / 2);
         offCtx.scale(renderDpr, renderDpr);
         ctx = offCtx;
+    }
+
+    // ====== 문틀(벽 개구부) 화이트 윤곽선 — 채움 없이 선만 ======
+    {
+        const m = (geo.frameThick + geo.frameGap) * baseScale;
+        ctx.save();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(
+            offsetX - m, offsetY - m,
+            totalWidth * baseScale + 2 * m, totalH * baseScale + 2 * m
+        );
+        ctx.restore();
     }
 
     // 패턴 비율 체크: 셀 크기가 0 이하이거나 내경이 너무 작아 패턴 불가능할 때 레드
@@ -1276,12 +1294,14 @@ async function draw() {
         if (!showDimensions) return;
         if (!lastBaseScale || !lastDoorWpx || !lastDoorHpx) return;
         const rCtx = canvas.getContext('2d');
-        const ox = logW / 2 + panX + lastOLeft * scaleFactor;
-        const oy = logH / 2 + panY + lastOTop  * scaleFactor;
-        const dW = lastDoorWpx * scaleFactor;
-        const dH = lastDoorHpx * scaleFactor;
-        const wMm = Math.round(lastDoorWpx / lastBaseScale);
-        const hMm = Math.round(lastDoorHpx / lastBaseScale);
+        const mFrame = (geo.frameThick + geo.frameGap) * lastBaseScale * scaleFactor;
+        const extra = 30 * lastBaseScale * scaleFactor;
+        const ox = logW / 2 + panX + lastOLeft * scaleFactor - mFrame - extra;
+        const oy = logH / 2 + panY + lastOTop  * scaleFactor - mFrame - extra;
+        const dW = lastDoorWpx * scaleFactor + 2 * mFrame;
+        const dH = lastDoorHpx * scaleFactor + 2 * mFrame;
+        const wMm = Math.round(geo.frameOpeningW);
+        const hMm = Math.round(geo.frameOpeningH);
         rCtx.save();
         rCtx.setTransform(window.devicePixelRatio||1, 0, 0, window.devicePixelRatio||1, 0, 0);
         const GAP=24, TICK=5, ITICK=12, R=3;
@@ -1841,10 +1861,6 @@ async function draw() {
         if (!chkPungpan.checked) {
             document.getElementById('txtPungpan').value = 0;
             document.getElementById('numPungpan').value = 0;
-            await draw();
-            const newH = Math.round(geo.actualPatternH);
-            txtH.value = newH;
-            document.getElementById('numH').value = newH;
         }
         draw();
     });
@@ -1860,6 +1876,7 @@ document.getElementById('chkDimension').addEventListener('change', e => { showDi
         { range: txtCols,   num: document.getElementById('numCols'),    min: 2,    max: 30   },
         { range: txtFrame,  num: document.getElementById('numFrame'),   min: 20,   max: 150  },
         { range: txtFrameH, num: document.getElementById('numFrameH'),  min: 20,   max: 150  },
+        { range: txtFrameThick, num: document.getElementById('numFrameThick'), min: 20, max: 150 },
         { range: txtSlat,   num: document.getElementById('numSlat'),    min: 8,    max: 35   },
         { range: document.getElementById('txtPungpan'), num: document.getElementById('numPungpan'), min: 0, max: 600 },
     ];
@@ -1993,6 +2010,7 @@ document.getElementById('chkDimension').addEventListener('change', e => { showDi
             cols:      parseInt(txtCols.value),
             frame:     parseInt(txtFrame.value),
             frameH:    parseInt(txtFrameH.value),
+            frameThick: parseInt(txtFrameThick.value),
             slat:      parseInt(txtSlat.value),
             doorType:  txtDoorType.value,
             doorCount: parseInt(txtDoorCount.value),
@@ -2023,6 +2041,7 @@ document.getElementById('chkDimension').addEventListener('change', e => { showDi
         setSlider('txtCols',   'numCols',   p.cols);
         setSlider('txtFrame',  'numFrame',  p.frame);
         setSlider('txtFrameH', 'numFrameH', p.frameH);
+        setSlider('txtFrameThick', 'numFrameThick', p.frameThick ?? 30);
         setSlider('txtSlat',   'numSlat',   p.slat);
         txtDoorType.value  = p.doorType;
         txtDoorCount.value = p.doorCount;

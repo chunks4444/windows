@@ -6,8 +6,6 @@ require_once __DIR__ . '/../../../lib/jwt.php';
 if (!jwt_from_request()) { http_response_code(401); echo json_encode(['error' => '인증이 필요합니다.']); exit; }
 
 $cols      = max(2,   (int)($_POST['cols']      ?? 4));
-$outerW    = max(400, (int)($_POST['outerW']    ?? 600));
-$outerH    = max(400, (int)($_POST['outerH']    ?? 1707));
 $pungpanH  = max(0,   (int)($_POST['pungpanH']  ?? 0));
 $pungpanOn = (($_POST['pungpanOn'] ?? '0') === '1');
 $frameW    = max(20,  (int)($_POST['frameW']    ?? 60));
@@ -16,6 +14,22 @@ $slatT     = max(8,   (int)($_POST['slatT']     ?? 12));
 $rotateOn  = (($_POST['rotateOn']  ?? '0') === '1');
 $doorType  = in_array($_POST['doorType'] ?? '', ['swing','slide']) ? $_POST['doorType'] : 'swing';
 $doorCount = max(1, min(4, (int)($_POST['doorCount'] ?? 1)));
+
+// 문틀(벽 개구부) 치수 → 문틀두께·갭을 양쪽에서 빼고 짝수에 따라 문 폭/높이(outerW/outerH) 역산
+$frameOpeningW = max(400, (int)($_POST['frameOpeningW'] ?? 600));
+$frameOpeningH = max(400, (int)($_POST['frameOpeningH'] ?? 1707));
+$frameThick    = max(0,   (int)($_POST['frameThick']    ?? 30));
+$frameGap      = max(0,   (int)($_POST['frameGap']      ?? 2));
+
+$base   = $frameOpeningW - 2 * $frameThick - 2 * $frameGap;
+$outerH = max(100, $frameOpeningH - 2 * $frameThick - 2 * $frameGap);
+
+if ($doorType === 'slide') {
+    $outerW = ($base + $frameW * ($doorCount - 1)) / $doorCount;
+} else {
+    $outerW = ($base - $frameGap * ($doorCount - 1)) / $doorCount;
+}
+$outerW = max(100, $outerW);
 
 $SQRT3 = sqrt(3);
 $effectivePungpanInput = $pungpanOn ? $pungpanH : 0;
@@ -83,6 +97,10 @@ $geo = [
     'rowH'              => $rowH,
     'outerW'            => $outerW,
     'outerH'            => $outerH,
+    'frameOpeningW'     => $frameOpeningW,
+    'frameOpeningH'     => $frameOpeningH,
+    'frameThick'        => $frameThick,
+    'frameGap'          => $frameGap,
     'frameW'            => $frameWActual,
     'frameH'            => $frameH,
     'frameHTop'         => $frameHTop,
@@ -110,6 +128,8 @@ $geo = [
 $specs = [
     'outerW'    => (string)round($outerW),
     'outerH'    => (string)round($outerH),
+    'frameOpeningW' => (string)round($frameOpeningW),
+    'frameOpeningH' => (string)round($frameOpeningH),
     'innerW'    => (string)round($innerW),
     'innerH'    => (string)round($innerH),
     'cols'      => (string)$cols,

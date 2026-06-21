@@ -55,17 +55,24 @@ $cfg = get_engine_settings('classic');
                     <hr class="sb-divider">
 
                     <div class="ctrl">
-                        <div class="ctrl-header"><span class="ctrl-label">문 가로폭</span></div>
+                        <div class="ctrl-header"><span class="ctrl-label">문틀 가로</span></div>
                         <div class="slider-row">
                             <input type="range" id="txtW" min="400" max="3000" step="1" value="<?= htmlspecialchars($cfg['W']) ?>">
                             <input type="number" class="slider-num" id="numW" min="400" max="3000" step="1" value="<?= htmlspecialchars($cfg['W']) ?>">
                         </div>
                     </div>
                     <div class="ctrl">
-                        <div class="ctrl-header"><span class="ctrl-label">문 세로높이</span></div>
+                        <div class="ctrl-header"><span class="ctrl-label">문틀 세로</span></div>
                         <div class="slider-row">
                             <input type="range" id="txtH" min="400" max="3000" step="1" value="<?= htmlspecialchars($cfg['H']) ?>">
                             <input type="number" class="slider-num" id="numH" min="400" max="3000" step="1" value="<?= htmlspecialchars($cfg['H']) ?>">
+                        </div>
+                    </div>
+                    <div class="ctrl">
+                        <div class="ctrl-header"><span class="ctrl-label">문틀 두께</span></div>
+                        <div class="slider-row">
+                            <input type="range" id="txtFrameThick" min="20" max="150" step="1" value="<?= htmlspecialchars($cfg['frameThick']) ?>">
+                            <input type="number" class="slider-num" id="numFrameThick" min="20" max="150" step="1" value="<?= htmlspecialchars($cfg['frameThick']) ?>">
                         </div>
                     </div>
 
@@ -179,6 +186,14 @@ $cfg = get_engine_settings('classic');
                 <div class="sb-section sb-collapsed admin-only" style="display:none">
                     <div class="sb-section-title">제작 시방서</div>
                     <div class="spec-grid">
+                        <div class="spec-card">
+                            <div class="spec-lbl">문틀 가로</div>
+                            <div class="spec-val"><span id="spFrameOpeningW">0</span><span class="spec-unit">mm</span></div>
+                        </div>
+                        <div class="spec-card">
+                            <div class="spec-lbl">문틀 세로</div>
+                            <div class="spec-val"><span id="spFrameOpeningH">0</span><span class="spec-unit">mm</span></div>
+                        </div>
                         <div class="spec-card">
                             <div class="spec-lbl">외경 가로</div>
                             <div class="spec-val"><span id="spOuterW">0</span><span class="spec-unit">mm</span></div>
@@ -626,7 +641,7 @@ $cfg = get_engine_settings('classic');
         window.__pmokOpenDrawing         = <?= isset($_POST['drawing'])    ? json_encode($_POST['drawing'],    JSON_UNESCAPED_UNICODE) : 'null' ?>;
         window.__pmokCollectionDrawingId = <?= isset($_GET['drawing_id']) ? (int)$_GET['drawing_id']          : 'null' ?>;
         window.__pmokColorGroups         = <?= json_encode(get_color_groups(), JSON_UNESCAPED_UNICODE) ?>;
-        window.__pmokEngineLayout        = <?= json_encode(['gap' => (float)$cfg['gap'], 'basePadding' => (float)$cfg['basePadding']], JSON_UNESCAPED_UNICODE) ?>;
+        window.__pmokEngineLayout        = <?= json_encode(['gap' => (float)$cfg['gap'], 'basePadding' => (float)$cfg['basePadding'], 'frameGap' => (float)$cfg['frameGap']], JSON_UNESCAPED_UNICODE) ?>;
     </script>
     <script src="/src/js/drawing-sync.js?v=<?= md5_file(__DIR__ . '/../../js/drawing-sync.js') ?>"></script>
     <script src="/src/js/engine-common.js?v=<?= md5_file(__DIR__ . '/../../js/engine-common.js') ?>"></script>
