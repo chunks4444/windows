@@ -50,15 +50,16 @@ body { background: var(--page-bg, #F2F3F4); }
 
 /* ── 본문 ───────────────────────────────────────────────── */
 .bd-body {
+    max-width: 720px;
+    margin: 0 auto;
     font-size: var(--fs-16);
-    line-height: 1.9;
+    line-height: 1.7;
     color: var(--text-1);
     word-break: keep-all;
 }
 .bd-body p {
-    margin-bottom: 1.4rem;
+    margin: 0;
 }
-.bd-body p:last-child { margin-bottom: 0; }
 .bd-body h2, .bd-body h3 {
     font-weight: 800; letter-spacing: -.01em; color: var(--text-1);
     margin: 2rem 0 1rem;
