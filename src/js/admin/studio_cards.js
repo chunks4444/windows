@@ -94,6 +94,7 @@ function previewImage(input) {
             const prev = document.getElementById('scImgPreview');
             prev.src = dataUrl; prev.classList.add('show');
             document.getElementById('scImageUrl').value = '';
+            document.getElementById('scRemoveImgBtn').style.display = '';
         };
         img.src = e.target.result;
     };
