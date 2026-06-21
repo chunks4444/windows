@@ -4,7 +4,7 @@ body { background: var(--page-bg, #F2F3F4); }
 
 .bd-page {
     min-height: calc(100vh - 68px);
-    max-width: 1200px;
+    max-width: 1024px;
     margin: 0 auto;
     padding: 2.5rem 1.5rem 4rem;
 }
@@ -50,7 +50,7 @@ body { background: var(--page-bg, #F2F3F4); }
 
 /* ── 본문 ───────────────────────────────────────────────── */
 .bd-body {
-    max-width: 880px;
+    max-width: 1024px;
     margin: 0;
     font-size: var(--fs-16);
     line-height: 1.7;
