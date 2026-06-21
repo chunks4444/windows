@@ -179,8 +179,9 @@ body.pm-generator .pm-navbar .dropdown-menu { background: var(--sidebar-bg) !imp
     letter-spacing: -0.1px;
 }
 
-.drawing-name-input:focus { width: 200px; color: #111; }
+.drawing-name-input:focus { width: 200px; }
 .title-btn-group:focus-within { background: #fff; border-color: var(--sidebar-bg); }
+.title-btn-group:focus-within .drawing-name-input { color: #111; }
 .title-btn-group:focus-within .title-group-btn { border-left-color: #e0e0e0; background: transparent; color: #444; }
 .title-btn-group:focus-within .title-group-btn:hover { background: #f0f0f0; color: #111; }
 .title-btn-group:focus-within .title-group-btn.save-btn { background: var(--sidebar-bg); color: #fff; }
@@ -494,16 +495,16 @@ canvas:active { cursor: grabbing; }
 
 .ver-dropdown {
     display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    margin-bottom: 10px;
     background: var(--sidebar-bg);
     border: 1px solid rgba(255,255,255,0.15);
     border-radius: var(--r-sm);
     box-shadow: 0 12px 40px rgba(0,0,0,0.5);
     min-width: 240px;
-    max-height: min(300px, calc(100vh - 100px));
+    max-height: min(300px, calc(100vh - 140px));
     overflow-y: auto;
     z-index: 2000;
     scrollbar-width: thin;
