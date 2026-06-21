@@ -475,17 +475,6 @@ body { font-weight: 900; }
     opacity: 1;
 }
 
-.service-title,
-.service-sub-text {
-    opacity: 0;
-    transition: opacity .3s ease;
-}
-
-.service-card:hover .service-title,
-.service-card:hover .service-sub-text {
-    opacity: 1;
-}
-
 .service-card.has-bg-image:hover .service-title,
 .service-card.has-bg-image:hover .service-sub-text {
     text-shadow: 0 1px 3px rgba(255, 255, 255, .9), 0 0 8px rgba(255, 255, 255, .8);
