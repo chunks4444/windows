@@ -65,6 +65,7 @@
             <div class="adm-mfield">
                 <label>배경 이미지</label>
                 <img id="scImgPreview" class="sc-img-preview" src="" alt="">
+                <p style="font-size:11px;color:var(--text-3);margin:0 0 6px;">표준 사이즈 1200 X 800 px 권장</p>
                 <label class="sc-upload-label" for="scImgFile">
                     <i class="bi bi-upload"></i> 이미지 업로드 (PNG/JPG, 최대 1200px)
                 </label>
