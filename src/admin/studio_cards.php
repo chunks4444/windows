@@ -65,10 +65,15 @@
             <div class="adm-mfield">
                 <label>배경 이미지</label>
                 <img id="scImgPreview" class="sc-img-preview" src="" alt="">
-                <p style="font-size:11px;color:var(--text-3);margin:0 0 6px;">표준 사이즈 1200 X 800 px 권장</p>
-                <label class="sc-upload-label" for="scImgFile">
-                    <i class="bi bi-upload"></i> 이미지 업로드 (PNG/JPG, 최대 1200px)
-                </label>
+                <p style="font-size:11px;color:var(--text-3);margin:0 0 6px;">표준 사이즈 1200 X 800 px 권장 (없으면 호버 시 이미지 없이 표시됩니다)</p>
+                <div style="display:flex;gap:8px;">
+                    <label class="sc-upload-label" for="scImgFile">
+                        <i class="bi bi-upload"></i> 이미지 업로드 (PNG/JPG, 최대 1200px)
+                    </label>
+                    <button type="button" class="adm-withdraw-btn" id="scRemoveImgBtn" onclick="removeImage()" style="display:none;">
+                        <i class="bi bi-trash3"></i> 이미지 삭제
+                    </button>
+                </div>
                 <input type="file" id="scImgFile" accept="image/jpeg,image/png" style="display:none;" onchange="previewImage(this)">
                 <input id="scImageUrl" type="text" placeholder="또는 https://... URL 직접 입력"
                     style="margin-top:6px;height:38px;padding:0 10px;border:1px solid var(--border-md);border-radius:var(--r-sm);background:var(--input-bg);font-family:inherit;font-size:var(--fs-14);color:var(--text-1);outline:none;width:100%;">

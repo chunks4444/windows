@@ -42,7 +42,7 @@ try {
     $userId = (int) $pdo->lastInsertId();
     $token  = jwt_encode(['sub' => $userId, 'email' => $email, 'role' => 'u', 'iat' => time(), 'exp' => time() + JWT_EXPIRE]);
 
-    send_mail($email, '가입을 환영합니다!', 'welcome', ['email' => $email], '', 'member');
+    send_mail($email, '가입을 환영합니다!', 'welcome', ['email' => $email], '', 'member', mail_address('sales'));
 
     setcookie('pmok_auth', $token, [
         'expires'  => time() + JWT_EXPIRE,

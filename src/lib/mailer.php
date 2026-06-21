@@ -34,7 +34,7 @@ function mail_address(string $type = 'sales'): string {
 }
 
 // ── SMTP 발송 ────────────────────────────────────────────
-function send_mail(string $to, string $subject, string $template, array $vars = [], string $extra_headers = '', string $fromType = 'sales'): bool {
+function send_mail(string $to, string $subject, string $template, array $vars = [], string $extra_headers = '', string $fromType = 'sales', string $bcc = ''): bool {
     $tpl = __DIR__ . '/../components/mailform/' . $template . '.php';
     if (!file_exists($tpl)) return false;
 
@@ -47,12 +47,12 @@ function send_mail(string $to, string $subject, string $template, array $vars = 
     $from = $fromType === 'member' ? $cfg['mail_member'] : $cfg['mail_sales'];
 
     // 앱 비밀번호 미설정 시 fallback
-    if (!$cfg['mail_smtp_pass']) return _mail_fallback($to, $subject, $html, $from, $extra_headers);
+    if (!$cfg['mail_smtp_pass']) return _mail_fallback($to, $subject, $html, $from, $extra_headers, $bcc);
 
-    return _smtp_send($cfg['mail_smtp_user'], $cfg['mail_smtp_pass'], $from, $to, $subject, $html, $extra_headers);
+    return _smtp_send($cfg['mail_smtp_user'], $cfg['mail_smtp_pass'], $from, $to, $subject, $html, $extra_headers, $bcc);
 }
 
-function _smtp_send(string $authUser, string $authPass, string $from, string $to, string $subject, string $html, string $extra_headers = ''): bool {
+function _smtp_send(string $authUser, string $authPass, string $from, string $to, string $subject, string $html, string $extra_headers = '', string $bcc = ''): bool {
     $sock = @stream_socket_client('tcp://' . SMTP_HOST . ':' . SMTP_PORT, $errno, $errstr, 10);
     if (!$sock) return false;
     stream_set_timeout($sock, 10);
@@ -87,6 +87,10 @@ function _smtp_send(string $authUser, string $authPass, string $from, string $to
     $read();
     $send('RCPT TO:<' . $to . '>');
     $read();
+    if ($bcc && $bcc !== $to) {
+        $send('RCPT TO:<' . $bcc . '>');
+        $read();
+    }
     $send('DATA');
     $read();
 
@@ -108,7 +112,7 @@ function _smtp_send(string $authUser, string $authPass, string $from, string $to
     return substr(trim($resp), 0, 3) === '250';
 }
 
-function _mail_fallback(string $to, string $subject, string $html, string $from, string $extra_headers = ''): bool {
+function _mail_fallback(string $to, string $subject, string $html, string $from, string $extra_headers = '', string $bcc = ''): bool {
     $subj_enc = '=?UTF-8?B?' . base64_encode('[' . SITE_NAME . '] ' . $subject) . '?=';
     $parts    = [
         'From: ' . SITE_NAME . ' <' . $from . '>',
@@ -117,5 +121,7 @@ function _mail_fallback(string $to, string $subject, string $html, string $from,
         'Content-Transfer-Encoding: base64',
     ];
     if ($extra_headers !== '') $parts[] = $extra_headers;
-    return mail($to, $subj_enc, base64_encode($html), implode("\r\n", $parts));
+    $ok = mail($to, $subj_enc, base64_encode($html), implode("\r\n", $parts));
+    if ($bcc && $bcc !== $to) mail($bcc, $subj_enc, base64_encode($html), implode("\r\n", $parts));
+    return $ok;
 }

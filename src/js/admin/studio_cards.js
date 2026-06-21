@@ -55,10 +55,20 @@ function openModal(id) {
     window._scImageData = null;
 
     const prev = document.getElementById('scImgPreview');
-    if (c.image_url) { prev.src = c.image_url; prev.classList.add('show'); }
-    else { prev.src = ''; prev.classList.remove('show'); }
+    const removeBtn = document.getElementById('scRemoveImgBtn');
+    if (c.image_url) { prev.src = c.image_url; prev.classList.add('show'); removeBtn.style.display = ''; }
+    else { prev.src = ''; prev.classList.remove('show'); removeBtn.style.display = 'none'; }
 
     document.getElementById('scModalOverlay').classList.add('open');
+}
+
+function removeImage() {
+    window._scImageData = null;
+    document.getElementById('scImageUrl').value = '';
+    document.getElementById('scImgFile').value  = '';
+    const prev = document.getElementById('scImgPreview');
+    prev.src = ''; prev.classList.remove('show');
+    document.getElementById('scRemoveImgBtn').style.display = 'none';
 }
 
 function closeModal() {
