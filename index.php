@@ -11,9 +11,9 @@ try {
 } catch (Exception $e) {
     $studioCards = [];
 }
-// 최신 블로그 글 3개 (테이블 없으면 빈 배열)
+// 블로그 글 3개 (테이블 없으면 빈 배열)
 try {
-    $latestPosts = $pdo->query('SELECT * FROM blog_posts WHERE is_active=1 ORDER BY created_at DESC, id DESC LIMIT 3')->fetchAll();
+    $latestPosts = $pdo->query('SELECT * FROM blog_posts WHERE is_active=1 ORDER BY sort_order, id LIMIT 3')->fetchAll();
 } catch (Exception $e) {
     $latestPosts = [];
 }
