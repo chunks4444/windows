@@ -1,30 +1,35 @@
 <?php
 header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../lib/db.php';
-$pdo = db();
 
-$id   = (int)($_GET['id'] ?? 0);
-$work = null;
-if ($id) {
-    $stmt = $pdo->prepare('SELECT * FROM works WHERE id=? AND is_active=1');
-    $stmt->execute([$id]);
-    $work = $stmt->fetch();
+$id     = (int)($_GET['id'] ?? 0);
+$work   = null;
+$images = [];
+$next   = null;
+try {
+    $pdo = db();
+    if ($id) {
+        $stmt = $pdo->prepare('SELECT * FROM works WHERE id=? AND is_active=1');
+        $stmt->execute([$id]);
+        $work = $stmt->fetch();
+    }
+    if ($work) {
+        // 이미지 목록
+        $imgStmt = $pdo->prepare('SELECT image_url FROM work_images WHERE work_id=? ORDER BY sort_order, id');
+        $imgStmt->execute([$id]);
+        $images = $imgStmt->fetchAll(PDO::FETCH_COLUMN);
+        if (empty($images) && $work['image_url']) $images = [$work['image_url']];
+
+        // 다음 작품
+        $next = $pdo->prepare('SELECT id,title FROM works WHERE is_active=1 AND (sort_order > ? OR (sort_order=? AND id>?)) ORDER BY sort_order ASC, id ASC LIMIT 1');
+        $next->execute([$work['sort_order'], $work['sort_order'], $work['id']]);
+        $next = $next->fetch();
+        if (!$next) $next = $pdo->query('SELECT id,title FROM works WHERE is_active=1 ORDER BY sort_order ASC, id ASC LIMIT 1')->fetch();
+    }
+} catch (Throwable $e) {
+    $work = null;
 }
 if (!$work) { header('Location: /src/portfolio/'); exit; }
-
-// 이미지 목록
-try {
-    $imgStmt = $pdo->prepare('SELECT image_url FROM work_images WHERE work_id=? ORDER BY sort_order, id');
-    $imgStmt->execute([$id]);
-    $images = $imgStmt->fetchAll(PDO::FETCH_COLUMN);
-} catch (Exception $e) { $images = []; }
-if (empty($images) && $work['image_url']) $images = [$work['image_url']];
-
-// 다음 작품
-$next = $pdo->prepare('SELECT id,title FROM works WHERE is_active=1 AND (sort_order > ? OR (sort_order=? AND id>?)) ORDER BY sort_order ASC, id ASC LIMIT 1');
-$next->execute([$work['sort_order'], $work['sort_order'], $work['id']]);
-$next = $next->fetch();
-if (!$next) $next = $pdo->query('SELECT id,title FROM works WHERE is_active=1 ORDER BY sort_order ASC, id ASC LIMIT 1')->fetch();
 
 $total = count($images);
 $desc  = strip_tags($work['description'] ?? '');

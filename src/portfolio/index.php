@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../lib/db.php';
+try {
 $pdo = db();
 
 $pdo->exec("
@@ -75,6 +76,11 @@ if ((int)$pdo->query('SELECT COUNT(*) FROM work_tags')->fetchColumn() === 0) {
         $ts->execute([$t, $i]);
 }
 $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is_active=1 ORDER BY sort_order, id')->fetchAll(PDO::FETCH_COLUMN));
+} catch (Throwable $e) {
+    $works = [];
+    $total = 0;
+    $tags  = ['전체'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="ko">

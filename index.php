@@ -1,20 +1,27 @@
 <?php
 header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/src/lib/db.php';
-$pdo        = db();
-$heroSlides   = $pdo->query('SELECT * FROM hero_slides WHERE is_active=1 ORDER BY sort_order, id')->fetchAll();
-$spaceCards   = $pdo->query('SELECT label, image_url, collection_query FROM space_cards WHERE is_active=1 ORDER BY sort_order, id')->fetchAll();
-$faqs         = $pdo->query('SELECT * FROM faqs WHERE is_active=1 ORDER BY sort_order, id')->fetchAll();
+try {
+    $pdo        = db();
+    $heroSlides = $pdo->query('SELECT * FROM hero_slides WHERE is_active=1 ORDER BY sort_order, id')->fetchAll();
+    $spaceCards = $pdo->query('SELECT label, image_url, collection_query FROM space_cards WHERE is_active=1 ORDER BY sort_order, id')->fetchAll();
+    $faqs       = $pdo->query('SELECT * FROM faqs WHERE is_active=1 ORDER BY sort_order, id')->fetchAll();
+} catch (Throwable $e) {
+    $pdo        = null;
+    $heroSlides = [];
+    $spaceCards = [];
+    $faqs       = [];
+}
 // 스튜디오 카드 (테이블 없으면 빈 배열)
 try {
-    $studioCards = $pdo->query('SELECT * FROM studio_cards WHERE is_active=1 ORDER BY sort_order, id')->fetchAll();
-} catch (Exception $e) {
+    $studioCards = $pdo ? $pdo->query('SELECT * FROM studio_cards WHERE is_active=1 ORDER BY sort_order, id')->fetchAll() : [];
+} catch (Throwable $e) {
     $studioCards = [];
 }
 // 블로그 글 3개 (테이블 없으면 빈 배열)
 try {
-    $latestPosts = $pdo->query('SELECT * FROM blog_posts WHERE is_active=1 ORDER BY sort_order, id LIMIT 3')->fetchAll();
-} catch (Exception $e) {
+    $latestPosts = $pdo ? $pdo->query('SELECT * FROM blog_posts WHERE is_active=1 ORDER BY sort_order, id LIMIT 3')->fetchAll() : [];
+} catch (Throwable $e) {
     $latestPosts = [];
 }
 ?>

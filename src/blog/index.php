@@ -1,35 +1,42 @@
 <?php
 header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../lib/db.php';
-$pdo = db();
+$perPage = 10;
+try {
+    $pdo = db();
 
-$pdo->exec("
-CREATE TABLE IF NOT EXISTS blog_posts (
-    id            INT UNSIGNED      NOT NULL AUTO_INCREMENT,
-    title         VARCHAR(150)      NOT NULL DEFAULT '',
-    summary       VARCHAR(300)      NOT NULL DEFAULT '',
-    content       TEXT              NOT NULL,
-    thumbnail_url VARCHAR(500)      NOT NULL DEFAULT '',
-    sort_order    SMALLINT UNSIGNED NOT NULL DEFAULT 0,
-    is_active     TINYINT(1)        NOT NULL DEFAULT 1,
-    created_at    DATETIME          NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (id),
-    KEY idx_blog_posts_sort (sort_order, is_active)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
-");
+    $pdo->exec("
+    CREATE TABLE IF NOT EXISTS blog_posts (
+        id            INT UNSIGNED      NOT NULL AUTO_INCREMENT,
+        title         VARCHAR(150)      NOT NULL DEFAULT '',
+        summary       VARCHAR(300)      NOT NULL DEFAULT '',
+        content       TEXT              NOT NULL,
+        thumbnail_url VARCHAR(500)      NOT NULL DEFAULT '',
+        sort_order    SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+        is_active     TINYINT(1)        NOT NULL DEFAULT 1,
+        created_at    DATETIME          NOT NULL DEFAULT NOW(),
+        PRIMARY KEY (id),
+        KEY idx_blog_posts_sort (sort_order, is_active)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+    ");
 
-$perPage    = 10;
-$totalCount = (int)$pdo->query('SELECT COUNT(*) FROM blog_posts WHERE is_active=1')->fetchColumn();
-$totalPages = max(1, (int)ceil($totalCount / $perPage));
-$page       = max(1, min($totalPages, (int)($_GET['page'] ?? 1)));
-$offset     = ($page - 1) * $perPage;
+    $totalCount = (int)$pdo->query('SELECT COUNT(*) FROM blog_posts WHERE is_active=1')->fetchColumn();
+    $totalPages = max(1, (int)ceil($totalCount / $perPage));
+    $page       = max(1, min($totalPages, (int)($_GET['page'] ?? 1)));
+    $offset     = ($page - 1) * $perPage;
 
-$stmt = $pdo->prepare('SELECT * FROM blog_posts WHERE is_active=1 ORDER BY sort_order, id LIMIT :limit OFFSET :offset');
-$stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
-$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-$stmt->execute();
-$posts = $stmt->fetchAll();
-$total = count($posts);
+    $stmt = $pdo->prepare('SELECT * FROM blog_posts WHERE is_active=1 ORDER BY sort_order, id LIMIT :limit OFFSET :offset');
+    $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+    $stmt->execute();
+    $posts = $stmt->fetchAll();
+    $total = count($posts);
+} catch (Throwable $e) {
+    $posts      = [];
+    $total      = 0;
+    $totalPages = 1;
+    $page       = 1;
+}
 ?>
 <!DOCTYPE html>
 <html lang="ko">

@@ -1,25 +1,32 @@
 <?php
 header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../lib/db.php';
-$pdo = db();
 
 $id   = (int)($_GET['id'] ?? 0);
 $post = null;
-if ($id) {
-    $stmt = $pdo->prepare('SELECT * FROM blog_posts WHERE id=? AND is_active=1');
-    $stmt->execute([$id]);
-    $post = $stmt->fetch();
+$prev = null;
+$next = null;
+try {
+    $pdo = db();
+    if ($id) {
+        $stmt = $pdo->prepare('SELECT * FROM blog_posts WHERE id=? AND is_active=1');
+        $stmt->execute([$id]);
+        $post = $stmt->fetch();
+    }
+    if ($post) {
+        // 이전 / 다음 글
+        $prev = $pdo->prepare('SELECT id,title FROM blog_posts WHERE is_active=1 AND (sort_order < ? OR (sort_order=? AND id<?)) ORDER BY sort_order DESC, id DESC LIMIT 1');
+        $prev->execute([$post['sort_order'], $post['sort_order'], $post['id']]);
+        $prev = $prev->fetch();
+
+        $next = $pdo->prepare('SELECT id,title FROM blog_posts WHERE is_active=1 AND (sort_order > ? OR (sort_order=? AND id>?)) ORDER BY sort_order ASC, id ASC LIMIT 1');
+        $next->execute([$post['sort_order'], $post['sort_order'], $post['id']]);
+        $next = $next->fetch();
+    }
+} catch (Throwable $e) {
+    $post = null;
 }
 if (!$post) { header('Location: /src/blog/'); exit; }
-
-// 이전 / 다음 글
-$prev = $pdo->prepare('SELECT id,title FROM blog_posts WHERE is_active=1 AND (sort_order < ? OR (sort_order=? AND id<?)) ORDER BY sort_order DESC, id DESC LIMIT 1');
-$prev->execute([$post['sort_order'], $post['sort_order'], $post['id']]);
-$prev = $prev->fetch();
-
-$next = $pdo->prepare('SELECT id,title FROM blog_posts WHERE is_active=1 AND (sort_order > ? OR (sort_order=? AND id>?)) ORDER BY sort_order ASC, id ASC LIMIT 1');
-$next->execute([$post['sort_order'], $post['sort_order'], $post['id']]);
-$next = $next->fetch();
 
 $metaDesc = $post['summary'] ?: mb_substr(strip_tags($post['content']), 0, 120);
 ?>

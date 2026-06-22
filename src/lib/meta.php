@@ -15,9 +15,14 @@ function page_meta(): array {
 
     require_once __DIR__ . '/db.php';
     $path = $_SERVER['PHP_SELF'] ?? '/';
-    $stmt = db()->prepare('SELECT title, description, keywords, og_image FROM page_meta WHERE path=? LIMIT 1');
-    $stmt->execute([$path]);
-    $row = $stmt->fetch();
+    $row = null;
+    try {
+        $stmt = db()->prepare('SELECT title, description, keywords, og_image FROM page_meta WHERE path=? LIMIT 1');
+        $stmt->execute([$path]);
+        $row = $stmt->fetch();
+    } catch (Throwable $e) {
+        $row = null;
+    }
 
     $cache = $row ?: ['title' => '', 'description' => '', 'keywords' => '', 'og_image' => ''];
     return $cache;

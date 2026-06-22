@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../lib/logger.php';
 require_once __DIR__ . '/../lib/meta.php';
+require_once __DIR__ . '/../lib/db.php';
 
 // 상단 네비게이션 공통 컴포넌트
 // 포함하는 페이지에서 Bootstrap CSS/JS가 없으면 자동으로 로드합니다.
@@ -29,6 +30,73 @@ $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/collection/') !== false);
 $isWork       = (strpos($_SERVER['PHP_SELF'], '/portfolio/') !== false);
 $isBlog       = (strpos($_SERVER['PHP_SELF'], '/blog/') !== false);
 $isGuide      = (strpos($_SERVER['PHP_SELF'], '/guide/') !== false || $isBlog);
+
+// Studio 드롭다운: 메인페이지 카드와 동일한 제목/순서를 쓰도록 DB에서 가져온다
+try {
+    $navStudioCards = db()->query('SELECT engine_key, title FROM studio_cards WHERE is_active=1 ORDER BY sort_order, id')->fetchAll();
+} catch (Exception $e) {
+    $navStudioCards = [];
+}
+$navStudioDefaults = [
+    ['engine_key' => 'classic',  'title' => 'Classic Lattice'],
+    ['engine_key' => 'square',   'title' => 'Square Lattice'],
+    ['engine_key' => 'cross',    'title' => 'Cross Lattice'],
+    ['engine_key' => 'triangle', 'title' => 'Triangle Lattice'],
+    ['engine_key' => 'diamond',  'title' => 'Diamond Lattice'],
+    ['engine_key' => 'hexagon',  'title' => 'Hexagon Lattice'],
+];
+$navStudioItems = !empty($navStudioCards) ? $navStudioCards : $navStudioDefaults;
+$navStudioActive = [
+    'classic'  => $isClassic,
+    'square'   => $isSquare,
+    'cross'    => $isCross,
+    'diamond'  => $isDiamond,
+    'triangle' => $isTriangle,
+    'hexagon'  => $isHexagon,
+];
+$navStudioIcons = [
+    'classic' => '<svg width="27" height="27" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+            <g transform="rotate(90 340 340)">
+                <rect fill="currentColor" x="148" y="204" width="384" height="46" rx="23"/>
+                <rect fill="currentColor" x="148" y="430" width="384" height="46" rx="23"/>
+                <rect fill="currentColor" x="148" y="148" width="46" height="384" rx="23"/>
+                <rect fill="currentColor" x="294" y="148" width="46" height="384" rx="23"/>
+                <rect fill="currentColor" x="486" y="148" width="46" height="384" rx="23"/>
+            </g>
+        </svg>',
+    'square' => '<svg width="27" height="27" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+            <rect fill="currentColor" x="148" y="204" width="384" height="46" rx="23"/>
+            <rect fill="currentColor" x="148" y="430" width="384" height="46" rx="23"/>
+            <rect fill="currentColor" x="204" y="148" width="46" height="384" rx="23"/>
+            <rect fill="currentColor" x="430" y="148" width="46" height="384" rx="23"/>
+        </svg>',
+    'cross' => '<svg width="27" height="27" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+            <g transform="rotate(45 340 340)">
+                <rect fill="currentColor" x="148" y="204" width="384" height="46" rx="23"/>
+                <rect fill="currentColor" x="148" y="430" width="384" height="46" rx="23"/>
+                <rect fill="currentColor" x="204" y="148" width="46" height="384" rx="23"/>
+                <rect fill="currentColor" x="430" y="148" width="46" height="384" rx="23"/>
+            </g>
+        </svg>',
+    'diamond' => '<svg width="27" height="27" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+            <rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/>
+            <rect fill="currentColor" x="148" y="317" width="384" height="46" rx="23"/>
+            <g transform="rotate(45 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
+            <g transform="rotate(135 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
+        </svg>',
+    'triangle' => '<svg width="27" height="27" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+            <rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/>
+            <g transform="rotate(60 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
+            <g transform="rotate(120 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
+        </svg>',
+    'hexagon' => '<svg width="27" height="27" viewBox="0 0 680 680" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <polyline points="210,265 340,190 470,265" stroke="currentColor" stroke-width="32" stroke-linejoin="round" stroke-linecap="round"/>
+            <line x1="210" y1="265" x2="210" y2="415" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
+            <line x1="470" y1="265" x2="470" y2="415" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
+            <line x1="210" y1="415" x2="340" y2="490" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
+            <line x1="470" y1="415" x2="340" y2="490" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
+        </svg>',
+];
 ?>
 <nav class="pm-navbar navbar navbar-expand-lg fixed-top px-4 py-3">
     <a href="/" class="navbar-brand d-flex align-items-center">
@@ -45,73 +113,17 @@ $isGuide      = (strpos($_SERVER['PHP_SELF'], '/guide/') !== false || $isBlog);
     <div class="collapse navbar-collapse justify-content-end" id="pmNavMenu">
         <ul class="navbar-nav gap-3">
             <li class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Studio</a>
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">스튜디오</a>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item <?= $isClassic ? 'active' : '' ?> d-flex align-items-center gap-2"
-                           href="/src/engine/classic/classic.php">
-                        <svg width="27" height="27" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
-                            <g transform="rotate(90 340 340)">
-                                <rect fill="currentColor" x="148" y="204" width="384" height="46" rx="23"/>
-                                <rect fill="currentColor" x="148" y="430" width="384" height="46" rx="23"/>
-                                <rect fill="currentColor" x="148" y="148" width="46" height="384" rx="23"/>
-                                <rect fill="currentColor" x="294" y="148" width="46" height="384" rx="23"/>
-                                <rect fill="currentColor" x="486" y="148" width="46" height="384" rx="23"/>
-                            </g>
-                        </svg>
-                        Classic Lattice
+                    <?php foreach ($navStudioItems as $navItem):
+                        $navKey = $navItem['engine_key'];
+                    ?>
+                    <li><a class="dropdown-item <?= ($navStudioActive[$navKey] ?? false) ? 'active' : '' ?> d-flex align-items-center gap-2"
+                           href="/src/engine/<?= htmlspecialchars($navKey) ?>/<?= htmlspecialchars($navKey) ?>.php">
+                        <?= $navStudioIcons[$navKey] ?? '' ?>
+                        <?= htmlspecialchars($navItem['title']) ?>
                     </a></li>
-                    <li><a class="dropdown-item <?= $isSquare ? 'active' : '' ?> d-flex align-items-center gap-2"
-                           href="/src/engine/square/square.php">
-                        <svg width="27" height="27" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
-                            <rect fill="currentColor" x="148" y="204" width="384" height="46" rx="23"/>
-                            <rect fill="currentColor" x="148" y="430" width="384" height="46" rx="23"/>
-                            <rect fill="currentColor" x="204" y="148" width="46" height="384" rx="23"/>
-                            <rect fill="currentColor" x="430" y="148" width="46" height="384" rx="23"/>
-                        </svg>
-                        Square Lattice
-                    </a></li>
-                    <li><a class="dropdown-item <?= $isCross ? 'active' : '' ?> d-flex align-items-center gap-2"
-                           href="/src/engine/cross/cross.php">
-                        <svg width="27" height="27" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
-                            <g transform="rotate(45 340 340)">
-                                <rect fill="currentColor" x="148" y="204" width="384" height="46" rx="23"/>
-                                <rect fill="currentColor" x="148" y="430" width="384" height="46" rx="23"/>
-                                <rect fill="currentColor" x="204" y="148" width="46" height="384" rx="23"/>
-                                <rect fill="currentColor" x="430" y="148" width="46" height="384" rx="23"/>
-                            </g>
-                        </svg>
-                        Cross Lattice
-                    </a></li>
-                    <li><a class="dropdown-item <?= $isDiamond ? 'active' : '' ?> d-flex align-items-center gap-2"
-                           href="/src/engine/diamond/diamond.php">
-                        <svg width="27" height="27" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
-                            <rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/>
-                            <rect fill="currentColor" x="148" y="317" width="384" height="46" rx="23"/>
-                            <g transform="rotate(45 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
-                            <g transform="rotate(135 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
-                        </svg>
-                        Diamond Lattice
-                    </a></li>
-                    <li><a class="dropdown-item <?= $isTriangle ? 'active' : '' ?> d-flex align-items-center gap-2"
-                           href="/src/engine/triangle/triangle.php">
-                        <svg width="27" height="27" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
-                            <rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/>
-                            <g transform="rotate(60 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
-                            <g transform="rotate(120 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
-                        </svg>
-                        Triangle Lattice
-                    </a></li>
-                    <li><a class="dropdown-item <?= $isHexagon ? 'active' : '' ?> d-flex align-items-center gap-2"
-                           href="/src/engine/hexagon/hexagon.php">
-                        <svg width="27" height="27" viewBox="0 0 680 680" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <polyline points="210,265 340,190 470,265" stroke="currentColor" stroke-width="32" stroke-linejoin="round" stroke-linecap="round"/>
-                            <line x1="210" y1="265" x2="210" y2="415" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
-                            <line x1="470" y1="265" x2="470" y2="415" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
-                            <line x1="210" y1="415" x2="340" y2="490" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
-                            <line x1="470" y1="415" x2="340" y2="490" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
-                        </svg>
-                        Hexagon Lattice
-                    </a></li>
+                    <?php endforeach; ?>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item d-flex align-items-center gap-2" href="/src/mypage/dashboard.php">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
@@ -120,13 +132,13 @@ $isGuide      = (strpos($_SERVER['PHP_SELF'], '/guide/') !== false || $isBlog);
                             <rect x="3" y="13" width="8" height="8" rx="1.5"/>
                             <rect x="13" y="13" width="8" height="8" rx="1.5"/>
                         </svg>
-                        Dashboard
+                        대시보드
                     </a></li>
                 </ul>
             </li>
             <li class="nav-item dropdown">
                 <a href="/src/collection/" class="nav-link dropdown-toggle <?= $isLibrary ? 'active' : '' ?>"
-                   data-bs-toggle="dropdown" aria-expanded="false">Collection</a>
+                   data-bs-toggle="dropdown" aria-expanded="false">컬렉션</a>
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item d-flex align-items-center gap-2" href="/src/collection/"><i class="bi bi-collection"></i>전체 컬렉션</a></li>
                     <li id="navBoardSection" style="display:none;">
@@ -136,9 +148,9 @@ $isGuide      = (strpos($_SERVER['PHP_SELF'], '/guide/') !== false || $isBlog);
                     <div id="navBoardList"></div>
                 </ul>
             </li>
-            <li class="nav-item"><a href="/src/portfolio/" class="nav-link <?= $isWork ? 'active' : '' ?>">Portfolio</a></li>
+            <li class="nav-item"><a href="/src/portfolio/" class="nav-link <?= $isWork ? 'active' : '' ?>">포트폴리오</a></li>
             <li class="nav-item dropdown">
-                <a href="/src/guide/" class="nav-link dropdown-toggle <?= $isGuide ? 'active' : '' ?>" data-bs-toggle="dropdown" aria-expanded="false">Guide</a>
+                <a href="/src/guide/" class="nav-link dropdown-toggle <?= $isGuide ? 'active' : '' ?>" data-bs-toggle="dropdown" aria-expanded="false">가이드</a>
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item <?= $isBlog ? 'active' : '' ?>" href="/src/blog/"><i class="bi bi-journal-text me-2"></i>블로그</a></li>
                     <li><hr class="dropdown-divider"></li>
@@ -157,7 +169,7 @@ $isGuide      = (strpos($_SERVER['PHP_SELF'], '/guide/') !== false || $isBlog);
                 </ul>
             </li>
             <li class="nav-item dropdown">
-                <a href="/src/company/" class="nav-link dropdown-toggle <?= $isAbout ? 'active' : '' ?>" data-bs-toggle="dropdown" aria-expanded="false">About</a>
+                <a href="/src/company/" class="nav-link dropdown-toggle <?= $isAbout ? 'active' : '' ?>" data-bs-toggle="dropdown" aria-expanded="false">회사소개</a>
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" href="/src/company/"><i class="bi bi-book me-2"></i>평목 소개</a></li>
                     <li><a class="dropdown-item" href="/src/company/#studio"><i class="bi bi-pencil-square me-2"></i>스튜디오</a></li>
