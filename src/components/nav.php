@@ -25,11 +25,11 @@ $isDiamond  = (!$isSquare && !$isCross && !$isClassic && stripos($currentFile, '
 $isTriangle  = (stripos($currentFile, 'triangle') !== false);
 $isHexagon   = (stripos($_SERVER['PHP_SELF'], '/hexagon/') !== false);
 $isIndex      = ($currentFile === 'index.php' || $_SERVER['PHP_SELF'] === '/');
-$isAbout      = (strpos($_SERVER['PHP_SELF'], '/company/') !== false);
 $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/collection/') !== false);
 $isWork       = (strpos($_SERVER['PHP_SELF'], '/portfolio/') !== false);
 $isBlog       = (strpos($_SERVER['PHP_SELF'], '/blog/') !== false);
-$isGuide      = (strpos($_SERVER['PHP_SELF'], '/guide/') !== false || $isBlog);
+$isGuide      = (strpos($_SERVER['PHP_SELF'], '/guide/') !== false);
+$isAbout      = (strpos($_SERVER['PHP_SELF'], '/company/') !== false || $isBlog);
 
 // Studio 드롭다운: 메인페이지 카드와 동일한 제목/순서를 쓰도록 DB에서 가져온다
 try {
@@ -152,8 +152,6 @@ $navStudioIcons = [
             <li class="nav-item dropdown">
                 <a href="/src/guide/" class="nav-link dropdown-toggle <?= $isGuide ? 'active' : '' ?>" data-bs-toggle="dropdown" aria-expanded="false">가이드</a>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item <?= $isBlog ? 'active' : '' ?>" href="/src/blog/"><i class="bi bi-journal-text me-2"></i>블로그</a></li>
-                    <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="/src/guide/"><i class="bi bi-book me-2"></i>가이드 홈</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="/src/guide/intro.php"><i class="bi bi-info-circle me-2"></i>스튜디오 소개</a></li>
@@ -174,6 +172,8 @@ $navStudioIcons = [
                     <li><a class="dropdown-item" href="/src/company/"><i class="bi bi-book me-2"></i>평목 소개</a></li>
                     <li><a class="dropdown-item" href="/src/company/#studio"><i class="bi bi-pencil-square me-2"></i>스튜디오</a></li>
                     <li><a class="dropdown-item" href="/src/company/#contact"><i class="bi bi-envelope me-2"></i>문의, 제작 상담, 협업 제안</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item <?= $isBlog ? 'active' : '' ?>" href="/src/blog/"><i class="bi bi-journal-text me-2"></i>블로그</a></li>
                 </ul>
             </li>
             <li class="nav-item d-none"><a href="#" class="nav-link">Joiner</a></li>

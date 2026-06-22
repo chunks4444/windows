@@ -1,4 +1,10 @@
 <?php
+// 에러를 화면에 띄우지 않고 로그 파일에만 남긴다 (DB 자격증명·파일 경로 노출 방지)
+ini_set('display_errors', '0');
+ini_set('log_errors', '1');
+ini_set('error_log', __DIR__ . '/../../logs/php-error.log');
+error_reporting(E_ALL);
+
 $_host = ($_SERVER['HTTP_HOST'] ?? '');
 
 if ($_host === 'windows.pyeongmok.com') {
