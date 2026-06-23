@@ -5,3 +5,6 @@ RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 RewriteRule ^src/work/detail\.php$ /src/portfolio/detail.php [R=301,L,QSA]
 RewriteRule ^src/work/?$ /src/portfolio/ [R=301,L]
 SetEnv PMOK_JWT_SECRET "새로운-강력한-시크릿"
+
+# 동적 sitemap.xml
+RewriteRule ^sitemap\.xml$ /sitemap.php [L]

@@ -45,11 +45,13 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>창호 이야기 — 평목 공방 블로그</title>
     <meta name="description" content="평목 공방이 전하는 창호와 한옥 살창 이야기. 시공 사례와 제작 노트를 소개합니다.">
+    <?php require_once __DIR__ . '/../lib/meta.php'; ?>
+    <link rel="canonical" href="<?= htmlspecialchars(SITE_URL . '/src/blog/') ?>">
     <meta property="og:title" content="창호 이야기 — 평목 공방 블로그">
     <meta property="og:description" content="평목 공방이 전하는 창호와 한옥 살창 이야기. 시공 사례와 제작 노트를 소개합니다.">
+    <meta property="og:image" content="<?= htmlspecialchars(SITE_DEFAULT_IMAGE) ?>">
     <?php define('BOOTSTRAP_LOADED', true); ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <?php require_once __DIR__ . '/../lib/meta.php'; ?>
 <?php css_tag('/src/css/blog.css'); ?>
 </head>
 <body>
@@ -61,6 +63,7 @@ try {
     <div class="bg-hero">
         <div class="bg-hero-inner">
             <p class="bg-hero-label">Blog</p>
+            <h1>창호 이야기</h1>
             <p class="bg-hero-sub">평목 공방이 전하는 창호와 한옥 살창 이야기입니다.</p>
         </div>
     </div>

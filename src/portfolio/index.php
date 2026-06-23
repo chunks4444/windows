@@ -101,6 +101,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
     <div class="wk-hero">
         <div class="wk-hero-inner">
             <p class="wk-hero-label">Portfolio</p>
+            <h1>포트폴리오</h1>
             <p class="wk-hero-sub">
                 평목 공방에서 완성된 창호 작품들입니다.&ensp;
                 <span class="wk-count-badge"><?= $total ?>개 작품</span>

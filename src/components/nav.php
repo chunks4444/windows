@@ -11,7 +11,6 @@ if (!defined('BOOTSTRAP_LOADED')) {
 }
 echo '<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">';
 ?>
-<title>평목 - DESIGN IN REAL TIME</title>
 <?php css_tag('/src/css/common.css'); ?>
 <?php css_tag('/src/css/nav.css'); ?>
 

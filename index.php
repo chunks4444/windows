@@ -43,6 +43,8 @@ try {
 
         <div class="home-wrapper">
 
+            <h1 class="visually-hidden">평목 - 나만의 한옥 살창·창호를 실시간으로 디자인하는 스튜디오</h1>
+
             <!-- Hero Carousel -->
             <div class="hero-carousel-outer">
               <div class="container">
@@ -125,7 +127,7 @@ try {
                                     <?= $svgIcons[$key] ?? '' ?>
                                 </a>
                             </div>
-                            <h4 class="service-title text-center mb-3"><?= htmlspecialchars($sc['title']) ?></h4>
+                            <h3 class="service-title text-center mb-3"><?= htmlspecialchars($sc['title']) ?></h3>
                             <p class="service-sub-text text-center mb-0"><?= $sc['description'] ?></p>
                         </div>
                     </div>
@@ -360,7 +362,7 @@ try {
                 <div class="accordion faq-accordion" id="faqAccordion">
                     <?php foreach ($faqs as $i => $faq): ?>
                     <div class="accordion-item faq-item">
-                        <h2 class="accordion-header">
+                        <h3 class="accordion-header">
                             <button class="accordion-button faq-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq<?= $faq['id'] ?>">
                                 <?= htmlspecialchars($faq['question']) ?>
                             </button>

@@ -166,6 +166,7 @@ html, body {
 .wd-back:hover { color: var(--teal, var(--teal)); }
 .wd-divider { width: 1px; height: 18px; background: var(--border, #E0E5E4); flex-shrink: 0; }
 .wd-title {
+    margin: 0;
     font-size: var(--fs-14); font-weight: 400;
     color: var(--text-1, #1A1F1E);
     letter-spacing: -.01em;

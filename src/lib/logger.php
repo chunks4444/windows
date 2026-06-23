@@ -55,6 +55,13 @@ function pm_record_pageview(string $page, string $ip, string $ua, string $userId
     }
 }
 
+function pm_cleanup_old_logs(string $logDir, int $days = 30): void {
+    $cutoff = time() - $days * 86400;
+    foreach (glob($logDir . DIRECTORY_SEPARATOR . 'access_*.log') ?: [] as $file) {
+        if (@filemtime($file) < $cutoff) @unlink($file);
+    }
+}
+
 function pm_write_log(string $line): void {
     static $logDir = null;
     if ($logDir === null) {
@@ -71,6 +78,11 @@ function pm_write_log(string $line): void {
     $file = $logDir . DIRECTORY_SEPARATOR . 'access_' . date('Y-m-d') . '.log';
     if (@file_put_contents($file, $line, FILE_APPEND | LOCK_EX) === false) {
         error_log('[PMOK] write_fail | ' . rtrim($line));
+    }
+
+    // 1% 확률로 30일 지난 로그 파일 자동 삭제
+    if (mt_rand(0, 99) === 0) {
+        pm_cleanup_old_logs($logDir);
     }
 }
 

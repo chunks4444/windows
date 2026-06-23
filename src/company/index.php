@@ -31,7 +31,7 @@ foreach ($studioCards as $sc) $cardsByKey[$sc['engine_key']] = $sc;
     <div class="ab-hero-content">
         <div class="container">
             <p class="ab-hero-label">About 평목</p>
-            <h2 class="ab-hero-title">나무로 만드는<br>빛과 바람의 길,<em>평목</em></h2>
+            <h1 class="ab-hero-title">나무로 만드는<br>빛과 바람의 길,<em>평목</em></h1>
             <p class="ab-hero-desc">평목(平木)은 전통창호의 아름다움을 현대 공간에 담아내는 창호디자인 스튜디오입니다. <br>
             수백 년을 이어온 문살 기법을 디지털 도구로 재해석하여, 누구나 자신만의 창호를 <br>
             직접 설계하고 제작까지 연결할 수 있는 환경을 만들어갑니다.</p>

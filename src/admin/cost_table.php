@@ -7,6 +7,7 @@
     <?php define('BOOTSTRAP_LOADED', true); ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <?php require_once __DIR__ . '/../lib/meta.php'; ?>
+    <?php meta_tags(); ?>
 <?php css_tag('/src/css/dashboard.css'); ?>
     <?php css_tag('/src/css/users.css'); ?>
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
@@ -77,16 +78,16 @@
                 <label>항목</label>
                 <input id="wtName" type="text" placeholder="예: 홍송" maxlength="100">
             </div>
-            <div style="display:flex;gap:12px;">
-                <div class="adm-mfield" style="flex:2;">
+            <div class="wt-price-row">
+                <div class="adm-mfield wt-price-field">
                     <label>단가</label>
                     <input id="wtUnitPrice" type="number" min="0" step="100" placeholder="12000" class="num-input">
                 </div>
-                <div class="adm-mfield" style="flex:1;">
+                <div class="adm-mfield wt-unit-field">
                     <label>단위</label>
                     <input id="wtUnit" type="text" placeholder="사이, %, 시간…" maxlength="30">
                 </div>
-                <div class="adm-mfield" style="flex:1;">
+                <div class="adm-mfield wt-unit-field">
                     <label>단위명</label>
                     <input id="wtUnitName" type="text" placeholder="재(才), 퍼센트…" maxlength="50">
                 </div>

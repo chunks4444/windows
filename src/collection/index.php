@@ -17,6 +17,7 @@
 <div class="lib-hero">
     <div class="lib-hero-inner">
         <p class="lib-hero-label">Collection</p>
+        <h1>컬렉션</h1>
         <p class="lib-hero-sub">평목 스튜디오에서 제작된 창호 격자 패턴을 둘러보세요.</p>
     </div>
 </div>

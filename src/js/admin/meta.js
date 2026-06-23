@@ -18,15 +18,16 @@ async function loadPages() {
 }
 
 function renderTable(pages) {
-    document.getElementById('metaTbody').innerHTML = pages.map(p => `
-        <tr>
-            <td style="font-family:monospace;font-size:12px;white-space:nowrap;">${esc(p.path)}</td>
+    const sorted = [...pages].sort((a, b) => (a.path === '__default__' ? -1 : b.path === '__default__' ? 1 : 0));
+    document.getElementById('metaTbody').innerHTML = sorted.map(p => `
+        <tr${p.path === '__default__' ? ' style="background:var(--accent-bg);"' : ''}>
+            <td style="font-family:monospace;font-size:12px;white-space:nowrap;">${p.path === '__default__' ? '🌐 사이트 기본값' : esc(p.path)}</td>
             <td style="font-size:12px;">${esc(p.title) || '<span style="color:var(--text-3);">—</span>'}</td>
             <td style="font-size:12px;color:var(--text-2);">${truncate(esc(p.description), 60)}</td>
             <td style="font-size:12px;color:var(--text-3);">${truncate(esc(p.keywords), 40)}</td>
             <td><div class="adm-action-cell">
                 <button class="adm-edit-btn" onclick='openEditModal(${JSON.stringify(p)})'>수정</button>
-                <button class="adm-withdraw-btn" style="background:#c00;color:#fff;" onclick="deleteMeta(${p.id}, '${esc(p.path)}')">삭제</button>
+                ${p.path === '__default__' ? '' : `<button class="adm-withdraw-btn" style="background:#c00;color:#fff;" onclick="deleteMeta(${p.id}, '${esc(p.path)}')">삭제</button>`}
             </div></td>
         </tr>
     `).join('') || '<tr><td colspan="4" style="padding:40px;text-align:center;color:var(--text-3);">등록된 메타가 없습니다.</td></tr>';
@@ -41,6 +42,10 @@ function openAddModal() {
     document.getElementById('metaDesc').value      = '';
     document.getElementById('metaKeywords').value  = '';
     document.getElementById('metaOgImage').value   = '';
+    document.getElementById('metaOgImgFile').value = '';
+    window._metaOgImageData = null;
+    const prev = document.getElementById('metaOgImgPreview');
+    prev.src = ''; prev.classList.remove('show');
     document.getElementById('metaModalAlert').style.display = 'none';
     updateCount('metaTitle', 'cntTitle', 60);
     updateCount('metaDesc',  'cntDesc',  160);
@@ -57,11 +62,46 @@ function openEditModal(p) {
     document.getElementById('metaDesc').value      = p.description;
     document.getElementById('metaKeywords').value  = p.keywords;
     document.getElementById('metaOgImage').value   = p.og_image;
+    document.getElementById('metaOgImgFile').value = '';
+    window._metaOgImageData = null;
+    const prev = document.getElementById('metaOgImgPreview');
+    if (p.og_image) { prev.src = p.og_image; prev.classList.add('show'); }
+    else            { prev.src = ''; prev.classList.remove('show'); }
     document.getElementById('metaModalAlert').style.display = 'none';
     updateCount('metaTitle', 'cntTitle', 60);
     updateCount('metaDesc',  'cntDesc',  160);
     document.getElementById('metaModalOverlay').classList.add('open');
     document.getElementById('metaTitle').focus();
+}
+
+function previewOgImage(input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) { alert('PNG, JPG 또는 WEBP 파일만 업로드할 수 있습니다.'); input.value = ''; return; }
+    const reader = new FileReader();
+    reader.onload = e => {
+        const img = new Image();
+        img.onload = () => {
+            const MAX_W = 1200, MAX_H = 630;
+            let w = img.width, h = img.height;
+            if (w > MAX_W || h > MAX_H) {
+                const scale = Math.min(MAX_W / w, MAX_H / h);
+                w = Math.round(w * scale);
+                h = Math.round(h * scale);
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.88);
+            window._metaOgImageData = dataUrl;
+            const prev = document.getElementById('metaOgImgPreview');
+            prev.src = dataUrl;
+            prev.classList.add('show');
+            document.getElementById('metaOgImage').value = '';
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
 }
 
 function closeModal() {
@@ -84,6 +124,7 @@ async function saveMeta() {
             og_image:    document.getElementById('metaOgImage').value.trim(),
         };
         if (isEdit) body.id = editingId; else body.path = path;
+        if (window._metaOgImageData) body.og_image_data = window._metaOgImageData;
 
         const res  = await fetch('/src/api/admin/meta.php', {
             method:  isEdit ? 'PUT' : 'POST',

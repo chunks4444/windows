@@ -9,6 +9,8 @@ function css_tag(string $path): void {
     echo '<link rel="stylesheet" href="' . css_url($path) . '">' . "\n    ";
 }
 
+const SITE_META_DEFAULT_PATH = '__default__';
+
 function page_meta(): array {
     static $cache = null;
     if ($cache !== null) return $cache;
@@ -20,6 +22,10 @@ function page_meta(): array {
         $stmt = db()->prepare('SELECT title, description, keywords, og_image FROM page_meta WHERE path=? LIMIT 1');
         $stmt->execute([$path]);
         $row = $stmt->fetch();
+        if (!$row) {
+            $stmt->execute([SITE_META_DEFAULT_PATH]);
+            $row = $stmt->fetch();
+        }
     } catch (Throwable $e) {
         $row = null;
     }
@@ -28,16 +34,25 @@ function page_meta(): array {
     return $cache;
 }
 
+const SITE_URL          = 'https://windows.pyeongmok.com';
+const SITE_DEFAULT_TITLE = '평목 - DESIGN IN REAL TIME';
+const SITE_DEFAULT_DESC  = '평목 공방이 만드는 한옥 살창·창호 디자인 스튜디오. 나만의 문살 패턴을 직접 설계하고 주문하세요.';
+const SITE_DEFAULT_IMAGE = SITE_URL . '/src/assets/logo.png';
+
 function meta_tags(): void {
     echo '<link rel="icon" type="image/png" href="/src/assets/favicon.png">' . "\n    ";
     echo '<link rel="apple-touch-icon" href="/src/assets/apple-touch-icon.png">' . "\n    ";
     $m = page_meta();
-    if ($m['title'])       echo '<title>' . htmlspecialchars($m['title'], ENT_QUOTES) . '</title>' . "\n    ";
-    if ($m['description']) echo '<meta name="description" content="' . htmlspecialchars($m['description'], ENT_QUOTES) . '">' . "\n    ";
-    if ($m['keywords'])    echo '<meta name="keywords"    content="' . htmlspecialchars($m['keywords'],    ENT_QUOTES) . '">' . "\n    ";
-    $ogTitle = $m['title']       ?: '평목';
-    $ogDesc  = $m['description'] ?: '';
-    echo '<meta property="og:title"       content="' . htmlspecialchars($ogTitle, ENT_QUOTES) . '">' . "\n    ";
-    if ($ogDesc) echo '<meta property="og:description" content="' . htmlspecialchars($ogDesc, ENT_QUOTES) . '">' . "\n    ";
-    if ($m['og_image']) echo '<meta property="og:image" content="' . htmlspecialchars($m['og_image'], ENT_QUOTES) . '">' . "\n    ";
+    $title = $m['title'] ?: SITE_DEFAULT_TITLE;
+    $desc  = $m['description'] ?: SITE_DEFAULT_DESC;
+    $image = $m['og_image'] ?: SITE_DEFAULT_IMAGE;
+    $path  = strtok($_SERVER['REQUEST_URI'] ?? ($_SERVER['PHP_SELF'] ?? '/'), '?');
+
+    echo '<title>' . htmlspecialchars($title, ENT_QUOTES) . '</title>' . "\n    ";
+    echo '<meta name="description" content="' . htmlspecialchars($desc, ENT_QUOTES) . '">' . "\n    ";
+    if ($m['keywords']) echo '<meta name="keywords" content="' . htmlspecialchars($m['keywords'], ENT_QUOTES) . '">' . "\n    ";
+    echo '<link rel="canonical" href="' . htmlspecialchars(SITE_URL . $path, ENT_QUOTES) . '">' . "\n    ";
+    echo '<meta property="og:title"       content="' . htmlspecialchars($title, ENT_QUOTES) . '">' . "\n    ";
+    echo '<meta property="og:description" content="' . htmlspecialchars($desc, ENT_QUOTES) . '">' . "\n    ";
+    echo '<meta property="og:image"       content="' . htmlspecialchars($image, ENT_QUOTES) . '">' . "\n    ";
 }

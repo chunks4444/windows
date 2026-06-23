@@ -9,8 +9,10 @@ header('Content-Type: text/html; charset=UTF-8');
     <?php define('BOOTSTRAP_LOADED', true); ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <?php require_once __DIR__ . '/../lib/meta.php'; ?>
+    <?php meta_tags(); ?>
 <?php css_tag('/src/css/dashboard.css'); ?>
     <?php css_tag('/src/css/users.css'); ?>
+    <?php css_tag('/src/css/admin/meta.css'); ?>
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
 </head>
 <body>
@@ -69,8 +71,13 @@ header('Content-Type: text/html; charset=UTF-8');
                 <input type="text" id="metaKeywords" maxlength="500" placeholder="쉼표로 구분">
             </div>
             <div class="adm-mfield" style="margin-bottom:0;">
-                <label>OG Image URL</label>
-                <input type="text" id="metaOgImage" maxlength="500" placeholder="https://…">
+                <label>OG Image <small style="color:var(--text-3);font-weight:400;">공유 시 보일 썸네일, 권장 1200×630</small></label>
+                <img id="metaOgImgPreview" class="meta-img-preview" src="" alt="">
+                <label class="meta-upload-label" for="metaOgImgFile">
+                    <i class="bi bi-upload"></i> 이미지 업로드
+                </label>
+                <input type="file" id="metaOgImgFile" accept="image/*" style="display:none;" onchange="previewOgImage(this)">
+                <input type="text" id="metaOgImage" maxlength="500" placeholder="또는 https://... URL 직접 입력">
             </div>
         </div>
         <div class="adm-modal-foot">

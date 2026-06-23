@@ -133,9 +133,10 @@ tbody td {
     padding: 0;
 }
 .adm-modal-body { padding: 20px 24px 24px; overflow-y: auto; flex: 1; min-height: 0; }
-.adm-mfield { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+.adm-mfield { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; min-width: 0; }
 .adm-mfield label { font-size: var(--fs-12); font-weight: 700; color: var(--text-2); letter-spacing: 0.04em; text-transform: uppercase; }
 .adm-mfield input, .adm-mfield select {
+    width: 100%; box-sizing: border-box;
     height: 38px; padding: 0 10px;
     border: 1px solid var(--border-md); border-radius: var(--r-sm);
     background: var(--input-bg); font-family: inherit; font-size: var(--fs-14);

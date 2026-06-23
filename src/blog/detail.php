@@ -37,14 +37,13 @@ $metaDesc = $post['summary'] ?: mb_substr(strip_tags($post['content']), 0, 120);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($post['title']) ?> — 평목 공방 블로그</title>
     <meta name="description" content="<?= htmlspecialchars($metaDesc) ?>">
+    <?php require_once __DIR__ . '/../lib/meta.php'; ?>
+    <link rel="canonical" href="<?= htmlspecialchars(SITE_URL . '/src/blog/detail.php?id=' . $post['id']) ?>">
     <meta property="og:title" content="<?= htmlspecialchars($post['title']) ?>">
     <meta property="og:description" content="<?= htmlspecialchars($metaDesc) ?>">
-    <?php if ($post['thumbnail_url']): ?>
-    <meta property="og:image" content="<?= htmlspecialchars($post['thumbnail_url']) ?>">
-    <?php endif; ?>
+    <meta property="og:image" content="<?= htmlspecialchars($post['thumbnail_url'] ?: SITE_DEFAULT_IMAGE) ?>">
     <?php define('BOOTSTRAP_LOADED', true); ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <?php require_once __DIR__ . '/../lib/meta.php'; ?>
 <?php css_tag('/src/css/blog-detail.css'); ?>
 </head>
 <body>
