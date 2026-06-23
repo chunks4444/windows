@@ -1,5 +1,6 @@
 .st-cards { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; }
 @media(max-width:768px) { .st-cards { grid-template-columns:repeat(2,1fr); } }
+@media(max-width:420px) { .st-cards { grid-template-columns:1fr; } }
 .st-card {
     background:#fff; border:1px solid var(--border); border-radius:var(--r);
     padding:20px 24px;
@@ -10,14 +11,15 @@
 
 .st-panel {
     background:#fff; border:1px solid var(--border); border-radius:var(--r);
-    overflow:hidden; margin-bottom:20px;
+    margin-bottom:20px;
 }
 .st-panel-head {
     display:flex; align-items:center; justify-content:space-between;
+    flex-wrap:wrap; gap:8px;
     padding:14px 20px; border-bottom:1px solid var(--border);
 }
 .st-panel-title { font-size: var(--fs-14); font-weight:700; color:var(--text-1); }
-.st-panel-body  { padding:20px; }
+.st-panel-body  { padding:20px; overflow-x:auto; }
 .st-chart-wrap  { position:relative; height:260px; }
 
 .st-month-btns { display:flex; gap:6px; }

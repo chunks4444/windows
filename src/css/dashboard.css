@@ -30,11 +30,15 @@ body {
     margin: 0 auto;
     padding: 40px 24px 80px;
 }
+@media (max-width: 640px) {
+    .db-page { padding: 24px 16px 60px; }
+}
 
 .db-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
     margin-bottom: 32px;
     gap: 16px;
 }
