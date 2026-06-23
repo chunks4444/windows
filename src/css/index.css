@@ -511,10 +511,10 @@ body { font-weight: 900; }
 .service-card:hover .pm-symbol-link svg {
     transform: rotate(45deg);
     filter:
-        drop-shadow(1px 0 0 #fff)
-        drop-shadow(-1px 0 0 #fff)
-        drop-shadow(0 1px 0 #fff)
-        drop-shadow(0 -1px 0 #fff);
+        drop-shadow(1px 0 0 var(--red))
+        drop-shadow(-1px 0 0 var(--red))
+        drop-shadow(0 1px 0 var(--red))
+        drop-shadow(0 -1px 0 var(--red));
 }
 
 .pm-symbol-bar {
