@@ -81,6 +81,13 @@ function saveLibraryImage(string $dataUrl): ?string {
     return '/uploads/library/' . $fname;
 }
 
+function drawingThumbnailImage(PDO $pdo, int $drawingId): ?string {
+    $stmt = $pdo->prepare('SELECT thumbnail FROM drawings WHERE id=?');
+    $stmt->execute([$drawingId]);
+    $thumb = $stmt->fetchColumn();
+    return $thumb ? saveLibraryImage($thumb) : null;
+}
+
 if ($method === 'POST') {
     $name_ko    = trim($body['name_ko'] ?? '');
     $drawing_id = (int)($body['drawing_id'] ?? 0) ?: null;
@@ -96,6 +103,8 @@ if ($method === 'POST') {
     $image_path = '';
     if (!empty($body['image'])) {
         $image_path = saveLibraryImage($body['image']) ?? '';
+    } elseif ($drawing_id) {
+        $image_path = drawingThumbnailImage($pdo, $drawing_id) ?? '';
     }
 
     $slug = bin2hex(random_bytes(6));
@@ -133,6 +142,8 @@ if ($method === 'PUT') {
     $image_path = null;
     if (!empty($body['image'])) {
         $image_path = saveLibraryImage($body['image']);
+    } elseif ($hasDrawingId && $drawing_id) {
+        $image_path = drawingThumbnailImage($pdo, $drawing_id);
     }
 
     if ($image_path !== null) {

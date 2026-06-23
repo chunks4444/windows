@@ -240,6 +240,11 @@ body:has(.guide-wrap) {
     text-transform: uppercase; color: var(--teal);
     margin-bottom: .5rem;
 }
+.guide-hero h1 {
+    font-size: clamp(0.8rem, 1.5vw, 1.2rem);
+    font-weight: 600; letter-spacing: -.03em; color: var(--text-1, #1A1F1E);
+    line-height: 1.2; margin-bottom: .5rem;
+}
 .guide-hero-sub {
     font-size: var(--fs-13); font-weight: 700; color: var(--text-2);
 }

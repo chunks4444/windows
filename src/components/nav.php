@@ -131,7 +131,7 @@ $navStudioIcons = [
                             <rect x="3" y="13" width="8" height="8" rx="1.5"/>
                             <rect x="13" y="13" width="8" height="8" rx="1.5"/>
                         </svg>
-                        대시보드
+                        도면관리
                     </a></li>
                 </ul>
             </li>
@@ -190,7 +190,7 @@ $navStudioIcons = [
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="/src/mypage/profile.php"><i class="bi bi-person me-1"></i>프로필</a></li>
                     <li><a class="dropdown-item" href="/src/mypage/company.php"><i class="bi bi-building me-1"></i>회사 정보</a></li>
-                    <li><a class="dropdown-item" href="/src/mypage/dashboard.php"><i class="bi bi-grid me-1"></i>대시보드</a></li>
+                    <li><a class="dropdown-item" href="/src/mypage/dashboard.php"><i class="bi bi-grid me-1"></i>도면관리</a></li>
                     <li><a class="dropdown-item" href="/src/mypage/dashboard.php#boards"><i class="bi bi-collection me-1"></i>내 보드</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="#" onclick="authLogout();return false;"><i class="bi bi-box-arrow-right me-1"></i>로그아웃</a></li>

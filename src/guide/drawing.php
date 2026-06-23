@@ -21,7 +21,7 @@ include __DIR__ . '/_head.php';
 
 <div class="guide-tip">
     <i class="bi bi-lightbulb-fill"></i>
-    <span>도면 이름은 프로젝트명·현장명으로 관리하면 대시보드에서 찾기 쉽습니다. 예: <em>청담동_한옥_정면창</em></span>
+    <span>도면 이름은 프로젝트명·현장명으로 관리하면 도면관리에서 찾기 쉽습니다. 예: <em>청담동_한옥_정면창</em></span>
 </div>
 
 <h2>도면 불러오기</h2>
@@ -44,8 +44,8 @@ include __DIR__ . '/_head.php';
     <span>버전은 도면당 최대 저장 횟수까지 보관됩니다. 오래된 버전부터 자동으로 정리됩니다.</span>
 </div>
 
-<h2>대시보드에서 관리</h2>
-<p>상단 내비게이션 <span class="guide-ui">Studio</span> → <span class="guide-ui">Dashboard</span>에서 모든 도면을 한눈에 관리할 수 있습니다.</p>
+<h2>도면관리</h2>
+<p>상단 내비게이션 <span class="guide-ui">스튜디오</span> → <span class="guide-ui">도면관리</span>에서 모든 도면을 한눈에 관리할 수 있습니다.</p>
 <ul>
     <li>엔진별 탭으로 도면을 분류해 볼 수 있습니다.</li>
     <li>썸네일 이미지로 도면을 빠르게 식별할 수 있습니다.</li>
@@ -57,7 +57,7 @@ include __DIR__ . '/_head.php';
 <ol class="guide-steps">
     <li>사이드바의 도면 이름 입력란에서 이름을 수정합니다.</li>
     <li><span class="guide-ui">이름 변경</span> 버튼을 클릭합니다.</li>
-    <li>대시보드에도 즉시 반영됩니다.</li>
+    <li>도면관리에도 즉시 반영됩니다.</li>
 </ol>
 
 <?php include __DIR__ . '/_foot.php'; ?>

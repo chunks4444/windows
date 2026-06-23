@@ -20,6 +20,7 @@ header('Content-Type: text/html; charset=UTF-8');
 <div class="lib-hero">
     <div class="lib-hero-inner">
         <p class="lib-hero-label">My Page</p>
+        <h1>도면관리</h1>
         <p class="lib-hero-sub">저장한 도면과 보드를 관리하세요.</p>
     </div>
 </div>

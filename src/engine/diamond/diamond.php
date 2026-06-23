@@ -333,11 +333,10 @@ header('Pragma: no-cache');
                 <div class="cv-sep"></div>
                 <button class="cv-btn" id="btnEditDelete" title="선 삭제&#10;클릭 → 선 삭제&#10;다시 클릭 → 복구">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="4" y="11" width="16" height="8" rx="2"/>
-                        <rect x="4" y="11" width="7" height="8" rx="0" fill="currentColor" opacity="0.4" stroke="none"/>
-                        <rect x="4" y="11" width="7" height="8" rx="0" fill="none" stroke="currentColor" stroke-width="1.5"/>
-                        <line x1="4" y1="19" x2="20" y2="19"/>
-                        <path d="M9 8l3-3 3 3" stroke-width="1.8"/>
+                        <circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/>
+                        <line x1="20" y1="4" x2="8.12" y2="15.88"/>
+                        <line x1="14.47" y1="14.48" x2="20" y2="20"/>
+                        <line x1="8.12" y1="8.12" x2="12" y2="12"/>
                     </svg>
                 </button>
                 <button class="cv-btn" id="btnEditAdd" title="선 추가&#10;① 시작 교점 클릭&#10;② 끝 교점 클릭 → 선 완성">

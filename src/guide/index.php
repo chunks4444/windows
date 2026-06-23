@@ -22,6 +22,7 @@
     <div class="guide-hero">
         <div class="guide-hero-inner">
             <p class="guide-hero-label">Guide</p>
+            <h1>가이드</h1>
             <p class="guide-hero-sub">전통 창호 도면 설계부터 AI 렌더링까지, 평목 스튜디오의 모든 기능을 안내합니다.</p>
         </div>
     </div>
