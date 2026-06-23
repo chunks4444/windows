@@ -170,6 +170,22 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         reader.readAsDataURL(file);
     });
+
+    document.getElementById('lpDrawingId').addEventListener('change', async e => {
+        if (pendingImg) return; // 직접 업로드한 이미지가 있으면 그게 우선
+        const preview = document.getElementById('lpImgPreview');
+        const id = e.target.value;
+        if (!id) {
+            if (editingId === null) { preview.src = ''; preview.classList.remove('show'); }
+            return;
+        }
+        const res  = await fetch(`/src/api/admin/drawings.php?id=${id}`, { headers: headers() });
+        const data = await res.json();
+        if (data.drawing && data.drawing.thumbnail) {
+            preview.src = data.drawing.thumbnail;
+            preview.classList.add('show');
+        }
+    });
 });
 
 /* ── 저장 ── */

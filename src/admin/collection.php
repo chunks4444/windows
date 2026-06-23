@@ -76,7 +76,7 @@
                 </select>
             </div>
             <div class="adm-mfield">
-                <label>대표 이미지</label>
+                <label>대표 이미지 <small style="color:var(--text-3);font-weight:400;">업로드 안 하면 연결된 도면의 썸네일을 사용합니다</small></label>
                 <img id="lpImgPreview" class="lib-img-preview" src="" alt="">
                 <label class="lib-upload-label" for="lpImgFile">
                     <i class="bi bi-upload"></i> 이미지 선택 (최대 10MB · 1024px)

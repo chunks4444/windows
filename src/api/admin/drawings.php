@@ -15,7 +15,16 @@ if (!$payload || ($payload['role'] ?? '') !== 's') {
     exit;
 }
 
-$pdo  = db();
+$pdo = db();
+
+if (isset($_GET['id'])) {
+    $stmt = $pdo->prepare('SELECT id, type, title, thumbnail FROM drawings WHERE id=?');
+    $stmt->execute([(int)$_GET['id']]);
+    $row = $stmt->fetch();
+    echo json_encode(['drawing' => $row ?: null]);
+    exit;
+}
+
 $rows = $pdo->query(
     'SELECT id, type, title FROM drawings ORDER BY type, title'
 )->fetchAll();
