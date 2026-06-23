@@ -98,8 +98,10 @@ if ($method === 'POST') {
         $image_path = saveLibraryImage($body['image']) ?? '';
     }
 
-    $pdo->prepare('INSERT INTO library_patterns (name_ko, drawing_id, image_path, sort_order) VALUES (?,?,?,?)')
-        ->execute([$name_ko, $drawing_id, $image_path, $order]);
+    $slug = bin2hex(random_bytes(6));
+
+    $pdo->prepare('INSERT INTO library_patterns (slug, name_ko, drawing_id, image_path, sort_order) VALUES (?,?,?,?,?)')
+        ->execute([$slug, $name_ko, $drawing_id, $image_path, $order]);
     $id = (int)$pdo->lastInsertId();
 
     $stmt = $pdo->prepare('INSERT INTO library_keywords (pattern_id, keyword) VALUES (?,?)');
