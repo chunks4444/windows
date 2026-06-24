@@ -29,7 +29,7 @@ include __DIR__ . '/_head.php';
 <p>상단 필터 탭으로 패턴 유형별로 필터링할 수 있습니다.</p>
 <ul>
     <li><strong>전체</strong> — 모든 컬렉션 표시</li>
-    <li><strong>Classic / Square / Cross / Diamond / Triangle / Hexagon</strong> — 엔진별 분류</li>
+    <li><strong>세살 / 정자살 / 빗살 / 격자 빗살 / 세모 솟을살 / 육모 솟을살</strong> — 엔진별 분류</li>
 </ul>
 
 <h2>스튜디오에서 열기</h2>

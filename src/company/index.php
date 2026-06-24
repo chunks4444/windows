@@ -85,13 +85,11 @@ foreach ($studioCards as $sc) $cardsByKey[$sc['engine_key']] = $sc;
         <div class="ab-tools-grid">
             <a href="/src/engine/classic/classic.php" class="ab-tool-card">
                 <svg class="ab-tool-icon" width="48" height="48" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
-                    <g transform="rotate(90 340 340)">
-                        <rect fill="currentColor" x="148" y="204" width="384" height="46" rx="4"/>
-                        <rect fill="currentColor" x="148" y="430" width="384" height="46" rx="4"/>
-                        <rect fill="currentColor" x="148" y="148" width="46" height="384" rx="4"/>
-                        <rect fill="currentColor" x="294" y="148" width="46" height="384" rx="4"/>
-                        <rect fill="currentColor" x="486" y="148" width="46" height="384" rx="4"/>
-                    </g>
+                    <rect fill="currentColor" x="148" y="204" width="384" height="46" rx="4"/>
+                    <rect fill="currentColor" x="148" y="430" width="384" height="46" rx="4"/>
+                    <rect fill="currentColor" x="148" y="148" width="46" height="384" rx="4"/>
+                    <rect fill="currentColor" x="294" y="148" width="46" height="384" rx="4"/>
+                    <rect fill="currentColor" x="486" y="148" width="46" height="384" rx="4"/>
                 </svg>
                 <div>
                     <p class="ab-tool-name"><?= htmlspecialchars($cardsByKey['classic']['title'] ?? 'Classic Lattice') ?></p>

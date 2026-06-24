@@ -55,13 +55,11 @@ $navStudioActive = [
 ];
 $navStudioIcons = [
     'classic' => '<svg width="27" height="27" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
-            <g transform="rotate(90 340 340)">
-                <rect fill="currentColor" x="148" y="204" width="384" height="46" rx="23"/>
-                <rect fill="currentColor" x="148" y="430" width="384" height="46" rx="23"/>
-                <rect fill="currentColor" x="148" y="148" width="46" height="384" rx="23"/>
-                <rect fill="currentColor" x="294" y="148" width="46" height="384" rx="23"/>
-                <rect fill="currentColor" x="486" y="148" width="46" height="384" rx="23"/>
-            </g>
+            <rect fill="currentColor" x="148" y="204" width="384" height="46" rx="23"/>
+            <rect fill="currentColor" x="148" y="430" width="384" height="46" rx="23"/>
+            <rect fill="currentColor" x="148" y="148" width="46" height="384" rx="23"/>
+            <rect fill="currentColor" x="294" y="148" width="46" height="384" rx="23"/>
+            <rect fill="currentColor" x="486" y="148" width="46" height="384" rx="23"/>
         </svg>',
     'square' => '<svg width="27" height="27" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
             <rect fill="currentColor" x="148" y="204" width="384" height="46" rx="23"/>

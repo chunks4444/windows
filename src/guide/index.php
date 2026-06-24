@@ -41,7 +41,13 @@
 
         <a href="/src/guide/studio-classic.php" class="guide-cat-card">
             <div class="guide-cat-icon" style="background:#FFF0EE;color:#cc2200;">
-                <i class="bi bi-pencil-square"></i>
+                <svg width="22" height="22" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+                    <rect fill="currentColor" x="148" y="204" width="384" height="46" rx="23"/>
+                    <rect fill="currentColor" x="148" y="430" width="384" height="46" rx="23"/>
+                    <rect fill="currentColor" x="148" y="148" width="46" height="384" rx="23"/>
+                    <rect fill="currentColor" x="294" y="148" width="46" height="384" rx="23"/>
+                    <rect fill="currentColor" x="486" y="148" width="46" height="384" rx="23"/>
+                </svg>
             </div>
             <div class="guide-cat-title">스튜디오란?</div>
             <div class="guide-cat-desc">6가지 격자 패턴 엔진의 상세 사용 방법을 안내합니다.</div>

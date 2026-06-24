@@ -1,21 +1,21 @@
 <?php
 $guide_current = 'studio-cross.php';
-$guide_title   = 'Cross Lattice';
-$guide_prev    = ['href' => 'studio-square.php', 'title' => 'Square Lattice'];
-$guide_next    = ['href' => 'studio-diamond.php', 'title' => 'Diamond Lattice'];
+$guide_title   = '빗살';
+$guide_prev    = ['href' => 'studio-square.php', 'title' => '정자살'];
+$guide_next    = ['href' => 'studio-diamond.php', 'title' => '격자 빗살'];
 include __DIR__ . '/_head.php';
 ?>
 
-<h1>Cross Lattice</h1>
+<h1><span class="guide-h1-icon"><?= $guideEngineIcons['cross'] ?></span>빗살</h1>
 <p class="guide-lead">
-    Square Lattice를 45° 회전시킨 사선 격자 패턴입니다.
+    정자살을 45° 회전시킨 사선 격자 패턴입니다.
     대각선 방향 살이 교차하여 역동적이고 개성 있는 창호 디자인을 만들 수 있습니다.
 </p>
 
 <h2>특징</h2>
 <ul>
     <li>기본 격자를 45° 회전하여 마름모꼴 셀이 형성됩니다.</li>
-    <li>동일한 파라미터 체계를 Square와 공유하므로 전환이 쉽습니다.</li>
+    <li>동일한 파라미터 체계를 정자살과 공유하므로 전환이 쉽습니다.</li>
     <li>클리핑(Clipping) 처리로 프레임 밖으로 살이 삐져나오지 않습니다.</li>
 </ul>
 
@@ -32,7 +32,7 @@ include __DIR__ . '/_head.php';
 
 <div class="guide-tip">
     <i class="bi bi-lightbulb-fill"></i>
-    <span>Cross Lattice와 Square Lattice를 겹쳐 활용하면 더 복잡한 Diamond 패턴 효과를 낼 수 있습니다.</span>
+    <span>빗살과 정자살을 겹쳐 활용하면 더 복잡한 격자 빗살 패턴 효과를 낼 수 있습니다.</span>
 </div>
 
 <h2>활용 예시</h2>

@@ -1,7 +1,7 @@
 <?php
 $guide_current = 'drawing.php';
 $guide_title   = '도면 저장 & 불러오기';
-$guide_prev    = ['href' => 'studio-hexagon.php', 'title' => 'Hexagon Lattice'];
+$guide_prev    = ['href' => 'studio-hexagon.php', 'title' => '육모 솟을살'];
 $guide_next    = ['href' => 'export.php', 'title' => 'PDF / PNG 내보내기'];
 include __DIR__ . '/_head.php';
 ?>

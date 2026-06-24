@@ -1,12 +1,12 @@
 <?php
 $guide_current = 'studio-diamond.php';
-$guide_title   = 'Diamond Lattice';
-$guide_prev    = ['href' => 'studio-cross.php', 'title' => 'Cross Lattice'];
-$guide_next    = ['href' => 'studio-triangle.php', 'title' => 'Triangle Lattice'];
+$guide_title   = '격자 빗살';
+$guide_prev    = ['href' => 'studio-cross.php', 'title' => '빗살'];
+$guide_next    = ['href' => 'studio-triangle.php', 'title' => '세모 솟을살'];
 include __DIR__ . '/_head.php';
 ?>
 
-<h1>Diamond Lattice</h1>
+<h1><span class="guide-h1-icon"><?= $guideEngineIcons['diamond'] ?></span>격자 빗살</h1>
 <p class="guide-lead">
     수직·수평·대각선(±45°) 살을 모두 결합한 복합 격자 패턴입니다.
     마름모 셀 안에 작은 격자가 형성되어 세밀하고 정교한 전통 창호 느낌을 구현합니다.

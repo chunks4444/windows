@@ -16,12 +16,12 @@ $guide_nav = [
         'title' => '스튜디오', 'icon' => 'bi-pencil-square',
         'bg' => '#FFF0EE', 'color' => '#cc2200',
         'articles' => [
-            ['file' => 'studio-classic.php',  'title' => 'Classic Lattice'],
-            ['file' => 'studio-square.php',   'title' => 'Square Lattice'],
-            ['file' => 'studio-cross.php',    'title' => 'Cross Lattice'],
-            ['file' => 'studio-diamond.php',  'title' => 'Diamond Lattice'],
-            ['file' => 'studio-triangle.php', 'title' => 'Triangle Lattice'],
-            ['file' => 'studio-hexagon.php',  'title' => 'Hexagon Lattice'],
+            ['file' => 'studio-classic.php',  'title' => '세살',      'engine' => 'classic'],
+            ['file' => 'studio-square.php',   'title' => '정자살',    'engine' => 'square'],
+            ['file' => 'studio-cross.php',    'title' => '빗살',      'engine' => 'cross'],
+            ['file' => 'studio-diamond.php',  'title' => '격자 빗살', 'engine' => 'diamond'],
+            ['file' => 'studio-triangle.php', 'title' => '세모 솟을살', 'engine' => 'triangle'],
+            ['file' => 'studio-hexagon.php',  'title' => '육모 솟을살', 'engine' => 'hexagon'],
         ],
     ],
     [
@@ -69,6 +69,48 @@ $guide_nav = [
     ],
 ];
 
+$guideEngineIcons = [
+    'classic' => '<svg width="14" height="14" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+            <rect fill="currentColor" x="148" y="204" width="384" height="46" rx="23"/>
+            <rect fill="currentColor" x="148" y="430" width="384" height="46" rx="23"/>
+            <rect fill="currentColor" x="148" y="148" width="46" height="384" rx="23"/>
+            <rect fill="currentColor" x="294" y="148" width="46" height="384" rx="23"/>
+            <rect fill="currentColor" x="486" y="148" width="46" height="384" rx="23"/>
+        </svg>',
+    'square' => '<svg width="14" height="14" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+            <rect fill="currentColor" x="148" y="204" width="384" height="46" rx="23"/>
+            <rect fill="currentColor" x="148" y="430" width="384" height="46" rx="23"/>
+            <rect fill="currentColor" x="204" y="148" width="46" height="384" rx="23"/>
+            <rect fill="currentColor" x="430" y="148" width="46" height="384" rx="23"/>
+        </svg>',
+    'cross' => '<svg width="14" height="14" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+            <g transform="rotate(45 340 340)">
+                <rect fill="currentColor" x="148" y="204" width="384" height="46" rx="23"/>
+                <rect fill="currentColor" x="148" y="430" width="384" height="46" rx="23"/>
+                <rect fill="currentColor" x="204" y="148" width="46" height="384" rx="23"/>
+                <rect fill="currentColor" x="430" y="148" width="46" height="384" rx="23"/>
+            </g>
+        </svg>',
+    'diamond' => '<svg width="14" height="14" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+            <rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/>
+            <rect fill="currentColor" x="148" y="317" width="384" height="46" rx="23"/>
+            <g transform="rotate(45 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
+            <g transform="rotate(135 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
+        </svg>',
+    'triangle' => '<svg width="14" height="14" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+            <rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/>
+            <g transform="rotate(60 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
+            <g transform="rotate(120 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
+        </svg>',
+    'hexagon' => '<svg width="14" height="14" viewBox="0 0 680 680" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <polyline points="210,265 340,190 470,265" stroke="currentColor" stroke-width="32" stroke-linejoin="round" stroke-linecap="round"/>
+            <line x1="210" y1="265" x2="210" y2="415" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
+            <line x1="470" y1="265" x2="470" y2="415" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
+            <line x1="210" y1="415" x2="340" y2="490" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
+            <line x1="470" y1="415" x2="340" y2="490" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
+        </svg>',
+];
+
 // 현재 섹션 찾기
 $current_cat = '';
 foreach ($guide_nav as $sec) {
@@ -108,10 +150,16 @@ foreach ($guide_nav as $sec) {
     <nav>
     <?php foreach ($guide_nav as $sec): ?>
         <div class="gs-section">
-            <div class="gs-section-hd"><?= htmlspecialchars($sec['title']) ?></div>
+            <div class="gs-section-hd">
+                <span class="gs-section-hd-icon" style="background:<?= htmlspecialchars($sec['bg']) ?>;color:<?= htmlspecialchars($sec['color']) ?>;"><i class="bi <?= htmlspecialchars($sec['icon']) ?>"></i></span>
+                <?= htmlspecialchars($sec['title']) ?>
+            </div>
             <?php foreach ($sec['articles'] as $art): ?>
             <a href="/src/guide/<?= $art['file'] ?>"
                class="gs-link<?= ($art['file'] === ($guide_current ?? '')) ? ' active' : '' ?>">
+                <?php if (isset($art['engine'])): ?>
+                <span class="gs-link-icon"><?= $guideEngineIcons[$art['engine']] ?? '' ?></span>
+                <?php endif; ?>
                 <?= htmlspecialchars($art['title']) ?>
             </a>
             <?php endforeach; ?>

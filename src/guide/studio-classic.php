@@ -1,12 +1,12 @@
 <?php
 $guide_current = 'studio-classic.php';
-$guide_title   = 'Classic Lattice';
+$guide_title   = '세살';
 $guide_prev    = ['href' => 'getting-started.php', 'title' => '시작하기'];
-$guide_next    = ['href' => 'studio-square.php', 'title' => 'Square Lattice'];
+$guide_next    = ['href' => 'studio-square.php', 'title' => '정자살'];
 include __DIR__ . '/_head.php';
 ?>
 
-<h1>Classic Lattice</h1>
+<h1><span class="guide-h1-icon"><?= $guideEngineIcons['classic'] ?></span>세살</h1>
 <p class="guide-lead">
     전통 한국 창호의 사분턱(四分턱) 구조를 재현한 엔진입니다.
     스튜디오는 <strong>왼쪽 설계 사이드바 · 캔버스 · 오른쪽 배경·내보내기 사이드바</strong>

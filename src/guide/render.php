@@ -10,7 +10,7 @@ include __DIR__ . '/_head.php';
 <p class="guide-lead">
     현장 사진(배경) 위에 창호 도면을 겹쳐 AI가 실제 시공 모습으로 합성하는 기능입니다.
     <strong>배경 이미지 + 격자 도면 = AI 렌더링 결과물</strong>의 흐름으로 동작하며,
-    Classic Lattice 스튜디오의 <strong>오른쪽 사이드바</strong>에서 모든 과정이 이루어집니다.
+    세살 스튜디오의 <strong>오른쪽 사이드바</strong>에서 모든 과정이 이루어집니다.
 </p>
 
 <!-- 합성 원리 흐름도 -->
@@ -41,7 +41,7 @@ include __DIR__ . '/_head.php';
 </div>
 
 <h2>스튜디오 화면 구성</h2>
-<p>Classic Lattice 스튜디오는 <strong>세 개의 패널</strong>로 구성됩니다. AI 렌더링은 <strong>오른쪽 사이드바</strong>에서 진행됩니다.</p>
+<p>세살 스튜디오는 <strong>세 개의 패널</strong>로 구성됩니다. AI 렌더링은 <strong>오른쪽 사이드바</strong>에서 진행됩니다.</p>
 
 <!-- UI 다이어그램 -->
 <div class="guide-ui-diagram">

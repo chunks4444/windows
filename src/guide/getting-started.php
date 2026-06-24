@@ -2,7 +2,7 @@
 $guide_current = 'getting-started.php';
 $guide_title   = '시작하기';
 $guide_prev    = ['href' => 'intro.php', 'title' => '평목이란?'];
-$guide_next    = ['href' => 'studio-classic.php', 'title' => 'Classic Lattice'];
+$guide_next    = ['href' => 'studio-classic.php', 'title' => '세살'];
 include __DIR__ . '/_head.php';
 ?>
 
@@ -28,7 +28,7 @@ include __DIR__ . '/_head.php';
 <ol class="guide-steps">
     <li>상단 내비게이션에서 <span class="guide-ui">Studio</span>를 클릭합니다.</li>
     <li>드롭다운 메뉴에서 원하는 격자 패턴 엔진을 선택합니다.<br>
-        처음이라면 <strong>Classic Lattice</strong>를 권장합니다.</li>
+        처음이라면 <strong>세살</strong>을 권장합니다.</li>
     <li>스튜디오 화면이 열리면 왼쪽 사이드바에서 파라미터를 조정합니다.</li>
     <li>오른쪽 캔버스에 실시간으로 도면이 그려집니다.</li>
 </ol>

@@ -20,7 +20,7 @@ include __DIR__ . '/_head.php';
         <tr><th>기능</th><th>설명</th></tr>
     </thead>
     <tbody>
-        <tr><td><strong>6가지 스튜디오</strong></td><td>Classic, Square, Cross, Diamond, Triangle, Hexagon 격자 패턴 엔진</td></tr>
+        <tr><td><strong>6가지 스튜디오</strong></td><td>세살, 정자살, 빗살, 격자 빗살, 세모 솟을살, 육모 솟을살 격자 패턴 엔진</td></tr>
         <tr><td><strong>실시간 렌더링</strong></td><td>파라미터 변경 즉시 캔버스에 반영</td></tr>
         <tr><td><strong>도면 저장</strong></td><td>클라우드 DB에 도면 & 버전 저장, 어디서든 이어서 작업</td></tr>
         <tr><td><strong>PDF / PNG 내보내기</strong></td><td>인쇄·납품용 고해상도 파일 출력</td></tr>
@@ -33,12 +33,12 @@ include __DIR__ . '/_head.php';
 <p>스튜디오는 창호 살의 배열 방식에 따라 6가지 엔진으로 구분됩니다.</p>
 
 <ul>
-    <li><strong>Classic Lattice</strong> — 전통 사분턱 구조. 수직·수평 살이 교차하는 정통 창호 패턴</li>
-    <li><strong>Square Lattice</strong> — 단순 정방형 격자. 수직·수평 살로 구성된 기본 패턴</li>
-    <li><strong>Cross Lattice</strong> — 45° 회전 격자. 사선 살이 교차하는 대각선 패턴</li>
-    <li><strong>Diamond Lattice</strong> — 마름모 복합 패턴. 수직·수평·사선이 결합된 고급 패턴</li>
-    <li><strong>Triangle Lattice</strong> — 삼각 격자. 0°·60°·120° 세 방향 살로 구성</li>
-    <li><strong>Hexagon Lattice</strong> — 육각 격자. 삼각에서 한 방향을 제거한 육모살 패턴</li>
+    <li><strong>세살</strong> — 전통 사분턱 구조. 수직·수평 살이 교차하는 정통 창호 패턴</li>
+    <li><strong>정자살</strong> — 단순 정방형 격자. 수직·수평 살로 구성된 기본 패턴</li>
+    <li><strong>빗살</strong> — 45° 회전 격자. 사선 살이 교차하는 대각선 패턴</li>
+    <li><strong>격자 빗살</strong> — 마름모 복합 패턴. 수직·수평·사선이 결합된 고급 패턴</li>
+    <li><strong>세모 솟을살</strong> — 삼각 격자. 0°·60°·120° 세 방향 살로 구성</li>
+    <li><strong>육모 솟을살</strong> — 육각 격자. 삼각에서 한 방향을 제거한 육모살 패턴</li>
 </ul>
 
 <div class="guide-tip">

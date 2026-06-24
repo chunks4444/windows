@@ -1,20 +1,20 @@
 <?php
 $guide_current = 'studio-square.php';
-$guide_title   = 'Square Lattice';
-$guide_prev    = ['href' => 'studio-classic.php', 'title' => 'Classic Lattice'];
-$guide_next    = ['href' => 'studio-cross.php', 'title' => 'Cross Lattice'];
+$guide_title   = '정자살';
+$guide_prev    = ['href' => 'studio-classic.php', 'title' => '세살'];
+$guide_next    = ['href' => 'studio-cross.php', 'title' => '빗살'];
 include __DIR__ . '/_head.php';
 ?>
 
-<h1>Square Lattice</h1>
+<h1><span class="guide-h1-icon"><?= $guideEngineIcons['square'] ?></span>정자살</h1>
 <p class="guide-lead">
     수직·수평 살만으로 구성된 가장 단순한 정방형 격자 패턴입니다.
-    Classic과 달리 테두리 안의 살 배열이 균일하게 분할되어, 현대적이고 정제된 창호 디자인에 적합합니다.
+    세살과 달리 테두리 안의 살 배열이 균일하게 분할되어, 현대적이고 정제된 창호 디자인에 적합합니다.
 </p>
 
-<h2>Classic과의 차이점</h2>
+<h2>세살과의 차이점</h2>
 <table class="guide-table">
-    <thead><tr><th></th><th>Square Lattice</th><th>Classic Lattice</th></tr></thead>
+    <thead><tr><th></th><th>정자살</th><th>세살</th></tr></thead>
     <tbody>
         <tr><td>살 방향</td><td>수직 + 수평</td><td>수직 + 수평</td></tr>
         <tr><td>구조</td><td>균등 분할 격자</td><td>사분턱 전통 구조</td></tr>

@@ -1,12 +1,12 @@
 <?php
 $guide_current = 'studio-triangle.php';
-$guide_title   = 'Triangle Lattice';
-$guide_prev    = ['href' => 'studio-diamond.php', 'title' => 'Diamond Lattice'];
-$guide_next    = ['href' => 'studio-hexagon.php', 'title' => 'Hexagon Lattice'];
+$guide_title   = '세모 솟을살';
+$guide_prev    = ['href' => 'studio-diamond.php', 'title' => '격자 빗살'];
+$guide_next    = ['href' => 'studio-hexagon.php', 'title' => '육모 솟을살'];
 include __DIR__ . '/_head.php';
 ?>
 
-<h1>Triangle Lattice</h1>
+<h1><span class="guide-h1-icon"><?= $guideEngineIcons['triangle'] ?></span>세모 솟을살</h1>
 <p class="guide-lead">
     0°·60°·120° 세 방향 살이 교차하여 삼각형 셀을 형성하는 패턴입니다.
     기하학적인 아름다움이 특징이며, 동아시아 전통 목공예에서도 유사한 패턴을 찾아볼 수 있습니다.
@@ -34,7 +34,7 @@ include __DIR__ . '/_head.php';
 
 <div class="guide-tip">
     <i class="bi bi-lightbulb-fill"></i>
-    <span>Triangle Lattice에서 한 방향 살을 제거하면 <strong>Hexagon Lattice</strong> 패턴이 됩니다. 두 엔진을 비교해 보세요.</span>
+    <span>세모 솟을살에서 한 방향 살을 제거하면 <strong>육모 솟을살</strong> 패턴이 됩니다. 두 엔진을 비교해 보세요.</span>
 </div>
 
 <h2>활용 예시</h2>
