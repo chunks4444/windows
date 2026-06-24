@@ -21,7 +21,7 @@ body { background: var(--page-bg, #F2F3F4); }
 .bd-back:hover { color: var(--teal); }
 
 .bd-title {
-    font-size: clamp(1.5rem, 3.5vw, 2.1rem);
+    font-size: clamp(1.3rem, 2.8vw, 1.75rem);
     font-weight: 800; letter-spacing: -.02em;
     color: var(--text-1);
     line-height: 1.3;
