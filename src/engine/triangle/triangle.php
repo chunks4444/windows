@@ -411,6 +411,11 @@ header('Pragma: no-cache');
         <div class="controls-right" id="rightSidebar">
             <div class="sb-inner-right">
                 <div class="sb-section">
+                    <div class="sb-price-box">
+                        <div class="sb-price-label">예상가격</div>
+                        <div class="sb-price-amount"><span class="sb-price-start">350,000</span><span class="sb-price-end"> ~ 420,000원</span></div>
+                        <div class="sb-price-note">배송비, 시공비 제외</div>
+                    </div>
                     <div style="display:flex;gap:6px;width:100%;">
                         <button class="hbtn hbtn-primary" id="btnOrder" style="flex:1;justify-content:center;width:100%;">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none">

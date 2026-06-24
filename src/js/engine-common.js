@@ -1091,3 +1091,47 @@ function drawSvgInserts() {
         if (pickerModal) pickerModal.addEventListener('click', e => { if (e.target === pickerModal) closeLibraryPicker(); });
     });
 })();
+
+(function () {
+    // 예상가격 임시 추정 로직: 실제 견적 계산이 붙기 전까지,
+    // 문 크기/짝수/마감재 같은 파라미터를 바꾸면 가격도 같이 바뀌는 것처럼 보여주는 placeholder.
+    // 추후 실제 견적 로직이 완성되면 이 함수 내부만 실제 계산값으로 교체하면 된다.
+    const WOOD_RATIO = { hongsong: 0, sonamuPine: 0.45, oak: 1 };
+
+    function clamp(v, min, max) { return Math.min(max, Math.max(min, v)); }
+    function won(n) { return (Math.round(n / 1000) * 1000).toLocaleString('ko-KR'); }
+    function val(id, fallback) {
+        const el = document.getElementById(id);
+        const n = el ? parseFloat(el.value) : NaN;
+        return Number.isFinite(n) ? n : fallback;
+    }
+
+    function updatePriceBox() {
+        const startEl = document.querySelector('.sb-price-start');
+        const endEl = document.querySelector('.sb-price-end');
+        if (!startEl || !endEl) return;
+
+        const W = val('numW', val('txtW', 1200));
+        const H = val('numH', val('txtH', 2000));
+        const doorCount = val('txtDoorCount', 1);
+        const wood = document.getElementById('txtWood')?.value || 'hongsong';
+
+        const areaRatio = clamp((W * H - 400 * 400) / (3000 * 3000 - 400 * 400), 0, 1);
+        const doorRatio = clamp((doorCount - 1) / 3, 0, 1);
+        const woodRatio = WOOD_RATIO[wood] ?? 0;
+
+        const score = areaRatio * 0.5 + doorRatio * 0.3 + woodRatio * 0.2; // 0~1
+        const center = 350000 + score * 90000;
+
+        startEl.textContent = won(center - 35000);
+        endEl.textContent = ` ~ ${won(center + 35000)}원`;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const sidebar = document.getElementById('sidebar');
+        updatePriceBox();
+        if (!sidebar) return;
+        sidebar.addEventListener('input', updatePriceBox);
+        sidebar.addEventListener('change', updatePriceBox);
+    });
+})();

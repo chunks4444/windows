@@ -36,15 +36,10 @@ try {
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="/src/css/index.css">
     </head>
-
     <body>
-
         <?php include __DIR__ . '/src/components/nav.php'; ?>
-
         <div class="home-wrapper">
-
             <h1 class="visually-hidden">평목 - 나만의 한옥 살창·창호를 실시간으로 디자인하는 스튜디오</h1>
-
             <!-- Hero Carousel -->
             <div class="hero-carousel-outer">
               <div class="container">
@@ -82,16 +77,13 @@ try {
                 </div>
               </div>
             </div>
-
             <!-- -->
             <div class="container">
-
                 <div class="mt-5 mb-4">
                     <p class="ab-section-label">Studio</p>
                     <h2 class="ab-section-title">나만의 창호를 직접 디자인하세요.</h2>
                     <p class="ab-section-body">평목 스튜디오는 브라우저에서 바로 사용할 수 있는 <strong>창호 설계 도구</strong>입니다.<br>문틀 크기, 살 간격, 패턴을 조정하며 나만의 창호를 완성하면, <strong>평목 공방에서 제작해 드립니다.</strong></p>
                 </div>
-
                 <?php
                 $svgIcons = [
                     'classic' => '<svg width="56" height="84" viewBox="148 52 384 576" xmlns="http://www.w3.org/2000/svg"><g transform="rotate(90 340 340)"><rect class="pm-symbol-bar" x="148" y="204" width="384" height="46" rx="0"/><rect class="pm-symbol-bar" x="148" y="430" width="384" height="46" rx="0"/><rect class="pm-symbol-bar" x="148" y="148" width="46" height="384" rx="0"/><rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="0"/><rect class="pm-symbol-bar" x="486" y="148" width="46" height="384" rx="0"/><rect class="pm-symbol-bar" x="100" y="204" width="48" height="46" rx="0"/><rect class="pm-symbol-bar" x="532" y="204" width="48" height="46" rx="0"/><rect class="pm-symbol-bar" x="100" y="430" width="48" height="46" rx="0"/><rect class="pm-symbol-bar" x="532" y="430" width="48" height="46" rx="0"/></g></svg>',
@@ -133,7 +125,6 @@ try {
                     </div>
                 <?php endforeach; ?>
                 </div>
-
             <!-- card -->
             <section class="values-section mt-5 ">
                 <div class="values-inner container">
@@ -149,7 +140,6 @@ try {
                             </p>
                         </div>
                     </div>
-
                     <!-- Curation Header -->
                     <hr class="curation-divider">
                     <div class="mt-5 mb-4">
@@ -157,7 +147,6 @@ try {
                         <h2 class="ab-section-title">공간별 창호 디자인을 찾아보세요.</h2>
                         <p class="ab-section-body">중문부터 거실, 카페, 서재까지—<br>원하는 공간을 선택하면 추천 컬렉션을 바로 확인할 수 있습니다.</p>
                     </div>
-
                     <!-- Space Cards (DB) -->
                     <?php if (!empty($spaceCards)): ?>
                     <div class="space-cards-wrapper">
@@ -169,13 +158,11 @@ try {
                         <?php endforeach; ?>
                     </div>
                     <?php endif; ?>
-
                 </div>
             </section>
             <!-- card -->
         </div>
         <!-- home-wrapper -->
-
         <!-- Process -->
         <section class="process-section">
             <div class="container">
@@ -273,7 +260,6 @@ try {
             </div>
         </section>
         <?php endif; ?>
-
         <!-- Guide -->
         <section class="guide-section">
             <div class="container">
