@@ -901,7 +901,24 @@ function renderSvgInsertPanel() {
     if (rotEl)   rotEl.value   = ins.rotation;
 }
 
-// ctx/canvas/logW/logH/panX/panY/scaleFactor/draw 는 각 엔진 스크립트의 전역을 그대로 참조
+// insert의 중심(canvas 로직 좌표)과 회전 적용된 우하단 모서리(리사이즈 핸들 위치)를 계산
+// ctx/canvas/logW/logH/panX/panY/scaleFactor 는 각 엔진 스크립트의 전역을 그대로 참조
+const SVG_INSERT_HANDLE_HIT_R = 14;
+function _insertCorner(ins) {
+    const ox = logW / 2 + panX, oy = logH / 2 + panY;
+    const cx = ox + ins.cx * scaleFactor;
+    const cy = oy + ins.cy * scaleFactor;
+    const renderScale = ins.baseScale * ins.scaleMul;
+    const hw = ins.w * renderScale * scaleFactor / 2;
+    const hh = ins.h * renderScale * scaleFactor / 2;
+    const rot = ins.rotation * Math.PI / 180;
+    return {
+        cx, cy,
+        x: cx + (hw * Math.cos(rot) - hh * Math.sin(rot)),
+        y: cy + (hw * Math.sin(rot) + hh * Math.cos(rot)),
+    };
+}
+
 function drawSvgInserts() {
     if (!svgInserts.length) return;
     const ox = logW / 2 + panX, oy = logH / 2 + panY;
@@ -926,6 +943,16 @@ function drawSvgInserts() {
             ctx.setLineDash([]);
         }
         ctx.restore();
+        if (ins.id === selectedInsertId) {
+            const corner = _insertCorner(ins);
+            ctx.beginPath();
+            ctx.arc(corner.x, corner.y, 6, 0, Math.PI * 2);
+            ctx.fillStyle = '#3A8C82';
+            ctx.fill();
+            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = '#fff';
+            ctx.stroke();
+        }
     });
 }
 
@@ -952,19 +979,38 @@ function drawSvgInserts() {
         return null;
     }
 
-    let insertDrag = null; // { id, startCx, startCy, startClientX, startClientY }
+    let insertDrag = null; // { id, mode: 'move'|'resize', ... }
 
     function onDown(clientX, clientY, targetEl) {
         // 캔버스 자체(또는 컨테이너 빈 배경)를 클릭한 경우만 처리. 제목바/줌툴바 등
         // 캔버스 위에 떠 있는 다른 UI를 클릭한 경우는 절대 가로채지 않음.
         if (targetEl !== canvas && targetEl !== container) return false;
+
+        if (selectedInsertId) {
+            const sel = svgInserts.find(i => i.id === selectedInsertId);
+            if (sel) {
+                _normalizeInsert(sel);
+                const corner = _insertCorner(sel);
+                const p = toLogical(clientX, clientY);
+                if (Math.hypot(p.x - corner.x, p.y - corner.y) <= SVG_INSERT_HANDLE_HIT_R) {
+                    insertDrag = {
+                        id: sel.id, mode: 'resize',
+                        centerX: corner.cx, centerY: corner.cy,
+                        startDist: Math.hypot(corner.x - corner.cx, corner.y - corner.cy),
+                        startScaleMul: sel.scaleMul,
+                    };
+                    return true;
+                }
+            }
+        }
+
         const hit = hitTestInsert(clientX, clientY);
         if (!hit) {
             if (selectedInsertId) selectSvgInsert(null);
             return false;
         }
         selectSvgInsert(hit.id);
-        insertDrag = { id: hit.id, startCx: hit.cx, startCy: hit.cy, startClientX: clientX, startClientY: clientY };
+        insertDrag = { id: hit.id, mode: 'move', startCx: hit.cx, startCy: hit.cy, startClientX: clientX, startClientY: clientY };
         return true;
     }
 
@@ -972,6 +1018,20 @@ function drawSvgInserts() {
         if (!insertDrag) return false;
         const ins = svgInserts.find(i => i.id === insertDrag.id);
         if (!ins) { insertDrag = null; return false; }
+
+        if (insertDrag.mode === 'resize') {
+            const p = toLogical(clientX, clientY);
+            const dist = Math.hypot(p.x - insertDrag.centerX, p.y - insertDrag.centerY);
+            if (insertDrag.startDist > 0) {
+                const scaleMul = Math.min(3, Math.max(0.1, insertDrag.startScaleMul * dist / insertDrag.startDist));
+                ins.scaleMul = scaleMul;
+                const scaleEl = document.getElementById('svgInsertScale');
+                if (scaleEl) scaleEl.value = Math.round(scaleMul * 100);
+            }
+            draw();
+            return true;
+        }
+
         const dcx = (clientX - insertDrag.startClientX) / scaleFactor;
         const dcy = (clientY - insertDrag.startClientY) / scaleFactor;
         let cx = insertDrag.startCx + dcx;

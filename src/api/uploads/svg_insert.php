@@ -32,9 +32,13 @@ if (preg_match('/<script[\s>]|[\s"\']on[a-z]+\s*=\s*["\']|javascript:/i', $svg))
 
 $userId = (int)$payload['sub'];
 $dir    = __DIR__ . '/../../../uploads/svg_insert/' . $userId;
-if (!is_dir($dir)) mkdir($dir, 0755, true);
+if (!is_dir($dir) && !mkdir($dir, 0755, true) && !is_dir($dir)) {
+    http_response_code(500); echo json_encode(['error' => '업로드 폴더를 만들 수 없습니다 (권한 문제).']); exit;
+}
 
 $fname = time() . '_' . bin2hex(random_bytes(4)) . '.svg';
-file_put_contents($dir . '/' . $fname, $svg);
+if (file_put_contents($dir . '/' . $fname, $svg) === false) {
+    http_response_code(500); echo json_encode(['error' => '파일 저장에 실패했습니다 (권한 문제).']); exit;
+}
 
 echo json_encode(['ok' => true, 'url' => '/uploads/svg_insert/' . $userId . '/' . $fname]);
