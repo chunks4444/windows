@@ -15,7 +15,7 @@ if (!$payload) {
 $body = json_decode(file_get_contents('php://input'), true) ?? [];
 $svg  = $body['svg_data'] ?? '';
 
-if (preg_match('/^data:image\/svg\+xml(;charset=[^;]+)?;base64,/', $svg, $m)) {
+if (preg_match('/^data:[^,]*;base64,/i', $svg, $m)) {
     $svg = base64_decode(substr($svg, strlen($m[0])), true);
 }
 $svg = is_string($svg) ? trim($svg) : '';

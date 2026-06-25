@@ -44,7 +44,7 @@ $action = $body['action'] ?? '';
 // SVG 텍스트를 검증해 파일로 저장하고 공개 URL을 반환
 function saveSvgMotifFile(string $svgInput): ?string {
     $svg = $svgInput;
-    if (preg_match('/^data:image\/svg\+xml(;charset=[^;]+)?;base64,/', $svg, $m)) {
+    if (preg_match('/^data:[^,]*;base64,/i', $svg, $m)) {
         $svg = base64_decode(substr($svg, strlen($m[0])), true);
         if ($svg === false) return null;
     }
