@@ -23,6 +23,7 @@
         #postContentEditor { height:320px; background:#fff; font-size:13px; }
         .ql-editor { font-family:'Noto Sans KR','Inter',-apple-system,sans-serif; }
         .ql-editor strong, .ql-editor b { font-weight: 500; }
+        .ql-editor h1, .ql-editor h2, .ql-editor h3, .ql-editor h4 { font-weight: 500; }
         .ql-toolbar { border-color:var(--border-md) !important; border-radius:var(--r-sm) var(--r-sm) 0 0; }
         .ql-container { border-color:var(--border-md) !important; border-radius:0 0 var(--r-sm) var(--r-sm); font-family:inherit; }
         .adm-modal-fullscreen-btn { background:none; border:none; cursor:pointer; color:var(--text-3); font-size:16px; line-height:1; padding:0; margin-right:14px; }
