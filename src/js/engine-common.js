@@ -1257,6 +1257,15 @@ function drawSvgInserts() {
         window.__pmokEstimatedPrice = estMin;
     }
 
+    function isAdminRole() {
+        try {
+            const token = localStorage.getItem('pmok_auth_token');
+            if (!token) return false;
+            const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+            return ['s', 'm', 'a'].includes(payload.role);
+        } catch { return false; }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         const sidebar      = document.getElementById('sidebar');
         const rightSidebar = document.getElementById('rightSidebar');
@@ -1266,6 +1275,9 @@ function drawSvgInserts() {
         }
         if (rightSidebar) {
             rightSidebar.addEventListener('change', updateWoodCost);
+        }
+        if (isAdminRole()) {
+            document.querySelector('.sb-price-breakdown')?.classList.add('admin-visible');
         }
     });
 

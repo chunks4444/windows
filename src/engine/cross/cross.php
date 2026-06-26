@@ -420,11 +420,11 @@ header('Pragma: no-cache');
                     <div class="sb-price-box">
                         <div class="sb-price-label">예상가격</div>
                         <div class="sb-price-amount"><span class="sb-price-start">–</span><span class="sb-price-end"></span></div>
-                        <div class="sb-price-note">목재비 <span id="spWoodCost">–</span> <span class="sb-price-excl">(배송비·시공비 제외)</span></div>
                         <div class="sb-price-breakdown">
                             <div class="sb-break-row"><span>문(창호)</span><span id="spCostDoor">–</span></div>
                             <div class="sb-break-row"><span>문틀</span><span id="spCostMuntol">–</span></div>
                             <div class="sb-break-row sb-break-future"><span>오일·마감</span><span>추후</span></div>
+                            <div class="sb-price-note sb-break-total">목재비 <span id="spWoodCost">–</span> <span class="sb-price-excl">(배송비·시공비 제외)</span></div>
                         </div>
                     </div>
                     <div style="display:flex;gap:6px;width:100%;">
