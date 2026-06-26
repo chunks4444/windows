@@ -81,8 +81,8 @@ try {
             <div class="container">
                 <div class="mt-5 mb-4">
                     <p class="ab-section-label">Studio</p>
-                    <h2 class="ab-section-title">나만의 창호를 직접 디자인하세요.</h2>
-                    <p class="ab-section-body">평목 스튜디오는 브라우저에서 바로 사용할 수 있는 <strong>창호 설계 도구</strong>입니다.<br>문틀 크기, 살 간격, 패턴을 조정하며 나만의 창호를 완성하면, <strong>평목 공방에서 제작해 드립니다.</strong></p>
+                    <h2 class="ab-section-title">창호를 직접 설계하고 실시간 예상 견적을 확인하세요.</h2>
+                    <p class="ab-section-body">문틀 크기와 살 간격, 패턴을 자유롭게 조정하면 예상 견적이 즉시 반영됩니다.<br>완성된 설계는 <strong>평목 공방에서 제작해 드립니다.</strong></p>
                 </div>
                 <?php
                 $svgIcons = [
