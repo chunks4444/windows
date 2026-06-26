@@ -27,25 +27,28 @@ $body   = json_decode(file_get_contents('php://input'), true) ?? [];
 $action = $body['action'] ?? '';
 
 if ($action === 'save') {
-    $id         = (int)($body['id'] ?? 0);
-    $category   = trim($body['category'] ?? '');
-    $name       = trim($body['name'] ?? '');
-    $unit_price = (float)($body['unit_price'] ?? 0);
-    $unit       = trim($body['unit'] ?? '');
-    $unit_name  = trim($body['unit_name'] ?? '');
-    $weight     = (float)($body['weight'] ?? 1);
-    $notes      = trim($body['notes'] ?? '');
-    $is_active  = (int)($body['is_active'] ?? 1);
+    $id           = (int)($body['id'] ?? 0);
+    $category     = trim($body['category'] ?? '');
+    $name         = trim($body['name'] ?? '');
+    $unit_price   = (float)($body['unit_price'] ?? 0);
+    $unit         = trim($body['unit'] ?? '');
+    $unit_name    = trim($body['unit_name'] ?? '');
+    $weight       = (float)($body['weight'] ?? 1);
+    $engine       = trim($body['engine'] ?? '') ?: null;
+    $thickness_mm = (int)($body['thickness_mm'] ?? 0);
+    $width_mm     = (int)($body['width_mm'] ?? 0);
+    $notes        = trim($body['notes'] ?? '');
+    $is_active    = (int)($body['is_active'] ?? 1);
 
     if (!$name) { echo json_encode(['error' => '항목을 입력하세요.']); exit; }
 
     if ($id) {
-        $pdo->prepare('UPDATE cost_table SET category=?, name=?, unit_price=?, unit=?, unit_name=?, weight=?, notes=?, is_active=? WHERE id=?')
-            ->execute([$category, $name, $unit_price, $unit, $unit_name, $weight, $notes, $is_active, $id]);
+        $pdo->prepare('UPDATE cost_table SET category=?, name=?, unit_price=?, unit=?, unit_name=?, weight=?, engine=?, thickness_mm=?, width_mm=?, notes=?, is_active=? WHERE id=?')
+            ->execute([$category, $name, $unit_price, $unit, $unit_name, $weight, $engine, $thickness_mm, $width_mm, $notes, $is_active, $id]);
     } else {
         $maxOrder = (int)$pdo->query('SELECT COALESCE(MAX(sort_order),0) FROM cost_table')->fetchColumn();
-        $pdo->prepare('INSERT INTO cost_table (category, name, unit_price, unit, unit_name, weight, notes, sort_order, is_active) VALUES (?,?,?,?,?,?,?,?,?)')
-            ->execute([$category, $name, $unit_price, $unit, $unit_name, $weight, $notes, $maxOrder + 1, $is_active]);
+        $pdo->prepare('INSERT INTO cost_table (category, name, unit_price, unit, unit_name, weight, engine, thickness_mm, width_mm, notes, sort_order, is_active) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)')
+            ->execute([$category, $name, $unit_price, $unit, $unit_name, $weight, $engine, $thickness_mm, $width_mm, $notes, $maxOrder + 1, $is_active]);
         $id = (int)$pdo->lastInsertId();
     }
 

@@ -98,6 +98,28 @@
                 <label>가중치</label>
                 <input id="wtWeight" type="number" min="0" step="0.01" placeholder="1.00" class="num-input">
             </div>
+            <div class="adm-mfield" id="wtGridFields" style="display:none;">
+                <label>엔진</label>
+                <select id="wtEngine">
+                    <option value="">— 공통 —</option>
+                    <option value="classic">classic</option>
+                    <option value="square">square</option>
+                    <option value="cross">cross</option>
+                    <option value="diamond">diamond</option>
+                    <option value="triangle">triangle</option>
+                    <option value="hexagon">hexagon</option>
+                </select>
+            </div>
+            <div class="wt-price-row" id="wtDimFields" style="display:none;">
+                <div class="adm-mfield wt-price-field">
+                    <label>두께 (mm)</label>
+                    <input id="wtThickness" type="number" min="0" step="1" placeholder="0" class="num-input">
+                </div>
+                <div class="adm-mfield wt-price-field">
+                    <label>폭 (mm)</label>
+                    <input id="wtWidth" type="number" min="0" step="1" placeholder="0" class="num-input">
+                </div>
+            </div>
             <div class="adm-mfield">
                 <label>메모</label>
                 <textarea id="wtNotes" rows="3" placeholder="특이사항, 구매처, 참고사항 등"

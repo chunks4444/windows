@@ -52,9 +52,15 @@ function render() {
     bindDrag();
 }
 
+function toggleGridFields() {
+    const isGrid = document.getElementById('wtCategory').value === 'grid';
+    document.getElementById('wtGridFields').style.display = isGrid ? '' : 'none';
+    document.getElementById('wtDimFields').style.display  = isGrid ? '' : 'none';
+}
+
 function openModal(id) {
     const it = id ? items.find(x => x.id == id) : null;
-    document.getElementById('wtModalTitle').textContent = it ? '항목 수정' : '항목 추가';
+    document.getElementById('wtModalTitle').textContent   = it ? '항목 수정' : '항목 추가';
     document.getElementById('wtId').value        = it?.id ?? '';
     document.getElementById('wtCategory').value  = it?.category ?? '';
     document.getElementById('wtName').value      = it?.name ?? '';
@@ -62,7 +68,11 @@ function openModal(id) {
     document.getElementById('wtUnit').value      = it?.unit ?? '';
     document.getElementById('wtUnitName').value  = it?.unit_name ?? '';
     document.getElementById('wtWeight').value    = it ? parseFloat(it.weight).toFixed(2) : '1.00';
+    document.getElementById('wtEngine').value    = it?.engine ?? '';
+    document.getElementById('wtThickness').value = it?.thickness_mm ?? '0';
+    document.getElementById('wtWidth').value     = it?.width_mm ?? '0';
     document.getElementById('wtNotes').value     = it?.notes ?? '';
+    toggleGridFields();
     document.getElementById('wtModalOverlay').classList.add('open');
     setTimeout(() => document.getElementById('wtName').focus(), 50);
 }
@@ -71,15 +81,18 @@ function closeModal() { document.getElementById('wtModalOverlay').classList.remo
 
 async function saveItem() {
     const body = {
-        action:     'save',
-        id:         parseInt(document.getElementById('wtId').value) || 0,
-        category:   document.getElementById('wtCategory').value.trim(),
-        name:       document.getElementById('wtName').value.trim(),
-        unit_price: parseFloat(document.getElementById('wtUnitPrice').value) || 0,
-        unit:       document.getElementById('wtUnit').value.trim(),
-        unit_name:  document.getElementById('wtUnitName').value.trim(),
-        weight:     parseFloat(document.getElementById('wtWeight').value) || 1,
-        notes:      document.getElementById('wtNotes').value.trim(),
+        action:       'save',
+        id:           parseInt(document.getElementById('wtId').value) || 0,
+        category:     document.getElementById('wtCategory').value.trim(),
+        name:         document.getElementById('wtName').value.trim(),
+        unit_price:   parseFloat(document.getElementById('wtUnitPrice').value) || 0,
+        unit:         document.getElementById('wtUnit').value.trim(),
+        unit_name:    document.getElementById('wtUnitName').value.trim(),
+        weight:       parseFloat(document.getElementById('wtWeight').value) || 1,
+        engine:       document.getElementById('wtEngine').value.trim(),
+        thickness_mm: parseInt(document.getElementById('wtThickness').value) || 0,
+        width_mm:     parseInt(document.getElementById('wtWidth').value) || 0,
+        notes:        document.getElementById('wtNotes').value.trim(),
     };
     if (!body.name) { alert('항목을 입력하세요.'); return; }
     const res  = await fetch(API, { method: 'POST', headers: _h(), body: JSON.stringify(body) });
@@ -121,6 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('wtModalOverlay').addEventListener('click', e => {
         if (e.target === e.currentTarget) closeModal();
     });
+    document.getElementById('wtCategory').addEventListener('change', toggleGridFields);
     document.getElementById('thCategory').addEventListener('click', () => {
         sortDir = sortDir === 1 ? -1 : 1;
         render();
