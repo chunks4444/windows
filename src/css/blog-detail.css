@@ -61,7 +61,7 @@ body { background: var(--page-bg, #F2F3F4); }
     margin: 0;
 }
 .bd-body h2, .bd-body h3 {
-    font-weight: 500; letter-spacing: -.01em; color: var(--text-1);
+    font-weight: 600; letter-spacing: -.01em; color: var(--text-1);
     margin: 2rem 0 1rem;
 }
 .bd-body h2 { font-size: var(--fs-22); }
@@ -70,7 +70,7 @@ body { background: var(--page-bg, #F2F3F4); }
     margin: 0 0 1.4rem 1.4rem;
 }
 .bd-body li { margin-bottom: .4rem; }
-.bd-body strong, .bd-body b { font-weight: 500; }
+.bd-body strong, .bd-body b { font-weight: 600; }
 .bd-body a { color: var(--teal); text-decoration: underline; }
 .bd-body blockquote {
     border-left: 3px solid var(--teal);
