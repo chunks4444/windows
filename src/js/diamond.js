@@ -514,8 +514,8 @@ async function draw() {
         el.innerHTML = `<span class="slat-len">${p.slatW}×${geo.slatT}×${item.len}mm</span><span class="slat-cnt">${item.cnt}개</span>`;
         diagListEl.appendChild(el);
     });
-    document.getElementById('spMtVLen').textContent = `${geo.frameThick}×${p.mtW}×${p.mtVLen}mm`;
-    document.getElementById('spMtHLen').textContent = `${geo.frameThick}×${p.mtW}×${p.mtHLen}mm`;
+    document.getElementById('spMtVLen').textContent = `${p.mtFace}×${p.mtW}×${p.mtVLen}mm`;
+    document.getElementById('spMtHLen').textContent = `${p.mtFace}×${p.mtW}×${p.mtHLen}mm`;
 
     // draw() 안에서 ctx를 재할당 가능하도록 로컬 변수로 섀도잉
     let ctx = canvas.getContext('2d');

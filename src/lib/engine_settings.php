@@ -12,6 +12,7 @@ function engine_setting_defaults(string $engine): array {
         'frameH'      => '60',
         'frameThick'  => '30',
         'frameGap'    => '2',
+        'muntolFace'  => '30',   // 문틀 정면 보이는 폭 (mm) — 부재 표시·도면 기준
         'muntolT'     => '38',   // 문틀 두께 (mm) — 실제 목재 두께 (정면 30mm + 턱 8mm)
         'muntolW'     => '80',   // 문틀 폭 (mm) — 벽 안으로 들어가는 설치 깊이
         'slat'        => '12',

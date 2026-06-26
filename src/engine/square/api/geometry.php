@@ -164,6 +164,7 @@ $parts = [
     'pungpanT'       => $_pT,
     'mtVLen'         => (int)$frameOpeningH,
     'mtHLen'         => (int)$frameOpeningW,
+    'mtFace'          => (int)$_es['muntolFace'],
     'mtW'            => $_wMt,
     'mtT'            => $_tMt,
     'woodVolMm3'     => (int)$_vol,

@@ -269,6 +269,7 @@ $parts['slatW']          = $_wS;
 $parts['pungpanT']       = $_pT;
 $parts['mtVLen']         = (int)$frameOpeningH;
 $parts['mtHLen']         = (int)$frameOpeningW;
+$parts['mtFace']          = (int)$_es['muntolFace'];
 $parts['mtW']            = $_wMt;
 $parts['mtT']            = $_tMt;
 $parts['woodVolMm3']     = (int)$_vol;
