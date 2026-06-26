@@ -70,7 +70,7 @@ body { background: var(--page-bg, #F2F3F4); }
     margin: 0 0 1.4rem 1.4rem;
 }
 .bd-body li { margin-bottom: .4rem; }
-.bd-body strong, .bd-body b { font-weight: 600; }
+.bd-body strong, .bd-body b { font-weight: 500; }
 .bd-body a { color: var(--teal); text-decoration: underline; }
 .bd-body blockquote {
     border-left: 3px solid var(--teal);
