@@ -133,8 +133,8 @@ $_JAE = 33 * 33 * 3600;
 $_wU  = (int)($_es['ulgeomiW']             ?? $_d['울거미']['width_mm'] ?? 33);
 $_wS  = (int)($_es['slatW']               ?? $_d['살']['width_mm']    ?? 20);
 $_pT  = (int)($_es['pungpanT']            ?? 15);
-$_tMt = (int)($_d['문틀']['thickness_mm'] ?? 30);
-$_wMt = (int)($_d['문틀']['width_mm']     ?? 33);
+$_tMt = $frameThick;
+$_wMt = (int)($_es['muntolW'] ?? $_d['문틀']['width_mm'] ?? 33);
 
 $_volDoor   = round($outerH + 2*$slatT) * (2*$doorCount)                * $frameW * $_wU
             + round($outerW + 2*$slatT) * (($pungpanOn?3:2)*$doorCount) * $frameH * $_wU

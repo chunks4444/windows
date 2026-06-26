@@ -12,6 +12,7 @@ function engine_setting_defaults(string $engine): array {
         'frameH'      => '60',
         'frameThick'  => '30',
         'frameGap'    => '2',
+        'muntolW'     => '33',   // 문틀 폭 (mm) — 원가 계산용
         'slat'        => '12',
         'ulgeomiW'    => '33',   // 울거미 폭 (mm) — 원가 계산용
         'slatW'       => '20',   // 살 폭 (mm) — 원가 계산용

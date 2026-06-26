@@ -21,6 +21,7 @@ const KEY_LABELS = {
     rotate:      '패턴 세로 방향 (0/1)',
     frameThick:  '문틀 두께 (mm)',
     frameGap:    '문틀-문 설치 틈 (mm)',
+    muntolW:     '문틀 폭 (mm)',
     pungpanOn:   '풍판 사용 (0/1)',
     pungpan:     '풍판 높이 (mm)',
     pungpanT:    '풍판 판재 두께 (mm)',
@@ -32,7 +33,7 @@ const SETTING_GROUPS = [
     { label: '문 기본', keys: ['doorType', 'doorCount', 'W', 'H', 'gap'] },
     { label: '울거미', keys: ['frame', 'frameH', 'ulgeomiW'] },
     { label: '살',     keys: ['slat', 'slatW', 'cols', 'ratio', 'patternTop', 'patternMid', 'patternBot', 'shrinkH', 'rotate'] },
-    { label: '문틀',   keys: ['frameThick', 'frameGap'] },
+    { label: '문틀',   keys: ['frameThick', 'muntolW', 'frameGap'] },
     { label: '풍판',   keys: ['pungpanOn', 'pungpan', 'pungpanT'] },
     { label: '기타',   keys: ['dimensionOn', 'basePadding'] },
 ];

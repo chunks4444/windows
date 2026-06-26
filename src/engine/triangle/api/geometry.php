@@ -250,8 +250,8 @@ $_JAE = 33 * 33 * 3600;
 $_wU  = (int)($_es['ulgeomiW']             ?? $_d['울거미']['width_mm'] ?? 33);
 $_wS  = (int)($_es['slatW']               ?? $_d['살']['width_mm']    ?? 20);
 $_pT  = (int)($_es['pungpanT']            ?? 15);
-$_tMt = (int)($_d['문틀']['thickness_mm'] ?? 30);
-$_wMt = (int)($_d['문틀']['width_mm']     ?? 33);
+$_tMt = $frameThick;
+$_wMt = (int)($_es['muntolW'] ?? $_d['문틀']['width_mm'] ?? 33);
 
 $_hSLen   = $rotateOn ? round($innerH + 2*$tenonDepth) : round($innerW + 2*$tenonDepth);
 $_hSCnt_n = $rotateOn ? max(0, $cols-1) * $doorCount : max(0, $rows-1) * $doorCount;
