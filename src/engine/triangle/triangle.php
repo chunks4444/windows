@@ -413,8 +413,8 @@ header('Pragma: no-cache');
                 <div class="sb-section">
                     <div class="sb-price-box">
                         <div class="sb-price-label">예상가격</div>
-                        <div class="sb-price-amount"><span class="sb-price-start">350,000</span><span class="sb-price-end"> ~ 420,000원</span></div>
-                        <div class="sb-price-note">배송비, 시공비 제외</div>
+                        <div class="sb-price-amount"><span class="sb-price-start">–</span><span class="sb-price-end"></span></div>
+                        <div class="sb-price-note">목재비 <span id="spWoodCost">–</span></div>
                     </div>
                     <div style="display:flex;gap:6px;width:100%;">
                         <button class="hbtn hbtn-primary" id="btnOrder" style="flex:1;justify-content:center;width:100%;">
@@ -432,9 +432,13 @@ header('Pragma: no-cache');
                     <div class="sb-section-title" style="cursor:default;">마감</div>
                     <div class="ctrl">
                         <select id="txtWood" class="sb-select">
-                            <option value="hongsong">홍송</option>
-                            <option value="sonamuPine">소나무</option>
-                            <option value="oak">참나무</option>
+                            <?php foreach (get_wood_options() as $w): ?>
+                            <option value="<?= htmlspecialchars($w['name'], ENT_QUOTES) ?>"
+                                data-price="<?= (int)$w['unit_price'] ?>"
+                                data-weight="<?= (float)$w['weight'] ?>">
+                                <?= htmlspecialchars($w['name'], ENT_QUOTES) ?>
+                            </option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                     <div class="ctrl">

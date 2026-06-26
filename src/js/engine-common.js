@@ -1202,45 +1202,50 @@ function drawSvgInserts() {
 })();
 
 (function () {
-    // 예상가격 임시 추정 로직: 실제 견적 계산이 붙기 전까지,
-    // 문 크기/짝수/마감재 같은 파라미터를 바꾸면 가격도 같이 바뀌는 것처럼 보여주는 placeholder.
-    // 추후 실제 견적 로직이 완성되면 이 함수 내부만 실제 계산값으로 교체하면 된다.
-    const WOOD_RATIO = { hongsong: 0, sonamuPine: 0.45, oak: 1 };
+    function won(n) { return Math.round(n).toLocaleString('ko-KR'); }
 
-    function clamp(v, min, max) { return Math.min(max, Math.max(min, v)); }
-    function won(n) { return (Math.round(n / 1000) * 1000).toLocaleString('ko-KR'); }
-    function val(id, fallback) {
-        const el = document.getElementById(id);
-        const n = el ? parseFloat(el.value) : NaN;
-        return Number.isFinite(n) ? n : fallback;
-    }
-
-    function updatePriceBox() {
+    function updateWoodCost() {
+        const woodEl  = document.getElementById('spWoodCost');
         const startEl = document.querySelector('.sb-price-start');
-        const endEl = document.querySelector('.sb-price-end');
-        if (!startEl || !endEl) return;
+        const endEl   = document.querySelector('.sb-price-end');
 
-        const W = val('numW', val('txtW', 1200));
-        const H = val('numH', val('txtH', 2000));
-        const doorCount = val('txtDoorCount', 1);
-        const wood = document.getElementById('txtWood')?.value || 'hongsong';
+        const p = window.__pmokLastParts;
+        if (!p?.woodJae) {
+            if (woodEl)  woodEl.textContent  = '–';
+            if (startEl) startEl.textContent = '–';
+            if (endEl)   endEl.textContent   = '';
+            window.__pmokEstimatedPrice = 0;
+            return;
+        }
 
-        const areaRatio = clamp((W * H - 400 * 400) / (3000 * 3000 - 400 * 400), 0, 1);
-        const doorRatio = clamp((doorCount - 1) / 3, 0, 1);
-        const woodRatio = WOOD_RATIO[wood] ?? 0;
+        const opt    = document.getElementById('txtWood')?.selectedOptions?.[0];
+        const price  = parseFloat(opt?.dataset?.price  ?? 0);
+        const weight = parseFloat(opt?.dataset?.weight ?? 1);
+        if (!price) {
+            if (woodEl)  woodEl.textContent  = '–';
+            if (startEl) startEl.textContent = '–';
+            if (endEl)   endEl.textContent   = '';
+            window.__pmokEstimatedPrice = 0;
+            return;
+        }
 
-        const score = areaRatio * 0.5 + doorRatio * 0.3 + woodRatio * 0.2; // 0~1
-        const center = 350000 + score * 90000;
+        const woodCost    = Math.round(p.woodJae * (p.techWeight ?? 1) * weight * price);
+        const estMin      = woodCost * 5;
+        const estMax      = Math.round(estMin * 1.15);
 
-        startEl.textContent = won(center - 35000);
-        endEl.textContent = ` ~ ${won(center + 35000)}원`;
+        if (woodEl)  woodEl.textContent  = won(woodCost) + '원';
+        if (startEl) startEl.textContent = won(estMin);
+        if (endEl)   endEl.textContent   = ` ~ ${won(estMax)}원`;
+
+        window.__pmokEstimatedPrice = estMin;
     }
 
     document.addEventListener('DOMContentLoaded', () => {
         const sidebar = document.getElementById('sidebar');
-        updatePriceBox();
         if (!sidebar) return;
-        sidebar.addEventListener('input', updatePriceBox);
-        sidebar.addEventListener('change', updatePriceBox);
+        sidebar.addEventListener('change', updateWoodCost);
+        sidebar.addEventListener('input',  updateWoodCost);
     });
+
+    window.__pmokUpdateWoodCost = updateWoodCost;
 })();

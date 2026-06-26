@@ -84,6 +84,17 @@ function get_engine_part_dims(string $engine): array {
     }
 }
 
+// cost_table의 wood 카테고리 활성 항목 반환. 없으면 기본 fallback.
+function get_wood_options(): array {
+    try {
+        $stmt = db()->prepare("SELECT name, unit_price, weight FROM cost_table WHERE category='wood' AND is_active=1 ORDER BY sort_order, id");
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if ($rows) return $rows;
+    } catch (Throwable $e) {}
+    return [['name'=>'소나무','unit_price'=>6000,'weight'=>1.35]];
+}
+
 // cost_table의 finish 카테고리 활성 항목 반환. 없으면 기본 2개 fallback.
 function get_finish_options(): array {
     try {

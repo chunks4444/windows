@@ -476,6 +476,8 @@ async function draw() {
     }
 
     const p = data.parts;
+    window.__pmokLastParts = p;
+    window.__pmokUpdateWoodCost?.();
     document.getElementById('spFrVLen').textContent = p.frVLen;
     document.getElementById('spFrVCnt').textContent = p.frVCnt;
     document.getElementById('spFrHLen').textContent = p.frHLen;
@@ -2039,6 +2041,7 @@ document.getElementById('chkDimension').addEventListener('change', e => { showDi
             deletedSegs: [...deletedSegs],
             addedLines,
             svgInserts,
+            estimatedPrice: window.__pmokEstimatedPrice || 0,
         };
     }
 
