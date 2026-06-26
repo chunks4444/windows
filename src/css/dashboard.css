@@ -558,3 +558,16 @@ body {
     animation: dbSpin 0.6s linear infinite;
 }
 @keyframes dbSpin { to { transform: rotate(360deg); } }
+
+/* 엔진 기본값 관리 — 그룹 헤더 */
+.setting-group-header {
+    background: var(--surface-2, #f0f4f3);
+    color: var(--text-2, #5a6b69);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 6px 10px !important;
+    border-top: 2px solid var(--border, #d8e2e0);
+}
+.setting-label { color: var(--text-2, #5a6b69); font-size: 12px; }
