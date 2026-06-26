@@ -44,13 +44,22 @@ function engine_setting_defaults(string $engine): array {
     }
 }
 
-// 엔진의 현재 설정값 (DB 값으로 기본값을 덮어씀). DB 조회가 실패해도 기본값으로 동작.
+// 엔진의 현재 설정값. DB에 없는 키는 PHP 기본값으로 자동 INSERT → 이후 어드민 UI에서 관리 가능.
 function get_engine_settings(string $engine): array {
     $defaults = engine_setting_defaults($engine);
     try {
-        $stmt = db()->prepare('SELECT setting_key, setting_value FROM engine_settings WHERE engine = ?');
+        $pdo  = db();
+        $stmt = $pdo->prepare('SELECT setting_key, setting_value FROM engine_settings WHERE engine = ?');
         $stmt->execute([$engine]);
         $rows = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+
+        $missing = array_diff_key($defaults, $rows);
+        if ($missing) {
+            $ins = $pdo->prepare('INSERT IGNORE INTO engine_settings (engine, setting_key, setting_value) VALUES (?, ?, ?)');
+            foreach ($missing as $k => $v) {
+                $ins->execute([$engine, $k, $v]);
+            }
+        }
     } catch (Throwable $e) {
         $rows = [];
     }
