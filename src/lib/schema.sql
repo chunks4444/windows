@@ -3,6 +3,9 @@
 -- ============================================================
 
 -- 기존 DB에 컬럼 추가할 경우 아래 ALTER 실행
+-- ALTER TABLE cost_table ADD COLUMN engine       VARCHAR(20)       NULL                COMMENT '엔진명 (classic/square/…, NULL=공통)' AFTER category;
+-- ALTER TABLE cost_table ADD COLUMN thickness_mm SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '부재 두께 mm (문틀만 사용, 살=slatT·울거미=frameW/H)' AFTER weight;
+-- ALTER TABLE cost_table ADD COLUMN width_mm     SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '부재 폭 mm (울거미·살·문틀 공통)' AFTER thickness_mm;
 -- ALTER TABLE drawings ADD COLUMN thumbnail   MEDIUMTEXT   NULL    COMMENT '썸네일 이미지 (data:image/jpeg;base64,…)' AFTER updated_at;
 -- ALTER TABLE drawings ADD COLUMN work_time_sec INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '누적 작업 시간(초)' AFTER thumbnail;
 -- ALTER TABLE users ADD COLUMN role ENUM('s','m','a','u') NOT NULL DEFAULT 'u' COMMENT '권한: s=슈퍼, m=관리자, a=작가, u=회원' AFTER email;

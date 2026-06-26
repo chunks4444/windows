@@ -38,7 +38,7 @@
             <thead>
                 <tr>
                     <th style="width:32px;"></th>
-                    <th style="width:100px;">구분</th>
+                    <th id="thCategory" style="width:100px;cursor:pointer;user-select:none;">구분 <span id="thCategorySort"></span></th>
                     <th>항목</th>
                     <th style="width:140px;text-align:right;">단가</th>
                     <th style="width:80px;">단위</th>
@@ -67,10 +67,12 @@
                 <label>구분</label>
                 <select id="wtCategory">
                     <option value="">— 선택 —</option>
-                    <option value="wood">우드</option>
-                    <option value="grid">그리드</option>
+                    <option value="wood">목재</option>
+                    <option value="oil">오일</option>
+                    <option value="grid">엔진</option>
                     <option value="labor">인건비</option>
                     <option value="overhead">일반경비</option>
+                    <option value="finish">마감</option>
                     <option value="delivery">배송비</option>
                 </select>
             </div>

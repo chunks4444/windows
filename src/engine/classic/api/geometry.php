@@ -171,6 +171,14 @@ $ppPanelH = $pungpanVisible ? ($effectivePungpanH - $frameH) : 0;
 
 $vSlatCnt = max(0, $cols - 1);
 
+// 목재 재수 계산 (1재 = 33×33×3600mm, 단면 고정)
+$_frVLen  = round($outerH + 2 * $slatT);   $frVCnt_n  = 2 * $doorCount;
+$_frHLen  = round($outerW + 2 * $slatT);   $frHCnt_n  = ($pungpanOn ? 3 : 2) * $doorCount;
+$_hSLen   = round($innerW + 2 * $tenonDepth); $hSCnt_n = $hSlatCnt * $doorCount;
+$_vSLen   = round($innerH + 2 * $tenonDepth); $vSCnt_n = $vSlatCnt * $doorCount;
+$_totalMm = $_frVLen * $frVCnt_n + $_frHLen * $frHCnt_n + $_hSLen * $hSCnt_n + $_vSLen * $vSCnt_n;
+$_woodJae = $_totalMm / 3600.0;
+
 $parts = [
     'frVLen'         => (string)round($outerH + 2 * $slatT),
     'frVCnt'         => (2 * $doorCount) . '개',
@@ -184,6 +192,8 @@ $parts = [
     'hSlatCnt'       => ($hSlatCnt * $doorCount) . '개',
     'vSlatLen'       => (string)round($innerH + 2 * $tenonDepth),
     'vSlatCnt'       => ($vSlatCnt * $doorCount) . '개',
+    'woodTotalMm'    => (int)$_totalMm,
+    'woodJae'        => round($_woodJae, 2),
 ];
 
 echo json_encode(['geo' => $geo, 'specs' => $specs, 'parts' => $parts]);

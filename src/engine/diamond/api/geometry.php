@@ -142,6 +142,15 @@ for ($k = $diagN; $k >= 1; $k--) {
     $diagList[] = ['len' => $diagLen, 'cnt' => $diagCnt * $doorCount];
 }
 
+// 목재 재수 계산 (1재 = 33×33×3600mm, 단면 고정)
+$_frVLen  = round($outerH + 2 * $slatT); $_frVCnt_n = 2 * $doorCount;
+$_frHLen  = round($outerW + 2 * $slatT); $_frHCnt_n = ($pungpanOn ? 3 : 2) * $doorCount;
+$_hSLen   = round($innerW + 2 * $tenonDepth); $_hSCnt_n = $hSlatCnt * $doorCount;
+$_vSLen   = round($innerH + 2 * $tenonDepth); $_vSCnt_n = $vSlatCnt * $doorCount;
+$_diagMm  = array_sum(array_map(fn($d) => (float)$d['len'] * $d['cnt'], $diagList));
+$_totalMm = $_frVLen * $_frVCnt_n + $_frHLen * $_frHCnt_n + $_hSLen * $_hSCnt_n + $_vSLen * $_vSCnt_n + $_diagMm;
+$_woodJae = $_totalMm / 3600.0;
+
 $parts = [
     'frVLen'         => (string)round($outerH + 2 * $slatT),
     'frVCnt'         => (2 * $doorCount) . '개',
@@ -156,6 +165,8 @@ $parts = [
     'vSlatLen'       => (string)round($innerH + 2 * $tenonDepth),
     'vSlatCnt'       => ($vSlatCnt * $doorCount) . '개',
     'diagList'       => $diagList,
+    'woodTotalMm'    => (int)$_totalMm,
+    'woodJae'        => round($_woodJae, 2),
 ];
 
 echo json_encode(['geo' => $geo, 'specs' => $specs, 'parts' => $parts]);

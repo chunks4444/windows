@@ -11,13 +11,26 @@ async function load() {
     render();
 }
 
-const CAT_LABEL = { wood:'우드', grid:'그리드', labor:'인건비', overhead:'일반경비', delivery:'배송비' };
+const CAT_LABEL = { wood:'목재', oil:'오일', grid:'엔진', finish:'마감', labor:'인건비', overhead:'일반경비', delivery:'배송비' };
+const CAT_ORDER = ['wood','oil','grid','finish','labor','overhead','delivery'];
 function catLabel(v) { return CAT_LABEL[v] || v || '—'; }
 function fmt(n) { return Number(n).toLocaleString('ko-KR'); }
 function esc(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
+let sortDir = 0; // 0=원본순, 1=오름차순, -1=내림차순
+
 function render() {
-    document.getElementById('wtBody').innerHTML = items.map(it => `
+    let list = items;
+    if (sortDir !== 0) {
+        list = items.slice().sort((a, b) => {
+            const ai = CAT_ORDER.indexOf(a.category), bi = CAT_ORDER.indexOf(b.category);
+            return (ai - bi) * sortDir;
+        });
+    }
+    const sortEl = document.getElementById('thCategorySort');
+    if (sortEl) sortEl.textContent = sortDir === 1 ? '▲' : sortDir === -1 ? '▼' : '';
+
+    document.getElementById('wtBody').innerHTML = list.map(it => `
         <tr data-id="${it.id}" draggable="true">
             <td style="text-align:center;"><span class="drag-handle"><i class="bi bi-grip-vertical"></i></span></td>
             <td style="font-size:12px;color:var(--text-3);">${catLabel(it.category)}</td>
@@ -107,6 +120,10 @@ function bindDrag() {
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('wtModalOverlay').addEventListener('click', e => {
         if (e.target === e.currentTarget) closeModal();
+    });
+    document.getElementById('thCategory').addEventListener('click', () => {
+        sortDir = sortDir === 1 ? -1 : 1;
+        render();
     });
     const user = JSON.parse(localStorage.getItem('pmok_auth_user') || 'null');
     if (!user || user.role !== 's') { document.getElementById('wtAuthWall').style.display = ''; return; }

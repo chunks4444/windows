@@ -460,9 +460,9 @@ header('Pragma: no-cache');
                     </div>
                     <div class="ctrl">
                         <select id="txtFinish" class="sb-select">
-                            <option value="changhoji">창호지</option>
-                            <option value="glass">유리</option>
-                            <option value="acrylic">아크릴</option>
+                            <?php foreach (get_finish_options() as $opt): ?>
+                            <option value="<?= htmlspecialchars($opt, ENT_QUOTES) ?>"><?= htmlspecialchars($opt, ENT_QUOTES) ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                     <hr class="sb-divider">

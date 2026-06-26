@@ -242,4 +242,14 @@ $parts['diagList'] = array_map(function($item) use ($doorCount) {
     return ['len' => $item['len'], 'cnt' => $item['cnt'] * 2 * $doorCount];
 }, $merged);
 
+// 목재 재수 계산 (1재 = 33×33×3600mm, 단면 고정)
+$_frVLen  = round($outerH + 2 * $slatT); $_frVCnt_n = 2 * $doorCount;
+$_frHLen  = round($outerW + 2 * $slatT); $_frHCnt_n = ($pungpanOn ? 3 : 2) * $doorCount;
+$_hSLen   = $rotateOn ? round($innerH + 2 * $tenonDepth) : round($innerW + 2 * $tenonDepth);
+$_hSCnt_n = $rotateOn ? max(0, $cols - 1) * $doorCount : max(0, $rows - 1) * $doorCount;
+$_diagMm  = array_sum(array_map(fn($d) => (float)$d['len'] * $d['cnt'], $parts['diagList']));
+$_totalMm = $_frVLen * $_frVCnt_n + $_frHLen * $_frHCnt_n + $_hSLen * $_hSCnt_n + $_diagMm;
+$parts['woodTotalMm'] = (int)$_totalMm;
+$parts['woodJae']     = round($_totalMm / 3600.0, 2);
+
 echo json_encode(['geo' => $geo, 'specs' => $specs, 'parts' => $parts]);

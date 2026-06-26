@@ -822,8 +822,8 @@
 
 // ── SVG 문양 삽입 (꽃살 등 장식 문양) — 6개 엔진 공용 ──────
 // baseScale: 삽입 시 자동으로 맞춘 기준 크기(로직단위/원본px), scaleMul: 슬라이더(1.0 = 100% = 처음 삽입된 크기)
-let svgInserts       = []; // [{ id, url, cx, cy, baseScale, scaleMul, rotation, w, h }] cx/cy는 로직 좌표
-let selectedInsertId = null;
+let svgInserts        = []; // [{ id, url, cx, cy, baseScale, scaleMul, rotation, w, h }] cx/cy는 로직 좌표
+let selectedInsertIds = new Set();
 const _motifImgCache = new Map();
 
 function _loadMotifImg(url) {
@@ -850,39 +850,50 @@ function addSvgInsert(url, naturalW, naturalH) {
     const baseScale = targetSize / Math.max(w, h);
     const id = 'ins_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
     svgInserts.push({ id, url, cx: 0, cy: 0, baseScale, scaleMul: 1, rotation: 0, w, h });
-    selectedInsertId = id;
+    selectedInsertIds = new Set([id]);
     _loadMotifImg(url);
     renderSvgInsertPanel();
     draw();
 }
 
 function duplicateSelectedInsert() {
-    const ins = svgInserts.find(i => i.id === selectedInsertId);
-    if (!ins) return;
-    const id = 'ins_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+    if (!selectedInsertIds.size) return;
     const offset = Math.min(logW, logH) * 0.04;
-    svgInserts.push({ ...ins, id, cx: ins.cx + offset, cy: ins.cy + offset });
-    selectedInsertId = id;
+    const newIds = new Set();
+    svgInserts.filter(i => selectedInsertIds.has(i.id)).forEach(ins => {
+        const id = 'ins_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+        svgInserts.push({ ...ins, id, cx: ins.cx + offset, cy: ins.cy + offset });
+        newIds.add(id);
+    });
+    selectedInsertIds = newIds;
     renderSvgInsertPanel();
     draw();
 }
 
 function selectSvgInsert(id) {
-    selectedInsertId = id;
+    selectedInsertIds = id ? new Set([id]) : new Set();
+    renderSvgInsertPanel();
+    draw();
+}
+
+function toggleSelectInsert(id) {
+    if (selectedInsertIds.has(id)) selectedInsertIds.delete(id);
+    else selectedInsertIds.add(id);
     renderSvgInsertPanel();
     draw();
 }
 
 function removeSelectedInsert() {
-    if (!selectedInsertId) return;
-    svgInserts = svgInserts.filter(i => i.id !== selectedInsertId);
-    selectedInsertId = null;
+    if (!selectedInsertIds.size) return;
+    svgInserts = svgInserts.filter(i => !selectedInsertIds.has(i.id));
+    selectedInsertIds.clear();
     renderSvgInsertPanel();
     draw();
 }
 
 function updateSelectedInsert(patch) {
-    const ins = svgInserts.find(i => i.id === selectedInsertId);
+    if (selectedInsertIds.size !== 1) return;
+    const ins = svgInserts.find(i => i.id === [...selectedInsertIds][0]);
     if (!ins) return;
     Object.assign(ins, patch);
     draw();
@@ -891,14 +902,34 @@ function updateSelectedInsert(patch) {
 function renderSvgInsertPanel() {
     const panel = document.getElementById('svgInsertControls');
     if (!panel) return;
-    const ins = svgInserts.find(i => i.id === selectedInsertId);
-    panel.style.display = ins ? '' : 'none';
-    if (!ins) return;
-    _normalizeInsert(ins);
-    const scaleEl = document.getElementById('svgInsertScale');
-    const rotEl   = document.getElementById('svgInsertRotation');
-    if (scaleEl) scaleEl.value = Math.round(ins.scaleMul * 100);
-    if (rotEl)   rotEl.value   = ins.rotation;
+    const count = selectedInsertIds.size;
+    panel.style.display = count ? '' : 'none';
+    if (!count) return;
+
+    const primaryId  = count === 1 ? [...selectedInsertIds][0] : null;
+    const ins        = primaryId ? svgInserts.find(i => i.id === primaryId) : null;
+    const scaleEl    = document.getElementById('svgInsertScale');
+    const rotEl      = document.getElementById('svgInsertRotation');
+    const scaleRow   = scaleEl?.closest('.svg-insert-row');
+    const rotRow     = rotEl?.closest('.svg-insert-row');
+
+    if (ins) {
+        _normalizeInsert(ins);
+        if (scaleEl) scaleEl.value = Math.round(ins.scaleMul * 100);
+        if (rotEl)   rotEl.value   = ins.rotation;
+    }
+    if (scaleRow) scaleRow.style.display = ins ? '' : 'none';
+    if (rotRow)   rotRow.style.display   = ins ? '' : 'none';
+
+    let groupInfo = document.getElementById('svgInsertGroupInfo');
+    if (!groupInfo) {
+        groupInfo = document.createElement('div');
+        groupInfo.id = 'svgInsertGroupInfo';
+        groupInfo.style.cssText = 'font-size:11px;color:var(--text-3);padding:2px 0 4px;';
+        panel.insertBefore(groupInfo, panel.firstChild);
+    }
+    groupInfo.textContent = count > 1 ? `${count}개 선택됨 (Shift+클릭으로 추가/해제)` : '';
+    groupInfo.style.display = count > 1 ? '' : 'none';
 }
 
 // insert의 중심(canvas 로직 좌표)과 회전 적용된 우하단 모서리(리사이즈 핸들 위치)를 계산
@@ -935,7 +966,7 @@ function drawSvgInserts() {
         ctx.translate(x, y);
         ctx.rotate(ins.rotation * Math.PI / 180);
         ctx.drawImage(img, -w / 2, -h / 2, w, h);
-        if (ins.id === selectedInsertId) {
+        if (selectedInsertIds.has(ins.id)) {
             ctx.setLineDash([5, 4]);
             ctx.strokeStyle = '#3A8C82';
             ctx.lineWidth = 1.5;
@@ -943,7 +974,7 @@ function drawSvgInserts() {
             ctx.setLineDash([]);
         }
         ctx.restore();
-        if (ins.id === selectedInsertId) {
+        if (selectedInsertIds.size === 1 && selectedInsertIds.has(ins.id)) {
             const corner = _insertCorner(ins);
             ctx.beginPath();
             ctx.arc(corner.x, corner.y, 6, 0, Math.PI * 2);
@@ -979,22 +1010,22 @@ function drawSvgInserts() {
         return null;
     }
 
-    let insertDrag = null; // { id, mode: 'move'|'resize', ... }
+    let insertDrag = null; // { mode: 'move'|'resize', starts?: Map, id?: string, ... }
 
-    function onDown(clientX, clientY, targetEl) {
-        // 캔버스 자체(또는 컨테이너 빈 배경)를 클릭한 경우만 처리. 제목바/줌툴바 등
-        // 캔버스 위에 떠 있는 다른 UI를 클릭한 경우는 절대 가로채지 않음.
+    function onDown(clientX, clientY, targetEl, shiftKey = false) {
         if (targetEl !== canvas && targetEl !== container) return false;
 
-        if (selectedInsertId) {
-            const sel = svgInserts.find(i => i.id === selectedInsertId);
+        // 리사이즈 핸들: 단일 선택일 때만
+        if (selectedInsertIds.size === 1) {
+            const primaryId = [...selectedInsertIds][0];
+            const sel = svgInserts.find(i => i.id === primaryId);
             if (sel) {
                 _normalizeInsert(sel);
                 const corner = _insertCorner(sel);
                 const p = toLogical(clientX, clientY);
                 if (Math.hypot(p.x - corner.x, p.y - corner.y) <= SVG_INSERT_HANDLE_HIT_R) {
                     insertDrag = {
-                        id: sel.id, mode: 'resize',
+                        mode: 'resize', id: primaryId,
                         centerX: corner.cx, centerY: corner.cy,
                         startDist: Math.hypot(corner.x - corner.cx, corner.y - corner.cy),
                         startScaleMul: sel.scaleMul,
@@ -1006,20 +1037,32 @@ function drawSvgInserts() {
 
         const hit = hitTestInsert(clientX, clientY);
         if (!hit) {
-            if (selectedInsertId) selectSvgInsert(null);
+            if (selectedInsertIds.size) selectSvgInsert(null);
             return false;
         }
-        selectSvgInsert(hit.id);
-        insertDrag = { id: hit.id, mode: 'move', startCx: hit.cx, startCy: hit.cy, startClientX: clientX, startClientY: clientY };
+
+        if (shiftKey) {
+            toggleSelectInsert(hit.id);
+        } else if (!selectedInsertIds.has(hit.id)) {
+            selectSvgInsert(hit.id);
+        }
+
+        if (selectedInsertIds.size) {
+            insertDrag = {
+                mode: 'move',
+                starts: new Map(svgInserts.filter(i => selectedInsertIds.has(i.id)).map(i => [i.id, { cx: i.cx, cy: i.cy }])),
+                startClientX: clientX, startClientY: clientY,
+            };
+        }
         return true;
     }
 
     function onMove(clientX, clientY) {
         if (!insertDrag) return false;
-        const ins = svgInserts.find(i => i.id === insertDrag.id);
-        if (!ins) { insertDrag = null; return false; }
 
         if (insertDrag.mode === 'resize') {
+            const ins = svgInserts.find(i => i.id === insertDrag.id);
+            if (!ins) { insertDrag = null; return false; }
             const p = toLogical(clientX, clientY);
             const dist = Math.hypot(p.x - insertDrag.centerX, p.y - insertDrag.centerY);
             if (insertDrag.startDist > 0) {
@@ -1034,11 +1077,17 @@ function drawSvgInserts() {
 
         const dcx = (clientX - insertDrag.startClientX) / scaleFactor;
         const dcy = (clientY - insertDrag.startClientY) / scaleFactor;
-        let cx = insertDrag.startCx + dcx;
-        let cy = insertDrag.startCy + dcy;
-        const snapped = typeof snapToNode === 'function' ? snapToNode(cx, cy) : null;
-        if (snapped) { cx = snapped.cx; cy = snapped.cy; }
-        ins.cx = cx; ins.cy = cy;
+        svgInserts.forEach(ins => {
+            const start = insertDrag.starts?.get(ins.id);
+            if (!start) return;
+            let cx = start.cx + dcx;
+            let cy = start.cy + dcy;
+            if (selectedInsertIds.size === 1) {
+                const snapped = typeof snapToNode === 'function' ? snapToNode(cx, cy) : null;
+                if (snapped) { cx = snapped.cx; cy = snapped.cy; }
+            }
+            ins.cx = cx; ins.cy = cy;
+        });
         draw();
         return true;
     }
@@ -1054,7 +1103,7 @@ function drawSvgInserts() {
 
         // 마우스: 캡처 단계에서 먼저 검사해 엔진 자체 mousedown(팬 등)보다 우선권을 가짐
         container.addEventListener('mousedown', e => {
-            if (onDown(e.clientX, e.clientY, e.target)) e.stopImmediatePropagation();
+            if (onDown(e.clientX, e.clientY, e.target, e.shiftKey)) e.stopImmediatePropagation();
         }, { capture: true });
         window.addEventListener('mousemove', e => {
             if (onMove(e.clientX, e.clientY)) e.stopImmediatePropagation();
