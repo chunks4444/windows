@@ -102,9 +102,10 @@ function ai_render_openai(string $imageBase64, string $prompt): array {
     $tmpImg = ai_prepare_image($imageBase64);
     if (!$tmpImg) return ['error' => '이미지 디코딩 실패'];
 
-    $fullPrompt = 'Keep the exact same window structure, grid pattern, proportions, and composition unchanged. '
-        . 'Apply only surface texture and material: ' . $prompt
-        . '. Do not alter the shape, lines, or layout of the window frame and lattice.';
+    $fullPrompt = 'CRITICAL: Do NOT change the window design, shape, structure, frame, lattice pattern, proportions, or layout in any way. '
+        . 'Only apply realistic surface rendering, lighting, and material texture. '
+        . 'Render this scene as: ' . $prompt
+        . '. The window frame and lattice must remain pixel-perfect identical to the input.';
 
     $ch = curl_init('https://api.openai.com/v1/images/edits');
     curl_setopt_array($ch, [

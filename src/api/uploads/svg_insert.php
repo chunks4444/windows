@@ -6,6 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 require_once __DIR__ . '/../../lib/jwt.php';
+require_once __DIR__ . '/../../lib/svg_sanitize.php';
 
 $payload = jwt_from_request();
 if (!$payload) {
@@ -29,6 +30,8 @@ if (stripos($svg, '<svg') === false) {
 if (preg_match('/<script[\s>]|[\s"\']on[a-z]+\s*=\s*["\']|javascript:/i', $svg)) {
     http_response_code(422); echo json_encode(['error' => '허용되지 않는 내용이 포함된 SVG입니다.']); exit;
 }
+
+$svg = svg_strip_background($svg);
 
 $userId = (int)$payload['sub'];
 $dir    = __DIR__ . '/../../../uploads/svg_insert/' . $userId;

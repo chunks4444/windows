@@ -7,6 +7,7 @@ set_exception_handler(function(Throwable $e) {
 });
 require_once __DIR__ . '/../../lib/db.php';
 require_once __DIR__ . '/../../lib/jwt.php';
+require_once __DIR__ . '/../../lib/svg_sanitize.php';
 
 $payload = jwt_from_request();
 if (!$payload || ($payload['role'] ?? '') !== 's') {
@@ -53,6 +54,8 @@ function saveSvgMotifFile(string $svgInput): ?string {
     if (stripos($svg, '<svg') === false) return null;
     // 기본적인 악성 스크립트 방지
     if (preg_match('/<script[\s>]|[\s"\']on[a-z]+\s*=\s*["\']|javascript:/i', $svg)) return null;
+
+    $svg = svg_strip_background($svg);
 
     $dir = __DIR__ . '/../../../uploads/svg_motifs';
     if (!is_dir($dir)) mkdir($dir, 0755, true);
