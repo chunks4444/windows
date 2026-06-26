@@ -260,6 +260,12 @@ $_vol = round($outerH + 2*$slatT) * (2*$doorCount)                * $frameW * $_
       + array_sum(array_map(fn($d) => (float)$d['len'] * $d['cnt'] * $slatT * $_wS, $parts['diagList']))
       + $frameOpeningH * 2 * $_tMt * $_wMt
       + $frameOpeningW * 2 * $_tMt * $_wMt;
+$parts['frT']         = $_wU;
+$parts['slatW']       = $_wS;
+$parts['mtVLen']      = (int)$frameOpeningH;
+$parts['mtHLen']      = (int)$frameOpeningW;
+$parts['mtW']         = $_wMt;
+$parts['mtT']         = $_tMt;
 $parts['woodVolMm3']  = (int)$_vol;
 $parts['woodJae']     = round($_vol / $_JAE, 2);
 $parts['techWeight']  = (float)($_d['기술난이도']['weight'] ?? 1.0);

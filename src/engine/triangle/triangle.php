@@ -210,17 +210,17 @@ header('Pragma: no-cache');
 
                 <!-- ── 부재 목록 ──────────────────── -->
                 <div class="sb-section sb-collapsed admin-only" style="display:none">
-                    <div class="sb-section-title">부재 목록<small>(내경에 살두께 × 2)</small></div>
+                    <div class="sb-section-title">부재 목록 <small>폭×두께×길이</small></div>
 
                     <div class="slat-group">
                         <div class="slat-group-title">울거미</div>
                         <div class="diag-list">
                             <div class="slat-row">
-                                <span class="slat-len" id="spFrVLen">—</span><span class="slat-len-unit">mm</span>
+                                <span class="slat-len" id="spFrVLen">—</span>
                                 <span class="slat-cnt" id="spFrVCnt">2개</span>
                             </div>
                             <div class="slat-row">
-                                <span class="slat-len" id="spFrHLen">—</span><span class="slat-len-unit">mm</span>
+                                <span class="slat-len" id="spFrHLen">—</span>
                                 <span class="slat-cnt" id="spFrHCnt">2개</span>
                             </div>
                         </div>
@@ -238,7 +238,7 @@ header('Pragma: no-cache');
                     <div class="slat-group">
                         <div class="slat-group-title" id="dirSlatGroupTitle">가로부재</div>
                         <div class="slat-row">
-                            <span class="slat-len" id="spHSlatLen">—</span><span class="slat-len-unit">mm</span>
+                            <span class="slat-len" id="spHSlatLen">—</span>
                             <span class="slat-cnt" id="spHSlatCnt">—</span>
                         </div>
                     </div>
@@ -246,6 +246,20 @@ header('Pragma: no-cache');
                     <div class="slat-group">
                         <div class="slat-group-title">사선살</div>
                         <div id="spDiagList" class="diag-list"></div>
+                    </div>
+
+                    <div class="slat-group">
+                        <div class="slat-group-title">문틀</div>
+                        <div class="diag-list">
+                            <div class="slat-row">
+                                <span class="slat-len" id="spMtVLen">—</span>
+                                <span class="slat-cnt">2개</span>
+                            </div>
+                            <div class="slat-row">
+                                <span class="slat-len" id="spMtHLen">—</span>
+                                <span class="slat-cnt">2개</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -414,7 +428,7 @@ header('Pragma: no-cache');
                     <div class="sb-price-box">
                         <div class="sb-price-label">예상가격</div>
                         <div class="sb-price-amount"><span class="sb-price-start">–</span><span class="sb-price-end"></span></div>
-                        <div class="sb-price-note">목재비 <span id="spWoodCost">–</span></div>
+                        <div class="sb-price-note">목재비 <span id="spWoodCost">–</span> <span class="sb-price-excl">(배송비·시공비 제외)</span></div>
                     </div>
                     <div style="display:flex;gap:6px;width:100%;">
                         <button class="hbtn hbtn-primary" id="btnOrder" style="flex:1;justify-content:center;width:100%;">

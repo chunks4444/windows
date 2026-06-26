@@ -1165,20 +1165,26 @@ function drawSvgInserts() {
             input.value = '';
             return;
         }
+        const uploadBtn = document.querySelector('button[onclick*="svgFileInput"]');
+        if (uploadBtn) uploadBtn.classList.add('btn-loading');
         const reader = new FileReader();
         reader.onload = async e => {
-            const res = await fetch('/src/api/uploads/svg_insert.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('pmok_auth_token') },
-                body: JSON.stringify({ svg_data: e.target.result }),
-            });
-            const data = await res.json();
-            input.value = '';
-            if (!data.ok) { alert(data.error || '업로드 실패'); return; }
-            const img = new Image();
-            img.onload = () => addSvgInsert(data.url, img.naturalWidth, img.naturalHeight);
-            img.onerror = () => addSvgInsert(data.url, 100, 100);
-            img.src = data.url;
+            try {
+                const res = await fetch('/src/api/uploads/svg_insert.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + localStorage.getItem('pmok_auth_token') },
+                    body: JSON.stringify({ svg_data: e.target.result }),
+                });
+                const data = await res.json();
+                input.value = '';
+                if (!data.ok) { alert(data.error || '업로드 실패'); return; }
+                const img = new Image();
+                img.onload = () => addSvgInsert(data.url, img.naturalWidth, img.naturalHeight);
+                img.onerror = () => addSvgInsert(data.url, 100, 100);
+                img.src = data.url;
+            } finally {
+                if (uploadBtn) uploadBtn.classList.remove('btn-loading');
+            }
         };
         reader.readAsDataURL(file);
     }
@@ -1241,10 +1247,15 @@ function drawSvgInserts() {
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        const sidebar = document.getElementById('sidebar');
-        if (!sidebar) return;
-        sidebar.addEventListener('change', updateWoodCost);
-        sidebar.addEventListener('input',  updateWoodCost);
+        const sidebar      = document.getElementById('sidebar');
+        const rightSidebar = document.getElementById('rightSidebar');
+        if (sidebar) {
+            sidebar.addEventListener('change', updateWoodCost);
+            sidebar.addEventListener('input',  updateWoodCost);
+        }
+        if (rightSidebar) {
+            rightSidebar.addEventListener('change', updateWoodCost);
+        }
     });
 
     window.__pmokUpdateWoodCost = updateWoodCost;

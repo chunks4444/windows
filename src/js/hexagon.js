@@ -268,11 +268,19 @@
 
     btnAddThumb.addEventListener('click', () => aiFileUploader.click());
 
+    let _uploadPending = 0;
+    function _setThumbBtnLoading(v) {
+        btnAddThumb.classList.toggle('btn-loading', v);
+        btnAddThumb.disabled = v;
+    }
+
     aiFileUploader.addEventListener('change', function(e) {
         const files = Array.from(e.target.files);
         files.forEach(file => {
             if (!['image/jpeg', 'image/png'].includes(file.type)) { alert('PNG 또는 JPG 파일만 업로드할 수 있습니다.'); return; }
             if (file.size > 700 * 1024) { alert('파일 크기는 700KB 이하여야 합니다.'); return; }
+            _uploadPending++;
+            _setThumbBtnLoading(true);
             const reader = new FileReader();
             reader.onload = function(event) {
                 compressImage(event.target.result, async function(dataUrl) {
@@ -294,6 +302,7 @@
                         }
                         if (activeThumbId === id) localStorage.setItem(BG_IMAGE_KEY, String(result.id));
                     }
+                    if (--_uploadPending <= 0) { _uploadPending = 0; _setThumbBtnLoading(false); }
                 });
             };
             reader.readAsDataURL(file);
@@ -513,9 +522,9 @@ async function draw() {
     const p = data.parts;
     window.__pmokLastParts = p;
     window.__pmokUpdateWoodCost?.();
-    document.getElementById('spFrVLen').textContent = p.frVLen;
+    document.getElementById('spFrVLen').textContent = `${geo.frameW}×${p.frT}×${p.frVLen}mm`;
     document.getElementById('spFrVCnt').textContent = p.frVCnt;
-    document.getElementById('spFrHLen').textContent = p.frHLen;
+    document.getElementById('spFrHLen').textContent = `${geo.frameH}×${p.frT}×${p.frHLen}mm`;
     document.getElementById('spFrHCnt').textContent = p.frHCnt;
 
     const ppGroup = document.getElementById('pungpanMaterialGroup');
@@ -529,7 +538,7 @@ async function draw() {
     }
 
     document.getElementById('dirSlatGroupTitle').textContent = p.dirTitle;
-    document.getElementById('spHSlatLen').textContent = p.hSlatLen;
+    document.getElementById('spHSlatLen').textContent = `${p.slatW}×${geo.slatT}×${p.hSlatLen}mm`;
     document.getElementById('spHSlatCnt').textContent = p.hSlatCnt;
 
     const diagListEl = document.getElementById('spDiagList');
@@ -537,9 +546,11 @@ async function draw() {
     p.diagList.forEach(({ len, cnt }) => {
         const el = document.createElement('div');
         el.className = 'slat-row';
-        el.innerHTML = `<span class="slat-len">${len}<span class="slat-len-unit">mm</span></span><span class="slat-cnt">${cnt}개</span>`;
+        el.innerHTML = `<span class="slat-len">${p.slatW}×${geo.slatT}×${len}mm</span><span class="slat-cnt">${cnt}개</span>`;
         diagListEl.appendChild(el);
     });
+    document.getElementById('spMtVLen').textContent = `${p.mtW}×${p.mtT}×${p.mtVLen}mm`;
+    document.getElementById('spMtHLen').textContent = `${p.mtW}×${p.mtT}×${p.mtHLen}mm`;
 
     // draw() 안에서 ctx를 재할당 가능하도록 로컬 변수로 섀도잉
     let ctx = canvas.getContext('2d');
