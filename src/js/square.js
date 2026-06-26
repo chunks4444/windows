@@ -506,8 +506,7 @@ async function draw() {
     const ppGroup = document.getElementById('pungpanMaterialGroup');
     if (p.pungpanVisible) {
         ppGroup.style.display = '';
-        document.getElementById('spPpHLen').textContent = p.ppHLen;
-        document.getElementById('spPpVLen').textContent = p.ppVLen;
+        document.getElementById('spPpLen').textContent = `${p.ppVLen}×${p.pungpanT}×${p.ppHLen}mm`;
         document.querySelector('#pungpanMaterialGroup .slat-count-badge').textContent = p.pungpanCnt;
     } else {
         ppGroup.style.display = 'none';

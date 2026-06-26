@@ -145,20 +145,24 @@ for ($k = $diagN; $k >= 1; $k--) {
 
 // 목재 재수 계산 (1재 = 33×33×3600mm³, 부재별 실제 단면 사용)
 $_d   = get_engine_part_dims('diamond');
+$_es  = get_engine_settings('diamond');
 $_JAE = 33 * 33 * 3600;
-$_wU  = (int)($_d['울거미']['width_mm']    ?? 33);
-$_wS  = (int)($_d['살']['width_mm']       ?? 33);
+$_wU  = (int)($_es['ulgeomiW']             ?? $_d['울거미']['width_mm'] ?? 33);
+$_wS  = (int)($_es['slatW']               ?? $_d['살']['width_mm']    ?? 20);
+$_pT  = (int)($_es['pungpanT']            ?? 15);
 $_tMt = (int)($_d['문틀']['thickness_mm'] ?? 30);
 $_wMt = (int)($_d['문틀']['width_mm']     ?? 33);
 
-$_vol = round($outerH + 2*$slatT) * (2*$doorCount)                * $frameW * $_wU
-      + round($outerW + 2*$slatT) * (($pungpanOn?3:2)*$doorCount) * $frameH * $_wU
-      + round($innerW + 2*$tenonDepth) * ($hSlatCnt*$doorCount)   * $slatT  * $_wS
-      + round($innerH + 2*$tenonDepth) * ($vSlatCnt*$doorCount)   * $slatT  * $_wS
-      + array_sum(array_map(fn($d) => (float)$d['len'] * $d['cnt'] * $slatT * $_wS, $diagList))
-      + $frameOpeningH * 2 * $_tMt * $_wMt
-      + $frameOpeningW * 2 * $_tMt * $_wMt;
-$_woodJae = $_vol / $_JAE;
+$_volDoor   = round($outerH + 2*$slatT) * (2*$doorCount)                * $frameW * $_wU
+            + round($outerW + 2*$slatT) * (($pungpanOn?3:2)*$doorCount) * $frameH * $_wU
+            + round($innerW + 2*$tenonDepth) * ($hSlatCnt*$doorCount)   * $slatT  * $_wS
+            + round($innerH + 2*$tenonDepth) * ($vSlatCnt*$doorCount)   * $slatT  * $_wS
+            + array_sum(array_map(fn($d) => (float)$d['len'] * $d['cnt'] * $slatT * $_wS, $diagList))
+            + ($pungpanVisible ? (int)round($innerW) * (int)round($ppPanelH) * $_pT : 0);
+$_volMuntol = $frameOpeningH * 2 * $_tMt * $_wMt
+            + $frameOpeningW * 2 * $_tMt * $_wMt;
+$_vol       = $_volDoor + $_volMuntol;
+$_woodJae   = $_vol / $_JAE;
 
 $parts = [
     'frVLen'         => (string)round($outerH + 2 * $slatT),
@@ -176,12 +180,15 @@ $parts = [
     'diagList'       => $diagList,
     'frT'            => $_wU,
     'slatW'          => $_wS,
+    'pungpanT'       => $_pT,
     'mtVLen'         => (int)$frameOpeningH,
     'mtHLen'         => (int)$frameOpeningW,
     'mtW'            => $_wMt,
     'mtT'            => $_tMt,
     'woodVolMm3'     => (int)$_vol,
     'woodJae'        => round($_woodJae, 2),
+    'woodJae_door'   => round($_volDoor / $_JAE, 2),
+    'woodJae_muntol' => round($_volMuntol / $_JAE, 2),
     'techWeight'     => (float)($_d['기술난이도']['weight'] ?? 1.0),
 ];
 

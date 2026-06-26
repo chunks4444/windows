@@ -13,8 +13,11 @@ function engine_setting_defaults(string $engine): array {
         'frameThick'  => '30',
         'frameGap'    => '2',
         'slat'        => '12',
+        'ulgeomiW'    => '33',   // 울거미 폭 (mm) — 원가 계산용
+        'slatW'       => '20',   // 살 폭 (mm) — 원가 계산용
         'pungpanOn'   => '0',
         'pungpan'     => '0',
+        'pungpanT'    => '15',   // 풍판 판재 두께 (mm) — 원가 계산용
         'dimensionOn' => '1',
         'gap'         => '2',
         'basePadding' => '60',

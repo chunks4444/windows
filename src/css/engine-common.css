@@ -1484,6 +1484,10 @@ input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
 .sb-price-start, .sb-price-end { transition: color 0.25s ease; }
 .sb-price-note { font-size: 11px; color: #fff; margin-top: 3px; }
 .sb-price-excl { opacity: 0.55; }
+.sb-price-breakdown { margin-top: 6px; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 6px; display: flex; flex-direction: column; gap: 3px; }
+.sb-break-row { display: flex; justify-content: space-between; font-size: 11px; color: #fff; }
+.sb-break-row span:last-child { font-variant-numeric: tabular-nums; }
+.sb-break-future { opacity: 0.4; }
 
 /* 업로드 버튼 로딩 스피너 */
 .btn-loading { pointer-events:none; opacity:0.65; position:relative; }

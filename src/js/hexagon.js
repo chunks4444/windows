@@ -530,8 +530,7 @@ async function draw() {
     const ppGroup = document.getElementById('pungpanMaterialGroup');
     if (p.pungpanVisible) {
         ppGroup.style.display = '';
-        document.getElementById('spPpHLen').textContent = p.ppHLen;
-        document.getElementById('spPpVLen').textContent = p.ppVLen;
+        document.getElementById('spPpLen').textContent = `${p.ppVLen}×${p.pungpanT}×${p.ppHLen}mm`;
         document.querySelector('#pungpanMaterialGroup .slat-count-badge').textContent = p.pungpanCnt;
     } else {
         ppGroup.style.display = 'none';
@@ -1068,7 +1067,7 @@ async function draw() {
         adjDiag.forEach(({ len, cnt }) => {
             const el = document.createElement('div');
             el.className = 'slat-row';
-            el.innerHTML = `<span class="slat-len">${len}<span class="slat-len-unit">mm</span></span><span class="slat-cnt">${cnt}개</span>`;
+            el.innerHTML = `<span class="slat-len">${p.slatW}×${geo.slatT}×${len}mm</span><span class="slat-cnt">${cnt}개</span>`;
             diagListEl.appendChild(el);
         });
     }

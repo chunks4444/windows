@@ -1211,15 +1211,19 @@ function drawSvgInserts() {
     function won(n) { return Math.round(n).toLocaleString('ko-KR'); }
 
     function updateWoodCost() {
-        const woodEl  = document.getElementById('spWoodCost');
-        const startEl = document.querySelector('.sb-price-start');
-        const endEl   = document.querySelector('.sb-price-end');
+        const woodEl    = document.getElementById('spWoodCost');
+        const doorEl    = document.getElementById('spCostDoor');
+        const muntolEl  = document.getElementById('spCostMuntol');
+        const startEl   = document.querySelector('.sb-price-start');
+        const endEl     = document.querySelector('.sb-price-end');
 
         const p = window.__pmokLastParts;
         if (!p?.woodJae) {
-            if (woodEl)  woodEl.textContent  = '–';
-            if (startEl) startEl.textContent = '–';
-            if (endEl)   endEl.textContent   = '';
+            if (woodEl)   woodEl.textContent   = '–';
+            if (doorEl)   doorEl.textContent   = '–';
+            if (muntolEl) muntolEl.textContent = '–';
+            if (startEl)  startEl.textContent  = '–';
+            if (endEl)    endEl.textContent    = '';
             window.__pmokEstimatedPrice = 0;
             return;
         }
@@ -1228,20 +1232,27 @@ function drawSvgInserts() {
         const price  = parseFloat(opt?.dataset?.price  ?? 0);
         const weight = parseFloat(opt?.dataset?.weight ?? 1);
         if (!price) {
-            if (woodEl)  woodEl.textContent  = '–';
-            if (startEl) startEl.textContent = '–';
-            if (endEl)   endEl.textContent   = '';
+            if (woodEl)   woodEl.textContent   = '–';
+            if (doorEl)   doorEl.textContent   = '–';
+            if (muntolEl) muntolEl.textContent = '–';
+            if (startEl)  startEl.textContent  = '–';
+            if (endEl)    endEl.textContent    = '';
             window.__pmokEstimatedPrice = 0;
             return;
         }
 
-        const woodCost    = Math.round(p.woodJae * (p.techWeight ?? 1) * weight * price);
+        const tw          = p.techWeight ?? 1;
+        const doorCost    = Math.round((p.woodJae_door   ?? 0) * tw * weight * price);
+        const muntolCost  = Math.round((p.woodJae_muntol ?? 0) *      weight * price);
+        const woodCost    = doorCost + muntolCost;
         const estMin      = woodCost * 5;
         const estMax      = Math.round(estMin * 1.15);
 
-        if (woodEl)  woodEl.textContent  = won(woodCost) + '원';
-        if (startEl) startEl.textContent = won(estMin);
-        if (endEl)   endEl.textContent   = ` ~ ${won(estMax)}원`;
+        if (woodEl)   woodEl.textContent   = won(woodCost) + '원';
+        if (doorEl)   doorEl.textContent   = won(doorCost) + '원';
+        if (muntolEl) muntolEl.textContent = won(muntolCost) + '원';
+        if (startEl)  startEl.textContent  = won(estMin);
+        if (endEl)    endEl.textContent    = ` ~ ${won(estMax)}원`;
 
         window.__pmokEstimatedPrice = estMin;
     }

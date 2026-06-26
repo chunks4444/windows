@@ -225,9 +225,7 @@ header('Pragma: no-cache');
                     <div class="slat-group" id="pungpanMaterialGroup" style="display:none;">
                         <div class="slat-group-title">풍판 <span class="slat-count-badge">1개</span></div>
                         <div class="slat-row">
-                            <span class="slat-len" id="spPpHLen">—</span><span class="slat-len-unit">mm</span>
-                            <span style="color:var(--text-3);font-size:11px;margin:0 3px;">×</span>
-                            <span class="slat-len" id="spPpVLen">—</span><span class="slat-len-unit">mm</span>
+                            <span class="slat-len" id="spPpLen">—</span>
                         </div>
                     </div>
 
@@ -423,6 +421,11 @@ header('Pragma: no-cache');
                         <div class="sb-price-label">예상가격</div>
                         <div class="sb-price-amount"><span class="sb-price-start">–</span><span class="sb-price-end"></span></div>
                         <div class="sb-price-note">목재비 <span id="spWoodCost">–</span> <span class="sb-price-excl">(배송비·시공비 제외)</span></div>
+                        <div class="sb-price-breakdown">
+                            <div class="sb-break-row"><span>문(창호)</span><span id="spCostDoor">–</span></div>
+                            <div class="sb-break-row"><span>문틀</span><span id="spCostMuntol">–</span></div>
+                            <div class="sb-break-row sb-break-future"><span>오일·마감</span><span>추후</span></div>
+                        </div>
                     </div>
                     <div style="display:flex;gap:6px;width:100%;">
                         <button class="hbtn hbtn-primary" id="btnOrder" style="flex:1;justify-content:center;width:100%;">
