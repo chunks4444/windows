@@ -12,7 +12,8 @@ function engine_setting_defaults(string $engine): array {
         'frameH'      => '60',
         'frameThick'  => '30',
         'frameGap'    => '2',
-        'muntolW'     => '33',   // 문틀 폭 (mm) — 원가 계산용
+        'muntolT'     => '38',   // 문틀 두께 (mm) — 실제 목재 두께 (정면 30mm + 턱 8mm)
+        'muntolW'     => '80',   // 문틀 폭 (mm) — 벽 안으로 들어가는 설치 깊이
         'slat'        => '12',
         'ulgeomiW'    => '33',   // 울거미 폭 (mm) — 원가 계산용
         'slatW'       => '20',   // 살 폭 (mm) — 원가 계산용
