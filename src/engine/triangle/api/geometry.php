@@ -3,6 +3,7 @@ ini_set('display_errors', 0);
 error_reporting(0);
 header('Content-Type: application/json; charset=UTF-8');
 require_once __DIR__ . '/../../../lib/jwt.php';
+require_once __DIR__ . '/../../../lib/engine_settings.php';
 if (!jwt_from_request()) { http_response_code(401); echo json_encode(['error' => '인증이 필요합니다.']); exit; }
 
 $cols      = max(2,   (int)($_POST['cols']      ?? 4));
@@ -242,14 +243,25 @@ $parts['diagList'] = array_map(function($item) use ($doorCount) {
     return ['len' => $item['len'], 'cnt' => $item['cnt'] * 2 * $doorCount];
 }, $merged);
 
-// 목재 재수 계산 (1재 = 33×33×3600mm, 단면 고정)
-$_frVLen  = round($outerH + 2 * $slatT); $_frVCnt_n = 2 * $doorCount;
-$_frHLen  = round($outerW + 2 * $slatT); $_frHCnt_n = ($pungpanOn ? 3 : 2) * $doorCount;
-$_hSLen   = $rotateOn ? round($innerH + 2 * $tenonDepth) : round($innerW + 2 * $tenonDepth);
-$_hSCnt_n = $rotateOn ? max(0, $cols - 1) * $doorCount : max(0, $rows - 1) * $doorCount;
-$_diagMm  = array_sum(array_map(fn($d) => (float)$d['len'] * $d['cnt'], $parts['diagList']));
-$_totalMm = $_frVLen * $_frVCnt_n + $_frHLen * $_frHCnt_n + $_hSLen * $_hSCnt_n + $_diagMm;
-$parts['woodTotalMm'] = (int)$_totalMm;
-$parts['woodJae']     = round($_totalMm / 3600.0, 2);
+// 목재 재수 계산 (1재 = 33×33×3600mm³, 부재별 실제 단면 사용)
+$_d   = get_engine_part_dims('triangle');
+$_JAE = 33 * 33 * 3600;
+$_wU  = (int)($_d['울거미']['width_mm']    ?? 33);
+$_wS  = (int)($_d['살']['width_mm']       ?? 33);
+$_tMt = (int)($_d['문틀']['thickness_mm'] ?? 30);
+$_wMt = (int)($_d['문틀']['width_mm']     ?? 33);
+
+$_hSLen   = $rotateOn ? round($innerH + 2*$tenonDepth) : round($innerW + 2*$tenonDepth);
+$_hSCnt_n = $rotateOn ? max(0, $cols-1) * $doorCount : max(0, $rows-1) * $doorCount;
+
+$_vol = round($outerH + 2*$slatT) * (2*$doorCount)                * $frameW * $_wU
+      + round($outerW + 2*$slatT) * (($pungpanOn?3:2)*$doorCount) * $frameH * $_wU
+      + $_hSLen * $_hSCnt_n * $slatT * $_wS
+      + array_sum(array_map(fn($d) => (float)$d['len'] * $d['cnt'] * $slatT * $_wS, $parts['diagList']))
+      + $frameOpeningH * 2 * $_tMt * $_wMt
+      + $frameOpeningW * 2 * $_tMt * $_wMt;
+$parts['woodVolMm3']  = (int)$_vol;
+$parts['woodJae']     = round($_vol / $_JAE, 2);
+$parts['techWeight']  = (float)($_d['기술난이도']['weight'] ?? 1.0);
 
 echo json_encode(['geo' => $geo, 'specs' => $specs, 'parts' => $parts]);

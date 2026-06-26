@@ -3,6 +3,7 @@ ini_set('display_errors', 0);
 error_reporting(0);
 header('Content-Type: application/json; charset=UTF-8');
 require_once __DIR__ . '/../../../lib/jwt.php';
+require_once __DIR__ . '/../../../lib/engine_settings.php';
 if (!jwt_from_request()) { http_response_code(401); echo json_encode(['error' => '인증이 필요합니다.']); exit; }
 
 $cols      = max(2,   (int)($_POST['cols']      ?? 4));
@@ -152,12 +153,20 @@ foreach ($lenMap as $len => $cnt) {
     $diagList[] = ['len' => $len, 'cnt' => $cnt * $doorCount];
 }
 
-// 목재 재수 계산 (1재 = 33×33×3600mm, 단면 고정)
-$_frVLen  = round($outerH + 2 * $slatT); $_frVCnt_n = 2 * $doorCount;
-$_frHLen  = round($outerW + 2 * $slatT); $_frHCnt_n = ($pungpanOn ? 3 : 2) * $doorCount;
-$_diagMm  = array_sum(array_map(fn($d) => (float)$d['len'] * $d['cnt'], $diagList));
-$_totalMm = $_frVLen * $_frVCnt_n + $_frHLen * $_frHCnt_n + $_diagMm;
-$_woodJae = $_totalMm / 3600.0;
+// 목재 재수 계산 (1재 = 33×33×3600mm³, 부재별 실제 단면 사용)
+$_d   = get_engine_part_dims('cross');
+$_JAE = 33 * 33 * 3600;
+$_wU  = (int)($_d['울거미']['width_mm']    ?? 33);
+$_wS  = (int)($_d['살']['width_mm']       ?? 33);
+$_tMt = (int)($_d['문틀']['thickness_mm'] ?? 30);
+$_wMt = (int)($_d['문틀']['width_mm']     ?? 33);
+
+$_vol = round($outerH + 2*$slatT) * (2*$doorCount)                * $frameW * $_wU
+      + round($outerW + 2*$slatT) * (($pungpanOn?3:2)*$doorCount) * $frameH * $_wU
+      + array_sum(array_map(fn($d) => (float)$d['len'] * $d['cnt'] * $slatT * $_wS, $diagList))
+      + $frameOpeningH * 2 * $_tMt * $_wMt
+      + $frameOpeningW * 2 * $_tMt * $_wMt;
+$_woodJae = $_vol / $_JAE;
 
 $parts = [
     'frVLen'         => (string)round($outerH + 2 * $slatT),
@@ -173,8 +182,9 @@ $parts = [
     'vSlatLen'       => '',
     'vSlatCnt'       => '',
     'diagList'       => $diagList,
-    'woodTotalMm'    => (int)$_totalMm,
+    'woodVolMm3'     => (int)$_vol,
     'woodJae'        => round($_woodJae, 2),
+    'techWeight'     => (float)($_d['기술난이도']['weight'] ?? 1.0),
 ];
 
 echo json_encode(['geo' => $geo, 'specs' => $specs, 'parts' => $parts]);

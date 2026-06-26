@@ -1,4 +1,3 @@
 logs/*.log
 uploads/
 **/config.local.php
-uploads/

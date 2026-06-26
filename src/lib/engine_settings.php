@@ -54,16 +54,18 @@ function get_engine_settings(string $engine): array {
 const ENGINE_SETTING_NAMES = ['classic', 'square', 'cross', 'diamond', 'triangle', 'hexagon'];
 
 /**
- * 엔진별 부재 폭/두께 조회 (category='grid', engine 일치 행).
- * 반환: ['울거미'=>['width_mm'=>33], '살'=>['width_mm'=>33], '문틀'=>['thickness_mm'=>30,'width_mm'=>30]]
- * - 살 두께: slatT (슬라이더)
- * - 울거미 두께: frameW/frameH (도면 파라미터)
- * - 문틀 두께/폭: 모두 cost_table (thickness_mm, width_mm)
+ * 엔진별 부재 치수 및 기술난이도 조회 (category='grid', engine 일치 행).
+ * 반환 예: [
+ *   '울거미'    => ['thickness_mm'=>0, 'width_mm'=>33],
+ *   '살'        => ['thickness_mm'=>0, 'width_mm'=>33],
+ *   '문틀'      => ['thickness_mm'=>30, 'width_mm'=>33],
+ *   '기술난이도' => ['weight'=>1.2],
+ * ]
  */
 function get_engine_part_dims(string $engine): array {
     try {
         $stmt = db()->prepare(
-            "SELECT name, thickness_mm, width_mm FROM cost_table
+            "SELECT name, thickness_mm, width_mm, weight FROM cost_table
              WHERE category='grid' AND engine=? AND is_active=1"
         );
         $stmt->execute([$engine]);
@@ -73,6 +75,7 @@ function get_engine_part_dims(string $engine): array {
             $result[$r['name']] = [
                 'thickness_mm' => (int)$r['thickness_mm'],
                 'width_mm'     => (int)$r['width_mm'],
+                'weight'       => (float)$r['weight'],
             ];
         }
         return $result;

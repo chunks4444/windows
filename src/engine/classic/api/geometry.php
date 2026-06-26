@@ -3,6 +3,7 @@ ini_set('display_errors', 0);
 error_reporting(0);
 header('Content-Type: application/json; charset=UTF-8');
 require_once __DIR__ . '/../../../lib/jwt.php';
+require_once __DIR__ . '/../../../lib/engine_settings.php';
 if (!jwt_from_request()) { http_response_code(401); echo json_encode(['error' => '인증이 필요합니다.']); exit; }
 
 $cols       = max(2,   (int)($_POST['cols']      ?? 12));
@@ -171,13 +172,21 @@ $ppPanelH = $pungpanVisible ? ($effectivePungpanH - $frameH) : 0;
 
 $vSlatCnt = max(0, $cols - 1);
 
-// 목재 재수 계산 (1재 = 33×33×3600mm, 단면 고정)
-$_frVLen  = round($outerH + 2 * $slatT);   $frVCnt_n  = 2 * $doorCount;
-$_frHLen  = round($outerW + 2 * $slatT);   $frHCnt_n  = ($pungpanOn ? 3 : 2) * $doorCount;
-$_hSLen   = round($innerW + 2 * $tenonDepth); $hSCnt_n = $hSlatCnt * $doorCount;
-$_vSLen   = round($innerH + 2 * $tenonDepth); $vSCnt_n = $vSlatCnt * $doorCount;
-$_totalMm = $_frVLen * $frVCnt_n + $_frHLen * $frHCnt_n + $_hSLen * $hSCnt_n + $_vSLen * $vSCnt_n;
-$_woodJae = $_totalMm / 3600.0;
+// 목재 재수 계산 (1재 = 33×33×3600mm³, 부재별 실제 단면 사용)
+$_d   = get_engine_part_dims('classic');
+$_JAE = 33 * 33 * 3600;
+$_wU  = (int)($_d['울거미']['width_mm']     ?? 33);
+$_wS  = (int)($_d['살']['width_mm']        ?? 33);
+$_tMt = (int)($_d['문틀']['thickness_mm']  ?? 30);
+$_wMt = (int)($_d['문틀']['width_mm']      ?? 33);
+
+$_vol = round($outerH + 2*$slatT) * (2*$doorCount)                * $frameW * $_wU  // 세로 울거미
+      + round($outerW + 2*$slatT) * (($pungpanOn?3:2)*$doorCount) * $frameH * $_wU  // 가로 울거미
+      + round($innerW + 2*$tenonDepth) * ($hSlatCnt*$doorCount)   * $slatT  * $_wS  // 가로살
+      + round($innerH + 2*$tenonDepth) * ($vSlatCnt*$doorCount)   * $slatT  * $_wS  // 세로살
+      + $frameOpeningH * 2 * $_tMt * $_wMt  // 문틀 세로재
+      + $frameOpeningW * 2 * $_tMt * $_wMt; // 문틀 가로재
+$_woodJae = $_vol / $_JAE;
 
 $parts = [
     'frVLen'         => (string)round($outerH + 2 * $slatT),
@@ -192,8 +201,9 @@ $parts = [
     'hSlatCnt'       => ($hSlatCnt * $doorCount) . '개',
     'vSlatLen'       => (string)round($innerH + 2 * $tenonDepth),
     'vSlatCnt'       => ($vSlatCnt * $doorCount) . '개',
-    'woodTotalMm'    => (int)$_totalMm,
+    'woodVolMm3'     => (int)$_vol,
     'woodJae'        => round($_woodJae, 2),
+    'techWeight'     => (float)($_d['기술난이도']['weight'] ?? 1.0),
 ];
 
 echo json_encode(['geo' => $geo, 'specs' => $specs, 'parts' => $parts]);
