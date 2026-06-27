@@ -1010,6 +1010,11 @@ async function draw() {
             }
         });
 
+        addedLines.forEach(ln => {
+            if (Math.abs(ln.ny2 - ln.ny1) < 0.001) adjHSlatCnt++;
+            else adjVSlatCnt++;
+        });
+
         document.getElementById('spHSlatCnt').textContent = Math.max(0, adjHSlatCnt) + '개';
         document.getElementById('spVSlatCnt').textContent = Math.max(0, adjVSlatCnt) + '개';
 
@@ -1963,7 +1968,7 @@ document.getElementById('chkDimension').addEventListener('change', e => { showDi
         const R   = Math.round(22 * dpr);
         const sw  = canvas.width  - R;
         const sh  = canvas.height - R;
-        const W   = 320;
+        const W   = 640;
         const H   = Math.round(W * sh / sw);
         const tmp = document.createElement('canvas');
         tmp.width = W; tmp.height = H;
@@ -1971,7 +1976,7 @@ document.getElementById('chkDimension').addEventListener('change', e => { showDi
         tctx.fillStyle = '#E5E7EA';
         tctx.fillRect(0, 0, W, H);
         tctx.drawImage(canvas, R, R, sw, sh, 0, 0, W, H);
-        return tmp.toDataURL('image/jpeg', 0.65);
+        return tmp.toDataURL('image/jpeg', 0.85);
     }
 
     // 썸네일 + 배경 이미지 복원 (서버에서 로드)

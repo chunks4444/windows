@@ -1062,6 +1062,16 @@ async function draw() {
             Math.max(0, adjStraightCnt) + '개';
 
         adjDiag = adjDiag.filter(item => item.cnt > 0);
+
+        addedLines.forEach(ln => {
+            const dx = (ln.nx2 - ln.nx1) * geo.innerW;
+            const dy = (ln.ny2 - ln.ny1) * geo.innerH;
+            const realLen = Math.round(Math.hypot(dx, dy) + tenonLen);
+            const m = adjDiag.find(it => Math.abs(it.len - realLen) <= tenonLen);
+            if (m) m.cnt++;
+            else adjDiag.push({ len: realLen, cnt: 1 });
+        });
+
         adjDiag.sort((a, b) => b.len - a.len);
         diagListEl.innerHTML = '';
         adjDiag.forEach(({ len, cnt }) => {
@@ -2010,7 +2020,7 @@ document.getElementById('chkDimension').addEventListener('change', e => { showDi
         const R   = Math.round(22 * dpr);
         const sw  = canvas.width  - R;
         const sh  = canvas.height - R;
-        const W   = 320;
+        const W   = 640;
         const H   = Math.round(W * sh / sw);
         const tmp = document.createElement('canvas');
         tmp.width  = W;
@@ -2019,7 +2029,7 @@ document.getElementById('chkDimension').addEventListener('change', e => { showDi
         tctx.fillStyle = '#E5E7EA';
         tctx.fillRect(0, 0, W, H);
         tctx.drawImage(canvas, R, R, sw, sh, 0, 0, W, H);
-        return tmp.toDataURL('image/jpeg', 0.65);
+        return tmp.toDataURL('image/jpeg', 0.85);
     }
 
     // 썸네일 + 배경 이미지 복원
