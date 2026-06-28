@@ -76,6 +76,19 @@
     const canvas = document.getElementById('doorCanvas');
     const ctx = canvas.getContext('2d');
     const container = document.getElementById('canvasContainer');
+
+    // ── Konva 오버레이 모듈 초기화 ───────────────────────
+    const kv = initKonvaOverlay({
+        canvas,
+        getState: () => ({ logW, logH, panX, panY, scaleFactor, lastSlatPx, lastCellSize }),
+        getSegMap: () => lastSegMap,
+        deletedSegs,
+        draw,
+    });
+    window.__pmokOnDeactivate    = kv.onDeactivate;
+    window.__pmokKonvaInserts    = true;
+    window.__pmokAddKonvaInsert  = (url, w, h) => kv.addKonvaInsert(url, w, h);
+
     const sidebar = document.getElementById('sidebar');
 
     const txtW = document.getElementById('txtW');
@@ -232,6 +245,7 @@
         canvas.height = ph;
         canvas.style.width  = w + 'px';
         canvas.style.height = h + 'px';
+        kv.syncSize();
         if (_versionsLoaded) draw();
     }
 
@@ -424,6 +438,8 @@ async function fetchGeometry() {
 
 let _panRaf = null;
 let _geoCache = null;
+let _kvKey  = null; // Konva 패턴 노드를 마지막으로 빌드한 시점의 파라미터 키
+let _kvCornerMode = null; // 마지막 빌드 시점의 doorCornerPositions 모드
 function drawPan() {
     if (_panRaf) return;
     _panRaf = requestAnimationFrame(() => { _panRaf = null; draw(); });
@@ -634,6 +650,26 @@ async function draw() {
     const Color_Slat_Fill  = patternBroken ? '#cc0000' : selectedSlatColor;
     const Color_Tenon_Fill = patternBroken ? '#cc0000' : selectedSlatColor;
 
+    // doorCornerPositions 모드(오프스크린 캔버스)에서는 canvas 렌더링 유지
+    const useKonvaPattern = !doorCornerPositions;
+
+    // 줌·팬 시 Konva 노드 재생성 생략: geo·삭제·색상 등 실질 파라미터가 변한 경우만 rebuild
+    const _newKvKey = JSON.stringify([
+        _geoCache?.sig ?? '',
+        [...deletedSegs].sort().join(','),
+        addedLines.length,
+        faceColorMap ? JSON.stringify(Object.entries(faceColorMap).sort()) : '',
+        JSON.stringify(Object.entries(kv.getSlatColorOverrides()).sort()),
+        selectedSlatColor,
+        selectedFrameColor,
+        Math.round(baseScale * 1000),
+    ]);
+    const buildKonvaPattern = useKonvaPattern &&
+        (_newKvKey !== _kvKey || !!doorCornerPositions !== !!_kvCornerMode);
+
+    if (buildKonvaPattern) kv.beginPattern();
+    else if (!useKonvaPattern) { kv.clearPattern(); _kvKey = null; } // 배치모드: 노드 제거 + 키 무효화
+
     // ====== 내경 배경 (살 내부 화이트) ======
     for (const d of renderOrder) {
         let pOffX = 0;
@@ -646,8 +682,12 @@ async function draw() {
         }
         const tX = rx => offsetX + (pOffX + rx) * baseScale;
         const tY = ry => offsetY + ry * baseScale;
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(tX(geo.frameW), tY(geo.frameHTop), geo.innerW * baseScale, geo.innerH * baseScale);
+        if (buildKonvaPattern) {
+            kv.addPatternBg(tX(geo.frameW), tY(geo.frameHTop), geo.innerW * baseScale, geo.innerH * baseScale);
+        } else {
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(tX(geo.frameW), tY(geo.frameHTop), geo.innerW * baseScale, geo.innerH * baseScale);
+        }
     }
 
     // ====== 1차 루프: 패턴만 그리기 (세로살, 가로살, 사분턱) ======
@@ -755,15 +795,19 @@ async function draw() {
 
         // 내경 영역으로 클리핑 — innerH 기준
         const clipH = geo.innerH;
-        ctx.save();
-        ctx.beginPath();
-        ctx.rect(
-            toCanvasX(geo.frameW),
-            toCanvasY(geo.frameHTop),
-            geo.innerW * baseScale,
-            clipH * baseScale
-        );
-        ctx.clip();
+        if (buildKonvaPattern) {
+            kv.addPatternClipGroup(d, toCanvasX(geo.frameW), toCanvasY(geo.frameHTop), geo.innerW * baseScale, clipH * baseScale);
+        } else {
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(
+                toCanvasX(geo.frameW),
+                toCanvasY(geo.frameHTop),
+                geo.innerW * baseScale,
+                clipH * baseScale
+            );
+            ctx.clip();
+        }
 
         // 면 채색
         // 면 채색 (오른쪽 세로살 + 아래쪽 가로살 포함 — 살은 위에 덮여 그려지므로 지운 살 위치만 색상이 보임)
@@ -771,7 +815,14 @@ async function draw() {
             const stepV = geo.cellW + geo.slatV, stepH_ = geo.cellH + geo.slatH;
             for (let row = 0; row < geo.rowsInt; row++) for (let col = 0; col < geo.cols; col++) {
                 const _fc = faceColorMap[`cell:${col}:${row}`] ?? null;
-                if (_fc) { ctx.fillStyle = _fc; ctx.fillRect(toCanvasX(geo.frameW + col * stepV), toCanvasY(geo.frameHTop + row * stepH_), stepV * baseScale, stepH_ * baseScale); }
+                if (_fc) {
+                    if (buildKonvaPattern) {
+                        kv.addPatternRectToGroup(d, toCanvasX(geo.frameW + col * stepV), toCanvasY(geo.frameHTop + row * stepH_), stepV * baseScale, stepH_ * baseScale, _fc);
+                    } else {
+                        ctx.fillStyle = _fc;
+                        ctx.fillRect(toCanvasX(geo.frameW + col * stepV), toCanvasY(geo.frameHTop + row * stepH_), stepV * baseScale, stepH_ * baseScale);
+                    }
+                }
             }
         }
 
@@ -784,9 +835,14 @@ async function draw() {
             const stepH = geo.cellH + geo.slatH;
 
             // 촉 (항상)
-            ctx.fillStyle = Color_Tenon_Fill;
-            ctx.fillRect(toCanvasX(left), toCanvasY(topY - geo.tenonDepth), geo.slatV * baseScale, geo.tenonDepth * baseScale);
-            ctx.fillRect(toCanvasX(left), toCanvasY(botY), geo.slatV * baseScale, geo.tenonDepth * baseScale);
+            if (buildKonvaPattern) {
+                kv.addPatternRectToGroup(d, toCanvasX(left), toCanvasY(topY - geo.tenonDepth), geo.slatV * baseScale, geo.tenonDepth * baseScale, Color_Tenon_Fill);
+                kv.addPatternRectToGroup(d, toCanvasX(left), toCanvasY(botY), geo.slatV * baseScale, geo.tenonDepth * baseScale, Color_Tenon_Fill);
+            } else {
+                ctx.fillStyle = Color_Tenon_Fill;
+                ctx.fillRect(toCanvasX(left), toCanvasY(topY - geo.tenonDepth), geo.slatV * baseScale, geo.tenonDepth * baseScale);
+                ctx.fillRect(toCanvasX(left), toCanvasY(botY), geo.slatV * baseScale, geo.tenonDepth * baseScale);
+            }
 
             for (let j = 0; j < geo.rowsInt; j++) {
                 const segStartY = topY + j * stepH;
@@ -797,9 +853,13 @@ async function draw() {
                 lastSegMap.set(vsKey, { cx: vsCx, cy: toCanvasY(segStartY), ex: vsCx, ey: toCanvasY(segEndY), mx: vsCx, my: vsCy, normAngle: Math.PI / 2, lineKey: makeLineKey(vsCx, vsCy, Math.PI / 2) });
                 if (deletedSegs.has(vsKey)) continue;
 
-                ctx.fillStyle = Color_Slat_Fill;
-                ctx.fillRect(toCanvasX(left), toCanvasY(segStartY), geo.slatV * baseScale, stepH * baseScale);
-                drawCenterLine(toCanvasX(cx), toCanvasY(segStartY), toCanvasX(cx), toCanvasY(segEndY));
+                if (buildKonvaPattern) {
+                    kv.addPatternSlatRect(d, toCanvasX(left), toCanvasY(segStartY), geo.slatV * baseScale, stepH * baseScale, Color_Slat_Fill, vsKey, lastSegMap.get(vsKey).lineKey);
+                } else {
+                    ctx.fillStyle = Color_Slat_Fill;
+                    ctx.fillRect(toCanvasX(left), toCanvasY(segStartY), geo.slatV * baseScale, stepH * baseScale);
+                    drawCenterLine(toCanvasX(cx), toCanvasY(segStartY), toCanvasX(cx), toCanvasY(segEndY));
+                }
             }
         }
 
@@ -816,9 +876,14 @@ async function draw() {
             const stepW  = geo.cellW + geo.slatV;
 
             // 촉 (항상)
-            ctx.fillStyle = Color_Tenon_Fill;
-            ctx.fillRect(toCanvasX(leftX - geo.tenonDepth), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale);
-            ctx.fillRect(toCanvasX(rightX), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale);
+            if (buildKonvaPattern) {
+                kv.addPatternRectToGroup(d, toCanvasX(leftX - geo.tenonDepth), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale, Color_Tenon_Fill);
+                kv.addPatternRectToGroup(d, toCanvasX(rightX), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale, Color_Tenon_Fill);
+            } else {
+                ctx.fillStyle = Color_Tenon_Fill;
+                ctx.fillRect(toCanvasX(leftX - geo.tenonDepth), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale);
+                ctx.fillRect(toCanvasX(rightX), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale);
+            }
 
             for (let i = 0; i < geo.cols; i++) {
                 const segStartX = leftX + i * stepW;
@@ -829,9 +894,13 @@ async function draw() {
                 lastSegMap.set(hsKey, { cx: toCanvasX(segStartX), cy: hsCy, ex: toCanvasX(segEndX), ey: hsCy, mx: toCanvasX(segMidX), my: hsCy, normAngle: 0, lineKey: makeLineKey(toCanvasX(segMidX), hsCy, 0) });
                 if (deletedSegs.has(hsKey)) continue;
 
-                ctx.fillStyle = Color_Slat_Fill;
-                ctx.fillRect(toCanvasX(segStartX), toCanvasY(top), stepW * baseScale, geo.slatH * baseScale);
-                drawCenterLine(toCanvasX(segStartX), toCanvasY(ry), toCanvasX(segEndX), toCanvasY(ry));
+                if (buildKonvaPattern) {
+                    kv.addPatternSlatRect(d, toCanvasX(segStartX), toCanvasY(top), stepW * baseScale, geo.slatH * baseScale, Color_Slat_Fill, hsKey, lastSegMap.get(hsKey).lineKey);
+                } else {
+                    ctx.fillStyle = Color_Slat_Fill;
+                    ctx.fillRect(toCanvasX(segStartX), toCanvasY(top), stepW * baseScale, geo.slatH * baseScale);
+                    drawCenterLine(toCanvasX(segStartX), toCanvasY(ry), toCanvasX(segEndX), toCanvasY(ry));
+                }
             }
         }
 
@@ -839,10 +908,13 @@ async function draw() {
         // 사분턱
         // ====================================
 
-        ctx.strokeStyle = patternBroken ? '#cc0000' : selectedSlatColor;
+        const diagStroke = patternBroken ? '#cc0000' : selectedSlatColor;
+        const diagWidth  = ((geo.slatV + geo.slatH) / 2) * baseScale;
 
-        ctx.lineWidth =
-            ((geo.slatV + geo.slatH) / 2) * baseScale;
+        if (!buildKonvaPattern) {
+            ctx.strokeStyle = diagStroke;
+            ctx.lineWidth   = diagWidth;
+        }
 
         for (let row = 0; row < geo.rowsInt; row++) {
 
@@ -878,10 +950,18 @@ async function draw() {
                 lastSegMap.set(bsKey0, { cx: bsCx, cy: bsCy, ex: bsMx, ey: bsMy, mx: (bsCx + bsMx) / 2, my: (bsCy + bsMy) / 2, normAngle: Math.PI / 4, lineKey: bsLineKey });
                 lastSegMap.set(bsKey1, { cx: bsMx, cy: bsMy, ex: bsEx, ey: bsEy, mx: (bsMx + bsEx) / 2, my: (bsMy + bsEy) / 2, normAngle: Math.PI / 4, lineKey: bsLineKey });
                 if (!deletedSegs.has(bsKey0)) {
-                    ctx.beginPath(); ctx.moveTo(bsCx, bsCy); ctx.lineTo(bsMx, bsMy); ctx.stroke();
+                    if (buildKonvaPattern) {
+                        kv.addPatternLine(bsCx, bsCy, bsMx, bsMy, diagStroke, diagWidth);
+                    } else {
+                        ctx.beginPath(); ctx.moveTo(bsCx, bsCy); ctx.lineTo(bsMx, bsMy); ctx.stroke();
+                    }
                 }
                 if (!deletedSegs.has(bsKey1)) {
-                    ctx.beginPath(); ctx.moveTo(bsMx, bsMy); ctx.lineTo(bsEx, bsEy); ctx.stroke();
+                    if (buildKonvaPattern) {
+                        kv.addPatternLine(bsMx, bsMy, bsEx, bsEy, diagStroke, diagWidth);
+                    } else {
+                        ctx.beginPath(); ctx.moveTo(bsMx, bsMy); ctx.lineTo(bsEx, bsEy); ctx.stroke();
+                    }
                 }
 
                 // 우상 → 좌하 (/) — 반씩 분할하여 독립 삭제 가능
@@ -894,16 +974,24 @@ async function draw() {
                 lastSegMap.set(fsKey0, { cx: fsCx, cy: fsCy, ex: fsMx, ey: fsMy, mx: (fsCx + fsMx) / 2, my: (fsCy + fsMy) / 2, normAngle: 3 * Math.PI / 4, lineKey: fsLineKey });
                 lastSegMap.set(fsKey1, { cx: fsMx, cy: fsMy, ex: fsEx, ey: fsEy, mx: (fsMx + fsEx) / 2, my: (fsMy + fsEy) / 2, normAngle: 3 * Math.PI / 4, lineKey: fsLineKey });
                 if (!deletedSegs.has(fsKey0)) {
-                    ctx.beginPath(); ctx.moveTo(fsCx, fsCy); ctx.lineTo(fsMx, fsMy); ctx.stroke();
+                    if (buildKonvaPattern) {
+                        kv.addPatternLine(fsCx, fsCy, fsMx, fsMy, diagStroke, diagWidth);
+                    } else {
+                        ctx.beginPath(); ctx.moveTo(fsCx, fsCy); ctx.lineTo(fsMx, fsMy); ctx.stroke();
+                    }
                 }
                 if (!deletedSegs.has(fsKey1)) {
-                    ctx.beginPath(); ctx.moveTo(fsMx, fsMy); ctx.lineTo(fsEx, fsEy); ctx.stroke();
+                    if (buildKonvaPattern) {
+                        kv.addPatternLine(fsMx, fsMy, fsEx, fsEy, diagStroke, diagWidth);
+                    } else {
+                        ctx.beginPath(); ctx.moveTo(fsMx, fsMy); ctx.lineTo(fsEx, fsEy); ctx.stroke();
+                    }
                 }
             }
         }
 
         // 클리핑 해제
-        ctx.restore();
+        if (!useKonvaPattern) ctx.restore();
 
     }   // ← 1차 루프 끝
 
@@ -1069,16 +1157,18 @@ async function draw() {
         // 창호 실제 높이
         const actualH = geo.actualPatternH;
 
-        ctx.fillStyle = selectedFrameColor;
-
-        // 좌측 세로 울거미
-        ctx.fillRect(toCanvasX(0), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale);
-        // 상부 가로 울거미
-        ctx.fillRect(toCanvasX(geo.frameW), toCanvasY(0), geo.innerW * baseScale, geo.frameHTop * baseScale);
-        // 하단 울거미
-        ctx.fillRect(toCanvasX(geo.frameW), toCanvasY(geo.frameHTop + geo.innerH), geo.innerW * baseScale, geo.frameHBottom * baseScale);
-        // 우측 세로 울거미
-        ctx.fillRect(toCanvasX(geo.outerW - geo.frameW), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale);
+        if (buildKonvaPattern) {
+            kv.addPatternFrameRect(toCanvasX(0), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale, selectedFrameColor);
+            kv.addPatternFrameRect(toCanvasX(geo.frameW), toCanvasY(0), geo.innerW * baseScale, geo.frameHTop * baseScale, selectedFrameColor);
+            kv.addPatternFrameRect(toCanvasX(geo.frameW), toCanvasY(geo.frameHTop + geo.innerH), geo.innerW * baseScale, geo.frameHBottom * baseScale, selectedFrameColor);
+            kv.addPatternFrameRect(toCanvasX(geo.outerW - geo.frameW), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale, selectedFrameColor);
+        } else {
+            ctx.fillStyle = selectedFrameColor;
+            ctx.fillRect(toCanvasX(0), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale);
+            ctx.fillRect(toCanvasX(geo.frameW), toCanvasY(0), geo.innerW * baseScale, geo.frameHTop * baseScale);
+            ctx.fillRect(toCanvasX(geo.frameW), toCanvasY(geo.frameHTop + geo.innerH), geo.innerW * baseScale, geo.frameHBottom * baseScale);
+            ctx.fillRect(toCanvasX(geo.outerW - geo.frameW), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale);
+        }
     }
 
     // ====================================
@@ -1110,40 +1200,30 @@ async function draw() {
             const ppInnerW = geo.innerW;
             const ppInnerH = pungpanDrawH - geo.frameH;
 
-            ctx.fillStyle = lightenHex(selectedFrameColor, 40);
-            ctx.fillRect(
-                toCX(ppInnerX),
-                toCY(pungpanY),
-                ppInnerW * baseScale,
-                ppInnerH * baseScale
-            );
-
-            ctx.fillStyle = selectedFrameColor;
-
-            // 좌측 세로 울거미 (풍판 전체 높이)
-            ctx.fillRect(
-                toCX(0),
-                toCY(pungpanY),
-                geo.frameW * baseScale,
-                pungpanDrawH * baseScale
-            );
-
-            // 우측 세로 울거미 (풍판 전체 높이)
-            ctx.fillRect(
-                toCX(geo.outerW - geo.frameW),
-                toCY(pungpanY),
-                geo.frameW * baseScale,
-                pungpanDrawH * baseScale
-            );
-
-            // 하단 가로 울거미
-            ctx.fillRect(
-                toCX(geo.frameW),
-                toCY(pungpanY + pungpanDrawH - geo.frameH),
-                geo.innerW * baseScale,
-                geo.frameH * baseScale
-            );
+            if (buildKonvaPattern) {
+                kv.addPatternFrameRect(toCX(ppInnerX), toCY(pungpanY), ppInnerW * baseScale, ppInnerH * baseScale, lightenHex(selectedFrameColor, 40));
+                kv.addPatternFrameRect(toCX(0), toCY(pungpanY), geo.frameW * baseScale, pungpanDrawH * baseScale, selectedFrameColor);
+                kv.addPatternFrameRect(toCX(geo.outerW - geo.frameW), toCY(pungpanY), geo.frameW * baseScale, pungpanDrawH * baseScale, selectedFrameColor);
+                kv.addPatternFrameRect(toCX(geo.frameW), toCY(pungpanY + pungpanDrawH - geo.frameH), geo.innerW * baseScale, geo.frameH * baseScale, selectedFrameColor);
+            } else {
+                ctx.fillStyle = lightenHex(selectedFrameColor, 40);
+                ctx.fillRect(toCX(ppInnerX), toCY(pungpanY), ppInnerW * baseScale, ppInnerH * baseScale);
+                ctx.fillStyle = selectedFrameColor;
+                ctx.fillRect(toCX(0), toCY(pungpanY), geo.frameW * baseScale, pungpanDrawH * baseScale);
+                ctx.fillRect(toCX(geo.outerW - geo.frameW), toCY(pungpanY), geo.frameW * baseScale, pungpanDrawH * baseScale);
+                ctx.fillRect(toCX(geo.frameW), toCY(pungpanY + pungpanDrawH - geo.frameH), geo.innerW * baseScale, geo.frameH * baseScale);
+            }
         }
+    }
+
+    if (useKonvaPattern) {
+        if (buildKonvaPattern) {
+            kv.commitPattern();
+            _kvKey = _newKvKey;
+        } else {
+            kv.syncPatternTransform();
+        }
+        _kvCornerMode = !!doorCornerPositions;
     }
 
     if (doorCornerPositions) {
@@ -1154,21 +1234,20 @@ async function draw() {
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         const _c = getOverlayCorners();
         drawPerspectiveQuad(ctx, offCanvas, _c.tl, _c.tr, _c.br, _c.bl);
-        if (false && showDimensions && lastDoorWpx > 0) {
-            const _sf  = scaleFactor;
-            const GAP  = 24 / _sf, TICK = 5 / _sf, ITICK = 12 / _sf;
-            const R    = 3  / _sf, lw   = 1 / _sf, fs    = 13 / _sf;
-            const dL = offsetX, dR = offsetX + totalWidth * baseScale;
-            const dT = offsetY, dB = offsetY + totalH * baseScale;
+        if (showDimensions && totalWidth > 0) {
+            const allX = [_c.tl.x, _c.tr.x, _c.br.x, _c.bl.x];
+            const allY = [_c.tl.y, _c.tr.y, _c.br.y, _c.bl.y];
+            const dL = Math.min(...allX), dR = Math.max(...allX);
+            const dT = Math.min(...allY), dB = Math.max(...allY);
+            const GAP = 24, TICK = 5, ITICK = 12, R = 3, lw = 1, fs = 14;
+            const extra = 30;
             ctx.save();
-            ctx.translate(logW / 2 + panX, logH / 2 + panY);
-            ctx.scale(scaleFactor, scaleFactor);
             ctx.strokeStyle = 'rgba(50,50,50,0.7)';
             ctx.fillStyle   = 'rgba(50,50,50,0.7)';
             ctx.lineWidth   = lw;
             ctx.font        = `${fs}px -apple-system,sans-serif`;
             const _dot2 = (x, y) => { ctx.beginPath(); ctx.arc(x, y, R, 0, Math.PI * 2); ctx.fill(); };
-            const bY = dB + GAP;
+            const bY = dB + extra + GAP;
             ctx.beginPath();
             ctx.moveTo(dL, bY - ITICK); ctx.lineTo(dL, bY + TICK);
             ctx.moveTo(dR, bY - ITICK); ctx.lineTo(dR, bY + TICK);
@@ -1176,8 +1255,8 @@ async function draw() {
             ctx.stroke();
             _dot2(dL, bY); _dot2(dR, bY);
             ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-            ctx.fillText(`${Math.round(totalWidth)}mm`, (dL + dR) / 2, bY + TICK + 3 / _sf);
-            const rX = dR + GAP;
+            ctx.fillText(`${Math.round(geo.frameOpeningW)}mm`, (dL + dR) / 2, bY + TICK + 3);
+            const rX = dR + extra + GAP;
             ctx.beginPath();
             ctx.moveTo(rX - ITICK, dT); ctx.lineTo(rX + TICK, dT);
             ctx.moveTo(rX - ITICK, dB); ctx.lineTo(rX + TICK, dB);
@@ -1185,7 +1264,7 @@ async function draw() {
             ctx.stroke();
             _dot2(rX, dT); _dot2(rX, dB);
             ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-            ctx.fillText(`${Math.round(totalH)}mm`, rX + TICK + 3 / _sf, (dT + dB) / 2);
+            ctx.fillText(`${Math.round(geo.frameOpeningH)}mm`, rX + TICK + 3, (dT + dB) / 2);
             ctx.restore();
         }
     } else {
@@ -1293,6 +1372,7 @@ async function draw() {
         }
     }
     drawSvgInserts();
+    kv.drawSlatOverlay();
     if (!_exportCanvas || _exportCanvas.width !== canvas.width || _exportCanvas.height !== canvas.height) {
         _exportCanvas = document.createElement('canvas');
         _exportCanvas.width = canvas.width;
@@ -1546,6 +1626,7 @@ async function draw() {
     container.addEventListener('mousedown', function(e) {
         if (e.target.closest('.canvas-controls') || e.target.closest('.canvas-title-bar')) return;
         if (lineEditMode) { handleEditClick(e); return; }
+        if (kv.slatSelectMode && !kv.usePatternLayer) { kv.handleSlatSelect(e); return; }
         if (facePaintMode) {
             facePaintIsDown = true;
             const coord = screenToCtxCoord(e.clientX, e.clientY);
@@ -2050,7 +2131,9 @@ document.getElementById('chkDimension').addEventListener('change', e => { showDi
             placementNaturalSize: placementNaturalSize ? { ...placementNaturalSize } : null,
             deletedSegs: [...deletedSegs],
             addedLines,
-            svgInserts,
+            svgInserts: [],
+            konvaShapes: kv.getKonvaParams(),
+            slatColorOverrides: kv.getSlatColorOverrides(),
             estimatedPrice: window.__pmokEstimatedPrice || 0,
         };
     }
@@ -2077,10 +2160,10 @@ document.getElementById('chkDimension').addEventListener('change', e => { showDi
         deletedSegs  = new Set(p.deletedSegs || []);
         addedLines   = p.addedLines || [];
         addLineStart = null;
-        svgInserts       = p.svgInserts || [];
+        svgInserts       = [];
         selectedInsertId = null;
-        svgInserts.forEach(ins => _loadMotifImg(ins.url));
         renderSvgInsertPanel();
+        kv.applyKonvaParams(p);
         document.getElementById('btnScale').classList.toggle('cv-btn-active', placementMode);
         frameColorPicker.selectColor(p.frameColor);
         slatColorPicker.selectColor(p.slatColor);

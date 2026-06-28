@@ -654,6 +654,7 @@ async function draw() {
         JSON.stringify(Object.entries(kv.getSlatColorOverrides()).sort()),
         selectedSlatColor,
         selectedFrameColor,
+        Math.round(baseScale * 1000), // dimPad·창 크기 변화로 baseScale이 달라지면 노드 재생성
     ]);
     const buildKonvaPattern = useKonvaPattern &&
         (_newKvKey !== _kvKey || !!doorCornerPositions !== !!_kvCornerMode);

@@ -76,6 +76,19 @@
     const canvas = document.getElementById('doorCanvas');
     const ctx = canvas.getContext('2d');
     const container = document.getElementById('canvasContainer');
+
+    // ── Konva 오버레이 모듈 초기화 ───────────────────────
+    const kv = initKonvaOverlay({
+        canvas,
+        getState: () => ({ logW, logH, panX, panY, scaleFactor, lastSlatPx, lastCellSize }),
+        getSegMap: () => lastSegMap,
+        deletedSegs,
+        draw,
+    });
+    window.__pmokOnDeactivate    = kv.onDeactivate;
+    window.__pmokKonvaInserts    = true;
+    window.__pmokAddKonvaInsert  = (url, w, h) => kv.addKonvaInsert(url, w, h);
+
     const sidebar = document.getElementById('sidebar');
 
     const txtW = document.getElementById('txtW');
@@ -233,6 +246,7 @@
         canvas.height = ph;
         canvas.style.width  = w + 'px';
         canvas.style.height = h + 'px';
+        kv.syncSize();
         if (_versionsLoaded) draw();
     }
 
@@ -426,6 +440,8 @@ async function fetchGeometry() {
 
 let _panRaf = null;
 let _geoCache = null;
+let _kvKey  = null; // Konva 패턴 노드를 마지막으로 빌드한 시점의 파라미터 키
+let _kvCornerMode = null; // 마지막 빌드 시점의 doorCornerPositions 모드
 function drawPan() {
     if (_panRaf) return;
     _panRaf = requestAnimationFrame(() => { _panRaf = null; draw(); });
@@ -630,6 +646,26 @@ async function draw() {
     const Color_Slat_Fill  = patternBroken ? '#cc0000' : selectedSlatColor;
     const Color_Tenon_Fill = patternBroken ? '#cc0000' : selectedSlatColor;
 
+    // doorCornerPositions 모드(오프스크린 캔버스)에서는 canvas 렌더링 유지
+    const useKonvaPattern = !doorCornerPositions;
+
+    // 줌·팬 시 Konva 노드 재생성 생략: geo·삭제·색상 등 실질 파라미터가 변한 경우만 rebuild
+    const _newKvKey = JSON.stringify([
+        _geoCache?.sig ?? '',
+        [...deletedSegs].sort().join(','),
+        addedLines.length,
+        faceColorMap ? JSON.stringify(Object.entries(faceColorMap).sort()) : '',
+        JSON.stringify(Object.entries(kv.getSlatColorOverrides()).sort()),
+        selectedSlatColor,
+        selectedFrameColor,
+        Math.round(baseScale * 1000),
+    ]);
+    const buildKonvaPattern = useKonvaPattern &&
+        (_newKvKey !== _kvKey || !!doorCornerPositions !== !!_kvCornerMode);
+
+    if (buildKonvaPattern) kv.beginPattern();
+    else if (!useKonvaPattern) { kv.clearPattern(); _kvKey = null; } // 배치모드: 노드 제거 + 키 무효화
+
     // ====== 내경 배경 (살 내부 화이트) ======
     for (const d of renderOrder) {
         let pOffX = 0;
@@ -642,8 +678,12 @@ async function draw() {
         }
         const tX = rx => offsetX + (pOffX + rx) * baseScale;
         const tY = ry => offsetY + ry * baseScale;
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(tX(geo.frameW), tY(geo.frameHTop), geo.innerW * baseScale, geo.innerH * baseScale);
+        if (buildKonvaPattern) {
+            kv.addPatternBg(tX(geo.frameW), tY(geo.frameHTop), geo.innerW * baseScale, geo.innerH * baseScale);
+        } else {
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(tX(geo.frameW), tY(geo.frameHTop), geo.innerW * baseScale, geo.innerH * baseScale);
+        }
     }
 
     // ====== 1차 루프: 패턴만 그리기 (45° 사선살, 사분턱) ======
@@ -747,15 +787,19 @@ async function draw() {
 
         // 내경 영역으로 클리핑 — innerH 기준
         const clipH = geo.innerH;
-        ctx.save();
-        ctx.beginPath();
-        ctx.rect(
-            toCanvasX(geo.frameW),
-            toCanvasY(geo.frameHTop),
-            geo.innerW * baseScale,
-            clipH * baseScale
-        );
-        ctx.clip();
+        if (buildKonvaPattern) {
+            kv.addPatternClipGroup(d, toCanvasX(geo.frameW), toCanvasY(geo.frameHTop), geo.innerW * baseScale, clipH * baseScale);
+        } else {
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(
+                toCanvasX(geo.frameW),
+                toCanvasY(geo.frameHTop),
+                geo.innerW * baseScale,
+                clipH * baseScale
+            );
+            ctx.clip();
+        }
 
         // 면 채색 자리 (살 선 아래 — 비워둠, 살 위에서 그림)
 
@@ -763,9 +807,13 @@ async function draw() {
             // ====================================
             // 45° 대각선 — 셀 중심에서 반씩 분리, 한 면씩 삭제 가능
             // ====================================
-            ctx.strokeStyle = patternBroken ? '#cc0000' : selectedSlatColor;
-            ctx.lineWidth = geo.slatT * baseScale;
-            ctx.lineCap = 'round';
+            const _diagStroke = patternBroken ? '#cc0000' : selectedSlatColor;
+            const _diagW = geo.slatT * baseScale;
+            if (!buildKonvaPattern) {
+                ctx.strokeStyle = _diagStroke;
+                ctx.lineWidth = _diagW;
+                ctx.lineCap = 'round';
+            }
 
             for (let row = 0; row < geo.rowsInt; row++) {
                 for (let col = 0; col < geo.cols; col++) {
@@ -801,7 +849,10 @@ async function draw() {
                     lastSegMap.set(bsbKey, { cx: bsbCx, cy: bsbCy, ex: bsbEx, ey: bsbEy, mx: (bsbCx+bsbEx)/2, my: (bsbCy+bsbEy)/2, normAngle: Math.PI/4, lineKey: bsFullLK });
 
                     const dBsA = !deletedSegs.has(bsaKey), dBsB = !deletedSegs.has(bsbKey);
-                    if (dBsA || dBsB) {
+                    if (buildKonvaPattern) {
+                        if (dBsA) kv.addPatternLine(bsaCx, bsaCy, bsaEx, bsaEy, _diagStroke, _diagW);
+                        if (dBsB) kv.addPatternLine(bsbCx, bsbCy, bsbEx, bsbEy, _diagStroke, _diagW);
+                    } else if (dBsA || dBsB) {
                         ctx.beginPath();
                         if (dBsA && dBsB)     { ctx.moveTo(bsaCx, bsaCy); ctx.lineTo(bsbEx, bsbEy); }
                         else if (dBsA)        { ctx.moveTo(bsaCx, bsaCy); ctx.lineTo(bsaEx, bsaEy); }
@@ -822,7 +873,10 @@ async function draw() {
                     lastSegMap.set(fsbKey, { cx: fsbCx, cy: fsbCy, ex: fsbEx, ey: fsbEy, mx: (fsbCx+fsbEx)/2, my: (fsbCy+fsbEy)/2, normAngle: 3*Math.PI/4, lineKey: fsFullLK });
 
                     const dFsA = !deletedSegs.has(fsaKey), dFsB = !deletedSegs.has(fsbKey);
-                    if (dFsA || dFsB) {
+                    if (buildKonvaPattern) {
+                        if (dFsA) kv.addPatternLine(fsaCx, fsaCy, fsaEx, fsaEy, _diagStroke, _diagW);
+                        if (dFsB) kv.addPatternLine(fsbCx, fsbCy, fsbEx, fsbEy, _diagStroke, _diagW);
+                    } else if (dFsA || dFsB) {
                         ctx.beginPath();
                         if (dFsA && dFsB)     { ctx.moveTo(fsaCx, fsaCy); ctx.lineTo(fsbEx, fsbEy); }
                         else if (dFsA)        { ctx.moveTo(fsaCx, fsaCy); ctx.lineTo(fsaEx, fsaEy); }
@@ -834,7 +888,7 @@ async function draw() {
         }
 
         // 클리핑 해제
-        ctx.restore();
+        if (!useKonvaPattern) ctx.restore();
 
         // 코너 다이아몬드 면 채색 — 살 선 위에, cellW/2 크기로 X교차점과 분리
         if (faceColorMap) {
@@ -1027,16 +1081,18 @@ async function draw() {
         // 창호 실제 높이
         const actualH = geo.actualPatternH;
 
-        ctx.fillStyle = selectedFrameColor;
-
-        // 좌측 세로 울거미
-        ctx.fillRect(toCanvasX(0), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale);
-        // 상부 가로 울거미
-        ctx.fillRect(toCanvasX(geo.frameW), toCanvasY(0), geo.innerW * baseScale, geo.frameHTop * baseScale);
-        // 하단 울거미
-        ctx.fillRect(toCanvasX(geo.frameW), toCanvasY(geo.frameHTop + geo.innerH), geo.innerW * baseScale, geo.frameHBottom * baseScale);
-        // 우측 세로 울거미
-        ctx.fillRect(toCanvasX(geo.outerW - geo.frameW), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale);
+        if (buildKonvaPattern) {
+            kv.addPatternFrameRect(toCanvasX(0), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale, selectedFrameColor);
+            kv.addPatternFrameRect(toCanvasX(geo.frameW), toCanvasY(0), geo.innerW * baseScale, geo.frameHTop * baseScale, selectedFrameColor);
+            kv.addPatternFrameRect(toCanvasX(geo.frameW), toCanvasY(geo.frameHTop + geo.innerH), geo.innerW * baseScale, geo.frameHBottom * baseScale, selectedFrameColor);
+            kv.addPatternFrameRect(toCanvasX(geo.outerW - geo.frameW), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale, selectedFrameColor);
+        } else {
+            ctx.fillStyle = selectedFrameColor;
+            ctx.fillRect(toCanvasX(0), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale);
+            ctx.fillRect(toCanvasX(geo.frameW), toCanvasY(0), geo.innerW * baseScale, geo.frameHTop * baseScale);
+            ctx.fillRect(toCanvasX(geo.frameW), toCanvasY(geo.frameHTop + geo.innerH), geo.innerW * baseScale, geo.frameHBottom * baseScale);
+            ctx.fillRect(toCanvasX(geo.outerW - geo.frameW), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale);
+        }
     }
 
     // ====================================
@@ -1068,40 +1124,30 @@ async function draw() {
             const ppInnerW = geo.innerW;
             const ppInnerH = pungpanDrawH - geo.frameH;
 
-            ctx.fillStyle = lightenHex(selectedFrameColor, 40);
-            ctx.fillRect(
-                toCX(ppInnerX),
-                toCY(pungpanY),
-                ppInnerW * baseScale,
-                ppInnerH * baseScale
-            );
-
-            ctx.fillStyle = selectedFrameColor;
-
-            // 좌측 세로 울거미 (풍판 전체 높이)
-            ctx.fillRect(
-                toCX(0),
-                toCY(pungpanY),
-                geo.frameW * baseScale,
-                pungpanDrawH * baseScale
-            );
-
-            // 우측 세로 울거미 (풍판 전체 높이)
-            ctx.fillRect(
-                toCX(geo.outerW - geo.frameW),
-                toCY(pungpanY),
-                geo.frameW * baseScale,
-                pungpanDrawH * baseScale
-            );
-
-            // 하단 가로 울거미
-            ctx.fillRect(
-                toCX(geo.frameW),
-                toCY(pungpanY + pungpanDrawH - geo.frameH),
-                geo.innerW * baseScale,
-                geo.frameH * baseScale
-            );
+            if (buildKonvaPattern) {
+                kv.addPatternFrameRect(toCX(ppInnerX), toCY(pungpanY), ppInnerW * baseScale, ppInnerH * baseScale, lightenHex(selectedFrameColor, 40));
+                kv.addPatternFrameRect(toCX(0), toCY(pungpanY), geo.frameW * baseScale, pungpanDrawH * baseScale, selectedFrameColor);
+                kv.addPatternFrameRect(toCX(geo.outerW - geo.frameW), toCY(pungpanY), geo.frameW * baseScale, pungpanDrawH * baseScale, selectedFrameColor);
+                kv.addPatternFrameRect(toCX(geo.frameW), toCY(pungpanY + pungpanDrawH - geo.frameH), geo.innerW * baseScale, geo.frameH * baseScale, selectedFrameColor);
+            } else {
+                ctx.fillStyle = lightenHex(selectedFrameColor, 40);
+                ctx.fillRect(toCX(ppInnerX), toCY(pungpanY), ppInnerW * baseScale, ppInnerH * baseScale);
+                ctx.fillStyle = selectedFrameColor;
+                ctx.fillRect(toCX(0), toCY(pungpanY), geo.frameW * baseScale, pungpanDrawH * baseScale);
+                ctx.fillRect(toCX(geo.outerW - geo.frameW), toCY(pungpanY), geo.frameW * baseScale, pungpanDrawH * baseScale);
+                ctx.fillRect(toCX(geo.frameW), toCY(pungpanY + pungpanDrawH - geo.frameH), geo.innerW * baseScale, geo.frameH * baseScale);
+            }
         }
+    }
+
+    if (useKonvaPattern) {
+        if (buildKonvaPattern) {
+            kv.commitPattern();
+            _kvKey = _newKvKey;
+        } else {
+            kv.syncPatternTransform();
+        }
+        _kvCornerMode = !!doorCornerPositions;
     }
 
     if (doorCornerPositions) {
@@ -1112,15 +1158,15 @@ async function draw() {
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         const _c = getOverlayCorners();
         drawPerspectiveQuad(ctx, offCanvas, _c.tl, _c.tr, _c.br, _c.bl);
-        if (false && showDimensions && lastDoorWpx > 0) {
+        if (showDimensions && totalWidth > 0) {
             const _sf  = scaleFactor;
             const GAP  = 24 / _sf, TICK = 5 / _sf, ITICK = 12 / _sf;
             const R    = 3  / _sf, lw   = 1 / _sf, fs    = 13 / _sf;
-            const dL = offsetX, dR = offsetX + totalWidth * baseScale;
-            const dT = offsetY, dB = offsetY + totalH * baseScale;
+            const dL = Math.min(_c.tl.x, _c.bl.x) / dpr;
+            const dR = Math.max(_c.tr.x, _c.br.x) / dpr;
+            const dT = Math.min(_c.tl.y, _c.tr.y) / dpr;
+            const dB = Math.max(_c.bl.y, _c.br.y) / dpr;
             ctx.save();
-            ctx.translate(logW / 2 + panX, logH / 2 + panY);
-            ctx.scale(scaleFactor, scaleFactor);
             ctx.strokeStyle = 'rgba(50,50,50,0.7)';
             ctx.fillStyle   = 'rgba(50,50,50,0.7)';
             ctx.lineWidth   = lw;
@@ -1251,6 +1297,7 @@ async function draw() {
         }
     }
     drawSvgInserts();
+    kv.drawSlatOverlay();
     if (!_exportCanvas || _exportCanvas.width !== canvas.width || _exportCanvas.height !== canvas.height) {
         _exportCanvas = document.createElement('canvas');
         _exportCanvas.width = canvas.width;
@@ -1510,6 +1557,7 @@ async function draw() {
             paintFaceCell(coord.x, coord.y, e.button === 2);
             return;
         }
+        if (kv.slatSelectMode && !kv.usePatternLayer) { kv.handleSlatSelect(e); return; }
         const cornerHit = getHitOverlayCorner(e.clientX, e.clientY);
         const corner = cornerHit === 'center' ? 'move' : cornerHit;
         const sp = () => ({
@@ -2015,7 +2063,9 @@ document.getElementById('chkDimension').addEventListener('change', e => { showDi
             placementNaturalSize: placementNaturalSize ? { ...placementNaturalSize } : null,
             deletedSegs: [...deletedSegs],
             addedLines,
-            svgInserts,
+            svgInserts: [],
+            konvaShapes: kv.getKonvaParams(),
+            slatColorOverrides: kv.getSlatColorOverrides(),
             estimatedPrice: window.__pmokEstimatedPrice || 0,
         };
     }
@@ -2042,10 +2092,10 @@ document.getElementById('chkDimension').addEventListener('change', e => { showDi
         deletedSegs  = new Set(p.deletedSegs || []);
         addedLines   = p.addedLines || [];
         addLineStart = null;
-        svgInserts       = p.svgInserts || [];
+        svgInserts       = [];
         selectedInsertId = null;
-        svgInserts.forEach(ins => _loadMotifImg(ins.url));
         renderSvgInsertPanel();
+        kv.applyKonvaParams(p);
         document.getElementById('btnScale').classList.toggle('cv-btn-active', placementMode);
         frameColorPicker.selectColor(p.frameColor);
         slatColorPicker.selectColor(p.slatColor);
