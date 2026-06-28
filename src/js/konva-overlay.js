@@ -571,6 +571,19 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
         patternLayer.draw(); // 동기 렌더 — canvas와 같은 프레임에 출력
     }
 
+    // 노드 재생성 없이 transform만 업데이트 (줌·팬 전용)
+    function syncPatternTransform() {
+        if (!_usePatternLayer) return;
+        const s = getState();
+        if (!s.logW) return;
+        patternLayer.position({ x: s.logW / 2 + s.panX, y: s.logH / 2 + s.panY });
+        patternLayer.scale({ x: s.scaleFactor, y: s.scaleFactor });
+        patternLayer.draw(); // 동기
+        konvaShapeLayer.position({ x: s.logW / 2 + s.panX, y: s.logH / 2 + s.panY });
+        konvaShapeLayer.scale({ x: s.scaleFactor, y: s.scaleFactor });
+        konvaShapeLayer.batchDraw();
+    }
+
     function updatePatternHighlight() {
         if (!_usePatternLayer) return;
         for (const [, rect] of Object.entries(_patternSlatNodes)) {
@@ -649,6 +662,7 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
         addPatternFrameRect,
         addPatternLine,
         commitPattern,
+        syncPatternTransform,
         updatePatternHighlight,
     };
 };

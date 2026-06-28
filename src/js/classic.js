@@ -450,6 +450,8 @@ async function fetchGeometry(p = null) {
 
 let _panRaf = null;
 let _geoCache = null;
+let _kvKey  = null; // Konva 패턴 노드를 마지막으로 빌드한 시점의 파라미터 키
+let _kvCornerMode = null; // 마지막 빌드 시점의 doorCornerPositions 모드
 function drawPan() {
     if (_panRaf) return;
     _panRaf = requestAnimationFrame(() => { _panRaf = null; draw(); });
@@ -642,8 +644,22 @@ async function draw() {
 
     // doorCornerPositions 모드(오프스크린 캔버스)에서는 canvas 렌더링 유지
     const useKonvaPattern = !doorCornerPositions;
-    if (useKonvaPattern) kv.beginPattern();
-    else kv.clearPattern(); // 배치모드: 기존 Konva 패턴 제거
+
+    // 줌·팬 시 Konva 노드 재생성 생략: geo·삭제·색상 등 실질 파라미터가 변한 경우만 rebuild
+    const _newKvKey = JSON.stringify([
+        _geoCache?.sig ?? '',
+        [...deletedSegs].sort().join(','),
+        addedLines.length,
+        faceColorMap ? JSON.stringify(Object.entries(faceColorMap).sort()) : '',
+        JSON.stringify(Object.entries(kv.getSlatColorOverrides()).sort()),
+        selectedSlatColor,
+        selectedFrameColor,
+    ]);
+    const buildKonvaPattern = useKonvaPattern &&
+        (_newKvKey !== _kvKey || !!doorCornerPositions !== !!_kvCornerMode);
+
+    if (buildKonvaPattern) kv.beginPattern();
+    else if (!useKonvaPattern) { kv.clearPattern(); _kvKey = null; } // 배치모드: 노드 제거 + 키 무효화
 
     // ====== 내경 배경 (살 내부 화이트) ======
     for (const d of renderOrder) {
@@ -657,7 +673,7 @@ async function draw() {
         }
         const tX = rx => offsetX + (pOffX + rx) * baseScale;
         const tY = ry => offsetY + ry * baseScale;
-        if (useKonvaPattern) {
+        if (buildKonvaPattern) {
             kv.addPatternBg(tX(geo.frameW), tY(geo.frameHTop), geo.innerW * baseScale, geo.innerH * baseScale);
         } else {
             ctx.fillStyle = '#ffffff';
@@ -787,7 +803,7 @@ async function draw() {
 
         // 내경 영역으로 클리핑 — innerH 기준
         const clipH = geo.innerH;
-        if (useKonvaPattern) {
+        if (buildKonvaPattern) {
             kv.addPatternClipGroup(d, toCanvasX(geo.frameW), toCanvasY(geo.frameHTop), geo.innerW * baseScale, clipH * baseScale);
         } else {
             ctx.save();
@@ -810,7 +826,7 @@ async function draw() {
                 for (let col = 0; col < geo.cols; col++) {
                     const _fc = faceColorMap[`cell:${col}:${row}`] ?? null;
                     if (_fc) {
-                        if (useKonvaPattern) {
+                        if (buildKonvaPattern) {
                             kv.addPatternRectToGroup(d,
                                 toCanvasX(geo.frameW + col * stepV),
                                 toCanvasY(geo.frameHTop + cb.y0),
@@ -844,7 +860,7 @@ async function draw() {
                 const botY  = geo.frameHTop + geo.innerH;
 
                 // 촉 (항상)
-                if (useKonvaPattern) {
+                if (buildKonvaPattern) {
                     kv.addPatternRectToGroup(d, toCanvasX(left), toCanvasY(topY - geo.tenonDepth), geo.slatV * baseScale, geo.tenonDepth * baseScale, Color_Tenon_Fill);
                     kv.addPatternRectToGroup(d, toCanvasX(left), toCanvasY(botY), geo.slatV * baseScale, geo.tenonDepth * baseScale, Color_Tenon_Fill);
                 } else {
@@ -864,7 +880,7 @@ async function draw() {
                     lastSegMap.set(vsKey, { cx: vsCx, cy: toCanvasY(segStartY), ex: vsCx, ey: toCanvasY(segEndY), mx: vsCx, my: vsCy, normAngle: Math.PI / 2, lineKey: makeLineKey(vsCx, vsCy, Math.PI / 2) });
                     if (deletedSegs.has(vsKey)) continue;
 
-                    if (useKonvaPattern) {
+                    if (buildKonvaPattern) {
                         kv.addPatternSlatRect(d, toCanvasX(left), toCanvasY(segStartY), geo.slatV * baseScale, segH * baseScale, Color_Slat_Fill, vsKey, lastSegMap.get(vsKey).lineKey);
                     } else {
                         ctx.fillStyle = Color_Slat_Fill;
@@ -886,7 +902,7 @@ async function draw() {
                 const stepW  = geo.cellW + geo.slatV;
 
                 // 촉 (항상)
-                if (useKonvaPattern) {
+                if (buildKonvaPattern) {
                     kv.addPatternRectToGroup(d, toCanvasX(leftX - geo.tenonDepth), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale, Color_Tenon_Fill);
                     kv.addPatternRectToGroup(d, toCanvasX(rightX), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale, Color_Tenon_Fill);
                 } else {
@@ -904,7 +920,7 @@ async function draw() {
                     lastSegMap.set(hsKey, { cx: toCanvasX(segStartX), cy: hsCy, ex: toCanvasX(segEndX), ey: hsCy, mx: toCanvasX(segMidX), my: hsCy, normAngle: 0, lineKey: makeLineKey(toCanvasX(segMidX), hsCy, 0) });
                     if (deletedSegs.has(hsKey)) continue;
 
-                    if (useKonvaPattern) {
+                    if (buildKonvaPattern) {
                         kv.addPatternSlatRect(d, toCanvasX(segStartX), toCanvasY(top), stepW * baseScale, geo.slatH * baseScale, Color_Slat_Fill, hsKey, lastSegMap.get(hsKey).lineKey);
                     } else {
                         ctx.fillStyle = Color_Slat_Fill;
@@ -1024,7 +1040,7 @@ async function draw() {
                 const x2 = toX(geo.frameW + ln.nx2 * geo.innerW);
                 const y2 = toY(geo.frameHTop + ln.ny2 * geo.innerH);
                 lastSegMap.set(`added:${d}:${idx}`, { cx: x1, cy: y1, ex: x2, ey: y2, mx: (x1 + x2) / 2, my: (y1 + y2) / 2, normAngle: 0 });
-                if (useKonvaPattern) {
+                if (buildKonvaPattern) {
                     kv.addPatternLine(x1, y1, x2, y2, addedColor, lastSlatPx);
                 } else {
                     ctx.beginPath();
@@ -1067,7 +1083,7 @@ async function draw() {
         // 창호 실제 높이
         const actualH = geo.actualPatternH;
 
-        if (useKonvaPattern) {
+        if (buildKonvaPattern) {
             kv.addPatternFrameRect(toCanvasX(0), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale, selectedFrameColor);
             kv.addPatternFrameRect(toCanvasX(geo.frameW), toCanvasY(0), geo.innerW * baseScale, geo.frameHTop * baseScale, selectedFrameColor);
             kv.addPatternFrameRect(toCanvasX(geo.frameW), toCanvasY(geo.frameHTop + geo.innerH), geo.innerW * baseScale, geo.frameHBottom * baseScale, selectedFrameColor);
@@ -1110,7 +1126,7 @@ async function draw() {
             const ppInnerW = geo.innerW;
             const ppInnerH = pungpanDrawH - geo.frameH;
 
-            if (useKonvaPattern) {
+            if (buildKonvaPattern) {
                 kv.addPatternFrameRect(toCX(ppInnerX), toCY(pungpanY), ppInnerW * baseScale, ppInnerH * baseScale, lightenHex(selectedFrameColor, 40));
                 kv.addPatternFrameRect(toCX(0), toCY(pungpanY), geo.frameW * baseScale, pungpanDrawH * baseScale, selectedFrameColor);
                 kv.addPatternFrameRect(toCX(geo.outerW - geo.frameW), toCY(pungpanY), geo.frameW * baseScale, pungpanDrawH * baseScale, selectedFrameColor);
@@ -1127,7 +1143,15 @@ async function draw() {
         }
     }
 
-    if (useKonvaPattern) kv.commitPattern();
+    if (useKonvaPattern) {
+        if (buildKonvaPattern) {
+            kv.commitPattern();
+            _kvKey = _newKvKey;          // 다음 draw에서 변경 여부 비교
+        } else {
+            kv.syncPatternTransform();   // 줌·팬: transform만 업데이트
+        }
+        _kvCornerMode = !!doorCornerPositions;
+    }
 
     if (doorCornerPositions) {
         // 오프스크린 컨텍스트 복원 후 메인 캔버스로 전환
@@ -1137,17 +1161,15 @@ async function draw() {
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         const _c = getOverlayCorners();
         drawPerspectiveQuad(ctx, offCanvas, _c.tl, _c.tr, _c.br, _c.bl);
-        if (false && showDimensions && lastDoorWpx > 0) {
-            const _sf  = scaleFactor;
-            const GAP  = 24 / _sf, TICK = 5 / _sf, ITICK = 12 / _sf;
-            const R    = 3  / _sf, lw   = 1 / _sf, fs    = 14 / _sf;
-            const mFrame = (geo.frameThick + geo.frameGap) * baseScale;
-            const extra  = 30 * baseScale;
-            const dL = offsetX - mFrame, dR = offsetX + totalWidth * baseScale + mFrame;
-            const dT = offsetY - mFrame, dB = offsetY + totalH * baseScale + mFrame;
+        if (showDimensions && totalWidth > 0) {
+            // _c 코너는 CSS px 좌표 → dpr transform 적용 ctx와 일치
+            const allX = [_c.tl.x, _c.tr.x, _c.br.x, _c.bl.x];
+            const allY = [_c.tl.y, _c.tr.y, _c.br.y, _c.bl.y];
+            const dL = Math.min(...allX), dR = Math.max(...allX);
+            const dT = Math.min(...allY), dB = Math.max(...allY);
+            const GAP = 24, TICK = 5, ITICK = 12, R = 3, lw = 1, fs = 14;
+            const extra = 30;
             ctx.save();
-            ctx.translate(logW / 2 + panX, logH / 2 + panY);
-            ctx.scale(scaleFactor, scaleFactor);
             ctx.strokeStyle = 'rgba(50,50,50,0.7)';
             ctx.fillStyle   = 'rgba(50,50,50,0.7)';
             ctx.lineWidth   = lw;
@@ -1161,7 +1183,7 @@ async function draw() {
             ctx.stroke();
             _dot2(dL, bY); _dot2(dR, bY);
             ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-            ctx.fillText(`${Math.round(geo.frameOpeningW)}mm`, (dL + dR) / 2, bY + TICK + 3 / _sf);
+            ctx.fillText(`${Math.round(geo.frameOpeningW)}mm`, (dL + dR) / 2, bY + TICK + 3);
             const rX = dR + extra + GAP;
             ctx.beginPath();
             ctx.moveTo(rX - ITICK, dT); ctx.lineTo(rX + TICK, dT);
@@ -1170,7 +1192,7 @@ async function draw() {
             ctx.stroke();
             _dot2(rX, dT); _dot2(rX, dB);
             ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-            ctx.fillText(`${Math.round(geo.frameOpeningH)}mm`, rX + TICK + 3 / _sf, (dT + dB) / 2);
+            ctx.fillText(`${Math.round(geo.frameOpeningH)}mm`, rX + TICK + 3, (dT + dB) / 2);
             ctx.restore();
         }
     } else {
@@ -1358,11 +1380,20 @@ async function draw() {
         const LBL    = '#ffffff';
         const ZERO   = '#3A8C82';
 
-        // 문 범위 (스크린 좌표)
-        const doorL = ox;
-        const doorR = ox + lastDoorWpx * scaleFactor;
-        const doorT = oy;
-        const doorB = oy + lastDoorHpx * scaleFactor;
+        // 문 범위 (스크린 좌표) — 배치 모드는 실제 코너 기준
+        let doorL, doorR, doorT, doorB;
+        const _rc = getOverlayCorners();
+        if (_rc) {
+            doorL = Math.min(_rc.tl.x, _rc.tr.x, _rc.br.x, _rc.bl.x);
+            doorR = Math.max(_rc.tl.x, _rc.tr.x, _rc.br.x, _rc.bl.x);
+            doorT = Math.min(_rc.tl.y, _rc.tr.y, _rc.br.y, _rc.bl.y);
+            doorB = Math.max(_rc.tl.y, _rc.tr.y, _rc.br.y, _rc.bl.y);
+        } else {
+            doorL = ox;
+            doorR = ox + lastDoorWpx * scaleFactor;
+            doorT = oy;
+            doorB = oy + lastDoorHpx * scaleFactor;
+        }
 
         // 가로 눈금자 — 바깥 진하게, 문 범위 밝게
         rCtx.fillStyle = BG_OUT;
