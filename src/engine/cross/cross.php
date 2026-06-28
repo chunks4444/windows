@@ -676,6 +676,8 @@ header('Pragma: no-cache');
 
     <?php include __DIR__ . '/../../components/order_modal.php'; ?>
 
+    <script src="https://unpkg.com/konva@9/konva.min.js"></script>
+    <script src="/src/js/konva-overlay.js?v=<?= md5_file(__DIR__ . '/../../js/konva-overlay.js') ?>"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
         window.__pmokOpenDrawing         = <?= isset($_POST['drawing'])    ? json_encode($_POST['drawing'],    JSON_UNESCAPED_UNICODE) : 'null' ?>;
