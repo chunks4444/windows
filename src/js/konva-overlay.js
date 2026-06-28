@@ -44,6 +44,7 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
     let _patternClipGroups = {};
     let _patternSlatNodes  = {};
     let _usePatternLayer   = false;
+    let _activeClipGroup   = null;
 
     // ── 좌표 변환 ─────────────────────────────────────────
     // stage px → logic coords (konvaShapeLayer 기준)
@@ -512,6 +513,7 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
         patternLayer.clear(); // 이전 프레임 잔상 즉시 제거 (batchDraw는 비동기)
         _patternClipGroups = {};
         _patternSlatNodes  = {};
+        _activeClipGroup   = null;
         _usePatternLayer   = true;
     }
 
@@ -522,6 +524,7 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
             patternLayer.clear();
             _patternClipGroups = {};
             _patternSlatNodes  = {};
+            _activeClipGroup   = null;
         }
         _usePatternLayer = false;
     }
@@ -531,9 +534,14 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
     }
 
     function addPatternClipGroup(id, x, y, w, h) {
-        // 클립 그룹 없이 patternLayer에 직접 추가 (hit detection 안정화)
-        // 프레임 rect가 위에 쌓여 경계 밖을 자연스럽게 덮음
-        _patternClipGroups[id] = true;
+        const group = new Konva.Group({ clipX: x, clipY: y, clipWidth: w, clipHeight: h });
+        patternLayer.add(group);
+        _activeClipGroup = group;
+        _patternClipGroups[id] = group;
+    }
+
+    function endPatternClipGroup() {
+        _activeClipGroup = null;
     }
 
     function addPatternSlatRect(groupId, x, y, w, h, baseFill, segKey, lineKey) {
@@ -545,21 +553,22 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
         rect.setAttr('_pmok_lineKey',  lineKey);
         rect.setAttr('_pmok_baseFill', baseFill);
         _patternSlatNodes[segKey] = rect;
-        patternLayer.add(rect);
+        (_activeClipGroup || patternLayer).add(rect);
     }
 
     function addPatternRectToGroup(groupId, x, y, w, h, fill) {
-        patternLayer.add(new Konva.Rect({ x, y, width: w, height: h, fill, listening: false, perfectDrawEnabled: false }));
+        (_activeClipGroup || patternLayer).add(new Konva.Rect({ x, y, width: w, height: h, fill, listening: false, perfectDrawEnabled: false }));
     }
 
     function addPatternFrameRect(x, y, w, h, fill) {
+        _activeClipGroup = null; // 프레임 rect는 항상 clip 밖 (patternLayer 직접)
         const rect = new Konva.Rect({ x, y, width: w, height: h, fill, listening: true, perfectDrawEnabled: false });
         rect.setAttr('_pmok_type', 'frame');
         patternLayer.add(rect);
     }
 
     function addPatternLine(x1, y1, x2, y2, stroke, width) {
-        patternLayer.add(new Konva.Line({ points: [x1, y1, x2, y2], stroke, strokeWidth: width, lineCap: 'round', listening: false }));
+        (_activeClipGroup || patternLayer).add(new Konva.Line({ points: [x1, y1, x2, y2], stroke, strokeWidth: width, lineCap: 'round', listening: false }));
     }
 
     function commitPattern() {
@@ -657,6 +666,7 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
         clearPattern,
         addPatternBg,
         addPatternClipGroup,
+        endPatternClipGroup,
         addPatternSlatRect,
         addPatternRectToGroup,
         addPatternFrameRect,
