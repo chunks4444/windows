@@ -1979,17 +1979,33 @@ document.getElementById('chkDimension').addEventListener('change', e => { showDi
 
     function captureThumbnail() {
         const dpr = window.devicePixelRatio || 1;
-        const R   = Math.round(22 * dpr);
-        const sw  = canvas.width  - R;
-        const sh  = canvas.height - R;
-        const W   = 640;
-        const H   = Math.round(W * sh / sw);
+        if (!lastDoorWpx || !lastDoorHpx) return null;
+        const pad = 20;
+        const left = logW / 2 + panX + lastOLeft * scaleFactor - pad;
+        const top  = logH / 2 + panY + lastOTop  * scaleFactor - pad;
+        const cw   = lastDoorWpx * scaleFactor + 2 * pad;
+        const ch   = lastDoorHpx * scaleFactor + 2 * pad;
+        const sx = Math.max(0, Math.round(left * dpr));
+        const sy = Math.max(0, Math.round(top  * dpr));
+        const sw = Math.min(canvas.width  - sx, Math.round(cw * dpr));
+        const sh = Math.min(canvas.height - sy, Math.round(ch * dpr));
+        if (sw <= 0 || sh <= 0) return null;
+        const W = 640, H = 480;
+        const maxW = W - 40, maxH = H - 40;
+        const ar = sw / sh;
+        let dw, dh;
+        if (ar > maxW / maxH) { dw = maxW; dh = Math.round(maxW / ar); }
+        else                   { dh = maxH; dw = Math.round(maxH * ar); }
+        const dx = Math.round((W - dw) / 2);
+        const dy = Math.round((H - dh) / 2);
         const tmp = document.createElement('canvas');
         tmp.width = W; tmp.height = H;
         const tctx = tmp.getContext('2d');
         tctx.fillStyle = '#E5E7EA';
         tctx.fillRect(0, 0, W, H);
-        tctx.drawImage(canvas, R, R, sw, sh, 0, 0, W, H);
+        tctx.drawImage(canvas, sx, sy, sw, sh, dx, dy, dw, dh);
+        const kvEl = document.getElementById('konvaStageContainer');
+        if (kvEl) kvEl.querySelectorAll('canvas').forEach(c => { try { tctx.drawImage(c, sx, sy, sw, sh, dx, dy, dw, dh); } catch (_) {} });
         return tmp.toDataURL('image/jpeg', 0.85);
     }
 

@@ -674,5 +674,6 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
         commitPattern,
         syncPatternTransform,
         updatePatternHighlight,
+        getStageCanvas: () => konvaStage.toCanvas(),
     };
 };

@@ -28,19 +28,19 @@ function engine_setting_defaults(string $engine): array {
 
     switch ($engine) {
         case 'classic':
-            return $common + ['cols' => '12', 'ratio' => '1.2', 'patternTop' => '3', 'patternMid' => '5', 'patternBot' => '3'];
+            return $common + ['cols' => '12', 'ratio' => '1.2', 'patternTop' => '3', 'patternMid' => '5', 'patternBot' => '3', 'min_days' => '3'];
         case 'square':
-            return $common + ['cols' => '6', 'ratio' => '1.0', 'shrinkH' => '0'];
+            return $common + ['cols' => '6', 'ratio' => '1.0', 'shrinkH' => '0', 'min_days' => '3'];
         case 'cross':
-            return $common + ['cols' => '4', 'shrinkH' => '0'];
+            return $common + ['cols' => '4', 'shrinkH' => '0', 'min_days' => '4'];
         case 'diamond':
-            return $common + ['cols' => '4', 'shrinkH' => '0'];
+            return $common + ['cols' => '4', 'shrinkH' => '0', 'min_days' => '4'];
         case 'triangle':
-            return $common + ['cols' => '4', 'shrinkH' => '0', 'rotate' => '1'];
+            return $common + ['cols' => '4', 'shrinkH' => '0', 'rotate' => '1', 'min_days' => '4'];
         case 'hexagon':
-            return $common + ['cols' => '3', 'shrinkH' => '0', 'rotate' => '1'];
+            return $common + ['cols' => '3', 'shrinkH' => '0', 'rotate' => '1', 'min_days' => '5'];
         default:
-            return $common;
+            return $common + ['min_days' => '3'];
     }
 }
 

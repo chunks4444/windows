@@ -491,6 +491,7 @@ header('Pragma: no-cache');
                             <div class="sb-break-row"><span>문(창호)</span><span id="spCostDoor">–</span></div>
                             <div class="sb-break-row"><span>문틀</span><span id="spCostMuntol">–</span></div>
                             <div class="sb-break-row sb-break-total"><span>목재비 합계</span><span id="spWoodCost">–</span></div>
+                            <div class="sb-lead-time sb-break-row" data-min-days="<?= (int)$cfg['min_days'] ?>"><span>최소 제작기간</span><span><strong><?= (int)$cfg['min_days'] ?></strong>일</span></div>
                             <div class="sb-price-note">※ 배송비·시공비 제외</div>
                             <div class="sb-price-disclaimer">※ 본 금액은 예상 견적입니다. 사용자 편집 내용을 검토한 후 최종 견적이 확정됩니다.</div>
                         </div>

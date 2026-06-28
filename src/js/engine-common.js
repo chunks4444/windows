@@ -414,13 +414,16 @@
             document.getElementById('orderDrawingTitle').textContent   = getTitle() || '(제목 없음)';
             document.getElementById('orderDrawingVersion').textContent = (getVersionLabel && getVersionLabel()) || '—';
 
-            const thumbImg = document.getElementById('orderThumbImg');
-            const thumbSrc = getThumbnail ? getThumbnail() : null;
-            thumbImg.style.display = thumbSrc ? '' : 'none';
-            if (thumbSrc) thumbImg.src = thumbSrc;
-
             const dueDateEl = document.getElementById('orderDueDate');
-            dueDateEl.min   = new Date().toISOString().slice(0, 10);
+            const minDays   = parseInt(document.querySelector('.sb-lead-time')?.dataset?.minDays ?? '0', 10);
+            const minDate   = new Date();
+            let bizAdded = 0;
+            while (bizAdded < minDays + 1) {
+                minDate.setDate(minDate.getDate() + 1);
+                const dow = minDate.getDay();
+                if (dow !== 0 && dow !== 6) bizAdded++;
+            }
+            dueDateEl.min   = `${minDate.getFullYear()}-${String(minDate.getMonth()+1).padStart(2,'0')}-${String(minDate.getDate()).padStart(2,'0')}`;
             dueDateEl.value = '';
 
             document.getElementById('orderShipZipcode').value       = user.zipcode        || '';
@@ -432,6 +435,19 @@
             document.getElementById('orderZipSearchBtn').onclick = _orderOpenPostcode;
 
             document.getElementById('orderBackdrop').classList.add('pm-active');
+
+            const thumbImg = document.getElementById('orderThumbImg');
+            try {
+                const thumbSrc = getThumbnail ? getThumbnail() : null;
+                if (thumbSrc) {
+                    thumbImg.src = thumbSrc;
+                    thumbImg.style.display = 'block';
+                } else {
+                    thumbImg.style.display = 'none';
+                }
+            } catch (_) {
+                thumbImg.style.display = 'none';
+            }
 
             document.getElementById('orderSubmitBtn').onclick = () => {
                 const dueDate   = dueDateEl.value;

@@ -28,6 +28,7 @@ const KEY_LABELS = {
     pungpanT:    '풍판 판재 두께 (mm)',
     dimensionOn: '치수 표기 (0/1)',
     basePadding: '캔버스 여백 (px)',
+    min_days:    '최소 제작기간 (일)',
 };
 
 const SETTING_GROUPS = [
@@ -36,7 +37,7 @@ const SETTING_GROUPS = [
     { label: '살',     keys: ['slat', 'slatW', 'cols', 'ratio', 'patternTop', 'patternMid', 'patternBot', 'shrinkH', 'rotate'] },
     { label: '문틀',   keys: ['frameThick', 'frameGap', 'muntolT', 'muntolW'] },
     { label: '풍판',   keys: ['pungpanOn', 'pungpan', 'pungpanT'] },
-    { label: '기타',   keys: ['dimensionOn', 'basePadding'] },
+    { label: '기타',   keys: ['dimensionOn', 'basePadding', 'min_days'] },
 ];
 
 const engineSelect = document.getElementById('engineSelect');
