@@ -1288,10 +1288,11 @@ async function draw() {
             // _c 코너는 CSS px 좌표 → dpr transform 적용 ctx와 일치
             const allX = [_c.tl.x, _c.tr.x, _c.br.x, _c.bl.x];
             const allY = [_c.tl.y, _c.tr.y, _c.br.y, _c.bl.y];
-            const dL = Math.min(...allX), dR = Math.max(...allX);
-            const dT = Math.min(...allY), dB = Math.max(...allY);
+            const mFrameSc = (geo.frameThick + geo.frameGap) * baseScale * scaleFactor;
+            const dL = Math.min(...allX) - mFrameSc, dR = Math.max(...allX) + mFrameSc;
+            const dT = Math.min(...allY) - mFrameSc, dB = Math.max(...allY) + mFrameSc;
             const GAP = 24, TICK = 5, ITICK = 12, R = 3, lw = 1, fs = 14;
-            const extra = 30;
+            const extra = 30 * baseScale * scaleFactor;
             ctx.save();
             ctx.strokeStyle = 'rgba(50,50,50,0.7)';
             ctx.fillStyle   = 'rgba(50,50,50,0.7)';
