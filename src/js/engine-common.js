@@ -265,6 +265,7 @@
         placementMode = false;
         document.getElementById('btnScale').classList.remove('cv-btn-active');
         canvas.style.cursor = 'default';
+        window.__pmokOnDeactivate?.();
     }
 
     function drawTriangleAffine(tctx, img,
@@ -845,6 +846,11 @@ function _normalizeInsert(ins) {
 }
 
 function addSvgInsert(url, naturalW, naturalH) {
+    // Konva 모드에서는 Konva.Image로 대체
+    if (typeof window.__pmokAddKonvaInsert === 'function') {
+        window.__pmokAddKonvaInsert(url, naturalW, naturalH);
+        return;
+    }
     const w = naturalW || 100, h = naturalH || 100;
     const targetSize = Math.min(logW, logH) * 0.25;
     const baseScale = targetSize / Math.max(w, h);
@@ -951,6 +957,7 @@ function _insertCorner(ins) {
 }
 
 function drawSvgInserts() {
+    if (window.__pmokKonvaInserts) return; // Konva.Image가 대신 렌더링
     if (!svgInserts.length) return;
     const ox = logW / 2 + panX, oy = logH / 2 + panY;
     svgInserts.forEach(ins => {
@@ -1103,25 +1110,29 @@ function drawSvgInserts() {
 
         // 마우스: 캡처 단계에서 먼저 검사해 엔진 자체 mousedown(팬 등)보다 우선권을 가짐
         container.addEventListener('mousedown', e => {
+            if (window.__pmokKonvaInserts) return; // Konva가 삽입 이벤트 처리
             if (onDown(e.clientX, e.clientY, e.target, e.shiftKey)) e.stopImmediatePropagation();
         }, { capture: true });
         window.addEventListener('mousemove', e => {
+            if (window.__pmokKonvaInserts) return;
             if (onMove(e.clientX, e.clientY)) e.stopImmediatePropagation();
         }, { capture: true });
-        window.addEventListener('mouseup', () => { onUp(); }, { capture: true });
+        window.addEventListener('mouseup', () => { if (!window.__pmokKonvaInserts) onUp(); }, { capture: true });
 
         // 터치: 기존 터치 핸들러(팬/핀치)보다 먼저 처리되도록 캡처 단계 사용
         container.addEventListener('touchstart', e => {
+            if (window.__pmokKonvaInserts) return;
             if (e.touches.length !== 1) return;
             const t = e.touches[0];
             if (onDown(t.clientX, t.clientY, e.target)) e.stopImmediatePropagation();
         }, { capture: true, passive: true });
         container.addEventListener('touchmove', e => {
+            if (window.__pmokKonvaInserts) return;
             if (e.touches.length !== 1 || !insertDrag) return;
             const t = e.touches[0];
             if (onMove(t.clientX, t.clientY)) e.stopImmediatePropagation();
         }, { capture: true, passive: true });
-        container.addEventListener('touchend', () => { onUp(); }, { capture: true });
+        container.addEventListener('touchend', () => { if (!window.__pmokKonvaInserts) onUp(); }, { capture: true });
     });
 })();
 

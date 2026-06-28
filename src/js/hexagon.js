@@ -1553,7 +1553,7 @@ async function draw() {
             const d = Math.hypot(cx - node.cx, cy - node.cy);
             if (d < bestDist) { bestDist = d; best = node; }
         }
-        return (best && bestDist < lastCellSize) ? best : null;
+        return (best && bestDist < lastCellSize * 0.5) ? best : null;
     }
 
     function hitTestCell(px, py) {

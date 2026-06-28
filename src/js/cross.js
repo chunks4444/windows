@@ -882,7 +882,7 @@ async function draw() {
 
         let adjHSlatCnt = parseInt(p.hSlatCnt) || 0;
         let adjVSlatCnt = parseInt(p.vSlatCnt) || 0;
-        let adjDiag     = [];
+        let adjDiag     = (p.diagList || []).map(item => ({ ...item }));
         const extraPieces = [];
 
         for (const [, segs] of lineGroups) {
@@ -958,6 +958,16 @@ async function draw() {
 
         document.getElementById('spHSlatCnt').textContent = Math.max(0, adjHSlatCnt) + '개';
         document.getElementById('spVSlatCnt').textContent = Math.max(0, adjVSlatCnt) + '개';
+
+        adjDiag = adjDiag.filter(item => item.cnt > 0);
+        adjDiag.sort((a, b) => b.len - a.len);
+        diagListEl.innerHTML = '';
+        adjDiag.forEach(({ len, cnt }) => {
+            const el = document.createElement('div');
+            el.className = 'slat-row';
+            el.innerHTML = `<span class="slat-len">${p.slatW}×${geo.slatT}×${len}mm</span><span class="slat-cnt">${cnt}개</span>`;
+            diagListEl.appendChild(el);
+        });
 
     }
 

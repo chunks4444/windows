@@ -35,6 +35,8 @@
     let lastSegMap   = new Map();
     let lastNodeList = [];
     let lastILeft = 0, lastITop = 0, lastIW = 1, lastIH = 1, lastSlatPx = 1, lastCellSize = 1;
+
+    // ── 살 선택 (상태는 konva-overlay 모듈 내부에서 관리) ──
     let lastBaseScale = 1, lastOLeft = 0, lastOTop = 0, lastDoorWpx = 0, lastDoorHpx = 0;
     let showDimensions = true;
     let _exportCanvas = null;
@@ -98,6 +100,19 @@
     const canvas = document.getElementById('doorCanvas');
     const ctx = canvas.getContext('2d');
     const container = document.getElementById('canvasContainer');
+
+    // ── Konva 오버레이 모듈 초기화 ───────────────────────
+    const kv = initKonvaOverlay({
+        canvas,
+        getState: () => ({ logW, logH, panX, panY, scaleFactor, lastSlatPx, lastCellSize }),
+        getSegMap: () => lastSegMap,
+        deletedSegs,
+        draw,
+    });
+    window.__pmokOnDeactivate    = kv.onDeactivate;
+    window.__pmokKonvaInserts    = true;
+    window.__pmokAddKonvaInsert  = (url, w, h) => kv.addKonvaInsert(url, w, h);
+
     const sidebar = document.getElementById('sidebar');
 
     const txtW = document.getElementById('txtW');
@@ -239,6 +254,7 @@
         canvas.height = ph;
         canvas.style.width  = w + 'px';
         canvas.style.height = h + 'px';
+        kv.syncSize();
         if (_versionsLoaded) draw();
     }
 
@@ -624,6 +640,11 @@ async function draw() {
     const Color_Slat_Fill  = patternBroken ? '#cc0000' : selectedSlatColor;
     const Color_Tenon_Fill = patternBroken ? '#cc0000' : selectedSlatColor;
 
+    // doorCornerPositions 모드(오프스크린 캔버스)에서는 canvas 렌더링 유지
+    const useKonvaPattern = !doorCornerPositions;
+    if (useKonvaPattern) kv.beginPattern();
+    else kv.clearPattern(); // 배치모드: 기존 Konva 패턴 제거
+
     // ====== 내경 배경 (살 내부 화이트) ======
     for (const d of renderOrder) {
         let pOffX = 0;
@@ -636,8 +657,12 @@ async function draw() {
         }
         const tX = rx => offsetX + (pOffX + rx) * baseScale;
         const tY = ry => offsetY + ry * baseScale;
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(tX(geo.frameW), tY(geo.frameHTop), geo.innerW * baseScale, geo.innerH * baseScale);
+        if (useKonvaPattern) {
+            kv.addPatternBg(tX(geo.frameW), tY(geo.frameHTop), geo.innerW * baseScale, geo.innerH * baseScale);
+        } else {
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(tX(geo.frameW), tY(geo.frameHTop), geo.innerW * baseScale, geo.innerH * baseScale);
+        }
     }
 
     // ====== 1차 루프: 패턴만 그리기 (세로살, 가로살, 사분턱) ======
@@ -762,15 +787,19 @@ async function draw() {
 
         // 내경 영역으로 클리핑 — innerH 기준
         const clipH = geo.innerH;
-        ctx.save();
-        ctx.beginPath();
-        ctx.rect(
-            toCanvasX(geo.frameW),
-            toCanvasY(geo.frameHTop),
-            geo.innerW * baseScale,
-            clipH * baseScale
-        );
-        ctx.clip();
+        if (useKonvaPattern) {
+            kv.addPatternClipGroup(d, toCanvasX(geo.frameW), toCanvasY(geo.frameHTop), geo.innerW * baseScale, clipH * baseScale);
+        } else {
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(
+                toCanvasX(geo.frameW),
+                toCanvasY(geo.frameHTop),
+                geo.innerW * baseScale,
+                clipH * baseScale
+            );
+            ctx.clip();
+        }
 
         // 면 채색 (오른쪽 세로살 + 아래쪽 가로살 포함해서 그림 — 살은 위에 덮여 그려지므로 지운 살 위치만 색상이 보임)
         if (faceColorMap) {
@@ -781,13 +810,23 @@ async function draw() {
                 for (let col = 0; col < geo.cols; col++) {
                     const _fc = faceColorMap[`cell:${col}:${row}`] ?? null;
                     if (_fc) {
-                        ctx.fillStyle = _fc;
-                        ctx.fillRect(
-                            toCanvasX(geo.frameW + col * stepV),
-                            toCanvasY(geo.frameHTop + cb.y0),
-                            stepV * baseScale,
-                            (cb.y1 - cb.y0 + geo.slatH) * baseScale
-                        );
+                        if (useKonvaPattern) {
+                            kv.addPatternRectToGroup(d,
+                                toCanvasX(geo.frameW + col * stepV),
+                                toCanvasY(geo.frameHTop + cb.y0),
+                                stepV * baseScale,
+                                (cb.y1 - cb.y0 + geo.slatH) * baseScale,
+                                _fc
+                            );
+                        } else {
+                            ctx.fillStyle = _fc;
+                            ctx.fillRect(
+                                toCanvasX(geo.frameW + col * stepV),
+                                toCanvasY(geo.frameHTop + cb.y0),
+                                stepV * baseScale,
+                                (cb.y1 - cb.y0 + geo.slatH) * baseScale
+                            );
+                        }
                     }
                 }
             }
@@ -805,9 +844,14 @@ async function draw() {
                 const botY  = geo.frameHTop + geo.innerH;
 
                 // 촉 (항상)
-                ctx.fillStyle = Color_Tenon_Fill;
-                ctx.fillRect(toCanvasX(left), toCanvasY(topY - geo.tenonDepth), geo.slatV * baseScale, geo.tenonDepth * baseScale);
-                ctx.fillRect(toCanvasX(left), toCanvasY(botY), geo.slatV * baseScale, geo.tenonDepth * baseScale);
+                if (useKonvaPattern) {
+                    kv.addPatternRectToGroup(d, toCanvasX(left), toCanvasY(topY - geo.tenonDepth), geo.slatV * baseScale, geo.tenonDepth * baseScale, Color_Tenon_Fill);
+                    kv.addPatternRectToGroup(d, toCanvasX(left), toCanvasY(botY), geo.slatV * baseScale, geo.tenonDepth * baseScale, Color_Tenon_Fill);
+                } else {
+                    ctx.fillStyle = Color_Tenon_Fill;
+                    ctx.fillRect(toCanvasX(left), toCanvasY(topY - geo.tenonDepth), geo.slatV * baseScale, geo.tenonDepth * baseScale);
+                    ctx.fillRect(toCanvasX(left), toCanvasY(botY), geo.slatV * baseScale, geo.tenonDepth * baseScale);
+                }
 
                 const vSegs = geo.vSegBounds;
                 for (let j = 0; j < vSegs.length; j++) {
@@ -820,9 +864,13 @@ async function draw() {
                     lastSegMap.set(vsKey, { cx: vsCx, cy: toCanvasY(segStartY), ex: vsCx, ey: toCanvasY(segEndY), mx: vsCx, my: vsCy, normAngle: Math.PI / 2, lineKey: makeLineKey(vsCx, vsCy, Math.PI / 2) });
                     if (deletedSegs.has(vsKey)) continue;
 
-                    ctx.fillStyle = Color_Slat_Fill;
-                    ctx.fillRect(toCanvasX(left), toCanvasY(segStartY), geo.slatV * baseScale, segH * baseScale);
-                    drawCenterLine(toCanvasX(cx), toCanvasY(segStartY), toCanvasX(cx), toCanvasY(segEndY));
+                    if (useKonvaPattern) {
+                        kv.addPatternSlatRect(d, toCanvasX(left), toCanvasY(segStartY), geo.slatV * baseScale, segH * baseScale, Color_Slat_Fill, vsKey, lastSegMap.get(vsKey).lineKey);
+                    } else {
+                        ctx.fillStyle = Color_Slat_Fill;
+                        ctx.fillRect(toCanvasX(left), toCanvasY(segStartY), geo.slatV * baseScale, segH * baseScale);
+                        drawCenterLine(toCanvasX(cx), toCanvasY(segStartY), toCanvasX(cx), toCanvasY(segEndY));
+                    }
                 }
             }
 
@@ -838,9 +886,14 @@ async function draw() {
                 const stepW  = geo.cellW + geo.slatV;
 
                 // 촉 (항상)
-                ctx.fillStyle = Color_Tenon_Fill;
-                ctx.fillRect(toCanvasX(leftX - geo.tenonDepth), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale);
-                ctx.fillRect(toCanvasX(rightX), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale);
+                if (useKonvaPattern) {
+                    kv.addPatternRectToGroup(d, toCanvasX(leftX - geo.tenonDepth), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale, Color_Tenon_Fill);
+                    kv.addPatternRectToGroup(d, toCanvasX(rightX), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale, Color_Tenon_Fill);
+                } else {
+                    ctx.fillStyle = Color_Tenon_Fill;
+                    ctx.fillRect(toCanvasX(leftX - geo.tenonDepth), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale);
+                    ctx.fillRect(toCanvasX(rightX), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale);
+                }
 
                 for (let i = 0; i < geo.cols; i++) {
                     const segStartX = leftX + i * stepW;
@@ -851,14 +904,18 @@ async function draw() {
                     lastSegMap.set(hsKey, { cx: toCanvasX(segStartX), cy: hsCy, ex: toCanvasX(segEndX), ey: hsCy, mx: toCanvasX(segMidX), my: hsCy, normAngle: 0, lineKey: makeLineKey(toCanvasX(segMidX), hsCy, 0) });
                     if (deletedSegs.has(hsKey)) continue;
 
-                    ctx.fillStyle = Color_Slat_Fill;
-                    ctx.fillRect(toCanvasX(segStartX), toCanvasY(top), stepW * baseScale, geo.slatH * baseScale);
-                    drawCenterLine(toCanvasX(segStartX), toCanvasY(ry), toCanvasX(segEndX), toCanvasY(ry));
+                    if (useKonvaPattern) {
+                        kv.addPatternSlatRect(d, toCanvasX(segStartX), toCanvasY(top), stepW * baseScale, geo.slatH * baseScale, Color_Slat_Fill, hsKey, lastSegMap.get(hsKey).lineKey);
+                    } else {
+                        ctx.fillStyle = Color_Slat_Fill;
+                        ctx.fillRect(toCanvasX(segStartX), toCanvasY(top), stepW * baseScale, geo.slatH * baseScale);
+                        drawCenterLine(toCanvasX(segStartX), toCanvasY(ry), toCanvasX(segEndX), toCanvasY(ry));
+                    }
                 }
             });
 
         // 클리핑 해제
-        ctx.restore();
+        if (!useKonvaPattern) ctx.restore();
 
     }   // ← 1차 루프 끝
 
@@ -949,11 +1006,14 @@ async function draw() {
 
     // ====== 추가 선 그리기 (모든 문짝에 동일하게 복제) ======
     if (addedLines.length > 0) {
-        ctx.save();
-        ctx.strokeStyle = patternBroken ? '#cc0000' : selectedSlatColor;
-        ctx.lineWidth   = lastSlatPx;
-        ctx.lineCap     = 'round';
-        ctx.setLineDash([]);
+        const addedColor = patternBroken ? '#cc0000' : selectedSlatColor;
+        if (!useKonvaPattern) {
+            ctx.save();
+            ctx.strokeStyle = addedColor;
+            ctx.lineWidth   = lastSlatPx;
+            ctx.lineCap     = 'round';
+            ctx.setLineDash([]);
+        }
         for (const d of renderOrder) {
             const px = doorPanelOffsetX[d];
             const toX = rx => offsetX + (px + rx) * baseScale;
@@ -964,13 +1024,17 @@ async function draw() {
                 const x2 = toX(geo.frameW + ln.nx2 * geo.innerW);
                 const y2 = toY(geo.frameHTop + ln.ny2 * geo.innerH);
                 lastSegMap.set(`added:${d}:${idx}`, { cx: x1, cy: y1, ex: x2, ey: y2, mx: (x1 + x2) / 2, my: (y1 + y2) / 2, normAngle: 0 });
-                ctx.beginPath();
-                ctx.moveTo(x1, y1);
-                ctx.lineTo(x2, y2);
-                ctx.stroke();
+                if (useKonvaPattern) {
+                    kv.addPatternLine(x1, y1, x2, y2, addedColor, lastSlatPx);
+                } else {
+                    ctx.beginPath();
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                    ctx.stroke();
+                }
             });
         }
-        ctx.restore();
+        if (!useKonvaPattern) ctx.restore();
     }
 
     if (lineEditMode === 'add' && addLineStart) {
@@ -1003,16 +1067,18 @@ async function draw() {
         // 창호 실제 높이
         const actualH = geo.actualPatternH;
 
-        ctx.fillStyle = selectedFrameColor;
-
-        // 좌측 세로 울거미
-        ctx.fillRect(toCanvasX(0), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale);
-        // 상부 가로 울거미
-        ctx.fillRect(toCanvasX(geo.frameW), toCanvasY(0), geo.innerW * baseScale, geo.frameHTop * baseScale);
-        // 하단 울거미
-        ctx.fillRect(toCanvasX(geo.frameW), toCanvasY(geo.frameHTop + geo.innerH), geo.innerW * baseScale, geo.frameHBottom * baseScale);
-        // 우측 세로 울거미
-        ctx.fillRect(toCanvasX(geo.outerW - geo.frameW), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale);
+        if (useKonvaPattern) {
+            kv.addPatternFrameRect(toCanvasX(0), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale, selectedFrameColor);
+            kv.addPatternFrameRect(toCanvasX(geo.frameW), toCanvasY(0), geo.innerW * baseScale, geo.frameHTop * baseScale, selectedFrameColor);
+            kv.addPatternFrameRect(toCanvasX(geo.frameW), toCanvasY(geo.frameHTop + geo.innerH), geo.innerW * baseScale, geo.frameHBottom * baseScale, selectedFrameColor);
+            kv.addPatternFrameRect(toCanvasX(geo.outerW - geo.frameW), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale, selectedFrameColor);
+        } else {
+            ctx.fillStyle = selectedFrameColor;
+            ctx.fillRect(toCanvasX(0), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale);
+            ctx.fillRect(toCanvasX(geo.frameW), toCanvasY(0), geo.innerW * baseScale, geo.frameHTop * baseScale);
+            ctx.fillRect(toCanvasX(geo.frameW), toCanvasY(geo.frameHTop + geo.innerH), geo.innerW * baseScale, geo.frameHBottom * baseScale);
+            ctx.fillRect(toCanvasX(geo.outerW - geo.frameW), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale);
+        }
     }
 
     // ====================================
@@ -1044,41 +1110,24 @@ async function draw() {
             const ppInnerW = geo.innerW;
             const ppInnerH = pungpanDrawH - geo.frameH;
 
-            ctx.fillStyle = lightenHex(selectedFrameColor, 40);
-            ctx.fillRect(
-                toCX(ppInnerX),
-                toCY(pungpanY),
-                ppInnerW * baseScale,
-                ppInnerH * baseScale
-            );
+            if (useKonvaPattern) {
+                kv.addPatternFrameRect(toCX(ppInnerX), toCY(pungpanY), ppInnerW * baseScale, ppInnerH * baseScale, lightenHex(selectedFrameColor, 40));
+                kv.addPatternFrameRect(toCX(0), toCY(pungpanY), geo.frameW * baseScale, pungpanDrawH * baseScale, selectedFrameColor);
+                kv.addPatternFrameRect(toCX(geo.outerW - geo.frameW), toCY(pungpanY), geo.frameW * baseScale, pungpanDrawH * baseScale, selectedFrameColor);
+                kv.addPatternFrameRect(toCX(geo.frameW), toCY(pungpanY + pungpanDrawH - geo.frameH), geo.innerW * baseScale, geo.frameH * baseScale, selectedFrameColor);
+            } else {
+                ctx.fillStyle = lightenHex(selectedFrameColor, 40);
+                ctx.fillRect(toCX(ppInnerX), toCY(pungpanY), ppInnerW * baseScale, ppInnerH * baseScale);
 
-            ctx.fillStyle = selectedFrameColor;
-
-            // 좌측 세로 울거미 (풍판 전체 높이)
-            ctx.fillRect(
-                toCX(0),
-                toCY(pungpanY),
-                geo.frameW * baseScale,
-                pungpanDrawH * baseScale
-            );
-
-            // 우측 세로 울거미 (풍판 전체 높이)
-            ctx.fillRect(
-                toCX(geo.outerW - geo.frameW),
-                toCY(pungpanY),
-                geo.frameW * baseScale,
-                pungpanDrawH * baseScale
-            );
-
-            // 하단 가로 울거미
-            ctx.fillRect(
-                toCX(geo.frameW),
-                toCY(pungpanY + pungpanDrawH - geo.frameH),
-                geo.innerW * baseScale,
-                geo.frameH * baseScale
-            );
+                ctx.fillStyle = selectedFrameColor;
+                ctx.fillRect(toCX(0), toCY(pungpanY), geo.frameW * baseScale, pungpanDrawH * baseScale);
+                ctx.fillRect(toCX(geo.outerW - geo.frameW), toCY(pungpanY), geo.frameW * baseScale, pungpanDrawH * baseScale);
+                ctx.fillRect(toCX(geo.frameW), toCY(pungpanY + pungpanDrawH - geo.frameH), geo.innerW * baseScale, geo.frameH * baseScale);
+            }
         }
     }
+
+    if (useKonvaPattern) kv.commitPattern();
 
     if (doorCornerPositions) {
         // 오프스크린 컨텍스트 복원 후 메인 캔버스로 전환
@@ -1229,6 +1278,9 @@ async function draw() {
         }
     }
     drawSvgInserts();
+
+    kv.drawSlatOverlay();
+
     if (!_exportCanvas || _exportCanvas.width !== canvas.width || _exportCanvas.height !== canvas.height) {
         _exportCanvas = document.createElement('canvas');
         _exportCanvas.width = canvas.width;
@@ -1485,6 +1537,7 @@ async function draw() {
     container.addEventListener('mousedown', function(e) {
         if (e.target.closest('.canvas-controls') || e.target.closest('.canvas-title-bar')) return;
         if (lineEditMode) { handleEditClick(e); return; }
+        if (kv.slatSelectMode && !kv.usePatternLayer) { kv.handleSlatSelect(e); return; }
         if (facePaintMode) {
             facePaintIsDown = true;
             const coord = screenToCtxCoord(e.clientX, e.clientY);
@@ -2037,7 +2090,9 @@ async function draw() {
             placementNaturalSize: placementNaturalSize ? { ...placementNaturalSize } : null,
             deletedSegs: [...deletedSegs],
             addedLines,
-            svgInserts,
+            svgInserts: [],   // Konva.Image로 대체 — konvaShapes에 포함됨
+            konvaShapes: kv.getKonvaParams(),
+            slatColorOverrides: kv.getSlatColorOverrides(),
             estimatedPrice: window.__pmokEstimatedPrice || 0,
         };
     }
@@ -2068,10 +2123,10 @@ async function draw() {
         deletedSegs  = new Set(p.deletedSegs || []);
         addedLines   = p.addedLines || [];
         addLineStart = null;
-        svgInserts       = p.svgInserts || [];
+        svgInserts       = [];   // Konva.Image로 대체
         selectedInsertId = null;
-        svgInserts.forEach(ins => _loadMotifImg(ins.url));
         renderSvgInsertPanel();
+        kv.applyKonvaParams(p);
         document.getElementById('btnScale').classList.toggle('cv-btn-active', placementMode);
         frameColorPicker.selectColor(p.frameColor);
         slatColorPicker.selectColor(p.slatColor);
