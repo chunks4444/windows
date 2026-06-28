@@ -357,6 +357,37 @@ header('Pragma: no-cache');
                         <path d="M3.51 15a9 9 0 1 0 .49-3.37"/>
                     </svg>
                 </button>
+                <div class="cv-sep"></div>
+                <button class="cv-btn" id="btnShapeSelect" title="선택&#10;살 클릭 → 색상·삭제&#10;도형 클릭 → 이동·크기조절·회전">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 3l14 9-7 1-4 7L5 3z"/>
+                    </svg>
+                </button>
+                <button class="cv-btn" id="btnShapeCircle" title="원 그리기&#10;클릭 → 원 배치">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                        <circle cx="12" cy="12" r="9"/>
+                    </svg>
+                </button>
+                <button class="cv-btn" id="btnShapeLine" title="선 그리기&#10;시작점 클릭 → 끝점 클릭">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                        <line x1="5" y1="19" x2="19" y2="5"/>
+                    </svg>
+                </button>
+                <button class="cv-btn" id="btnShapeRect" title="사각형 그리기&#10;클릭 → 사각형 배치">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2"/>
+                    </svg>
+                </button>
+                <button class="cv-btn" id="btnShapeText" title="텍스트 추가&#10;클릭 → 텍스트 입력">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                        <line x1="4" y1="6" x2="20" y2="6"/><line x1="12" y1="6" x2="12" y2="20"/>
+                    </svg>
+                </button>
+                <button class="cv-btn" id="btnShapeClear" title="도형 모두 삭제">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="9"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+                    </svg>
+                </button>
             </div>
 
             <!-- 캔버스 상단 제목 오버레이 -->
@@ -401,7 +432,37 @@ header('Pragma: no-cache');
             </div>
 
             <canvas id="doorCanvas"></canvas>
+            <div id="konvaStageContainer" style="position:absolute;top:0;left:0;pointer-events:none;"></div>
 
+            <div id="konvaShapePanel" style="display:none;position:absolute;top:44px;left:50%;transform:translateX(-50%);
+                display:none;align-items:center;gap:8px;background:rgba(255,255,255,0.97);
+                border:1px solid var(--border);border-radius:8px;padding:6px 12px;
+                box-shadow:0 2px 10px rgba(0,0,0,0.13);z-index:200;white-space:nowrap;">
+                <span style="font-size:11px;color:var(--text-3);font-weight:600;">도형</span>
+                <label style="font-size:11px;color:var(--text-2);">선</label>
+                <input type="color" id="konvaStrokeColor" value="#e03030" style="width:26px;height:22px;border:none;padding:0;cursor:pointer;border-radius:4px;">
+                <label style="font-size:11px;color:var(--text-2);">채우기</label>
+                <input type="color" id="konvaFillColor" value="#e03030" style="width:26px;height:22px;border:none;padding:0;cursor:pointer;border-radius:4px;">
+                <label style="font-size:11px;color:var(--text-2);">두께</label>
+                <select id="konvaStrokeWidth" style="height:22px;font-size:11px;border:1px solid var(--border);border-radius:4px;padding:0 4px;">
+                    <option value="1">1</option><option value="2" selected>2</option>
+                    <option value="3">3</option><option value="5">5</option><option value="8">8</option>
+                </select>
+                <label style="font-size:11px;color:var(--text-2);">투명도</label>
+                <input type="range" id="konvaOpacity" min="10" max="100" value="100" style="width:60px;">
+            </div>
+
+            <div id="slatSelPanel" style="display:none;position:absolute;top:44px;left:50%;transform:translateX(-50%);
+                align-items:center;gap:8px;background:rgba(255,255,255,0.97);
+                border:1px solid var(--border);border-radius:8px;padding:6px 12px;
+                box-shadow:0 2px 10px rgba(0,0,0,0.13);z-index:200;white-space:nowrap;">
+                <span style="font-size:11px;color:var(--text-3);font-weight:600;">살</span>
+                <label style="font-size:11px;color:var(--text-2);">색상</label>
+                <input type="color" id="slatOverrideColor" value="#e03030" style="width:26px;height:22px;border:none;padding:0;cursor:pointer;border-radius:4px;">
+                <button id="btnApplySlatColor" style="height:22px;padding:0 8px;font-size:11px;border:1px solid var(--teal);border-radius:4px;background:var(--teal);color:#fff;cursor:pointer;">적용</button>
+                <button id="btnResetSlatColor" style="height:22px;padding:0 8px;font-size:11px;border:1px solid var(--border);border-radius:4px;background:#fff;cursor:pointer;">초기화</button>
+                <button id="btnDeleteSelectedSlat" style="height:22px;padding:0 8px;font-size:11px;border:1px solid #e03;border-radius:4px;background:#fff;color:#e03;cursor:pointer;">삭제</button>
+            </div>
 
             <!-- 렌더링 로딩 오버레이 -->
             <div class="render-overlay" id="renderOverlay" style="display:none;">
