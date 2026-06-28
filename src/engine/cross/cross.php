@@ -485,8 +485,9 @@ header('Pragma: no-cache');
                         <div class="sb-price-breakdown">
                             <div class="sb-break-row"><span>문(창호)</span><span id="spCostDoor">–</span></div>
                             <div class="sb-break-row"><span>문틀</span><span id="spCostMuntol">–</span></div>
-                            <div class="sb-break-row sb-break-future"><span>오일·마감</span><span>추후</span></div>
-                            <div class="sb-price-note sb-break-total">목재비 <span id="spWoodCost">–</span> <span class="sb-price-excl">(배송비·시공비 제외)</span></div>
+                            <div class="sb-break-row sb-break-total"><span>목재비 합계</span><span id="spWoodCost">–</span></div>
+                            <div class="sb-price-note">※ 배송비·시공비 제외</div>
+                            <div class="sb-price-disclaimer">※ 본 금액은 예상 견적입니다. 사용자 편집 내용을 검토한 후 최종 견적이 확정됩니다.</div>
                         </div>
                     </div>
                     <div style="display:flex;gap:6px;width:100%;">
