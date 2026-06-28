@@ -52,6 +52,13 @@
     const ctx = canvas.getContext('2d');
     const container = document.getElementById('canvasContainer');
 
+    // ── 라인 편집 상태 (initKonvaOverlay보다 먼저 선언 필요) ──
+    let deletedSegs = new Set();
+    let addedLines   = [];
+    let lineEditMode = null;
+    let addLineStart = null;
+    let lastDrawnDoorCount = 1;
+
     // ── Konva 오버레이 모듈 초기화 ───────────────────────
     const kv = initKonvaOverlay({
         canvas,
@@ -327,11 +334,8 @@
 
 
 // ── 라인 편집 ──────────────────────────────────
-let deletedSegs = new Set();  // 삭제된 세그먼트 key (쌍으로 관리)
-let addedLines   = [];
-let lineEditMode = null;
-let addLineStart = null;
-let lastDrawnDoorCount = 1;
+// (deletedSegs / addedLines / lineEditMode / addLineStart / lastDrawnDoorCount 는
+//  initKonvaOverlay 앞 쪽에서 미리 선언됨)
 
 // 문짝 수가 늘어날 때, 0번 문짝(기준)의 편집 패턴을 새로 생기는 문짝에 복사
 function cloneDoorPatternToNewDoors(oldCount, newCount) {
