@@ -628,7 +628,7 @@ async function draw() {
     }
 
     // ====== 문틀(벽 개구부) 화이트 윤곽선 — 채움 없이 선만 ======
-    {
+    if (!doorCornerPositions) {
         const m = (geo.frameThick + geo.frameGap) * baseScale;
         ctx.save();
         ctx.strokeStyle = '#ffffff';
@@ -888,7 +888,7 @@ async function draw() {
         }
 
         // 클리핑 해제
-        if (!useKonvaPattern) ctx.restore();
+        if (!buildKonvaPattern) ctx.restore();
 
         // 코너 다이아몬드 면 채색 — 살 선 위에, cellW/2 크기로 X교차점과 분리
         if (faceColorMap) {
@@ -1157,22 +1157,34 @@ async function draw() {
         // 4코너 투시 변환으로 메인 캔버스에 합성
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         const _c = getOverlayCorners();
+
+        // 문틀·치수 공통 좌표 계산 (CSS px 단위, _c 코너 기준)
+        const mFrameSc = (geo.frameThick + geo.frameGap) * baseScale * scaleFactor;
+        const dL = Math.min(_c.tl.x, _c.bl.x) - mFrameSc;
+        const dR = Math.max(_c.tr.x, _c.br.x) + mFrameSc;
+        const dT = Math.min(_c.tl.y, _c.tr.y) - mFrameSc;
+        const dB = Math.max(_c.bl.y, _c.br.y) + mFrameSc;
+
+        // 문틀(벽 개구부) 화이트 윤곽선 — 배치 모드: 메인 캔버스에 직접 그림
+        ctx.save();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([]);
+        ctx.strokeRect(dL, dT, dR - dL, dB - dT);
+        ctx.restore();
+
+        // 4코너 투시 변환으로 메인 캔버스에 합성
         drawPerspectiveQuad(ctx, offCanvas, _c.tl, _c.tr, _c.br, _c.bl);
         if (showDimensions && totalWidth > 0) {
-            const _sf  = scaleFactor;
-            const GAP  = 24 / _sf, TICK = 5 / _sf, ITICK = 12 / _sf;
-            const R    = 3  / _sf, lw   = 1 / _sf, fs    = 13 / _sf;
-            const dL = Math.min(_c.tl.x, _c.bl.x) / dpr;
-            const dR = Math.max(_c.tr.x, _c.br.x) / dpr;
-            const dT = Math.min(_c.tl.y, _c.tr.y) / dpr;
-            const dB = Math.max(_c.bl.y, _c.br.y) / dpr;
+            const GAP = 24, TICK = 5, ITICK = 12, R = 3, lw = 1, fs = 14;
+            const extra = 30 * baseScale * scaleFactor;
             ctx.save();
             ctx.strokeStyle = 'rgba(50,50,50,0.7)';
             ctx.fillStyle   = 'rgba(50,50,50,0.7)';
             ctx.lineWidth   = lw;
             ctx.font        = `${fs}px -apple-system,sans-serif`;
             const _dot2 = (x, y) => { ctx.beginPath(); ctx.arc(x, y, R, 0, Math.PI * 2); ctx.fill(); };
-            const bY = dB + GAP;
+            const bY = dB + extra + GAP;
             ctx.beginPath();
             ctx.moveTo(dL, bY - ITICK); ctx.lineTo(dL, bY + TICK);
             ctx.moveTo(dR, bY - ITICK); ctx.lineTo(dR, bY + TICK);
@@ -1180,8 +1192,8 @@ async function draw() {
             ctx.stroke();
             _dot2(dL, bY); _dot2(dR, bY);
             ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-            ctx.fillText(`${Math.round(totalWidth)}mm`, (dL + dR) / 2, bY + TICK + 3 / _sf);
-            const rX = dR + GAP;
+            ctx.fillText(`${Math.round(geo.frameOpeningW)}mm`, (dL + dR) / 2, bY + TICK + 3);
+            const rX = dR + extra + GAP;
             ctx.beginPath();
             ctx.moveTo(rX - ITICK, dT); ctx.lineTo(rX + TICK, dT);
             ctx.moveTo(rX - ITICK, dB); ctx.lineTo(rX + TICK, dB);
@@ -1189,7 +1201,7 @@ async function draw() {
             ctx.stroke();
             _dot2(rX, dT); _dot2(rX, dB);
             ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-            ctx.fillText(`${Math.round(totalH)}mm`, rX + TICK + 3 / _sf, (dT + dB) / 2);
+            ctx.fillText(`${Math.round(geo.frameOpeningH)}mm`, rX + TICK + 3, (dT + dB) / 2);
             ctx.restore();
         }
     } else {

@@ -622,7 +622,8 @@ async function draw() {
     }
 
     // ====== 문틀(벽 개구부) 화이트 윤곽선 — 채움 없이 선만 ======
-    {
+    // 배치 모드에서는 offCtx에 그리면 범위를 벗어나므로 여기서는 일반 모드만 처리
+    if (!doorCornerPositions) {
         const m = (geo.frameThick + geo.frameGap) * baseScale;
         ctx.save();
         ctx.strokeStyle = '#ffffff';
@@ -932,7 +933,7 @@ async function draw() {
             });
 
         // 클리핑 해제
-        if (!useKonvaPattern) ctx.restore();
+        if (!buildKonvaPattern) ctx.restore();
 
     }   // ← 1차 루프 끝
 
@@ -1158,17 +1159,28 @@ async function draw() {
         // 오프스크린 컨텍스트 복원 후 메인 캔버스로 전환
         ctx.restore();
         ctx = canvas.getContext('2d');
-        // 4코너 투시 변환으로 메인 캔버스에 합성
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         const _c = getOverlayCorners();
+
+        // 문틀·치수 공통 좌표 계산 (CSS px 단위, _c 코너 기준)
+        const mFrameSc = (geo.frameThick + geo.frameGap) * baseScale * scaleFactor;
+        const dL = Math.min(_c.tl.x, _c.bl.x) - mFrameSc;
+        const dR = Math.max(_c.tr.x, _c.br.x) + mFrameSc;
+        const dT = Math.min(_c.tl.y, _c.tr.y) - mFrameSc;
+        const dB = Math.max(_c.bl.y, _c.br.y) + mFrameSc;
+
+        // 문틀(벽 개구부) 화이트 윤곽선 — 배치 모드: 메인 캔버스에 직접 그림
+        ctx.save();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([]);
+        ctx.strokeRect(dL, dT, dR - dL, dB - dT);
+        ctx.restore();
+
+        // 4코너 투시 변환으로 메인 캔버스에 합성
         drawPerspectiveQuad(ctx, offCanvas, _c.tl, _c.tr, _c.br, _c.bl);
+
         if (showDimensions && totalWidth > 0) {
-            // _c 코너는 CSS px 좌표 → dpr transform 적용 ctx와 일치
-            const allX = [_c.tl.x, _c.tr.x, _c.br.x, _c.bl.x];
-            const allY = [_c.tl.y, _c.tr.y, _c.br.y, _c.bl.y];
-            const mFrameSc = (geo.frameThick + geo.frameGap) * baseScale * scaleFactor;
-            const dL = Math.min(...allX) - mFrameSc, dR = Math.max(...allX) + mFrameSc;
-            const dT = Math.min(...allY) - mFrameSc, dB = Math.max(...allY) + mFrameSc;
             const GAP = 24, TICK = 5, ITICK = 12, R = 3, lw = 1, fs = 14;
             const extra = 30 * baseScale * scaleFactor;
             ctx.save();
