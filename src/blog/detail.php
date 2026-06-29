@@ -38,6 +38,8 @@ $metaDesc = $post['summary'] ?: mb_substr(strip_tags($post['content']), 0, 120);
     <title><?= htmlspecialchars($post['title']) ?> — 평목 공방 블로그</title>
     <meta name="description" content="<?= htmlspecialchars($metaDesc) ?>">
     <?php require_once __DIR__ . '/../lib/meta.php'; ?>
+    <link rel="icon" type="image/png" href="/src/assets/favicon.png">
+    <link rel="apple-touch-icon" href="/src/assets/apple-touch-icon.png">
     <link rel="canonical" href="<?= htmlspecialchars(SITE_URL . '/src/blog/detail.php?id=' . $post['id']) ?>">
     <meta property="og:title" content="<?= htmlspecialchars($post['title']) ?>">
     <meta property="og:description" content="<?= htmlspecialchars($metaDesc) ?>">

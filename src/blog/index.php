@@ -46,6 +46,8 @@ try {
     <title>창호 이야기 — 평목 공방 블로그</title>
     <meta name="description" content="평목 공방이 전하는 창호와 한옥 살창 이야기. 시공 사례와 제작 노트를 소개합니다.">
     <?php require_once __DIR__ . '/../lib/meta.php'; ?>
+    <link rel="icon" type="image/png" href="/src/assets/favicon.png">
+    <link rel="apple-touch-icon" href="/src/assets/apple-touch-icon.png">
     <link rel="canonical" href="<?= htmlspecialchars(SITE_URL . '/src/blog/') ?>">
     <meta property="og:title" content="창호 이야기 — 평목 공방 블로그">
     <meta property="og:description" content="평목 공방이 전하는 창호와 한옥 살창 이야기. 시공 사례와 제작 노트를 소개합니다.">

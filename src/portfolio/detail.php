@@ -42,6 +42,8 @@ $desc  = strip_tags($work['description'] ?? '');
     <title><?= htmlspecialchars($work['title']) ?> — 평목</title>
     <meta name="description" content="<?= htmlspecialchars($desc) ?>">
     <?php require_once __DIR__ . '/../lib/meta.php'; ?>
+    <link rel="icon" type="image/png" href="/src/assets/favicon.png">
+    <link rel="apple-touch-icon" href="/src/assets/apple-touch-icon.png">
     <link rel="canonical" href="<?= htmlspecialchars(SITE_URL . '/src/portfolio/detail.php?id=' . $work['id']) ?>">
     <meta property="og:title" content="<?= htmlspecialchars($work['title']) ?>">
     <meta property="og:description" content="<?= htmlspecialchars($desc) ?>">
