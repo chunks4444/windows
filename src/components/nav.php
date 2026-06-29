@@ -13,6 +13,7 @@ echo '<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/boots
 ?>
 <?php css_tag('/src/css/common.css'); ?>
 <?php css_tag('/src/css/nav.css'); ?>
+<?php include __DIR__ . '/topbar_notice.php'; ?>
 
 <?php
 // 현재 페이지 파일명으로 active 항목 판별

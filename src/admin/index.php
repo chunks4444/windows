@@ -68,6 +68,10 @@
                 <div class="adm-home-icon"><i class="bi bi-question-circle"></i></div>
                 <div><div class="adm-home-title">FAQ 관리</div><div class="adm-home-desc">자주 묻는 질문</div></div>
             </a>
+            <a href="/src/admin/notice.php" class="adm-home-card">
+                <div class="adm-home-icon"><i class="bi bi-megaphone"></i></div>
+                <div><div class="adm-home-title">공지 배너</div><div class="adm-home-desc">상단 띠 배너 관리</div></div>
+            </a>
             <a href="/src/admin/collection.php" class="adm-home-card">
                 <div class="adm-home-icon"><i class="bi bi-image"></i></div>
                 <div><div class="adm-home-title">컬렉션 관리</div><div class="adm-home-desc">공개 패턴 라이브러리</div></div>
