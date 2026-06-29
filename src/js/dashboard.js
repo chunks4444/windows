@@ -108,10 +108,8 @@ function openDrawing(type, title) {
 }
 
 function renderCard(d) {
-    const cfg   = TYPE_CONFIG[d.type] || { label: d.type };
-    const thumb = d.thumbnail
-        ? `<img src="${escAttr(d.thumbnail)}" alt="${escAttr(d.title)}" loading="lazy">`
-        : `<div class="db-thumb-placeholder">
+    const cfg         = TYPE_CONFIG[d.type] || { label: d.type };
+    const thumb       = `<div class="db-thumb-placeholder">
              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
                  <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
              </svg>
@@ -120,7 +118,7 @@ function renderCard(d) {
         ? `<div class="db-quote-badge"><i class="bi bi-lock-fill"></i> 견적요청중</div>`
         : '';
     return `
-        <div class="db-card" onclick="openDrawing('${escAttr(d.type)}', '${escAttr(d.title)}')">
+        <div class="db-card" data-id="${d.id}" onclick="openDrawing('${escAttr(d.type)}', '${escAttr(d.title)}')">
             ${lockedBadge}
             <button class="db-card-copy" onclick="copyDrawing(event,'${escAttr(d.type)}','${escAttr(d.title)}')" title="복사">
                 <i class="bi bi-copy"></i>
@@ -150,6 +148,26 @@ function renderCard(d) {
                 </div>
             </div>
         </div>`;
+}
+
+async function lazyLoadThumbnails(drawings) {
+    const ids = drawings.map(d => d.id).filter(Boolean);
+    if (!ids.length) return;
+    try {
+        const res  = await fetch('/src/api/drawings/thumbnails.php', {
+            method: 'POST',
+            headers: _headers(),
+            body: JSON.stringify({ ids }),
+        });
+        if (!res.ok) return;
+        const map = await res.json();
+        for (const [id, src] of Object.entries(map)) {
+            if (!src) continue;
+            const card  = document.querySelector(`.db-card[data-id="${id}"]`);
+            const thumb = card?.querySelector('.db-thumb');
+            if (thumb) thumb.innerHTML = `<img src="${escAttr(src)}" alt="" loading="lazy">`;
+        }
+    } catch {}
 }
 
 function showDeleteModal(desc, onConfirm) {

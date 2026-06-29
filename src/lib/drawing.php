@@ -65,30 +65,42 @@ class Drawing {
         return ['drawing' => $drawing, 'versions' => $versions];
     }
 
-    // 유저의 타입별 도면 목록 (썸네일 + 메타, 버전 미포함)
+    // 유저의 타입별 도면 목록 (메타만, 버전·썸네일 미포함)
     static function list(int $userId, string $type): array {
         $pdo  = db();
-        $stmt = $pdo->prepare('SELECT id, title, thumbnail, work_time_sec, created_at, updated_at, locked_at FROM drawings WHERE user_id = ? AND type = ? ORDER BY updated_at DESC');
+        $stmt = $pdo->prepare('SELECT id, title, work_time_sec, created_at, updated_at, locked_at FROM drawings WHERE user_id = ? AND type = ? ORDER BY updated_at DESC');
         $stmt->execute([$userId, $type]);
         return $stmt->fetchAll();
     }
 
-    // 유저의 전체 도면 목록 (타입 무관, 대시보드용) - 버전 수 포함
+    // 유저의 전체 도면 목록 (타입 무관, 대시보드용) - 썸네일 미포함, 별도 thumbnails()로 lazy 로딩
     static function list_all(int $userId, int $page = 1, int $limit = 20): array {
         $pdo    = db();
         $offset = ($page - 1) * $limit;
         $stmt   = $pdo->prepare(
-            'SELECT d.id, d.type, d.title, d.thumbnail, d.work_time_sec, d.created_at, d.updated_at, d.locked_at,
-                    COUNT(v.id) AS version_count
+            'SELECT d.id, d.type, d.title, d.work_time_sec, d.created_at, d.updated_at, d.locked_at,
+                    (SELECT COUNT(*) FROM drawing_versions WHERE drawing_id = d.id) AS version_count
              FROM drawings d
-             LEFT JOIN drawing_versions v ON v.drawing_id = d.id
              WHERE d.user_id = ?
-             GROUP BY d.id
              ORDER BY d.updated_at DESC
              LIMIT ? OFFSET ?'
         );
         $stmt->execute([$userId, $limit, $offset]);
         return $stmt->fetchAll();
+    }
+
+    // 도면 ID 배열에 대한 썸네일만 반환 (user_id 검증 포함)
+    static function thumbnails(int $userId, array $ids): array {
+        if (!$ids) return [];
+        $pdo          = db();
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        $stmt         = $pdo->prepare("SELECT id, thumbnail FROM drawings WHERE id IN ($placeholders) AND user_id = ?");
+        $stmt->execute([...$ids, $userId]);
+        $result = [];
+        foreach ($stmt->fetchAll() as $row) {
+            $result[(int) $row['id']] = $row['thumbnail'];
+        }
+        return $result;
     }
 
     // 도면 삭제 (버전도 CASCADE 삭제)
