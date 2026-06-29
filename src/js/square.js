@@ -454,6 +454,7 @@ let _panRaf = null;
 let _geoCache = null;
 let _kvKey  = null; // Konva 패턴 노드를 마지막으로 빌드한 시점의 파라미터 키
 let _kvCornerMode = null; // 마지막 빌드 시점의 doorCornerPositions 모드
+let _mondrianVersion = 0; // generateMondrian() 호출마다 증가 → Konva 캐시 무효화
 function drawPan() {
     if (_panRaf) return;
     _panRaf = requestAnimationFrame(() => { _panRaf = null; draw(); });
@@ -666,6 +667,7 @@ async function draw() {
         selectedSlatColor,
         selectedFrameColor,
         Math.round(baseScale * 1000),
+        _mondrianVersion,
     ]);
     const buildKonvaPattern = useKonvaPattern &&
         (_newKvKey !== _kvKey || !!doorCornerPositions !== !!_kvCornerMode);
@@ -2718,6 +2720,7 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
                 ? { axis: 'v', pos: l.pos / W, from: l.from / H, to: l.to / H }
                 : { axis: 'h', pos: l.pos / H, from: l.from / W, to: l.to / W }),
         };
+        _mondrianVersion++;
         _updateMondrianBtn();
         draw();
     }
@@ -2725,6 +2728,7 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
     document.getElementById('btnMondrian').addEventListener('click', generateMondrian);
     document.getElementById('btnMondrianClear').addEventListener('click', () => {
         mondrianLayout = null;
+        _mondrianVersion++;
         _updateMondrianBtn();
         draw();
     });
