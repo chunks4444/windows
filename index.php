@@ -382,8 +382,8 @@ try {
             <div class="container">
                 <div class="home-contact-inner">
                     <p class="home-contact-label">Contact</p>
-                    <h2 class="home-contact-title">어떤 문의도 작지 않습니다.</h2>
-                    <p class="home-contact-body"><strong>설계·제작·설치 상담, 협업 제안</strong> 모두 환영합니다.<br>망설이지 말고 먼저 연락 주세요. 빠르게 답변드립니다.</p>
+                    <h2 class="home-contact-title">작은 문의도 괜찮습니다.</h2>
+                    <p class="home-contact-body">설계·제작·설치 상담은 물론,<br>협업 및 프로젝트 제안까지 언제든 환영합니다.<br><br>궁금한 점이 있다면 언제든 연락해 주세요.<br>빠르게 답변드리겠습니다.</p>
                     <div class="home-contact-actions">
                         <button type="button" class="home-contact-btn home-contact-btn--primary" data-bs-toggle="modal" data-bs-target="#contactModal">
                             <i class="bi bi-envelope-fill"></i> 이메일로 문의하기

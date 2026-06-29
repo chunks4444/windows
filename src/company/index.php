@@ -167,7 +167,7 @@ foreach ($studioCards as $sc) $cardsByKey[$sc['engine_key']] = $sc;
     <div class="container">
         <p class="ab-section-label">Contact</p>
         <h2 class="ab-section-title">함께 만들어가요.</h2>
-        <p class="ab-section-body">설계 문의, 제작 상담, 협업 제안 모두 환영합니다.</p>
+        <p class="ab-section-body">작은 문의도 괜찮습니다.<br>설계·제작·설치 상담은 물론, 협업 및 프로젝트 제안까지 언제든 환영합니다.<br>궁금한 점이 있다면 언제든 연락해 주세요. 빠르게 답변드리겠습니다.</p>
         <button class="ab-contact-btn" data-bs-toggle="modal" data-bs-target="#contactModal">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
             이메일 문의하기
