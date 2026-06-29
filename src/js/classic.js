@@ -10,11 +10,16 @@
     // ── 색상 그룹 ─────────────────────────────────
     const colorGroups = window.__pmokColorGroups || [];
 
-    let selectedFrameColor = '#28241e';
-    let selectedSlatColor  = '#28241e';
-    let faceColorMap       = null;
+    let selectedFrameColor  = '#28241e';
+    let selectedSlatColor   = '#28241e';
+    let selectedMuntolColor = '#4a4a4a';
+    let showMuntol          = true;
+    let faceColorMap        = null;
     let facePaintMode      = false;
     let facePaintIsDown    = false;
+    let frameColorMap      = null;
+    let framePaintMode     = false;
+    let lastFrameRects     = [];
 
     // ── 라인 편집 상태 ──────────────────────────────
     let deletedSegs  = new Set();
@@ -621,17 +626,15 @@ async function draw() {
         ctx = offCtx;
     }
 
-    // ====== 문틀(벽 개구부) 화이트 윤곽선 — 채움 없이 선만 ======
-    // 배치 모드에서는 offCtx에 그리면 범위를 벗어나므로 여기서는 일반 모드만 처리
-    if (!doorCornerPositions) {
+    // ====== 문틀(벽 개구부) 채움 + 내경 밝은 테두리 ======
+    if (!doorCornerPositions && showMuntol) {
         const m = (geo.frameThick + geo.frameGap) * baseScale;
         ctx.save();
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(
-            offsetX - m, offsetY - m,
-            totalWidth * baseScale + 2 * m, totalH * baseScale + 2 * m
-        );
+        ctx.fillStyle = selectedMuntolColor;
+        ctx.fillRect(offsetX - m, offsetY - m, totalWidth * baseScale + 2 * m, totalH * baseScale + 2 * m);
+        ctx.strokeStyle = lightenHex(selectedMuntolColor, 40);
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(offsetX, offsetY, totalWidth * baseScale, totalH * baseScale);
         ctx.restore();
     }
 
@@ -655,6 +658,7 @@ async function draw() {
         JSON.stringify(Object.entries(kv.getSlatColorOverrides()).sort()),
         selectedSlatColor,
         selectedFrameColor,
+        frameColorMap ? JSON.stringify(Object.entries(frameColorMap).sort()) : '',
         Math.round(baseScale * 1000), // dimPad·창 크기 변화로 baseScale이 달라지면 노드 재생성
     ]);
     const buildKonvaPattern = useKonvaPattern &&
@@ -1066,6 +1070,7 @@ async function draw() {
     }
 
     // ====== 2차 루프: 울거미만 그리기 (패턴 위에 덮음) ======
+    lastFrameRects = [];
     for (const d of renderOrder) {
 
         let panelOffsetX = 0;
@@ -1085,16 +1090,26 @@ async function draw() {
         // 창호 실제 높이
         const actualH = geo.actualPatternH;
 
+        const fcp = (side) => frameColorMap?.[`${side}:${d}`] ?? selectedFrameColor;
+        lastFrameRects.push(
+            { key: `left:${d}`,  x: toCanvasX(0),                     y: toCanvasY(0),                        w: geo.frameW * baseScale, h: geo.outerH * baseScale },
+            { key: `top:${d}`,   x: toCanvasX(geo.frameW),             y: toCanvasY(0),                        w: geo.innerW * baseScale, h: geo.frameHTop * baseScale },
+            { key: `bot:${d}`,   x: toCanvasX(geo.frameW),             y: toCanvasY(geo.frameHTop + geo.innerH), w: geo.innerW * baseScale, h: geo.frameHBottom * baseScale },
+            { key: `right:${d}`, x: toCanvasX(geo.outerW - geo.frameW), y: toCanvasY(0),                       w: geo.frameW * baseScale, h: geo.outerH * baseScale }
+        );
         if (buildKonvaPattern) {
-            kv.addPatternFrameRect(toCanvasX(0), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale, selectedFrameColor);
-            kv.addPatternFrameRect(toCanvasX(geo.frameW), toCanvasY(0), geo.innerW * baseScale, geo.frameHTop * baseScale, selectedFrameColor);
-            kv.addPatternFrameRect(toCanvasX(geo.frameW), toCanvasY(geo.frameHTop + geo.innerH), geo.innerW * baseScale, geo.frameHBottom * baseScale, selectedFrameColor);
-            kv.addPatternFrameRect(toCanvasX(geo.outerW - geo.frameW), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale, selectedFrameColor);
+            kv.addPatternFrameRect(toCanvasX(0), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale, fcp('left'));
+            kv.addPatternFrameRect(toCanvasX(geo.frameW), toCanvasY(0), geo.innerW * baseScale, geo.frameHTop * baseScale, fcp('top'));
+            kv.addPatternFrameRect(toCanvasX(geo.frameW), toCanvasY(geo.frameHTop + geo.innerH), geo.innerW * baseScale, geo.frameHBottom * baseScale, fcp('bot'));
+            kv.addPatternFrameRect(toCanvasX(geo.outerW - geo.frameW), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale, fcp('right'));
         } else {
-            ctx.fillStyle = selectedFrameColor;
+            ctx.fillStyle = fcp('left');
             ctx.fillRect(toCanvasX(0), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale);
+            ctx.fillStyle = fcp('top');
             ctx.fillRect(toCanvasX(geo.frameW), toCanvasY(0), geo.innerW * baseScale, geo.frameHTop * baseScale);
+            ctx.fillStyle = fcp('bot');
             ctx.fillRect(toCanvasX(geo.frameW), toCanvasY(geo.frameHTop + geo.innerH), geo.innerW * baseScale, geo.frameHBottom * baseScale);
+            ctx.fillStyle = fcp('right');
             ctx.fillRect(toCanvasX(geo.outerW - geo.frameW), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale);
         }
     }
@@ -1589,6 +1604,11 @@ async function draw() {
             paintFaceCell(coord.x, coord.y, e.button === 2);
             return;
         }
+        if (framePaintMode) {
+            const coord = screenToCtxCoord(e.clientX, e.clientY);
+            paintFramePart(coord.x, coord.y, e.button === 2);
+            return;
+        }
         const cornerHit = getHitOverlayCorner(e.clientX, e.clientY);
         const corner = cornerHit === 'center' ? 'move' : cornerHit;
         const sp = () => ({
@@ -1839,6 +1859,31 @@ async function draw() {
         return bounds;
     }
 
+    function hitTestFrame(cx, cy) {
+        const M = 8; // hit margin (px)
+        for (const r of lastFrameRects) {
+            if (cx >= r.x - M && cx <= r.x + r.w + M && cy >= r.y - M && cy <= r.y + r.h + M) return r.key;
+        }
+        return null;
+    }
+
+    function paintFramePart(cx, cy, isErase) {
+        const key = hitTestFrame(cx, cy);
+        if (!key) return;
+        if (isErase) {
+            if (frameColorMap) {
+                delete frameColorMap[key];
+                if (!Object.keys(frameColorMap).length) frameColorMap = null;
+            }
+        } else {
+            if (!frameColorMap) frameColorMap = {};
+            frameColorMap[key] = selectedFrameColor;
+        }
+        const clearBtn = document.getElementById('btnFrameClear');
+        if (clearBtn) clearBtn.style.display = frameColorMap ? '' : 'none';
+        draw();
+    }
+
     function hitTestCell(cx, cy) {
         if (!geo.cols || !lastBaseScale || !geo.hBarYs) return null;
         const relX = cx - lastILeft, relY = cy - lastITop;
@@ -1874,11 +1919,51 @@ async function draw() {
     if (btnFacePaint) {
         btnFacePaint.addEventListener('click', () => {
             facePaintMode = !facePaintMode;
+            if (facePaintMode) { framePaintMode = false; document.getElementById('btnFramePaint')?.classList.remove('cv-btn-active'); }
             btnFacePaint.classList.toggle('cv-btn-active', facePaintMode);
             canvas.style.cursor = facePaintMode ? 'crosshair' : (panMode ? 'grab' : 'default');
         });
     }
-    canvas.addEventListener('contextmenu', e => { if (facePaintMode) e.preventDefault(); });
+    canvas.addEventListener('contextmenu', e => { if (facePaintMode || framePaintMode) e.preventDefault(); });
+
+    const btnFramePaint = document.getElementById('btnFramePaint');
+    const frameColorInp = document.getElementById('frameColorInput');
+    const frameColorCodeEl = document.getElementById('frameColorCode');
+    if (frameColorInp && frameColorCodeEl) {
+        frameColorInp.addEventListener('input', () => { frameColorCodeEl.textContent = frameColorInp.value; });
+    }
+    const muntolColorInp = document.getElementById('muntolColorInput');
+    const muntolColorCodeEl = document.getElementById('muntolColorCode');
+    if (muntolColorInp) {
+        muntolColorInp.addEventListener('input', () => {
+            selectedMuntolColor = muntolColorInp.value;
+            if (muntolColorCodeEl) muntolColorCodeEl.textContent = muntolColorInp.value;
+            draw();
+        });
+    }
+    const chkMuntol = document.getElementById('chkMuntol');
+    if (chkMuntol) {
+        chkMuntol.addEventListener('change', () => {
+            showMuntol = chkMuntol.checked;
+            draw();
+        });
+    }
+    if (btnFramePaint) {
+        btnFramePaint.addEventListener('click', () => {
+            framePaintMode = !framePaintMode;
+            if (framePaintMode) { facePaintMode = false; facePaintIsDown = false; btnFacePaint?.classList.remove('cv-btn-active'); }
+            btnFramePaint.classList.toggle('cv-btn-active', framePaintMode);
+            canvas.style.cursor = framePaintMode ? 'crosshair' : (panMode ? 'grab' : 'default');
+        });
+    }
+    const btnFrameClear = document.getElementById('btnFrameClear');
+    if (btnFrameClear) {
+        btnFrameClear.addEventListener('click', () => {
+            frameColorMap = null;
+            btnFrameClear.style.display = 'none';
+            draw();
+        });
+    }
 
     document.getElementById('btnOrder')?.addEventListener('click', () => {
         openOrderModal({
@@ -2142,8 +2227,12 @@ async function draw() {
             finish:    document.getElementById('txtFinish').value,
             frameColor: selectedFrameColor,
             slatColor:  selectedSlatColor,
-            faceBrushColor: faceColorUI.getCurrentHex(),
-            faceColorMap:   faceColorMap ? { ...faceColorMap } : null,
+            faceBrushColor:  faceColorUI.getCurrentHex(),
+            faceColorMap:    faceColorMap  ? { ...faceColorMap  } : null,
+            frameBrushColor: frameColorInp?.value || '#888888',
+            frameColorMap:   frameColorMap ? { ...frameColorMap } : null,
+            muntolColor:     selectedMuntolColor,
+            showMuntol:      showMuntol,
             panX, panY, scaleFactor,
             _savedView: true,
             placementMode,
@@ -2191,9 +2280,18 @@ async function draw() {
         document.getElementById('btnScale').classList.toggle('cv-btn-active', placementMode);
         frameColorPicker.selectColor(p.frameColor);
         slatColorPicker.selectColor(p.slatColor);
-        faceColorMap = p.faceColorMap || null;
+        faceColorMap  = p.faceColorMap  || null;
+        frameColorMap = p.frameColorMap || null;
+        if (p.muntolColor) {
+            selectedMuntolColor = p.muntolColor;
+            if (muntolColorInp) { muntolColorInp.value = p.muntolColor; if (muntolColorCodeEl) muntolColorCodeEl.textContent = p.muntolColor; }
+        }
+        showMuntol = p.showMuntol !== false;
+        if (chkMuntol) chkMuntol.checked = showMuntol;
         faceColorUI.restoreColor(p.faceBrushColor || null);
         faceColorUI.updateClearBtn(!!faceColorMap);
+        if (frameColorInp && p.frameBrushColor) { frameColorInp.value = p.frameBrushColor; if (frameColorCodeEl) frameColorCodeEl.textContent = p.frameBrushColor; }
+        if (btnFrameClear) btnFrameClear.style.display = frameColorMap ? '' : 'none';
         updateDoorCountOptions();
         draw();
     }

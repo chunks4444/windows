@@ -10,7 +10,9 @@
     // ── 색상 그룹 ─────────────────────────────────
     const colorGroups = window.__pmokColorGroups || [];
 
-    let selectedFrameColor = '#28241e';
+    let selectedFrameColor  = '#28241e';
+    let selectedMuntolColor = '#4a4a4a';
+    let showMuntol          = true;
     let selectedSlatColor  = '#28241e';
     let faceColorMap       = null;
     let facePaintMode      = false;
@@ -627,16 +629,15 @@ async function draw() {
         ctx = offCtx; // 드로잉을 오프스크린으로 리다이렉트
     }
 
-    // ====== 문틀(벽 개구부) 화이트 윤곽선 — 채움 없이 선만 ======
-    if (!doorCornerPositions) {
+    // ====== 문틀(벽 개구부) 채움 + 내경 밝은 테두리 ======
+    if (!doorCornerPositions && showMuntol) {
         const m = (geo.frameThick + geo.frameGap) * baseScale;
         ctx.save();
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(
-            offsetX - m, offsetY - m,
-            totalWidth * baseScale + 2 * m, totalH * baseScale + 2 * m
-        );
+        ctx.fillStyle = selectedMuntolColor;
+        ctx.fillRect(offsetX - m, offsetY - m, totalWidth * baseScale + 2 * m, totalH * baseScale + 2 * m);
+        ctx.strokeStyle = lightenHex(selectedMuntolColor, 40);
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(offsetX, offsetY, totalWidth * baseScale, totalH * baseScale);
         ctx.restore();
     }
 
@@ -1823,6 +1824,9 @@ async function draw() {
             faceColorMap[key] = faceColorUI.getCurrentHex();
         }
         faceColorUI.updateClearBtn(!!faceColorMap);
+        showMuntol = p.showMuntol !== false;
+        const _chkM = document.getElementById('chkMuntol'); if (_chkM) _chkM.checked = showMuntol;
+        if (p.muntolColor) { selectedMuntolColor = p.muntolColor; const _mi = document.getElementById('muntolColorInput'); if (_mi) { _mi.value = p.muntolColor; const _mc = document.getElementById('muntolColorCode'); if (_mc) _mc.textContent = p.muntolColor; } }
         draw();
     }
 
@@ -1913,6 +1917,9 @@ async function draw() {
     });
 
 document.getElementById('chkDimension').addEventListener('change', e => { showDimensions = e.target.checked; draw(); });
+document.getElementById('chkMuntol')?.addEventListener('change', e => { showMuntol = e.target.checked; draw(); });
+document.getElementById('muntolColorInput')?.addEventListener('input', e => { selectedMuntolColor = e.target.value; const el = document.getElementById('muntolColorCode'); if (el) el.textContent = e.target.value; draw(); });
+document.getElementById('muntolColorInput')?.addEventListener('input', e => { selectedMuntolColor = e.target.value; document.getElementById('muntolColorCode').textContent = e.target.value; draw(); });
         document.getElementById('chkShrinkH').addEventListener('change', draw);
 
     // ── 슬라이더 ↔ 인풋창 양방향 동기화 ──────────────────
@@ -2084,6 +2091,8 @@ document.getElementById('chkDimension').addEventListener('change', e => { showDi
             slatColor:  selectedSlatColor,
             faceBrushColor: faceColorUI.getCurrentHex(),
             faceColorMap:   faceColorMap ? { ...faceColorMap } : null,
+            muntolColor:    selectedMuntolColor,
+            showMuntol:     showMuntol,
             panX, panY, scaleFactor,
             _savedView: true,
             placementMode,

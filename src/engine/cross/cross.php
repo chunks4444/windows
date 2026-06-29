@@ -138,6 +138,20 @@ header('Pragma: no-cache');
                             <span class="toggle-track"></span>
                         </label>
                     </div>
+                    <div class="toggle-row" style="margin-top:6px;margin-bottom:0;">
+                        <span class="toggle-label">문틀 표시</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="chkMuntol" checked>
+                            <span class="toggle-track"></span>
+                        </label>
+                    </div>
+                    <div style="margin-top:4px;display:flex;align-items:center;justify-content:space-between;">
+                        <span class="color-label">문틀 컬러</span>
+                        <div class="color-preview-btn" style="gap:5px;">
+                            <input type="color" id="muntolColorInput" value="#4a4a4a" style="width:14px;height:14px;padding:0;border:none;border-radius:3px;cursor:pointer;flex-shrink:0;">
+                            <span id="muntolColorCode">#4a4a4a</span>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- ── 제작 시방서 ────────────────── -->
