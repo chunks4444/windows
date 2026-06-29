@@ -377,6 +377,28 @@ try {
         </section>
         <?php endif; ?>
 
+        <!-- CONTACT CTA -->
+        <section class="home-contact-section">
+            <div class="container">
+                <div class="home-contact-inner">
+                    <p class="home-contact-label">Contact</p>
+                    <h2 class="home-contact-title">어떤 문의도 작지 않습니다.</h2>
+                    <p class="home-contact-body"><strong>설계·제작·설치 상담, 협업 제안</strong> 모두 환영합니다.<br>망설이지 말고 먼저 연락 주세요. 빠르게 답변드립니다.</p>
+                    <div class="home-contact-actions">
+                        <button type="button" class="home-contact-btn home-contact-btn--primary" data-bs-toggle="modal" data-bs-target="#contactModal">
+                            <i class="bi bi-envelope-fill"></i> 이메일로 문의하기
+                        </button>
+                        <a href="tel:+82705124458" class="home-contact-btn home-contact-btn--ghost">
+                            <i class="bi bi-telephone-fill"></i> 070-5124-4568
+                        </a>
+                    </div>
+                    <p class="home-contact-hint">평일 오전 10시 – 오후 6시 운영 · 주말·공휴일 이메일 접수 가능</p>
+                </div>
+            </div>
+        </section>
+
+        <?php include __DIR__ . '/src/components/contact_modal.php'; ?>
+
         <!-- FOOTER -->
         <div class="site-footer border-top px-4 py-4">
             <p class="footer-copy mb-0">©

@@ -708,9 +708,163 @@ body { font-weight: 900; }
     }
 }
 
+/* CONTACT MODAL */
+#contactModal .modal-content {
+    border: none; border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+}
+#contactModal .modal-header {
+    border-bottom: 1px solid var(--border);
+    padding: 20px 24px 16px;
+}
+#contactModal .modal-title {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: var(--fs-16); font-weight: 700;
+}
+#contactModal .modal-body { padding: 24px; }
+.ct-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; min-width: 0; }
+.ct-field label { font-size: var(--fs-12); font-weight: 700; color: #666; letter-spacing: .03em; }
+.ct-field input, .ct-field textarea {
+    border: 1px solid #e0e0e0; border-radius: 4px;
+    padding: 9px 12px; font-size: var(--fs-14);
+    font-family: inherit; outline: none;
+    transition: border-color .15s; resize: none;
+}
+.ct-field input:focus, .ct-field textarea:focus { border-color: #111; }
+.ct-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.ct-submit {
+    width: 100%; height: 40px; margin-top: 4px;
+    background: var(--red); color: #fff; border: none;
+    border-radius: 4px; font-family: inherit;
+    font-size: var(--fs-14); font-weight: 600; cursor: pointer;
+    transition: background .15s;
+}
+.ct-submit:hover { background: var(--red-dark, #a81c00); }
+.ct-submit:disabled { background: #999; cursor: not-allowed; }
+.ct-error {
+    background: #fff3f0; border-left: 3px solid #e05218;
+    padding: 9px 12px; font-size: var(--fs-13); color: #e05218;
+    margin-bottom: 14px; border-radius: 2px;
+}
+.ct-success {
+    text-align: center; padding: 32px 0 16px;
+    font-size: var(--fs-16); color: var(--text-1); line-height: 1.8;
+}
+.ct-success strong { display: block; font-size: var(--fs-16); margin-bottom: 8px; }
+@media (max-width: 576px) {
+    .ct-row-2 { grid-template-columns: 1fr; }
+    #contactModal .modal-body { padding: 16px; }
+}
+
+/* CONTACT CTA SECTION */
+.home-contact-section {
+    background: #F2F3F4;
+    padding: 96px 0 104px;
+    border-top: 1px solid var(--border);
+}
+
+.home-contact-inner {
+    max-width: 640px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.home-contact-label {
+    font-size: var(--fs-12);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--red, #cc2200);
+    margin-bottom: 20px;
+}
+
+.home-contact-title {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: clamp(var(--fs-22), 3vw, var(--fs-32));
+    font-weight: 700;
+    line-height: 1.35;
+    letter-spacing: -0.025em;
+    color: #111;
+    margin-bottom: 20px;
+}
+
+.home-contact-body {
+    font-size: var(--fs-16);
+    line-height: 1.9;
+    color: #555;
+    margin-bottom: 36px;
+}
+
+.home-contact-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.home-contact-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    border-radius: 50px;
+    font-size: var(--fs-15);
+    font-weight: 700;
+    text-decoration: none;
+    letter-spacing: -0.01em;
+    transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
+}
+
+.home-contact-btn--primary {
+    background: #111;
+    color: #fff;
+    border: 2px solid #111;
+}
+.home-contact-btn--primary:hover {
+    background: var(--red, #cc2200);
+    border-color: var(--red, #cc2200);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.home-contact-btn--ghost {
+    background: transparent;
+    color: #444;
+    border: 2px solid rgba(0,0,0,0.2);
+}
+.home-contact-btn--ghost:hover {
+    border-color: rgba(0,0,0,0.5);
+    color: #111;
+    transform: translateY(-2px);
+}
+
+.home-contact-hint {
+    font-size: var(--fs-12);
+    color: #999;
+    margin: 0;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+}
+
+@media (max-width: 576px) {
+    .home-contact-section {
+        padding: 64px 0 72px;
+    }
+    .home-contact-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    .home-contact-btn {
+        width: 100%;
+        max-width: 320px;
+        justify-content: center;
+    }
+}
+
 /* FAQ SECTION */
 .faq-section {
-    padding: 32px 0 120px;
+    padding: 32px 0 80px;
     border-top: 1px solid var(--border);
 }
 
