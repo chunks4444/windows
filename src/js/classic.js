@@ -1599,14 +1599,16 @@ async function draw() {
         if (lineEditMode) { handleEditClick(e); return; }
         if (kv.slatSelectMode && !kv.usePatternLayer) { kv.handleSlatSelect(e); return; }
         if (facePaintMode) {
+            if (e.button === 2 || e.ctrlKey) return; // 지우기는 contextmenu에서 처리
             facePaintIsDown = true;
             const coord = screenToCtxCoord(e.clientX, e.clientY);
-            paintFaceCell(coord.x, coord.y, e.button === 2);
+            paintFaceCell(coord.x, coord.y, false);
             return;
         }
         if (framePaintMode) {
+            if (e.button === 2 || e.ctrlKey) return; // 지우기는 contextmenu에서 처리
             const coord = screenToCtxCoord(e.clientX, e.clientY);
-            paintFramePart(coord.x, coord.y, e.button === 2);
+            paintFramePart(coord.x, coord.y, false);
             return;
         }
         const cornerHit = getHitOverlayCorner(e.clientX, e.clientY);
@@ -1924,7 +1926,18 @@ async function draw() {
             canvas.style.cursor = facePaintMode ? 'crosshair' : (panMode ? 'grab' : 'default');
         });
     }
-    canvas.addEventListener('contextmenu', e => { if (facePaintMode || framePaintMode) e.preventDefault(); });
+    canvas.addEventListener('contextmenu', e => {
+        if (facePaintMode) {
+            e.preventDefault();
+            const coord = screenToCtxCoord(e.clientX, e.clientY);
+            paintFaceCell(coord.x, coord.y, true);
+        }
+        if (framePaintMode) {
+            e.preventDefault();
+            const coord = screenToCtxCoord(e.clientX, e.clientY);
+            paintFramePart(coord.x, coord.y, true);
+        }
+    });
 
     const btnFramePaint = document.getElementById('btnFramePaint');
     const frameColorInp = document.getElementById('frameColorInput');

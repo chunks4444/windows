@@ -892,6 +892,23 @@ async function draw() {
                 }
             }
 
+            // 면 채색 — Mondrian 배경 위, 살 아래
+            if (faceColorMap) {
+                const stepV = geo.cellW + geo.slatV, stepH = geo.cellH + geo.slatH;
+                for (let row = 0; row < geo.rowsInt; row++) {
+                    for (let col = 0; col < geo.cols; col++) {
+                        const _fc = faceColorMap[`cell:${col}:${row}`] ?? null;
+                        if (!_fc) continue;
+                        if (buildKonvaPattern) {
+                            kv.addPatternRectToGroup(d, toCanvasX(geo.frameW + col * stepV), toCanvasY(geo.frameHTop + row * stepH), stepV * baseScale, stepH * baseScale, _fc);
+                        } else {
+                            ctx.fillStyle = _fc;
+                            ctx.fillRect(toCanvasX(geo.frameW + col * stepV), toCanvasY(geo.frameHTop + row * stepH), stepV * baseScale, stepH * baseScale);
+                        }
+                    }
+                }
+            }
+
             // 살 + 촉 (bars drawn on top of cells)
             for (const ln of lines) {
                 if (ln.axis === 'v') {
@@ -931,7 +948,7 @@ async function draw() {
                 }
             }
         } else {
-            // ── 면 채색 (오른쪽 세로살 + 아래쪽 가로살 포함 — 살은 위에 덮여 그려지므로 지운 살 위치만 색상이 보임)
+            // ── 면 채색 (정자살 모드)
             if (faceColorMap) {
                 const stepV = geo.cellW + geo.slatV, stepH = geo.cellH + geo.slatH;
                 for (let row = 0; row < geo.rowsInt; row++) {
@@ -1706,9 +1723,10 @@ async function draw() {
         if (lineEditMode) { handleEditClick(e); return; }
         if (kv.slatSelectMode && !kv.usePatternLayer) { kv.handleSlatSelect(e); return; }
         if (facePaintMode) {
+            if (e.button === 2 || e.ctrlKey) return;
             facePaintIsDown = true;
             const coord = screenToCtxCoord(e.clientX, e.clientY);
-            paintFaceCell(coord.x, coord.y, e.button === 2);
+            paintFaceCell(coord.x, coord.y, false);
             return;
         }
         const cornerHit = getHitOverlayCorner(e.clientX, e.clientY);
@@ -1923,6 +1941,23 @@ async function draw() {
         if (!geo.cols || !lastBaseScale) return null;
         const relX = cx - lastILeft, relY = cy - lastITop;
         if (relX < 0 || relY < 0 || relX > lastIW || relY > lastIH) return null;
+
+        // Mondrian 모드: 클릭 위치가 속하는 BSP 렉트 인덱스 반환
+        if (mondrianLayout) {
+            const rx = relX / lastBaseScale; // mm, inner frame origin 기준
+            const ry = relY / lastBaseScale;
+            const iW = geo.innerW, iH = geo.innerH;
+            const rects = mondrianLayout.rects;
+            for (let i = 0; i < rects.length; i++) {
+                const r = rects[i];
+                if (rx >= r.x * iW && rx < (r.x + r.w) * iW &&
+                    ry >= r.y * iH && ry < (r.y + r.h) * iH) {
+                    return `mondrian:${i}`;
+                }
+            }
+            return null;
+        }
+
         const stepVpx = (geo.cellW + geo.slatV) * lastBaseScale;
         const stepHpx = (geo.cellH + geo.slatH) * lastBaseScale;
         const col = Math.floor(relX / stepVpx);
@@ -1934,6 +1969,17 @@ async function draw() {
     function paintFaceCell(cx, cy, isErase) {
         const key = hitTestCell(cx, cy);
         if (!key) return;
+
+        // Mondrian 모드: 렉트 색상 직접 변경
+        if (key.startsWith('mondrian:')) {
+            const idx = parseInt(key.slice(9), 10);
+            if (!mondrianLayout?.rects[idx]) return;
+            mondrianLayout.rects[idx].color = isErase ? null : faceColorUI.getCurrentHex();
+            _mondrianVersion++;
+            draw();
+            return;
+        }
+
         if (isErase) {
             if (faceColorMap) {
                 delete faceColorMap[key];
@@ -1955,7 +2001,13 @@ async function draw() {
             canvas.style.cursor = facePaintMode ? 'crosshair' : (panMode ? 'grab' : 'default');
         });
     }
-    canvas.addEventListener('contextmenu', e => { if (facePaintMode) e.preventDefault(); });
+    canvas.addEventListener('contextmenu', e => {
+        if (facePaintMode) {
+            e.preventDefault();
+            const coord = screenToCtxCoord(e.clientX, e.clientY);
+            paintFaceCell(coord.x, coord.y, true);
+        }
+    });
 
     document.getElementById('btnOrder')?.addEventListener('click', () => {
         openOrderModal({

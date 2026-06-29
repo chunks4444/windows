@@ -802,37 +802,43 @@ async function draw() {
             ctx.clip();
         }
 
-        // 코너 다이아몬드 면 채색 — 살 선 아래 레이어
+        // 면 채색 — 살 선 아래 레이어 (코너 + 셀중심 두 가지 타입)
         if (faceColorMap) {
             const stepV  = geo.cellW + geo.slatV;
             const stepH_ = geo.cellH + geo.slatH;
-            const hW = geo.cellW / 2;
-            const hH = geo.cellH / 2;
+            const hW = stepV  / 2;
+            const hH = stepH_ / 2;
+            const drawDiamond = (xC, yC, fc) => {
+                if (buildKonvaPattern) {
+                    kv.addPatternPolygon([
+                        toCanvasX(xC),      toCanvasY(yC - hH),
+                        toCanvasX(xC + hW), toCanvasY(yC),
+                        toCanvasX(xC),      toCanvasY(yC + hH),
+                        toCanvasX(xC - hW), toCanvasY(yC),
+                    ], fc);
+                } else {
+                    ctx.fillStyle = fc;
+                    ctx.beginPath();
+                    ctx.moveTo(toCanvasX(xC),      toCanvasY(yC - hH));
+                    ctx.lineTo(toCanvasX(xC + hW), toCanvasY(yC));
+                    ctx.lineTo(toCanvasX(xC),      toCanvasY(yC + hH));
+                    ctx.lineTo(toCanvasX(xC - hW), toCanvasY(yC));
+                    ctx.closePath();
+                    ctx.fill();
+                }
+            };
             for (let row = 0; row <= geo.rowsInt - 2; row++) {
                 for (let col = 0; col <= geo.cols - 2; col++) {
                     const _fc = faceColorMap[`corner:${col}:${row}`] ?? null;
-                    if (!_fc) continue;
-                    const kx0 = geo.frameW    + col * stepV  + geo.cellW / 2;
-                    const ky0 = geo.frameHTop + row * stepH_ + geo.cellH / 2;
-                    const xC  = kx0 + stepV / 2;
-                    const yC  = ky0 + stepH_ / 2;
-                    if (buildKonvaPattern) {
-                        kv.addPatternPolygon([
-                            toCanvasX(xC),      toCanvasY(yC - hH),
-                            toCanvasX(xC + hW), toCanvasY(yC),
-                            toCanvasX(xC),      toCanvasY(yC + hH),
-                            toCanvasX(xC - hW), toCanvasY(yC),
-                        ], _fc);
-                    } else {
-                        ctx.fillStyle = _fc;
-                        ctx.beginPath();
-                        ctx.moveTo(toCanvasX(xC),      toCanvasY(yC - hH));
-                        ctx.lineTo(toCanvasX(xC + hW), toCanvasY(yC));
-                        ctx.lineTo(toCanvasX(xC),      toCanvasY(yC + hH));
-                        ctx.lineTo(toCanvasX(xC - hW), toCanvasY(yC));
-                        ctx.closePath();
-                        ctx.fill();
-                    }
+                    if (_fc) drawDiamond(geo.frameW + col * stepV + geo.cellW + geo.slatV / 2,
+                                         geo.frameHTop + row * stepH_ + geo.cellH + geo.slatH / 2, _fc);
+                }
+            }
+            for (let row = 0; row <= geo.rowsInt - 1; row++) {
+                for (let col = 0; col <= geo.cols - 1; col++) {
+                    const _fc = faceColorMap[`center:${col}:${row}`] ?? null;
+                    if (_fc) drawDiamond(geo.frameW + col * stepV + geo.cellW / 2,
+                                         geo.frameHTop + row * stepH_ + geo.cellH / 2, _fc);
                 }
             }
         }
@@ -1572,9 +1578,10 @@ async function draw() {
         if (e.target.closest('.canvas-controls') || e.target.closest('.canvas-title-bar')) return;
         if (lineEditMode) { handleEditClick(e); return; }
         if (facePaintMode) {
+            if (e.button === 2 || e.ctrlKey) return;
             facePaintIsDown = true;
             const coord = screenToCtxCoord(e.clientX, e.clientY);
-            paintFaceCell(coord.x, coord.y, e.button === 2);
+            paintFaceCell(coord.x, coord.y, false);
             return;
         }
         if (kv.slatSelectMode && !kv.usePatternLayer) { kv.handleSlatSelect(e); return; }
@@ -1810,12 +1817,39 @@ async function draw() {
         const stepV  = geo.cellW + geo.slatV;
         const stepH_ = geo.cellH + geo.slatH;
 
-        // 항상 가장 가까운 코너 다이아몬드(큰 흰 마름모 공간)를 반환
-        const offX = geo.cellW + geo.slatV / 2;
-        const offY = geo.cellH + geo.slatH / 2;
-        const col_k = Math.max(0, Math.min(geo.cols    - 2, Math.round((rx - offX) / stepV)));
-        const row_k = Math.max(0, Math.min(geo.rowsInt - 2, Math.round((ry - offY) / stepH_)));
-        return `corner:${col_k}:${row_k}`;
+        // 코너 다이아몬드 후보 (4셀 사이)
+        const cornerOffX = geo.cellW + geo.slatV / 2;
+        const cornerOffY = geo.cellH + geo.slatH / 2;
+        const col_c = Math.max(0, Math.min(geo.cols - 2, Math.round((rx - cornerOffX) / stepV)));
+        const row_c = Math.max(0, Math.min(geo.rowsInt - 2, Math.round((ry - cornerOffY) / stepH_)));
+        const cxCorner = cornerOffX + col_c * stepV;
+        const cyCorner = cornerOffY + row_c * stepH_;
+
+        // 셀 중심 다이아몬드 후보 (각 X 교차점)
+        const centerOffX = geo.cellW / 2;
+        const centerOffY = geo.cellH / 2;
+        const col_m = Math.max(0, Math.min(geo.cols - 1, Math.round((rx - centerOffX) / stepV)));
+        const row_m = Math.max(0, Math.min(geo.rowsInt - 1, Math.round((ry - centerOffY) / stepH_)));
+        const cxCenter = centerOffX + col_m * stepV;
+        const cyCenter = centerOffY + row_m * stepH_;
+
+        // 클릭 위치에 더 가까운 쪽 반환
+        const dCorner = Math.hypot(rx - cxCorner, ry - cyCorner);
+        const dCenter = Math.hypot(rx - cxCenter, ry - cyCenter);
+        if (dCenter < dCorner) return `center:${col_m}:${row_m}`;
+        return `corner:${col_c}:${row_c}`;
+    }
+
+    function getAllCellKeys() {
+        if (!geo || !geo.cols || !geo.rowsInt) return [];
+        const keys = [];
+        for (let row = 0; row <= geo.rowsInt - 2; row++)
+            for (let col = 0; col <= geo.cols - 2; col++)
+                keys.push(`corner:${col}:${row}`);
+        for (let row = 0; row <= geo.rowsInt - 1; row++)
+            for (let col = 0; col <= geo.cols - 1; col++)
+                keys.push(`center:${col}:${row}`);
+        return keys;
     }
 
     function paintFaceCell(cx, cy, isErase) {
@@ -1842,7 +1876,13 @@ async function draw() {
             canvas.style.cursor = facePaintMode ? 'crosshair' : (panMode ? 'grab' : 'default');
         });
     }
-    canvas.addEventListener('contextmenu', e => { if (facePaintMode) e.preventDefault(); });
+    canvas.addEventListener('contextmenu', e => {
+        if (facePaintMode) {
+            e.preventDefault();
+            const coord = screenToCtxCoord(e.clientX, e.clientY);
+            paintFaceCell(coord.x, coord.y, true);
+        }
+    });
 
     document.getElementById('btnOrder')?.addEventListener('click', () => {
         openOrderModal({

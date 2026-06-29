@@ -143,13 +143,6 @@ header('Pragma: no-cache');
                             <span class="toggle-track"></span>
                         </label>
                     </div>
-                    <div style="margin-top:4px;display:flex;align-items:center;justify-content:space-between;">
-                        <span class="color-label">문틀 컬러</span>
-                        <div class="color-preview-btn" style="gap:5px;">
-                            <input type="color" id="muntolColorInput" value="#4a4a4a" style="width:14px;height:14px;padding:0;border:none;border-radius:3px;cursor:pointer;flex-shrink:0;">
-                            <span id="muntolColorCode">#4a4a4a</span>
-                        </div>
-                    </div>
                 </div>
 
                 <!-- ── 제작 시방서 ────────────────── -->
@@ -567,6 +560,13 @@ header('Pragma: no-cache');
                                     <span id="slatPreviewName">—</span>
                                 </button>
                                 <div class="color-popup" id="slatPopup"></div>
+                            </div>
+                        </div>
+                        <div style="display:flex;align-items:center;justify-content:space-between;">
+                            <span class="color-label">문틀 컬러</span>
+                            <div class="color-preview-btn" style="gap:5px;">
+                                <input type="color" id="muntolColorInput" value="#4a4a4a" style="width:14px;height:14px;padding:0;border:none;border-radius:3px;cursor:pointer;flex-shrink:0;">
+                                <span id="muntolColorCode">#4a4a4a</span>
                             </div>
                         </div>
                     </div>
