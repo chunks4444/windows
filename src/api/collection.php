@@ -10,6 +10,8 @@ require_once __DIR__ . '/../lib/db.php';
 $_input = json_decode(file_get_contents('php://input'), true) ?? [];
 $q      = trim($_input['q'] ?? $_GET['q'] ?? '');
 $page   = max(1, (int)($_input['page'] ?? 1));
+$engine = trim($_input['engine'] ?? '');
+if (!in_array($engine, ['classic','square','cross','diamond','triangle','hexagon'], true)) $engine = '';
 $limit  = 20;
 $offset = ($page - 1) * $limit;
 $pdo    = db();
@@ -30,6 +32,10 @@ if ($q !== '') {
     $like = '%' . $q . '%';
     $baseWhere .= ' AND (p.name_ko LIKE :q OR p.id IN (SELECT pattern_id FROM library_keywords WHERE keyword LIKE :q2))';
     $params = [':q' => $like, ':q2' => $like];
+}
+if ($engine !== '') {
+    $baseWhere .= ' AND d.type = :engine';
+    $params[':engine'] = $engine;
 }
 
 // 필터 버튼용 전체 키워드 (page 1에서만)

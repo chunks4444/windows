@@ -7,16 +7,17 @@ let isLoading      = false;
 let currentQ       = '';
 const likes        = {};
 let activeFilter   = 'all';
+let activeEngine   = '';
 let searchTimer    = null;
 let scrollObserver = null;
 
 /* ── API ──────────────────────────────────────── */
-async function fetchPage(q, page) {
+async function fetchPage(q, page, engine) {
     try {
         const res  = await fetch('/src/api/collection.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ q, page }),
+            body: JSON.stringify({ q, page, engine: engine || '' }),
         });
         const data = await res.json();
         if (data.error) { console.error('collection API:', data.error); return { patterns: [], has_more: false }; }
@@ -45,7 +46,7 @@ async function loadNextPage() {
     isLoading = true;
     setLoadMore(false, true); // 버튼 로딩 상태
 
-    const data     = await fetchPage(currentQ, currentPage);
+    const data     = await fetchPage(currentQ, currentPage, activeEngine);
     const patterns = data.patterns || [];
 
     if (currentPage === 1 && Array.isArray(data.keywords)) {
@@ -137,7 +138,7 @@ function buildCard(p) {
                 </div>
             </div>
             <div class="lib-card-body">
-                <div class="lib-card-name">${esc(p.name_ko)}</div>
+                <div class="lib-card-name">${engineIconHtml(p.engine)}${esc(p.name_ko)}</div>
                 <div class="lib-card-sub">${kwHtml}</div>
             </div>
         </div>`;
@@ -173,6 +174,22 @@ function bindFilterBtns() {
             } else {
                 resetAndLoad(activeFilter);
             }
+        };
+    });
+}
+
+function bindEngineFilterBtns() {
+    document.querySelectorAll('.lib-engine-btn').forEach(btn => {
+        btn.onclick = () => {
+            document.querySelectorAll('.lib-engine-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            activeEngine = btn.dataset.engine || '';
+            if (activeFilter === 'liked') {
+                activeFilter = 'all';
+                document.querySelectorAll('.lib-filter-btn').forEach(b => b.classList.remove('active'));
+                document.querySelector('[data-filter="all"]').classList.add('active');
+            }
+            resetAndLoad(currentQ);
         };
     });
 }
@@ -332,6 +349,12 @@ function showToast(msg) {
     setTimeout(() => t.classList.remove('visible'), 2400);
 }
 
+function engineIconHtml(engine) {
+    const svg = (window.__pmokEngineIcons || {})[engine];
+    if (!svg) return '';
+    return `<span class="lib-card-engine-icon">${svg}</span>`;
+}
+
 function esc(str) {
     return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
@@ -339,6 +362,7 @@ function esc(str) {
 /* ── 초기화 ───────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', async () => {
     bindFilterBtns();
+    bindEngineFilterBtns();
     document.getElementById('boardModal').addEventListener('click', e => {
         if (e.target === e.currentTarget) closeBoardModal();
     });

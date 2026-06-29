@@ -25,13 +25,29 @@
 <!-- 검색 / 필터 바 -->
 <div class="lib-toolbar">
     <div class="lib-toolbar-inner">
+        <div class="lib-filters" id="libFilters">
+            <button class="lib-filter-btn active" data-filter="all">전체</button>
+            <button class="lib-filter-btn lib-filter-like" data-filter="liked"><i class="bi bi-heart-fill"></i> 좋아요</button>
+        </div>
         <div class="lib-search">
             <i class="bi bi-search"></i>
             <input type="text" id="libSearch" placeholder="패턴 검색…" autocomplete="off">
         </div>
-        <div class="lib-filters" id="libFilters">
-            <button class="lib-filter-btn active" data-filter="all">전체</button>
-            <button class="lib-filter-btn lib-filter-like" data-filter="liked"><i class="bi bi-heart-fill"></i> 좋아요</button>
+        <?php
+        $engineLabels = [
+            'classic'  => '세살',
+            'square'   => '정자살',
+            'cross'    => '빗살',
+            'diamond'  => '격자 빗살',
+            'triangle' => '세모 솟을살',
+            'hexagon'  => '육모 솟을살',
+        ];
+        ?>
+        <div class="lib-engine-row" id="libEngineFilters">
+            <button class="lib-engine-btn active" data-engine=""><i class="bi bi-grid"></i> 전체</button>
+            <?php foreach ($engineLabels as $key => $label): ?>
+            <button class="lib-engine-btn" data-engine="<?= $key ?>"><?= $navStudioIcons[$key] ?> <?= $label ?></button>
+            <?php endforeach; ?>
         </div>
     </div>
 </div>
@@ -46,6 +62,9 @@
     </div>
 </div>
 
+<script>
+window.__pmokEngineIcons = <?= json_encode(array_map(fn($svg) => $svg, $navStudioIcons), JSON_UNESCAPED_UNICODE) ?>;
+</script>
 <script src="/src/js/collection.js?v=<?= md5_file(__DIR__ . '/../js/collection.js') ?>"></script>
 
 <!-- 보드 모달 -->

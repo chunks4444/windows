@@ -51,18 +51,31 @@ body { background: var(--page-bg); }
     flex-wrap: wrap;
 }
 
+.lib-filters {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    min-width: 0;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 2px;
+}
+.lib-filters::-webkit-scrollbar { display: none; }
+
 .lib-search {
     display: flex;
     align-items: center;
     gap: 8px;
-    flex: 1;
-    min-width: 200px;
-    max-width: 320px;
-    height: 38px;
+    flex-shrink: 0;
+    width: 220px;
+    height: 36px;
     background: #fff;
     border: 1px solid var(--border);
     border-radius: 999px;
-    padding: 0 16px;
+    padding: 0 14px;
 }
 
 .lib-search input {
@@ -76,18 +89,6 @@ body { background: var(--page-bg); }
 }
 
 .lib-search i { color: var(--text-3); font-size: var(--fs-16); }
-
-.lib-filters {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    padding-bottom: 2px;
-}
-.lib-filters::-webkit-scrollbar { display: none; }
 
 .lib-filter-btn {
     height: 32px;
@@ -121,6 +122,49 @@ body { background: var(--page-bg); }
 .lib-filter-like.active i,
 .lib-filter-like:hover i { color: #fff; }
 
+/* ── 엔진 종류 필터 행 ───────────────────────── */
+.lib-engine-row {
+    flex-basis: 100%;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 2px;
+}
+.lib-engine-row::-webkit-scrollbar { display: none; }
+
+.lib-engine-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 28px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--page-bg);
+    font-size: var(--fs-12);
+    font-weight: 500;
+    font-family: inherit;
+    color: var(--text-2);
+    cursor: pointer;
+    transition: all 0.12s;
+    white-space: nowrap;
+}
+.lib-engine-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+.lib-engine-btn:hover {
+    background: var(--teal);
+    border-color: var(--teal);
+    color: #fff;
+}
+.lib-engine-btn.active {
+    background: var(--teal);
+    border-color: var(--teal);
+    color: #fff;
+    font-weight: 700;
+}
+
 /* ── 메인 영역 ───────────────────────────────── */
 .lib-main {
     max-width: 1320px;
@@ -131,7 +175,7 @@ body { background: var(--page-bg); }
 /* ── 매소너리 그리드 ──────────────────────────── */
 .lib-masonry {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 12px;
     align-items: start;
 }
@@ -270,6 +314,9 @@ body { background: var(--page-bg); }
 }
 
 .lib-card-name {
+    display: flex;
+    align-items: center;
+    gap: 5px;
     font-size: var(--fs-14);
     font-weight: 600;
     color: var(--text-1);
@@ -279,6 +326,9 @@ body { background: var(--page-bg); }
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+.lib-card-engine-icon { display: inline-flex; align-items: center; flex-shrink: 0; color: var(--text-3); }
+.lib-card-engine-icon svg { width: 13px; height: 13px; }
 
 .lib-card-sub {
     font-size: var(--fs-12);
