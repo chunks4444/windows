@@ -154,13 +154,13 @@ body { background: var(--page-bg); }
 }
 .lib-engine-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
 .lib-engine-btn:hover {
-    background: var(--teal);
-    border-color: var(--teal);
+    background: #777;
+    border-color: #777;
     color: #fff;
 }
 .lib-engine-btn.active {
-    background: var(--teal);
-    border-color: var(--teal);
+    background: #777;
+    border-color: #777;
     color: #fff;
     font-weight: 700;
 }
