@@ -570,15 +570,15 @@ header('Pragma: no-cache');
                             </div>
                         </div>
                     </div>
-                    <div style="margin-top:8px;display:flex;align-items:center;justify-content:space-between;">
+                    <?php /* 면칠하기 임시 비활성화 (복구: display:none 제거) */ ?>
+                    <div style="margin-top:8px;display:flex;align-items:center;justify-content:space-between;display:none;">
                         <span class="color-label">면 컬러</span>
                         <div class="color-preview-btn" style="gap:5px;">
                             <input type="color" id="faceColorInput" value="#c8102e" style="width:14px;height:14px;padding:0;border:none;border-radius:3px;cursor:pointer;flex-shrink:0;">
                             <span id="faceColorCode">#c8102e</span>
                         </div>
                     </div>
-                    <div style="display:flex;gap:6px;margin-top:6px;">
-                        <?php /* 면칠하기 임시 비활성화 (복구: display:none 제거) */ ?>
+                    <div style="display:flex;gap:6px;margin-top:6px;display:none;">
                         <button id="btnFacePaint" type="button" class="hbtn" style="flex:1;justify-content:center;font-size:11px;display:none;">면컬러 칠하기</button>
                         <button id="btnFaceClear" type="button" class="hbtn" style="flex-shrink:0;padding:0 8px;font-size:11px;display:none;width:auto;justify-content:center;">초기화</button>
                     </div>
