@@ -160,7 +160,7 @@ $navStudioIcons = [
                     <li><a class="dropdown-item" href="/src/guide/order.php"><i class="bi bi-cart-check me-2"></i>주문</a></li>
                     <li><a class="dropdown-item" href="/src/guide/delivery.php"><i class="bi bi-truck me-2"></i>배송</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="/#faqAccordion"><i class="bi bi-question-circle me-2"></i>FAQ</a></li>
+                    <li><a class="dropdown-item" href="/src/guide/faq.php"><i class="bi bi-question-circle me-2"></i>FAQ</a></li>
                 </ul>
             </li>
             <li class="nav-item dropdown">

@@ -43,9 +43,14 @@ $faqs = db()->query('SELECT * FROM faqs WHERE is_active=1 ORDER BY sort_order, i
 <?php endif; ?>
 
 <style>
-.faq-guide-accordion { margin-top: 24px; }
+.faq-guide-accordion {
+    margin-top: 24px;
+    --bs-accordion-btn-padding-y: 18px;
+    --bs-accordion-btn-padding-x: 20px;
+}
+.faq-guide-item h3 { margin: 0; }
 .faq-guide-item {
-    border: 1px solid var(--bs-border-color, #dee2e6);
+    border: 1px solid var(--bs-border-color, #dee2e6) !important;
     border-radius: 8px !important;
     margin-bottom: 8px;
     overflow: hidden;
@@ -55,7 +60,7 @@ $faqs = db()->query('SELECT * FROM faqs WHERE is_active=1 ORDER BY sort_order, i
     font-weight: 600;
     background: #fff;
     color: #1a1a1a;
-    padding: 16px 20px;
+    padding: var(--bs-accordion-btn-padding-y) var(--bs-accordion-btn-padding-x) !important;
     box-shadow: none !important;
 }
 .faq-guide-btn:not(.collapsed) {
@@ -69,7 +74,7 @@ $faqs = db()->query('SELECT * FROM faqs WHERE is_active=1 ORDER BY sort_order, i
     filter: none;
 }
 .faq-guide-body {
-    padding: 12px 20px 20px;
+    padding: 16px 20px 22px;
     font-size: 14px;
     line-height: 1.75;
     color: #444;
