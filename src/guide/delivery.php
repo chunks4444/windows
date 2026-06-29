@@ -2,7 +2,7 @@
 $guide_current = 'delivery.php';
 $guide_title   = '배송 안내';
 $guide_prev    = ['href' => 'order.php', 'title' => '주문 안내'];
-$guide_next    = null;
+$guide_next    = ['href' => 'faq.php', 'title' => '자주 묻는 질문'];
 include __DIR__ . '/_head.php';
 ?>
 

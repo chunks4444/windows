@@ -110,6 +110,15 @@
             <div class="guide-cat-count">1개 아티클</div>
         </a>
 
+        <a href="/src/guide/faq.php" class="guide-cat-card">
+            <div class="guide-cat-icon" style="background:#F0F4F0;color:#3A6B3A;">
+                <i class="bi bi-patch-question-fill"></i>
+            </div>
+            <div class="guide-cat-title">FAQ</div>
+            <div class="guide-cat-desc">자주 묻는 질문: 치수 입력, 견적 요청, 목재·마감 선택 등을 안내합니다.</div>
+            <div class="guide-cat-count">1개 아티클</div>
+        </a>
+
     </div>
 </div>
 

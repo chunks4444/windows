@@ -280,6 +280,7 @@ CREATE TABLE IF NOT EXISTS faqs (
     created_at  DATETIME          NOT NULL DEFAULT NOW(),
     PRIMARY KEY (id),
     KEY idx_faqs_sort (sort_order, is_active)
+-- ALTER TABLE faqs ADD COLUMN show_on_main TINYINT(1) NOT NULL DEFAULT 0 COMMENT '메인페이지 노출' AFTER is_active; -- 2026-06-29
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='자주 묻는 질문';
 
 -- 초기 데이터 (스테인)

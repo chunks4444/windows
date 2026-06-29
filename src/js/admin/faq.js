@@ -8,7 +8,19 @@ async function loadFaqs() {
     const data = await res.json();
     if (!res.ok) { document.getElementById('faqAuthWall').style.display = ''; return; }
     faqs = data.faqs || [];
+    const toggle = document.getElementById('faqSectionToggle');
+    const label  = document.getElementById('faqSectionLabel');
+    toggle.checked     = !!data.section_visible;
+    label.textContent  = toggle.checked ? '메인 노출 중' : '메인 숨김';
+    label.style.color  = toggle.checked ? 'var(--teal)' : 'var(--text-3)';
     render();
+}
+
+async function setSectionVisible(visible) {
+    const label = document.getElementById('faqSectionLabel');
+    await fetch(API, { method: 'POST', headers: _h(), body: JSON.stringify({ action: 'set_section_visible', visible }) });
+    label.textContent = visible ? '메인 노출 중' : '메인 숨김';
+    label.style.color = visible ? 'var(--teal)' : 'var(--text-3)';
 }
 
 function render() {
@@ -18,6 +30,12 @@ function render() {
             <td><strong>${esc(f.question)}</strong></td>
             <td><div class="faq-answer-preview">${esc(f.answer)}</div></td>
             <td><span class="${f.is_active ? 'adm-active-badge' : 'adm-withdrawn-badge'}">${f.is_active ? '노출' : '숨김'}</span></td>
+            <td style="text-align:center;">
+                <button onclick="toggleMain(${f.id})" title="메인페이지 노출 전환"
+                    style="border:none;background:none;padding:0;cursor:pointer;font-size:18px;line-height:1;">
+                    ${f.show_on_main ? '★' : '☆'}
+                </button>
+            </td>
             <td>
                 <div class="adm-action-cell">
                     <button class="adm-edit-btn" style="height:28px;padding:0 10px;font-size:12px;" onclick="openModal(${f.id})">수정</button>
@@ -27,6 +45,11 @@ function render() {
             </td>
         </tr>`).join('');
     bindDrag();
+}
+
+async function toggleMain(id) {
+    await fetch(API, { method: 'POST', headers: _h(), body: JSON.stringify({ action: 'toggle_main', id }) });
+    loadFaqs();
 }
 
 function esc(s) {

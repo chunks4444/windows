@@ -35,9 +35,15 @@
     <div class="adm-breadcrumb"><a href="/src/admin/">어드민</a><span class="adm-breadcrumb-sep">/</span>FAQ 관리</div>
     <div class="db-header">
         <h1 class="db-title"><i class="bi bi-question-circle me-2"></i>FAQ 관리</h1>
-        <button class="adm-edit-btn" style="height:32px;padding:0 14px;" onclick="openModal()">
-            <i class="bi bi-plus-lg"></i> 추가
-        </button>
+        <div style="display:flex;align-items:center;gap:12px;">
+            <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;cursor:pointer;user-select:none;" title="메인페이지 FAQ 섹션 노출 여부">
+                <input type="checkbox" id="faqSectionToggle" class="form-check-input" style="width:36px;height:20px;cursor:pointer;margin:0;" onchange="setSectionVisible(this.checked)">
+                <span id="faqSectionLabel" style="color:var(--text-2);">메인 노출</span>
+            </label>
+            <button class="adm-edit-btn" style="height:32px;padding:0 14px;" onclick="openModal()">
+                <i class="bi bi-plus-lg"></i> 추가
+            </button>
+        </div>
     </div>
     <p style="font-size:12px;color:var(--text-3);margin:-8px 0 16px;">행을 드래그해 순서를 변경할 수 있습니다.</p>
 
@@ -48,7 +54,8 @@
                     <th style="width:32px;"></th>
                     <th>질문</th>
                     <th>답변</th>
-                    <th style="width:72px;">상태</th>
+                    <th style="width:60px;">상태</th>
+                    <th style="width:60px;">메인</th>
                     <th style="width:160px;"></th>
                 </tr>
             </thead>

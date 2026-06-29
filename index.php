@@ -5,12 +5,15 @@ try {
     $pdo        = db();
     $heroSlides = $pdo->query('SELECT * FROM hero_slides WHERE is_active=1 ORDER BY sort_order, id')->fetchAll();
     $spaceCards = $pdo->query('SELECT label, image_url, collection_query FROM space_cards WHERE is_active=1 ORDER BY sort_order, id')->fetchAll();
-    $faqs       = $pdo->query('SELECT * FROM faqs WHERE is_active=1 ORDER BY sort_order, id')->fetchAll();
+    $faqs          = $pdo->query('SELECT * FROM faqs WHERE is_active=1 AND show_on_main=1 ORDER BY sort_order, id')->fetchAll();
+    $faqVisible    = $pdo->query("SELECT value FROM site_config WHERE key_name='faq_section_visible'")->fetchColumn();
+    $faqVisible    = ($faqVisible === false || $faqVisible !== '0');
 } catch (Throwable $e) {
     $pdo        = null;
     $heroSlides = [];
     $spaceCards = [];
     $faqs       = [];
+    $faqVisible = true;
 }
 // 스튜디오 카드 (테이블 없으면 빈 배열)
 try {
@@ -345,6 +348,7 @@ try {
         </section>
 
         <!-- FAQ -->
+        <?php if ($faqVisible): ?>
         <section class="faq-section">
             <div class="container">
                 <div class="mb-4">
@@ -371,6 +375,7 @@ try {
                 <?php endif; ?>
             </div>
         </section>
+        <?php endif; ?>
 
         <!-- FOOTER -->
         <div class="site-footer border-top px-4 py-4">

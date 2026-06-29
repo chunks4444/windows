@@ -19,8 +19,9 @@ $method = $_SERVER['REQUEST_METHOD'];
 $pdo    = db();
 
 if ($method === 'GET') {
-    $rows = $pdo->query('SELECT * FROM faqs ORDER BY sort_order, id')->fetchAll();
-    echo json_encode(['faqs' => $rows]);
+    $rows    = $pdo->query('SELECT * FROM faqs ORDER BY sort_order, id')->fetchAll();
+    $visible = $pdo->query("SELECT value FROM site_config WHERE key_name='faq_section_visible'")->fetchColumn();
+    echo json_encode(['faqs' => $rows, 'section_visible' => ($visible === false ? true : (bool)(int)$visible)]);
     exit;
 }
 
@@ -66,6 +67,13 @@ if ($action === 'toggle') {
     exit;
 }
 
+if ($action === 'toggle_main') {
+    $id = (int)($body['id'] ?? 0);
+    $pdo->prepare('UPDATE faqs SET show_on_main = 1 - show_on_main WHERE id=?')->execute([$id]);
+    echo json_encode(['ok' => true]);
+    exit;
+}
+
 if ($action === 'reorder') {
     $ids  = $body['ids'] ?? [];
     $stmt = $pdo->prepare('UPDATE faqs SET sort_order=? WHERE id=?');
@@ -73,6 +81,14 @@ if ($action === 'reorder') {
         $stmt->execute([$i, (int)$id]);
     }
     echo json_encode(['ok' => true]);
+    exit;
+}
+
+if ($action === 'set_section_visible') {
+    $val = isset($body['visible']) && $body['visible'] ? '1' : '0';
+    $pdo->prepare("INSERT INTO site_config (key_name, value) VALUES ('faq_section_visible', ?) ON DUPLICATE KEY UPDATE value = VALUES(value)")
+        ->execute([$val]);
+    echo json_encode(['ok' => true, 'section_visible' => (bool)(int)$val]);
     exit;
 }
 

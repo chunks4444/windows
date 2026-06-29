@@ -67,6 +67,13 @@ $guide_nav = [
             ['file' => 'delivery.php', 'title' => '배송 안내'],
         ],
     ],
+    [
+        'title' => 'FAQ', 'icon' => 'bi-patch-question',
+        'bg' => '#F0F4F0', 'color' => '#3A6B3A',
+        'articles' => [
+            ['file' => 'faq.php', 'title' => '자주 묻는 질문'],
+        ],
+    ],
 ];
 
 $guideEngineIcons = [
