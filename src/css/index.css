@@ -279,10 +279,10 @@ body { font-weight: 900; }
     display: inline-flex;
     align-items: center;
     gap: .3rem;
-    margin-top: 12px;
+    margin-top: 24px;
     font-size: var(--fs-13);
     font-weight: 600;
-    color: var(--teal);
+    color: #000;
     text-decoration: none;
 }
 .process-guide-link:hover { text-decoration: underline; }

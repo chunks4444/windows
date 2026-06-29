@@ -166,9 +166,12 @@ try {
         <!-- Process -->
         <section class="process-section">
             <div class="container">
-                <div class="mb-4">
-                    <p class="ab-section-label">사용법</p>
-                    <h2 class="ab-section-title">이렇게 사용하세요.</h2>
+                <div class="mb-4 d-flex align-items-end justify-content-between flex-wrap gap-2">
+                    <div>
+                        <p class="ab-section-label">사용법</p>
+                        <h2 class="ab-section-title">이렇게 사용하세요.</h2>
+                    </div>
+                    <a href="/src/guide/" class="home-blog-more">가이드 전체 보기 <i class="bi bi-arrow-right"></i></a>
                 </div>
                 <div class="process-container">
                     <div class="process-step">
@@ -182,6 +185,7 @@ try {
                                 <li><i class="bi bi-check2"></i> 살 간격·두께 슬라이더 조정</li>
                                 <li><i class="bi bi-check2"></i> 실시간으로 결과 확인</li>
                             </ul>
+                            <a href="/src/guide/studio-classic.php" class="process-guide-link">스튜디오 가이드 보기 <i class="bi bi-arrow-right"></i></a>
                         </div>
                     </div>
                     <div class="process-step">
@@ -195,6 +199,7 @@ try {
                                 <li><i class="bi bi-check2"></i> 컬렉션에서 다양한 패턴 탐색</li>
                                 <li><i class="bi bi-check2"></i> 보드에 마음에 드는 패턴 모으기</li>
                             </ul>
+                            <a href="/src/guide/drawing.php" class="process-guide-link">도면 관리 가이드 보기 <i class="bi bi-arrow-right"></i></a>
                         </div>
                     </div>
                     <div class="process-step">
@@ -208,6 +213,7 @@ try {
                                 <li><i class="bi bi-check2"></i> AI 렌더링으로 공간 시각화</li>
                                 <li><i class="bi bi-check2"></i> 배경 이미지와 도면 합성 확인</li>
                             </ul>
+                            <a href="/src/guide/render.php" class="process-guide-link">렌더링 가이드 보기 <i class="bi bi-arrow-right"></i></a>
                         </div>
                     </div>
                     <div class="process-step">
@@ -217,7 +223,7 @@ try {
                             <h3 class="process-title">제작 주문</h3>
                             <p class="process-desc">완성된 설계를 가지고 평목 공방에 제작을 주문하세요.</p>
                             <ul class="process-hints">
-                                <li><i class="bi bi-check2"></i> 도면 오른쪽 상단 주문버튼 클릭</li>
+                                <li><i class="bi bi-check2"></i> 도면 오른쪽 상단 견적요청 버튼 클릭</li>
                                 <li><i class="bi bi-check2"></i> 저장한 도면 기반으로 상담</li>
                                 <li><i class="bi bi-check2"></i> 설계·제작·협업 모두 환영</li>
                             </ul>
