@@ -70,7 +70,7 @@
             params: params ? { ...params } : {
                 W: 600, H: 1707, cols: 12, frame: 60, frameH: 60, slat: 12,
                 vRatio: 1.2, pattern: '3/5/3', doorType: 'swing', doorCount: 1,
-                pungpanOn: false, pungpan: 0, wood: 'hongsong', finish: 'changhoji',
+                pungpanOn: false, pungpan: 0, wood: '소나무', finish: '창호지',
                 frameColor: DEFAULT_FRAME_COLOR, slatColor: DEFAULT_SLAT_COLOR, name: '',
             },
             deletedSegs: new Set(),
