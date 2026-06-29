@@ -275,6 +275,18 @@ body { font-weight: 900; }
     flex-shrink: 0;
 }
 
+.process-guide-link {
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    margin-top: 12px;
+    font-size: var(--fs-13);
+    font-weight: 600;
+    color: var(--teal);
+    text-decoration: none;
+}
+.process-guide-link:hover { text-decoration: underline; }
+
 .process-arrow { display: none; }
 
 @media (max-width: 1024px) {

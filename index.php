@@ -221,6 +221,7 @@ try {
                                 <li><i class="bi bi-check2"></i> 저장한 도면 기반으로 상담</li>
                                 <li><i class="bi bi-check2"></i> 설계·제작·협업 모두 환영</li>
                             </ul>
+                            <a href="/src/guide/order.php" class="process-guide-link">주문 안내 보기 <i class="bi bi-arrow-right"></i></a>
                         </div>
                     </div>
                 </div>
@@ -321,7 +322,7 @@ try {
                         <div class="guide-card-icon" style="background:#FDF0E6;color:#B8662F;"><i class="bi bi-cart-check"></i></div>
                         <div class="guide-card-body">
                             <div class="guide-card-title">주문</div>
-                            <div class="guide-card-desc">콘텐츠 준비 중입니다.</div>
+                            <div class="guide-card-desc">완성된 도면으로 제작을 의뢰하는 방법을 안내합니다.</div>
                         </div>
                         <i class="bi bi-arrow-right guide-card-arrow"></i>
                     </a>
@@ -329,7 +330,7 @@ try {
                         <div class="guide-card-icon" style="background:#EAF3FB;color:#2E6FA8;"><i class="bi bi-truck"></i></div>
                         <div class="guide-card-body">
                             <div class="guide-card-title">배송</div>
-                            <div class="guide-card-desc">콘텐츠 준비 중입니다.</div>
+                            <div class="guide-card-desc">택배·화물 배송 방법과 반품·교환 안내를 확인하세요.</div>
                         </div>
                         <i class="bi bi-arrow-right guide-card-arrow"></i>
                     </a>
