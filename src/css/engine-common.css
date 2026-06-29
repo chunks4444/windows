@@ -86,8 +86,6 @@ body.pm-generator .pm-navbar .dropdown-menu { background: var(--sidebar-bg) !imp
     border-radius: 20px;
     transition: border-color .15s;
 }
-.title-btn-group:focus-within { border-color: rgba(255,255,255,0.3); }
-
 .title-btn-group .hdr-title-badge {
     border: none;
     border-radius: 0;
@@ -942,7 +940,6 @@ canvas:active { cursor: grabbing; }
     white-space: nowrap;
     transition: opacity 0.22s ease, transform 0.22s ease;
     z-index: 9999;
-    white-space: nowrap;
 }
 .pm-save-toast--in {
     opacity: 1;

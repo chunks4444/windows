@@ -2192,7 +2192,7 @@ async function draw() {
                     imgObj.src = src;
                 });
             });
-            Promise.all(wallpaperPromises).then(() => { console.log('[THUMB draw] scaleFactor=', scaleFactor); draw(); });
+            Promise.all(wallpaperPromises).then(() => { draw(); });
         } catch(e) {}
     }
 
@@ -2447,7 +2447,6 @@ async function draw() {
 
     async function loadVersions() {
         scaleFactor = 1.0; panX = 0; panY = 0;
-        console.log('[LV] start scaleFactor=1.0');
 
         // 내 도면에서 직접 열었을 때 PHP가 POST 값을 window.__pmokOpenDrawing에 주입
         const pendingTitle = window.__pmokOpenDrawing || null;

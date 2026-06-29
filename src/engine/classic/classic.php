@@ -20,9 +20,7 @@ header('Pragma: no-cache');
 </head>
 
 <body class="pm-generator">
-    <?php include __DIR__ . '/../../components/nav.php'; ?>
-    <style>.pm-navbar,.pm-navbar .nav-link,.pm-navbar .navbar-brand{color:#fff!important;}.pm-navbar .dropdown-item{color:#fff!important;}</style>
-    <?php include __DIR__ . '/../../components/auth_guard.php'; ?>
+    <?php include __DIR__ . '/../../components/engine-nav.php'; ?>
 
     <input type="file" id="aiFileUploader" accept="image/*" multiple style="display: none;">
 
