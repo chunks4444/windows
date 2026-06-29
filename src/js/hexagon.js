@@ -862,27 +862,35 @@ async function draw() {
             const startY  = iTop - slatPx / 2;
 
             lastCellSize = size;
+            // Konva: 면색 선행 패스 (살 선보다 아래 레이어)
+            if (buildKonvaPattern && faceColorMap) {
+                for (let y2 = startY - rowStep, rIdx2 = 0; y2 < iTop + iH + rowStep; y2 += rowStep, rIdx2++) {
+                    for (let x2 = iLeft - width, cIdx2 = 0; x2 < iLeft + iW + width; x2 += width, cIdx2++) {
+                        const offX2 = (rIdx2 % 2 === 0) ? width / 2 : 0;
+                        const cx2 = x2 + offX2, cy2 = y2;
+                        for (let w = 0; w < 6; w++) {
+                            const _fc = faceColorMap[`hex:${rIdx2}:${cIdx2}:${w}`] ?? null;
+                            if (_fc) {
+                                const a1 = w * Math.PI / 3, a2 = (w + 1) * Math.PI / 3;
+                                kv.addPatternPolygon([cx2, cy2, cx2 + size * Math.cos(a1), cy2 + size * Math.sin(a1), cx2 + size * Math.cos(a2), cy2 + size * Math.sin(a2)], _fc);
+                            }
+                        }
+                    }
+                }
+            }
             for (let y = startY - rowStep, rIdx = 0; y < iTop + iH + rowStep; y += rowStep, rIdx++) {
                 for (let x = iLeft - width, cIdx = 0; x < iLeft + iW + width; x += width, cIdx++) {
                     const offX = (rIdx % 2 === 0) ? width / 2 : 0;
                     const cx = x + offX, cy = y;
-                    if (faceColorMap) {
+                    if (!buildKonvaPattern && faceColorMap) {
                         for (let w = 0; w < 6; w++) {
                             const _fc = faceColorMap[`hex:${rIdx}:${cIdx}:${w}`] ?? null;
                             if (_fc) {
                                 const a1 = w * Math.PI / 3, a2 = (w + 1) * Math.PI / 3;
-                                if (buildKonvaPattern) {
-                                    const v1x = cx + size * Math.cos(a1), v1y = cy + size * Math.sin(a1);
-                                    const v2x = cx + size * Math.cos(a2), v2y = cy + size * Math.sin(a2);
-                                    const minX = Math.min(cx, v1x, v2x), maxX = Math.max(cx, v1x, v2x);
-                                    const minY = Math.min(cy, v1y, v2y), maxY = Math.max(cy, v1y, v2y);
-                                    kv.addPatternRectToGroup(d, minX, minY, maxX - minX, maxY - minY, _fc);
-                                } else {
-                                    ctx.beginPath(); ctx.moveTo(cx, cy);
-                                    ctx.lineTo(cx + size * Math.cos(a1), cy + size * Math.sin(a1));
-                                    ctx.lineTo(cx + size * Math.cos(a2), cy + size * Math.sin(a2));
-                                    ctx.closePath(); ctx.fillStyle = _fc; ctx.fill();
-                                }
+                                ctx.beginPath(); ctx.moveTo(cx, cy);
+                                ctx.lineTo(cx + size * Math.cos(a1), cy + size * Math.sin(a1));
+                                ctx.lineTo(cx + size * Math.cos(a2), cy + size * Math.sin(a2));
+                                ctx.closePath(); ctx.fillStyle = _fc; ctx.fill();
                             }
                         }
                     }
@@ -937,11 +945,7 @@ async function draw() {
                             if (_fc) {
                                 const a1 = Math.PI / 2 + w * Math.PI / 3, a2 = Math.PI / 2 + (w + 1) * Math.PI / 3;
                                 if (buildKonvaPattern) {
-                                    const v1x = cx + size * Math.cos(a1), v1y = cy + size * Math.sin(a1);
-                                    const v2x = cx + size * Math.cos(a2), v2y = cy + size * Math.sin(a2);
-                                    const minX = Math.min(cx, v1x, v2x), maxX = Math.max(cx, v1x, v2x);
-                                    const minY = Math.min(cy, v1y, v2y), maxY = Math.max(cy, v1y, v2y);
-                                    kv.addPatternRectToGroup(d, minX, minY, maxX - minX, maxY - minY, _fc);
+                                    kv.addPatternPolygon([cx, cy, cx + size * Math.cos(a1), cy + size * Math.sin(a1), cx + size * Math.cos(a2), cy + size * Math.sin(a2)], _fc);
                                 } else {
                                     ctx.beginPath(); ctx.moveTo(cx, cy);
                                     ctx.lineTo(cx + size * Math.cos(a1), cy + size * Math.sin(a1));
@@ -1673,14 +1677,18 @@ async function draw() {
     function paintFaceCell(cx, cy, isErase) {
         const key = hitTestCell(cx, cy);
         if (!key) return;
+        // 클릭한 wedge가 아닌 벌집 셀 전체(6개 wedge)를 칠함
+        const parts = key.split(':');
+        const cellBase = parts.slice(0, -1).join(':');
         if (isErase) {
             if (faceColorMap) {
-                delete faceColorMap[key];
+                for (let w = 0; w < 6; w++) delete faceColorMap[`${cellBase}:${w}`];
                 if (!Object.keys(faceColorMap).length) faceColorMap = null;
             }
         } else {
             if (!faceColorMap) faceColorMap = {};
-            faceColorMap[key] = faceColorUI.getCurrentHex();
+            const color = faceColorUI.getCurrentHex();
+            for (let w = 0; w < 6; w++) faceColorMap[`${cellBase}:${w}`] = color;
         }
         faceColorUI.updateClearBtn(!!faceColorMap);
         draw();

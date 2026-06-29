@@ -802,7 +802,40 @@ async function draw() {
             ctx.clip();
         }
 
-        // 면 채색 자리 (살 선 아래 — 비워둠, 살 위에서 그림)
+        // 코너 다이아몬드 면 채색 — 살 선 아래 레이어
+        if (faceColorMap) {
+            const stepV  = geo.cellW + geo.slatV;
+            const stepH_ = geo.cellH + geo.slatH;
+            const hW = geo.cellW / 2;
+            const hH = geo.cellH / 2;
+            for (let row = 0; row <= geo.rowsInt - 2; row++) {
+                for (let col = 0; col <= geo.cols - 2; col++) {
+                    const _fc = faceColorMap[`corner:${col}:${row}`] ?? null;
+                    if (!_fc) continue;
+                    const kx0 = geo.frameW    + col * stepV  + geo.cellW / 2;
+                    const ky0 = geo.frameHTop + row * stepH_ + geo.cellH / 2;
+                    const xC  = kx0 + stepV / 2;
+                    const yC  = ky0 + stepH_ / 2;
+                    if (buildKonvaPattern) {
+                        kv.addPatternPolygon([
+                            toCanvasX(xC),      toCanvasY(yC - hH),
+                            toCanvasX(xC + hW), toCanvasY(yC),
+                            toCanvasX(xC),      toCanvasY(yC + hH),
+                            toCanvasX(xC - hW), toCanvasY(yC),
+                        ], _fc);
+                    } else {
+                        ctx.fillStyle = _fc;
+                        ctx.beginPath();
+                        ctx.moveTo(toCanvasX(xC),      toCanvasY(yC - hH));
+                        ctx.lineTo(toCanvasX(xC + hW), toCanvasY(yC));
+                        ctx.lineTo(toCanvasX(xC),      toCanvasY(yC + hH));
+                        ctx.lineTo(toCanvasX(xC - hW), toCanvasY(yC));
+                        ctx.closePath();
+                        ctx.fill();
+                    }
+                }
+            }
+        }
 
         {
             // ====================================
@@ -890,32 +923,6 @@ async function draw() {
 
         // 클리핑 해제
         if (!buildKonvaPattern) ctx.restore();
-
-        // 코너 다이아몬드 면 채색 — 살 선 위에, cellW/2 크기로 X교차점과 분리
-        if (faceColorMap) {
-            const stepV  = geo.cellW + geo.slatV;
-            const stepH_ = geo.cellH + geo.slatH;
-            const hW = geo.cellW / 2;
-            const hH = geo.cellH / 2;
-            for (let row = 0; row <= geo.rowsInt - 2; row++) {
-                for (let col = 0; col <= geo.cols - 2; col++) {
-                    const _fc = faceColorMap[`corner:${col}:${row}`] ?? null;
-                    if (!_fc) continue;
-                    const kx0 = geo.frameW    + col * stepV  + geo.cellW / 2;
-                    const ky0 = geo.frameHTop + row * stepH_ + geo.cellH / 2;
-                    const xC  = kx0 + stepV / 2;
-                    const yC  = ky0 + stepH_ / 2;
-                    ctx.fillStyle = _fc;
-                    ctx.beginPath();
-                    ctx.moveTo(toCanvasX(xC),      toCanvasY(yC - hH));
-                    ctx.lineTo(toCanvasX(xC + hW), toCanvasY(yC));
-                    ctx.lineTo(toCanvasX(xC),      toCanvasY(yC + hH));
-                    ctx.lineTo(toCanvasX(xC - hW), toCanvasY(yC));
-                    ctx.closePath();
-                    ctx.fill();
-                }
-            }
-        }
 
     }   // ← 1차 루프 끝
 

@@ -861,6 +861,22 @@ async function draw() {
             const startY  = iTop - slatPx / 2;
 
             lastCellSize = size;
+            // Konva: 면색 선행 패스 (살 선보다 아래 레이어)
+            if (buildKonvaPattern && faceColorMap) {
+                for (let y2 = startY - rowStep, rIdx2 = 0; y2 < iTop + iH + rowStep; y2 += rowStep, rIdx2++) {
+                    for (let x2 = iLeft - width, cIdx2 = 0; x2 < iLeft + iW + width; x2 += width, cIdx2++) {
+                        const offX2 = (rIdx2 % 2 === 0) ? width / 2 : 0;
+                        const cx2 = x2 + offX2, cy2 = y2;
+                        for (let i = 0; i < 6; i++) {
+                            const _fc = faceColorMap[`tri:${rIdx2}:${cIdx2}:${i}`] ?? null;
+                            if (_fc) {
+                                const a1 = i * Math.PI / 3, a2 = (i + 1) * Math.PI / 3;
+                                kv.addPatternPolygon([cx2, cy2, cx2 + size * Math.cos(a1), cy2 + size * Math.sin(a1), cx2 + size * Math.cos(a2), cy2 + size * Math.sin(a2)], _fc);
+                            }
+                        }
+                    }
+                }
+            }
             for (let y = startY - rowStep, rIdx = 0; y < iTop + iH + rowStep; y += rowStep, rIdx++) {
                 for (let x = iLeft - width, cIdx = 0; x < iLeft + iW + width; x += width, cIdx++) {
                     const offX = (rIdx % 2 === 0) ? width / 2 : 0;
@@ -913,6 +929,22 @@ async function draw() {
             const startX  = iLeft - slatPx / 2;
 
             lastCellSize = size;
+            // Konva: 면색 선행 패스 (살 선보다 아래 레이어)
+            if (buildKonvaPattern && faceColorMap) {
+                for (let x2 = startX - colStep, cIdx2 = 0; x2 < iLeft + iW + colStep; x2 += colStep, cIdx2++) {
+                    for (let y2 = iTop - width, rowIdx2 = 0; y2 < iTop + iH + width; y2 += width, rowIdx2++) {
+                        const offY2 = (cIdx2 % 2 === 0) ? width / 2 : 0;
+                        const cx2 = x2, cy2 = y2 + offY2;
+                        for (let i = 0; i < 6; i++) {
+                            const _fc = faceColorMap[`tri:${cIdx2}:${rowIdx2}:${i}`] ?? null;
+                            if (_fc) {
+                                const a1 = i * Math.PI / 3 + Math.PI / 2, a2 = (i + 1) * Math.PI / 3 + Math.PI / 2;
+                                kv.addPatternPolygon([cx2, cy2, cx2 + size * Math.cos(a1), cy2 + size * Math.sin(a1), cx2 + size * Math.cos(a2), cy2 + size * Math.sin(a2)], _fc);
+                            }
+                        }
+                    }
+                }
+            }
             for (let x = startX - colStep, cIdx = 0; x < iLeft + iW + colStep; x += colStep, cIdx++) {
                 for (let y = iTop - width, rowIdx = 0; y < iTop + iH + width; y += width, rowIdx++) {
                     const offY = (cIdx % 2 === 0) ? width / 2 : 0;
