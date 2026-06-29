@@ -97,7 +97,7 @@
                 <i class="bi bi-cart-check"></i>
             </div>
             <div class="guide-cat-title">주문</div>
-            <div class="guide-cat-desc">콘텐츠 준비 중입니다.</div>
+            <div class="guide-cat-desc">견적요청 방법과 주문 흐름, 도면 잠금 정책을 안내합니다.</div>
             <div class="guide-cat-count">1개 아티클</div>
         </a>
 
@@ -106,7 +106,7 @@
                 <i class="bi bi-truck"></i>
             </div>
             <div class="guide-cat-title">배송</div>
-            <div class="guide-cat-desc">콘텐츠 준비 중입니다.</div>
+            <div class="guide-cat-desc">배송 방법·배송비 안내 및 반품·교환 정책을 확인하세요.</div>
             <div class="guide-cat-count">1개 아티클</div>
         </a>
 
