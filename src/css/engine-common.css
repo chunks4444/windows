@@ -270,6 +270,7 @@ body.pm-generator .pm-navbar .dropdown-menu { background: var(--sidebar-bg) !imp
 
 canvas { display: block; width: 100%; height: 100%; cursor: grab; margin-top: 4px; touch-action: none; }
 canvas:active { cursor: grabbing; }
+#konvaStageContainer canvas { cursor: inherit; }
 
 /* ── CANVAS CONTROLS ─────────────────────── */
 .canvas-controls {

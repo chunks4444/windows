@@ -95,13 +95,15 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
         if (konvaLinePreview) { konvaLinePreview.destroy(); konvaLinePreview = null; }
         if (!mode) { konvaTransformer.nodes([]); konvaShapeLayer.batchDraw(); }
         konvaContainer.style.pointerEvents = mode ? 'auto' : 'none';
-        konvaContainer.style.cursor =
-            ['circle','line','rect','text'].includes(mode) ? 'crosshair' : 'default';
-        document.getElementById('btnShapeSelect')?.classList.toggle('active', mode === 'select');
-        document.getElementById('btnShapeCircle')?.classList.toggle('active', mode === 'circle');
-        document.getElementById('btnShapeLine')?.classList.toggle('active', mode === 'line');
-        document.getElementById('btnShapeRect')?.classList.toggle('active', mode === 'rect');
-        document.getElementById('btnShapeText')?.classList.toggle('active', mode === 'text');
+        const isDrawMode = ['circle','line','rect','text'].includes(mode);
+        const cursorVal  = isDrawMode ? 'crosshair' : mode === 'select' ? 'default' : '';
+        konvaContainer.style.cursor = cursorVal || 'default';
+        canvas.style.cursor = cursorVal;
+        document.getElementById('btnShapeSelect')?.classList.toggle('cv-btn-active', mode === 'select');
+        document.getElementById('btnShapeCircle')?.classList.toggle('cv-btn-active', mode === 'circle');
+        document.getElementById('btnShapeLine')?.classList.toggle('cv-btn-active', mode === 'line');
+        document.getElementById('btnShapeRect')?.classList.toggle('cv-btn-active', mode === 'rect');
+        document.getElementById('btnShapeText')?.classList.toggle('cv-btn-active', mode === 'text');
         updatePanels();
     }
 
@@ -384,7 +386,10 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
     el('btnResetSlatColor')?.addEventListener('click', () => {
         if (!_selectedLineKey) return;
         delete slatColorOverrides[_selectedLineKey];
+        _selectedLineKey = null;
         draw();
+        updatePatternHighlight();
+        updatePanels();
     });
     el('btnDeleteSelectedSlat')?.addEventListener('click', () => {
         if (!_selectedLineKey || !deletedSegs) return;
@@ -404,11 +409,10 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
         if (willActivate) {
             _slatSelectMode = true;
             el('btnSlatSelect')?.classList.add('cv-btn-active');
+            canvas.style.cursor = 'crosshair';
             if (_usePatternLayer) {
                 konvaContainer.style.pointerEvents = 'auto';
                 konvaContainer.style.cursor = 'crosshair';
-            } else {
-                canvas.style.cursor = 'crosshair';
             }
         }
     });
@@ -576,6 +580,13 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
         if (s.logW) {
             patternLayer.position({ x: s.logW / 2 + s.panX, y: s.logH / 2 + s.panY });
             patternLayer.scale({ x: s.scaleFactor, y: s.scaleFactor });
+        }
+        // 노드 재생성 직후 선택 하이라이트·색상 오버라이드를 반영한 뒤 렌더
+        for (const [, rect] of Object.entries(_patternSlatNodes)) {
+            const lineKey  = rect.getAttr('_pmok_lineKey');
+            const baseFill = rect.getAttr('_pmok_baseFill');
+            const oc       = slatColorOverrides[lineKey];
+            rect.fill(lineKey === _selectedLineKey ? 'rgba(41,121,255,0.55)' : (oc || baseFill));
         }
         patternLayer.draw(); // 동기 렌더 — canvas와 같은 프레임에 출력
     }
