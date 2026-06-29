@@ -1893,9 +1893,6 @@ async function draw() {
             faceColorMap[key] = faceColorUI.getCurrentHex();
         }
         faceColorUI.updateClearBtn(!!faceColorMap);
-        showMuntol = p.showMuntol !== false;
-        const _chkM = document.getElementById('chkMuntol'); if (_chkM) _chkM.checked = showMuntol;
-        if (p.muntolColor) { selectedMuntolColor = p.muntolColor; const _mi = document.getElementById('muntolColorInput'); if (_mi) { _mi.value = p.muntolColor; const _mc = document.getElementById('muntolColorCode'); if (_mc) _mc.textContent = p.muntolColor; } }
         draw();
     }
 
