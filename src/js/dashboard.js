@@ -363,6 +363,7 @@ async function loadMoreDrawings() {
                 grid = document.querySelector('#dbContent .db-grid');
             }
             grid.insertAdjacentHTML('beforeend', drawings.map(renderCard).join(''));
+            lazyLoadThumbnails(drawings);
         }
     } catch(e) {}
 
@@ -411,6 +412,7 @@ async function loadDashboard() {
 
         setDrawingsLoadMore(drawingsHasMore);
         setupDrawingsObserver();
+        lazyLoadThumbnails(drawings);
     } catch (e) {
         document.getElementById('dbContent').innerHTML = '<div class="db-loading">오류가 발생했습니다.</div>';
     }
