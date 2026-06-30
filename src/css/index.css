@@ -3,27 +3,18 @@
 }
 
 /* AI 프롬프트 바 */
-.hero-prompt-wrap {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
+.idx-ai-wrap {
     max-width: 600px;
-    padding: 0 20px;
-    z-index: 10;
+    margin: 48px auto 28px;
 }
 .idx-ai-bar {
     display: flex;
     align-items: center;
     gap: 10px;
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1.5px solid rgba(255,255,255,0.6);
+    background: #f7f7f5;
+    border: 1.5px solid #e0ddd8;
     border-radius: 999px;
     padding: 10px 10px 10px 20px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
 }
 .idx-ai-icon { color: #3A8C82; font-size: 18px; flex-shrink: 0; }
 .idx-ai-input {
@@ -54,15 +45,12 @@
 .idx-ai-result {
     margin-top: 8px;
     font-size: 13px;
-    color: #222;
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.6);
+    color: #555;
+    background: #f0f9f8;
+    border: 1px solid #c5e6e3;
     border-radius: 16px;
     padding: 10px 20px;
     line-height: 1.6;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
 }
 
 /* HERO CAROUSEL */
@@ -73,7 +61,6 @@
 .hero-carousel-outer .container {
     overflow: hidden;
     border-radius: 16px;
-    position: relative;
 }
 
 .hero-carousel-outer .carousel-item {

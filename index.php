@@ -77,18 +77,20 @@ try {
                     <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
                         <span class="carousel-control-next-icon" aria-hidden="true"></span>
                     </button>
-                    <!-- AI 프롬프트 오버레이 -->
-                    <div class="hero-prompt-wrap">
-                        <div class="idx-ai-bar">
-                            <i class="bi bi-stars idx-ai-icon"></i>
-                            <input type="text" id="idxAiInput" class="idx-ai-input"
-                                placeholder="원하는 창호를 말해보세요  예: 정자살 여닫이 2짝 900×2000">
-                            <button id="idxAiSend" class="idx-ai-btn">설계 시작</button>
-                        </div>
-                        <div id="idxAiResult" class="idx-ai-result" style="display:none;"></div>
-                    </div>
                 </div>
               </div>
+            </div>
+            <!-- AI 프롬프트 -->
+            <div class="container">
+                <div class="idx-ai-wrap">
+                    <div class="idx-ai-bar">
+                        <i class="bi bi-stars idx-ai-icon"></i>
+                        <input type="text" id="idxAiInput" class="idx-ai-input"
+                            placeholder="원하는 창호를 말해보세요  예: 정자살 여닫이 2짝 900×2000">
+                        <button id="idxAiSend" class="idx-ai-btn">설계 시작</button>
+                    </div>
+                    <div id="idxAiResult" class="idx-ai-result" style="display:none;"></div>
+                </div>
             </div>
             <!-- -->
             <div class="container">
