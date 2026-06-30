@@ -28,6 +28,27 @@ header('Pragma: no-cache');
         <div class="controls" id="sidebar">
             <div class="sb-inner">
 
+                <!-- ── 문 설정 그룹 ─────────────── -->
+                <div class="sb-section">
+                    <div class="sb-section-title">문 설정</div>
+
+                    <div class="door-row">
+                        <div class="ctrl">
+                            <select id="txtDoorType" class="sb-select">
+                                <option value="swing" <?= $cfg['doorType'] === 'swing' ? 'selected' : '' ?>>여닫이</option>
+                                <option value="slide" <?= $cfg['doorType'] === 'slide' ? 'selected' : '' ?>>미서기</option>
+                            </select>
+                        </div>
+                        <div class="ctrl">
+                            <select id="txtDoorCount" class="sb-select">
+                                <option value="1" <?= $cfg['doorCount'] === '1' ? 'selected' : '' ?>>1짝</option>
+                                <option value="2" <?= $cfg['doorCount'] === '2' ? 'selected' : '' ?>>2짝</option>
+                                <option value="3" <?= $cfg['doorCount'] === '3' ? 'selected' : '' ?>>3짝</option>
+                                <option value="4" <?= $cfg['doorCount'] === '4' ? 'selected' : '' ?>>4짝</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <hr class="sb-divider">
 
                     <div class="ctrl">

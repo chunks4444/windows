@@ -273,7 +273,7 @@ body.pm-generator .pm-navbar .dropdown-menu { background: var(--sidebar-bg) !imp
     border: 1px solid rgba(255,255,255,0.15);
     background: var(--sidebar-bg);
     color: rgba(255,255,255,0.9);
-    font-size: var(--fs-13);
+    font-size: var(--fs-12);
     font-weight: 500;
     cursor: pointer;
     display: flex;
@@ -524,7 +524,7 @@ canvas:active { cursor: grabbing; }
     border: 1px solid rgba(255,255,255,0.15);
     border-radius: var(--r-sm);
     color: #fff;
-    font-size: var(--fs-13);
+    font-size: var(--fs-12);
     font-weight: 600;
     font-family: inherit;
     cursor: pointer;
@@ -1362,12 +1362,12 @@ select.sb-select { display: none; }
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 36px;
+    height: 30px;
     padding: 0 10px 0 12px;
     border-radius: var(--r-sm);
     background: var(--sidebar-bg);
     color: var(--text-1);
-    font-size: var(--fs-13);
+    font-size: var(--fs-12);
     font-family: inherit;
     cursor: pointer;
     user-select: none;
@@ -1390,8 +1390,8 @@ select.sb-select { display: none; }
 }
 .cs-wrap.open .cs-dropdown { display: block; }
 .cs-option {
-    padding: 8px 12px;
-    font-size: var(--fs-13);
+    padding: 7px 12px;
+    font-size: var(--fs-12);
     font-family: inherit;
     color: var(--text-1);
     cursor: pointer;
@@ -1455,7 +1455,7 @@ input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
 /* ── 색상 드롭다운 ───────────────────────── */
 .color-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
 .color-row:last-child { margin-bottom: 0; }
-.color-label { font-size: var(--fs-12); font-weight: 600; color: #fff; }
+.color-label { font-size: var(--fs-12); font-weight: 400; color: var(--text-1); letter-spacing: -0.2px; }
 .color-picker-wrap { position: relative; }
 
 .color-preview-btn {
