@@ -49,6 +49,10 @@ body { background: #f4f6f5; }
 .as-msg { max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #555; }
 .as-reply { max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #888; }
 .as-time { color: #bbb; white-space: nowrap; }
+.as-log tr.expanded .as-msg,
+.as-log tr.expanded .as-reply { white-space: normal; overflow: visible; text-overflow: unset; max-width: none; }
+.as-log tbody tr { cursor: pointer; }
+.as-log tbody tr:hover td { background: #f8faf9; }
 </style>
 </head>
 <body>
@@ -123,11 +127,11 @@ async function load() {
 
     // 로그
     document.getElementById('logBody').innerHTML = d.logs.map(r => `
-        <tr>
+        <tr onclick="this.classList.toggle('expanded')">
             <td class="as-time">${r.created_at.slice(5,16)}</td>
             <td><span class="as-engine-tag">${r.engine}</span></td>
-            <td class="as-msg" title="${r.message}">${r.message}</td>
-            <td class="as-reply" title="${r.reply||''}">${r.reply||'-'}</td>
+            <td class="as-msg">${r.message}</td>
+            <td class="as-reply">${r.reply||'-'}</td>
         </tr>
     `).join('');
 
