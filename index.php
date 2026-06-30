@@ -178,9 +178,11 @@ try {
                 </div>
                 <div class="process-container">
                     <div class="process-step">
-                        <span class="process-num">01</span>
-                        <div class="process-step-body">
+                        <div class="process-card-bg">
+                            <span class="process-num">01</span>
                             <i class="bi bi-pencil-square process-icon"></i>
+                        </div>
+                        <div class="process-card-overlay">
                             <h3 class="process-title">패턴 설계</h3>
                             <p class="process-desc">상단 Studio 메뉴에서 원하는 창호 패턴을 선택하세요.</p>
                             <ul class="process-hints">
@@ -192,9 +194,11 @@ try {
                         </div>
                     </div>
                     <div class="process-step">
-                        <span class="process-num">02</span>
-                        <div class="process-step-body">
+                        <div class="process-card-bg">
+                            <span class="process-num">02</span>
                             <i class="bi bi-bookmark-heart process-icon"></i>
+                        </div>
+                        <div class="process-card-overlay">
                             <h3 class="process-title">저장 & 탐색</h3>
                             <p class="process-desc">완성된 도면을 저장하고 컬렉션에서 영감을 찾아보세요.</p>
                             <ul class="process-hints">
@@ -206,9 +210,11 @@ try {
                         </div>
                     </div>
                     <div class="process-step">
-                        <span class="process-num">03</span>
-                        <div class="process-step-body">
+                        <div class="process-card-bg">
+                            <span class="process-num">03</span>
                             <i class="bi bi-file-earmark-image process-icon"></i>
+                        </div>
+                        <div class="process-card-overlay">
                             <h3 class="process-title">렌더링 & 내보내기</h3>
                             <p class="process-desc">완성된 도면을 PNG·PDF로 내보내거나 AI 렌더링으로 실제 공간에 배치해 검토하세요.</p>
                             <ul class="process-hints">
@@ -220,9 +226,11 @@ try {
                         </div>
                     </div>
                     <div class="process-step">
-                        <span class="process-num">04</span>
-                        <div class="process-step-body">
+                        <div class="process-card-bg">
+                            <span class="process-num">04</span>
                             <i class="bi bi-chat-heart process-icon"></i>
+                        </div>
+                        <div class="process-card-overlay">
                             <h3 class="process-title">제작 주문</h3>
                             <p class="process-desc">완성된 설계를 가지고 평목 공방에 제작을 주문하세요.</p>
                             <ul class="process-hints">
