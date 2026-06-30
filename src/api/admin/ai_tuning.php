@@ -9,7 +9,10 @@ if (!$payload || ($payload['role'] ?? '') !== 's') {
 }
 
 $pdo  = db();
-$KEYS = ['ai_engine_aliases', 'ai_extra_instructions', 'ai_param_desc', 'ai_engine_titles'];
+$KEYS = ['ai_engine_aliases', 'ai_extra_instructions', 'ai_param_desc'];
+
+// ai_engine_titles는 studio_cards로 통합됨 — 잔여 행 정리
+try { $pdo->exec("DELETE FROM site_config WHERE key_name='ai_engine_titles'"); } catch (Throwable $e) {}
 
 function cfg_get(PDO $pdo, string $key): string {
     $row = $pdo->prepare("SELECT value FROM site_config WHERE key_name=?");
@@ -23,18 +26,18 @@ function cfg_set(PDO $pdo, string $key, string $value): void {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    // AI용 한글 타이틀 (site_config — studio_cards와 무관)
-    $savedTitles = [];
+    // studio_cards 타이틀 (메뉴·메인·가이드·AI 공통 소스)
+    $engineTitles = [];
     try {
-        $raw = cfg_get($pdo, 'ai_engine_titles');
-        if ($raw) $savedTitles = json_decode($raw, true) ?: [];
+        $rows = $pdo->query('SELECT engine_key, title FROM studio_cards')->fetchAll();
+        foreach ($rows as $r) $engineTitles[$r['engine_key']] = $r['title'];
     } catch (Throwable $e) {}
 
     echo json_encode([
         'ai_engine_aliases'     => cfg_get($pdo, 'ai_engine_aliases'),
         'ai_extra_instructions' => cfg_get($pdo, 'ai_extra_instructions'),
         'ai_param_desc'         => cfg_get($pdo, 'ai_param_desc'),
-        'engine_titles'         => $savedTitles,
+        'engine_titles'         => $engineTitles,
     ]);
     exit;
 }
@@ -46,11 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (array_key_exists($k, $body)) {
             cfg_set($pdo, $k, trim($body[$k]));
         }
-    }
-
-    // engine_titles → ai_engine_titles 키로 저장
-    if (array_key_exists('engine_titles', $body) && is_array($body['engine_titles'])) {
-        cfg_set($pdo, 'ai_engine_titles', json_encode($body['engine_titles'], JSON_UNESCAPED_UNICODE));
     }
 
     echo json_encode(['ok' => true]);

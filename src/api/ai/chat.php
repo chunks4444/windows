@@ -34,28 +34,21 @@ if (!$apiKey) { http_response_code(500); echo json_encode(['error' => 'Anthropic
 $dbAliases   = '';
 $dbExtra     = '';
 $dbParamDesc = '';
-$dbEngTitles = '';
 try {
-    $stmt = db()->query("SELECT key_name, value FROM site_config WHERE key_name IN ('ai_engine_aliases','ai_extra_instructions','ai_param_desc','ai_engine_titles')");
+    $stmt = db()->query("SELECT key_name, value FROM site_config WHERE key_name IN ('ai_engine_aliases','ai_extra_instructions','ai_param_desc')");
     foreach ($stmt->fetchAll() as $r) {
         if ($r['key_name'] === 'ai_engine_aliases')     $dbAliases   = trim($r['value']);
         if ($r['key_name'] === 'ai_extra_instructions') $dbExtra     = trim($r['value']);
         if ($r['key_name'] === 'ai_param_desc')         $dbParamDesc = trim($r['value']);
-        if ($r['key_name'] === 'ai_engine_titles')      $dbEngTitles = trim($r['value']);
     }
 } catch (Throwable $e) {}
 
-// 엔진 이름 — ai_engine_titles 우선, 없으면 studio_cards 폴백
+// 엔진 이름 — studio_cards 단일 소스 (메뉴·메인·가이드·AI 공통)
 $engineDesc = [];
-if ($dbEngTitles) {
-    try { $engineDesc = json_decode($dbEngTitles, true) ?: []; } catch (Throwable $e) {}
-}
-if (empty($engineDesc)) {
-    try {
-        $rows = db()->query('SELECT engine_key, title FROM studio_cards')->fetchAll();
-        foreach ($rows as $r) $engineDesc[$r['engine_key']] = $r['title'];
-    } catch (Throwable $e) {}
-}
+try {
+    $rows = db()->query('SELECT engine_key, title FROM studio_cards')->fetchAll();
+    foreach ($rows as $r) $engineDesc[$r['engine_key']] = $r['title'];
+} catch (Throwable $e) {}
 
 $paramDescDefault = <<<'EOT'
 공통 파라미터 (모든 엔진):

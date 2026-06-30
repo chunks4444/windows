@@ -37,9 +37,7 @@ body { background: #f4f6f5; }
 .at-engine-label { display: flex; align-items: center; gap: 7px; }
 .at-engine-key { font-size: 10px; font-weight: 700; letter-spacing: .05em; background: #111; color: #fff; border-radius: 4px; padding: 2px 6px; font-family: monospace; }
 .at-engine-name { font-size: 12px; font-weight: 600; color: #333; }
-.at-engine-title-input { border: none; border-bottom: 1.5px solid transparent; background: transparent; font-size: 13px; font-weight: 700; color: #222; outline: none; width: 90px; padding: 1px 4px; border-radius: 4px; transition: border-color .15s, background .15s; }
-.at-engine-title-input:hover { border-bottom-color: #ccc; }
-.at-engine-title-input:focus { border-bottom-color: var(--teal); background: var(--teal-light); border-radius: 4px 4px 0 0; }
+.at-engine-title-input { border: none; background: transparent; font-size: 13px; font-weight: 700; color: #555; outline: none; width: 90px; padding: 1px 4px; cursor: default; pointer-events: none; }
 .at-engine-input { border: 1.5px solid #e5e9e7; border-radius: 8px; padding: 8px 10px; font-size: 12px; color: #333; width: 100%; outline: none; transition: border-color .15s; font-family: inherit; }
 .at-engine-input:focus { border-color: var(--teal); background: var(--teal-light); }
 .at-engine-input::placeholder { color: #bbb; }
@@ -222,7 +220,7 @@ body { background: #f4f6f5; }
                     <div class="at-engine-label">
                         <span class="at-engine-key"><?= $key ?></span>
                         <input type="text" class="at-engine-title-input" data-engine="<?= $key ?>"
-                               id="title_<?= $key ?>" placeholder="한글 이름">
+                               id="title_<?= $key ?>" readonly tabindex="-1">
                     </div>
                     <input type="text" class="at-engine-input" data-engine="<?= $key ?>"
                            id="alias_<?= $key ?>" placeholder="<?= $placeholder ?>">
@@ -374,17 +372,11 @@ async function save() {
         if (el.value.trim()) aliases[el.dataset.engine] = el.value.trim();
     });
 
-    const titles = {};
-    document.querySelectorAll('.at-engine-title-input').forEach(el => {
-        if (el.value.trim()) titles[el.dataset.engine] = el.value.trim();
-    });
-
     const res = await fetch('/src/api/admin/ai_tuning.php', {
         method: 'POST',
         headers: _h(true),
         body: JSON.stringify({
             ai_engine_aliases:     JSON.stringify(aliases),
-            engine_titles:         titles,
             ai_extra_instructions: JSON.stringify(getInstrs()),
             ai_param_desc:         document.getElementById('aiParamDesc').value,
         }),
