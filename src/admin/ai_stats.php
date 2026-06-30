@@ -96,8 +96,13 @@ function _h() { return { 'Authorization': 'Bearer ' + localStorage.getItem('pmok
 
 async function load() {
     const res = await fetch('/src/api/admin/ai_stats.php', { headers: _h() });
-    if (!res.ok) { document.getElementById('authWall').style.display = ''; return; }
+    if (res.status === 403) { document.getElementById('authWall').style.display = ''; return; }
     const d = await res.json();
+    if (d.error === 'db_error') {
+        document.getElementById('mainPage').innerHTML = `<div style="padding:40px;color:#c00;font-size:13px;">DB 오류: ${d.message}<br><br>ai_chat_history 테이블을 생성해주세요 (schema.sql 참고)</div>`;
+        document.getElementById('mainPage').style.display = '';
+        return;
+    }
 
     // 요약
     document.getElementById('statRow').innerHTML = `

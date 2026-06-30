@@ -239,9 +239,11 @@ body { background: #f4f6f5; }
         </div>
 
         <div class="at-mtab-pane at-section-body" data-mpane="param">
-            <div class="at-section-desc" style="margin-bottom:14px;">비우면 기본값 자동 사용</div>
-            <textarea id="aiParamDesc" class="at-textarea" rows="14"
-                placeholder="비워두면 기본 파라미터 설명이 사용됩니다."></textarea>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                <span id="paramDescStatus" style="font-size:12px;color:#999;"></span>
+                <button id="btnParamReset" onclick="resetParamDesc()" style="font-size:11px;color:#888;border:1.5px solid #ddd;background:#fff;border-radius:7px;padding:4px 12px;cursor:pointer;display:none;">기본값으로 초기화</button>
+            </div>
+            <textarea id="aiParamDesc" class="at-textarea" rows="16" oninput="onParamDescInput()"></textarea>
             <div class="at-hint" style="margin-top:6px;">AI 시스템 프롬프트에 포함되는 파라미터 목록입니다. 새 파라미터 추가 시 수정하세요.</div>
         </div>
     </div>
@@ -362,7 +364,11 @@ async function load() {
         (Array.isArray(instrs) ? instrs : [instrs]).forEach(t => addInstr(t));
     } catch { if (d.ai_extra_instructions) addInstr(d.ai_extra_instructions); }
     if (document.getElementById('instrList').children.length === 0) addInstr();
-    document.getElementById('aiParamDesc').value = d.ai_param_desc || '';
+    window._paramDescDefault = d.ai_param_desc_default || '';
+    window._paramDescCustom  = d.ai_param_desc || '';
+    const textarea = document.getElementById('aiParamDesc');
+    textarea.value = window._paramDescCustom || window._paramDescDefault;
+    updateParamDescUI();
     document.getElementById('mainPage').style.display = '';
 }
 
@@ -426,6 +432,20 @@ async function runTest() {
 
     btn.disabled = false;
     btn.innerHTML = '<i class="bi bi-send-fill me-1"></i>전송';
+}
+
+function updateParamDescUI() {
+    const isCustom = document.getElementById('aiParamDesc').value.trim() !== (window._paramDescDefault || '').trim();
+    document.getElementById('paramDescStatus').textContent = isCustom ? '✎ 커스텀' : '기본값 사용 중';
+    document.getElementById('paramDescStatus').style.color  = isCustom ? '#2A7B70' : '#999';
+    document.getElementById('btnParamReset').style.display  = isCustom ? '' : 'none';
+}
+function onParamDescInput() { updateParamDescUI(); }
+function resetParamDesc() {
+    if (!confirm('기본값으로 초기화하면 커스텀 내용이 삭제됩니다. 계속하시겠습니까?')) return;
+    document.getElementById('aiParamDesc').value = window._paramDescDefault || '';
+    window._paramDescCustom = '';
+    updateParamDescUI();
 }
 
 window.addEventListener('load', load);

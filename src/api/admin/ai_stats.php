@@ -10,16 +10,16 @@ if (!$payload || ($payload['role'] ?? '') !== 's') {
 
 $pdo = db();
 
-$total = $pdo->query("SELECT COUNT(*) FROM ai_chat_history")->fetchColumn();
-$today = $pdo->query("SELECT COUNT(*) FROM ai_chat_history WHERE DATE(created_at)=CURDATE()")->fetchColumn();
-$users = $pdo->query("SELECT COUNT(DISTINCT user_id) FROM ai_chat_history WHERE user_id IS NOT NULL")->fetchColumn();
-
-$engines = $pdo->query(
-    "SELECT engine, COUNT(*) AS cnt FROM ai_chat_history GROUP BY engine ORDER BY cnt DESC"
-)->fetchAll(PDO::FETCH_ASSOC);
-
-$logs = $pdo->query(
-    "SELECT created_at, engine, message, reply FROM ai_chat_history ORDER BY created_at DESC LIMIT 50"
-)->fetchAll(PDO::FETCH_ASSOC);
+try {
+    $total   = $pdo->query("SELECT COUNT(*) FROM ai_chat_history")->fetchColumn();
+    $today   = $pdo->query("SELECT COUNT(*) FROM ai_chat_history WHERE DATE(created_at)=CURDATE()")->fetchColumn();
+    $users   = $pdo->query("SELECT COUNT(DISTINCT user_id) FROM ai_chat_history WHERE user_id IS NOT NULL")->fetchColumn();
+    $engines = $pdo->query("SELECT engine, COUNT(*) AS cnt FROM ai_chat_history GROUP BY engine ORDER BY cnt DESC")->fetchAll(PDO::FETCH_ASSOC);
+    $logs    = $pdo->query("SELECT created_at, engine, message, reply FROM ai_chat_history ORDER BY created_at DESC LIMIT 50")->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    http_response_code(500);
+    echo json_encode(['error' => 'db_error', 'message' => $e->getMessage()]);
+    exit;
+}
 
 echo json_encode(compact('total', 'today', 'users', 'engines', 'logs'), JSON_UNESCAPED_UNICODE);

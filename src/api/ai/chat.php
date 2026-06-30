@@ -64,6 +64,8 @@ $paramDescDefault = <<<'EOT'
 - pungpan: 풍판 높이 (mm) — pungpanOn=true일 때만 유효
 - wood: 목재 종류 (예: "소나무", "느티나무", "참나무")
 - finish: 마감 (예: "오일", "옻칠", "무도장")
+- frameColor: 울거미 색상 (hex, 예: "#28241e", "#8B4513")
+- slatColor: 살 색상 (hex, 예: "#28241e", "#c8a96e")
 - showMuntol: 문틀 윤곽선 표시 (true/false)
 
 엔진별 추가 파라미터:
