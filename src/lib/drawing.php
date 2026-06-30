@@ -4,7 +4,7 @@ require_once __DIR__ . '/db.php';
 class Drawing {
 
     // 도면 저장 (type + title 기준 upsert, 버전 전체 교체)
-    static function save(int $userId, string $type, string $title, ?int $createdAtMs, array $versions, ?string $thumbnail = null, int $workTimeSec = 0): int {
+    static function save(int $userId, string $type, string $title, ?int $createdAtMs, array $versions, ?string $thumbnail = null, int $workTimeSec = 0, ?string $patternCategory = null): int {
         $pdo  = db();
         $stmt = $pdo->prepare('SELECT id FROM drawings WHERE user_id = ? AND type = ? AND title = ?');
         $stmt->execute([$userId, $type, $title]);
@@ -12,13 +12,15 @@ class Drawing {
 
         if ($row) {
             $drawingId = (int) $row['id'];
-            $pdo->prepare('UPDATE drawings SET updated_at = NOW(), thumbnail = COALESCE(?, thumbnail), work_time_sec = ? WHERE id = ?')
-                ->execute([$thumbnail, $workTimeSec, $drawingId]);
+            $catSql    = $patternCategory !== null ? ', pattern_category = ?' : '';
+            $catArgs   = $patternCategory !== null ? [$thumbnail, $workTimeSec, $patternCategory, $drawingId] : [$thumbnail, $workTimeSec, $drawingId];
+            $pdo->prepare("UPDATE drawings SET updated_at = NOW(), thumbnail = COALESCE(?, thumbnail), work_time_sec = ?{$catSql} WHERE id = ?")
+                ->execute($catArgs);
         } else {
             $createdAt = $createdAtMs ? date('Y-m-d H:i:s', intval($createdAtMs / 1000)) : date('Y-m-d H:i:s');
             // IGNORE 로 중복 삽입(레이스 컨디션) 방지 — 중복이면 INSERT 건너뜀
-            $pdo->prepare('INSERT IGNORE INTO drawings (user_id, type, title, created_at, thumbnail, work_time_sec) VALUES (?, ?, ?, ?, ?, ?)')
-                ->execute([$userId, $type, $title, $createdAt, $thumbnail, $workTimeSec]);
+            $pdo->prepare('INSERT IGNORE INTO drawings (user_id, type, title, pattern_category, created_at, thumbnail, work_time_sec) VALUES (?, ?, ?, ?, ?, ?, ?)')
+                ->execute([$userId, $type, $title, $patternCategory, $createdAt, $thumbnail, $workTimeSec]);
             $drawingId = (int) $pdo->lastInsertId();
             // lastInsertId()가 0이면 이미 존재 → SELECT로 ID 조회
             if ($drawingId === 0) {
@@ -68,7 +70,15 @@ class Drawing {
     // 유저의 타입별 도면 목록 (메타만, 버전·썸네일 미포함)
     static function list(int $userId, string $type): array {
         $pdo  = db();
-        $stmt = $pdo->prepare('SELECT id, title, work_time_sec, created_at, updated_at, locked_at FROM drawings WHERE user_id = ? AND type = ? ORDER BY updated_at DESC');
+        $stmt = $pdo->prepare('
+            SELECT d.id, d.title, d.pattern_category,
+                   pc.name AS pattern_category_name,
+                   d.work_time_sec, d.created_at, d.updated_at, d.locked_at
+            FROM drawings d
+            LEFT JOIN pattern_categories pc ON pc.id = CAST(d.pattern_category AS UNSIGNED)
+            WHERE d.user_id = ? AND d.type = ?
+            ORDER BY d.updated_at DESC
+        ');
         $stmt->execute([$userId, $type]);
         return $stmt->fetchAll();
     }
@@ -78,9 +88,12 @@ class Drawing {
         $pdo    = db();
         $offset = ($page - 1) * $limit;
         $stmt   = $pdo->prepare(
-            'SELECT d.id, d.type, d.title, d.work_time_sec, d.created_at, d.updated_at, d.locked_at,
+            'SELECT d.id, d.type, d.title, d.pattern_category,
+                    pc.name AS pattern_category_name,
+                    d.work_time_sec, d.created_at, d.updated_at, d.locked_at,
                     (SELECT COUNT(*) FROM drawing_versions WHERE drawing_id = d.id) AS version_count
              FROM drawings d
+             LEFT JOIN pattern_categories pc ON pc.id = CAST(d.pattern_category AS UNSIGNED)
              WHERE d.user_id = ?
              ORDER BY d.updated_at DESC
              LIMIT ? OFFSET ?'

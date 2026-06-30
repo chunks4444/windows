@@ -1310,3 +1310,120 @@ function drawSvgInserts() {
 
     window.__pmokUpdateWoodCost = updateWoodCost;
 })();
+
+/* ── AI 채팅 ──────────────────────────────────────────────── */
+(function () {
+    function token() { return localStorage.getItem('pmok_auth_token') || ''; }
+
+    function aiSessionKey() {
+        let k = sessionStorage.getItem('pmok_ai_session');
+        if (!k) { k = Math.random().toString(36).slice(2) + Date.now().toString(36); sessionStorage.setItem('pmok_ai_session', k); }
+        return k;
+    }
+
+    async function pmokAiChat({ engine, message, getParams, applyParams, _onDone, _onReply }) {
+        const replyEl = document.getElementById('aiChatReply');
+        const sendBtn = document.getElementById('aiChatSend');
+        if (sendBtn) sendBtn.disabled = true;
+        if (replyEl) { replyEl.textContent = '생각하는 중…'; replyEl.className = 'ai-chat-reply ai-chat-thinking'; }
+
+        function notifyReply(text, isError) {
+            if (replyEl) { replyEl.textContent = text; replyEl.className = 'ai-chat-reply ' + (isError ? 'ai-chat-error' : 'ai-chat-ok'); }
+            if (_onReply) _onReply(text, isError);
+        }
+
+        try {
+            const res  = await fetch('/src/api/ai/chat.php', {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify({ engine, message, params: getParams(), session_key: aiSessionKey() }),
+            });
+            const data = await res.json();
+            if (data.error) {
+                notifyReply('오류: ' + data.error, true);
+            } else if (data.engine && data.engine !== engine) {
+                sessionStorage.setItem('pmok_ai_params', JSON.stringify(Object.assign({}, getParams(), data.params)));
+                notifyReply(data.reply || (data.engine + ' 엔진으로 이동합니다…'), false);
+                setTimeout(() => { location.href = '/src/engine/' + data.engine + '/' + data.engine + '.php'; }, 1200);
+            } else {
+                const merged = Object.assign({}, getParams(), data.params);
+                applyParams(merged);
+                notifyReply(data.reply || '적용됐습니다.', false);
+            }
+        } catch (e) {
+            notifyReply('네트워크 오류가 발생했습니다.', true);
+        }
+        if (sendBtn) sendBtn.disabled = false;
+        if (_onDone) _onDone();
+    }
+
+    function initAiChat(opts) {
+        const inputEl = document.getElementById('aiChatInput');
+        const sendBtn = document.getElementById('aiChatSend');
+
+        if (inputEl && sendBtn) {
+            function send() {
+                const msg = inputEl.value.trim();
+                if (!msg) return;
+                inputEl.value = '';
+                pmokAiChat({ ...opts, message: msg });
+            }
+            sendBtn.addEventListener('click', send);
+            inputEl.addEventListener('keydown', e => {
+                if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
+            });
+        }
+
+        // nav 프롬프트 입력창 연결
+        const navInput = document.getElementById('navPromptInput');
+        const navBtn   = document.getElementById('navPromptSend');
+        if (navInput && navBtn) {
+            const navReply = document.getElementById('navPromptReply');
+            let navReplyTimer = null;
+            function showNavReply(text, isError) {
+                if (!navReply) return;
+                clearTimeout(navReplyTimer);
+                navReply.textContent = text;
+                navReply.className = 'pm-nav-prompt-reply' + (isError ? ' is-error' : '');
+                navReply.style.display = '';
+                navReplyTimer = setTimeout(() => { navReply.style.display = 'none'; }, isError ? 5000 : 8000);
+            }
+            function navSend() {
+                const msg = navInput.value.trim();
+                if (!msg) return;
+                navInput.value = '';
+                navBtn.disabled = true;
+                navInput.placeholder = '생각하는 중…';
+                if (navReply) navReply.style.display = 'none';
+                pmokAiChat({ ...opts, message: msg,
+                    _onReply: (text, isError) => showNavReply(text, isError),
+                    _onDone: () => {
+                        navBtn.disabled = false;
+                        navInput.placeholder = '예: 완자살 미서기문 3짝, 가로 1800 세로 1200으로 바꿔줘';
+                    }
+                });
+            }
+            navBtn.addEventListener('click', navSend);
+            navInput.addEventListener('keydown', e => {
+                if (e.key === 'Enter') { e.preventDefault(); navSend(); }
+            });
+        }
+
+        // 메인 페이지에서 넘어온 AI 파라미터 자동 적용
+        const stored = sessionStorage.getItem('pmok_ai_params');
+        if (stored) {
+            sessionStorage.removeItem('pmok_ai_params');
+            try {
+                const aiParams = JSON.parse(stored);
+                if (aiParams && Object.keys(aiParams).length) {
+                    const merged = Object.assign({}, opts.getParams(), aiParams);
+                    opts.applyParams(merged);
+                    const replyEl = document.getElementById('aiChatReply');
+                    if (replyEl) { replyEl.textContent = 'AI 설계 조건이 적용됐습니다.'; replyEl.className = 'ai-chat-reply ai-chat-ok'; }
+                }
+            } catch {}
+        }
+    }
+
+    window.pmokInitAiChat = initAiChat;
+})();

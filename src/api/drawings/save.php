@@ -32,6 +32,9 @@ if (Drawing::is_locked((int) $payload['sub'], $type, $title)) {
     http_response_code(423); echo json_encode(['error' => '이 도면은 견적요청 중이라 편집할 수 없습니다.']); exit;
 }
 
+$patternCategory = isset($body['pattern_category']) ? trim($body['pattern_category']) : null;
+if ($patternCategory === '') $patternCategory = null;
+
 $drawingId = Drawing::save(
     (int) $payload['sub'],
     $type,
@@ -39,7 +42,8 @@ $drawingId = Drawing::save(
     $body['created_at']   ?? null,
     $body['versions']     ?? [],
     $body['thumbnail']    ?? null,
-    (int) ($body['work_time_sec'] ?? 0)
+    (int) ($body['work_time_sec'] ?? 0),
+    $patternCategory
 );
 
 // 도면 저장 직후, drawing_id가 없는(NULL) 배경 이미지를 이 도면에 연결

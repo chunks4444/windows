@@ -134,8 +134,11 @@ function renderCard(d) {
                 </div>
                 <div class="db-card-meta">
                     <div class="db-card-meta-row">
-                        <i class="bi bi-clock"></i>
-                        <span>작업 <strong>${fmtWorkTime(d.work_time_sec)}</strong></span>
+                        <i class="bi bi-tag"></i>
+                        <select class="db-cat-select" onclick="event.stopPropagation()" onchange="updateCategory(event,${d.id})">
+                            <option value="">분류 없음</option>
+                            ${_patternCats.map(c => `<option value="${c.id}"${d.pattern_category == c.id ? ' selected' : ''}>${escHtml(c.name)}</option>`).join('')}
+                        </select>
                     </div>
                     <div class="db-card-meta-row">
                         <i class="bi bi-layers"></i>
@@ -144,6 +147,10 @@ function renderCard(d) {
                     <div class="db-card-meta-row">
                         <i class="bi bi-pencil"></i>
                         <span>수정 <strong>${fmtDate(new Date(d.updated_at).getTime())}</strong></span>
+                    </div>
+                    <div class="db-card-meta-row">
+                        <i class="bi bi-clock"></i>
+                        <span>작업 <strong>${fmtWorkTime(d.work_time_sec)}</strong></span>
                     </div>
                 </div>
             </div>
@@ -297,6 +304,27 @@ function escHtml(str) {
 }
 function escAttr(str) {
     return String(str).replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+let _patternCats = [];
+
+async function loadCategories() {
+    try {
+        const res = await fetch('/src/api/drawings/categories.php');
+        _patternCats = (await res.json()).categories || [];
+    } catch {}
+}
+
+async function updateCategory(e, drawingId) {
+    e.stopPropagation();
+    const val = e.target.value;
+    try {
+        await fetch('/src/api/drawings/set_category.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ..._headers() },
+            body: JSON.stringify({ drawing_id: drawingId, pattern_category: val || null }),
+        });
+    } catch {}
 }
 
 let currentTab = 'drawings';
@@ -550,6 +578,7 @@ async function deleteBoard(e, boardId, boardName) {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
+    await loadCategories();
     await loadDashboard();
     document.getElementById('dbBoardModal').addEventListener('click', e => {
         if (e.target === e.currentTarget) e.currentTarget.style.display = 'none';

@@ -25,6 +25,51 @@ if (isset($_GET['id'])) {
     exit;
 }
 
+// 필터/페이징 모드: ?page, ?category, ?type 파라미터 사용
+if (isset($_GET['page']) || isset($_GET['category'])) {
+    $limit    = 30;
+    $page     = max(1, (int)($_GET['page']     ?? 1));
+    $filter   = $_GET['category'] ?? '';   // '' = 전체, '0' = 미분류, 숫자 = 해당 카테고리 ID
+    $typeF    = $_GET['type']     ?? '';
+    $offset   = ($page - 1) * $limit;
+
+    $where  = [];
+    $params = [];
+
+    if ($filter === '0') {
+        $where[] = '(d.pattern_category IS NULL OR d.pattern_category = "")';
+    } elseif ($filter !== '') {
+        $where[] = 'd.pattern_category = ?';
+        $params[] = $filter;
+    }
+    if ($typeF !== '') {
+        $where[] = 'd.type = ?';
+        $params[] = $typeF;
+    }
+
+    $whereClause = $where ? ('WHERE ' . implode(' AND ', $where)) : '';
+
+    $stmt = $pdo->prepare("
+        SELECT d.id, d.type, d.title, d.pattern_category,
+               pc.name AS pattern_category_name,
+               u.email AS user_email,
+               d.updated_at, d.locked_at,
+               (SELECT COUNT(*) FROM drawing_versions WHERE drawing_id = d.id) AS version_count
+        FROM drawings d
+        LEFT JOIN pattern_categories pc ON pc.id = CAST(d.pattern_category AS UNSIGNED)
+        LEFT JOIN users u ON u.id = d.user_id
+        $whereClause
+        ORDER BY d.updated_at DESC
+        LIMIT ? OFFSET ?
+    ");
+    $stmt->execute([...$params, $limit + 1, $offset]);
+    $drawings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $has_more = count($drawings) > $limit;
+    if ($has_more) array_pop($drawings);
+    echo json_encode(['drawings' => $drawings, 'has_more' => $has_more]);
+    exit;
+}
+
 $rows = $pdo->query(
     'SELECT id, type, title FROM drawings ORDER BY type, title'
 )->fetchAll();

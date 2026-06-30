@@ -2239,7 +2239,8 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
             Number(localStorage.getItem(CREATED_KEY)),
             versions,
             captureThumbnail(),
-            workAccum
+            workAccum,
+            document.getElementById('patternCategory')?.value || null
         );
         if (!result) { pmHideSaveToast(); return; }
         const btn = document.getElementById('btnSave');
@@ -2276,6 +2277,8 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
             drawingId = data.drawing.id ?? null;
             isDrawingLocked = !!data.drawing.locked_at;
             updateLockBanner(isDrawingLocked);
+            const catEl = document.getElementById('patternCategory');
+            if (catEl) catEl.value = data.drawing.pattern_category || '';
             const cAt = new Date(data.drawing.created_at).getTime();
             const uAt = new Date(data.drawing.updated_at).getTime();
             localStorage.setItem(CREATED_KEY,  cAt);
@@ -2489,6 +2492,8 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
             drawingId = data.drawing.id ?? null;
             isDrawingLocked = !!data.drawing.locked_at;
             updateLockBanner(isDrawingLocked);
+            const catEl = document.getElementById('patternCategory');
+            if (catEl) catEl.value = data.drawing.pattern_category || '';
             const cAt = new Date(data.drawing.created_at).getTime();
             const uAt = new Date(data.drawing.updated_at).getTime();
             localStorage.setItem(CREATED_KEY, cAt); localStorage.setItem(MODIFIED_KEY, uAt);
@@ -2667,3 +2672,5 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
         pdf.save(getExportFilename('pdf'));
         DrawingSync.logExport(drawingId, WALLPAPER_ENGINE, 'pdf', document.getElementById('drawingName')?.value.trim() || '', document.getElementById('verLabel')?.textContent.trim() || '');
     });
+    // AI 채팅
+    window.pmokInitAiChat?.({ engine: WALLPAPER_ENGINE, getParams, applyParams });

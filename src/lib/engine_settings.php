@@ -120,3 +120,12 @@ function get_finish_options(): array {
     } catch (Throwable $e) {}
     return ['창호지', '유리'];
 }
+
+// 엔진별 패턴 카테고리 목록 반환 [{code, name}] — 관리자가 name만 수정해도 반영됨
+function get_pattern_categories(): array {
+    try {
+        $rows = db()->query("SELECT id, name FROM pattern_categories WHERE is_active = 1 ORDER BY sort_order, id")->fetchAll(PDO::FETCH_ASSOC);
+        if ($rows) return $rows;
+    } catch (Throwable $e) {}
+    return [];
+}

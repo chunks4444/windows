@@ -46,6 +46,32 @@
             <span class="oauth-status" id="render_status"></span>
         </div>
 
+        <div class="oauth-card" style="margin-top:16px;">
+            <div class="oauth-card-header">
+                <div class="oauth-card-logo" style="background:#6B4FBB;color:#fff;font-size:10px;font-weight:700;letter-spacing:-.5px;">ANT</div>
+                <span class="oauth-card-title">Anthropic Claude AI 채팅</span>
+            </div>
+            <div class="oauth-field">
+                <label>Anthropic API Key</label>
+                <input type="password" id="anthropic_api_key" placeholder="sk-ant-…" autocomplete="off" style="font-family:monospace;font-size:11px;">
+            </div>
+            <div class="oauth-field">
+                <label>모델</label>
+                <select id="ai_chat_model" style="width:100%;padding:8px 10px;border:1px solid var(--border-md,#ddd);border-radius:6px;font-size:13px;background:#fff;cursor:pointer;">
+                    <option value="claude-sonnet-4-6">Sonnet 4.6 — 고성능 (권장)</option>
+                    <option value="claude-haiku-4-5-20251001">Haiku 4.5 — 빠르고 저렴</option>
+                </select>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;">
+                <button class="oauth-save" onclick="saveAiConfig()" style="flex:1;margin:0;">저장</button>
+                <button class="oauth-save" id="btnTest" onclick="testAiConnection()" style="flex:1;margin:0;background:var(--text-3,#888);">연결 테스트</button>
+            </div>
+            <div style="margin-top:6px;display:flex;gap:10px;">
+                <span class="oauth-status" id="ai_status"></span>
+                <span class="oauth-status" id="test_status"></span>
+            </div>
+        </div>
+
     </div>
 </div>
 

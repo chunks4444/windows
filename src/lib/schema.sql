@@ -16,6 +16,8 @@
 -- ALTER TABLE users ADD COLUMN last_login_at DATETIME NULL COMMENT '최종 접속일시' AFTER created_at;
 -- ALTER TABLE users ADD COLUMN withdrawn_at DATETIME NULL COMMENT '탈퇴일시 (NULL=정상, NOT NULL=탈퇴)' AFTER last_login_at;
 -- ALTER TABLE drawings ADD COLUMN locked_at DATETIME NULL COMMENT '잠금일시 (NULL=편집가능, 견적요청 중이면 잠김)' AFTER work_time_sec;
+-- ALTER TABLE drawings ADD COLUMN pattern_category VARCHAR(40) NULL DEFAULT NULL COMMENT '전통 창호 패턴 분류 — pattern_categories.code 참조' AFTER title;
+-- CREATE TABLE pattern_categories (code VARCHAR(40) NOT NULL, engine VARCHAR(20) NOT NULL DEFAULT 'all', name VARCHAR(40) NOT NULL, sort_order TINYINT UNSIGNED NOT NULL DEFAULT 0, is_active TINYINT(1) NOT NULL DEFAULT 1, PRIMARY KEY (code, engine)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- 접속 통계 (6개월 rolling)
 CREATE TABLE IF NOT EXISTS page_views (
@@ -362,3 +364,19 @@ CREATE TABLE IF NOT EXISTS engine_settings (
     updated_at    DATETIME     NOT NULL DEFAULT NOW() ON UPDATE NOW() COMMENT '수정일시',
     PRIMARY KEY (engine, setting_key)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='엔진별 기본 설정값';
+
+
+-- AI 대화 히스토리 + 엔진 사용 통계
+CREATE TABLE IF NOT EXISTS ai_chat_history (
+    id         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    user_id    INT UNSIGNED    NULL     COMMENT '로그인 사용자 (NULL=비회원)',
+    session_key VARCHAR(64)   NOT NULL  COMMENT '비회원용 세션 키',
+    engine     VARCHAR(20)    NOT NULL  COMMENT '사용 엔진',
+    message    TEXT           NOT NULL  COMMENT '사용자 입력',
+    reply      TEXT           NULL      COMMENT 'AI 응답 텍스트',
+    params_out JSON           NULL      COMMENT 'AI가 반환한 파라미터',
+    created_at TIMESTAMP      NOT NULL  DEFAULT CURRENT_TIMESTAMP,
+    KEY idx_user_created    (user_id,     created_at),
+    KEY idx_session_created (session_key, created_at),
+    KEY idx_engine_created  (engine,      created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI 설계 도우미 대화 히스토리';

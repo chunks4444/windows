@@ -3,6 +3,7 @@ header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../../lib/colors.php';
 require_once __DIR__ . '/../../lib/engine_settings.php';
 $cfg = get_engine_settings('triangle');
+$patternCategories = get_pattern_categories();
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Pragma: no-cache');
 ?>
@@ -26,25 +27,6 @@ header('Pragma: no-cache');
         <!-- SIDEBAR -->
         <div class="controls" id="sidebar">
             <div class="sb-inner">
-                <!-- ── 문 설정 그룹 ─────────────── -->
-                <div class="sb-section">
-                    <div class="sb-section-title">문 설정</div>
-                    <div class="door-row">
-                        <div class="ctrl">
-                            <select id="txtDoorType" class="sb-select">
-                                <option value="swing" <?= $cfg['doorType'] === 'swing' ? 'selected' : '' ?>>여닫이</option>
-                                <option value="slide" <?= $cfg['doorType'] === 'slide' ? 'selected' : '' ?>>미서기</option>
-                            </select>
-                        </div>
-                        <div class="ctrl">
-                            <select id="txtDoorCount" class="sb-select">
-                                <option value="1" <?= $cfg['doorCount'] === '1' ? 'selected' : '' ?>>1짝</option>
-                                <option value="2" <?= $cfg['doorCount'] === '2' ? 'selected' : '' ?>>2짝</option>
-                                <option value="3" <?= $cfg['doorCount'] === '3' ? 'selected' : '' ?>>3짝</option>
-                                <option value="4" <?= $cfg['doorCount'] === '4' ? 'selected' : '' ?>>4짝</option>
-                            </select>
-                        </div>
-                    </div>
 
                     <hr class="sb-divider">
 
@@ -265,14 +247,6 @@ header('Pragma: no-cache');
                         </div>
                     </div>
                 </div>
-
-                <!-- 안내 -->
-                <div class="sb-footer">
-                    <strong>균등 분할.</strong><br>
-                    모든 칸의 순간격(살간격)이 동일하게 계산됩니다.
-                    올거미 촉도면은 상세도면으로 추가 예정입니다.
-                </div>
-
             </div>
         </div>
 
@@ -427,6 +401,12 @@ header('Pragma: no-cache');
                             <div id="verList"></div>
                         </div>
                     </div>
+                    <select id="patternCategory" class="title-group-btn" title="패턴 분류" style="padding:0 6px;font-size:var(--fs-12);cursor:pointer;border:none;background:transparent;color:var(--text-2);font-weight:600;height:28px;">
+                        <option value="">분류 없음</option>
+                        <?php foreach ($patternCategories as $pc): ?>
+                        <option value="<?= (int)$pc['id'] ?>"><?= htmlspecialchars($pc['name']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
                     <button class="title-group-btn save-btn" id="btnSave" title="저장">
                         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M5 4H17L20 7V20H5V4Z"/><path d="M8 4V9H15V4"/><path d="M9 15H15"/>

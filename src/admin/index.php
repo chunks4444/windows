@@ -122,6 +122,14 @@
                 <div class="adm-home-icon"><i class="bi bi-sliders"></i></div>
                 <div><div class="adm-home-title">엔진 기본값 관리</div><div class="adm-home-desc">엔진별 슬라이더 기본값/레이아웃 상수</div></div>
             </a>
+            <a href="/src/admin/pattern_categories.php" class="adm-home-card">
+                <div class="adm-home-icon"><i class="bi bi-tags"></i></div>
+                <div><div class="adm-home-title">패턴 카테고리</div><div class="adm-home-desc">정자살·완자살 등 전통 패턴 분류명 관리</div></div>
+            </a>
+            <a href="/src/admin/ai_tuning.php" class="adm-home-card">
+                <div class="adm-home-icon"><i class="bi bi-stars"></i></div>
+                <div><div class="adm-home-title">AI 튜닝</div><div class="adm-home-desc">엔진 별칭·지시사항 편집 및 프롬프트 테스트</div></div>
+            </a>
         </div>
     </div>
 

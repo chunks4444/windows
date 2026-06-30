@@ -1,4 +1,5 @@
 <?php
+if (!empty($_hide_topbar_notice)) return;
 $_noticeText = '';
 $_noticeLink = '';
 $_noticeBg   = 'dark';

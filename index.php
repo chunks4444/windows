@@ -77,6 +77,16 @@ try {
                     <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
                         <span class="carousel-control-next-icon" aria-hidden="true"></span>
                     </button>
+                    <!-- AI 프롬프트 오버레이 -->
+                    <div class="hero-prompt-wrap">
+                        <div class="idx-ai-bar">
+                            <i class="bi bi-stars idx-ai-icon"></i>
+                            <input type="text" id="idxAiInput" class="idx-ai-input"
+                                placeholder="원하는 창호를 말해보세요  예: 정자살 여닫이 2짝 900×2000">
+                            <button id="idxAiSend" class="idx-ai-btn">설계 시작</button>
+                        </div>
+                        <div id="idxAiResult" class="idx-ai-result" style="display:none;"></div>
+                    </div>
                 </div>
               </div>
             </div>
@@ -419,6 +429,62 @@ try {
             <a href="https://pyeongmok.com" class="footer-link">pyeongmok.com</a>
         </div>
 
+    <script>
+    (function () {
+        const ENGINE_URLS = {
+            classic:  '/src/engine/classic/classic.php',
+            square:   '/src/engine/square/square.php',
+            cross:    '/src/engine/cross/cross.php',
+            triangle: '/src/engine/triangle/triangle.php',
+            diamond:  '/src/engine/diamond/diamond.php',
+            hexagon:  '/src/engine/hexagon/hexagon.php',
+        };
+        const DEFAULT_ENGINE = 'classic';
+
+        const inputEl  = document.getElementById('idxAiInput');
+        const sendBtn  = document.getElementById('idxAiSend');
+        const resultEl = document.getElementById('idxAiResult');
+
+        async function send() {
+            const msg = inputEl.value.trim();
+            if (!msg) return;
+            sendBtn.disabled = true;
+            sendBtn.textContent = '생각 중…';
+            resultEl.style.display = '';
+            resultEl.textContent   = 'AI가 설계 조건을 분석하는 중입니다…';
+
+            try {
+                let sessionKey = sessionStorage.getItem('pmok_ai_session');
+                if (!sessionKey) { sessionKey = Math.random().toString(36).slice(2) + Date.now().toString(36); sessionStorage.setItem('pmok_ai_session', sessionKey); }
+
+                const res  = await fetch('/src/api/ai/chat.php', {
+                    method:  'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body:    JSON.stringify({ engine: DEFAULT_ENGINE, message: msg, params: {}, session_key: sessionKey }),
+                });
+                const data = await res.json();
+                if (data.error) {
+                    resultEl.textContent = '오류: ' + data.error;
+                } else {
+                    const engine = data.engine || DEFAULT_ENGINE;
+                    const url    = ENGINE_URLS[engine] || ENGINE_URLS[DEFAULT_ENGINE];
+                    resultEl.innerHTML = (data.reply || '설계 조건을 적용했습니다.') +
+                        ' <strong>스튜디오로 이동합니다…</strong>';
+                    // params를 sessionStorage에 저장 후 엔진으로 이동
+                    sessionStorage.setItem('pmok_ai_params', JSON.stringify(data.params || {}));
+                    setTimeout(() => { location.href = url; }, 900);
+                }
+            } catch {
+                resultEl.textContent = '네트워크 오류가 발생했습니다.';
+            }
+            sendBtn.disabled = false;
+            sendBtn.textContent = '설계 시작';
+        }
+
+        sendBtn.addEventListener('click', send);
+        inputEl.addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
+    })();
+    </script>
     </body>
 
 </html>

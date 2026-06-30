@@ -108,6 +108,21 @@ $navStudioIcons = [
             aria-controls="pmNavMenu" aria-expanded="false">
         <span class="navbar-toggler-icon"></span>
     </button>
+    <?php if (!empty($_engine_nav)): ?>
+    <div class="pm-nav-prompt-wrap">
+        <div>
+            <div class="pm-nav-prompt-box" id="navPromptBox">
+                <i class="bi bi-stars pm-nav-prompt-icon"></i>
+                <input type="text" id="navPromptInput" class="pm-nav-prompt-input"
+                       placeholder="예: 완자살 미서기문 3짝, 가로 1800 세로 1200으로 바꿔줘" autocomplete="off">
+                <button id="navPromptSend" class="pm-nav-prompt-btn">
+                    <i class="bi bi-send-fill"></i>
+                </button>
+            </div>
+            <div id="navPromptReply" class="pm-nav-prompt-reply" style="display:none;"></div>
+        </div>
+    </div>
+    <?php endif; ?>
     <div class="collapse navbar-collapse justify-content-end" id="pmNavMenu">
         <ul class="navbar-nav gap-3">
             <li class="nav-item dropdown">

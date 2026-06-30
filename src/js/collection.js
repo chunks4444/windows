@@ -7,17 +7,17 @@ let isLoading      = false;
 let currentQ       = '';
 const likes        = {};
 let activeFilter   = 'all';
-let activeEngine   = '';
+let activeCategory = '';
 let searchTimer    = null;
 let scrollObserver = null;
 
 /* ── API ──────────────────────────────────────── */
-async function fetchPage(q, page, engine) {
+async function fetchPage(q, page, category) {
     try {
         const res  = await fetch('/src/api/collection.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ q, page, engine: engine || '' }),
+            body: JSON.stringify({ q, page, category: category || '' }),
         });
         const data = await res.json();
         if (data.error) { console.error('collection API:', data.error); return { patterns: [], has_more: false }; }
@@ -46,7 +46,7 @@ async function loadNextPage() {
     isLoading = true;
     setLoadMore(false, true); // 버튼 로딩 상태
 
-    const data     = await fetchPage(currentQ, currentPage, activeEngine);
+    const data     = await fetchPage(currentQ, currentPage, activeCategory);
     const patterns = data.patterns || [];
 
     if (currentPage === 1 && Array.isArray(data.keywords)) {
@@ -178,12 +178,26 @@ function bindFilterBtns() {
     });
 }
 
-function bindEngineFilterBtns() {
-    document.querySelectorAll('.lib-engine-btn').forEach(btn => {
+async function initCategoryFilter() {
+    try {
+        const res  = await fetch('/src/api/drawings/categories.php');
+        const cats = (await res.json()).categories || [];
+        const row  = document.getElementById('libCatFilters');
+        if (!row) return;
+        cats.forEach(c => {
+            const btn = document.createElement('button');
+            btn.className    = 'lib-cat-btn';
+            btn.dataset.cat  = c.id;
+            btn.textContent  = c.name;
+            row.appendChild(btn);
+        });
+    } catch {}
+
+    document.querySelectorAll('.lib-cat-btn').forEach(btn => {
         btn.onclick = () => {
-            document.querySelectorAll('.lib-engine-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.lib-cat-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            activeEngine = btn.dataset.engine || '';
+            activeCategory = btn.dataset.cat || '';
             if (activeFilter === 'liked') {
                 activeFilter = 'all';
                 document.querySelectorAll('.lib-filter-btn').forEach(b => b.classList.remove('active'));
@@ -362,7 +376,7 @@ function esc(str) {
 /* ── 초기화 ───────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', async () => {
     bindFilterBtns();
-    bindEngineFilterBtns();
+    await initCategoryFilter();
     document.getElementById('boardModal').addEventListener('click', e => {
         if (e.target === e.currentTarget) closeBoardModal();
     });

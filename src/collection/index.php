@@ -33,21 +33,8 @@
             <i class="bi bi-search"></i>
             <input type="text" id="libSearch" placeholder="패턴 검색…" autocomplete="off">
         </div>
-        <?php
-        $engineLabels = [
-            'classic'  => '세살',
-            'square'   => '정자살',
-            'cross'    => '빗살',
-            'diamond'  => '격자 빗살',
-            'triangle' => '세모 솟을살',
-            'hexagon'  => '육모 솟을살',
-        ];
-        ?>
-        <div class="lib-engine-row" id="libEngineFilters">
-            <button class="lib-engine-btn active" data-engine=""><i class="bi bi-grid"></i> 전체</button>
-            <?php foreach ($engineLabels as $key => $label): ?>
-            <button class="lib-engine-btn" data-engine="<?= $key ?>"><?= $navStudioIcons[$key] ?> <?= $label ?></button>
-            <?php endforeach; ?>
+        <div class="lib-cat-row" id="libCatFilters">
+            <button class="lib-cat-btn active" data-cat=""><i class="bi bi-grid"></i> 전체</button>
         </div>
     </div>
 </div>

@@ -123,7 +123,7 @@ body { background: var(--page-bg); }
 .lib-filter-like:hover i { color: #fff; }
 
 /* ── 엔진 종류 필터 행 ───────────────────────── */
-.lib-engine-row {
+.lib-cat-row {
     flex-basis: 100%;
     display: flex;
     align-items: center;
@@ -133,14 +133,14 @@ body { background: var(--page-bg); }
     -ms-overflow-style: none;
     padding-bottom: 2px;
 }
-.lib-engine-row::-webkit-scrollbar { display: none; }
+.lib-cat-row::-webkit-scrollbar { display: none; }
 
-.lib-engine-btn {
+.lib-cat-btn {
     display: inline-flex;
     align-items: center;
     gap: 5px;
     height: 28px;
-    padding: 0 12px;
+    padding: 0 14px;
     border-radius: 999px;
     border: 1px solid var(--border);
     background: var(--page-bg);
@@ -152,13 +152,12 @@ body { background: var(--page-bg); }
     transition: all 0.12s;
     white-space: nowrap;
 }
-.lib-engine-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
-.lib-engine-btn:hover {
+.lib-cat-btn:hover {
     background: #777;
     border-color: #777;
     color: #fff;
 }
-.lib-engine-btn.active {
+.lib-cat-btn.active {
     background: #777;
     border-color: #777;
     color: #fff;

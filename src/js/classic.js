@@ -2361,7 +2361,8 @@ async function draw() {
             Number(localStorage.getItem(CREATED_KEY)),
             versions,
             captureThumbnail(),
-            workAccum
+            workAccum,
+            document.getElementById('patternCategory')?.value || null
         );
         if (!result) { pmHideSaveToast(); return; }
         const btn = document.getElementById('btnSave');
@@ -2579,7 +2580,7 @@ async function draw() {
             item.className = 'dm-item' + (d.title === curTitle ? ' dm-active' : '');
             item.innerHTML = `
                 <div class="dm-item-info">
-                    <div class="dm-title">${escHtml(d.title)}${d.locked_at ? ' <i class="bi bi-lock-fill dm-lock-icon" title="견적요청 중"></i>' : ''}</div>
+                    <div class="dm-title">${escHtml(d.title)}${d.locked_at ? ' <i class="bi bi-lock-fill dm-lock-icon" title="견적요청 중"></i>' : ''}${d.pattern_category ? ` <span class="dm-category-badge">${escHtml(d.pattern_category_name || d.pattern_category)}</span>` : ''}</div>
                     <div class="dm-date">${fmtDate(new Date(d.updated_at).getTime())}</div>
                 </div>
                 <div class="dm-actions">
@@ -2623,6 +2624,8 @@ async function draw() {
             drawingId = data.drawing.id ?? null;
             isDrawingLocked = !!data.drawing.locked_at;
             updateLockBanner(isDrawingLocked);
+            const catEl = document.getElementById('patternCategory');
+            if (catEl) catEl.value = data.drawing.pattern_category || '';
             const cAt = new Date(data.drawing.created_at).getTime();
             const uAt = new Date(data.drawing.updated_at).getTime();
             localStorage.setItem(CREATED_KEY, cAt); localStorage.setItem(MODIFIED_KEY, uAt);
@@ -2803,3 +2806,6 @@ async function draw() {
         pdf.save(getExportFilename('pdf'));
         DrawingSync.logExport(drawingId, WALLPAPER_ENGINE, 'pdf', document.getElementById('drawingName')?.value.trim() || '', document.getElementById('verLabel')?.textContent.trim() || '');
     });
+
+    // AI 채팅
+    window.pmokInitAiChat?.({ engine: WALLPAPER_ENGINE, getParams, applyParams });

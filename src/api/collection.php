@@ -7,14 +7,13 @@ set_exception_handler(function(Throwable $e) {
 });
 require_once __DIR__ . '/../lib/db.php';
 
-$_input = json_decode(file_get_contents('php://input'), true) ?? [];
-$q      = trim($_input['q'] ?? $_GET['q'] ?? '');
-$page   = max(1, (int)($_input['page'] ?? 1));
-$engine = trim($_input['engine'] ?? '');
-if (!in_array($engine, ['classic','square','cross','diamond','triangle','hexagon'], true)) $engine = '';
-$limit  = 20;
-$offset = ($page - 1) * $limit;
-$pdo    = db();
+$_input   = json_decode(file_get_contents('php://input'), true) ?? [];
+$q        = trim($_input['q'] ?? $_GET['q'] ?? '');
+$page     = max(1, (int)($_input['page'] ?? 1));
+$category = trim($_input['category'] ?? '');   // 패턴 카테고리 ID ('') = 전체
+$limit    = 20;
+$offset   = ($page - 1) * $limit;
+$pdo      = db();
 
 $editorMap = [
     'classic'  => '/src/engine/classic/classic.php',
@@ -33,9 +32,9 @@ if ($q !== '') {
     $baseWhere .= ' AND (p.name_ko LIKE :q OR p.id IN (SELECT pattern_id FROM library_keywords WHERE keyword LIKE :q2))';
     $params = [':q' => $like, ':q2' => $like];
 }
-if ($engine !== '') {
-    $baseWhere .= ' AND d.type = :engine';
-    $params[':engine'] = $engine;
+if ($category !== '') {
+    $baseWhere .= ' AND d.pattern_category = :category';
+    $params[':category'] = $category;
 }
 
 // 필터 버튼용 전체 키워드 (page 1에서만)
