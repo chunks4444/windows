@@ -41,6 +41,7 @@
     --naver-dark:   #02B350;
 
     /* 폰트 크기 스케일 (1rem = 16px) */
+    --fs-11:  0.6875rem;   /* 11px — 사이드바 버튼 */
     --fs-12:  0.75rem;     /* 12px — 배지, 메타 */
     --fs-13:  0.8125rem;   /* 13px — 보조 텍스트 */
     --fs-14:  0.875rem;    /* 14px — 본문, 버튼 */
@@ -58,7 +59,7 @@
     /* 엔진 레이아웃 */
     --sidebar-bg: #3A3A3A;
     --canvas-bg:  #EDEEF0;
-    --sidebar-w:  230px;
+    --sidebar-w:  200px;
     --hdr-h:      52px;
 }
 
