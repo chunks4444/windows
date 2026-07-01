@@ -1,3 +1,39 @@
+/* 부재치수 탭 카드 레이아웃 */
+.wt-dim-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.wt-card {
+    background: var(--surface-1, #fff);
+    border: 1px solid var(--border, #e5e5e5);
+    border-radius: 8px;
+    padding: 16px 20px;
+    min-width: 0;
+}
+.wt-card .adm-table-wrap { overflow-x: auto; }
+.wt-card table { min-width: 100%; }
+.wt-card-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text-3, #999);
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border, #eee);
+}
+
+.wt-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text-3, #999);
+    margin: 20px 0 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border, #eee);
+}
 .drag-handle { cursor:grab; color:var(--text-3); }
         .drag-handle:active { cursor:grabbing; }
         tr.dragging { opacity:.4; }

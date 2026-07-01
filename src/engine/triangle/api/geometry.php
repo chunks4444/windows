@@ -277,5 +277,6 @@ $parts['woodJae']        = round($_vol / $_JAE, 2);
 $parts['woodJae_door']   = round($_volDoor / $_JAE, 2);
 $parts['woodJae_muntol'] = round($_volMuntol / $_JAE, 2);
 $parts['techWeight']     = (float)($_d['기술난이도']['weight'] ?? 1.0);
+$parts['joints']         = $cols * $rows;
 
 echo json_encode(['geo' => $geo, 'specs' => $specs, 'parts' => $parts]);

@@ -2203,6 +2203,7 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
             rotate:    document.getElementById('chkRotate').checked,
             wood:      document.getElementById('txtWood').value,
             finish:    document.getElementById('txtFinish').value,
+            hardware:  document.getElementById('txtHardware')?.value ?? '',
             frameColor: selectedFrameColor,
             slatColor:  selectedSlatColor,
             faceBrushColor: faceColorUI.getCurrentHex(),
@@ -2237,8 +2238,9 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
         setSlider('txtPungpan', 'numPungpan', p.pungpan);
         document.getElementById('chkShrinkH').checked = p.shrinkH || false;
         document.getElementById('chkRotate').checked = p.rotate;
-        document.getElementById('txtWood').value     = p.wood || 'hongsong';
-        document.getElementById('txtFinish').value   = p.finish;
+        document.getElementById('txtWood').value     = p.wood || '소나무';
+        document.getElementById('txtFinish').value   = p.finish ?? '';
+        const hwEl = document.getElementById('txtHardware'); if (hwEl) hwEl.value = p.hardware ?? '';
         rotateOn = p.rotate;
         document.getElementById('pungpanCtrl').style.display = p.pungpanOn ? 'block' : 'none';
         placementMode        = p.placementMode        || false;
@@ -2370,6 +2372,9 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
 
     async function loadVersions() {
         scaleFactor = 1.0; panX = 0; panY = 0;
+        const _woodEl = document.getElementById('txtWood');     if (_woodEl) _woodEl.value = '소나무';
+        const _finishEl = document.getElementById('txtFinish'); if (_finishEl) _finishEl.value = '';
+        const _hwEl = document.getElementById('txtHardware');  if (_hwEl) _hwEl.value = '';
 
         const pendingTitle = window.__pmokOpenDrawing || null;
         if (pendingTitle) {

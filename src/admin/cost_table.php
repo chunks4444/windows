@@ -1,4 +1,19 @@
-<?php header('Content-Type: text/html; charset=UTF-8'); ?>
+<?php
+header('Content-Type: text/html; charset=UTF-8');
+require_once __DIR__ . '/../lib/db.php';
+try {
+    $studioCards = db()->query('SELECT engine_key, title FROM studio_cards WHERE is_active=1 ORDER BY sort_order, id')->fetchAll(PDO::FETCH_ASSOC);
+} catch (Throwable $e) {
+    $studioCards = [
+        ['engine_key'=>'classic',  'title'=>'Classic Lattice'],
+        ['engine_key'=>'square',   'title'=>'Square Lattice'],
+        ['engine_key'=>'cross',    'title'=>'Cross Lattice'],
+        ['engine_key'=>'diamond',  'title'=>'Diamond Lattice'],
+        ['engine_key'=>'triangle', 'title'=>'Triangle Lattice'],
+        ['engine_key'=>'hexagon',  'title'=>'Hexagon Lattice'],
+    ];
+}
+?>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -8,10 +23,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <?php require_once __DIR__ . '/../lib/meta.php'; ?>
     <?php meta_tags(); ?>
-<?php css_tag('/src/css/dashboard.css'); ?>
+    <?php css_tag('/src/css/dashboard.css'); ?>
     <?php css_tag('/src/css/users.css'); ?>
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
-    
     <?php css_tag('/src/css/admin/cost_table.css'); ?>
 </head>
 <body>
@@ -24,30 +38,151 @@
 <div class="db-page" id="wtPage" style="display:none;">
     <div class="adm-breadcrumb"><a href="/src/admin/">어드민</a><span class="adm-breadcrumb-sep">/</span>원가 테이블</div>
     <div class="db-header">
-        <div>
-            <h1 class="db-title"><i class="bi bi-calculator me-2"></i>원가 테이블</h1>
-            <p style="font-size:12px;color:var(--text-3);margin:2px 0 0;">목재 종류별 단가 및 가중치를 관리합니다.</p>
-        </div>
+        <h1 class="db-title"><i class="bi bi-calculator me-2"></i>원가 테이블</h1>
         <button class="adm-edit-btn" style="height:32px;padding:0 14px;" onclick="openModal()">
             <i class="bi bi-plus-lg"></i> 추가
         </button>
     </div>
 
-    <div class="adm-table-wrap" style="margin-top:8px;">
+    <!-- 탭 -->
+    <div class="adm-tab-bar" id="wtTabs" style="margin-bottom:16px;">
+        <button class="adm-tab-btn active" data-tab="wood">목재</button>
+        <button class="adm-tab-btn" data-tab="finish">마감</button>
+        <button class="adm-tab-btn" data-tab="grid">부재 치수</button>
+        <button class="adm-tab-btn" data-tab="labor">인건비</button>
+        <button class="adm-tab-btn" data-tab="overhead">간접비</button>
+    </div>
+
+    <!-- 부재치수 탭 — 인라인 편집 -->
+    <div id="wtDimPanel" style="display:none;">
+        <!-- 엔진 선택 + 저장 -->
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+            <select id="wtEngineSelect" class="form-select form-select-sm" style="width:200px;">
+                <?php foreach ($studioCards as $c): ?>
+                <option value="<?= htmlspecialchars($c['engine_key']) ?>"><?= htmlspecialchars($c['title']) ?></option>
+                <?php endforeach; ?>
+            </select>
+            <button class="adm-edit-btn" id="btnDimSave" style="height:32px;padding:0 16px;">저장</button>
+        </div>
+
+        <!-- 좌우 카드 -->
+        <div class="wt-dim-grid">
+            <!-- 왼쪽: 부재 치수 -->
+            <div class="wt-card">
+                <div class="wt-card-title">부재 치수</div>
+                <div class="adm-table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width:100px;">부재명</th>
+                                <th style="width:90px;text-align:right;">두께(mm)</th>
+                                <th style="width:90px;text-align:right;">폭(mm)</th>
+                                <th style="width:140px;text-align:right;">로스율</th>
+                                <th>메모</th>
+                            </tr>
+                        </thead>
+                        <tbody id="wtDimBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 아래: 작업 시간 -->
+            <div class="wt-card">
+                <div class="wt-card-title">엔진별 작업 시간</div>
+                <p style="font-size:12px;color:var(--text-3);margin:0 0 12px;line-height:1.6;">
+                    제작비 = (교차점 × 교차점당 시간<br>
+                    + 짝 × (울거미 + 다듬기) + 문틀) ÷ 60 × 시간당 공임
+                </p>
+                <div class="adm-table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>항목</th>
+                                <th style="width:100px;text-align:right;">시간 (분)</th>
+                                <th style="width:40px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="wtLaborEngineBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 인건비 탭 — 인라인 편집 -->
+    <div id="wtLaborPanel" style="display:none;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+            <button class="adm-edit-btn" id="btnLaborSave" style="height:32px;padding:0 16px;">저장</button>
+        </div>
+        <div class="wt-dim-grid">
+            <!-- 기본 단가 (고정) -->
+            <div class="wt-card">
+                <div class="wt-card-title">기본 단가</div>
+                <div class="adm-table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>항목</th>
+                                <th style="width:160px;text-align:right;">단가</th>
+                                <th style="width:80px;">단위</th>
+                            </tr>
+                        </thead>
+                        <tbody id="wtLaborBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- 직종 단가 (동적) -->
+            <div class="wt-card">
+                <div class="wt-card-title" style="display:flex;justify-content:space-between;align-items:center;">
+                    <span>직종 단가</span>
+                    <button class="adm-withdraw-btn" id="btnLaborAdd" style="height:26px;padding:0 10px;font-size:12px;">+ 추가</button>
+                </div>
+                <div class="adm-table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>직종명</th>
+                                <th style="width:160px;text-align:right;">시간당 단가 (원)</th>
+                                <th style="width:40px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="wtLaborRoleBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 간접비 탭 — 인라인 편집 -->
+    <div id="wtOverheadPanel" style="display:none;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+            <button class="adm-edit-btn" id="btnOverheadSave" style="height:32px;padding:0 16px;">저장</button>
+        </div>
+        <div class="wt-card" style="max-width:440px;">
+            <div class="wt-card-title">비율 설정</div>
+            <p style="font-size:12px;color:var(--text-3);margin:0 0 12px;line-height:1.6;">
+                판매가 = 원가 합계 × (1 + 간접비율 + 이익률)
+            </p>
+            <div class="adm-table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>항목</th>
+                            <th style="width:120px;text-align:right;">비율 (%)</th>
+                            <th style="width:60px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="wtOverheadBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 나머지 탭 공용 테이블 -->
+    <div id="wtTableWrap" class="adm-table-wrap">
         <table id="wtTable">
             <thead>
-                <tr>
-                    <th style="width:32px;"></th>
-                    <th id="thCategory" style="width:100px;cursor:pointer;user-select:none;">구분 <span id="thCategorySort"></span></th>
-                    <th>항목</th>
-                    <th style="width:140px;text-align:right;">단가</th>
-                    <th style="width:80px;">단위</th>
-                    <th style="width:100px;">단위명</th>
-                    <th style="width:100px;text-align:right;">가중치</th>
-                    <th>메모</th>
-                    <th style="width:72px;">상태</th>
-                    <th style="width:160px;"></th>
-                </tr>
+                <tr id="wtColHeads"></tr>
             </thead>
             <tbody id="wtBody"></tbody>
         </table>
@@ -63,66 +198,53 @@
         </div>
         <div class="adm-modal-body">
             <input type="hidden" id="wtId">
-            <div class="adm-mfield">
-                <label>구분</label>
-                <select id="wtCategory">
-                    <option value="">— 선택 —</option>
-                    <option value="wood">목재</option>
-                    <option value="oil">오일</option>
-                    <option value="grid">엔진</option>
-                    <option value="labor">인건비</option>
-                    <option value="overhead">일반경비</option>
-                    <option value="finish">마감</option>
-                    <option value="delivery">배송비</option>
-                </select>
-            </div>
+            <input type="hidden" id="wtCategory">
             <div class="adm-mfield">
                 <label>항목</label>
                 <input id="wtName" type="text" placeholder="예: 홍송" maxlength="100">
             </div>
-            <div class="wt-price-row">
+            <div id="wtPriceRow" class="wt-price-row">
                 <div class="adm-mfield wt-price-field">
                     <label>단가</label>
-                    <input id="wtUnitPrice" type="number" min="0" step="100" placeholder="12000" class="num-input">
+                    <input id="wtUnitPrice" type="number" min="0" step="1" placeholder="12000" class="num-input">
                 </div>
                 <div class="adm-mfield wt-unit-field">
                     <label>단위</label>
-                    <input id="wtUnit" type="text" placeholder="사이, %, 시간…" maxlength="30">
+                    <input id="wtUnit" type="text" placeholder="사이, 분, %…" maxlength="30">
                 </div>
                 <div class="adm-mfield wt-unit-field">
                     <label>단위명</label>
-                    <input id="wtUnitName" type="text" placeholder="재(才), 퍼센트…" maxlength="50">
+                    <input id="wtUnitName" type="text" placeholder="재(才)…" maxlength="50">
                 </div>
             </div>
-            <div class="adm-mfield">
+            <div id="wtFinishRow" style="display:none;">
+                <div style="display:flex;gap:8px;margin-bottom:0;">
+                    <div class="adm-mfield" style="flex:1;">
+                        <label>작업 시간 <small style="color:var(--text-3);font-weight:400;">(분/㎡)</small></label>
+                        <input id="wtWorkTimeMin" type="number" min="0" step="1" placeholder="10" class="num-input">
+                    </div>
+                    <div class="adm-mfield" style="flex:1;">
+                        <label>도포 횟수 <small style="color:var(--text-3);font-weight:400;">(회)</small></label>
+                        <input id="wtCoatCount" type="number" min="1" step="1" placeholder="2" class="num-input">
+                    </div>
+                </div>
+            </div>
+            <div id="wtWeightRow" class="adm-mfield">
                 <label>가중치</label>
                 <input id="wtWeight" type="number" min="0" step="0.01" placeholder="1.00" class="num-input">
             </div>
-            <div class="adm-mfield" id="wtGridFields" style="display:none;">
-                <label>엔진</label>
+            <div class="adm-mfield" id="wtEngineField" style="display:none;">
+                <label>엔진 <small style="color:var(--text-3);font-weight:400;">(비우면 공통)</small></label>
                 <select id="wtEngine">
                     <option value="">— 공통 —</option>
-                    <option value="classic">classic</option>
-                    <option value="square">square</option>
-                    <option value="cross">cross</option>
-                    <option value="diamond">diamond</option>
-                    <option value="triangle">triangle</option>
-                    <option value="hexagon">hexagon</option>
+                    <?php foreach ($studioCards as $c): ?>
+                    <option value="<?= htmlspecialchars($c['engine_key']) ?>"><?= htmlspecialchars($c['title']) ?></option>
+                    <?php endforeach; ?>
                 </select>
-            </div>
-            <div class="wt-price-row" id="wtDimFields" style="display:none;">
-                <div class="adm-mfield wt-price-field">
-                    <label>두께 (mm)</label>
-                    <input id="wtThickness" type="number" min="0" step="1" placeholder="0" class="num-input">
-                </div>
-                <div class="adm-mfield wt-price-field">
-                    <label>폭 (mm)</label>
-                    <input id="wtWidth" type="number" min="0" step="1" placeholder="0" class="num-input">
-                </div>
             </div>
             <div class="adm-mfield">
                 <label>메모</label>
-                <textarea id="wtNotes" rows="3" placeholder="특이사항, 구매처, 참고사항 등"
+                <textarea id="wtNotes" rows="3"
                     style="width:100%;padding:8px 10px;border:1px solid var(--border-md);border-radius:var(--r-sm);background:var(--input-bg);font-family:inherit;font-size:13px;color:var(--text-1);outline:none;resize:vertical;"></textarea>
             </div>
         </div>
@@ -133,6 +255,9 @@
     </div>
 </div>
 
+<script>
+window.__pmokEngineLabels = <?= json_encode(array_column($studioCards, 'title', 'engine_key'), JSON_UNESCAPED_UNICODE) ?>;
+</script>
 <script src="/src/js/admin/cost_table.js"></script>
 </body>
 </html>

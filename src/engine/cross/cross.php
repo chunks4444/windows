@@ -5,6 +5,7 @@ header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../../lib/colors.php';
 require_once __DIR__ . '/../../lib/engine_settings.php';
 $cfg = get_engine_settings('cross');
+$costCfg = get_cost_config('cross');
 $patternCategories = get_pattern_categories();
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Pragma: no-cache');
@@ -487,10 +488,18 @@ header('Pragma: no-cache');
                         <div class="sb-price-label">예상가격</div>
                         <div class="sb-price-amount"><span class="sb-price-start">–</span><span class="sb-price-end"></span></div>
                         <div class="sb-price-breakdown">
-                            <div class="sb-break-row"><span>문(창호)</span><span id="spCostDoor">–</span></div>
-                            <div class="sb-break-row"><span>문틀</span><span id="spCostMuntol">–</span></div>
-                            <div class="sb-break-row sb-break-total"><span>목재비 합계</span><span id="spWoodCost">–</span></div>
-                            <div class="sb-lead-time sb-break-row" data-min-days="<?= (int)$cfg['min_days'] ?>"><span>최소 제작기간</span><span><strong><?= (int)$cfg['min_days'] ?></strong>일</span></div>
+                            <div class="sb-break-row"><span>문(창호) 목재</span><span id="spCostDoor">–</span></div>
+                            <div class="sb-break-row"><span>문틀 목재</span><span id="spCostMuntol">–</span></div>
+                            <div class="sb-break-row sb-break-sub sb-break-key"><span>목재비</span><span id="spWoodCost">–</span></div>
+                            <div class="sb-break-divider"></div>
+                            <div class="sb-break-row sb-break-key"><span>제작비 <small id="spCraftTime"></small></span><span id="spCraftCost">–</span></div>
+                            <div class="sb-break-row sb-break-key"><span>부자재</span><span id="spHardwareCost">–</span></div>
+                            <div class="sb-break-row sb-break-key"><span>마감</span><span id="spFinishCost">–</span></div>
+                            <div class="sb-break-divider"></div>
+                            <div class="sb-break-row sb-break-key"><span>간접비</span><span id="spOverheadCost">–</span></div>
+                            <div class="sb-break-row sb-break-key"><span>이익</span><span id="spProfitCost">–</span></div>
+                            <div class="sb-break-divider"></div>
+                            <div class="sb-break-row sb-break-total sb-break-key"><span>판매가</span><span id="spTotalCost">–</span></div>                            <div class="sb-lead-time sb-break-row" data-min-days="<?= (int)$cfg['min_days'] ?>"><span>최소 납기</span><span><strong><?= (int)$cfg['min_days'] ?></strong>일</span></div>
                             <div class="sb-price-note">※ 배송비·시공비 제외</div>
                             <div class="sb-price-disclaimer">※ 본 금액은 예상 견적입니다. 사용자 편집 내용을 검토한 후 최종 견적이 확정됩니다.</div>
                         </div>
@@ -522,8 +531,25 @@ header('Pragma: no-cache');
                     </div>
                     <div class="ctrl">
                         <select id="txtFinish" class="sb-select">
-                            <?php foreach (get_finish_options() as $opt): ?>
-                            <option value="<?= htmlspecialchars($opt, ENT_QUOTES) ?>"><?= htmlspecialchars($opt, ENT_QUOTES) ?></option>
+                            <option value="" data-price="0" data-time="0" data-coats="0">마감 없음</option>
+                            <?php foreach (get_finish_options() as $f): ?>
+                            <option value="<?= htmlspecialchars($f['name'], ENT_QUOTES) ?>"
+                                data-price="<?= (int)$f['unit_price'] ?>"
+                                data-time="<?= (int)$f['work_time_min'] ?>"
+                                data-coats="<?= (int)$f['coat_count'] ?>">
+                                <?= htmlspecialchars($f['name'], ENT_QUOTES) ?>
+                            </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="ctrl">
+                        <select id="txtHardware" class="sb-select">
+                            <option value="" data-price="0">부자재 없음</option>
+                            <?php foreach (get_hardware_options() as $h): ?>
+                            <option value="<?= htmlspecialchars($h['name'], ENT_QUOTES) ?>"
+                                data-price="<?= (int)$h['unit_price'] ?>">
+                                <?= htmlspecialchars($h['name'], ENT_QUOTES) ?>
+                            </option>
                             <?php endforeach; ?>
                         </select>
                     </div>
@@ -697,7 +723,8 @@ header('Pragma: no-cache');
         window.__pmokOpenDrawing         = <?= isset($_POST['drawing'])    ? json_encode($_POST['drawing'],    JSON_UNESCAPED_UNICODE) : 'null' ?>;
         window.__pmokCollectionDrawingId = <?= isset($_GET['drawing_id']) ? (int)$_GET['drawing_id']          : 'null' ?>;
         window.__pmokColorGroups         = <?= json_encode(get_color_groups(), JSON_UNESCAPED_UNICODE) ?>;
-        window.__pmokEngineLayout        = <?= json_encode(['gap' => (float)$cfg['gap'], 'basePadding' => (float)$cfg['basePadding'], 'frameGap' => (float)$cfg['frameGap'], 'frameThick' => (float)$cfg['frameThick']], JSON_UNESCAPED_UNICODE) ?>;
+        window.__pmokEngineLayout        = <?= json_encode(['gap' => (float)$cfg['gap'], 'basePadding' => (float)$cfg['basePadding'], 'frameGap' => (float)$cfg['frameGap'], 'frameThick' => (float)$cfg['frameThick'], 'craftTime' => (float)$costCfg['craft_time'], 'ulgeomiTime' => (float)$costCfg['ulgeomi_time'], 'trimTime' => (float)$costCfg['trim_time'], 'muntolTime' => (float)$costCfg['muntol_time'], 'minWorkHours' => (float)$cfg['min_work_hours']], JSON_UNESCAPED_UNICODE) ?>;
+        window.__pmokCostConfig           = <?= json_encode(array_merge($costCfg, ['slatW' => (float)$cfg['slatW'], 'slatThick' => (float)$cfg['slat'], 'ulgeomiW' => (float)$cfg['ulgeomiW']]), JSON_UNESCAPED_UNICODE) ?>;
     </script>
     <script src="/src/js/drawing-sync.js?v=<?= md5_file(__DIR__ . '/../../js/drawing-sync.js') ?>"></script>
     <script src="/src/js/engine-common.js?v=<?= md5_file(__DIR__ . '/../../js/engine-common.js') ?>"></script>

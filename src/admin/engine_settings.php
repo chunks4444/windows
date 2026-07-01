@@ -1,5 +1,18 @@
 <?php
 header('Content-Type: text/html; charset=UTF-8');
+require_once __DIR__ . '/../lib/db.php';
+try {
+    $studioCards = db()->query('SELECT engine_key, title FROM studio_cards WHERE is_active=1 ORDER BY sort_order, id')->fetchAll(PDO::FETCH_ASSOC);
+} catch (Throwable $e) {
+    $studioCards = [
+        ['engine_key'=>'classic',  'title'=>'Classic Lattice'],
+        ['engine_key'=>'square',   'title'=>'Square Lattice'],
+        ['engine_key'=>'cross',    'title'=>'Cross Lattice'],
+        ['engine_key'=>'diamond',  'title'=>'Diamond Lattice'],
+        ['engine_key'=>'triangle', 'title'=>'Triangle Lattice'],
+        ['engine_key'=>'hexagon',  'title'=>'Hexagon Lattice'],
+    ];
+}
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -18,48 +31,24 @@ header('Content-Type: text/html; charset=UTF-8');
 <?php include __DIR__ . '/../components/nav.php'; ?>
 
 <div class="db-page" id="engineSettingsPage" style="display:none;">
-    <div class="adm-breadcrumb"><a href="/src/admin/">어드민</a><span class="adm-breadcrumb-sep">/</span>엔진 기본값 관리</div>
+    <div class="adm-breadcrumb"><a href="/src/admin/">어드민</a><span class="adm-breadcrumb-sep">/</span>엔진 설정</div>
     <div class="db-header">
-        <h1 class="db-title"><i class="bi bi-sliders me-2"></i>엔진 기본값 관리</h1>
-        <button class="adm-edit-btn" style="height:32px;padding:0 14px;" onclick="addSettingRow()">
-            <i class="bi bi-plus-lg"></i> 항목 추가
-        </button>
+        <h1 class="db-title"><i class="bi bi-sliders me-2"></i>엔진 설정</h1>
+        <div style="display:flex;gap:8px;align-items:center;">
+            <select id="engineSelect" class="form-select form-select-sm" style="width:200px;"></select>
+            <button class="adm-edit-btn" id="btnSave" style="height:32px;padding:0 16px;">
+                <i class="bi bi-check-lg"></i> 저장
+            </button>
+        </div>
     </div>
 
-    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
-        <select id="engineSelect" class="form-select form-select-sm" style="width:200px;">
-            <option value="classic">Classic Lattice</option>
-            <option value="square">Square Lattice</option>
-            <option value="cross">Cross Lattice</option>
-            <option value="diamond">Diamond Lattice</option>
-            <option value="triangle">Triangle Lattice</option>
-            <option value="hexagon">Hexagon Lattice</option>
-        </select>
-        <button class="adm-edit-btn" style="height:32px;padding:0 14px;" onclick="saveSettings()">
-            <i class="bi bi-check-lg"></i> 저장
-        </button>
-    </div>
-
-    <p style="font-size:12px;color:#888;margin:-4px 0 12px;">
-        해당 엔진 페이지를 새로 열면 여기서 저장한 값이 좌측 패널 슬라이더의 기본값으로 적용됩니다.
-        이미 작업 중인(저장된) 도면에는 영향을 주지 않습니다.
-    </p>
-
-    <div class="adm-table-wrap">
-        <table id="settingsTable">
-            <thead>
-                <tr>
-                    <th style="width:160px;">항목</th>
-                    <th style="width:140px;">키</th>
-                    <th>값</th>
-                    <th style="width:60px;"></th>
-                </tr>
-            </thead>
-            <tbody id="settingsBody"></tbody>
-        </table>
-    </div>
+    <div class="eng-grid" id="settingsGrid"></div>
 </div>
 
+<script>
+window.__pmokEngineLabels = <?= json_encode(array_column($studioCards, 'title', 'engine_key'), JSON_UNESCAPED_UNICODE) ?>;
+window.__pmokEngineKeys   = <?= json_encode(array_column($studioCards, 'engine_key'), JSON_UNESCAPED_UNICODE) ?>;
+</script>
 <script src="/src/js/admin/engine_settings.js"></script>
 </body>
 </html>

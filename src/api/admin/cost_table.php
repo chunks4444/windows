@@ -35,20 +35,35 @@ if ($action === 'save') {
     $unit_name    = trim($body['unit_name'] ?? '');
     $weight       = (float)($body['weight'] ?? 1);
     $engine       = trim($body['engine'] ?? '') ?: null;
-    $thickness_mm = (int)($body['thickness_mm'] ?? 0);
-    $width_mm     = (int)($body['width_mm'] ?? 0);
-    $notes        = trim($body['notes'] ?? '');
-    $is_active    = (int)($body['is_active'] ?? 1);
+    $thickness_mm  = (int)($body['thickness_mm']  ?? 0);
+    $width_mm      = (int)($body['width_mm']      ?? 0);
+    $work_time_min = (int)($body['work_time_min'] ?? 0);
+    $coat_count    = (int)($body['coat_count']    ?? 2);
+    $notes         = trim($body['notes'] ?? '');
+    $is_active     = (int)($body['is_active'] ?? 1);
 
     if (!$name) { echo json_encode(['error' => '항목을 입력하세요.']); exit; }
 
+    // grid·labor·overhead는 (category, engine, name) 으로 upsert
+    if (!$id && in_array($category, ['grid', 'labor', 'overhead'])) {
+        if ($engine === null) {
+            $check = $pdo->prepare('SELECT id FROM cost_table WHERE category=? AND engine IS NULL AND name=?');
+            $check->execute([$category, $name]);
+        } else {
+            $check = $pdo->prepare('SELECT id FROM cost_table WHERE category=? AND engine=? AND name=?');
+            $check->execute([$category, $engine, $name]);
+        }
+        $existing = $check->fetchColumn();
+        if ($existing) $id = (int)$existing;
+    }
+
     if ($id) {
-        $pdo->prepare('UPDATE cost_table SET category=?, name=?, unit_price=?, unit=?, unit_name=?, weight=?, engine=?, thickness_mm=?, width_mm=?, notes=?, is_active=? WHERE id=?')
-            ->execute([$category, $name, $unit_price, $unit, $unit_name, $weight, $engine, $thickness_mm, $width_mm, $notes, $is_active, $id]);
+        $pdo->prepare('UPDATE cost_table SET category=?, name=?, unit_price=?, unit=?, unit_name=?, weight=?, engine=?, thickness_mm=?, width_mm=?, work_time_min=?, coat_count=?, notes=?, is_active=? WHERE id=?')
+            ->execute([$category, $name, $unit_price, $unit, $unit_name, $weight, $engine, $thickness_mm, $width_mm, $work_time_min, $coat_count, $notes, $is_active, $id]);
     } else {
         $maxOrder = (int)$pdo->query('SELECT COALESCE(MAX(sort_order),0) FROM cost_table')->fetchColumn();
-        $pdo->prepare('INSERT INTO cost_table (category, name, unit_price, unit, unit_name, weight, engine, thickness_mm, width_mm, notes, sort_order, is_active) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)')
-            ->execute([$category, $name, $unit_price, $unit, $unit_name, $weight, $engine, $thickness_mm, $width_mm, $notes, $maxOrder + 1, $is_active]);
+        $pdo->prepare('INSERT INTO cost_table (category, name, unit_price, unit, unit_name, weight, engine, thickness_mm, width_mm, work_time_min, coat_count, notes, sort_order, is_active) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)')
+            ->execute([$category, $name, $unit_price, $unit, $unit_name, $weight, $engine, $thickness_mm, $width_mm, $work_time_min, $coat_count, $notes, $maxOrder + 1, $is_active]);
         $id = (int)$pdo->lastInsertId();
     }
 

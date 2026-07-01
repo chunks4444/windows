@@ -1238,50 +1238,119 @@ function drawSvgInserts() {
     function won(n) { return Math.round(n).toLocaleString('ko-KR'); }
 
     function updateWoodCost() {
-        const woodEl    = document.getElementById('spWoodCost');
-        const doorEl    = document.getElementById('spCostDoor');
-        const muntolEl  = document.getElementById('spCostMuntol');
-        const startEl   = document.querySelector('.sb-price-start');
-        const endEl     = document.querySelector('.sb-price-end');
+        const els = {
+            door:     document.getElementById('spCostDoor'),
+            muntol:   document.getElementById('spCostMuntol'),
+            wood:     document.getElementById('spWoodCost'),
+            craft:    document.getElementById('spCraftCost'),
+            craftTime:document.getElementById('spCraftTime'),
+            hardware: document.getElementById('spHardwareCost'),
+            finish:   document.getElementById('spFinishCost'),
+            overhead: document.getElementById('spOverheadCost'),
+            profit:   document.getElementById('spProfitCost'),
+            total:    document.getElementById('spTotalCost'),
+            priceStart: document.querySelector('.sb-price-start'),
+            priceEnd:   document.querySelector('.sb-price-end'),
+        };
+
+        function reset() {
+            Object.values(els).forEach(el => { if (el) el.textContent = '–'; });
+            if (els.priceEnd) els.priceEnd.textContent = '';
+            window.__pmokEstimatedPrice = 0;
+        }
 
         const p = window.__pmokLastParts;
-        if (!p?.woodJae) {
-            if (woodEl)   woodEl.textContent   = '–';
-            if (doorEl)   doorEl.textContent   = '–';
-            if (muntolEl) muntolEl.textContent = '–';
-            if (startEl)  startEl.textContent  = '–';
-            if (endEl)    endEl.textContent    = '';
-            window.__pmokEstimatedPrice = 0;
-            return;
-        }
+        if (!p?.woodJae) return reset();
 
-        const opt    = document.getElementById('txtWood')?.selectedOptions?.[0];
+        const woodEl = document.getElementById('txtWood');
+        const opt    = woodEl?.selectedOptions?.[0] ?? woodEl?.options?.[0];
         const price  = parseFloat(opt?.dataset?.price  ?? 0);
         const weight = parseFloat(opt?.dataset?.weight ?? 1);
-        if (!price) {
-            if (woodEl)   woodEl.textContent   = '–';
-            if (doorEl)   doorEl.textContent   = '–';
-            if (muntolEl) muntolEl.textContent = '–';
-            if (startEl)  startEl.textContent  = '–';
-            if (endEl)    endEl.textContent    = '';
-            window.__pmokEstimatedPrice = 0;
-            return;
+        if (!price) return reset();
+
+        // 1. 목재비
+        const doorCost   = Math.round((p.woodJae_door   ?? 0) * weight * price);
+        const showMuntol  = document.getElementById('chkMuntol')?.checked !== false;
+        const muntolCost = showMuntol
+            ? Math.round((p.woodJae_muntol ?? 0) * weight * price)
+            : 0;
+        const woodCost   = doorCost + muntolCost;
+
+        // 2. 제작비
+        const layout      = window.__pmokEngineLayout ?? {};
+        const costCfg     = window.__pmokCostConfig   ?? {};
+        const craftTime   = layout.craftTime   ?? 3;
+        const ulgeomiTime = layout.ulgeomiTime ?? 20;
+        const trimTime    = layout.trimTime    ?? 40;
+        const hourlyRate  = costCfg.hourly_rate ?? 30000;
+        const joints      = p.joints      ?? 0;
+        const doorCount   = parseInt(document.getElementById('txtDoorCount')?.value ?? 1);
+        const muntolTime  = showMuntol ? (layout.muntolTime ?? 60) : 0;
+        const totalMin    = joints * craftTime + doorCount * (ulgeomiTime + trimTime) + muntolTime;
+        const craftCost   = Math.round(totalMin / 60 * hourlyRate);
+
+        // 3. 부자재비
+        const hwOpt       = document.getElementById('txtHardware')?.selectedOptions?.[0];
+        const hwRate      = parseFloat(hwOpt?.dataset?.price ?? 0);
+        const hardwareCost = Math.round(doorCount * hwRate);
+
+        // 4. 마감비 (재료비 + 인건비) — 육면체 4면 기준
+        // 총 목재 길이로 실제 도장 면적 산출 (1재 = 33×33×3600 mm³)
+        const slatW     = costCfg.slatW     ?? 20;
+        const slatThick = costCfg.slatThick ?? 12;
+        const JAE_VOL   = 33 * 33 * 3600;
+        const totalLenMm  = (p.woodJae_door ?? 0) * JAE_VOL / (slatW * slatThick);
+        const surfaceM2   = totalLenMm * 2 * (slatW + slatThick) / 1_000_000;
+        const finishOpt   = document.getElementById('txtFinish')?.selectedOptions?.[0];
+        const fPrice      = parseFloat(finishOpt?.dataset?.price  ?? 0);
+        const fTime       = parseFloat(finishOpt?.dataset?.time   ?? 0);
+        const fCoats      = parseInt(finishOpt?.dataset?.coats    ?? 2);
+        const finishRate  = costCfg.finish_rate ?? 25000;
+        const finishMatCost   = fPrice > 0 ? Math.round(fPrice * surfaceM2 * fCoats) : 0;
+        const finishLaborCost = fTime  > 0 ? Math.round(surfaceM2 * fTime * fCoats / 60 * finishRate) : 0;
+        const finishCost      = finishMatCost + finishLaborCost;
+
+        // 5. 간접비·이익 & 판매가
+        const base         = woodCost + craftCost + hardwareCost + finishCost;
+        const overheadRate = costCfg.overhead_rate ?? 0.20;
+        const profitRate   = costCfg.profit_rate   ?? 0.30;
+        const overheadCost = Math.round(base * overheadRate);
+        const profitCost   = Math.round(base * profitRate);
+        const totalCost    = base + overheadCost + profitCost;
+
+        // 표시
+        const finishTimeMin  = fTime > 0 ? surfaceM2 * fTime * fCoats : 0;
+        const totalWorkMin   = totalMin + finishTimeMin;
+        const minWorkHours   = (layout.minWorkHours ?? 0) * 60;
+        const displayMin     = Math.max(totalWorkMin, minWorkHours);
+        const h = Math.floor(displayMin / 60);
+        const m = Math.round(displayMin % 60);
+        const timeStr = h > 0 ? `${h}시간 ${m}분` : `${m}분`;
+
+        // 최소 납기 업데이트
+        const leadEl = document.querySelector('.sb-lead-time');
+        if (leadEl) {
+            const minDays = parseInt(leadEl.dataset.minDays ?? '0');
+            const calcDays = Math.ceil(displayMin / 60 / 8);
+            const days = Math.max(minDays, calcDays);
+            const strong = leadEl.querySelector('strong');
+            if (strong) strong.textContent = days;
         }
 
-        const tw          = p.techWeight ?? 1;
-        const doorCost    = Math.round((p.woodJae_door   ?? 0) * tw * weight * price);
-        const muntolCost  = Math.round((p.woodJae_muntol ?? 0) *      weight * price);
-        const woodCost    = doorCost + muntolCost;
-        const estMin      = woodCost * 5;
-        const estMax      = Math.round(estMin * 1.15);
+        if (els.door)      els.door.textContent      = won(doorCost) + '원';
+        if (els.muntol)    els.muntol.textContent    = won(muntolCost) + '원';
+        if (els.wood)      els.wood.textContent      = won(woodCost) + '원';
+        if (els.craft)     els.craft.textContent     = won(craftCost) + '원';
+        if (els.craftTime) els.craftTime.textContent = timeStr;
+        if (els.hardware)  els.hardware.textContent  = won(hardwareCost) + '원';
+        if (els.finish)    els.finish.textContent    = finishCost > 0 ? won(finishCost) + '원' : '–';
+        if (els.overhead)  els.overhead.textContent  = won(overheadCost) + '원';
+        if (els.profit)    els.profit.textContent    = won(profitCost)   + '원';
+        if (els.total)     els.total.textContent     = won(totalCost) + '원';
+        if (els.priceStart) els.priceStart.textContent = won(totalCost);
+        if (els.priceEnd)   els.priceEnd.textContent   = '';
 
-        if (woodEl)   woodEl.textContent   = won(woodCost) + '원';
-        if (doorEl)   doorEl.textContent   = won(doorCost) + '원';
-        if (muntolEl) muntolEl.textContent = won(muntolCost) + '원';
-        if (startEl)  startEl.textContent  = won(estMin);
-        if (endEl)    endEl.textContent    = ` ~ ${won(estMax)}원`;
-
-        window.__pmokEstimatedPrice = estMin;
+        window.__pmokEstimatedPrice = totalCost;
     }
 
     function isAdminRole() {

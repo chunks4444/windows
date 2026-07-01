@@ -70,7 +70,7 @@
             params: params ? { ...params } : {
                 W: 600, H: 1707, cols: 12, frame: 60, frameH: 60, slat: 12,
                 vRatio: 1.2, pattern: '3/5/3', doorType: 'swing', doorCount: 1,
-                pungpanOn: false, pungpan: 0, wood: '소나무', finish: '창호지',
+                pungpanOn: false, pungpan: 0, wood: '소나무', finish: '', hardware: '',
                 frameColor: DEFAULT_FRAME_COLOR, slatColor: DEFAULT_SLAT_COLOR, name: '',
             },
             deletedSegs: new Set(),
@@ -2238,6 +2238,7 @@ async function draw() {
             pungpan:   parseInt(document.getElementById('txtPungpan').value) || 0,
             wood:      document.getElementById('txtWood').value,
             finish:    document.getElementById('txtFinish').value,
+            hardware:  document.getElementById('txtHardware')?.value ?? '',
             frameColor: selectedFrameColor,
             slatColor:  selectedSlatColor,
             faceBrushColor:  faceColorUI.getCurrentHex(),
@@ -2277,8 +2278,9 @@ async function draw() {
         txtDoorCount.value = p.doorCount;
         document.getElementById('chkPungpan').checked = p.pungpanOn;
         setSlider('txtPungpan', 'numPungpan', p.pungpan);
-        document.getElementById('txtWood').value    = p.wood || 'hongsong';
-        document.getElementById('txtFinish').value  = p.finish;
+        document.getElementById('txtWood').value    = p.wood || '소나무';
+        document.getElementById('txtFinish').value  = p.finish ?? '';
+        const hwEl = document.getElementById('txtHardware'); if (hwEl) hwEl.value = p.hardware ?? '';
         document.getElementById('pungpanCtrl').style.display = p.pungpanOn ? 'block' : 'none';
         placementMode        = p.placementMode        || false;
         doorCornerPositions  = p.doorCornerPositions  || null;
@@ -2461,6 +2463,9 @@ async function draw() {
 
     async function loadVersions() {
         scaleFactor = 1.0; panX = 0; panY = 0;
+        const _woodEl = document.getElementById('txtWood');     if (_woodEl) _woodEl.value = '소나무';
+        const _finishEl = document.getElementById('txtFinish'); if (_finishEl) _finishEl.value = '';
+        const _hwEl = document.getElementById('txtHardware');  if (_hwEl) _hwEl.value = '';
 
         // 내 도면에서 직접 열었을 때 PHP가 POST 값을 window.__pmokOpenDrawing에 주입
         const pendingTitle = window.__pmokOpenDrawing || null;

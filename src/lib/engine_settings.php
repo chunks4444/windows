@@ -28,19 +28,19 @@ function engine_setting_defaults(string $engine): array {
 
     switch ($engine) {
         case 'classic':
-            return $common + ['cols' => '12', 'ratio' => '1.2', 'patternTop' => '3', 'patternMid' => '5', 'patternBot' => '3', 'min_days' => '3'];
+            return $common + ['cols' => '12', 'ratio' => '1.2', 'patternTop' => '3', 'patternMid' => '5', 'patternBot' => '3', 'min_days' => '3', 'min_work_hours' => '4'];
         case 'square':
-            return $common + ['cols' => '6', 'ratio' => '1.0', 'shrinkH' => '0', 'min_days' => '3'];
+            return $common + ['cols' => '6', 'ratio' => '1.0', 'shrinkH' => '0', 'min_days' => '3', 'min_work_hours' => '4'];
         case 'cross':
-            return $common + ['cols' => '4', 'shrinkH' => '0', 'min_days' => '4'];
+            return $common + ['cols' => '4', 'shrinkH' => '0', 'min_days' => '4', 'min_work_hours' => '6'];
         case 'diamond':
-            return $common + ['cols' => '4', 'shrinkH' => '0', 'min_days' => '4'];
+            return $common + ['cols' => '4', 'shrinkH' => '0', 'min_days' => '4', 'min_work_hours' => '6'];
         case 'triangle':
-            return $common + ['cols' => '4', 'shrinkH' => '0', 'rotate' => '1', 'min_days' => '4'];
+            return $common + ['cols' => '4', 'shrinkH' => '0', 'rotate' => '1', 'min_days' => '4', 'min_work_hours' => '8'];
         case 'hexagon':
-            return $common + ['cols' => '3', 'shrinkH' => '0', 'rotate' => '1', 'min_days' => '5'];
+            return $common + ['cols' => '3', 'shrinkH' => '0', 'rotate' => '1', 'min_days' => '5', 'min_work_hours' => '10'];
         default:
-            return $common + ['min_days' => '3'];
+            return $common + ['min_days' => '3', 'min_work_hours' => '4'];
     }
 }
 
@@ -99,6 +99,69 @@ function get_engine_part_dims(string $engine): array {
     }
 }
 
+// 원가 계산용 상수 — cost_table (labor/overhead 카테고리) 기반
+// $engine = 엔진명 또는 '*' (공통만)
+function get_cost_config(string $engine = '*'): array {
+    // 엔진별 하드코딩 fallback (cost_table에 행이 없을 때)
+    $engineDefaults = [
+        'classic'  => ['craft_time' => 2,  'ulgeomi_time' => 20, 'trim_time' => 30, 'muntol_time' => 60],
+        'square'   => ['craft_time' => 3,  'ulgeomi_time' => 20, 'trim_time' => 40, 'muntol_time' => 60],
+        'cross'    => ['craft_time' => 3,  'ulgeomi_time' => 20, 'trim_time' => 40, 'muntol_time' => 60],
+        'diamond'  => ['craft_time' => 5,  'ulgeomi_time' => 25, 'trim_time' => 60, 'muntol_time' => 90],
+        'triangle' => ['craft_time' => 6,  'ulgeomi_time' => 25, 'trim_time' => 60, 'muntol_time' => 90],
+        'hexagon'  => ['craft_time' => 8,  'ulgeomi_time' => 30, 'trim_time' => 80, 'muntol_time' => 120],
+    ];
+
+    $defaults = [
+        'hourly_rate'    => 30000,
+        'finish_rate'    => 25000,
+        'hardware_swing' => 15000,
+        'hardware_slide' => 25000,
+        'overhead_rate'  => 0.20,
+        'profit_rate'    => 0.30,
+        'craft_time'     => $engineDefaults[$engine]['craft_time']   ?? 3,
+        'ulgeomi_time'   => $engineDefaults[$engine]['ulgeomi_time'] ?? 20,
+        'trim_time'      => $engineDefaults[$engine]['trim_time']    ?? 40,
+        'muntol_time'    => $engineDefaults[$engine]['muntol_time']  ?? 60,
+    ];
+
+    try {
+        // 공통 행 (engine IS NULL) — labor
+        $stmt = db()->prepare(
+            "SELECT name, unit_price FROM cost_table
+             WHERE category='labor' AND engine IS NULL AND is_active=1"
+        );
+        $stmt->execute();
+        foreach ($stmt->fetchAll() as $r) {
+            $defaults[$r['name']] = (float)$r['unit_price'];
+        }
+
+        // overhead 행: DB에 % 단위(예: 20)로 저장 → 0.0~1.0 소수로 변환
+        $stmt = db()->prepare(
+            "SELECT name, unit_price FROM cost_table
+             WHERE category='overhead' AND engine IS NULL AND is_active=1"
+        );
+        $stmt->execute();
+        foreach ($stmt->fetchAll() as $r) {
+            $defaults[$r['name']] = (float)$r['unit_price'] / 100;
+        }
+
+        // 엔진별 행 (시간 단위 설정)
+        if ($engine !== '*') {
+            $stmt = db()->prepare(
+                "SELECT name, unit_price FROM cost_table
+                 WHERE category='labor' AND engine=? AND is_active=1"
+            );
+            $stmt->execute([$engine]);
+            foreach ($stmt->fetchAll() as $r) {
+                $defaults[$r['name']] = (float)$r['unit_price'];
+            }
+        }
+    } catch (Throwable $e) {}
+
+    return $defaults;
+}
+
 // cost_table의 wood 카테고리 활성 항목 반환. 없으면 기본 fallback.
 function get_wood_options(): array {
     try {
@@ -110,15 +173,29 @@ function get_wood_options(): array {
     return [['name'=>'소나무','unit_price'=>6000,'weight'=>1.35]];
 }
 
-// cost_table의 finish 카테고리 활성 항목 반환. 없으면 기본 2개 fallback.
-function get_finish_options(): array {
+// cost_table의 hardware 카테고리 활성 항목 반환. 없으면 기본 fallback.
+function get_hardware_options(): array {
     try {
-        $stmt = db()->prepare("SELECT name FROM cost_table WHERE category='finish' AND is_active=1 ORDER BY sort_order, id");
+        $stmt = db()->prepare("SELECT name, unit_price FROM cost_table WHERE category='hardware' AND is_active=1 ORDER BY sort_order, id");
         $stmt->execute();
-        $rows = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         if ($rows) return $rows;
     } catch (Throwable $e) {}
-    return ['창호지', '유리'];
+    return [
+        ['name'=>'여닫이 기본철물', 'unit_price'=>15000],
+        ['name'=>'미서기 기본철물', 'unit_price'=>25000],
+    ];
+}
+
+// cost_table의 finish 카테고리 활성 항목 반환. 없으면 기본 fallback.
+function get_finish_options(): array {
+    try {
+        $stmt = db()->prepare("SELECT name, unit_price, work_time_min, coat_count FROM cost_table WHERE category='finish' AND is_active=1 ORDER BY sort_order, id");
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if ($rows) return $rows;
+    } catch (Throwable $e) {}
+    return [['name'=>'들기름','unit_price'=>8000,'work_time_min'=>10,'coat_count'=>2]];
 }
 
 // 엔진별 패턴 카테고리 목록 반환 [{code, name}] — 관리자가 name만 수정해도 반영됨
