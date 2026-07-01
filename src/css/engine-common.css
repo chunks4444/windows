@@ -1694,10 +1694,6 @@ input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
     }
 }
 
-/* 햄버거 메뉴 열렸을 때 프롬프트 숨김 */
-.pm-navbar:has(.navbar-collapse.show) .pm-nav-prompt-wrap {
-    display: none;
-}
 
 /* ── AI 채팅 패널 ─────────────────────────────────────── */
 .ai-chat-panel {

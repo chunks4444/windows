@@ -103,9 +103,7 @@ $navStudioIcons = [
              alt="평목" class="pm-nav-logo">
         <span class="pm-nav-tagline"> </span>
     </a>
-    <button class="navbar-toggler border-0" type="button"
-            data-bs-toggle="collapse" data-bs-target="#pmNavMenu"
-            aria-controls="pmNavMenu" aria-expanded="false">
+    <button class="navbar-toggler border-0" id="pmNavToggler" type="button" aria-expanded="false" aria-label="메뉴 열기">
         <span class="navbar-toggler-icon"></span>
     </button>
     <?php if (!empty($_engine_nav)): ?>
@@ -215,6 +213,131 @@ $navStudioIcons = [
         </ul>
     </div>
 </nav>
+
+<!-- ── 오른쪽 슬라이드 드로어 네비게이션 ──────────────── -->
+<div class="pm-nav-drawer-backdrop" id="pmNavDrawerBackdrop"></div>
+<div class="pm-nav-drawer" id="pmNavDrawer" aria-hidden="true">
+    <div class="pm-dw-head">
+        <a href="/" class="navbar-brand d-flex align-items-center">
+            <img src="/src/assets/logo.png"
+                 srcset="/src/assets/logo.png 1x, /src/assets/logo@2x.png 2x"
+                 alt="평목" class="pm-nav-logo">
+        </a>
+        <button class="pm-dw-close" id="pmNavDrawerClose" aria-label="닫기">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+    <div class="pm-dw-body">
+
+        <!-- 스튜디오 (기본 열림) -->
+        <div class="pm-dw-acc open">
+            <button class="pm-dw-acc-hd">스튜디오 <i class="bi bi-chevron-down"></i></button>
+            <div class="pm-dw-acc-bd">
+                <?php foreach ($navStudioItems as $navItem):
+                    $navKey = $navItem['engine_key']; ?>
+                <a class="pm-dw-link <?= ($navStudioActive[$navKey] ?? false) ? 'active' : '' ?>"
+                   href="/src/engine/<?= htmlspecialchars($navKey) ?>/<?= htmlspecialchars($navKey) ?>.php">
+                    <?= $navStudioIcons[$navKey] ?? '' ?>
+                    <span><?= htmlspecialchars($navItem['title']) ?></span>
+                </a>
+                <?php endforeach; ?>
+                <a class="pm-dw-link" href="/src/mypage/dashboard.php">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>
+                    <span>도면관리</span>
+                </a>
+            </div>
+        </div>
+
+        <a class="pm-dw-link pm-dw-link-top <?= $isLibrary ? 'active' : '' ?>" href="/src/collection/">컬렉션</a>
+        <a class="pm-dw-link pm-dw-link-top <?= $isWork ? 'active' : '' ?>" href="/src/portfolio/">포트폴리오</a>
+
+        <!-- 가이드 -->
+        <div class="pm-dw-acc">
+            <button class="pm-dw-acc-hd">가이드 <i class="bi bi-chevron-down"></i></button>
+            <div class="pm-dw-acc-bd">
+                <a class="pm-dw-link" href="/src/guide/"><i class="bi bi-book"></i><span>가이드 홈</span></a>
+                <a class="pm-dw-link" href="/src/guide/intro.php"><i class="bi bi-info-circle"></i><span>스튜디오 소개</span></a>
+                <a class="pm-dw-link" href="/src/guide/studio-classic.php"><i class="bi bi-pencil-square"></i><span>스튜디오 사용법</span></a>
+                <a class="pm-dw-link" href="/src/guide/drawing.php"><i class="bi bi-folder2-open"></i><span>도면 관리</span></a>
+                <a class="pm-dw-link" href="/src/guide/render.php"><i class="bi bi-stars"></i><span>AI 렌더링</span></a>
+                <a class="pm-dw-link" href="/src/guide/faq.php"><i class="bi bi-question-circle"></i><span>FAQ</span></a>
+            </div>
+        </div>
+
+        <!-- 회사소개 -->
+        <div class="pm-dw-acc">
+            <button class="pm-dw-acc-hd">회사소개 <i class="bi bi-chevron-down"></i></button>
+            <div class="pm-dw-acc-bd">
+                <a class="pm-dw-link" href="/src/company/"><i class="bi bi-book"></i><span>평목 소개</span></a>
+                <a class="pm-dw-link" href="/src/company/#contact"><i class="bi bi-envelope"></i><span>문의·제작상담</span></a>
+                <a class="pm-dw-link <?= $isBlog ? 'active' : '' ?>" href="/src/blog/"><i class="bi bi-journal-text"></i><span>블로그</span></a>
+            </div>
+        </div>
+
+        <div class="pm-dw-divider"></div>
+
+        <!-- 인증 -->
+        <a class="pm-dw-link pm-dw-link-top" id="drawerLoginBtn" href="#"
+           data-bs-toggle="modal" data-bs-target="#authModal">
+            <i class="bi bi-person"></i><span>로그인</span>
+        </a>
+        <div id="drawerUserMenu" style="display:none;">
+            <div class="pm-dw-user-row">
+                <i class="bi bi-person-circle"></i>
+                <span id="drawerUserEmail" class="pm-dw-user-email"></span>
+            </div>
+            <a class="pm-dw-link" href="/src/mypage/profile.php"><i class="bi bi-person"></i><span>프로필</span></a>
+            <a class="pm-dw-link" href="/src/mypage/dashboard.php"><i class="bi bi-grid"></i><span>도면관리</span></a>
+            <a class="pm-dw-link" href="/src/mypage/dashboard.php#boards"><i class="bi bi-collection"></i><span>내 보드</span></a>
+            <a class="pm-dw-link" href="#" onclick="authLogout();return false;"><i class="bi bi-box-arrow-right"></i><span>로그아웃</span></a>
+            <a class="pm-dw-link" href="/src/admin/" id="drawerAdminLink" style="display:none;"><i class="bi bi-speedometer2"></i><span>어드민</span></a>
+        </div>
+
+    </div>
+</div>
+<script>
+(function () {
+    var toggler  = document.getElementById('pmNavToggler');
+    var drawer   = document.getElementById('pmNavDrawer');
+    var backdrop = document.getElementById('pmNavDrawerBackdrop');
+    var closeBtn = document.getElementById('pmNavDrawerClose');
+
+    function openDrawer() {
+        drawer.classList.add('open');
+        backdrop.classList.add('open');
+        drawer.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeDrawer() {
+        drawer.classList.remove('open');
+        backdrop.classList.remove('open');
+        drawer.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+    }
+
+    if (toggler)  toggler.addEventListener('click', openDrawer);
+    if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+    if (backdrop) backdrop.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeDrawer(); });
+
+    // 아코디언 토글
+    drawer.querySelectorAll('.pm-dw-acc-hd').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            this.closest('.pm-dw-acc').classList.toggle('open');
+        });
+    });
+
+    // 링크 클릭 시 닫기 (모달 트리거·인페이지 앵커 제외)
+    drawer.querySelectorAll('a.pm-dw-link, a.pm-dw-link-top').forEach(function (a) {
+        a.addEventListener('click', function () {
+            if (this.getAttribute('data-bs-toggle') === 'modal') { closeDrawer(); return; }
+            if ((this.getAttribute('href') || '').startsWith('#')) return;
+            closeDrawer();
+        });
+    });
+})();
+</script>
+
 <?php if (!defined('BOOTSTRAP_JS_LOADED')): define('BOOTSTRAP_JS_LOADED', true); ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
 <script src="/src/js/visitor-log.js" defer></script>

@@ -310,6 +310,23 @@ function authUpdateNav() {
         if (boardSection) boardSection.style.display = 'none';
         if (boardList)    boardList.innerHTML = '';
     }
+
+    // 드로어 인증 동기화
+    const drawerLoginBtn = document.getElementById('drawerLoginBtn');
+    const drawerUserMenu = document.getElementById('drawerUserMenu');
+    const drawerUserEmail = document.getElementById('drawerUserEmail');
+    if (drawerLoginBtn && drawerUserMenu) {
+        if (user) {
+            drawerLoginBtn.style.display = 'none';
+            drawerUserMenu.style.display = '';
+            if (drawerUserEmail) drawerUserEmail.textContent = user.email;
+            const drawerAdminLink = document.getElementById('drawerAdminLink');
+            if (drawerAdminLink) drawerAdminLink.style.display = user.role === 's' ? '' : 'none';
+        } else {
+            drawerLoginBtn.style.display = '';
+            drawerUserMenu.style.display = 'none';
+        }
+    }
 }
 
 async function loadNavBoards() {
