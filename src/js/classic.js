@@ -2279,7 +2279,8 @@ async function draw() {
         document.getElementById('chkPungpan').checked = p.pungpanOn;
         setSlider('txtPungpan', 'numPungpan', p.pungpan);
         document.getElementById('txtWood').value    = p.wood || '소나무';
-        document.getElementById('txtFinish').value  = p.finish ?? '';
+        const _fEl = document.getElementById('txtFinish');
+        if (_fEl) { _fEl.value = p.finish ?? ''; if (_fEl.selectedIndex < 0) _fEl.selectedIndex = 0; }
         const hwEl = document.getElementById('txtHardware'); if (hwEl) hwEl.value = p.hardware ?? '';
         document.getElementById('pungpanCtrl').style.display = p.pungpanOn ? 'block' : 'none';
         placementMode        = p.placementMode        || false;
@@ -2740,10 +2741,16 @@ async function draw() {
         const exportCtx = exportCanvas.getContext('2d');
         exportCanvas.width  = logW * 2;
         exportCanvas.height = logH * 2;
-        exportCtx.fillStyle = bgColor;
-        exportCtx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
-
+        if (bgColor) {
+            exportCtx.fillStyle = bgColor;
+            exportCtx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+        }
         exportCtx.drawImage(_exportCanvas || canvas, 0, 0, logW * 2, logH * 2);
+        // Konva 슬랫 오버레이 레이어 합성
+        const _kvEl = document.getElementById('konvaStageContainer');
+        if (_kvEl) _kvEl.querySelectorAll('canvas').forEach(kc => {
+            try { exportCtx.drawImage(kc, 0, 0, logW * 2, logH * 2); } catch(_) {}
+        });
         return exportCanvas;
     }
 
@@ -2751,7 +2758,7 @@ async function draw() {
     btnSavePNG.addEventListener('click', function() {
         updateModified();
 
-        const exportCanvas = _exportCapture('#E5E7EA');
+        const exportCanvas = _exportCapture(appBackgroundImage ? '#E5E7EA' : null);
         const doorTypeText = txtDoorType.options[txtDoorType.selectedIndex].text;
         const filename = getExportFilename('png');
         const link = document.createElement('a');
