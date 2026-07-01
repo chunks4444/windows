@@ -14,7 +14,6 @@ html, body {
 
 /* ── 전체 래퍼 ────────────────────────────────────────── */
 .wd-page {
-    height: calc(100vh - 68px);
     display: flex;
     flex-direction: column;
     overflow: hidden;

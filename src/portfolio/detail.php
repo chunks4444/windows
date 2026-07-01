@@ -53,7 +53,7 @@ $desc  = strip_tags($work['description'] ?? '');
 <?php css_tag('/src/css/work-detail.css'); ?>
 </head>
 <body>
-<?php require_once __DIR__ . '/../components/nav.php'; ?>
+<?php $_hide_topbar_notice = true; require_once __DIR__ . '/../components/nav.php'; ?>
 
 <div class="wd-page">
 
@@ -136,6 +136,15 @@ $desc  = strip_tags($work['description'] ?? '');
 
 <script>
 (function () {
+    // 네비바 실제 높이로 .wd-page 높이 설정
+    function setPageHeight() {
+        const nav = document.querySelector('.pm-navbar') || document.querySelector('nav');
+        const offset = nav ? nav.getBoundingClientRect().bottom : 64;
+        document.querySelector('.wd-page').style.height = (window.innerHeight - offset) + 'px';
+    }
+    setPageHeight();
+    window.addEventListener('resize', setPageHeight);
+
     const mainImg = document.getElementById('wdMainImg');
     const prevBtn = document.getElementById('wdPrev');
     const nextBtn = document.getElementById('wdNext');
