@@ -81,8 +81,6 @@ const LABOR_ENGINE_FIELDS = [
     { name: 'muntol_time',  label: '문틀 제작 시간',    unit: '분' },
 ];
 
-// 직종명으로 사용하지 않을 예약된 이름
-const LABOR_RESERVED = new Set(LABOR_COMMON_FIELDS.map(f => f.name));
 
 function renderLabor() {
     const laborItems = items.filter(it => it.category === 'labor' && !it.engine);
@@ -116,36 +114,6 @@ function renderLabor() {
     }).join('');
 }
 
-function laborRoleRow(it) {
-    return `<tr data-id="${it.id ?? ''}">
-        <td><input class="form-control form-control-sm" data-f="name" value="${esc(it.name ?? '')}"></td>
-        <td><input type="number" class="form-control form-control-sm num-input" data-f="price" min="0" step="1" value="${it.unit_price ?? ''}"></td>
-        <td style="text-align:center;">
-            <button class="adm-withdraw-btn" style="background:#c00;color:#fff;padding:2px 8px;"
-                onclick="delLaborRole(this,'${esc(it.name ?? '')}',${it.id ?? 0})">삭제</button>
-        </td>
-    </tr>`;
-}
-
-function addLaborRole() {
-    const tbody = document.getElementById('wtLaborRoleBody');
-    const tr = document.createElement('tr');
-    tr.dataset.id = '';
-    tr.innerHTML = laborRoleRow({ name:'', unit_price:'' }).replace(/^<tr[^>]*>/, '').replace(/<\/tr>$/, '');
-    tbody.appendChild(tr);
-    tr.querySelector('input').focus();
-}
-
-async function delLaborRole(btn, name, id) {
-    if (id && !confirm(`"${name}" 을(를) 삭제할까요?`)) return;
-    if (id) {
-        await fetch(API, { method: 'POST', headers: _h(), body: JSON.stringify({ action: 'delete', id }) });
-        await load();
-    } else {
-        btn.closest('tr').remove();
-    }
-}
-
 async function saveLabor() {
     const saveOne = body => fetch(API, { method: 'POST', headers: _h(), body: JSON.stringify(body) });
 
@@ -160,18 +128,6 @@ async function saveLabor() {
             unit: tr.dataset.unit, unit_name: '', weight: 1, thickness_mm: 0, width_mm: 0, notes: '',
         };
     });
-
-    // 직종 단가
-    const roleBodies = [...document.querySelectorAll('#wtLaborRoleBody tr')].map(tr => {
-        const name = tr.querySelector('[data-f="name"]').value.trim();
-        if (!name) return null;
-        return {
-            action: 'save', id: tr.dataset.id ? parseInt(tr.dataset.id) : 0,
-            category: 'labor', engine: '',
-            name, unit_price: parseFloat(tr.querySelector('[data-f="price"]').value) || 0,
-            unit: '원', unit_name: '', weight: 1, thickness_mm: 0, width_mm: 0, notes: '',
-        };
-    }).filter(Boolean);
 
     // 엔진별 작업 시간
     const laborEngineBodies = [...document.querySelectorAll('#wtLaborEngineBody tr')].map(tr => {
@@ -188,7 +144,7 @@ async function saveLabor() {
         };
     }).filter(Boolean);
 
-    const results = await Promise.all([...baseBodies, ...roleBodies, ...laborEngineBodies].map(saveOne));
+    const results = await Promise.all([...baseBodies, ...laborEngineBodies].map(saveOne));
     if (results.some(r => !r.ok)) { alert('저장 실패'); return; }
     await load();
     const btn = document.getElementById('btnLaborSave');
@@ -366,7 +322,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderLabor();
     });
     document.getElementById('btnLaborSave').addEventListener('click', saveLabor);
-    document.getElementById('btnLaborAdd').addEventListener('click', addLaborRole);
     document.getElementById('btnOverheadSave').addEventListener('click', saveOverhead);
 
     const user = JSON.parse(localStorage.getItem('pmok_auth_user') || 'null');
