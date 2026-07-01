@@ -185,6 +185,5 @@ $desc  = strip_tags($work['description'] ?? '');
     }, { passive: false });
 })();
 </script>
-<?php include __DIR__ . '/../components/footer.php'; ?>
 </body>
 </html>
