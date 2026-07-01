@@ -1682,9 +1682,16 @@ input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
     #svgPickerGrid { grid-template-columns: repeat(3, 1fr); }
 }
 
-/* 1200px 미만(아이패드 포함): 프롬프트 숨김 — 햄버거 메뉴 모드 */
-@media (max-width: 1199px) {
+/* 991px 이하(폰 등): 프롬프트 숨김 */
+@media (max-width: 991px) {
     .pm-nav-prompt-wrap { display: none; }
+}
+/* 992px~1199px(아이패드): 햄버거 모드라 중앙 여유 생김 — 폭만 조정 */
+@media (min-width: 992px) and (max-width: 1199px) {
+    .pm-nav-prompt-wrap {
+        width: 380px;
+        max-width: calc(100vw - 280px);
+    }
 }
 
 /* ── AI 채팅 패널 ─────────────────────────────────────── */
