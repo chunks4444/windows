@@ -512,9 +512,11 @@ async function draw() {
     document.getElementById('spStep').innerText       = s.step;
     document.getElementById('spPungpan').innerText    = s.pungpan;
     document.getElementById('spEye').innerText        = s.eye;
-    document.getElementById('spDiagEye').innerText    = s.diagEye;
     document.getElementById('spFrameHTop').innerText  = s.frameHTop;
     document.getElementById('spTotalDoorW').innerText = s.totalDoorW;
+    document.getElementById('spHalfLapW').innerText   = s.halfLapW;
+    document.getElementById('spGrooveW').innerText    = s.grooveW;
+    document.getElementById('spGrooveWH').innerText   = s.grooveWH;
 
     const overlapCard = document.getElementById('spOverlapCard');
     if (overlapCard) {

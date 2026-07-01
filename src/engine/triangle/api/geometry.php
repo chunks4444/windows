@@ -76,7 +76,7 @@ $cellH       = $rowH;
 $cellSize    = $stepX;
 $step        = $rotateOn ? $rowHR : $stepX;
 $stepH       = $rowH + $slatT;
-$diagEye     = number_format($rotateOn ? ($colStepR - $slatT) : ($stepX - $slatT), 1);
+$diagEye     = number_format($rotateOn ? ($colStepR - $slatT) : (($innerW + $slatT) / $cols - $slatT), 1);
 $tenonDepth  = $slatT;
 $actualPatternH = $frameHTop + $innerH + $frameHBottom;
 
@@ -126,6 +126,8 @@ $geo = [
     'rowHR'             => $rowHR,
 ];
 
+$halfLapW = $slatT * 2 / $SQRT3;
+
 $specs = [
     'outerW'    => (string)round($outerW),
     'outerH'    => (string)round($outerH),
@@ -135,13 +137,16 @@ $specs = [
     'innerH'    => (string)round($innerH),
     'cols'      => (string)$cols,
     'rows'      => (string)round($rows),
-    'step'      => number_format($step, 1),
+    'step'      => number_format(($innerW + $slatT) / $cols, 1),
     'pungpan'   => (string)round($effectivePungpanH),
-    'eye'       => number_format($cellW, 1),
+    'eye'       => $rows > 0 ? number_format(($innerH + $slatT) / $rows, 1) : '0',
     'diagEye'   => $diagEye,
     'frameHTop' => (string)round($frameHTop),
     'totalDoorW'=> (string)round($totalDoorWidth),
     'overlap'   => $doorType === 'slide' ? (string)round($overlap) : '0',
+    'halfLapW'  => number_format($halfLapW, 1),
+    'grooveW'   => number_format($slatT * sqrt(3), 1),
+    'grooveWH'  => number_format($slatT, 1),
 ];
 
 $pungpanVisible = $pungpanOn && $effectivePungpanH > 0;
