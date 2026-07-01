@@ -15,11 +15,10 @@ const ENGINE_LABEL = window.__pmokEngineLabels || {
 };
 
 const TABS = {
-    wood:     { label: '목재',    cats: ['wood', 'oil'],        cols: 'default'          },
-    finish:   { label: '마감',    cats: ['finish', 'delivery'], cols: 'finish'           },
-    grid:     { label: '부재 치수', cats: ['grid'],              cols: 'dim'              },
-    labor:    { label: '인건비',   cats: ['labor'],              cols: 'labor_inline'     },
-    overhead: { label: '간접비',   cats: ['overhead'],           cols: 'overhead_inline'  },
+    wood:     { label: '목재',   cats: ['wood', 'oil'],        cols: 'default'         },
+    finish:   { label: '마감',   cats: ['finish', 'delivery'], cols: 'finish'          },
+    labor:    { label: '인건비', cats: ['labor'],              cols: 'labor_inline'    },
+    overhead: { label: '간접비', cats: ['overhead'],           cols: 'overhead_inline' },
 };
 
 const LABOR_COMMON_FIELDS = [
@@ -32,15 +31,7 @@ const OVERHEAD_FIELDS = [
     { name: 'profit_rate',   label: '이익률',   hint: '목표 이익률',     unit: '%' },
 ];
 
-// 부재 치수 탭에서 관리하는 시간 항목 — 인건비 탭에서는 숨김
-const LABOR_TIME_NAMES = new Set(['craft_time', 'ulgeomi_time', 'trim_time', 'muntol_time']);
 
-const LABOR_NAME_LABEL = {
-    craft_time:   '교차점당 작업시간',
-    ulgeomi_time: '울거미 제작 시간',
-    trim_time:    '짝당 다듬기 시간',
-    muntol_time:  '문틀 제작 시간',
-};
 
 const COL_HEADS = {
     default: `<th style="width:32px;"></th><th>항목</th><th style="width:130px;text-align:right;">단가</th><th style="width:80px;">단위</th><th style="width:100px;">단위명</th><th style="width:90px;text-align:right;">가중치</th><th>메모</th><th style="width:72px;">상태</th><th style="width:160px;"></th>`,
@@ -83,48 +74,12 @@ async function load() {
 function fmt(n) { return Number(n).toLocaleString('ko-KR'); }
 function esc(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
-// ── 부재치수 탭 인라인 편집 ─────────────────────────────────────────────────
-const PART_DEFS = [
-    { code: '울거미',    label: '울거미' },
-    { code: '살',        label: '살' },
-    { code: '문틀',      label: '문틀' },
-    { code: '풍판',      label: '풍판' },
-    { code: '기술난이도', label: '기술난이도' },
-];
-
 const LABOR_ENGINE_FIELDS = [
     { name: 'craft_time',   label: '교차점당 작업시간', unit: '분' },
     { name: 'ulgeomi_time', label: '울거미 제작 시간',  unit: '분' },
     { name: 'trim_time',    label: '짝당 다듬기 시간',  unit: '분' },
     { name: 'muntol_time',  label: '문틀 제작 시간',    unit: '분' },
 ];
-
-function renderDim() {
-    const gridItems  = items.filter(it => it.category === 'grid' && it.engine === activeEngine);
-    const laborRows  = items.filter(it => it.category === 'labor' && it.engine === activeEngine);
-
-    document.getElementById('wtDimBody').innerHTML = PART_DEFS.map(p => {
-        const it = gridItems.find(r => r.name === p.code) || {};
-        return `<tr data-id="${it.id ?? ''}" data-code="${esc(p.code)}">
-            <td style="font-weight:600;white-space:nowrap;">${esc(p.label)}</td>
-            <td><input type="number" class="form-control form-control-sm num-input" data-f="thickness_mm" min="0" value="${it.thickness_mm ?? 0}"></td>
-            <td><input type="number" class="form-control form-control-sm num-input" data-f="width_mm"     min="0" value="${it.width_mm ?? 0}"></td>
-            <td><input type="number" class="form-control form-control-sm num-input" data-f="weight"       min="0" step="0.01" value="${parseFloat(it.weight ?? 1).toFixed(2)}"></td>
-            <td><input class="form-control form-control-sm" data-f="notes" value="${esc(it.notes ?? '')}"></td>
-        </tr>`;
-    }).join('');
-
-    document.getElementById('wtLaborEngineBody').innerHTML = LABOR_ENGINE_FIELDS.map(f => {
-        const it = laborRows.find(r => r.name === f.name);
-        return `<tr data-labor-id="${it?.id ?? ''}" data-labor-name="${f.name}">
-            <td>${f.label}</td>
-            <td><input type="number" min="0" step="1"
-                       class="form-control form-control-sm num-input"
-                       value="${it?.unit_price ?? ''}"></td>
-            <td></td>
-        </tr>`;
-    }).join('');
-}
 
 // 직종명으로 사용하지 않을 예약된 이름
 const LABOR_RESERVED = new Set(LABOR_COMMON_FIELDS.map(f => f.name));
@@ -146,9 +101,19 @@ function renderLabor() {
         </tr>`;
     }).join('');
 
-    // 직종 단가 (동적)
-    const roleItems = laborItems.filter(it => !LABOR_RESERVED.has(it.name));
-    document.getElementById('wtLaborRoleBody').innerHTML = roleItems.map(it => laborRoleRow(it)).join('');
+    // 엔진별 작업 시간
+    const laborEngineRows = items.filter(it => it.category === 'labor' && it.engine === activeEngine);
+    const engBody = document.getElementById('wtLaborEngineBody');
+    if (engBody) engBody.innerHTML = LABOR_ENGINE_FIELDS.map(f => {
+        const it = laborEngineRows.find(r => r.name === f.name);
+        return `<tr data-labor-id="${it?.id ?? ''}" data-labor-name="${f.name}">
+            <td>${f.label}</td>
+            <td><input type="number" min="0" step="1"
+                       class="form-control form-control-sm num-input"
+                       value="${it?.unit_price ?? ''}"></td>
+            <td></td>
+        </tr>`;
+    }).join('');
 }
 
 function laborRoleRow(it) {
@@ -208,34 +173,8 @@ async function saveLabor() {
         };
     }).filter(Boolean);
 
-    const results = await Promise.all([...baseBodies, ...roleBodies].map(saveOne));
-    if (results.some(r => !r.ok)) { alert('저장 실패'); return; }
-    await load();
-    const btn = document.getElementById('btnLaborSave');
-    const orig = btn.textContent;
-    btn.textContent = '저장 완료 ✓';
-    setTimeout(() => { btn.textContent = orig; }, 1500);
-}
-
-async function saveDim() {
-    const saveOne = body => fetch(API, { method: 'POST', headers: _h(), body: JSON.stringify(body) });
-
-    // 1. 부재 치수 (병렬)
-    const gridBodies = [...document.querySelectorAll('#wtDimBody tr[data-code]')].map(tr => ({
-        action: 'save',
-        id:           tr.dataset.id ? parseInt(tr.dataset.id) : 0,
-        category:     'grid',
-        engine:       activeEngine,
-        name:         tr.dataset.code,
-        thickness_mm: parseInt(tr.querySelector('[data-f="thickness_mm"]').value) || 0,
-        width_mm:     parseInt(tr.querySelector('[data-f="width_mm"]').value) || 0,
-        weight:       parseFloat(tr.querySelector('[data-f="weight"]').value) || 1,
-        notes:        tr.querySelector('[data-f="notes"]').value.trim(),
-        unit_price: 0, unit: '', unit_name: '',
-    }));
-
-    // 2. 작업시간 (병렬)
-    const laborBodies = [...document.querySelectorAll('#wtLaborEngineBody tr')].map(tr => {
+    // 엔진별 작업 시간
+    const laborEngineBodies = [...document.querySelectorAll('#wtLaborEngineBody tr')].map(tr => {
         const val = parseFloat(tr.querySelector('input').value);
         if (isNaN(val)) return null;
         const name  = tr.dataset.laborName;
@@ -249,12 +188,10 @@ async function saveDim() {
         };
     }).filter(Boolean);
 
-    const results = await Promise.all([...gridBodies, ...laborBodies].map(saveOne));
+    const results = await Promise.all([...baseBodies, ...roleBodies, ...laborEngineBodies].map(saveOne));
     if (results.some(r => !r.ok)) { alert('저장 실패'); return; }
-
     await load();
-
-    const btn = document.getElementById('btnDimSave');
+    const btn = document.getElementById('btnLaborSave');
     const orig = btn.textContent;
     btn.textContent = '저장 완료 ✓';
     setTimeout(() => { btn.textContent = orig; }, 1500);
@@ -303,18 +240,14 @@ async function saveOverhead() {
 // ── 일반 탭 테이블 + 모달 ────────────────────────────────────────────────────
 function render() {
     const tab     = TABS[activeTab];
-    const isDim   = tab.cols === 'dim';
-
     const isLaborInline    = tab.cols === 'labor_inline';
     const isOverheadInline = tab.cols === 'overhead_inline';
 
     document.querySelectorAll('#wtTabs .adm-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === activeTab));
-    document.getElementById('wtDimPanel').style.display      = isDim            ? '' : 'none';
     document.getElementById('wtLaborPanel').style.display    = isLaborInline    ? '' : 'none';
     document.getElementById('wtOverheadPanel').style.display = isOverheadInline ? '' : 'none';
-    document.getElementById('wtTableWrap').style.display     = (isDim || isLaborInline || isOverheadInline) ? 'none' : '';
+    document.getElementById('wtTableWrap').style.display     = (isLaborInline || isOverheadInline) ? 'none' : '';
 
-    if (isDim)            { renderDim();      return; }
     if (isLaborInline)    { renderLabor();    return; }
     if (isOverheadInline) { renderOverhead(); return; }
 
@@ -430,9 +363,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     document.getElementById('wtEngineSelect').addEventListener('change', e => {
         activeEngine = e.target.value;
-        renderDim();
+        renderLabor();
     });
-    document.getElementById('btnDimSave').addEventListener('click', saveDim);
     document.getElementById('btnLaborSave').addEventListener('click', saveLabor);
     document.getElementById('btnLaborAdd').addEventListener('click', addLaborRole);
     document.getElementById('btnOverheadSave').addEventListener('click', saveOverhead);

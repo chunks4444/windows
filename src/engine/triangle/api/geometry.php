@@ -244,7 +244,6 @@ $parts['diagList'] = array_map(function($item) use ($doorCount) {
 }, $merged);
 
 // 목재 재수 계산 (1재 = 33×33×3600mm³, 부재별 실제 단면 사용)
-$_d   = get_engine_part_dims('triangle');
 $_es  = get_engine_settings('triangle');
 $_JAE = 33 * 33 * 3600;
 $_wU  = (int)($_es['ulgeomiW']             ?? $_d['울거미']['width_mm'] ?? 33);
@@ -276,7 +275,6 @@ $parts['woodVolMm3']     = (int)$_vol;
 $parts['woodJae']        = round($_vol / $_JAE, 2);
 $parts['woodJae_door']   = round($_volDoor / $_JAE, 2);
 $parts['woodJae_muntol'] = round($_volMuntol / $_JAE, 2);
-$parts['techWeight']     = (float)($_d['기술난이도']['weight'] ?? 1.0);
 $parts['joints']         = $cols * $rows;
 
 echo json_encode(['geo' => $geo, 'specs' => $specs, 'parts' => $parts]);

@@ -48,70 +48,18 @@ try {
     <div class="adm-tab-bar" id="wtTabs" style="margin-bottom:16px;">
         <button class="adm-tab-btn active" data-tab="wood">목재</button>
         <button class="adm-tab-btn" data-tab="finish">마감</button>
-        <button class="adm-tab-btn" data-tab="grid">부재 치수</button>
         <button class="adm-tab-btn" data-tab="labor">인건비</button>
         <button class="adm-tab-btn" data-tab="overhead">간접비</button>
     </div>
 
-    <!-- 부재치수 탭 — 인라인 편집 -->
-    <div id="wtDimPanel" style="display:none;">
-        <!-- 엔진 선택 + 저장 -->
+    <!-- 인건비 탭 — 인라인 편집 -->
+    <div id="wtLaborPanel" style="display:none;">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
             <select id="wtEngineSelect" class="form-select form-select-sm" style="width:200px;">
                 <?php foreach ($studioCards as $c): ?>
                 <option value="<?= htmlspecialchars($c['engine_key']) ?>"><?= htmlspecialchars($c['title']) ?></option>
                 <?php endforeach; ?>
             </select>
-            <button class="adm-edit-btn" id="btnDimSave" style="height:32px;padding:0 16px;">저장</button>
-        </div>
-
-        <!-- 좌우 카드 -->
-        <div class="wt-dim-grid">
-            <!-- 왼쪽: 부재 치수 -->
-            <div class="wt-card">
-                <div class="wt-card-title">부재 치수</div>
-                <div class="adm-table-wrap">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="width:100px;">부재명</th>
-                                <th style="width:90px;text-align:right;">두께(mm)</th>
-                                <th style="width:90px;text-align:right;">폭(mm)</th>
-                                <th style="width:140px;text-align:right;">로스율</th>
-                                <th>메모</th>
-                            </tr>
-                        </thead>
-                        <tbody id="wtDimBody"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- 아래: 작업 시간 -->
-            <div class="wt-card">
-                <div class="wt-card-title">엔진별 작업 시간</div>
-                <p style="font-size:12px;color:var(--text-3);margin:0 0 12px;line-height:1.6;">
-                    제작비 = (교차점 × 교차점당 시간<br>
-                    + 짝 × (울거미 + 다듬기) + 문틀) ÷ 60 × 시간당 공임
-                </p>
-                <div class="adm-table-wrap">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>항목</th>
-                                <th style="width:100px;text-align:right;">시간 (분)</th>
-                                <th style="width:40px;"></th>
-                            </tr>
-                        </thead>
-                        <tbody id="wtLaborEngineBody"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 인건비 탭 — 인라인 편집 -->
-    <div id="wtLaborPanel" style="display:none;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
             <button class="adm-edit-btn" id="btnLaborSave" style="height:32px;padding:0 16px;">저장</button>
         </div>
         <div class="wt-dim-grid">
@@ -131,22 +79,23 @@ try {
                     </table>
                 </div>
             </div>
-            <!-- 직종 단가 (동적) -->
+            <!-- 엔진별 작업 시간 -->
             <div class="wt-card">
-                <div class="wt-card-title" style="display:flex;justify-content:space-between;align-items:center;">
-                    <span>직종 단가</span>
-                    <button class="adm-withdraw-btn" id="btnLaborAdd" style="height:26px;padding:0 10px;font-size:12px;">+ 추가</button>
-                </div>
+                <div class="wt-card-title">엔진별 작업 시간</div>
+                <p style="font-size:12px;color:var(--text-3);margin:0 0 12px;line-height:1.6;">
+                    제작비 = (교차점 × 교차점당 시간<br>
+                    + 짝 × (울거미 + 다듬기) + 문틀) ÷ 60 × 시간당 공임
+                </p>
                 <div class="adm-table-wrap">
                     <table>
                         <thead>
                             <tr>
-                                <th>직종명</th>
-                                <th style="width:160px;text-align:right;">시간당 단가 (원)</th>
+                                <th>항목</th>
+                                <th style="width:100px;text-align:right;">시간 (분)</th>
                                 <th style="width:40px;"></th>
                             </tr>
                         </thead>
-                        <tbody id="wtLaborRoleBody"></tbody>
+                        <tbody id="wtLaborEngineBody"></tbody>
                     </table>
                 </div>
             </div>

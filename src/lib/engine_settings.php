@@ -68,37 +68,6 @@ function get_engine_settings(string $engine): array {
 
 const ENGINE_SETTING_NAMES = ['classic', 'square', 'cross', 'diamond', 'triangle', 'hexagon'];
 
-/**
- * 엔진별 부재 치수 및 기술난이도 조회 (category='grid', engine 일치 행).
- * 반환 예: [
- *   '울거미'    => ['thickness_mm'=>0, 'width_mm'=>33],
- *   '살'        => ['thickness_mm'=>0, 'width_mm'=>33],
- *   '문틀'      => ['thickness_mm'=>30, 'width_mm'=>33],
- *   '기술난이도' => ['weight'=>1.2],
- * ]
- */
-function get_engine_part_dims(string $engine): array {
-    try {
-        $stmt = db()->prepare(
-            "SELECT name, thickness_mm, width_mm, weight FROM cost_table
-             WHERE category='grid' AND engine=? AND is_active=1"
-        );
-        $stmt->execute([$engine]);
-        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        $result = [];
-        foreach ($rows as $r) {
-            $result[$r['name']] = [
-                'thickness_mm' => (int)$r['thickness_mm'],
-                'width_mm'     => (int)$r['width_mm'],
-                'weight'       => (float)$r['weight'],
-            ];
-        }
-        return $result;
-    } catch (Throwable $e) {
-        return [];
-    }
-}
-
 // 원가 계산용 상수 — cost_table (labor/overhead 카테고리) 기반
 // $engine = 엔진명 또는 '*' (공통만)
 function get_cost_config(string $engine = '*'): array {

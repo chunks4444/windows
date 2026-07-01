@@ -127,7 +127,6 @@ $hSlatCnt = max(0, $rows - 1);
 $vSlatCnt = max(0, $cols - 1);
 
 // 목재 재수 계산 (1재 = 33×33×3600mm³, 부재별 실제 단면 사용)
-$_d   = get_engine_part_dims('square');
 $_es  = get_engine_settings('square');
 $_JAE = 33 * 33 * 3600;
 $_wU  = (int)($_es['ulgeomiW']             ?? $_d['울거미']['width_mm'] ?? 33);
@@ -171,7 +170,6 @@ $parts = [
     'woodJae'        => round($_woodJae, 2),
     'woodJae_door'   => round($_volDoor / $_JAE, 2),
     'woodJae_muntol' => round($_volMuntol / $_JAE, 2),
-    'techWeight'     => (float)($_d['기술난이도']['weight'] ?? 1.0),
     'joints'         => $cols * $rows,
 ];
 
