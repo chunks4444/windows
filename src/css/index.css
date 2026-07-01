@@ -919,14 +919,14 @@ body { font-weight: 900; }
 
 /* FAQ SECTION */
 .faq-section {
-    padding: 32px 0 80px;
+    padding: 24px 0 48px;
     border-top: 1px solid var(--border);
 }
 
 .faq-accordion {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 0;
 }
 
 .faq-item {
@@ -941,7 +941,7 @@ body { font-weight: 900; }
     font-weight: 700;
     color: #111;
     background: #fff;
-    padding: 20px 24px;
+    padding: 14px 20px;
     letter-spacing: -0.01em;
     box-shadow: none !important;
 }
@@ -963,10 +963,16 @@ body { font-weight: 900; }
 .faq-body {
     font-size: var(--fs-14);
     color: #444;
-    line-height: 1.8;
-    padding: 0 24px 20px;
+    line-height: 1.6;
+    padding: 8px 20px 14px;
     font-weight: 400;
     border-top: 1px solid var(--border);
+}
+.faq-body p {
+    margin-bottom: 0.4rem;
+}
+.faq-body p:last-child {
+    margin-bottom: 0;
 }
 
 /* VALUES GRID */
