@@ -2335,6 +2335,9 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
         renderSvgInsertPanel();
         kv.applyKonvaParams(p);
         updateDoorCountOptions();
+        if (p.muntolColor) { selectedMuntolColor = p.muntolColor; const _mi = document.getElementById('muntolColorInput'); if (_mi) { _mi.value = p.muntolColor; const _mc = document.getElementById('muntolColorCode'); if (_mc) _mc.textContent = p.muntolColor; } }
+        showMuntol = p.showMuntol !== false;
+        const _chkM = document.getElementById('chkMuntol'); if (_chkM) _chkM.checked = showMuntol;
         draw();
     }
 
