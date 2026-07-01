@@ -26,15 +26,16 @@ html, body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     background: var(--page-bg, #F2F3F4);
-    padding: 2rem 1rem;
-    gap: 1rem;
+    padding: 1.2rem 1rem .8rem;
+    gap: .8rem;
     overflow: hidden;
 }
 
 /* 이미지 + 화살표 래퍼 */
 .wd-viewer-inner {
+    flex: 1;
+    min-height: 0;
     position: relative;
     width: 100%;
     max-width: 1200px;
@@ -47,7 +48,7 @@ html, body {
 /* 메인 이미지 */
 .wd-main-img {
     display: block;
-    max-height: calc(100vh - 68px - 200px);
+    max-height: 100%;
     max-width: 100%;
     width: auto;
     height: auto;
@@ -86,6 +87,7 @@ html, body {
 
 /* 슬라이드 카운터 */
 .wd-counter {
+    flex-shrink: 0;
     font-size: var(--fs-13);
     color: var(--text-3, #97A8A6);
     letter-spacing: .06em;
@@ -95,10 +97,10 @@ html, body {
 
 /* ── 썸네일 스트립 (뷰어 하단, 사진 바로 아래) ──────── */
 .wd-strip {
+    flex-shrink: 0;
     width: 100%;
     max-width: 1200px;
     overflow-x: auto;
-    padding-bottom: 1.2rem;
     display: flex;
     justify-content: center;
     scrollbar-width: thin;
@@ -201,9 +203,8 @@ html, body {
 
 /* ── 반응형 ──────────────────────────────────────────── */
 @media (max-width: 768px) {
-    .wd-page { height: calc(100vh - 68px); }
+    .wd-viewer { padding: .8rem .5rem .5rem; gap: .5rem; }
     .wd-viewer-inner { padding: 0 3rem; }
-    .wd-thumbs { padding: 0 3rem; }
     .wd-info-bar { flex-direction: column; align-items: flex-start; gap: .5rem; }
     .wd-thumb { width: 72px; height: 52px; }
 }
