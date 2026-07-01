@@ -231,7 +231,7 @@ $navStudioIcons = [
 
         <!-- 스튜디오 (기본 열림) -->
         <div class="pm-dw-acc open">
-            <button class="pm-dw-acc-hd">스튜디오 <i class="bi bi-chevron-down"></i></button>
+            <button class="pm-dw-acc-hd"><i class="bi bi-pencil-square pm-dw-acc-icon"></i>스튜디오 <i class="bi bi-chevron-down"></i></button>
             <div class="pm-dw-acc-bd">
                 <?php foreach ($navStudioItems as $navItem):
                     $navKey = $navItem['engine_key']; ?>
@@ -248,12 +248,12 @@ $navStudioIcons = [
             </div>
         </div>
 
-        <a class="pm-dw-link pm-dw-link-top <?= $isLibrary ? 'active' : '' ?>" href="/src/collection/">컬렉션</a>
-        <a class="pm-dw-link pm-dw-link-top <?= $isWork ? 'active' : '' ?>" href="/src/portfolio/">포트폴리오</a>
+        <a class="pm-dw-link-top <?= $isLibrary ? 'active' : '' ?>" href="/src/collection/"><i class="bi bi-collection pm-dw-acc-icon"></i>컬렉션</a>
+        <a class="pm-dw-link-top <?= $isWork ? 'active' : '' ?>" href="/src/portfolio/"><i class="bi bi-images pm-dw-acc-icon"></i>포트폴리오</a>
 
         <!-- 가이드 -->
         <div class="pm-dw-acc">
-            <button class="pm-dw-acc-hd">가이드 <i class="bi bi-chevron-down"></i></button>
+            <button class="pm-dw-acc-hd"><i class="bi bi-book pm-dw-acc-icon"></i>가이드 <i class="bi bi-chevron-down"></i></button>
             <div class="pm-dw-acc-bd">
                 <a class="pm-dw-link" href="/src/guide/"><i class="bi bi-book"></i><span>가이드 홈</span></a>
                 <a class="pm-dw-link" href="/src/guide/intro.php"><i class="bi bi-info-circle"></i><span>스튜디오 소개</span></a>
@@ -266,7 +266,7 @@ $navStudioIcons = [
 
         <!-- 회사소개 -->
         <div class="pm-dw-acc">
-            <button class="pm-dw-acc-hd">회사소개 <i class="bi bi-chevron-down"></i></button>
+            <button class="pm-dw-acc-hd"><i class="bi bi-building pm-dw-acc-icon"></i>회사소개 <i class="bi bi-chevron-down"></i></button>
             <div class="pm-dw-acc-bd">
                 <a class="pm-dw-link" href="/src/company/"><i class="bi bi-book"></i><span>평목 소개</span></a>
                 <a class="pm-dw-link" href="/src/company/#contact"><i class="bi bi-envelope"></i><span>문의·제작상담</span></a>
@@ -277,9 +277,9 @@ $navStudioIcons = [
         <div class="pm-dw-divider"></div>
 
         <!-- 인증 -->
-        <a class="pm-dw-link pm-dw-link-top" id="drawerLoginBtn" href="#"
+        <a class="pm-dw-link-top" id="drawerLoginBtn" href="#"
            data-bs-toggle="modal" data-bs-target="#authModal">
-            <i class="bi bi-person"></i><span>로그인</span>
+            <i class="bi bi-person pm-dw-acc-icon"></i><span>로그인</span>
         </a>
         <div id="drawerUserMenu" style="display:none;">
             <div class="pm-dw-user-row">
