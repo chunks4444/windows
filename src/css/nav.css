@@ -100,11 +100,3 @@ a.pm-topbar-notice-text:hover { opacity: 0.85; }
 @media (max-width: 768px) {
     .pm-navbar { background: rgba(255,255,255,0.97); }
 }
-
-/* 아이패드 가로: 메뉴 간격 축소 */
-@media (min-width: 992px) and (max-width: 1199px) {
-    .pm-navbar.px-4 { padding-left: 16px !important; padding-right: 16px !important; }
-    .pm-navbar .nav-link { padding-left: 8px !important; padding-right: 8px !important; font-size: 12px; }
-    .pm-navbar .navbar-brand { margin-right: 8px !important; }
-    .pm-nav-tagline { display: none; }
-}

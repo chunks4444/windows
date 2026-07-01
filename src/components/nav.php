@@ -96,7 +96,7 @@ $navStudioIcons = [
         </svg>',
 ];
 ?>
-<nav class="pm-navbar navbar navbar-expand-lg fixed-top px-4 py-3">
+<nav class="pm-navbar navbar <?= !empty($_engine_nav) ? 'navbar-expand-xl' : 'navbar-expand-lg' ?> fixed-top px-4 py-3">
     <a href="/" class="navbar-brand d-flex align-items-center">
         <img src="/src/assets/logo.png"
              srcset="/src/assets/logo.png 1x, /src/assets/logo@2x.png 2x"
