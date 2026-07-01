@@ -332,7 +332,8 @@ function authUpdateNav() {
 async function loadNavBoards() {
     const boardSection = document.getElementById('navBoardSection');
     const boardList    = document.getElementById('navBoardList');
-    if (!boardSection || !boardList) return;
+    const drawerBoardSection = document.getElementById('drawerBoardSection');
+    const drawerBoardList    = document.getElementById('drawerBoardList');
     const token = authGetToken();
     if (!token) return;
     try {
@@ -341,19 +342,39 @@ async function loadNavBoards() {
         });
         const data = await res.json();
         const boards = data.boards || [];
-        if (!boards.length) {
-            boardSection.style.display = 'none';
-            boardList.innerHTML = '';
-            return;
+
+        // PC 유저 메뉴
+        if (boardSection && boardList) {
+            if (!boards.length) {
+                boardSection.style.display = 'none';
+                boardList.innerHTML = '';
+            } else {
+                boardSection.style.display = '';
+                boardList.innerHTML = boards.map(b =>
+                    `<li><a class="dropdown-item d-flex align-items-center gap-2" href="/src/mypage/dashboard.php?board=${b.id}">
+                        <i class="bi bi-collection" style="font-size:14px;"></i>
+                        <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${_escHtml(b.name)}</span>
+                        <span style="font-size:10px;color:#aaa;flex-shrink:0;">${b.item_count}</span>
+                    </a></li>`
+                ).join('');
+            }
         }
-        boardSection.style.display = '';
-        boardList.innerHTML = boards.map(b =>
-            `<li><a class="dropdown-item d-flex align-items-center gap-2" href="/src/mypage/dashboard.php?board=${b.id}">
-                <i class="bi bi-collection" style="font-size:14px;"></i>
-                <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${_escHtml(b.name)}</span>
-                <span style="font-size:10px;color:#aaa;flex-shrink:0;">${b.item_count}</span>
-            </a></li>`
-        ).join('');
+
+        // 드로어
+        if (drawerBoardSection && drawerBoardList) {
+            if (!boards.length) {
+                drawerBoardSection.style.display = 'none';
+                drawerBoardList.innerHTML = '';
+            } else {
+                drawerBoardSection.style.display = '';
+                drawerBoardList.innerHTML = boards.map(b =>
+                    `<a class="pm-dw-link" href="/src/mypage/dashboard.php?board=${b.id}">
+                        <i class="bi bi-collection"></i>
+                        <span>${_escHtml(b.name)}</span>
+                    </a>`
+                ).join('');
+            }
+        }
     } catch {}
 }
 

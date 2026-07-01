@@ -147,17 +147,8 @@ $navStudioIcons = [
                     </a></li>
                 </ul>
             </li>
-            <li class="nav-item dropdown">
-                <a href="/src/collection/" class="nav-link dropdown-toggle <?= $isLibrary ? 'active' : '' ?>"
-                   data-bs-toggle="dropdown" aria-expanded="false">컬렉션</a>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item d-flex align-items-center gap-2" href="/src/collection/"><i class="bi bi-collection"></i>전체 컬렉션</a></li>
-                    <li id="navBoardSection" style="display:none;">
-                        <hr class="dropdown-divider">
-                        <span class="dropdown-header" style="font-size:10px;letter-spacing:.06em;color:#aaa;padding:4px 16px 2px;">내 보드</span>
-                    </li>
-                    <div id="navBoardList"></div>
-                </ul>
+            <li class="nav-item">
+                <a href="/src/collection/" class="nav-link <?= $isLibrary ? 'active' : '' ?>">컬렉션</a>
             </li>
             <li class="nav-item"><a href="/src/portfolio/" class="nav-link <?= $isWork ? 'active' : '' ?>">포트폴리오</a></li>
             <li class="nav-item dropdown">
@@ -195,15 +186,20 @@ $navStudioIcons = [
             <!-- 로그인 후 -->
             <li class="nav-item dropdown" id="navUserMenu" style="display:none;">
                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-person-circle me-1"></i><span id="navUserEmail"></span>
+                    <i class="bi bi-person-circle"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
-                    <li><span class="dropdown-item-text" style="font-size:11px;color:#aaa;padding:8px 18px 4px;">마지막 접속<br><span id="navLastLogin" style="color:#888;font-weight:600;">—</span></span></li>
+                    <li><span class="dropdown-item-text" style="font-size:12px;font-weight:600;color:#111;padding:10px 18px 2px;display:flex;align-items:center;gap:6px;"><i class="bi bi-person-circle" style="font-size:16px;"></i><span id="navUserEmail"></span></span></li>
+                    <li><span class="dropdown-item-text" style="font-size:11px;color:#aaa;padding:2px 18px 6px;">마지막 접속 <span id="navLastLogin" style="color:#888;font-weight:600;">—</span></span></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="/src/mypage/profile.php"><i class="bi bi-person me-1"></i>프로필</a></li>
                     <li><a class="dropdown-item" href="/src/mypage/company.php"><i class="bi bi-building me-1"></i>회사 정보</a></li>
                     <li><a class="dropdown-item" href="/src/mypage/dashboard.php"><i class="bi bi-grid me-1"></i>도면관리</a></li>
-                    <li><a class="dropdown-item" href="/src/mypage/dashboard.php#boards"><i class="bi bi-collection me-1"></i>내 보드</a></li>
+                    <li id="navBoardSection" style="display:none;">
+                        <hr class="dropdown-divider">
+                        <span class="dropdown-header" style="font-size:10px;letter-spacing:.06em;color:#aaa;padding:4px 16px 2px;">내 보드</span>
+                    </li>
+                    <div id="navBoardList"></div>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="#" onclick="authLogout();return false;"><i class="bi bi-box-arrow-right me-1"></i>로그아웃</a></li>
                     <li id="navAdminLink" style="display:none;"><hr class="dropdown-divider"></li>
@@ -231,7 +227,7 @@ $navStudioIcons = [
 
         <!-- 스튜디오 (기본 열림) -->
         <div class="pm-dw-acc open">
-            <button class="pm-dw-acc-hd"><i class="bi bi-pencil-square pm-dw-acc-icon"></i>스튜디오 <i class="bi bi-chevron-down"></i></button>
+            <button class="pm-dw-acc-hd"><span><i class="bi bi-pencil-square pm-dw-acc-icon"></i>스튜디오</span><i class="bi bi-chevron-down"></i></button>
             <div class="pm-dw-acc-bd">
                 <?php foreach ($navStudioItems as $navItem):
                     $navKey = $navItem['engine_key']; ?>
@@ -253,7 +249,7 @@ $navStudioIcons = [
 
         <!-- 가이드 -->
         <div class="pm-dw-acc">
-            <button class="pm-dw-acc-hd"><i class="bi bi-book pm-dw-acc-icon"></i>가이드 <i class="bi bi-chevron-down"></i></button>
+            <button class="pm-dw-acc-hd"><span><i class="bi bi-book pm-dw-acc-icon"></i>가이드</span><i class="bi bi-chevron-down"></i></button>
             <div class="pm-dw-acc-bd">
                 <a class="pm-dw-link" href="/src/guide/"><i class="bi bi-book"></i><span>가이드 홈</span></a>
                 <a class="pm-dw-link" href="/src/guide/intro.php"><i class="bi bi-info-circle"></i><span>스튜디오 소개</span></a>
@@ -266,7 +262,7 @@ $navStudioIcons = [
 
         <!-- 회사소개 -->
         <div class="pm-dw-acc">
-            <button class="pm-dw-acc-hd"><i class="bi bi-building pm-dw-acc-icon"></i>회사소개 <i class="bi bi-chevron-down"></i></button>
+            <button class="pm-dw-acc-hd"><span><i class="bi bi-building pm-dw-acc-icon"></i>회사소개</span><i class="bi bi-chevron-down"></i></button>
             <div class="pm-dw-acc-bd">
                 <a class="pm-dw-link" href="/src/company/"><i class="bi bi-book"></i><span>평목 소개</span></a>
                 <a class="pm-dw-link" href="/src/company/#contact"><i class="bi bi-envelope"></i><span>문의·제작상담</span></a>
@@ -288,7 +284,10 @@ $navStudioIcons = [
             </div>
             <a class="pm-dw-link" href="/src/mypage/profile.php"><i class="bi bi-person"></i><span>프로필</span></a>
             <a class="pm-dw-link" href="/src/mypage/dashboard.php"><i class="bi bi-grid"></i><span>도면관리</span></a>
-            <a class="pm-dw-link" href="/src/mypage/dashboard.php#boards"><i class="bi bi-collection"></i><span>내 보드</span></a>
+            <div id="drawerBoardSection" style="display:none;">
+                <div class="pm-dw-board-label">내 보드</div>
+                <div id="drawerBoardList"></div>
+            </div>
             <a class="pm-dw-link" href="#" onclick="authLogout();return false;"><i class="bi bi-box-arrow-right"></i><span>로그아웃</span></a>
             <a class="pm-dw-link" href="/src/admin/" id="drawerAdminLink" style="display:none;"><i class="bi bi-speedometer2"></i><span>어드민</span></a>
         </div>
