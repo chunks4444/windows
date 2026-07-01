@@ -812,6 +812,10 @@
 (function () {
     document.addEventListener('DOMContentLoaded', () => {
         if (!window.matchMedia('(max-width: 1200px)').matches) return;
+        // 초기 접힘은 CSS transition 없이 즉시 처리해야 resizeCanvas가 정확한 폭을 읽음
+        const noAnim = document.createElement('style');
+        noAnim.textContent = '.controls,.controls-right{transition:none!important}';
+        document.head.appendChild(noAnim);
         if (sidebar && !sidebar.classList.contains('collapsed')) {
             sidebar.classList.add('collapsed');
             if (btnSidebarTab) btnSidebarTab.classList.add('collapsed');
@@ -820,7 +824,10 @@
             rightSidebar.classList.add('collapsed');
             if (btnRightSidebarTab) btnRightSidebarTab.classList.add('collapsed');
         }
-        resizeCanvasDebounced();
+        requestAnimationFrame(() => {
+            document.head.removeChild(noAnim);
+            resizeCanvasDebounced();
+        });
     });
 })();
 
