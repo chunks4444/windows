@@ -44,9 +44,30 @@ function engine_setting_defaults(string $engine): array {
     }
 }
 
+// 슬라이더 드래그 등으로 geometry.php가 프레임마다 재요청되므로,
+// 매 요청 DB 왕복(로컬 개발환경은 원격 DB라 특히 느림)을 줄이기 위해 짧은 TTL로 파일 캐시.
+// 어드민이 설정을 저장하면 engine_settings_cache_clear()로 즉시 무효화됨.
+const ENGINE_SETTINGS_CACHE_TTL = 20; // seconds
+
+function engine_settings_cache_file(string $engine): string {
+    return sys_get_temp_dir() . '/pmok_engine_settings_' . preg_replace('/[^a-z]/', '', $engine) . '.json';
+}
+
+function engine_settings_cache_clear(string $engine): void {
+    $f = engine_settings_cache_file($engine);
+    if (is_file($f)) @unlink($f);
+}
+
 // 엔진의 현재 설정값. DB에 없는 키는 PHP 기본값으로 자동 INSERT → 이후 어드민 UI에서 관리 가능.
 function get_engine_settings(string $engine): array {
-    $defaults = engine_setting_defaults($engine);
+    $defaults  = engine_setting_defaults($engine);
+    $cacheFile = engine_settings_cache_file($engine);
+
+    if (is_file($cacheFile) && (time() - filemtime($cacheFile)) < ENGINE_SETTINGS_CACHE_TTL) {
+        $cached = json_decode((string)file_get_contents($cacheFile), true);
+        if (is_array($cached)) return array_merge($defaults, $cached);
+    }
+
     try {
         $pdo  = db();
         $stmt = $pdo->prepare('SELECT setting_key, setting_value FROM engine_settings WHERE engine = ?');
@@ -60,6 +81,7 @@ function get_engine_settings(string $engine): array {
                 $ins->execute([$engine, $k, $v]);
             }
         }
+        file_put_contents($cacheFile, json_encode($rows), LOCK_EX);
     } catch (Throwable $e) {
         $rows = [];
     }

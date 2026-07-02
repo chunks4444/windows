@@ -2072,17 +2072,24 @@ async function draw() {
     document.getElementById('txtPatternBot').addEventListener('change', draw);
     document.getElementById('chkDimension').addEventListener('change', e => { showDimensions = e.target.checked; draw(); });
 
+    let _rafPending = false;
+    function drawThrottled() {
+        if (_rafPending) return;
+        _rafPending = true;
+        requestAnimationFrame(() => { _rafPending = false; draw(); });
+    }
+
     syncPairs.forEach(({ range, num, min, max }) => {
         range.addEventListener('input', () => {
             num.value = range.value;
-            draw();
+            drawThrottled();
         });
         num.addEventListener('input', () => {
             const v = parseInt(num.value);
             if (isNaN(v)) return;
             if (v >= min && v <= max) {
                 range.value = v;
-                draw();
+                drawThrottled();
             }
         });
         num.addEventListener('blur', () => {

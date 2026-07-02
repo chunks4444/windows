@@ -45,6 +45,7 @@ if ($method === 'POST') {
         http_response_code(500); echo json_encode(['error' => '저장에 실패했습니다.']); exit;
     }
 
+    engine_settings_cache_clear($engine);
     echo json_encode(['ok' => true, 'settings' => get_engine_settings($engine)]);
     exit;
 }
