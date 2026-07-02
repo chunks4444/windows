@@ -495,7 +495,6 @@ async function draw() {
     document.getElementById('spGrooveW').innerText    = s.grooveW;
     document.getElementById('spGrooveWH').innerText   = s.grooveWH;
     document.getElementById('spPungpan').innerText    = s.pungpan;
-    document.getElementById('spEye').innerText        = s.eye;
     document.getElementById('spFrameHTop').innerText  = s.frameHTop;
     document.getElementById('spTotalDoorW').innerText = s.totalDoorW;
 

@@ -248,10 +248,6 @@ header('Pragma: no-cache');
                             <div class="spec-lbl">풍판 높이</div>
                             <div class="spec-val"><span id="spPungpan">0</span><span class="spec-unit">mm</span></div>
                         </div>
-                        <div class="spec-card accent">
-                            <div class="spec-lbl">살간격</div>
-                            <div class="spec-val"><span id="spEye">0</span><span class="spec-unit">mm</span></div>
-                        </div>
 
                         <div class="spec-card accent">
                             <div class="spec-lbl">상/하 울거미</div>

@@ -113,11 +113,16 @@ $specs = [
     'cols'      => (string)$cols,
     'rows'      => (string)round($rows),
     'step'      => number_format($step, 1),
+    'stepV'     => number_format($stepH, 1),
     'pungpan'   => (string)round($effectivePungpanH),
     'eye'       => number_format($cellW, 1),
     'frameHTop' => (string)round($frameHTop),
     'totalDoorW'=> (string)round($totalDoorWidth),
     'overlap'   => $doorType === 'slide' ? (string)round($overlap) : '0',
+    // 정자살은 직교(90°) 격자라 세모살 같은 각도 보정 없이 살두께 그대로가 반턱/홈폭이 된다.
+    'halfLapW'  => number_format($slatT, 1),
+    'grooveW'   => number_format($slatT, 1),
+    'grooveWH'  => number_format($slatT, 1),
 ];
 
 $pungpanVisible = $pungpanOn && $effectivePungpanH > 0;
