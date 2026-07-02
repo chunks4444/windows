@@ -134,7 +134,7 @@ $vSlatCnt = max(0, $cols - 1);
 $diagList = [];
 $diagN = min($rows, $cols);
 for ($k = $diagN; $k >= 1; $k--) {
-    $diagLen = number_format((($k - 1) * $stepW + $cellW) * sqrt(2), 1);
+    $diagLen = number_format((($k - 1) * $stepW + $cellW) * sqrt(2) + 2 * $slatT, 1);
     if ($k === $diagN) {
         $diagCnt = ($rows === $cols) ? 2 : 2 * (abs($rows - $cols) + 1);
     } else {
