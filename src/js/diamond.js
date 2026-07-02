@@ -471,9 +471,11 @@ async function draw() {
     document.getElementById('spCounts').innerText     = s.cols;
     document.getElementById('spRows').innerText       = s.rows;
     document.getElementById('spStep').innerText       = s.step;
+    document.getElementById('spStepV').innerText      = s.stepV;
     document.getElementById('spPungpan').innerText    = s.pungpan;
-    document.getElementById('spEye').innerText        = s.eye;
     document.getElementById('spDiagEye').innerText    = s.diagEye;
+    document.getElementById('spHalfLapWD').innerText  = s.halfLapWD;
+    document.getElementById('spGrooveWDiag').innerText = s.grooveWDiag;
     document.getElementById('spFrameHTop').innerText  = s.frameHTop;
     document.getElementById('spTotalDoorW').innerText = s.totalDoorW;
 

@@ -116,12 +116,22 @@ $specs = [
     'cols'      => (string)$cols,
     'rows'      => (string)round($rows),
     'step'      => number_format($step, 1),
+    'stepV'     => number_format($stepH, 1),
     'pungpan'   => (string)round($effectivePungpanH),
     'eye'       => number_format($cellW, 1),
     'diagEye'   => $diagEye,
     'frameHTop' => (string)round($frameHTop),
     'totalDoorW'=> (string)round($totalDoorWidth),
     'overlap'   => $doorType === 'slide' ? (string)round($overlap) : '0',
+    // 다이아몬드는 직교살+대각살이 공존 — 교차 유형별로 반턱/홈폭이 다르다.
+    // 직교-직교, 대각-대각 교차는 90°라 slatT 그대로 (스퀘어/빗살과 동일 논리)
+    // 직교-대각 교차는 45°라 정사각형(가로세로 step) 대각선의 절반 (2026-07-02 CAD 확인)
+    // 대각살이 울거미에 박히는 홈폭은 빗살과 동일하게 slatT×(1+√2)
+    'halfLapW'     => number_format($slatT, 1),
+    'halfLapDiag'  => number_format($slatT, 1),
+    'halfLapWD'    => number_format($step * sqrt(2) / 2, 1),
+    'grooveW'      => number_format($slatT, 1),
+    'grooveWDiag'  => number_format($slatT * (1 + sqrt(2)), 1),
 ];
 
 $pungpanVisible = $pungpanOn && $effectivePungpanH > 0;

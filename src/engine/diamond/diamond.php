@@ -184,20 +184,28 @@ header('Pragma: no-cache');
                             <div class="spec-val"><span id="spRows">0</span><span class="spec-unit">칸</span></div>
                         </div>
                         <div class="spec-card accent">
-                            <div class="spec-lbl">간격 먹줄</div>
+                            <div class="spec-lbl">가로 먹줄</div>
                             <div class="spec-val"><span id="spStep">0</span><span class="spec-unit">mm</span></div>
                         </div>
                         <div class="spec-card accent">
-                            <div class="spec-lbl">풍판 높이</div>
-                            <div class="spec-val"><span id="spPungpan">0</span><span class="spec-unit">mm</span></div>
-                        </div>
-                        <div class="spec-card accent">
-                            <div class="spec-lbl">살간격</div>
-                            <div class="spec-val"><span id="spEye">0</span><span class="spec-unit">mm</span></div>
+                            <div class="spec-lbl">세로 먹줄</div>
+                            <div class="spec-val"><span id="spStepV">0</span><span class="spec-unit">mm</span></div>
                         </div>
                         <div class="spec-card accent-blue">
                             <div class="spec-lbl">사선 간격</div>
                             <div class="spec-val"><span id="spDiagEye">0</span><span class="spec-unit">mm</span></div>
+                        </div>
+                        <div class="spec-card accent-blue">
+                            <div class="spec-lbl">살 먹줄</div>
+                            <div class="spec-val"><span id="spHalfLapWD">0</span><span class="spec-unit">mm</span></div>
+                        </div>
+                        <div class="spec-card accent-blue">
+                            <div class="spec-lbl">울거미홈폭</div>
+                            <div class="spec-val"><span id="spGrooveWDiag">0</span><span class="spec-unit">mm</span></div>
+                        </div>
+                        <div class="spec-card accent">
+                            <div class="spec-lbl">풍판 높이</div>
+                            <div class="spec-val"><span id="spPungpan">0</span><span class="spec-unit">mm</span></div>
                         </div>
                         <div class="spec-card accent">
                             <div class="spec-lbl">상/하 울거미</div>
