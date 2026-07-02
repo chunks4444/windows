@@ -34,8 +34,9 @@ $outerW = max(100, $outerW);
 
 $SQRT3 = sqrt(3);
 $effectivePungpanInput = $pungpanOn ? $pungpanH : 0;
-$colStepR = 0.0;
-$rowHR    = 0.0;
+$colStepR  = 0.0;
+$rowHR     = 0.0;
+$cellWHexR = 0.0;
 
 if (!$rotateOn) {
     $innerW = $outerW - 2 * $frameW;
@@ -151,6 +152,8 @@ $specs = [
     'grooveWH'  => number_format($slatT, 1),
     // 세로 울거미에 홈을 파야 하는 세로 방향 간격(피치)
     'grooveGapV' => number_format($rowHR, 1),
+    // 사선 먹줄: 육각형 한 변 길이(hexSize)의 절반
+    'diagStep'   => number_format(($cellWHexR / $SQRT3) / 2, 1),
 ];
 
 $pungpanVisible = $pungpanOn && $effectivePungpanH > 0;

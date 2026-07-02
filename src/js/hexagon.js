@@ -511,6 +511,7 @@ async function draw() {
     document.getElementById('spRows').innerText       = s.rows;
     document.getElementById('spStep').innerText       = s.step;
     document.getElementById('spDiagEye').innerText    = s.diagEye;
+    document.getElementById('spDiagStep').innerText   = s.diagStep;
     document.getElementById('spHalfLapW').innerText   = s.halfLapW;
     document.getElementById('spGrooveW').innerText    = s.grooveW;
     document.getElementById('spGrooveWH').innerText   = s.grooveWH;
