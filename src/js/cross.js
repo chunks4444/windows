@@ -2073,12 +2073,14 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
         const tmp = document.createElement('canvas');
         tmp.width = W; tmp.height = H;
         const tctx = tmp.getContext('2d');
-        tctx.fillStyle = '#E5E7EA';
-        tctx.fillRect(0, 0, W, H);
+        if (appBackgroundImage) {
+            tctx.fillStyle = '#E5E7EA';
+            tctx.fillRect(0, 0, W, H);
+        }
         tctx.drawImage(canvas, sx, sy, sw, sh, dx, dy, dw, dh);
         const kvEl = document.getElementById('konvaStageContainer');
         if (kvEl) kvEl.querySelectorAll('canvas').forEach(c => { try { tctx.drawImage(c, sx, sy, sw, sh, dx, dy, dw, dh); } catch (_) {} });
-        return tmp.toDataURL('image/jpeg', 0.85);
+        return tmp.toDataURL('image/png');
     }
 
     // 썸네일 + 배경 이미지 복원 (서버에서 로드)
