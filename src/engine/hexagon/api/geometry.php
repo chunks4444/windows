@@ -142,6 +142,10 @@ $specs = [
     'frameHTop' => (string)round($frameHTop),
     'totalDoorW'=> (string)round($totalDoorWidth),
     'overlap'   => $doorType === 'slide' ? (string)round($overlap) : '0',
+    // 육모살은 세모솟을살과 같은 60° 기하구조라 반턱/홈폭 공식을 그대로 재사용 (사용자 확인, 2026-07-02)
+    'halfLapW'  => number_format($slatT * 2 / $SQRT3, 1),
+    'grooveW'   => number_format($slatT * $SQRT3, 1),
+    'grooveWH'  => number_format($slatT, 1),
 ];
 
 $pungpanVisible = $pungpanOn && $effectivePungpanH > 0;
