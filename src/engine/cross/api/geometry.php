@@ -115,7 +115,8 @@ $specs = [
     'step'      => number_format($step, 1),
     'stepV'     => number_format($stepH, 1),
     'pungpan'   => (string)round($effectivePungpanH),
-    'eye'       => number_format($cellW, 1),
+    // 살 먹줄: 대각으로 놓인 살 위에서 교차점 중심-중심 거리 (살두께 포함)
+    'eye'       => number_format(sqrt(pow($step, 2) + pow($stepH, 2)), 1),
     'frameHTop' => (string)round($frameHTop),
     'totalDoorW'=> (string)round($totalDoorWidth),
     'overlap'   => $doorType === 'slide' ? (string)round($overlap) : '0',
