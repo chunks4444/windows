@@ -705,6 +705,10 @@
         document.querySelectorAll('.admin-only').forEach(el => {
             el.style.display = show ? '' : 'none';
         });
+        const showSuper = role === 's';
+        document.querySelectorAll('.super-only').forEach(el => {
+            el.style.display = showSuper ? '' : 'none';
+        });
     }
     document.addEventListener('DOMContentLoaded', showAdminSections);
     window.addEventListener('pmokAuthChanged', showAdminSections);

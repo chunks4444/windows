@@ -503,6 +503,7 @@ header('Pragma: no-cache');
                         <div class="sb-price-label">예상가격</div>
                         <div class="sb-price-amount"><span class="sb-price-start">–</span><span class="sb-price-end"></span></div>
                         <div class="sb-price-breakdown">
+                            <div class="super-only" style="display:none">
                             <div class="sb-break-row"><span>문(창호) 목재</span><span id="spCostDoor">–</span></div>
                             <div class="sb-break-row"><span>문틀 목재</span><span id="spCostMuntol">–</span></div>
                             <div class="sb-break-row sb-break-sub sb-break-key"><span>목재비</span><span id="spWoodCost">–</span></div>
@@ -514,7 +515,9 @@ header('Pragma: no-cache');
                             <div class="sb-break-row sb-break-key"><span>간접비</span><span id="spOverheadCost">–</span></div>
                             <div class="sb-break-row sb-break-key"><span>이익</span><span id="spProfitCost">–</span></div>
                             <div class="sb-break-divider"></div>
-                            <div class="sb-break-row sb-break-total sb-break-key"><span>판매가</span><span id="spTotalCost">–</span></div>                            <div class="sb-lead-time sb-break-row" data-min-days="<?= (int)$cfg['min_days'] ?>"><span>최소 납기</span><span><strong><?= (int)$cfg['min_days'] ?></strong>일</span></div>
+                            <div class="sb-break-row sb-break-total sb-break-key"><span>판매가</span><span id="spTotalCost">–</span></div>
+                            </div>
+                            <div class="sb-lead-time sb-break-row" data-min-days="<?= (int)$cfg['min_days'] ?>"><span>최소 납기</span><span><strong><?= (int)$cfg['min_days'] ?></strong>일</span></div>
                             <div class="sb-price-note">※ 배송비·시공비 제외</div>
                             <div class="sb-price-disclaimer">※ 본 금액은 예상 견적입니다. 사용자 편집 내용을 검토한 후 최종 견적이 확정됩니다.</div>
                         </div>
