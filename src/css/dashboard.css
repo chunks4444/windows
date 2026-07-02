@@ -103,6 +103,34 @@ body {
     transform: rotate(60deg);
 }
 
+/* ── 렌더링 탭 ──────────────────────────────── */
+.rh-usage-banner {
+    display: flex; align-items: center; gap: 8px;
+    background: #fff4e5; color: #8a5a00; border: 1px solid #ffdca0;
+    border-radius: 8px; padding: 10px 14px; font-size: 13px; margin-bottom: 16px;
+}
+.rh-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+@media (max-width: 1024px) { .rh-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 768px)  { .rh-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px)  { .rh-grid { grid-template-columns: 1fr; } }
+.rh-item { position: relative; border-radius: var(--r-sm, 8px); overflow: hidden; cursor: pointer; border: 2px solid transparent; transition: border-color .15s; aspect-ratio: 4/3; background: #f2f2f0; }
+.rh-item:hover { border-color: var(--teal, #3A8C82); }
+.rh-item img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.rh-item-del {
+    position: absolute; top: 4px; right: 4px; width: 22px; height: 22px;
+    background: rgba(0,0,0,0.65); border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 12px; opacity: 0; transition: opacity .15s; cursor: pointer;
+}
+.rh-item:hover .rh-item-del { opacity: 1; }
+.rh-item-engine {
+    position: absolute; bottom: 4px; left: 4px; background: rgba(0,0,0,0.6); color: #fff;
+    font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px; letter-spacing: -0.2px;
+}
+
 
 /* ── 카드 그리드 ──────────────────────────────── */
 .db-grid {

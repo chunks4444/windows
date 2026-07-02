@@ -5,6 +5,7 @@ require_once __DIR__ . '/../../lib/engine_settings.php';
 $cfg = get_engine_settings('triangle');
 $costCfg = get_cost_config('triangle');
 $patternCategories = get_pattern_categories();
+$renderPresets = get_render_presets();
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Pragma: no-cache');
 ?>
@@ -615,7 +616,7 @@ header('Pragma: no-cache');
                     </div>
                 </div>
                 <div class="sb-section">
-                    <div class="sb-section-title" style="cursor:default;">배경 사진</div>
+                    <div class="sb-section-title" style="cursor:default;">렌더링</div>
                     <div style="display:flex;flex-direction:column;gap:8px;">
                         <div style="display:flex;gap:6px;width:100%;">
                         <button class="rp-add-btn" id="btnAddThumb" style="flex:1;">
@@ -624,14 +625,20 @@ header('Pragma: no-cache');
                                 <polyline points="17 8 12 3 7 8"/>
                                 <line x1="12" y1="3" x2="12" y2="15"/>
                             </svg>
-                            사진 추가
+                            배경 업로드
                         </button>
                         <button id="btnClearBg" style="display:none;flex-shrink:0;width:28px;height:28px;border:none;background:none;padding:0;cursor:pointer;color:#e05218;align-items:center;justify-content:center;align-self:center;" title="배경 지우기">
                             <i class="bi bi-x-lg" style="font-size:13px;"></i>
                         </button>
                         </div>
                         <div class="rp-thumb-list" id="thumbList"></div>
-                        <textarea id="aiPrompt" class="rp-prompt" placeholder="한국어 또는 영어로 입력&#10;예) 전통 한옥 창호, 따뜻한 실내 조명" rows="3"></textarea>
+                        <select id="aiPromptPreset" class="rp-prompt-select" onchange="if(this.value) document.getElementById('aiPrompt').value = this.value;">
+                            <option value="">재질/조명 선택…</option>
+                            <?php foreach ($renderPresets as $rp): ?>
+                            <option value="<?= htmlspecialchars($rp['prompt_text']) ?>"><?= htmlspecialchars($rp['label']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <textarea id="aiPrompt" class="rp-prompt" placeholder="프리셋을 선택하거나 직접 입력하세요" rows="3"></textarea>
                         <button class="rp-ai-btn" onclick="startAISynthesis()">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>

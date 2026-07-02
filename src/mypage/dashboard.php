@@ -30,10 +30,29 @@ header('Content-Type: text/html; charset=UTF-8');
         <div class="db-tabs">
             <button class="db-tab active" id="tabDrawings" onclick="switchTab('drawings')">내 도면</button>
             <button class="db-tab" id="tabBoards" onclick="switchTab('boards')">내 보드</button>
+            <button class="db-tab" id="tabRenders" onclick="switchTab('renders')">렌더링</button>
         </div>
     </div>
     <div id="dbContent"></div>
     <div id="dbBoardsContent" style="display:none;"></div>
+    <div id="dbRendersContent" style="display:none;"></div>
+</div>
+
+<!-- 렌더링 상세 모달 -->
+<div id="dbRenderModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:16px;width:min(90vw,720px);max-height:85vh;display:flex;flex-direction:column;overflow:hidden;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid #eee;">
+            <h3 id="dbRenderModalTitle" style="margin:0;font-size:15px;font-weight:700;color:var(--text-3,#888);"></h3>
+            <div style="display:flex;gap:8px;align-items:center;">
+                <button id="dbRenderModalDownload" style="border:none;background:var(--teal,#3A8C82);color:#fff;border-radius:6px;padding:6px 14px;font-size:13px;font-weight:600;cursor:pointer;">다운로드</button>
+                <button id="dbRenderModalDelete" style="border:none;background:#f5f5f5;color:#c00;border-radius:6px;padding:6px 14px;font-size:13px;font-weight:600;cursor:pointer;">삭제</button>
+                <button onclick="document.getElementById('dbRenderModal').style.display='none'" style="background:none;border:none;font-size:20px;cursor:pointer;color:#999;">&times;</button>
+            </div>
+        </div>
+        <div style="overflow:auto;padding:16px;display:flex;align-items:center;justify-content:center;background:#f7f7f5;">
+            <img id="dbRenderModalImg" src="" style="max-width:100%;max-height:70vh;display:block;border-radius:8px;">
+        </div>
+    </div>
 </div>
 
 <!-- 보드 상세 모달 -->

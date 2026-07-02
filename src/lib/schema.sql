@@ -366,6 +366,17 @@ CREATE TABLE IF NOT EXISTS engine_settings (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='엔진별 기본 설정값';
 
 
+-- AI 렌더링 재질/조명 프리셋 (엔진 사이드바 선택 박스, 어드민에서 편집)
+CREATE TABLE IF NOT EXISTS render_presets (
+    id          INT UNSIGNED      NOT NULL AUTO_INCREMENT,
+    label       VARCHAR(50)       NOT NULL DEFAULT '' COMMENT '선택 박스에 표시될 이름 (예: 형광등 조명)',
+    prompt_text VARCHAR(500)      NOT NULL DEFAULT '' COMMENT 'AI 렌더링에 실제로 전달할 프롬프트',
+    sort_order  SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    is_active   TINYINT(1)        NOT NULL DEFAULT 1,
+    PRIMARY KEY (id),
+    KEY idx_render_presets_sort (sort_order, is_active)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI 렌더링 재질/조명 프리셋';
+
 -- AI 대화 히스토리 + 엔진 사용 통계
 CREATE TABLE IF NOT EXISTS ai_chat_history (
     id         BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,

@@ -501,16 +501,9 @@
             const realIdx = savedRenders.length - 1 - i;
             const item = document.createElement('div');
             item.className = 'render-saved-item';
-            item.innerHTML = `<img src="${r.src}"><span class="render-saved-dl" title="다운로드"><i class="bi bi-download"></i></span><span class="render-saved-del" title="삭제"><i class="bi bi-x"></i></span>`;
+            item.innerHTML = `<img src="${r.src}"><span class="render-saved-del" title="삭제"><i class="bi bi-x"></i></span>`;
             item.querySelector('img').addEventListener('click', () => {
                 showRenderResult(r.src);
-            });
-            item.querySelector('.render-saved-dl').addEventListener('click', (e) => {
-                e.stopPropagation();
-                const link = document.createElement('a');
-                link.download = getExportFilename('png').replace(/\.png$/, '_render.png');
-                link.href = r.src;
-                link.click();
             });
             item.querySelector('.render-saved-del').addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -536,6 +529,24 @@
             catch(e) { savedRenders.shift(); }
         }
         renderSavedThumbList();
+        if (_totalRenderStorageBytes() >= RENDER_STORAGE_WARN_BYTES) {
+            pmAlert('저장된 렌더링 용량이 많이 찼습니다. 마이페이지 > 렌더링 탭에서 오래된 항목을 정리해주세요.', { type: 'danger' });
+        }
+    }
+
+    // 6개 엔진 전체의 렌더링 저장 용량(브라우저 localStorage) 합산 — 대시보드 경고와 동일 기준
+    const RENDER_ENGINES_ALL     = ['classic', 'square', 'cross', 'triangle', 'diamond', 'hexagon'];
+    const RENDER_STORAGE_WARN_BYTES = 3 * 1024 * 1024;
+    function _totalRenderStorageBytes() {
+        const uid = _localUserId();
+        let total = 0;
+        RENDER_ENGINES_ALL.forEach(eng => {
+            const base = `pmok_${eng}_renders`;
+            const key  = uid ? `${base}_u${uid}` : base;
+            const raw  = localStorage.getItem(key);
+            if (raw) total += raw.length;
+        });
+        return total;
     }
 
     function setEditMode(mode) {

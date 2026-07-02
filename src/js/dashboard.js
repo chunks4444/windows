@@ -333,9 +333,12 @@ function switchTab(tab) {
     currentTab = tab;
     document.getElementById('tabDrawings').classList.toggle('active', tab === 'drawings');
     document.getElementById('tabBoards').classList.toggle('active', tab === 'boards');
-    document.getElementById('dbContent').style.display       = tab === 'drawings' ? '' : 'none';
-    document.getElementById('dbBoardsContent').style.display = tab === 'boards'   ? '' : 'none';
-    if (tab === 'boards') loadBoards();
+    document.getElementById('tabRenders').classList.toggle('active', tab === 'renders');
+    document.getElementById('dbContent').style.display        = tab === 'drawings' ? '' : 'none';
+    document.getElementById('dbBoardsContent').style.display  = tab === 'boards'   ? '' : 'none';
+    document.getElementById('dbRendersContent').style.display = tab === 'renders'  ? '' : 'none';
+    if (tab === 'boards')  loadBoards();
+    if (tab === 'renders') loadRenders();
 }
 
 function _token() { return localStorage.getItem('pmok_auth_token'); }
@@ -596,4 +599,104 @@ document.addEventListener('DOMContentLoaded', async () => {
 window.addEventListener('pmokAuthChanged', () => {
     document.getElementById('dbAuthWall').style.display = 'none';
     loadDashboard();
+});
+
+/* ── 렌더링 탭 (localStorage에 저장된 6개 엔진의 렌더링 결과를 엔진 구분 없이 모아 보여줌) ── */
+const RENDER_ENGINES     = ['classic', 'square', 'cross', 'triangle', 'diamond', 'hexagon'];
+const RENDER_WARN_BYTES  = 3 * 1024 * 1024; // localStorage 총량(보통 5~10MB) 대비 안전 경고선
+
+function _renderKeyFor(engine) {
+    const uid = _dashLocalUserId();
+    const base = `pmok_${engine}_renders`;
+    return uid ? `${base}_u${uid}` : base;
+}
+
+function _dashLocalUserId() {
+    const tok = _token();
+    if (!tok) return null;
+    try { return JSON.parse(atob(tok.split('.')[1])).sub ?? null; } catch { return null; }
+}
+
+function _allRenderItems() {
+    const items = [];
+    RENDER_ENGINES.forEach(engine => {
+        let arr = [];
+        try { arr = JSON.parse(localStorage.getItem(_renderKeyFor(engine))) || []; } catch {}
+        arr.forEach(r => items.push({ ...r, engine }));
+    });
+    items.sort((a, b) => (b.savedAt || 0) - (a.savedAt || 0));
+    return items;
+}
+
+function _renderStorageBytes() {
+    let total = 0;
+    RENDER_ENGINES.forEach(engine => {
+        const raw = localStorage.getItem(_renderKeyFor(engine));
+        if (raw) total += raw.length;
+    });
+    return total;
+}
+
+function loadRenders() {
+    const el    = document.getElementById('dbRendersContent');
+    const items = _allRenderItems();
+    const bytes = _renderStorageBytes();
+
+    let html = '';
+    if (bytes >= RENDER_WARN_BYTES) {
+        html += `<div class="rh-usage-banner"><i class="bi bi-exclamation-triangle-fill"></i> 저장 공간이 많이 찼습니다 (약 ${(bytes / 1024 / 1024).toFixed(1)}MB 사용 중). 브라우저 저장 공간이라 계속 쌓이면 오래된 렌더링부터 자동으로 사라질 수 있어요 — 필요 없는 항목을 정리해주세요.</div>`;
+    }
+
+    if (!items.length) {
+        html += '<div class="db-empty">저장된 렌더링이 없습니다.</div>';
+        el.innerHTML = html;
+        return;
+    }
+
+    html += '<div class="rh-grid">' + items.map((r, i) => `
+        <div class="rh-item" data-idx="${i}">
+            <img src="${r.src}" loading="lazy">
+            <span class="rh-item-engine">${(TYPE_CONFIG[r.engine]?.label || r.engine)}</span>
+            <span class="rh-item-del" title="삭제" onclick="event.stopPropagation(); deleteRenderItem('${r.engine}', ${r.savedAt})"><i class="bi bi-x"></i></span>
+        </div>`).join('') + '</div>';
+    el.innerHTML = html;
+
+    el.querySelectorAll('.rh-item').forEach(node => {
+        node.addEventListener('click', () => openRenderModal(items[parseInt(node.dataset.idx)]));
+    });
+}
+
+function deleteRenderItem(engine, savedAt) {
+    const key = _renderKeyFor(engine);
+    let arr = [];
+    try { arr = JSON.parse(localStorage.getItem(key)) || []; } catch {}
+    arr = arr.filter(r => r.savedAt !== savedAt);
+    try { localStorage.setItem(key, JSON.stringify(arr)); } catch {}
+    loadRenders();
+}
+
+function openRenderModal(item) {
+    const modal = document.getElementById('dbRenderModal');
+    const date  = item.savedAt ? new Date(item.savedAt) : null;
+    const pad   = n => String(n).padStart(2, '0');
+    const dateText = date ? `${date.getFullYear()}.${pad(date.getMonth() + 1)}.${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}` : '';
+    const filename = `pmok_${item.engine}_render_${item.savedAt || Date.now()}.png`;
+
+    document.getElementById('dbRenderModalTitle').textContent = `${TYPE_CONFIG[item.engine]?.label || item.engine} · ${dateText}`;
+    document.getElementById('dbRenderModalImg').src = item.src;
+    document.getElementById('dbRenderModalDownload').onclick = () => {
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = item.src;
+        link.click();
+    };
+    document.getElementById('dbRenderModalDelete').onclick = () => {
+        deleteRenderItem(item.engine, item.savedAt);
+        modal.style.display = 'none';
+    };
+    modal.style.display = 'flex';
+}
+
+document.getElementById('dbRenderModal')?.addEventListener('click', e => {
+    if (e.target === e.currentTarget) e.currentTarget.style.display = 'none';
 });

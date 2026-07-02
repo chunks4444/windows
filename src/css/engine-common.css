@@ -500,6 +500,24 @@ canvas:active { cursor: grabbing; }
 .rp-thumb-item:hover .rp-remove { opacity: 1; }
 .rp-remove:hover { background: rgba(200,50,50,0.85) !important; }
 
+.rp-prompt-select {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: var(--r-sm);
+    background: var(--sidebar-bg);
+    color: #fff;
+    font-size: var(--fs-12);
+    font-family: inherit;
+    font-weight: 400;
+    letter-spacing: -0.1px;
+    outline: none;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+}
+.rp-prompt-select:focus { border-color: rgba(255,255,255,0.5); background: rgba(0,0,0,0.25); }
+.rp-prompt-select option { color: #000; }
+
 .rp-prompt {
     width: 100%;
     padding: 8px 10px;
@@ -547,9 +565,7 @@ canvas:active { cursor: grabbing; }
 .render-saved-item:hover { border-color: var(--teal-mid); }
 .render-saved-item img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .render-saved-del  { position: absolute; top: 3px; right: 3px;  width: 18px; height: 24px; background: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: var(--fs-12); opacity: 0; transition: opacity .15s; cursor: pointer; }
-.render-saved-dl   { position: absolute; top: 3px; right: 25px; width: 18px; height: 24px; background: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: var(--fs-12); opacity: 0; transition: opacity .15s; cursor: pointer; }
-.render-saved-item:hover .render-saved-del,
-.render-saved-item:hover .render-saved-dl  { opacity: 1; }
+.render-saved-item:hover .render-saved-del { opacity: 1; }
 
 /* ── VERSION DROPDOWN ────────────────────── */
 .ver-wrap { position: relative; margin-left: 8px; }
@@ -688,6 +704,7 @@ canvas:active { cursor: grabbing; }
     flex-shrink: 0;
 }
 .render-result-title { font-size: var(--fs-14); font-weight: 700; color: var(--text-1); letter-spacing: -0.2px; }
+.render-result-filename { font-size: var(--fs-12); font-weight: 400; color: var(--text-3); margin-left: 4px; }
 .render-result-apply {
     height: 30px;
     padding: 0 14px;

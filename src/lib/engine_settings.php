@@ -197,3 +197,12 @@ function get_pattern_categories(): array {
     } catch (Throwable $e) {}
     return [];
 }
+
+// AI 렌더링 재질/조명 프리셋 목록 반환 [{id, label, prompt_text}] — 관리자 페이지에서 편집
+function get_render_presets(): array {
+    try {
+        $rows = db()->query("SELECT id, label, prompt_text FROM render_presets WHERE is_active = 1 ORDER BY sort_order, id")->fetchAll(PDO::FETCH_ASSOC);
+        if ($rows) return $rows;
+    } catch (Throwable $e) {}
+    return [];
+}

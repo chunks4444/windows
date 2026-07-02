@@ -10,6 +10,7 @@ if (!jwt_from_request()) { http_response_code(401); echo json_encode(['error' =>
 $body   = json_decode(file_get_contents('php://input'), true);
 $image  = $body['image']  ?? '';
 $prompt = trim($body['prompt'] ?? '');
+$rect   = is_array($body['rect'] ?? null) ? $body['rect'] : null;
 
 if (!$image || !$prompt) {
     echo json_encode(['error' => '이미지 또는 프롬프트가 없습니다.']);
@@ -19,4 +20,4 @@ if (!$image || !$prompt) {
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/../../../lib/ai_render.php';
 
-echo json_encode(ai_render_openai($image, $prompt));
+echo json_encode(ai_render_openai($image, $prompt, $rect));

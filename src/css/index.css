@@ -19,6 +19,7 @@
 .idx-ai-icon { color: #3A8C82; font-size: 18px; flex-shrink: 0; }
 .idx-ai-input {
     flex: 1;
+    min-width: 0;
     border: none;
     background: transparent;
     font-size: 14px;
@@ -51,6 +52,17 @@
     border-radius: 16px;
     padding: 10px 20px;
     line-height: 1.6;
+}
+
+@media (max-width: 480px) {
+    .idx-ai-bar {
+        gap: 6px;
+        padding: 8px 8px 8px 16px;
+    }
+    .idx-ai-btn {
+        padding: 8px 14px;
+        font-size: 12px;
+    }
 }
 
 /* HERO CAROUSEL */

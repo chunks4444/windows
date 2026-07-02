@@ -20,14 +20,16 @@ if (!$payload || ($payload['role'] ?? '') !== 's') {
 $pdo = db();
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $rows = $pdo->query("SELECT key_name, value FROM site_config WHERE key_name IN ('render_quality','openai_api_key','anthropic_api_key','ai_chat_model')")->fetchAll();
+    require_once __DIR__ . '/../../lib/ai_render.php';
+    $rows = $pdo->query("SELECT key_name, value FROM site_config WHERE key_name IN ('render_quality','openai_api_key','anthropic_api_key','ai_chat_model','render_base_prompt')")->fetchAll();
     $cfg  = [];
     foreach ($rows as $r) $cfg[$r['key_name']] = $r['value'];
     echo json_encode([
-        'render_quality'    => $cfg['render_quality']    ?? 'low',
-        'openai_api_key'    => $cfg['openai_api_key']    ?? '',
-        'anthropic_api_key' => $cfg['anthropic_api_key'] ?? '',
-        'ai_chat_model'     => $cfg['ai_chat_model']     ?? 'claude-sonnet-4-6',
+        'render_quality'     => $cfg['render_quality']     ?? 'low',
+        'openai_api_key'     => $cfg['openai_api_key']     ?? '',
+        'anthropic_api_key'  => $cfg['anthropic_api_key']  ?? '',
+        'ai_chat_model'      => $cfg['ai_chat_model']      ?? 'claude-sonnet-4-6',
+        'render_base_prompt' => $cfg['render_base_prompt'] ?? ai_default_base_prompt_template(),
     ]);
     exit;
 }
@@ -51,6 +53,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT' || $_SERVER['REQUEST_METHOD'] === 'POST
     $allowedModels = ['claude-sonnet-4-6', 'claude-haiku-4-5-20251001'];
     if (isset($body['ai_chat_model']) && in_array($body['ai_chat_model'], $allowedModels)) {
         $stmt->execute(['ai_chat_model', $body['ai_chat_model']]);
+    }
+
+    if (array_key_exists('render_base_prompt', $body)) {
+        $stmt->execute(['render_base_prompt', trim($body['render_base_prompt'])]);
     }
 
     echo json_encode(['ok' => true]);

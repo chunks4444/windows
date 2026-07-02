@@ -122,28 +122,44 @@
 
         const dpr = window.devicePixelRatio || 1;
 
-        // 배경+도면 전체를 AI로 전송
+        // 배경+도면 전체를 AI로 전송 (눈금자·문짝 치수 표기는 제외한 깨끗한 프레임으로 캡처)
+        const _prevShowDimensions = showDimensions;
+        showDimensions = false;
+        draw();
         const composite = document.createElement('canvas');
         composite.width  = logW;
         composite.height = logH;
         const compCtx = composite.getContext('2d');
-        compCtx.drawImage(canvas, 0, 0, logW, logH);
+        compCtx.drawImage(_exportCanvas || canvas, 0, 0, logW, logH);
+        const _kvEl = document.getElementById('konvaStageContainer');
+        if (_kvEl) _kvEl.querySelectorAll('canvas').forEach(kc => { try { compCtx.drawImage(kc, 0, 0, logW, logH); } catch(_) {} });
+        showDimensions = _prevShowDimensions;
+        draw();
 
-        const cx = logW / 2 + panX;
-        const cy = logH / 2 + panY;
-        const dl = Math.max(0, Math.round(cx - doorNaturalSize.w / 2));
-        const dt = Math.max(0, Math.round(cy - doorNaturalSize.h / 2));
-        const dw = Math.min(logW - dl, Math.round(doorNaturalSize.w));
-        const dh = Math.min(logH - dt, Math.round(doorNaturalSize.h));
-
-        const maskCvs = document.createElement('canvas');
-        maskCvs.width  = logW;
-        maskCvs.height = logH;
-        const mCtx = maskCvs.getContext('2d');
-        mCtx.fillStyle = '#000';
-        mCtx.fillRect(0, 0, logW, logH);
-        mCtx.fillStyle = '#fff';
-        mCtx.fillRect(dl, dt, dw, dh);
+        // 도면 영역 좌표 (편집 허용 영역 — 배경은 이 밖에서 절대 변경되지 않음)
+        let dl, dt, dw, dh;
+        if (doorCornerPositions) {
+            // 배치(투시 warp) 모드: 실제 화면상 4코너 기준 바운딩 박스 사용
+            const _c = getOverlayCorners();
+            const margin = (geo.frameThick + geo.frameGap) * lastBaseScale * scaleFactor;
+            const minX = Math.min(_c.tl.x, _c.tr.x, _c.br.x, _c.bl.x) - margin;
+            const maxX = Math.max(_c.tl.x, _c.tr.x, _c.br.x, _c.bl.x) + margin;
+            const minY = Math.min(_c.tl.y, _c.tr.y, _c.br.y, _c.bl.y) - margin;
+            const maxY = Math.max(_c.tl.y, _c.tr.y, _c.br.y, _c.bl.y) + margin;
+            dl = Math.max(0, Math.round(minX));
+            dt = Math.max(0, Math.round(minY));
+            dw = Math.min(logW - dl, Math.round(maxX - minX));
+            dh = Math.min(logH - dt, Math.round(maxY - minY));
+        } else {
+            const cx = logW / 2 + panX;
+            const cy = logH / 2 + panY;
+            const doorW = doorNaturalSize.w * scaleFactor;
+            const doorH = doorNaturalSize.h * scaleFactor;
+            dl = Math.max(0, Math.round(cx - doorW / 2));
+            dt = Math.max(0, Math.round(cy - doorH / 2));
+            dw = Math.min(logW - dl, Math.round(doorW));
+            dh = Math.min(logH - dt, Math.round(doorH));
+        }
 
         const overlay = document.getElementById('renderOverlay');
         overlay.style.display = 'flex';
@@ -154,7 +170,7 @@
         fetch('api/render.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', ...(_tok ? { 'Authorization': 'Bearer ' + _tok } : {}) },
-            body: JSON.stringify({ image: composite.toDataURL('image/jpeg', 0.95), prompt }),
+            body: JSON.stringify({ image: composite.toDataURL('image/jpeg', 0.95), prompt, rect: { x: dl, y: dt, w: dw, h: dh } }),
             signal: _renderAbort.signal,
         })
         .then(r => { clearTimeout(_renderTimer); return r.json(); })
@@ -164,14 +180,11 @@
             if (!data.image) { pmAlert('서버 오류', { type: 'danger' }); return; }
             const img = new Image();
             img.onload = () => {
-                // AI 결과 비율 역변환 후 전체 표시
+                // 서버에서 이미 원본 해상도(logW×logH)로 합성되어 오므로 그대로 사용
                 const out = document.createElement('canvas');
                 out.width = logW; out.height = logH;
                 const ctx = out.getContext('2d');
-                const scl = Math.min(1024/logW, 1024/logH);
-                const fitW = Math.round(logW*scl), fitH = Math.round(logH*scl);
-                const ox = Math.round((1024-fitW)/2), oy = Math.round((1024-fitH)/2);
-                ctx.drawImage(img, ox, oy, fitW, fitH, 0, 0, logW, logH);
+                ctx.drawImage(img, 0, 0, logW, logH);
                 const finalSrc = out.toDataURL('image/jpeg', 0.95);
                 saveRender(finalSrc);
                 showRenderResult(finalSrc);
@@ -190,7 +203,7 @@
             pop.innerHTML = `
                 <div class="render-result-inner">
                     <div class="render-result-toolbar">
-                        <span class="render-result-title">Rendering 결과</span>
+                        <span class="render-result-title">Rendering 결과 <span id="rrFilename" class="render-result-filename"></span></span>
                         <div style="display:flex;gap:6px;">
                             <button class="render-result-apply" id="rrDownload">다운로드</button>
                             <button class="render-result-close" id="rrClose">✕</button>
@@ -202,12 +215,13 @@
             document.getElementById('rrClose').onclick = () => pop.classList.remove('rr-visible');
             document.getElementById('rrDownload').onclick = () => {
                 const link = document.createElement('a');
-                const base = getExportFilename('png').replace(/\.png$/, '');
-                link.download = `${base}_${savedRenders.length}.png`;
+                link.download = document.getElementById('rrFilename').textContent;
                 link.href = document.getElementById('rrImg').src;
                 link.click();
             };
         }
+        const _rrFname = `${getExportFilename('png').replace(/\.png$/, '')}_${savedRenders.length}.png`;
+        document.getElementById('rrFilename').textContent = _rrFname;
         document.getElementById('rrImg').src = src;
         requestAnimationFrame(() => pop.classList.add('rr-visible'));
     }
