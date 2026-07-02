@@ -5,10 +5,13 @@ ini_set('log_errors', '1');
 ini_set('error_log', __DIR__ . '/../../logs/php-error.log');
 error_reporting(E_ALL);
 
-$_host = ($_SERVER['HTTP_HOST'] ?? '');
+// 도메인 문자열(HTTP_HOST) 비교 대신 소켓 파일 존재 여부로 운영서버 여부를 판단한다.
+// w.pyeongmok.com 같은 별칭 도메인으로 접속하면 HTTP_HOST가 'windows.pyeongmok.com'과
+// 정확히 일치하지 않아 운영서버인데도 원격 TCP DB로 빠지는 문제가 있었음.
+$_sock = '/var/run/mysqld/mysqld.sock';
 
-if ($_host === 'windows.pyeongmok.com') {
-    define('DB_SOCKET',  '/var/run/mysqld/mysqld.sock');
+if (@is_readable($_sock)) {
+    define('DB_SOCKET',  $_sock);
     define('DB_HOST',    null);
     define('DB_PORT',    null);
 } else {
@@ -17,12 +20,12 @@ if ($_host === 'windows.pyeongmok.com') {
     define('DB_PORT',    6836);
 }
 
+unset($_sock);
+
 define('DB_NAME',    'windowspyeongmok');
 define('DB_USER',    'webpyeongmok');
 define('DB_PASS',    '@@@Chun20662782@@');
 define('DB_CHARSET', 'utf8mb4');
-
-unset($_host);
 
 function db(): PDO {
     static $pdo = null;
