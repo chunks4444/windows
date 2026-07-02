@@ -113,11 +113,17 @@ $specs = [
     'cols'      => (string)$cols,
     'rows'      => (string)round($rows),
     'step'      => number_format($step, 1),
+    'stepV'     => number_format($stepH, 1),
     'pungpan'   => (string)round($effectivePungpanH),
     'eye'       => number_format($cellW, 1),
     'frameHTop' => (string)round($frameHTop),
     'totalDoorW'=> (string)round($totalDoorWidth),
     'overlap'   => $doorType === 'slide' ? (string)round($overlap) : '0',
+    // 빗살은 45° 대각 격자 — 두 대각선 살끼리는 90°로 교차하므로 반턱은 slatT 그대로,
+    // 울거미 홈폭은 slatT × (1 + √2) (현장 확인값, 2026-07-02)
+    'halfLapW'  => number_format($slatT, 1),
+    'grooveW'   => number_format($slatT * (1 + sqrt(2)), 1),
+    'grooveWH'  => number_format($slatT * (1 + sqrt(2)), 1),
 ];
 
 $pungpanVisible = $pungpanOn && $effectivePungpanH > 0;

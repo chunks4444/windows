@@ -184,8 +184,24 @@ header('Pragma: no-cache');
                             <div class="spec-val"><span id="spRows">0</span><span class="spec-unit">칸</span></div>
                         </div>
                         <div class="spec-card accent">
-                            <div class="spec-lbl">간격 먹줄</div>
+                            <div class="spec-lbl">가로 먹줄</div>
                             <div class="spec-val"><span id="spStep">0</span><span class="spec-unit">mm</span></div>
+                        </div>
+                        <div class="spec-card accent">
+                            <div class="spec-lbl">세로 먹줄</div>
+                            <div class="spec-val"><span id="spStepV">0</span><span class="spec-unit">mm</span></div>
+                        </div>
+                        <div class="spec-card accent-blue">
+                            <div class="spec-lbl">반턱 너비</div>
+                            <div class="spec-val"><span id="spHalfLapW">0</span><span class="spec-unit">mm</span></div>
+                        </div>
+                        <div class="spec-card accent-blue">
+                            <div class="spec-lbl">세로울거미홈폭</div>
+                            <div class="spec-val"><span id="spGrooveW">0</span><span class="spec-unit">mm</span></div>
+                        </div>
+                        <div class="spec-card accent-blue">
+                            <div class="spec-lbl">가로울거미홈폭</div>
+                            <div class="spec-val"><span id="spGrooveWH">0</span><span class="spec-unit">mm</span></div>
                         </div>
                         <div class="spec-card accent">
                             <div class="spec-lbl">풍판 높이</div>
