@@ -1253,13 +1253,16 @@ async function draw() {
         const dT = Math.min(_c.tl.y, _c.tr.y) - mFrameSc;
         const dB = Math.max(_c.bl.y, _c.br.y) + mFrameSc;
 
-        // 문틀(벽 개구부) 화이트 윤곽선 — 배치 모드: 메인 캔버스에 직접 그림
-        ctx.save();
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 2;
-        ctx.setLineDash([]);
-        ctx.strokeRect(dL, dT, dR - dL, dB - dT);
-        ctx.restore();
+        // 문틀(벽 개구부) 채움 — 배치 모드: 메인 캔버스에 직접 그림
+        if (showMuntol) {
+            ctx.save();
+            ctx.fillStyle = selectedMuntolColor;
+            ctx.fillRect(dL, dT, dR - dL, dB - dT);
+            ctx.strokeStyle = lightenHex(selectedMuntolColor, 40);
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(dL + mFrameSc, dT + mFrameSc, (dR - dL) - 2 * mFrameSc, (dB - dT) - 2 * mFrameSc);
+            ctx.restore();
+        }
 
         // 4코너 투시 변환으로 메인 캔버스에 합성
         drawPerspectiveQuad(ctx, offCanvas, _c.tl, _c.tr, _c.br, _c.bl);
