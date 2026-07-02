@@ -56,8 +56,11 @@ if (!$rotateOn) {
     $innerW   = $outerW - 2 * $frameW;
     $stepX    = $cols > 0 ? $innerW / $cols : 0;
     $rowH     = $stepX * $SQRT3 / 2;
-    $colStepR = $cols > 0 ? $innerW / $cols : 0;
-    $rowHR    = $colStepR > 0 ? $colStepR * 2 / $SQRT3 : 0;
+    // 세로살이 좌우 울거미 안쪽면과 겹쳐 그려지던 문제 수정: 스퀘어/클래식처럼 칸 사이에
+    // 살두께를 미리 빼놓고, colStepR(중심-중심)는 거기에 slatT를 더해 되돌린다.
+    $cellWHexR = $cols > 0 ? ($innerW - $slatT * ($cols - 1)) / $cols : 0;
+    $colStepR  = $cellWHexR + $slatT;
+    $rowHR     = $cellWHexR > 0 ? $cellWHexR * 2 / $SQRT3 : 0;
     $availH2  = $outerH - 2 * $frameH - $effectivePungpanInput;
     $rows     = $rowHR > 0 ? max(2, (int)($availH2 / $rowHR) + 1) : 2;
     $innerH   = ($rows - 1) * $rowHR;
@@ -146,14 +149,17 @@ $specs = [
     'halfLapW'  => number_format($slatT * 2 / $SQRT3, 1),
     'grooveW'   => number_format($slatT * $SQRT3, 1),
     'grooveWH'  => number_format($slatT, 1),
+    // 세로 울거미에 홈을 파야 하는 세로 방향 간격(피치)
+    'grooveGapV' => number_format($rowHR, 1),
 ];
 
 $pungpanVisible = $pungpanOn && $effectivePungpanH > 0;
 $ppPanelH = $pungpanVisible ? ($effectivePungpanH - $frameH) : 0;
 
 // ── 육모살 세로살·사선살 수량 계산 ──────────────────────────
-// JS hexagon.js: rotateOn=true 고정 (pointy-top), size = iW/(cols*√3), bStep = 2*size
-$hexSize = $innerW / max(1, $cols * $SQRT3);
+// JS hexagon.js: rotateOn=true 고정 (pointy-top), size = (iW-slatT*(cols-1))/cols/√3, bStep = 2*size
+// colStepR와 동일하게 칸 사이 살두께를 미리 빼놓은 순수 크기 사용 (경계 울거미 겹침 버그 수정)
+$hexSize = $cols > 0 ? ((($innerW - $slatT * ($cols - 1)) / $cols) / $SQRT3) : 0;
 
 function calcGroupsHexDR(float $iW, float $iH, float $hexSize, float $sT): array {
     $S3    = sqrt(3);

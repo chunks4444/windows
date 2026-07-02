@@ -514,6 +514,7 @@ async function draw() {
     document.getElementById('spHalfLapW').innerText   = s.halfLapW;
     document.getElementById('spGrooveW').innerText    = s.grooveW;
     document.getElementById('spGrooveWH').innerText   = s.grooveWH;
+    document.getElementById('spGrooveGapV').innerText = s.grooveGapV;
     document.getElementById('spPungpan').innerText    = s.pungpan;
     document.getElementById('spFrameHTop').innerText  = s.frameHTop;
     document.getElementById('spTotalDoorW').innerText = s.totalDoorW;
@@ -926,19 +927,24 @@ async function draw() {
 
         } else {
             // ── 세로 방향 (pointy-top 육모) ───────────────
+            // 스퀘어/클래식처럼 칸 사이에 살두께를 미리 빼놓은 순수 크기(size) 사용,
+            // step(중심-중심)은 거기에 slatT를 더해 되돌림 — 좌우 울거미 겹침 버그 수정 (geometry.php와 동일 공식)
             const S3     = Math.sqrt(3);
-            const size   = iW / (geo.cols * S3);
-            const step   = size * S3;
+            const size   = (iW - slatPx * (geo.cols - 1)) / geo.cols / S3;
+            const step   = size * S3 + slatPx;
             const bStep  = size * 2;
             const phaseD = -size / 2;
             const phaseU =  size / 2;
+            // 패턴 전체(면색·세로살·대각살) 원점을 slatPxHalf만큼 왼쪽으로 당겨서
+            // 좌우 경계 칸 폭이 안쪽 칸과 동일(cellWHexR)해지도록 함
+            const iLeftV = iLeft - slatPxHalf;
 
             lastCellSize = size;
 
             // 면 채색 — pointy-top 육각형
             if (faceColorMap) {
                 for (let i = 0; i < geo.cols; i++) {
-                    const cx = iLeft + (i + 0.5) * step;
+                    const cx = iLeftV + (i + 0.5) * step;
                     for (let k = -1; ; k++) {
                         const cy = iTop + size * (2 * k + 1 - i % 2);
                         if (cy - size > iTop + iH) break;
@@ -960,9 +966,9 @@ async function draw() {
                 }
             }
 
-            // 세로살 — 셀 단위 세그먼트
-            for (let n = 0; n <= geo.cols; n++) {
-                const x = iLeft + n * step;
+            // 세로살 — 셀 단위 세그먼트 (경계 n=0/cols는 울거미 안쪽면과 겹쳐 그리지 않음 — 부재수 cols-1과 일치)
+            for (let n = 1; n < geo.cols; n++) {
+                const x = iLeftV + n * step;
                 if (x > iLeft + iW + slatPxHalf) break;
                 const j0 = Math.floor(-slatPxHalf / size);
                 for (let j = j0; ; j++) {
@@ -994,9 +1000,9 @@ async function draw() {
                     const y0 = iTop + phaseD + k * bStep;
                     if (y0 > iTop + iH) break;
                     for (let m = 0; ; m++) {
-                        const x1 = iLeft + m * (step / 2);
+                        const x1 = iLeftV + m * (step / 2);
                         if (x1 > iLeft + iW + slatPxHalf) break;
-                        const x2 = iLeft + (m + 1) * (step / 2);
+                        const x2 = iLeftV + (m + 1) * (step / 2);
                         const y1 = y0 + m * (size / 2);
                         const y2 = y0 + (m + 1) * (size / 2);
                         const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
@@ -1025,9 +1031,9 @@ async function draw() {
                     const y0 = iTop + phaseU + k * bStep;
                     if (y0 > iTop + iH + iW / S3) break;
                     for (let m = 0; ; m++) {
-                        const x1 = iLeft + m * (step / 2);
+                        const x1 = iLeftV + m * (step / 2);
                         if (x1 > iLeft + iW + slatPxHalf) break;
-                        const x2 = iLeft + (m + 1) * (step / 2);
+                        const x2 = iLeftV + (m + 1) * (step / 2);
                         const y1 = y0 - m * (size / 2);
                         const y2 = y0 - (m + 1) * (size / 2);
                         const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
@@ -1663,11 +1669,12 @@ async function draw() {
             const wedge   = Math.floor(angle / (Math.PI / 3)) % 6;
             return `hex:${rIdx}:${cIdx}:${wedge}`;
         } else {
-            const size  = iW / (geo.cols * S3);
-            const step  = size * S3;
-            const i     = Math.floor((px - iLeft) / step);
+            const size   = (iW - slatPx * (geo.cols - 1)) / geo.cols / S3;
+            const step   = size * S3 + slatPx;
+            const iLeftV = iLeft - slatPx / 2;
+            const i     = Math.floor((px - iLeftV) / step);
             const k     = Math.round(((py - iTop) / size - 1 + (i % 2)) / 2);
-            const hcx   = iLeft + (i + 0.5) * step;
+            const hcx   = iLeftV + (i + 0.5) * step;
             const hcy   = iTop + size * (2 * k + 1 - i % 2);
             if (Math.hypot(px - hcx, py - hcy) > size) return null;
             const angle = ((Math.atan2(py - hcy, px - hcx) - Math.PI / 2 + 2 * Math.PI) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
