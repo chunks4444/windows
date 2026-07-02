@@ -79,7 +79,7 @@ $cellH       = $rowH;
 $cellSize    = $stepX;
 $step        = $rotateOn ? $rowHR : $stepX;
 $stepH       = $rowH + $slatT;
-$diagEye     = number_format($rotateOn ? ($colStepR - $slatT) : ($stepX - $slatT), 1);
+$diagEye     = number_format($rotateOn ? $colStepR : ($stepX - $slatT), 1);
 $tenonDepth  = $slatT;
 $actualPatternH = $frameHTop + $innerH + $frameHBottom;
 

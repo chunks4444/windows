@@ -218,10 +218,6 @@ header('Pragma: no-cache');
                             <div class="spec-lbl">상/하 울거미</div>
                             <div class="spec-val"><span id="spFrameHTop">0</span><span class="spec-unit">mm</span></div>
                         </div>
-                        <div class="spec-card accent">
-                            <div class="spec-lbl">전체 문폭</div>
-                            <div class="spec-val"><span id="spTotalDoorW">0</span><span class="spec-unit">mm</span></div>
-                        </div>
                         <div class="spec-card" id="spOverlapCard" style="display:none;">
                             <div class="spec-lbl">겹침</div>
                             <div class="spec-val"><span id="spOverlap">0</span><span class="spec-unit">mm</span></div>
