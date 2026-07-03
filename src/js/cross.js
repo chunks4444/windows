@@ -76,6 +76,7 @@
         () => { faceColorMap = null; draw(); }
     );
     const canvas = document.getElementById('doorCanvas');
+    const rulerCanvas = document.getElementById('rulerCanvas');
     const ctx = canvas.getContext('2d');
     const container = document.getElementById('canvasContainer');
 
@@ -262,6 +263,10 @@
         canvas.height = ph;
         canvas.style.width  = w + 'px';
         canvas.style.height = h + 'px';
+        rulerCanvas.width  = pw;
+        rulerCanvas.height = ph;
+        rulerCanvas.style.width  = w + 'px';
+        rulerCanvas.style.height = h + 'px';
         kv.syncSize();
         if (_versionsLoaded) draw();
     }
@@ -1395,8 +1400,12 @@ async function draw() {
     }
 
     function drawRulers() {
-        const rCtx = canvas.getContext('2d');
+        const rCtx = rulerCanvas.getContext('2d');
         const rDpr = window.devicePixelRatio || 1;
+        rCtx.save();
+        rCtx.setTransform(1, 0, 0, 1, 0, 0);
+        rCtx.clearRect(0, 0, rulerCanvas.width, rulerCanvas.height);
+        rCtx.restore();
         if (!lastBaseScale) return;
 
         const R    = 22;

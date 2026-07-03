@@ -479,6 +479,7 @@ header('Pragma: no-cache');
 
             <canvas id="doorCanvas"></canvas>
             <div id="konvaStageContainer" style="position:absolute;top:0;left:0;pointer-events:none;"></div>
+            <canvas id="rulerCanvas" style="position:absolute;top:0;left:0;pointer-events:none;z-index:1;"></canvas>
 
             <!-- 도형 스타일 패널 -->
             <div id="konvaShapePanel" style="display:none;position:absolute;top:44px;left:50%;transform:translateX(-50%);
