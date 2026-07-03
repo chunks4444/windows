@@ -242,7 +242,7 @@ body {
 .db-thumb {
     width: 100%;
     aspect-ratio: 4 / 3;
-    background: var(--page-bg);
+    background: #dcdcda;
     overflow: hidden;
     position: relative;
 }
