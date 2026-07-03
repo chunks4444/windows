@@ -82,7 +82,7 @@
             </a>
             <a href="/src/admin/space_cards.php" class="adm-home-card">
                 <div class="adm-home-icon"><i class="bi bi-grid"></i></div>
-                <div><div class="adm-home-title">공간 카드 관리</div><div class="adm-home-desc">메인 공간 큐레이션</div></div>
+                <div><div class="adm-home-title">메인 큐레이션 관리</div><div class="adm-home-desc">메인 공간 큐레이션</div></div>
             </a>
             <a href="/src/admin/studio_cards.php" class="adm-home-card">
                 <div class="adm-home-icon"><i class="bi bi-grid-1x2"></i></div>

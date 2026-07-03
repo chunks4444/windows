@@ -42,8 +42,13 @@
         <h1 class="db-title"><i class="bi bi-stars me-2"></i>AI 렌더링 설정</h1>
     </div>
 
-    <div style="max-width:600px;margin:0 auto;">
+    <div class="adm-tab-bar" id="rsTabs" style="margin-bottom:20px;">
+        <button class="adm-tab-btn active" data-tab="openai">OpenAI 이미지 렌더링</button>
+        <button class="adm-tab-btn" data-tab="anthropic">Anthropic Claude AI 채팅</button>
+        <button class="adm-tab-btn" data-tab="preset">재질/조명 프리셋</button>
+    </div>
 
+    <div id="rsPanelOpenai">
         <div class="oauth-card">
             <div class="oauth-card-header">
                 <div class="oauth-card-logo" style="background:#10a37f;color:#fff;font-size:11px;font-weight:700;letter-spacing:-.5px;">AI</div>
@@ -63,14 +68,16 @@
             </div>
             <div class="oauth-field">
                 <label>렌더링 기본 명령어 (프롬프트 템플릿)</label>
-                <textarea id="render_base_prompt" rows="5" style="width:100%;padding:8px 10px;border:1px solid var(--border-md,#ddd);border-radius:6px;font-size:12px;font-family:monospace;resize:vertical;" placeholder="{{prompt}} 자리에 사용자가 고른/입력한 프롬프트가 삽입됩니다"></textarea>
+                <textarea id="render_base_prompt" rows="14" style="width:100%;padding:8px 10px;border:1px solid var(--border-md,#ddd);border-radius:6px;font-size:12px;font-family:monospace;resize:vertical;" placeholder="{{prompt}} 자리에 사용자가 고른/입력한 프롬프트가 삽입됩니다"></textarea>
                 <div style="font-size:11px;color:var(--text-3);margin-top:4px;">문살 구조를 바꾸지 말라는 지시문. <code>{{prompt}}</code> 위치에 사용자 입력이 들어갑니다.</div>
             </div>
             <button class="oauth-save" onclick="saveRenderConfig()">저장</button>
             <span class="oauth-status" id="render_status"></span>
         </div>
+    </div>
 
-        <div class="oauth-card" style="margin-top:16px;">
+    <div id="rsPanelAnthropic" style="display:none;">
+        <div class="oauth-card">
             <div class="oauth-card-header">
                 <div class="oauth-card-logo" style="background:#6B4FBB;color:#fff;font-size:10px;font-weight:700;letter-spacing:-.5px;">ANT</div>
                 <span class="oauth-card-title">Anthropic Claude AI 채팅</span>
@@ -87,18 +94,17 @@
                 </select>
             </div>
             <div style="display:flex;gap:8px;align-items:center;">
-                <button class="oauth-save" onclick="saveAiConfig()" style="flex:1;margin:0;">저장</button>
-                <button class="oauth-save" id="btnTest" onclick="testAiConnection()" style="flex:1;margin:0;background:var(--text-3,#888);">연결 테스트</button>
+                <button class="oauth-save" onclick="saveAiConfig()" style="margin:0;">저장</button>
+                <button class="oauth-save" id="btnTest" onclick="testAiConnection()" style="margin:0;background:var(--text-3,#888);">연결 테스트</button>
             </div>
             <div style="margin-top:6px;display:flex;gap:10px;">
                 <span class="oauth-status" id="ai_status"></span>
                 <span class="oauth-status" id="test_status"></span>
             </div>
         </div>
-
     </div>
 
-    <div style="max-width:900px;margin:24px auto 0;">
+    <div id="rsPanelPreset" style="display:none;">
         <div class="oauth-card">
             <div class="oauth-card-header">
                 <div class="oauth-card-logo" style="background:#3A8C82;color:#fff;font-size:11px;font-weight:700;letter-spacing:-.5px;"><i class="bi bi-palette"></i></div>
@@ -120,6 +126,17 @@
         </div>
     </div>
 </div>
+
+<script>
+document.getElementById('rsTabs').addEventListener('click', e => {
+    const btn = e.target.closest('.adm-tab-btn');
+    if (!btn) return;
+    document.querySelectorAll('#rsTabs .adm-tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+    document.getElementById('rsPanelOpenai').style.display    = btn.dataset.tab === 'openai'    ? '' : 'none';
+    document.getElementById('rsPanelAnthropic').style.display = btn.dataset.tab === 'anthropic' ? '' : 'none';
+    document.getElementById('rsPanelPreset').style.display    = btn.dataset.tab === 'preset'    ? '' : 'none';
+});
+</script>
 
 <script src="/src/js/admin/render_settings.js"></script>
 </body>

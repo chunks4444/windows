@@ -71,10 +71,32 @@ a.pm-topbar-notice-text:hover { opacity: 0.85; }
     margin-left: 12px;
 }
 .pm-navbar .nav-link {
+    position: relative;
     font-size: var(--fs-13);
-    font-weight: 700;
+    font-weight: 600;
     letter-spacing: 0.02em;
+    color: #333 !important;
+    transition: color .15s;
+}
+.pm-navbar .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: -2px;
+    height: 2px;
+    background: var(--red);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .2s ease;
+}
+.pm-navbar .nav-link:hover,
+.pm-navbar .nav-link.active,
+.pm-navbar .nav-link[aria-expanded="true"] {
     color: #000 !important;
+}
+.pm-navbar .nav-link:hover::after,
+.pm-navbar .nav-link.active::after,
+.pm-navbar .nav-link[aria-expanded="true"]::after {
+    transform: scaleX(1);
 }
 .pm-navbar .dropdown-menu {
     min-width: 180px;

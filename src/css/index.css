@@ -180,7 +180,7 @@ body { font-weight: 900; }
 /* SPACE CARDS */
 .space-cards-wrapper {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 12px;
     padding: 28px 0 32px;
 }
@@ -378,38 +378,6 @@ body { font-weight: 900; }
 
 .values-inner {
     width: 100%;
-}
-
-.values-item {
-    padding: 52px 0;
-    border-bottom: 1px solid var(--border);
-    cursor: default;
-}
-
-.values-item:first-of-type {
-    border-top: 1px solid var(--border);
-}
-
-.values-title {
-    font-family: 'Noto Sans KR', serif;
-    font-size: var(--fs-22);
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    margin-bottom: 0;
-    transition: color .2s;
-}
-
-.values-item:hover .values-title {
-    color: var(--red);
-}
-
-.sub-title {
-    font-size: var(--fs-14);
-    font-weight: 400;
-    color: #191919 !important;
-    line-height: 1.7;
-    word-break: keep-all;
-    margin: 6px 0 0;
 }
 
 .service-sub-text {
@@ -649,7 +617,7 @@ body { font-weight: 900; }
 }
 .home-blog-card:hover {
     box-shadow: 0 4px 16px rgba(0,0,0,0.07);
-    border-color: rgba(204,34,0,0.25);
+    border-color: rgba(0,0,0,0.6);
     color: inherit;
 }
 
@@ -716,7 +684,7 @@ body { font-weight: 900; }
 
 .guide-card:hover {
     box-shadow: 0 4px 16px rgba(0,0,0,0.07);
-    border-color: rgba(204,34,0,0.25);
+    border-color: rgba(0,0,0,0.6);
     color: inherit;
 }
 
@@ -987,61 +955,14 @@ body { font-weight: 900; }
     margin-bottom: 0;
 }
 
-/* VALUES GRID */
-.values-grid {
-    display: flex;
-    gap: 0;
-    border-top: 1px solid var(--border);
-}
-
-.values-grid .values-item {
-    flex: 1;
-    border-bottom: none;
-    padding: 24px 40px;
-}
-
-.values-grid .values-item:first-child {
-    padding-left: 0;
-}
-
-.values-grid .values-item:last-child {
-    padding-right: 0;
-}
-
-.values-grid .values-item:not(:last-child) {
-    border-right: 1px solid var(--border);
-}
-
 @media (max-width: 768px) {
     .values-section {
         padding: 0 24px 32px;
-    }
-
-    .values-grid {
-        flex-direction: column;
-    }
-
-    .values-grid .values-item {
-        padding: 14px 0;
-        border-right: none !important;
-        border-bottom: 1px solid var(--border);
-    }
-
-    .values-grid .values-item:last-child {
-        border-bottom: none;
-    }
-
-    .values-title {
-        font-size: var(--fs-22);
     }
 }
 
 @media (max-width: 480px) {
     .values-section {
         padding: 0 20px 24px;
-    }
-
-    .values-title {
-        font-size: var(--fs-18);
     }
 }

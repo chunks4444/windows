@@ -1,5 +1,4 @@
 /* ── 상태 ─────────────────────────────────────── */
-let allKeywords    = [];
 let loadedPatterns = [];
 let currentPage    = 1;
 let hasMore        = true;
@@ -49,9 +48,9 @@ async function loadNextPage() {
     const data     = await fetchPage(currentQ, currentPage, activeCategory);
     const patterns = data.patterns || [];
 
-    if (currentPage === 1 && Array.isArray(data.keywords)) {
-        allKeywords = data.keywords;
-        buildFilterButtons();
+    if (currentPage === 1 && typeof data.total === 'number') {
+        const countEl = document.getElementById('libResultCount');
+        if (countEl) countEl.innerHTML = `<strong>${data.total}</strong>개 패턴`;
     }
 
     loadedPatterns = [...loadedPatterns, ...patterns];
@@ -97,8 +96,10 @@ function setupObserver() {
 function renderLiked() {
     scrollObserver?.disconnect();
     setLoadMore(false);
-    const masonry  = document.getElementById('libMasonry');
-    const patterns = loadedPatterns.filter(p => !!likes[p.id]);
+    const masonry   = document.getElementById('libMasonry');
+    const patterns  = loadedPatterns.filter(p => !!likes[p.id]);
+    const countEl   = document.getElementById('libResultCount');
+    if (countEl) countEl.innerHTML = `<strong>${patterns.length}</strong>개 좋아요`;
     if (!patterns.length) {
         masonry.innerHTML = '<p style="color:var(--text-3);font-size:13px;grid-column:1/-1;padding:40px 0;text-align:center;">좋아요한 패턴이 없습니다.</p>';
         return;
@@ -144,67 +145,58 @@ function buildCard(p) {
         </div>`;
 }
 
-/* ── 필터 버튼 ────────────────────────────────── */
-function buildFilterButtons() {
-    const container = document.getElementById('libFilters');
-    const existing  = new Set([...container.querySelectorAll('.lib-filter-btn')].map(b => b.dataset.filter));
-    allKeywords.forEach(kw => {
-        if (existing.has(kw)) return;
-        const btn = document.createElement('button');
-        btn.className      = 'lib-filter-btn';
-        btn.dataset.filter = kw;
-        btn.textContent    = kw;
-        container.appendChild(btn);
-        existing.add(kw);
-    });
-    bindFilterBtns();
+/* ── 좋아요 토글 버튼 ─────────────────────────── */
+function clearLikeActive() {
+    const btn = document.getElementById('libLikeBtn');
+    if (btn) btn.classList.remove('active');
+    activeFilter = 'all';
 }
 
-function bindFilterBtns() {
-    document.querySelectorAll('.lib-filter-btn').forEach(btn => {
-        btn.onclick = () => {
-            document.querySelectorAll('.lib-filter-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            activeFilter = btn.dataset.filter;
-            if (activeFilter === 'liked') {
-                renderLiked();
-            } else if (activeFilter === 'all') {
-                document.getElementById('libSearch').value = '';
-                resetAndLoad('');
-            } else {
-                resetAndLoad(activeFilter);
-            }
-        };
-    });
+function bindLikeBtn() {
+    const btn = document.getElementById('libLikeBtn');
+    if (!btn) return;
+    btn.onclick = () => {
+        const activating = !btn.classList.contains('active');
+        btn.classList.toggle('active', activating);
+        activeFilter = activating ? 'liked' : 'all';
+        if (activating) {
+            renderLiked();
+        } else {
+            resetAndLoad(currentQ);
+        }
+    };
 }
 
 async function initCategoryFilter() {
+    const select = document.getElementById('libCatSelect');
+    if (!select) return;
     try {
         const res  = await fetch('/src/api/drawings/categories.php');
         const cats = (await res.json()).categories || [];
-        const row  = document.getElementById('libCatFilters');
-        if (!row) return;
         cats.forEach(c => {
-            const btn = document.createElement('button');
-            btn.className    = 'lib-cat-btn';
-            btn.dataset.cat  = c.id;
-            btn.textContent  = c.name;
-            row.appendChild(btn);
+            const opt = document.createElement('option');
+            opt.value       = c.id;
+            opt.textContent = c.name;
+            select.appendChild(opt);
         });
     } catch {}
 
-    document.querySelectorAll('.lib-cat-btn').forEach(btn => {
-        btn.onclick = () => {
-            document.querySelectorAll('.lib-cat-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            activeCategory = btn.dataset.cat || '';
-            if (activeFilter === 'liked') {
-                activeFilter = 'all';
-                document.querySelectorAll('.lib-filter-btn').forEach(b => b.classList.remove('active'));
-                document.querySelector('[data-filter="all"]').classList.add('active');
-            }
-            resetAndLoad(currentQ);
-        };
+    select.addEventListener('change', () => {
+        activeCategory = select.value || '';
+        clearLikeActive();
+        resetAndLoad(currentQ);
+    });
+}
+
+/* ── 공간 셀렉트 ──────────────────────────────── */
+function initSpaceFilter() {
+    const select = document.getElementById('libSpaceSelect');
+    if (!select) return;
+    select.addEventListener('change', () => {
+        const q = select.value || '';
+        clearLikeActive();
+        document.getElementById('libSearch').value = q;
+        resetAndLoad(q);
     });
 }
 
@@ -212,9 +204,9 @@ async function initCategoryFilter() {
 document.getElementById('libSearch').addEventListener('input', e => {
     clearTimeout(searchTimer);
     searchTimer = setTimeout(() => {
-        activeFilter = 'all';
-        document.querySelectorAll('.lib-filter-btn').forEach(b => b.classList.remove('active'));
-        document.querySelector('[data-filter="all"]').classList.add('active');
+        clearLikeActive();
+        const spaceSelect = document.getElementById('libSpaceSelect');
+        if (spaceSelect) spaceSelect.value = '';
         resetAndLoad(e.target.value.trim());
     }, 300);
 });
@@ -375,8 +367,9 @@ function esc(str) {
 
 /* ── 초기화 ───────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', async () => {
-    bindFilterBtns();
+    bindLikeBtn();
     await initCategoryFilter();
+    initSpaceFilter();
     document.getElementById('boardModal').addEventListener('click', e => {
         if (e.target === e.currentTarget) closeBoardModal();
     });
@@ -391,6 +384,10 @@ document.addEventListener('DOMContentLoaded', async () => {
            || '';
     sessionStorage.removeItem('collectionQ');
 
-    if (q) document.getElementById('libSearch').value = q;
+    if (q) {
+        document.getElementById('libSearch').value = q;
+        const spaceSelect = document.getElementById('libSpaceSelect');
+        if (spaceSelect && [...spaceSelect.options].some(o => o.value === q)) spaceSelect.value = q;
+    }
     resetAndLoad(q);
 });

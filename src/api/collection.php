@@ -73,4 +73,18 @@ foreach ($rows as &$r) {
 
 $out = ['patterns' => $rows, 'has_more' => $has_more];
 if ($page === 1) $out['keywords'] = $keywords;
+
+// 총 개수 (첫 페이지에서만 계산 — 필터/검색어 바뀔 때마다 갱신됨)
+if ($page === 1) {
+    $cstmt = $pdo->prepare(
+        "SELECT COUNT(DISTINCT p.id) FROM library_patterns p
+         LEFT JOIN drawings d ON d.id = p.drawing_id
+         LEFT JOIN library_keywords k ON k.pattern_id = p.id
+         WHERE $baseWhere"
+    );
+    foreach ($params as $k => $v) $cstmt->bindValue($k, $v);
+    $cstmt->execute();
+    $out['total'] = (int)$cstmt->fetchColumn();
+}
+
 echo json_encode($out);

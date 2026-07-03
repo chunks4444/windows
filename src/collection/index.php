@@ -1,4 +1,12 @@
-<?php header('Content-Type: text/html; charset=UTF-8'); ?>
+<?php
+header('Content-Type: text/html; charset=UTF-8');
+require_once __DIR__ . '/../lib/db.php';
+try {
+    $spaceOptions = db()->query("SELECT label, collection_query FROM space_cards WHERE is_active=1 ORDER BY sort_order, id")->fetchAll();
+} catch (Throwable $e) {
+    $spaceOptions = [];
+}
+?>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -25,17 +33,25 @@
 <!-- 검색 / 필터 바 -->
 <div class="lib-toolbar">
     <div class="lib-toolbar-inner">
-        <div class="lib-filters" id="libFilters">
-            <button class="lib-filter-btn active" data-filter="all">전체</button>
-            <button class="lib-filter-btn lib-filter-like" data-filter="liked"><i class="bi bi-heart-fill"></i> 좋아요</button>
+        <div class="lib-select-row">
+            <select id="libCatSelect" class="lib-select">
+                <option value="">모양 전체</option>
+            </select>
+            <select id="libSpaceSelect" class="lib-select">
+                <option value="">공간 전체</option>
+                <?php foreach ($spaceOptions as $sp): ?>
+                <option value="<?= htmlspecialchars($sp['collection_query'], ENT_QUOTES) ?>"><?= htmlspecialchars($sp['label']) ?></option>
+                <?php endforeach; ?>
+            </select>
         </div>
-        <div class="lib-search">
-            <i class="bi bi-search"></i>
-            <input type="text" id="libSearch" placeholder="패턴 검색…" autocomplete="off">
+        <div class="lib-right-group">
+            <button class="lib-filter-like" id="libLikeBtn"><i class="bi bi-heart-fill"></i> 좋아요</button>
+            <div class="lib-search">
+                <i class="bi bi-search"></i>
+                <input type="text" id="libSearch" placeholder="패턴 검색…" autocomplete="off">
+            </div>
         </div>
-        <div class="lib-cat-row" id="libCatFilters">
-            <button class="lib-cat-btn active" data-cat=""><i class="bi bi-grid"></i> 전체</button>
-        </div>
+        <span class="lib-result-count" id="libResultCount"></span>
     </div>
 </div>
 
