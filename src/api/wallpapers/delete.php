@@ -28,7 +28,7 @@ if (!$row) {
 }
 
 // 파일 삭제
-$file = __DIR__ . '/../../../../' . ltrim($row['filepath'], '/');
+$file = __DIR__ . '/../../../' . ltrim($row['filepath'], '/');
 if (is_file($file)) @unlink($file);
 
 $pdo->prepare('DELETE FROM wallpapers WHERE id = ? AND user_id = ?')
