@@ -159,11 +159,21 @@ function bindLikeBtn() {
     if (!btn) return;
     btn.onclick = () => {
         const activating = !btn.classList.contains('active');
-        likedActive = activating;
-        btn.classList.toggle('active', activating);
-        if (activating) clearOtherFilters({ keepLiked: true });
-        resetAndLoad('');
+        if (activating && !authToken()) { pmokRequireAuth(() => bindLikeBtnActivate(btn)); return; }
+        if (activating) bindLikeBtnActivate(btn);
+        else {
+            likedActive = false;
+            btn.classList.remove('active');
+            resetAndLoad('');
+        }
     };
+}
+
+function bindLikeBtnActivate(btn) {
+    likedActive = true;
+    btn.classList.add('active');
+    clearOtherFilters({ keepLiked: true });
+    resetAndLoad('');
 }
 
 async function initCategoryFilter() {

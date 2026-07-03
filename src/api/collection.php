@@ -17,9 +17,10 @@ $limit    = 20;
 $offset   = ($page - 1) * $limit;
 $pdo      = db();
 
-$payload = jwt_from_request();
-$uid     = $payload ? (int)$payload['sub'] : 0;
-if ($liked && !$uid) $liked = false;
+$payload     = jwt_from_request();
+$uid         = $payload ? (int)$payload['sub'] : 0;
+$likedNoAuth = $liked && !$uid;   // 비로그인 상태로 좋아요 필터 요청 — 전체 목록이 아니라 빈 결과를 줘야 함
+if ($likedNoAuth) $liked = false;
 
 $editorMap = [
     'classic'  => '/src/engine/classic/classic.php',
@@ -47,6 +48,8 @@ if ($category !== '') {
 } elseif ($liked) {
     $baseWhere .= ' AND p.id IN (SELECT pattern_id FROM library_likes WHERE user_id = :uid)';
     $params[':uid'] = $uid;
+} elseif ($likedNoAuth) {
+    $baseWhere .= ' AND 0';   // 로그인 안 한 사용자의 좋아요 필터 — 전체 노출 대신 결과 없음
 }
 
 // 필터 버튼용 전체 키워드 (page 1에서만)

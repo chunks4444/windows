@@ -610,6 +610,7 @@ function loadRenders() {
     fetch('/src/api/renders/list.php', { headers: { Authorization: 'Bearer ' + _token() } })
         .then(r => r.json())
         .then(data => {
+            if (data.error) { el.innerHTML = '<div class="db-empty">렌더링 목록을 불러오지 못했습니다. 다시 로그인해주세요.</div>'; return; }
             _renderItemsCache = data.renders || [];
             _renderLimitCache = data.limit || 300;
 

@@ -11,6 +11,7 @@ $userId = (int)$payload['sub'];
 
 require_once __DIR__ . '/../../../lib/render_storage.php';
 if (render_count_for_user($userId) >= RENDER_LIMIT_PER_USER) {
+    http_response_code(429);
     echo json_encode(['error' => '저장된 렌더링이 ' . RENDER_LIMIT_PER_USER . '장을 초과했습니다. 마이페이지 > 렌더링 탭에서 오래된 항목을 삭제한 후 다시 시도해주세요.']);
     exit;
 }
