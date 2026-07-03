@@ -219,6 +219,8 @@ body { background: var(--page-bg); }
 
 .lib-card-img img {
     transition: transform 0.3s ease;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
 }
 
 /* ── 오버레이 ─────────────────────────────────── */
