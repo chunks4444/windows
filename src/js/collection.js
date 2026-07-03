@@ -5,18 +5,21 @@ let hasMore        = true;
 let isLoading      = false;
 let currentQ       = '';
 const likes        = {};
-let activeFilter   = 'all';
+let likedActive    = false;
 let activeCategory = '';
 let searchTimer    = null;
 let scrollObserver = null;
 
-/* ── API ──────────────────────────────────────── */
+/* ── API (검색어/모양/좋아요는 서로 결합하지 않는 개별 필터 — 하나만 적용됨) ── */
 async function fetchPage(q, page, category) {
     try {
+        const token   = authToken();
+        const headers = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = 'Bearer ' + token;
         const res  = await fetch('/src/api/collection.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ q, page, category: category || '' }),
+            headers,
+            body: JSON.stringify({ q, page, category: category || '', liked: likedActive }),
         });
         const data = await res.json();
         if (data.error) { console.error('collection API:', data.error); return { patterns: [], has_more: false }; }
@@ -92,34 +95,6 @@ function setupObserver() {
     scrollObserver.observe(document.getElementById('libLoadMore'));
 }
 
-/* ── 좋아요 필터 렌더 (검색어/카테고리 등 다른 필터 무시하고 좋아요한 전체 표시) ── */
-async function renderLiked() {
-    scrollObserver?.disconnect();
-    setLoadMore(false);
-    const masonry = document.getElementById('libMasonry');
-    const countEl = document.getElementById('libResultCount');
-    masonry.innerHTML = '<p style="color:var(--text-3);font-size:13px;grid-column:1/-1;padding:40px 0;text-align:center;">불러오는 중…</p>';
-
-    const token = authToken();
-    let patterns = [];
-    if (token) {
-        try {
-            const res  = await fetch('/src/api/collection_likes.php?full=1', { headers: { 'Authorization': 'Bearer ' + token } });
-            const data = await res.json();
-            patterns = data.patterns || [];
-        } catch(e) { console.error('renderLiked fetch error:', e); }
-    }
-
-    if (activeFilter !== 'liked') return; // 응답 오는 사이 필터가 꺼졌으면 무시
-
-    if (countEl) countEl.innerHTML = `<strong>${patterns.length}</strong>개 좋아요`;
-    if (!patterns.length) {
-        masonry.innerHTML = '<p style="color:var(--text-3);font-size:13px;grid-column:1/-1;padding:40px 0;text-align:center;">좋아요한 패턴이 없습니다.</p>';
-        return;
-    }
-    masonry.innerHTML = patterns.map(buildCard).join('');
-}
-
 /* ── 카드 HTML ────────────────────────────────── */
 function buildCard(p) {
     const imgHtml = p.image_path
@@ -158,25 +133,36 @@ function buildCard(p) {
         </div>`;
 }
 
-/* ── 좋아요 토글 버튼 ─────────────────────────── */
-function clearLikeActive() {
-    const btn = document.getElementById('libLikeBtn');
-    if (btn) btn.classList.remove('active');
-    activeFilter = 'all';
+/* ── 필터 전환 (좋아요/모양/공간·검색어는 서로 개별 검색 — 하나를 켜면 나머지는 비움) ── */
+function clearOtherFilters({ keepCategory, keepSpace, keepSearch, keepLiked } = {}) {
+    if (!keepCategory) {
+        activeCategory = '';
+        const el = document.getElementById('libCatSelect');
+        if (el) el.value = '';
+    }
+    if (!keepSpace) {
+        const el = document.getElementById('libSpaceSelect');
+        if (el) el.value = '';
+    }
+    if (!keepSearch) {
+        document.getElementById('libSearch').value = '';
+    }
+    if (!keepLiked) {
+        likedActive = false;
+        document.getElementById('libLikeBtn')?.classList.remove('active');
+    }
 }
 
+/* ── 좋아요 토글 버튼 ─────────────────────────── */
 function bindLikeBtn() {
     const btn = document.getElementById('libLikeBtn');
     if (!btn) return;
     btn.onclick = () => {
         const activating = !btn.classList.contains('active');
+        likedActive = activating;
         btn.classList.toggle('active', activating);
-        activeFilter = activating ? 'liked' : 'all';
-        if (activating) {
-            renderLiked();
-        } else {
-            resetAndLoad(currentQ);
-        }
+        if (activating) clearOtherFilters({ keepLiked: true });
+        resetAndLoad('');
     };
 }
 
@@ -196,11 +182,7 @@ async function initCategoryFilter() {
 
     select.addEventListener('change', () => {
         activeCategory = select.value || '';
-        clearLikeActive();
-        // 모양 필터는 공간/검색어와 AND로 겹치지 않도록 서로 배타적으로 동작
-        document.getElementById('libSearch').value = '';
-        const spaceSelect = document.getElementById('libSpaceSelect');
-        if (spaceSelect) spaceSelect.value = '';
+        clearOtherFilters({ keepCategory: true });
         resetAndLoad('');
     });
 }
@@ -211,11 +193,7 @@ function initSpaceFilter() {
     if (!select) return;
     select.addEventListener('change', () => {
         const q = select.value || '';
-        clearLikeActive();
-        // 공간 필터는 모양 카테고리와 AND로 겹치지 않도록 서로 배타적으로 동작
-        activeCategory = '';
-        const catSelect = document.getElementById('libCatSelect');
-        if (catSelect) catSelect.value = '';
+        clearOtherFilters({ keepSpace: true });
         document.getElementById('libSearch').value = q;
         resetAndLoad(q);
     });
@@ -225,13 +203,7 @@ function initSpaceFilter() {
 document.getElementById('libSearch').addEventListener('input', e => {
     clearTimeout(searchTimer);
     searchTimer = setTimeout(() => {
-        clearLikeActive();
-        // 검색어도 모양 카테고리와 AND로 겹치지 않도록 서로 배타적으로 동작
-        const spaceSelect = document.getElementById('libSpaceSelect');
-        if (spaceSelect) spaceSelect.value = '';
-        activeCategory = '';
-        const catSelect = document.getElementById('libCatSelect');
-        if (catSelect) catSelect.value = '';
+        clearOtherFilters({ keepSearch: true });
         resetAndLoad(e.target.value.trim());
     }, 300);
 });
@@ -280,7 +252,7 @@ async function toggleLikeFor(btn, id) {
         icon.className = 'bi bi-heart';
         btn.classList.remove('liked');
     }
-    if (activeFilter === 'liked') renderLiked();
+    if (likedActive) resetAndLoad(currentQ);
 }
 
 /* ── 보드 모달 ────────────────────────────────── */

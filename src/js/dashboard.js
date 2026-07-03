@@ -601,97 +601,70 @@ window.addEventListener('pmokAuthChanged', () => {
     loadDashboard();
 });
 
-/* ── 렌더링 탭 (localStorage에 저장된 6개 엔진의 렌더링 결과를 엔진 구분 없이 모아 보여줌) ── */
-const RENDER_ENGINES     = ['classic', 'square', 'cross', 'triangle', 'diamond', 'hexagon'];
-const RENDER_WARN_BYTES  = 3 * 1024 * 1024; // localStorage 총량(보통 5~10MB) 대비 안전 경고선
-
-function _renderKeyFor(engine) {
-    const uid = _dashLocalUserId();
-    const base = `pmok_${engine}_renders`;
-    return uid ? `${base}_u${uid}` : base;
-}
-
-function _dashLocalUserId() {
-    const tok = _token();
-    if (!tok) return null;
-    try { return JSON.parse(atob(tok.split('.')[1])).sub ?? null; } catch { return null; }
-}
-
-function _allRenderItems() {
-    const items = [];
-    RENDER_ENGINES.forEach(engine => {
-        let arr = [];
-        try { arr = JSON.parse(localStorage.getItem(_renderKeyFor(engine))) || []; } catch {}
-        arr.forEach(r => items.push({ ...r, engine }));
-    });
-    items.sort((a, b) => (b.savedAt || 0) - (a.savedAt || 0));
-    return items;
-}
-
-function _renderStorageBytes() {
-    let total = 0;
-    RENDER_ENGINES.forEach(engine => {
-        const raw = localStorage.getItem(_renderKeyFor(engine));
-        if (raw) total += raw.length;
-    });
-    return total;
-}
+/* ── 렌더링 탭 (서버 uploads/renders에 저장된 6개 엔진의 렌더링 결과를 엔진 구분 없이 모아 보여줌) ── */
+let _renderItemsCache = [];
+let _renderLimitCache = 300;
 
 function loadRenders() {
-    const el    = document.getElementById('dbRendersContent');
-    const items = _allRenderItems();
-    const bytes = _renderStorageBytes();
+    const el = document.getElementById('dbRendersContent');
+    fetch('/src/api/renders/list.php', { headers: { Authorization: 'Bearer ' + _token() } })
+        .then(r => r.json())
+        .then(data => {
+            _renderItemsCache = data.renders || [];
+            _renderLimitCache = data.limit || 300;
 
-    let html = '';
-    if (bytes >= RENDER_WARN_BYTES) {
-        html += `<div class="rh-usage-banner"><i class="bi bi-exclamation-triangle-fill"></i> 저장 공간이 많이 찼습니다 (약 ${(bytes / 1024 / 1024).toFixed(1)}MB 사용 중). 브라우저 저장 공간이라 계속 쌓이면 오래된 렌더링부터 자동으로 사라질 수 있어요 — 필요 없는 항목을 정리해주세요.</div>`;
-    }
+            let html = '';
+            if (_renderItemsCache.length >= _renderLimitCache) {
+                html += `<div class="rh-usage-banner"><i class="bi bi-exclamation-triangle-fill"></i> 저장 가능한 렌더링(${_renderLimitCache}장)이 가득 찼습니다. 오래된 항목을 삭제해야 새로 렌더링할 수 있어요.</div>`;
+            }
 
-    if (!items.length) {
-        html += '<div class="db-empty">저장된 렌더링이 없습니다.</div>';
-        el.innerHTML = html;
-        return;
-    }
+            if (!_renderItemsCache.length) {
+                html += '<div class="db-empty">저장된 렌더링이 없습니다.</div>';
+                el.innerHTML = html;
+                return;
+            }
 
-    html += '<div class="rh-grid">' + items.map((r, i) => `
-        <div class="rh-item" data-idx="${i}">
-            <img src="${r.src}" loading="lazy">
-            <span class="rh-item-engine">${(TYPE_CONFIG[r.engine]?.label || r.engine)}</span>
-            <span class="rh-item-del" title="삭제" onclick="event.stopPropagation(); deleteRenderItem('${r.engine}', ${r.savedAt})"><i class="bi bi-x"></i></span>
-        </div>`).join('') + '</div>';
-    el.innerHTML = html;
+            html += `<div class="rh-count">${_renderItemsCache.length} / ${_renderLimitCache}</div>`;
+            html += '<div class="rh-grid">' + _renderItemsCache.map((r, i) => `
+                <div class="rh-item" data-idx="${i}">
+                    <img src="${r.filepath}" loading="lazy">
+                    <span class="rh-item-engine">${(TYPE_CONFIG[r.engine]?.label || r.engine)}</span>
+                    <span class="rh-item-del" title="삭제" onclick="event.stopPropagation(); deleteRenderItem(${r.id})"><i class="bi bi-x"></i></span>
+                </div>`).join('') + '</div>';
+            el.innerHTML = html;
 
-    el.querySelectorAll('.rh-item').forEach(node => {
-        node.addEventListener('click', () => openRenderModal(items[parseInt(node.dataset.idx)]));
-    });
+            el.querySelectorAll('.rh-item').forEach(node => {
+                node.addEventListener('click', () => openRenderModal(_renderItemsCache[parseInt(node.dataset.idx)]));
+            });
+        })
+        .catch(() => { el.innerHTML = '<div class="db-empty">렌더링 목록을 불러오지 못했습니다.</div>'; });
 }
 
-function deleteRenderItem(engine, savedAt) {
-    const key = _renderKeyFor(engine);
-    let arr = [];
-    try { arr = JSON.parse(localStorage.getItem(key)) || []; } catch {}
-    arr = arr.filter(r => r.savedAt !== savedAt);
-    try { localStorage.setItem(key, JSON.stringify(arr)); } catch {}
-    loadRenders();
+function deleteRenderItem(id) {
+    fetch('/src/api/renders/delete.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + _token() },
+        body: JSON.stringify({ id }),
+    }).then(() => loadRenders()).catch(() => {});
 }
 
 function openRenderModal(item) {
     const modal = document.getElementById('dbRenderModal');
-    const date  = item.savedAt ? new Date(item.savedAt) : null;
+    const date  = item.created_at ? new Date(item.created_at.replace(' ', 'T')) : null;
     const pad   = n => String(n).padStart(2, '0');
     const dateText = date ? `${date.getFullYear()}.${pad(date.getMonth() + 1)}.${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}` : '';
-    const filename = `pmok_${item.engine}_render_${item.savedAt || Date.now()}.png`;
+    const filename = `pmok_${item.engine}_render_${item.id}.png`;
 
     document.getElementById('dbRenderModalTitle').textContent = `${TYPE_CONFIG[item.engine]?.label || item.engine} · ${dateText}`;
-    document.getElementById('dbRenderModalImg').src = item.src;
+    document.getElementById('dbRenderModalImg').src = item.filepath;
     document.getElementById('dbRenderModalDownload').onclick = () => {
         const link = document.createElement('a');
         link.download = filename;
-        link.href = item.src;
+        link.href = item.filepath;
         link.click();
     };
     document.getElementById('dbRenderModalDelete').onclick = () => {
-        deleteRenderItem(item.engine, item.savedAt);
+        deleteRenderItem(item.id);
         modal.style.display = 'none';
     };
     modal.style.display = 'flex';

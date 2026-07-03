@@ -6,14 +6,20 @@ set_exception_handler(function(Throwable $e) {
     exit;
 });
 require_once __DIR__ . '/../lib/db.php';
+require_once __DIR__ . '/../lib/jwt.php';
 
 $_input   = json_decode(file_get_contents('php://input'), true) ?? [];
 $q        = trim($_input['q'] ?? $_GET['q'] ?? '');
 $page     = max(1, (int)($_input['page'] ?? 1));
 $category = trim($_input['category'] ?? '');   // 패턴 카테고리 ID ('') = 전체
+$liked    = !empty($_input['liked']);          // 좋아요 필터 (로그인 필요)
 $limit    = 20;
 $offset   = ($page - 1) * $limit;
 $pdo      = db();
+
+$payload = jwt_from_request();
+$uid     = $payload ? (int)$payload['sub'] : 0;
+if ($liked && !$uid) $liked = false;
 
 $editorMap = [
     'classic'  => '/src/engine/classic/classic.php',
@@ -24,17 +30,23 @@ $editorMap = [
     'hexagon'  => '/src/engine/hexagon/hexagon.php',
 ];
 
-// WHERE 조건
+// WHERE 조건 — 검색어/모양/좋아요는 서로 결합하지 않고 각각 개별 검색으로 동작.
+// (프런트가 필터 하나를 켜면 나머지를 비우지만, 혹시 여러 개가 함께 오더라도
+//  모양 > 검색어(공간 포함) > 좋아요 우선순위로 하나만 적용한다.)
 $baseWhere = 'p.is_active = 1';
 $params    = [];
-if ($q !== '') {
-    $like = '%' . $q . '%';
-    $baseWhere .= ' AND (p.name_ko LIKE :q OR p.id IN (SELECT pattern_id FROM library_keywords WHERE keyword LIKE :q2))';
-    $params = [':q' => $like, ':q2' => $like];
-}
+
 if ($category !== '') {
     $baseWhere .= ' AND d.pattern_category = :category';
     $params[':category'] = $category;
+} elseif ($q !== '') {
+    $like = '%' . $q . '%';
+    $baseWhere .= ' AND (p.name_ko LIKE :q OR p.id IN (SELECT pattern_id FROM library_keywords WHERE keyword LIKE :q2))';
+    $params[':q']  = $like;
+    $params[':q2'] = $like;
+} elseif ($liked) {
+    $baseWhere .= ' AND p.id IN (SELECT pattern_id FROM library_likes WHERE user_id = :uid)';
+    $params[':uid'] = $uid;
 }
 
 // 필터 버튼용 전체 키워드 (page 1에서만)

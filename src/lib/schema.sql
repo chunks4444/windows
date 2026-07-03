@@ -101,6 +101,17 @@ CREATE TABLE IF NOT EXISTS wallpapers (
     CONSTRAINT fk_wallpapers_drawing FOREIGN KEY (drawing_id) REFERENCES drawings(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='엔진 배경 이미지';
 
+CREATE TABLE IF NOT EXISTS renders (
+    id         INT UNSIGNED    NOT NULL AUTO_INCREMENT COMMENT '렌더링 고유 ID',
+    user_id    INT UNSIGNED    NOT NULL COMMENT '소유 사용자 ID (users.id FK)',
+    engine     VARCHAR(20)     NOT NULL COMMENT '엔진 구분 (classic/square/cross/diamond/triangle/hexagon)',
+    filepath   VARCHAR(500)    NOT NULL COMMENT '저장 파일 경로 (/uploads/renders/…)',
+    created_at DATETIME        NOT NULL DEFAULT NOW() COMMENT '렌더링 완료 일시',
+    PRIMARY KEY (id),
+    KEY idx_renders_user_created (user_id, created_at),
+    CONSTRAINT fk_renders_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI 렌더링 결과 이미지 (사용자당 최대 300장)';
+
 -- 페이지 SEO 메타데이터
 CREATE TABLE IF NOT EXISTS page_meta (
     id          INT UNSIGNED  NOT NULL AUTO_INCREMENT,

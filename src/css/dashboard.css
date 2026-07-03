@@ -109,6 +109,9 @@ body {
     background: #fff4e5; color: #8a5a00; border: 1px solid #ffdca0;
     border-radius: 8px; padding: 10px 14px; font-size: 13px; margin-bottom: 16px;
 }
+.rh-count {
+    font-size: 13px; color: var(--text-3, #888); margin-bottom: 10px;
+}
 .rh-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);

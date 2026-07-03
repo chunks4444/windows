@@ -73,17 +73,6 @@
     function _wpToken()   { return localStorage.getItem('pmok_auth_token'); }
     function _wpHeaders() { return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _wpToken() }; }
 
-    function _localUserId() {
-        const tok = localStorage.getItem('pmok_auth_token');
-        if (!tok) return null;
-        try { return JSON.parse(atob(tok.split('.')[1])).sub ?? null; } catch { return null; }
-    }
-
-    function _rendersKey() {
-        const uid = _localUserId();
-        return uid ? RENDERS_KEY + '_u' + uid : RENDERS_KEY;
-    }
-
     function addThumbItem(id, src, filename) {
         const item = document.createElement('div');
         item.className = 'rp-thumb-item';
@@ -338,9 +327,20 @@
         return `rgb(${r},${g},${b})`;
     }
 
+    function _engineName() {
+        const m = /^pmok_(.+)_renders$/.exec(RENDERS_KEY || '');
+        return m ? m[1] : '';
+    }
+
     function loadSavedRenders() {
-        try { savedRenders = JSON.parse(localStorage.getItem(_rendersKey())) || []; } catch(e) { savedRenders = []; }
-        renderSavedThumbList();
+        fetch('/src/api/renders/list.php?engine=' + encodeURIComponent(_engineName()), { headers: _wpHeaders() })
+            .then(r => r.json())
+            .then(data => {
+                savedRenders = (data.renders || []).slice(0, MAX_RENDERS)
+                    .map(r => ({ id: r.id, src: r.filepath, savedAt: new Date(r.created_at).getTime() }));
+                renderSavedThumbList();
+            })
+            .catch(() => { savedRenders = []; renderSavedThumbList(); });
     }
 
     function openDrawingManager() {
@@ -497,8 +497,7 @@
         const list = document.getElementById('renderSavedList');
         if (!list) return;
         list.innerHTML = '';
-        [...savedRenders].reverse().forEach((r, i) => {
-            const realIdx = savedRenders.length - 1 - i;
+        savedRenders.forEach((r) => {
             const item = document.createElement('div');
             item.className = 'render-saved-item';
             item.innerHTML = `<img src="${r.src}"><span class="render-saved-del" title="삭제"><i class="bi bi-x"></i></span>`;
@@ -507,9 +506,11 @@
             });
             item.querySelector('.render-saved-del').addEventListener('click', (e) => {
                 e.stopPropagation();
-                savedRenders.splice(realIdx, 1);
-                try { localStorage.setItem(_rendersKey(), JSON.stringify(savedRenders)); } catch(e2) {}
-                renderSavedThumbList();
+                fetch('/src/api/renders/delete.php', {
+                    method: 'POST',
+                    headers: _wpHeaders(),
+                    body: JSON.stringify({ id: r.id }),
+                }).then(() => loadSavedRenders()).catch(() => {});
             });
             list.appendChild(item);
         });
@@ -520,33 +521,9 @@
         _resizeTimer = requestAnimationFrame(resizeCanvas);
     }
 
+    // 렌더링 결과는 render.php가 서버(uploads/renders)에 자동 저장하므로, 여기서는 목록만 새로고침
     function saveRender(src) {
-        savedRenders.push({ src, savedAt: Date.now() });
-        if (savedRenders.length > MAX_RENDERS) savedRenders.shift();
-        let ok = false;
-        while (!ok && savedRenders.length > 0) {
-            try { localStorage.setItem(_rendersKey(), JSON.stringify(savedRenders)); ok = true; }
-            catch(e) { savedRenders.shift(); }
-        }
-        renderSavedThumbList();
-        if (_totalRenderStorageBytes() >= RENDER_STORAGE_WARN_BYTES) {
-            pmAlert('저장된 렌더링 용량이 많이 찼습니다. 마이페이지 > 렌더링 탭에서 오래된 항목을 정리해주세요.', { type: 'danger' });
-        }
-    }
-
-    // 6개 엔진 전체의 렌더링 저장 용량(브라우저 localStorage) 합산 — 대시보드 경고와 동일 기준
-    const RENDER_ENGINES_ALL     = ['classic', 'square', 'cross', 'triangle', 'diamond', 'hexagon'];
-    const RENDER_STORAGE_WARN_BYTES = 3 * 1024 * 1024;
-    function _totalRenderStorageBytes() {
-        const uid = _localUserId();
-        let total = 0;
-        RENDER_ENGINES_ALL.forEach(eng => {
-            const base = `pmok_${eng}_renders`;
-            const key  = uid ? `${base}_u${uid}` : base;
-            const raw  = localStorage.getItem(key);
-            if (raw) total += raw.length;
-        });
-        return total;
+        loadSavedRenders();
     }
 
     function setEditMode(mode) {
