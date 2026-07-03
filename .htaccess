@@ -6,5 +6,15 @@ RewriteRule ^src/work/detail\.php$ /src/portfolio/detail.php [R=301,L,QSA]
 RewriteRule ^src/work/?$ /src/portfolio/ [R=301,L]
 SetEnv PMOK_JWT_SECRET "새로운-강력한-시크릿"
 
+# 블로그 글 시맨틱 URL: /src/blog/{slug} → detail.php?slug={slug}
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^src/blog/([^/]+)/?$ src/blog/detail.php?slug=$1 [L,QSA]
+
+# 포트폴리오 상세 시맨틱 URL: /src/portfolio/{slug} → detail.php?slug={slug}
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^src/portfolio/([^/]+)/?$ src/portfolio/detail.php?slug=$1 [L,QSA]
+
 # 동적 sitemap.xml
 RewriteRule ^sitemap\.xml$ /sitemap.php [L]

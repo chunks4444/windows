@@ -22,19 +22,19 @@ $urls = [
 try {
     $pdo = db();
 
-    $posts = $pdo->query("SELECT id, created_at FROM blog_posts WHERE is_active=1")->fetchAll();
+    $posts = $pdo->query("SELECT slug, created_at FROM blog_posts WHERE is_active=1")->fetchAll();
     foreach ($posts as $p) {
         $urls[] = [
-            'loc'     => '/src/blog/detail.php?id=' . $p['id'],
+            'loc'     => '/src/blog/' . rawurlencode($p['slug']),
             'lastmod' => date('Y-m-d', strtotime($p['created_at'])),
             'priority'=> '0.6',
         ];
     }
 
-    $works = $pdo->query("SELECT id, created_at FROM works WHERE is_active=1")->fetchAll();
+    $works = $pdo->query("SELECT slug, created_at FROM works WHERE is_active=1")->fetchAll();
     foreach ($works as $w) {
         $urls[] = [
-            'loc'     => '/src/portfolio/detail.php?id=' . $w['id'],
+            'loc'     => '/src/portfolio/' . rawurlencode($w['slug']),
             'lastmod' => date('Y-m-d', strtotime($w['created_at'])),
             'priority'=> '0.6',
         ];

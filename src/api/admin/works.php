@@ -7,6 +7,7 @@ set_exception_handler(function(Throwable $e) {
 });
 require_once __DIR__ . '/../../lib/db.php';
 require_once __DIR__ . '/../../lib/jwt.php';
+require_once __DIR__ . '/../../lib/slug.php';
 
 $payload = jwt_from_request();
 if (!$payload || ($payload['role'] ?? '') !== 's') {
@@ -70,9 +71,10 @@ if ($action === 'save') {
         $pdo->prepare('UPDATE works SET title=?, description=?, image_url=?, panel_bg=?, title_color=?, desc_color=? WHERE id=?')
             ->execute([$title, $description, $image_url, $panel_bg, $title_color, $desc_color, $id]);
     } else {
+        $slug     = make_unique_slug($pdo, 'works', $title);
         $maxOrder = (int)$pdo->query('SELECT COALESCE(MAX(sort_order),0) FROM works')->fetchColumn();
-        $pdo->prepare('INSERT INTO works (title, description, image_url, sort_order, panel_bg, title_color, desc_color) VALUES (?,?,?,?,?,?,?)')
-            ->execute([$title, $description, $image_url, $maxOrder + 1, $panel_bg, $title_color, $desc_color]);
+        $pdo->prepare('INSERT INTO works (title, slug, description, image_url, sort_order, panel_bg, title_color, desc_color) VALUES (?,?,?,?,?,?,?,?)')
+            ->execute([$title, $slug, $description, $image_url, $maxOrder + 1, $panel_bg, $title_color, $desc_color]);
         $id = (int)$pdo->lastInsertId();
     }
     $stmt = $pdo->prepare('SELECT * FROM works WHERE id=?');

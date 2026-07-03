@@ -80,6 +80,13 @@ CREATE TABLE IF NOT EXISTS contact_log (
     KEY idx_contact_ip_sent (ip_hash, sent_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='문의 메일 발송 이력';
 
+-- blog_posts 테이블은 src/blog/index.php의 CREATE TABLE IF NOT EXISTS로 관리됨.
+-- 2026-07-04 시맨틱 URL(slug) 지원 추가 (기존 DB):
+-- ALTER TABLE blog_posts ADD COLUMN slug VARCHAR(200) NOT NULL DEFAULT '' AFTER title;
+-- (기존 행 slug 백필 후) ALTER TABLE blog_posts ADD UNIQUE KEY uq_blog_posts_slug (slug);
+-- 2026-07-04 하단 CTA 문구 (기존 DB):
+-- ALTER TABLE blog_posts ADD COLUMN cta_text VARCHAR(200) NOT NULL DEFAULT '' AFTER summary;
+
 -- 배경 이미지 테이블 (엔진별 사용자 업로드 배경)
 -- 기존 DB에 컬럼 추가:
 -- ALTER TABLE wallpapers ADD COLUMN version_saved_at INT UNSIGNED NULL COMMENT '소속 버전 savedAt (Unix초)' AFTER drawing_id;
@@ -271,15 +278,20 @@ CREATE TABLE IF NOT EXISTS color_swatches (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='엔진 공통 컬러 팔레트';
 
 -- 완성 작품 갤러리
+-- 2026-07-04 시맨틱 URL(slug) 지원 추가 (기존 DB):
+-- ALTER TABLE works ADD COLUMN slug VARCHAR(200) NOT NULL DEFAULT '' AFTER title;
+-- (기존 행 slug 백필 후) ALTER TABLE works ADD UNIQUE KEY uq_works_slug (slug);
 CREATE TABLE IF NOT EXISTS works (
     id          INT UNSIGNED      NOT NULL AUTO_INCREMENT,
     title       VARCHAR(100)      NOT NULL DEFAULT '',
+    slug        VARCHAR(200)      NOT NULL DEFAULT '',
     description VARCHAR(300)      NOT NULL DEFAULT '',
     image_url   VARCHAR(500)      NOT NULL DEFAULT '',
     sort_order  SMALLINT UNSIGNED NOT NULL DEFAULT 0,
     is_active   TINYINT(1)        NOT NULL DEFAULT 1,
     created_at  DATETIME          NOT NULL DEFAULT NOW(),
     PRIMARY KEY (id),
+    UNIQUE KEY uq_works_slug (slug),
     KEY idx_works_sort (sort_order, is_active)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='완성 작품 갤러리';
 

@@ -3,28 +3,35 @@ header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../lib/db.php';
 
 $id     = (int)($_GET['id'] ?? 0);
+$slug   = trim($_GET['slug'] ?? '');
 $work   = null;
 $images = [];
 $next   = null;
 try {
     $pdo = db();
-    if ($id) {
+    if ($slug !== '') {
+        $stmt = $pdo->prepare('SELECT * FROM works WHERE slug=? AND is_active=1');
+        $stmt->execute([$slug]);
+        $work = $stmt->fetch();
+    } elseif ($id) {
+        // 예전 ?id= 링크 호환 — 새 슬러그 주소로 301 리다이렉트 (SEO 중복 콘텐츠 방지)
         $stmt = $pdo->prepare('SELECT * FROM works WHERE id=? AND is_active=1');
         $stmt->execute([$id]);
         $work = $stmt->fetch();
+        if ($work) { header('Location: /src/portfolio/' . rawurlencode($work['slug']), true, 301); exit; }
     }
     if ($work) {
         // 이미지 목록
         $imgStmt = $pdo->prepare('SELECT image_url FROM work_images WHERE work_id=? ORDER BY sort_order, id');
-        $imgStmt->execute([$id]);
+        $imgStmt->execute([$work['id']]);
         $images = $imgStmt->fetchAll(PDO::FETCH_COLUMN);
         if (empty($images) && $work['image_url']) $images = [$work['image_url']];
 
         // 다음 작품
-        $next = $pdo->prepare('SELECT id,title FROM works WHERE is_active=1 AND (sort_order > ? OR (sort_order=? AND id>?)) ORDER BY sort_order ASC, id ASC LIMIT 1');
+        $next = $pdo->prepare('SELECT id,title,slug FROM works WHERE is_active=1 AND (sort_order > ? OR (sort_order=? AND id>?)) ORDER BY sort_order ASC, id ASC LIMIT 1');
         $next->execute([$work['sort_order'], $work['sort_order'], $work['id']]);
         $next = $next->fetch();
-        if (!$next) $next = $pdo->query('SELECT id,title FROM works WHERE is_active=1 ORDER BY sort_order ASC, id ASC LIMIT 1')->fetch();
+        if (!$next) $next = $pdo->query('SELECT id,title,slug FROM works WHERE is_active=1 ORDER BY sort_order ASC, id ASC LIMIT 1')->fetch();
     }
 } catch (Throwable $e) {
     $work = null;
@@ -44,7 +51,7 @@ $desc  = strip_tags($work['description'] ?? '');
     <?php require_once __DIR__ . '/../lib/meta.php'; ?>
     <link rel="icon" type="image/png" href="/src/assets/favicon.png">
     <link rel="apple-touch-icon" href="/src/assets/apple-touch-icon.png">
-    <link rel="canonical" href="<?= htmlspecialchars(SITE_URL . '/src/portfolio/detail.php?id=' . $work['id']) ?>">
+    <link rel="canonical" href="<?= htmlspecialchars(SITE_URL . '/src/portfolio/' . rawurlencode($work['slug'])) ?>">
     <meta property="og:title" content="<?= htmlspecialchars($work['title']) ?>">
     <meta property="og:description" content="<?= htmlspecialchars($desc) ?>">
     <meta property="og:image" content="<?= htmlspecialchars($images[0] ?? SITE_DEFAULT_IMAGE) ?>">
@@ -121,7 +128,7 @@ $desc  = strip_tags($work['description'] ?? '');
         </div>
 
         <?php if ($next && $next['id'] !== $work['id']): ?>
-        <a class="wd-next-link" href="/src/portfolio/detail.php?id=<?= $next['id'] ?>">
+        <a class="wd-next-link" href="/src/portfolio/<?= rawurlencode($next['slug']) ?>">
             <span class="wd-next-label">next</span>
             <?= htmlspecialchars($next['title']) ?>
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">

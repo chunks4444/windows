@@ -7,6 +7,7 @@ set_exception_handler(function(Throwable $e) {
 });
 require_once __DIR__ . '/../../lib/db.php';
 require_once __DIR__ . '/../../lib/jwt.php';
+require_once __DIR__ . '/../../lib/slug.php';
 
 $payload = jwt_from_request();
 if (!$payload || ($payload['role'] ?? '') !== 's') {
@@ -54,6 +55,7 @@ if ($action === 'save') {
     $id            = (int)($body['id'] ?? 0);
     $title         = trim($body['title'] ?? '');
     $summary       = trim($body['summary'] ?? '');
+    $cta_text      = trim($body['cta_text'] ?? '');
     $content       = trim($body['content'] ?? '');
     $thumbnail_url = trim($body['thumbnail_url'] ?? '');
 
@@ -64,12 +66,13 @@ if ($action === 'save') {
     }
 
     if ($id) {
-        $pdo->prepare('UPDATE blog_posts SET title=?, summary=?, content=?, thumbnail_url=? WHERE id=?')
-            ->execute([$title, $summary, $content, $thumbnail_url, $id]);
+        $pdo->prepare('UPDATE blog_posts SET title=?, summary=?, cta_text=?, content=?, thumbnail_url=? WHERE id=?')
+            ->execute([$title, $summary, $cta_text, $content, $thumbnail_url, $id]);
     } else {
+        $slug     = make_unique_slug($pdo, 'blog_posts', $title);
         $maxOrder = (int)$pdo->query('SELECT COALESCE(MAX(sort_order),0) FROM blog_posts')->fetchColumn();
-        $pdo->prepare('INSERT INTO blog_posts (title, summary, content, thumbnail_url, sort_order) VALUES (?,?,?,?,?)')
-            ->execute([$title, $summary, $content, $thumbnail_url, $maxOrder + 1]);
+        $pdo->prepare('INSERT INTO blog_posts (title, slug, summary, cta_text, content, thumbnail_url, sort_order) VALUES (?,?,?,?,?,?,?)')
+            ->execute([$title, $slug, $summary, $cta_text, $content, $thumbnail_url, $maxOrder + 1]);
         $id = (int)$pdo->lastInsertId();
     }
     $stmt = $pdo->prepare('SELECT * FROM blog_posts WHERE id=?');

@@ -85,6 +85,31 @@ body { background: var(--page-bg, #F2F3F4); }
     margin: 1.5rem 0;
 }
 
+/* ── 하단 CTA ───────────────────────────────────────────── */
+.bd-cta {
+    display: flex; flex-direction: column; align-items: center; gap: 1rem;
+    text-align: center;
+    margin-top: 3rem;
+    padding: 2.25rem 1.5rem;
+    background: rgba(58, 140, 130, 0.06);
+    border-radius: var(--r);
+}
+.bd-cta-title {
+    font-size: var(--fs-16); font-weight: 700; color: var(--text-1);
+    margin: 0;
+}
+.bd-cta-btn {
+    display: inline-flex; align-items: center; gap: .5rem;
+    background: #fff; color: var(--teal);
+    border: 1.5px solid var(--teal);
+    font-size: var(--fs-14); font-weight: 700;
+    padding: .7rem 1.5rem;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: background .18s, color .18s;
+}
+.bd-cta-btn:hover { background: var(--teal); color: #fff; }
+
 /* ── 이전/다음 글 ───────────────────────────────────────── */
 .bd-pager {
     display: grid;

@@ -112,6 +112,10 @@
                         <label>요약 <span style="font-size:11px;color:var(--text-3);font-weight:400;">(목록 카드 / 검색결과 설명)</span></label>
                         <textarea id="postSummary" class="blog-textarea" rows="2" maxlength="300" placeholder="목록과 검색엔진에 노출될 한 줄 요약"></textarea>
                     </div>
+                    <div class="adm-mfield">
+                        <label>하단 CTA 문구 <span style="font-size:11px;color:var(--text-3);font-weight:400;">(본문 하단 컬렉션 유도 문구, 비워두면 기본 문구 사용)</span></label>
+                        <input id="postCtaText" type="text" maxlength="200" placeholder="예: 평목 스튜디오의 다양한 패턴 디자인 보러가기">
+                    </div>
                 </div>
             </div>
             <div class="adm-mfield">

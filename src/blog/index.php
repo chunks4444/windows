@@ -9,13 +9,16 @@ try {
     CREATE TABLE IF NOT EXISTS blog_posts (
         id            INT UNSIGNED      NOT NULL AUTO_INCREMENT,
         title         VARCHAR(150)      NOT NULL DEFAULT '',
+        slug          VARCHAR(200)      NOT NULL DEFAULT '',
         summary       VARCHAR(300)      NOT NULL DEFAULT '',
+        cta_text      VARCHAR(200)      NOT NULL DEFAULT '',
         content       TEXT              NOT NULL,
         thumbnail_url VARCHAR(500)      NOT NULL DEFAULT '',
         sort_order    SMALLINT UNSIGNED NOT NULL DEFAULT 0,
         is_active     TINYINT(1)        NOT NULL DEFAULT 1,
         created_at    DATETIME          NOT NULL DEFAULT NOW(),
         PRIMARY KEY (id),
+        UNIQUE KEY uq_blog_posts_slug (slug),
         KEY idx_blog_posts_sort (sort_order, is_active)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
     ");
@@ -77,7 +80,7 @@ try {
         <?php else: ?>
         <div class="bg-list">
             <?php foreach ($posts as $p): ?>
-            <article class="bg-card" onclick="location.href='/src/blog/detail.php?id=<?= $p['id'] ?>'">
+            <article class="bg-card" onclick="location.href='/src/blog/<?= rawurlencode($p['slug']) ?>'">
                 <?php if ($p['thumbnail_url']): ?>
                 <div class="bg-card-thumb">
                     <img src="<?= htmlspecialchars($p['thumbnail_url']) ?>"
@@ -86,7 +89,7 @@ try {
                 <?php endif; ?>
                 <div class="bg-card-body">
                     <h2 class="bg-card-title">
-                        <a href="/src/blog/detail.php?id=<?= $p['id'] ?>"><?= htmlspecialchars($p['title']) ?></a>
+                        <a href="/src/blog/<?= rawurlencode($p['slug']) ?>"><?= htmlspecialchars($p['title']) ?></a>
                     </h2>
                     <?php if ($p['summary']): ?>
                     <p class="bg-card-summary"><?= htmlspecialchars($p['summary']) ?></p>

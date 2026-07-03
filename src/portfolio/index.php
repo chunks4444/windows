@@ -132,7 +132,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
                  data-title="<?= htmlspecialchars($w['title']) ?>"
                  data-desc="<?= htmlspecialchars($desc) ?>"
                  role="button"
-                 onclick="location.href='/src/portfolio/detail.php?id=<?= $w['id'] ?>'">
+                 onclick="location.href='/src/portfolio/<?= rawurlencode($w['slug']) ?>'">
                 <img src="<?= htmlspecialchars($w['image_url']) ?>"
                      alt="<?= htmlspecialchars($w['title']) ?>"
                      loading="lazy">

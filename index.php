@@ -259,7 +259,7 @@ try {
                 </div>
                 <div class="home-blog-grid">
                     <?php foreach ($latestPosts as $p): ?>
-                    <a href="/src/blog/detail.php?id=<?= $p['id'] ?>" class="home-blog-card">
+                    <a href="/src/blog/<?= rawurlencode($p['slug']) ?>" class="home-blog-card">
                         <?php if ($p['thumbnail_url']): ?>
                         <div class="home-blog-card-thumb">
                             <img src="<?= htmlspecialchars($p['thumbnail_url']) ?>" alt="<?= htmlspecialchars($p['title']) ?>" loading="lazy">
