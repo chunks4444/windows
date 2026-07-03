@@ -2202,8 +2202,8 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
         const sw = Math.min(canvas.width  - sx, Math.round(cw * dpr));
         const sh = Math.min(canvas.height - sy, Math.round(ch * dpr));
         if (sw <= 0 || sh <= 0) return null;
-        const W = 640, H = 480;
-        const maxW = W - 40, maxH = H - 40;
+        const W = 1280, H = 960;
+        const maxW = W - 80, maxH = H - 80;
         const ar = sw / sh;
         let dw, dh;
         if (ar > maxW / maxH) { dw = maxW; dh = Math.round(maxW / ar); }

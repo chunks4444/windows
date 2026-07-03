@@ -252,6 +252,11 @@ body {
     height: 100%;
     object-fit: cover;
     display: block;
+    transition: transform 0.3s ease;
+}
+
+.db-card:hover .db-thumb img {
+    transform: scale(1.12);
 }
 
 .db-thumb-placeholder {
