@@ -199,7 +199,7 @@ body { background: var(--page-bg); }
 .lib-card-img {
     width: 100%;
     overflow: hidden;
-    background: #f0f0ef;
+    background: #dcdcda;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -308,6 +308,7 @@ body { background: var(--page-bg); }
 /* ── 카드 하단 정보 ──────────────────────────── */
 .lib-card-body {
     padding: 10px 12px 12px;
+    background: #fff;
 }
 
 .lib-card-name {
