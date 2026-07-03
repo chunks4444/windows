@@ -92,13 +92,26 @@ function setupObserver() {
     scrollObserver.observe(document.getElementById('libLoadMore'));
 }
 
-/* ── 좋아요 필터 렌더 ─────────────────────────── */
-function renderLiked() {
+/* ── 좋아요 필터 렌더 (검색어/카테고리 등 다른 필터 무시하고 좋아요한 전체 표시) ── */
+async function renderLiked() {
     scrollObserver?.disconnect();
     setLoadMore(false);
-    const masonry   = document.getElementById('libMasonry');
-    const patterns  = loadedPatterns.filter(p => !!likes[p.id]);
-    const countEl   = document.getElementById('libResultCount');
+    const masonry = document.getElementById('libMasonry');
+    const countEl = document.getElementById('libResultCount');
+    masonry.innerHTML = '<p style="color:var(--text-3);font-size:13px;grid-column:1/-1;padding:40px 0;text-align:center;">불러오는 중…</p>';
+
+    const token = authToken();
+    let patterns = [];
+    if (token) {
+        try {
+            const res  = await fetch('/src/api/collection_likes.php?full=1', { headers: { 'Authorization': 'Bearer ' + token } });
+            const data = await res.json();
+            patterns = data.patterns || [];
+        } catch(e) { console.error('renderLiked fetch error:', e); }
+    }
+
+    if (activeFilter !== 'liked') return; // 응답 오는 사이 필터가 꺼졌으면 무시
+
     if (countEl) countEl.innerHTML = `<strong>${patterns.length}</strong>개 좋아요`;
     if (!patterns.length) {
         masonry.innerHTML = '<p style="color:var(--text-3);font-size:13px;grid-column:1/-1;padding:40px 0;text-align:center;">좋아요한 패턴이 없습니다.</p>';
@@ -184,7 +197,11 @@ async function initCategoryFilter() {
     select.addEventListener('change', () => {
         activeCategory = select.value || '';
         clearLikeActive();
-        resetAndLoad(currentQ);
+        // 모양 필터는 공간/검색어와 AND로 겹치지 않도록 서로 배타적으로 동작
+        document.getElementById('libSearch').value = '';
+        const spaceSelect = document.getElementById('libSpaceSelect');
+        if (spaceSelect) spaceSelect.value = '';
+        resetAndLoad('');
     });
 }
 
@@ -195,6 +212,10 @@ function initSpaceFilter() {
     select.addEventListener('change', () => {
         const q = select.value || '';
         clearLikeActive();
+        // 공간 필터는 모양 카테고리와 AND로 겹치지 않도록 서로 배타적으로 동작
+        activeCategory = '';
+        const catSelect = document.getElementById('libCatSelect');
+        if (catSelect) catSelect.value = '';
         document.getElementById('libSearch').value = q;
         resetAndLoad(q);
     });
@@ -205,8 +226,12 @@ document.getElementById('libSearch').addEventListener('input', e => {
     clearTimeout(searchTimer);
     searchTimer = setTimeout(() => {
         clearLikeActive();
+        // 검색어도 모양 카테고리와 AND로 겹치지 않도록 서로 배타적으로 동작
         const spaceSelect = document.getElementById('libSpaceSelect');
         if (spaceSelect) spaceSelect.value = '';
+        activeCategory = '';
+        const catSelect = document.getElementById('libCatSelect');
+        if (catSelect) catSelect.value = '';
         resetAndLoad(e.target.value.trim());
     }, 300);
 });

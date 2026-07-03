@@ -19,11 +19,48 @@ $uid    = (int)$payload['sub'];
 $method = $_SERVER['REQUEST_METHOD'];
 $pdo    = db();
 
-// GET: 내 좋아요 패턴 ID 목록
+// GET: 내 좋아요 패턴 ID 목록 (?full=1 이면 카드 렌더용 전체 정보 포함, 필터 무관 전체)
 if ($method === 'GET') {
     $rows = $pdo->prepare('SELECT pattern_id FROM library_likes WHERE user_id = ?');
     $rows->execute([$uid]);
-    echo json_encode(['likes' => $rows->fetchAll(PDO::FETCH_COLUMN)]);
+    $ids = $rows->fetchAll(PDO::FETCH_COLUMN);
+
+    $out = ['likes' => $ids];
+
+    if (!empty($_GET['full']) && $ids) {
+        $editorMap = [
+            'classic'  => '/src/engine/classic/classic.php',
+            'square'   => '/src/engine/square/square.php',
+            'diamond'  => '/src/engine/diamond/diamond.php',
+            'cross'    => '/src/engine/cross/cross.php',
+            'triangle' => '/src/engine/triangle/triangle.php',
+            'hexagon'  => '/src/engine/hexagon/hexagon.php',
+        ];
+
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        $stmt = $pdo->prepare(
+            "SELECT p.id, p.name_ko, p.drawing_id, p.image_path, d.type AS engine,
+                    GROUP_CONCAT(k.keyword ORDER BY k.id SEPARATOR ',') AS keywords
+             FROM library_patterns p
+             LEFT JOIN drawings d ON d.id = p.drawing_id
+             LEFT JOIN library_keywords k ON k.pattern_id = p.id
+             WHERE p.id IN ($placeholders) AND p.is_active = 1
+             GROUP BY p.id
+             ORDER BY p.sort_order, p.id"
+        );
+        $stmt->execute(array_values($ids));
+        $patterns = $stmt->fetchAll();
+        foreach ($patterns as &$r) {
+            $r['keywords']   = $r['keywords'] ? explode(',', $r['keywords']) : [];
+            $engineKey       = strtolower($r['engine'] ?? '');
+            $r['editor_url'] = $editorMap[$engineKey] ?? null;
+        }
+        $out['patterns'] = $patterns;
+    } elseif (!empty($_GET['full'])) {
+        $out['patterns'] = [];
+    }
+
+    echo json_encode($out);
     exit;
 }
 

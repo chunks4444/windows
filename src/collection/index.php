@@ -43,9 +43,9 @@ try {
                 <option value="<?= htmlspecialchars($sp['collection_query'], ENT_QUOTES) ?>"><?= htmlspecialchars($sp['label']) ?></option>
                 <?php endforeach; ?>
             </select>
+            <button class="lib-filter-like" id="libLikeBtn"><i class="bi bi-heart-fill"></i> 좋아요</button>
         </div>
         <div class="lib-right-group">
-            <button class="lib-filter-like" id="libLikeBtn"><i class="bi bi-heart-fill"></i> 좋아요</button>
             <div class="lib-search">
                 <i class="bi bi-search"></i>
                 <input type="text" id="libSearch" placeholder="패턴 검색…" autocomplete="off">
