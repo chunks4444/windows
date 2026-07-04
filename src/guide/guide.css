@@ -285,7 +285,7 @@ body:has(.guide-wrap) {
     color: var(--text-1); margin-bottom: 6px;
 }
 .guide-cat-desc {
-    font-size: 12px; color: var(--text-1);
+    font-size: 13px; color: var(--text-1);
     line-height: 1.65; margin-bottom: 14px;
 }
 .guide-cat-count {
