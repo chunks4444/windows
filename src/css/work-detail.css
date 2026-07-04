@@ -1,7 +1,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body {
-    background: var(--page-bg, #F2F3F4);
+    background: var(--page-bg, #f9f9f9);
     font-family: 'Noto Sans KR', 'Inter', -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     color: var(--text-1, #1A1F1E);
@@ -26,7 +26,7 @@ html, body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: var(--page-bg, #F2F3F4);
+    background: var(--page-bg, #f9f9f9);
     padding: 1.2rem 1rem .8rem;
     gap: .8rem;
     overflow: hidden;
@@ -139,7 +139,7 @@ html, body {
 
 /* ── 정보 바 ─────────────────────────────────────────── */
 .wd-info-bar {
-    background: var(--page-bg, #F2F3F4);
+    background: var(--page-bg, #f9f9f9);
     border-top: 1px solid var(--border, #E0E5E4);
     padding: .9rem 1.5rem;
 }

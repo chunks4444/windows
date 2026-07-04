@@ -245,7 +245,7 @@ body { font-weight: 900; }
 /* PROCESS */
 /* ── PROCESS SECTION (Slidesgo card style) ──────────────── */
 .process-section {
-    background: var(--page-bg, #F2F3F4);
+    background: var(--page-bg, #f9f9f9);
     padding: 64px 0 80px;
 }
 
@@ -624,7 +624,7 @@ body { font-weight: 900; }
 .home-blog-card-thumb {
     width: 100%;
     aspect-ratio: 16 / 10;
-    background: var(--page-bg, #F2F3F4);
+    background: var(--page-bg, #f9f9f9);
     overflow: hidden;
 }
 .home-blog-card-thumb img {

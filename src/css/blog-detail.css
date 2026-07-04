@@ -1,6 +1,6 @@
 /* ── BLOG DETAIL — 아티클 레이아웃 ──────────────────────────── */
 
-body { background: var(--page-bg, #F2F3F4); }
+body { background: var(--page-bg, #f9f9f9); }
 
 .bd-page {
     min-height: calc(100vh - 68px);
