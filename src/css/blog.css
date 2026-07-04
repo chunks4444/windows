@@ -1,4 +1,4 @@
-/* ── BLOG INDEX — 텍스트 중심 리스트 레이아웃 ──────────────── */
+/* ── BLOG INDEX — 카드 그리드 레이아웃 ──────────────────────── */
 
 body { background: var(--page-bg, #f9f9f9); }
 
@@ -35,29 +35,31 @@ body { background: var(--page-bg, #f9f9f9); }
     padding: 2rem 2rem 4rem;
 }
 .bg-list {
-    display: flex; flex-direction: column;
-    gap: 1.25rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
 }
+@media (max-width: 900px) { .bg-list { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .bg-list { grid-template-columns: 1fr; gap: 1.1rem; } }
 
 .bg-card {
-    display: flex; gap: 1.25rem;
+    display: flex; flex-direction: column;
     background: #fff;
     border: 1px solid var(--border, #E0E5E4);
     border-radius: var(--r);
-    padding: 1rem;
+    overflow: hidden;
     cursor: pointer;
-    transition: border-color .18s ease, box-shadow .18s ease;
+    transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
 }
 .bg-card:hover {
     border-color: var(--teal);
-    box-shadow: 0 4px 16px rgba(0,0,0,.06);
+    box-shadow: 0 8px 20px rgba(0,0,0,.08);
+    transform: translateY(-2px);
 }
 
 .bg-card-thumb {
-    flex-shrink: 0;
-    width: 160px; height: 110px;
-    border-radius: var(--r-sm);
-    overflow: hidden;
+    width: 100%;
+    aspect-ratio: 4 / 3;
     background: var(--input-bg);
 }
 .bg-card-thumb img {
@@ -68,7 +70,7 @@ body { background: var(--page-bg, #f9f9f9); }
 .bg-card-body {
     flex: 1; min-width: 0;
     display: flex; flex-direction: column;
-    justify-content: center;
+    padding: 1rem 1.1rem 1.2rem;
     gap: .35rem;
 }
 .bg-card-title {
@@ -119,6 +121,4 @@ body { background: var(--page-bg, #f9f9f9); }
 @media (max-width: 600px) {
     .bg-hero-inner { padding: 0 1rem; }
     .bg-list-section { padding: 1.4rem 1rem 3rem; }
-    .bg-card { flex-direction: column; }
-    .bg-card-thumb { width: 100%; height: 160px; }
 }
