@@ -18,3 +18,7 @@ RewriteRule ^src/portfolio/([^/]+)/?$ src/portfolio/detail.php?slug=$1 [L,QSA]
 
 # 동적 sitemap.xml
 RewriteRule ^sitemap\.xml$ /sitemap.php [L]
+
+# 도면 썸네일 확장자 없는 주소 지원: /uploads/drawing_thumbs/{name} → {name}.png
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^uploads/drawing_thumbs/([A-Za-z0-9_]+)$ uploads/drawing_thumbs/$1.png [L]

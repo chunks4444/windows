@@ -59,8 +59,15 @@ function saveLibraryImage(string $input): ?string {
         $binary = base64_decode($base64, true);
     } elseif (strpos($input, '/uploads/') === 0) {
         // 도면 썸네일이 base64가 아니라 파일 경로로 저장된 경우 (Drawing::persistThumbnail 참고)
-        $path   = __DIR__ . '/../../../' . ltrim($input, '/');
-        $binary = is_file($path) ? file_get_contents($path) : false;
+        // 확장자가 없는 경로일 수 있어 .png를 붙여서도 확인한다 (.htaccess rewrite와 동일한 규칙)
+        $path = __DIR__ . '/../../../' . ltrim($input, '/');
+        if (is_file($path)) {
+            $binary = file_get_contents($path);
+        } elseif (is_file($path . '.png')) {
+            $binary = file_get_contents($path . '.png');
+        } else {
+            $binary = false;
+        }
     } else {
         return null;
     }

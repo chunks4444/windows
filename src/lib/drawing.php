@@ -3,9 +3,21 @@ require_once __DIR__ . '/db.php';
 
 class Drawing {
 
-    // base64 PNG 썸네일을 uploads/drawing_thumbs 파일로 저장하고 공개 경로를 반환.
+    // /uploads/drawing_thumbs 아래 공개 경로(확장자 있든 없든)를 실제 파일 시스템 경로로 해석.
+    // .htaccess가 확장자 없는 주소를 .png로 rewrite해주지만, 서버에서 직접 파일을 찾을 때는
+    // 확장자를 붙여서 존재 여부를 확인해야 한다.
+    private static function resolveThumbnailFile(string $publicPath): ?string {
+        $base = __DIR__ . '/../../' . ltrim($publicPath, '/');
+        if (is_file($base)) return $base;
+        if (is_file($base . '.png')) return $base . '.png';
+        return null;
+    }
+
+    // base64 PNG 썸네일을 uploads/drawing_thumbs 파일로 저장하고 공개 경로(확장자 없음)를 반환.
     // DB에 큰 base64 blob을 직접 넣으면 <img src="data:...">로 인라인 렌더링되어
     // 브라우저가 일반 이미지 리소스처럼 캐시/디코드하지 못하는 문제가 있어 파일로 분리한다.
+    // 주소에 .png를 노출하지 않기 위해 저장은 .png로 하되 반환 경로에는 확장자를 붙이지 않는다
+    // (.htaccess의 rewrite 규칙이 실제 파일로 연결해준다).
     private static function persistThumbnail(?string $thumbnail, ?string $oldThumbnail): ?string {
         if ($thumbnail === null) return null;
         if (!preg_match('/^data:image\/(png|jpeg|webp);base64,/', $thumbnail)) {
@@ -17,12 +29,12 @@ class Drawing {
 
         $dir = __DIR__ . '/../../uploads/drawing_thumbs';
         if (!is_dir($dir)) mkdir($dir, 0755, true);
-        $fname = time() . '_' . bin2hex(random_bytes(4)) . '.png';
-        file_put_contents($dir . '/' . $fname, $binary);
+        $fname = time() . '_' . bin2hex(random_bytes(4));
+        file_put_contents($dir . '/' . $fname . '.png', $binary);
 
         if ($oldThumbnail && strpos($oldThumbnail, '/uploads/drawing_thumbs/') === 0) {
-            $old = __DIR__ . '/../../' . ltrim($oldThumbnail, '/');
-            if (file_exists($old)) @unlink($old);
+            $old = self::resolveThumbnailFile($oldThumbnail);
+            if ($old) @unlink($old);
         }
 
         return '/uploads/drawing_thumbs/' . $fname;
@@ -155,8 +167,8 @@ class Drawing {
         $deleted = $stmt->rowCount() > 0;
 
         if ($deleted && $thumbnail && strpos($thumbnail, '/uploads/drawing_thumbs/') === 0) {
-            $file = __DIR__ . '/../../' . ltrim($thumbnail, '/');
-            if (file_exists($file)) @unlink($file);
+            $file = self::resolveThumbnailFile($thumbnail);
+            if ($file) @unlink($file);
         }
 
         return $deleted;
