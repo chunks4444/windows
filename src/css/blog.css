@@ -88,6 +88,8 @@ body { background: var(--page-bg, #f9f9f9); }
 }
 .bg-card-date {
     font-size: var(--fs-12); color: var(--text-3);
+    margin-top: auto;
+    padding-top: .35rem;
 }
 
 /* ── 페이지네이션 ─────────────────────────────────────────── */
