@@ -2188,12 +2188,12 @@ async function draw() {
         const sw = Math.min(canvas.width  - sx, Math.round(cw * dpr));
         const sh = Math.min(canvas.height - sy, Math.round(ch * dpr));
         if (sw <= 0 || sh <= 0) return null;
-        const W = 1280, H = 960;
+        const W = 1024, H = 768;
         const maxW = W - 80, maxH = H - 80;
-        const ar = sw / sh;
-        let dw, dh;
-        if (ar > maxW / maxH) { dw = maxW; dh = Math.round(maxW / ar); }
-        else                   { dh = maxH; dw = Math.round(maxH * ar); }
+        // 소스보다 크게 확대(업스케일)하면 흐려지므로 축소만 허용 (scale <= 1)
+        const scale = Math.min(1, maxW / sw, maxH / sh);
+        const dw = Math.round(sw * scale);
+        const dh = Math.round(sh * scale);
         const dx = Math.round((W - dw) / 2);
         const dy = Math.round((H - dh) / 2);
         const tmp = document.createElement('canvas');
