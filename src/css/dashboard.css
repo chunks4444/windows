@@ -138,10 +138,10 @@ body {
 /* ── 카드 그리드 ──────────────────────────────── */
 .db-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 16px;
 }
-@media (max-width: 1024px) { .db-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 1024px) { .db-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 768px)  { .db-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 480px)  { .db-grid { grid-template-columns: 1fr; } }
 
@@ -261,7 +261,7 @@ body {
 }
 
 .db-card:hover .db-thumb img {
-    transform: scale(3.5);
+    transform: scale(1.5);
 }
 
 .db-thumb-placeholder {
