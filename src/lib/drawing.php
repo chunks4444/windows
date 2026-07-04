@@ -20,7 +20,7 @@ class Drawing {
         $fname = time() . '_' . bin2hex(random_bytes(4)) . '.png';
         file_put_contents($dir . '/' . $fname, $binary);
 
-        if ($oldThumbnail && str_starts_with($oldThumbnail, '/uploads/drawing_thumbs/')) {
+        if ($oldThumbnail && strpos($oldThumbnail, '/uploads/drawing_thumbs/') === 0) {
             $old = __DIR__ . '/../../' . ltrim($oldThumbnail, '/');
             if (file_exists($old)) @unlink($old);
         }
