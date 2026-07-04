@@ -59,7 +59,7 @@ body { background: var(--page-bg, #f9f9f9); }
 
 .bg-card-thumb {
     width: 100%;
-    aspect-ratio: 4 / 3;
+    height: 200px;
     background: var(--input-bg);
 }
 .bg-card-thumb img {
