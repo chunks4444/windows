@@ -10,6 +10,9 @@ function make_slug(string $title): string {
     $s = preg_replace('/-+/', '-', $s);
     $s = trim($s, '-');
     $s = mb_strtolower($s, 'UTF-8');
+    // 한글 등 비ASCII 문자는 URL 인코딩 시 글자당 최대 9배(UTF-8 3바이트 → %XX%XX%XX)로
+    // 길이가 늘어나 URL 전체가 검색엔진 권장 길이를 훌쩍 넘길 수 있어 slug 자체를 짧게 제한한다.
+    $s = trim(mb_substr($s, 0, 20, 'UTF-8'), '-');
     return $s !== '' ? $s : 'post';
 }
 
