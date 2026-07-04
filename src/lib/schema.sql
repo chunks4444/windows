@@ -220,6 +220,30 @@ INSERT IGNORE INTO space_cards (id, label, image_url, collection_query, sort_ord
 (9,  '주방',   'https://picsum.photos/seed/sp09/600/400', '주방',   8),
 (10, '갤러리', 'https://picsum.photos/seed/sp10/600/400', '갤러리', 9);
 
+-- 컬렉션 페이지 "공간" 드롭다운 필터 키워드 (메인 큐레이션 space_cards와 독립)
+CREATE TABLE IF NOT EXISTS collection_space_filters (
+    id         INT UNSIGNED      NOT NULL AUTO_INCREMENT,
+    label      VARCHAR(50)       NOT NULL DEFAULT '' COMMENT '드롭다운 표시 라벨',
+    query      VARCHAR(100)      NOT NULL DEFAULT '' COMMENT '검색어 (컬렉션 검색창에 대입됨)',
+    sort_order SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    is_active  TINYINT(1)        NOT NULL DEFAULT 1,
+    created_at DATETIME          NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (id),
+    KEY idx_csf_sort (sort_order, is_active)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='컬렉션 공간 필터 키워드';
+
+INSERT IGNORE INTO collection_space_filters (id, label, query, sort_order) VALUES
+(1,  '중문',   '중문',   0),
+(2,  '거실',   '거실',   1),
+(3,  '카페',   '카페',   2),
+(4,  '침실',   '침실',   3),
+(5,  '서재',   '서재',   4),
+(6,  '현관',   '현관',   5),
+(7,  '다실',   '다실',   6),
+(8,  '한옥',   '한옥',   7),
+(9,  '주방',   '주방',   8),
+(10, '갤러리', '갤러리', 9);
+
 -- 사이트 설정 (OAuth 키 등)
 CREATE TABLE IF NOT EXISTS site_config (
     key_name   VARCHAR(80) NOT NULL,

@@ -2,7 +2,7 @@
 header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../lib/db.php';
 try {
-    $spaceOptions = db()->query("SELECT label, collection_query FROM space_cards WHERE is_active=1 ORDER BY sort_order, id")->fetchAll();
+    $spaceOptions = db()->query("SELECT label, query AS collection_query FROM collection_space_filters WHERE is_active=1 ORDER BY sort_order, id")->fetchAll();
 } catch (Throwable $e) {
     $spaceOptions = [];
 }
