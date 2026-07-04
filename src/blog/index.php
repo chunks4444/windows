@@ -105,13 +105,11 @@ try {
 
         <?php if ($totalPages > 1): ?>
         <nav class="bg-pagination">
-            <a class="bg-page-link <?= $page <= 1 ? 'disabled' : '' ?>"
-               href="?page=<?= max(1, $page - 1) ?>">‹</a>
-            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-            <a class="bg-page-link <?= $i === $page ? 'active' : '' ?>" href="?page=<?= $i ?>"><?= $i ?></a>
-            <?php endfor; ?>
-            <a class="bg-page-link <?= $page >= $totalPages ? 'disabled' : '' ?>"
-               href="?page=<?= min($totalPages, $page + 1) ?>">›</a>
+            <a class="bg-page-link bg-page-nav <?= $page <= 1 ? 'disabled' : '' ?>"
+               href="?page=<?= max(1, $page - 1) ?>">‹ 이전</a>
+            <span class="bg-page-indicator"><?= $page ?> / <?= $totalPages ?></span>
+            <a class="bg-page-link bg-page-nav <?= $page >= $totalPages ? 'disabled' : '' ?>"
+               href="?page=<?= min($totalPages, $page + 1) ?>">다음 ›</a>
         </nav>
         <?php endif; ?>
         <?php endif; ?>

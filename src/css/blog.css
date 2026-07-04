@@ -95,22 +95,25 @@ body { background: var(--page-bg, #f9f9f9); }
 /* ── 페이지네이션 ─────────────────────────────────────────── */
 .bg-pagination {
     display: flex; align-items: center; justify-content: center;
-    gap: .6rem;
+    gap: 1.2rem;
     margin-top: 2.5rem;
 }
 .bg-page-link {
     display: inline-flex; align-items: center; justify-content: center;
-    min-width: 44px; height: 44px;
-    padding: 0 .7rem;
+    height: 44px;
+    padding: 0 1.1rem;
+    border: 1px solid var(--border, #E0E5E4);
     border-radius: var(--r-sm);
     font-size: var(--fs-16); font-weight: 600;
     color: var(--text-2);
     text-decoration: none;
-    transition: background .15s ease, color .15s ease;
+    transition: background .15s ease, color .15s ease, border-color .15s ease;
 }
-.bg-page-link:hover { background: var(--input-bg); color: var(--text-1); }
-.bg-page-link.active { background: var(--teal); color: #fff; }
-.bg-page-link.disabled { color: var(--text-3); pointer-events: none; }
+.bg-page-link:hover { background: var(--input-bg); color: var(--text-1); border-color: var(--teal); }
+.bg-page-link.disabled { color: var(--text-3); pointer-events: none; opacity: .5; }
+.bg-page-indicator {
+    font-size: var(--fs-14); font-weight: 600; color: var(--text-2);
+}
 
 /* 빈 상태 */
 .bg-empty {
