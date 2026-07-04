@@ -146,9 +146,20 @@ class Drawing {
     // 도면 삭제 (버전도 CASCADE 삭제)
     static function delete(int $userId, string $type, string $title): bool {
         $pdo  = db();
+        $stmt = $pdo->prepare('SELECT thumbnail FROM drawings WHERE user_id = ? AND type = ? AND title = ?');
+        $stmt->execute([$userId, $type, $title]);
+        $thumbnail = $stmt->fetchColumn();
+
         $stmt = $pdo->prepare('DELETE FROM drawings WHERE user_id = ? AND type = ? AND title = ?');
         $stmt->execute([$userId, $type, $title]);
-        return $stmt->rowCount() > 0;
+        $deleted = $stmt->rowCount() > 0;
+
+        if ($deleted && $thumbnail && strpos($thumbnail, '/uploads/drawing_thumbs/') === 0) {
+            $file = __DIR__ . '/../../' . ltrim($thumbnail, '/');
+            if (file_exists($file)) @unlink($file);
+        }
+
+        return $deleted;
     }
 
     // 견적요청 중인 도면인지 확인 (잠금 여부)
