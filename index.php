@@ -154,7 +154,7 @@ try {
                     <?php if (!empty($spaceCards)): ?>
                     <div class="space-cards-wrapper">
                         <?php foreach ($spaceCards as $sc): ?>
-                        <a class="space-card" href="/src/collection/" onclick="sessionStorage.setItem('collectionQ','<?= htmlspecialchars($sc['collection_query'], ENT_QUOTES) ?>');">
+                        <a class="space-card" href="/src/collection/?q=<?= urlencode($sc['collection_query']) ?>">
                             <img src="<?= htmlspecialchars($sc['image_url']) ?>" alt="<?= htmlspecialchars($sc['label']) ?>">
                             <div class="space-card-overlay"><span class="space-card-label"><?= htmlspecialchars($sc['label']) ?></span></div>
                         </a>

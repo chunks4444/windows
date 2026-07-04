@@ -386,10 +386,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     await loadLikes();
 
-    const q = new URLSearchParams(location.search).get('q')
-           || sessionStorage.getItem('collectionQ')
-           || '';
-    sessionStorage.removeItem('collectionQ');
+    const q = new URLSearchParams(location.search).get('q') || '';
 
     if (q) {
         document.getElementById('libSearch').value = q;
