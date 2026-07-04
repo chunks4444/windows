@@ -109,7 +109,7 @@ function buildCard(p) {
 
     return `
         <div class="lib-item" data-id="${p.id}">
-            <div class="lib-card-img" style="aspect-ratio:4/3;">
+            <div class="lib-card-img" style="aspect-ratio:1/1;">
                 ${imgHtml}
                 <div class="lib-overlay">
                     <div class="lib-overlay-top">

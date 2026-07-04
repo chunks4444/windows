@@ -244,7 +244,7 @@ body {
 /* ── 썸네일 ──────────────────────────────────── */
 .db-thumb {
     width: 100%;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 1 / 1;
     background: #dcdcda;
     overflow: hidden;
     position: relative;
