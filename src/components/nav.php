@@ -2,6 +2,13 @@
 require_once __DIR__ . '/../lib/logger.php';
 require_once __DIR__ . '/../lib/meta.php';
 require_once __DIR__ . '/../lib/db.php';
+require_once __DIR__ . '/../lib/jwt.php';
+
+// 로그인/어드민 메뉴는 크롤러가 비로그인 상태에서도 마크업을 그대로 볼 수 없도록
+// 서버사이드에서 조건부 렌더링한다 (기존엔 CSS display:none으로만 숨겨 소스에는 항상 노출됨).
+$navAuthPayload = jwt_from_request();
+$navIsLoggedIn  = (bool) $navAuthPayload;
+$navIsAdmin     = $navIsLoggedIn && ($navAuthPayload['role'] ?? null) === 's';
 
 // 상단 네비게이션 공통 컴포넌트
 // 포함하는 페이지에서 Bootstrap CSS/JS가 없으면 자동으로 로드합니다.
@@ -178,13 +185,14 @@ $navStudioIcons = [
                     <li><a class="dropdown-item <?= $isBlog ? 'active' : '' ?>" href="/src/blog/"><i class="bi bi-journal-text me-2"></i>블로그</a></li>
                 </ul>
             </li>
-            <li class="nav-item d-none"><a href="#" class="nav-link">Joiner</a></li>
+            <?php if (!$navIsLoggedIn): ?>
             <!-- 비로그인 -->
             <li class="nav-item" id="navLoginBtn">
                 <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#authModal">로그인</a>
             </li>
+            <?php else: ?>
             <!-- 로그인 후 -->
-            <li class="nav-item dropdown" id="navUserMenu" style="display:none;">
+            <li class="nav-item dropdown" id="navUserMenu">
                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="bi bi-person-circle"></i>
                 </a>
@@ -202,10 +210,13 @@ $navStudioIcons = [
                     <div id="navBoardList"></div>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="#" onclick="authLogout();return false;"><i class="bi bi-box-arrow-right me-1"></i>로그아웃</a></li>
-                    <li id="navAdminLink" style="display:none;"><hr class="dropdown-divider"></li>
-                    <li id="navAdminMenu" style="display:none;"><a class="dropdown-item" href="/src/admin/"><i class="bi bi-speedometer2 me-1"></i>어드민</a></li>
+                    <?php if ($navIsAdmin): ?>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="/src/admin/"><i class="bi bi-speedometer2 me-1"></i>어드민</a></li>
+                    <?php endif; ?>
                 </ul>
             </li>
+            <?php endif; ?>
         </ul>
     </div>
 </nav>
@@ -273,11 +284,13 @@ $navStudioIcons = [
         <div class="pm-dw-divider"></div>
 
         <!-- 인증 -->
+        <?php if (!$navIsLoggedIn): ?>
         <a class="pm-dw-link-top" id="drawerLoginBtn" href="#"
            data-bs-toggle="modal" data-bs-target="#authModal">
             <i class="bi bi-person pm-dw-acc-icon"></i><span>로그인</span>
         </a>
-        <div id="drawerUserMenu" style="display:none;">
+        <?php else: ?>
+        <div id="drawerUserMenu">
             <div class="pm-dw-user-row">
                 <i class="bi bi-person-circle"></i>
                 <span id="drawerUserEmail" class="pm-dw-user-email"></span>
@@ -289,8 +302,11 @@ $navStudioIcons = [
                 <div id="drawerBoardList"></div>
             </div>
             <a class="pm-dw-link" href="#" onclick="authLogout();return false;"><i class="bi bi-box-arrow-right"></i><span>로그아웃</span></a>
-            <a class="pm-dw-link" href="/src/admin/" id="drawerAdminLink" style="display:none;"><i class="bi bi-speedometer2"></i><span>어드민</span></a>
+            <?php if ($navIsAdmin): ?>
+            <a class="pm-dw-link" href="/src/admin/" id="drawerAdminLink"><i class="bi bi-speedometer2"></i><span>어드민</span></a>
+            <?php endif; ?>
         </div>
+        <?php endif; ?>
 
     </div>
 </div>

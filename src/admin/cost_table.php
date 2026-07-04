@@ -1,5 +1,7 @@
 <?php
 header('Content-Type: text/html; charset=UTF-8');
+require_once __DIR__ . '/../lib/admin_guard.php';
+require_admin_role('s');
 require_once __DIR__ . '/../lib/db.php';
 try {
     $studioCards = db()->query('SELECT engine_key, title FROM studio_cards WHERE is_active=1 ORDER BY sort_order, id')->fetchAll(PDO::FETCH_ASSOC);

@@ -278,33 +278,32 @@ function authGetToken() {
 }
 
 function authUpdateNav() {
+    // 로그인/어드민 메뉴 존재 여부 자체는 서버사이드(nav.php)에서 JWT로 이미 결정되어 렌더링됨.
+    // 여기서는 이미 그려진 요소의 텍스트/보드 목록만 채우고, 페이지 이동 없이 로그인/로그아웃되는
+    // 드문 경우(pmokRequireAuth 콜백)를 위해 존재하는 요소에 한해 표시 상태만 동기화한다.
     const user = authGetUser();
     const loginBtn  = document.getElementById('navLoginBtn');
     const userMenu  = document.getElementById('navUserMenu');
     const userEmail = document.getElementById('navUserEmail');
-    if (!loginBtn || !userMenu) return;
     if (user) {
-        loginBtn.style.display = 'none';
-        userMenu.style.display = '';
-        if (userEmail) userEmail.textContent = user.email;
-        const lastLogin = document.getElementById('navLastLogin');
-        if (lastLogin) {
-            const ts = parseInt(localStorage.getItem('pmok_last_login') || '0');
-            if (ts) {
-                const d = new Date(ts);
-                const pad = n => String(n).padStart(2, '0');
-                lastLogin.textContent = `${d.getFullYear()}.${pad(d.getMonth()+1)}.${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+        if (loginBtn) loginBtn.style.display = 'none';
+        if (userMenu) {
+            userMenu.style.display = '';
+            if (userEmail) userEmail.textContent = user.email;
+            const lastLogin = document.getElementById('navLastLogin');
+            if (lastLogin) {
+                const ts = parseInt(localStorage.getItem('pmok_last_login') || '0');
+                if (ts) {
+                    const d = new Date(ts);
+                    const pad = n => String(n).padStart(2, '0');
+                    lastLogin.textContent = `${d.getFullYear()}.${pad(d.getMonth()+1)}.${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+                }
             }
+            loadNavBoards();
         }
-        const isSuper = user.role === 's';
-        const adminLink  = document.getElementById('navAdminLink');
-        const adminMenu  = document.getElementById('navAdminMenu');
-        if (adminLink) adminLink.style.display = isSuper ? '' : 'none';
-        if (adminMenu) adminMenu.style.display = isSuper ? '' : 'none';
-        loadNavBoards();
     } else {
-        loginBtn.style.display = '';
-        userMenu.style.display = 'none';
+        if (loginBtn) loginBtn.style.display = '';
+        if (userMenu) userMenu.style.display = 'none';
         const boardSection = document.getElementById('navBoardSection');
         const boardList    = document.getElementById('navBoardList');
         if (boardSection) boardSection.style.display = 'none';
@@ -315,17 +314,15 @@ function authUpdateNav() {
     const drawerLoginBtn = document.getElementById('drawerLoginBtn');
     const drawerUserMenu = document.getElementById('drawerUserMenu');
     const drawerUserEmail = document.getElementById('drawerUserEmail');
-    if (drawerLoginBtn && drawerUserMenu) {
-        if (user) {
-            drawerLoginBtn.style.display = 'none';
+    if (user) {
+        if (drawerLoginBtn) drawerLoginBtn.style.display = 'none';
+        if (drawerUserMenu) {
             drawerUserMenu.style.display = '';
             if (drawerUserEmail) drawerUserEmail.textContent = user.email;
-            const drawerAdminLink = document.getElementById('drawerAdminLink');
-            if (drawerAdminLink) drawerAdminLink.style.display = user.role === 's' ? '' : 'none';
-        } else {
-            drawerLoginBtn.style.display = '';
-            drawerUserMenu.style.display = 'none';
         }
+    } else {
+        if (drawerLoginBtn) drawerLoginBtn.style.display = '';
+        if (drawerUserMenu) drawerUserMenu.style.display = 'none';
     }
 }
 
