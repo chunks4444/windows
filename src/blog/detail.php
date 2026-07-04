@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../lib/db.php';
+require_once __DIR__ . '/../lib/meta.php';
 
 $id   = (int)($_GET['id'] ?? 0);
 $slug = trim($_GET['slug'] ?? '');
@@ -45,6 +46,10 @@ if (empty($_COOKIE[$viewCookie])) {
 }
 
 $metaDesc = $post['summary'] ?: mb_substr(strip_tags($post['content']), 0, 120);
+// og:image는 절대 URL이어야 카톡·페이스북 공유 카드가 정상 노출됨 (thumbnail_url은 /uploads/... 상대경로로 저장됨)
+$metaImage = $post['thumbnail_url']
+    ? (strpos($post['thumbnail_url'], 'http') === 0 ? $post['thumbnail_url'] : SITE_URL . $post['thumbnail_url'])
+    : SITE_DEFAULT_IMAGE;
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -59,7 +64,7 @@ $metaDesc = $post['summary'] ?: mb_substr(strip_tags($post['content']), 0, 120);
     <link rel="canonical" href="<?= htmlspecialchars(SITE_URL . '/src/blog/' . rawurlencode($post['slug'])) ?>">
     <meta property="og:title" content="<?= htmlspecialchars($post['title']) ?>">
     <meta property="og:description" content="<?= htmlspecialchars($metaDesc) ?>">
-    <meta property="og:image" content="<?= htmlspecialchars($post['thumbnail_url'] ?: SITE_DEFAULT_IMAGE) ?>">
+    <meta property="og:image" content="<?= htmlspecialchars($metaImage) ?>">
     <?php define('BOOTSTRAP_LOADED', true); ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <?php css_tag('/src/css/blog-detail.css'); ?>
