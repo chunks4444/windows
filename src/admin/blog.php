@@ -66,6 +66,7 @@
                     <th style="width:96px;">썸네일</th>
                     <th>제목</th>
                     <th>요약</th>
+                    <th style="width:64px;">조회수</th>
                     <th style="width:72px;">상태</th>
                     <th style="width:160px;"></th>
                 </tr>

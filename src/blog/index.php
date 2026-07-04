@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../lib/db.php';
-$perPage = 10;
+$perPage = 9;
 try {
     $pdo = db();
 
@@ -16,6 +16,7 @@ try {
         thumbnail_url VARCHAR(500)      NOT NULL DEFAULT '',
         sort_order    SMALLINT UNSIGNED NOT NULL DEFAULT 0,
         is_active     TINYINT(1)        NOT NULL DEFAULT 1,
+        view_count    INT UNSIGNED      NOT NULL DEFAULT 0,
         created_at    DATETIME          NOT NULL DEFAULT NOW(),
         PRIMARY KEY (id),
         UNIQUE KEY uq_blog_posts_slug (slug),

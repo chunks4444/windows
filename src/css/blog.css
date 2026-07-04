@@ -95,15 +95,15 @@ body { background: var(--page-bg, #f9f9f9); }
 /* ── 페이지네이션 ─────────────────────────────────────────── */
 .bg-pagination {
     display: flex; align-items: center; justify-content: center;
-    gap: .4rem;
+    gap: .6rem;
     margin-top: 2.5rem;
 }
 .bg-page-link {
     display: inline-flex; align-items: center; justify-content: center;
-    min-width: 32px; height: 32px;
-    padding: 0 .5rem;
+    min-width: 44px; height: 44px;
+    padding: 0 .7rem;
     border-radius: var(--r-sm);
-    font-size: var(--fs-14); font-weight: 600;
+    font-size: var(--fs-16); font-weight: 600;
     color: var(--text-2);
     text-decoration: none;
     transition: background .15s ease, color .15s ease;

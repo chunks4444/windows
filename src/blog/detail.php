@@ -35,6 +35,15 @@ try {
 }
 if (!$post) { header('Location: /src/blog/'); exit; }
 
+// 조회수 집계 — 방문자당 24시간에 1회만 카운트 (쿠키 기반 중복 방지)
+$viewCookie = 'blog_view_' . $post['id'];
+if (empty($_COOKIE[$viewCookie])) {
+    try {
+        $pdo->prepare('UPDATE blog_posts SET view_count = view_count + 1 WHERE id=?')->execute([$post['id']]);
+    } catch (Throwable $e) {}
+    setcookie($viewCookie, '1', time() + 86400, '/');
+}
+
 $metaDesc = $post['summary'] ?: mb_substr(strip_tags($post['content']), 0, 120);
 ?>
 <!DOCTYPE html>

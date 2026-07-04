@@ -20,6 +20,7 @@ function render() {
                 : `<div class="blog-thumb-empty"><i class="bi bi-image"></i></div>`}</td>
             <td><strong>${esc(p.title)}</strong></td>
             <td style="color:var(--text-3);font-size:12px;">${esc(p.summary || '')}</td>
+            <td style="text-align:center;color:var(--text-3);font-size:12px;">${p.view_count ?? 0}</td>
             <td><span class="${p.is_active ? 'adm-active-badge' : 'adm-withdrawn-badge'}">${p.is_active ? '노출' : '숨김'}</span></td>
             <td>
                 <div class="adm-action-cell">
