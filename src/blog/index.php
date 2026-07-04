@@ -26,8 +26,8 @@ try {
 
     $totalCount = (int)$pdo->query('SELECT COUNT(*) FROM blog_posts WHERE is_active=1')->fetchColumn();
     $totalPages = max(1, (int)ceil($totalCount / $perPage));
-    $page       = max(1, min($totalPages, (int)($_GET['page'] ?? 1)));
-    $offset     = ($page - 1) * $perPage;
+    $pageNum    = max(1, min($totalPages, (int)($_GET['page'] ?? 1)));
+    $offset     = ($pageNum - 1) * $perPage;
 
     $stmt = $pdo->prepare('SELECT * FROM blog_posts WHERE is_active=1 ORDER BY sort_order, id LIMIT :limit OFFSET :offset');
     $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
@@ -39,7 +39,7 @@ try {
     $posts      = [];
     $total      = 0;
     $totalPages = 1;
-    $page       = 1;
+    $pageNum    = 1;
 }
 ?>
 <!DOCTYPE html>
@@ -105,11 +105,11 @@ try {
 
         <?php if ($totalPages > 1): ?>
         <nav class="bg-pagination">
-            <a class="bg-page-link bg-page-nav <?= $page <= 1 ? 'disabled' : '' ?>"
-               href="?page=<?= max(1, $page - 1) ?>">‹ 이전</a>
-            <span class="bg-page-indicator"><?= $page ?> / <?= $totalPages ?></span>
-            <a class="bg-page-link bg-page-nav <?= $page >= $totalPages ? 'disabled' : '' ?>"
-               href="?page=<?= min($totalPages, $page + 1) ?>">다음 ›</a>
+            <a class="bg-page-link bg-page-nav <?= $pageNum <= 1 ? 'disabled' : '' ?>"
+               href="?page=<?= max(1, $pageNum - 1) ?>">‹ 이전</a>
+            <span class="bg-page-indicator"><?= $pageNum ?> / <?= $totalPages ?></span>
+            <a class="bg-page-link bg-page-nav <?= $pageNum >= $totalPages ? 'disabled' : '' ?>"
+               href="?page=<?= min($totalPages, $pageNum + 1) ?>">다음 ›</a>
         </nav>
         <?php endif; ?>
         <?php endif; ?>
