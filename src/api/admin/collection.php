@@ -53,10 +53,17 @@ function fixImageOrientation($img, string $binary) {
     }
 }
 
-function saveLibraryImage(string $dataUrl): ?string {
-    if (!preg_match('/^data:image\/(jpeg|png|webp);base64,/', $dataUrl)) return null;
-    $base64 = substr($dataUrl, strpos($dataUrl, ',') + 1);
-    $binary = base64_decode($base64, true);
+function saveLibraryImage(string $input): ?string {
+    if (preg_match('/^data:image\/(jpeg|png|webp);base64,/', $input)) {
+        $base64 = substr($input, strpos($input, ',') + 1);
+        $binary = base64_decode($base64, true);
+    } elseif (str_starts_with($input, '/uploads/')) {
+        // 도면 썸네일이 base64가 아니라 파일 경로로 저장된 경우 (Drawing::persistThumbnail 참고)
+        $path   = __DIR__ . '/../../../' . ltrim($input, '/');
+        $binary = is_file($path) ? file_get_contents($path) : false;
+    } else {
+        return null;
+    }
     if ($binary === false || strlen($binary) > 10 * 1024 * 1024) return null;
 
     $img = @imagecreatefromstring($binary);
