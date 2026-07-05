@@ -85,19 +85,21 @@ function saveLibraryImage(string $input): ?string {
         $nw = (int)($w * $scale); $nh = (int)($h * $scale);
     }
 
-    // JPEG는 투명 채널을 지원하지 않는다. 흰색 채우기 없이 그대로 JPEG로 저장하면
-    // GD의 기본 캔버스 색(검정)이 그대로 비쳐 투명했던 배경이 검게 나온다 — 카드 배경색과
-    // 맞춰 연한 회색으로 먼저 채운 캔버스에 합성한 뒤 저장한다.
+    // PNG로 저장해 투명 배경을 그대로 유지한다 (JPEG 변환 시 알파 채널이 검게 뭉개지는
+    // 문제도 없고, 선 위주 패턴 이미지라 JPEG 압축 아티팩트도 피할 수 있다).
     $canvas = imagecreatetruecolor($nw, $nh);
-    $bg     = imagecolorallocate($canvas, 0xf5, 0xf5, 0xf5);
-    imagefill($canvas, 0, 0, $bg);
+    imagealphablending($canvas, false);
+    imagesavealpha($canvas, true);
+    $transparent = imagecolorallocatealpha($canvas, 0, 0, 0, 127);
+    imagefill($canvas, 0, 0, $transparent);
+    imagealphablending($canvas, true);
     imagecopyresampled($canvas, $img, 0, 0, 0, 0, $nw, $nh, $w, $h);
     imagedestroy($img);
 
     $dir = __DIR__ . '/../../../uploads/library';
     if (!is_dir($dir)) mkdir($dir, 0755, true);
-    $fname = time() . '_' . bin2hex(random_bytes(4)) . '.jpg';
-    imagejpeg($canvas, $dir . '/' . $fname, 85);
+    $fname = time() . '_' . bin2hex(random_bytes(4)) . '.png';
+    imagepng($canvas, $dir . '/' . $fname, 6);
     imagedestroy($canvas);
     return '/uploads/library/' . $fname;
 }
