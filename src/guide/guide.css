@@ -221,7 +221,7 @@ body:has(.guide-wrap) {
 /* ── 가이드 랜딩 ─────────────────────────────── */
 .guide-landing {
     flex: 1;
-    background: var(--bg);
+    background: #fff;
     max-width: 1280px;
     margin: 0 auto;
     width: 100%;
@@ -246,7 +246,7 @@ body:has(.guide-wrap) {
     line-height: 1.3; margin-bottom: .5rem;
 }
 .guide-hero-sub {
-    font-size: var(--fs-14); font-weight: 400; color: var(--text-muted);
+    font-size: var(--fs-14); font-weight: 400; color: var(--text);
 }
 
 /* ── 카테고리 카드 ────────────────────────────── */
@@ -260,7 +260,7 @@ body:has(.guide-wrap) {
 }
 
 .guide-cat-card {
-    background: var(--bg);
+    background: #fff;
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 24px;
@@ -307,7 +307,7 @@ body:has(.guide-wrap) {
 .guide-sidebar {
     width: 256px;
     flex-shrink: 0;
-    background: var(--bg);
+    background: #fff;
     border-right: 1px solid var(--border);
     position: sticky;
     top: 68px;
@@ -370,7 +370,7 @@ body:has(.guide-wrap) {
 /* ── 본문 영역 ───────────────────────────────── */
 .guide-main {
     flex: 1;
-    background: var(--bg);
+    background: #fff;
     padding: 48px 60px 100px;
     min-width: 0;
 }

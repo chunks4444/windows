@@ -33,7 +33,7 @@
     <div class="guide-categories">
 
         <a href="/src/guide/intro.php" class="guide-cat-card">
-            <div class="guide-cat-icon" style="background:var(--accent-tint);color:var(--accent);">
+            <div class="guide-cat-icon" style="background:var(--accent-tint);color:#000;">
                 <i class="bi bi-info-circle-fill"></i>
             </div>
             <div class="guide-cat-title">평목 스튜디오란?</div>
@@ -42,7 +42,7 @@
         </a>
 
         <a href="/src/guide/studio-classic.php" class="guide-cat-card">
-            <div class="guide-cat-icon" style="background:var(--danger-tint);color:var(--danger);">
+            <div class="guide-cat-icon" style="background:var(--danger-tint);color:#000;">
                 <svg width="22" height="22" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
                     <rect fill="currentColor" x="148" y="204" width="384" height="46" rx="23"/>
                     <rect fill="currentColor" x="148" y="430" width="384" height="46" rx="23"/>
@@ -57,7 +57,7 @@
         </a>
 
         <a href="/src/guide/drawing.php" class="guide-cat-card">
-            <div class="guide-cat-icon" style="background:var(--accent-tint);color:var(--accent);">
+            <div class="guide-cat-icon" style="background:var(--accent-tint);color:#000;">
                 <i class="bi bi-folder2-open"></i>
             </div>
             <div class="guide-cat-title">도면 관리</div>
@@ -66,7 +66,7 @@
         </a>
 
         <a href="/src/guide/render.php" class="guide-cat-card">
-            <div class="guide-cat-icon" style="background:var(--accent-tint);color:var(--accent);">
+            <div class="guide-cat-icon" style="background:var(--accent-tint);color:#000;">
                 <i class="bi bi-stars"></i>
             </div>
             <div class="guide-cat-title">AI 렌더링</div>
@@ -75,7 +75,7 @@
         </a>
 
         <a href="/src/guide/collection.php" class="guide-cat-card">
-            <div class="guide-cat-icon" style="background:var(--accent-tint);color:var(--accent);">
+            <div class="guide-cat-icon" style="background:var(--accent-tint);color:#000;">
                 <i class="bi bi-collection-fill"></i>
             </div>
             <div class="guide-cat-title">컬렉션</div>
@@ -84,7 +84,7 @@
         </a>
 
         <a href="/src/guide/account.php" class="guide-cat-card">
-            <div class="guide-cat-icon" style="background:var(--accent-tint);color:var(--accent);">
+            <div class="guide-cat-icon" style="background:var(--accent-tint);color:#000;">
                 <i class="bi bi-person-gear"></i>
             </div>
             <div class="guide-cat-title">계정 설정</div>
@@ -93,7 +93,7 @@
         </a>
 
         <a href="/src/guide/order.php" class="guide-cat-card">
-            <div class="guide-cat-icon" style="background:var(--accent-tint);color:var(--accent);">
+            <div class="guide-cat-icon" style="background:var(--accent-tint);color:#000;">
                 <i class="bi bi-cart-check"></i>
             </div>
             <div class="guide-cat-title">주문</div>
@@ -102,7 +102,7 @@
         </a>
 
         <a href="/src/guide/delivery.php" class="guide-cat-card">
-            <div class="guide-cat-icon" style="background:var(--accent-tint);color:var(--accent);">
+            <div class="guide-cat-icon" style="background:var(--accent-tint);color:#000;">
                 <i class="bi bi-truck"></i>
             </div>
             <div class="guide-cat-title">배송</div>
@@ -111,7 +111,7 @@
         </a>
 
         <a href="/src/guide/faq.php" class="guide-cat-card">
-            <div class="guide-cat-icon" style="background:var(--accent-tint);color:var(--accent);">
+            <div class="guide-cat-icon" style="background:var(--accent-tint);color:#000;">
                 <i class="bi bi-patch-question-fill"></i>
             </div>
             <div class="guide-cat-title">FAQ</div>
