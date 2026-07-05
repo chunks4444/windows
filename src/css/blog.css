@@ -112,7 +112,7 @@ body { background: var(--page-bg, #f9f9f9); }
 }
 .bg-series-mini-thumb {
     flex-shrink: 0;
-    width: 72px; height: 72px;
+    width: 64px; height: 64px;
     border-radius: calc(var(--r) - 4px);
     overflow: hidden;
     background: var(--input-bg);
@@ -181,7 +181,7 @@ body { background: var(--page-bg, #f9f9f9); }
 .bg-question-mini:hover { border-color: var(--teal); box-shadow: 0 6px 16px rgba(0,0,0,.06); }
 .bg-question-mini-thumb {
     flex-shrink: 0;
-    width: 48px; height: 48px;
+    width: 64px; height: 64px;
     border-radius: calc(var(--r) - 4px);
     overflow: hidden;
     background: var(--input-bg);

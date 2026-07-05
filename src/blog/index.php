@@ -159,7 +159,7 @@ try {
         <section class="bg-posts-col bg-col">
             <h2 class="bg-col-title"><i class="bi bi-grid-3x3-gap"></i> 전체 글</h2>
             <?php foreach ($feedPosts as $pi => $p): ?>
-            <a class="bg-post-row<?= $pi >= 8 ? ' bg-more-item' : '' ?>" href="/src/blog/<?= rawurlencode($p['slug']) ?>">
+            <a class="bg-post-row<?= $pi >= 5 ? ' bg-more-item' : '' ?>" href="/src/blog/<?= rawurlencode($p['slug']) ?>">
                 <?php if ($p['thumbnail_url']): ?>
                 <div class="bg-post-row-thumb">
                     <img src="<?= htmlspecialchars($p['thumbnail_url']) ?>" alt="" loading="lazy">
@@ -177,7 +177,7 @@ try {
                 </div>
             </a>
             <?php endforeach; ?>
-            <?php if (count($feedPosts) > 8): ?>
+            <?php if (count($feedPosts) > 5): ?>
             <button type="button" class="bg-col-more-toggle" onclick="this.closest('.bg-col').classList.toggle('open')">
                 더보기 <i class="bi bi-chevron-down"></i>
             </button>
