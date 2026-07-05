@@ -38,39 +38,57 @@ try {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
     ");
 
-    $allPosts = $pdo->query("
-        SELECT p.id, p.title, p.slug, p.summary, p.question, p.thumbnail_url, p.created_at,
-               p.series_id, p.series_order,
-               s.name AS series_name, s.tagline AS series_tagline, s.sort_order AS series_sort
+    $totalCount = (int) $pdo->query("SELECT COUNT(*) FROM blog_posts WHERE is_active = 1")->fetchColumn();
+    $perPage    = 10;
+    $totalPages = max(1, (int) ceil($totalCount / $perPage));
+    $page       = max(1, min($totalPages, (int)($_GET['page'] ?? 1)));
+    $offset     = ($page - 1) * $perPage;
+
+    $stmt = $pdo->prepare("
+        SELECT p.id, p.title, p.slug, p.summary, p.thumbnail_url, p.created_at, p.view_count,
+               s.name AS series_name
         FROM blog_posts p
         LEFT JOIN blog_series s ON s.id = p.series_id
         WHERE p.is_active = 1
-        ORDER BY (s.sort_order IS NULL), s.sort_order, s.id, p.series_order, p.id
-    ")->fetchAll();
-    $total = count($allPosts);
+        ORDER BY p.created_at DESC
+        LIMIT :lim OFFSET :off
+    ");
+    $stmt->bindValue(':lim', $perPage, PDO::PARAM_INT);
+    $stmt->bindValue(':off', $offset, PDO::PARAM_INT);
+    $stmt->execute();
+    $pagePosts = $stmt->fetchAll();
 
-    // 좌측 "시리즈로 읽기" 목록용 그룹핑 (시리즈 없는 글은 제외)
-    $seriesGroups = [];
-    foreach ($allPosts as $p) {
-        if (!$p['series_id']) continue;
-        $sid = $p['series_id'];
-        if (!isset($seriesGroups[$sid])) {
-            $seriesGroups[$sid] = [
-                'name'    => $p['series_name'],
-                'tagline' => $p['series_tagline'],
-                'posts'   => [],
-            ];
-        }
-        $seriesGroups[$sid]['posts'][] = $p;
+    // 상단 피처 캐로셀 — 현재 페이지의 글 중 썸네일 있는 것 위주로 최대 5개
+    $featurePosts = [];
+    foreach ($pagePosts as $p) {
+        if ($p['thumbnail_url']) $featurePosts[] = $p;
+        if (count($featurePosts) >= 5) break;
     }
-    // 우측 "전체 글" 피드는 최신순
-    $feedPosts = $allPosts;
-    usort($feedPosts, fn($a, $b) => strtotime($b['created_at']) <=> strtotime($a['created_at']));
+
+    // 사이드바 — 시리즈별 카드 (시리즈명 + 태그라인 + 최근 글 최대 3개)
+    $seriesRows = $pdo->query("
+        SELECT p.id, p.title, p.slug, p.created_at, p.series_id,
+               s.name AS series_name, s.tagline AS series_tagline, s.sort_order AS series_sort
+        FROM blog_posts p
+        JOIN blog_series s ON s.id = p.series_id
+        WHERE p.is_active = 1
+        ORDER BY s.sort_order, s.id, p.created_at DESC
+    ")->fetchAll();
+    $seriesCards = [];
+    foreach ($seriesRows as $r) {
+        $sid = $r['series_id'];
+        if (!isset($seriesCards[$sid])) {
+            $seriesCards[$sid] = ['name' => $r['series_name'], 'tagline' => $r['series_tagline'], 'posts' => []];
+        }
+        if (count($seriesCards[$sid]['posts']) < 3) $seriesCards[$sid]['posts'][] = $r;
+    }
 } catch (Throwable $e) {
-    $allPosts     = [];
-    $total        = 0;
-    $seriesGroups = [];
-    $feedPosts    = [];
+    $totalCount   = 0;
+    $totalPages   = 1;
+    $page         = 1;
+    $pagePosts    = [];
+    $featurePosts = [];
+    $seriesCards  = [];
 }
 ?>
 <!DOCTYPE html>
@@ -83,7 +101,7 @@ try {
     <?php require_once __DIR__ . '/../lib/meta.php'; ?>
     <link rel="icon" type="image/png" href="/src/assets/favicon.png">
     <link rel="apple-touch-icon" href="/src/assets/apple-touch-icon.png">
-    <link rel="canonical" href="<?= htmlspecialchars(SITE_URL . '/src/blog/') ?>">
+    <link rel="canonical" href="<?= htmlspecialchars(SITE_URL . '/src/blog/' . ($page > 1 ? '?page=' . $page : '')) ?>">
     <meta property="og:title" content="창호 이야기 — 평목 공방 블로그">
     <meta property="og:description" content="평목 공방이 전하는 창호와 한옥 살창 이야기. 시공 사례와 제작 노트를 소개합니다.">
     <meta property="og:image" content="<?= htmlspecialchars(SITE_DEFAULT_IMAGE) ?>">
@@ -105,105 +123,105 @@ try {
         </div>
     </div>
 
-    <?php if ($total === 0): ?>
+    <?php if ($totalCount === 0): ?>
     <section class="bg-list-section">
         <div class="bg-empty">아직 등록된 글이 없습니다.</div>
     </section>
     <?php else: ?>
 
-    <div class="bg-layout">
-        <!-- ── 좌측 1/4: 시리즈물 ── -->
-        <aside class="bg-series-col bg-col">
-            <h2 class="bg-col-title"><i class="bi bi-book"></i> 시리즈로 읽기</h2>
-            <?php foreach (array_values($seriesGroups) as $si => $group):
-                $first = $group['posts'][0];
-                $count = count($group['posts']);
-                $latestDate = max(array_column($group['posts'], 'created_at'));
-            ?>
-            <article class="bg-series-mini<?= $si >= 4 ? ' bg-more-item' : '' ?>">
-                <a class="bg-series-mini-head" href="/src/blog/<?= rawurlencode($first['slug']) ?>">
-                    <?php if ($first['thumbnail_url']): ?>
-                    <div class="bg-series-mini-thumb">
-                        <img src="<?= htmlspecialchars($first['thumbnail_url']) ?>" alt="<?= htmlspecialchars($group['name']) ?>" loading="lazy">
-                    </div>
-                    <?php endif; ?>
-                    <div class="bg-series-mini-body">
-                        <p class="bg-series-mini-date">최근 업데이트 <?= date('Y.m.d', strtotime($latestDate)) ?></p>
-                        <h3 class="bg-series-mini-name"><?= htmlspecialchars($group['name']) ?></h3>
-                        <?php if ($group['tagline']): ?>
-                        <p class="bg-series-mini-tagline">"<?= htmlspecialchars($group['tagline']) ?>"</p>
-                        <?php endif; ?>
-                    </div>
-                </a>
-                <button type="button" class="bg-series-mini-eps-toggle" onclick="this.closest('.bg-series-mini').classList.toggle('open')">
-                    전 <?= $count ?>편 보기 <i class="bi bi-chevron-down"></i>
-                </button>
-                <ol class="bg-series-mini-eps">
-                    <?php foreach ($group['posts'] as $i => $ep): ?>
-                    <li><a href="/src/blog/<?= rawurlencode($ep['slug']) ?>"><span class="bg-series-mini-eps-num"><?= $i + 1 ?>편.</span><span class="bg-series-mini-eps-title"><?= htmlspecialchars($ep['title']) ?></span></a></li>
+    <div class="bg-tistory-layout">
+        <!-- ── 메인: 피처 캐로셀 + 순위 목록 + 페이지네이션 ── -->
+        <main class="bg-main">
+
+            <?php if ($featurePosts): ?>
+            <div id="blogFeature" class="carousel slide bg-feature" data-bs-ride="carousel" data-bs-interval="5000">
+                <div class="carousel-indicators">
+                    <?php foreach ($featurePosts as $i => $fp): ?>
+                    <button type="button" data-bs-target="#blogFeature" data-bs-slide-to="<?= $i ?>"
+                        <?= $i === 0 ? 'class="active" aria-current="true"' : '' ?>
+                        aria-label="Slide <?= $i + 1 ?>"></button>
                     <?php endforeach; ?>
-                </ol>
-            </article>
-            <?php endforeach; ?>
-            <?php if (empty($seriesGroups)): ?>
-            <p class="bg-series-mini-empty">아직 등록된 시리즈가 없습니다.</p>
-            <?php endif; ?>
-            <?php if (count($seriesGroups) > 4): ?>
-            <button type="button" class="bg-col-more-toggle" onclick="this.closest('.bg-col').classList.toggle('open')">
-                더보기 <i class="bi bi-chevron-down"></i>
-            </button>
-            <?php endif; ?>
-        </aside>
-
-        <!-- ── 중앙 2/4: 각개 블로그 리스트 ── -->
-        <section class="bg-posts-col bg-col">
-            <h2 class="bg-col-title"><i class="bi bi-grid-3x3-gap"></i> 전체 글</h2>
-            <?php foreach ($feedPosts as $pi => $p): ?>
-            <a class="bg-post-row<?= $pi >= 5 ? ' bg-more-item' : '' ?>" href="/src/blog/<?= rawurlencode($p['slug']) ?>">
-                <?php if ($p['thumbnail_url']): ?>
-                <div class="bg-post-row-thumb">
-                    <img src="<?= htmlspecialchars($p['thumbnail_url']) ?>" alt="" loading="lazy">
                 </div>
-                <?php endif; ?>
-                <div class="bg-post-row-body">
-                    <p class="bg-post-row-meta">
-                        <?php if ($p['series_name']): ?><span class="bg-post-row-series"><?= htmlspecialchars($p['series_name']) ?></span> · <?php endif; ?>
-                        <?= date('Y.m.d', strtotime($p['created_at'])) ?>
-                    </p>
-                    <h3 class="bg-post-row-title"><?= htmlspecialchars($p['title']) ?></h3>
-                    <?php if ($p['summary']): ?>
-                    <p class="bg-post-row-summary"><?= htmlspecialchars($p['summary']) ?></p>
-                    <?php endif; ?>
-                </div>
-            </a>
-            <?php endforeach; ?>
-            <?php if (count($feedPosts) > 5): ?>
-            <button type="button" class="bg-col-more-toggle" onclick="this.closest('.bg-col').classList.toggle('open')">
-                더보기 <i class="bi bi-chevron-down"></i>
-            </button>
-            <?php endif; ?>
-        </section>
-
-        <!-- ── 우측 1/4: 질문으로 찾기 ── -->
-        <aside class="bg-question-col bg-col">
-            <h2 class="bg-col-title"><i class="bi bi-question-circle"></i> 질문으로 찾기</h2>
-            <div class="bg-question-mini-list">
-                <?php foreach ($feedPosts as $qi => $p): ?>
-                <a class="bg-question-mini<?= $qi >= 10 ? ' bg-more-item' : '' ?>" href="/src/blog/<?= rawurlencode($p['slug']) ?>">
-                    <div class="bg-question-mini-body">
-                        <p class="bg-question-mini-q">Q. <?= htmlspecialchars($p['question'] ?: $p['title']) ?></p>
-                        <p class="bg-question-mini-meta">
-                            <?php if ($p['series_name']): ?><?= htmlspecialchars($p['series_name']) ?> · <?php endif; ?>
-                            <?= date('Y.m.d', strtotime($p['created_at'])) ?>
-                        </p>
+                <div class="carousel-inner">
+                    <?php foreach ($featurePosts as $i => $fp): ?>
+                    <div class="carousel-item <?= $i === 0 ? 'active' : '' ?>">
+                        <a href="/src/blog/<?= rawurlencode($fp['slug']) ?>" class="bg-feature-link">
+                            <img src="<?= htmlspecialchars($fp['thumbnail_url']) ?>" class="bg-feature-img" alt="<?= htmlspecialchars($fp['title']) ?>">
+                            <div class="bg-feature-caption">
+                                <?php if ($fp['series_name']): ?>
+                                <span class="bg-feature-badge"><?= htmlspecialchars($fp['series_name']) ?></span>
+                                <?php endif; ?>
+                                <h2 class="bg-feature-title">"<?= htmlspecialchars($fp['title']) ?>"</h2>
+                            </div>
+                        </a>
                     </div>
-                </a>
-                <?php endforeach; ?>
+                    <?php endforeach; ?>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#blogFeature" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#blogFeature" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                </button>
             </div>
-            <?php if (count($feedPosts) > 10): ?>
-            <button type="button" class="bg-col-more-toggle" onclick="this.closest('.bg-col').classList.toggle('open')">
-                더보기 <i class="bi bi-chevron-down"></i>
-            </button>
+            <?php endif; ?>
+
+            <ol class="bg-ranked-list" start="<?= $offset + 1 ?>">
+                <?php foreach ($pagePosts as $i => $p): ?>
+                <li class="bg-ranked-item">
+                    <a class="bg-ranked-link" href="/src/blog/<?= rawurlencode($p['slug']) ?>">
+                        <div class="bg-ranked-text">
+                            <?php if ($p['series_name']): ?>
+                            <p class="bg-ranked-cat"><?= htmlspecialchars($p['series_name']) ?></p>
+                            <?php endif; ?>
+                            <h3 class="bg-ranked-title"><span class="bg-ranked-num"><?= $offset + $i + 1 ?></span><?= htmlspecialchars($p['title']) ?></h3>
+                            <?php if ($p['summary']): ?>
+                            <p class="bg-ranked-summary"><?= htmlspecialchars($p['summary']) ?></p>
+                            <?php endif; ?>
+                        </div>
+                        <?php if ($p['thumbnail_url']): ?>
+                        <div class="bg-ranked-thumb">
+                            <img src="<?= htmlspecialchars($p['thumbnail_url']) ?>" alt="" loading="lazy">
+                        </div>
+                        <?php endif; ?>
+                    </a>
+                </li>
+                <?php endforeach; ?>
+            </ol>
+
+            <?php if ($totalPages > 1): ?>
+            <nav class="bg-pagination" aria-label="페이지">
+                <a class="bg-page-arrow <?= $page <= 1 ? 'disabled' : '' ?>"
+                   href="?page=<?= max(1, $page - 1) ?>" aria-label="이전 페이지"><i class="bi bi-chevron-left"></i></a>
+                <?php for ($pn = 1; $pn <= $totalPages; $pn++): ?>
+                <a class="bg-page-num <?= $pn === $page ? 'active' : '' ?>" href="?page=<?= $pn ?>"><?= $pn ?></a>
+                <?php endfor; ?>
+                <a class="bg-page-arrow <?= $page >= $totalPages ? 'disabled' : '' ?>"
+                   href="?page=<?= min($totalPages, $page + 1) ?>" aria-label="다음 페이지"><i class="bi bi-chevron-right"></i></a>
+            </nav>
+            <?php endif; ?>
+        </main>
+
+        <!-- ── 사이드바: 시리즈 카드 ── -->
+        <aside class="bg-sidebar">
+            <?php foreach ($seriesCards as $sc): ?>
+            <div class="bg-side-card">
+                <h3 class="bg-side-card-title"><?= htmlspecialchars($sc['name']) ?></h3>
+                <?php if ($sc['tagline']): ?>
+                <p class="bg-side-card-tagline">"<?= htmlspecialchars($sc['tagline']) ?>"</p>
+                <?php endif; ?>
+                <ul class="bg-side-card-posts">
+                    <?php foreach ($sc['posts'] as $sp): ?>
+                    <li>
+                        <a href="/src/blog/<?= rawurlencode($sp['slug']) ?>"><?= htmlspecialchars($sp['title']) ?></a>
+                        <span class="bg-side-card-date"><?= date('Y.m.d', strtotime($sp['created_at'])) ?></span>
+                    </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+            <?php endforeach; ?>
+            <?php if (empty($seriesCards)): ?>
+            <p class="bg-side-empty">아직 등록된 시리즈가 없습니다.</p>
             <?php endif; ?>
         </aside>
     </div>
