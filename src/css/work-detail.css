@@ -1,7 +1,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body {
-    background: var(--bg, var(--bg));
+    background: #fff;
     font-family: 'Noto Sans KR', 'Inter', -apple-system, sans-serif;
     -webkit-font-smoothing: antialiased;
     color: var(--text, var(--text));
@@ -26,7 +26,7 @@ html, body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: var(--bg, var(--bg));
+    background: #fff;
     padding: 1.2rem 1rem .8rem;
     gap: .8rem;
     overflow: hidden;
@@ -67,8 +67,8 @@ html, body {
     transform: translateY(-50%);
     width: 44px; height: 44px;
     border-radius: 50%;
-    border: none;
-    background: var(--bg);
+    border: 1px solid var(--border);
+    background: #fff;
     box-shadow: 0 2px 12px rgba(var(--text-rgb), .12);
     display: flex; align-items: center; justify-content: center;
     cursor: pointer;
@@ -78,7 +78,8 @@ html, body {
 }
 .wd-arrow:hover {
     background: var(--accent, var(--accent));
-    color: var(--bg);
+    border-color: var(--accent);
+    color: #fff;
     box-shadow: 0 4px 16px rgba(var(--accent-rgb), .3);
 }
 .wd-arrow:disabled { opacity: .25; cursor: default; pointer-events: none; }
@@ -139,7 +140,7 @@ html, body {
 
 /* ── 정보 바 ─────────────────────────────────────────── */
 .wd-info-bar {
-    background: var(--bg, var(--bg));
+    background: #fff;
     border-top: 1px solid var(--border, var(--border));
     padding: .9rem 1.5rem;
 }
