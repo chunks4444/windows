@@ -13,7 +13,7 @@ body { background: var(--page-bg, #f9f9f9); }
     padding: 2.5rem 0 0;
 }
 .wk-hero-inner {
-    max-width: 1280px; margin: 0 auto; padding: 0 2rem;
+    max-width: 1320px; margin: 0 auto; padding: 0 2rem;
 }
 .wk-hero-label {
     display: inline-block;
@@ -43,7 +43,7 @@ body { background: var(--page-bg, #f9f9f9); }
     position: sticky; top: 68px; z-index: 50;
 }
 .wk-filter-inner {
-    max-width: 1280px; margin: 0 auto;
+    max-width: 1320px; margin: 0 auto;
     padding: .75rem 2rem;
     display: flex; align-items: center; gap: .5rem;
     overflow-x: auto; scrollbar-width: none;
@@ -66,7 +66,7 @@ body { background: var(--page-bg, #f9f9f9); }
 
 /* ── 그리드 영역 ──────────────────────────────────────────── */
 .wk-grid-section {
-    max-width: 1280px; margin: 0 auto;
+    max-width: 1320px; margin: 0 auto;
     padding: 2rem 2rem 4rem;
 }
 .wk-grid-header {

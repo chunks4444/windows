@@ -85,7 +85,7 @@ body {
 body:not(.pm-generator) .container,
 body:not(.pm-generator) .container-lg,
 body:not(.pm-generator) .container-xl,
-body:not(.pm-generator) .container-xxl { max-width: 1280px; }
+body:not(.pm-generator) .container-xxl { max-width: 1320px; }
 
 /* ── 글로벌 푸터 (엔진/관리자 페이지 제외 전체 화면 공용) ───── */
 /* 화면 하단에 고정 — 콘텐츠가 가려지지 않도록 body에 padding-bottom 보정 */

@@ -12,7 +12,7 @@ body { background: var(--page-bg, #f9f9f9); }
     padding: 2.5rem 0;
 }
 .bg-hero-inner {
-    max-width: 1200px; margin: 0 auto; padding: 0 2rem;
+    max-width: 1320px; margin: 0 auto; padding: 0 2rem;
 }
 .bg-hero-label {
     display: inline-block;
@@ -31,7 +31,7 @@ body { background: var(--page-bg, #f9f9f9); }
 
 /* ── 목록 래퍼 ────────────────────────────────────────────── */
 .bg-list-section {
-    max-width: 1200px; margin: 0 auto;
+    max-width: 1320px; margin: 0 auto;
     padding: 2rem 2rem 4rem;
 }
 
@@ -67,12 +67,17 @@ body { background: var(--page-bg, #f9f9f9); }
 .bg-series-col {
     display: flex; flex-direction: column; gap: .9rem;
     position: sticky; top: 90px;
+    min-width: 0;
 }
 @media (max-width: 1100px) { .bg-series-col { position: static; } }
+
+/* 중앙/우측: 그리드 트랙 블로우아웃 방지 */
+.bg-posts-col { min-width: 0; }
 
 /* 우측: 질문으로 찾기 */
 .bg-question-col {
     position: sticky; top: 90px;
+    min-width: 0;
 }
 @media (max-width: 1100px) { .bg-question-col { position: static; } }
 
@@ -238,7 +243,7 @@ body { background: var(--page-bg, #f9f9f9); }
 
 /* 빈 상태 */
 .bg-empty {
-    max-width: 1200px; margin: 0 auto;
+    max-width: 1320px; margin: 0 auto;
     text-align: center; padding: 5rem 1rem;
     color: var(--text-3); font-size: var(--fs-16);
 }
