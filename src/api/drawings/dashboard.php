@@ -18,4 +18,11 @@ $drawings = Drawing::list_all((int)$payload['sub'], $page, $limit + 1);
 $has_more = count($drawings) > $limit;
 if ($has_more) array_pop($drawings);
 
-echo json_encode(['drawings' => $drawings, 'has_more' => $has_more]);
+$out = ['drawings' => $drawings, 'has_more' => $has_more];
+if ($page === 1) {
+    $stmt = db()->prepare('SELECT COUNT(*) FROM drawings WHERE user_id = ?');
+    $stmt->execute([(int)$payload['sub']]);
+    $out['total'] = (int)$stmt->fetchColumn();
+}
+
+echo json_encode($out);

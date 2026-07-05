@@ -427,6 +427,9 @@ async function loadDashboard() {
         drawingsHasMore = !!data.has_more;
         drawingsPage    = 2;
 
+        const countBadge = document.getElementById('libCountBadge');
+        if (countBadge && typeof data.total === 'number') countBadge.textContent = `${data.total}개 도면`;
+
         if (!drawings.length) {
             document.getElementById('dbContent').innerHTML = '<div class="db-empty">저장된 도면이 없습니다.</div>';
             return;
