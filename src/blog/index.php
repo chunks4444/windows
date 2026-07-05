@@ -189,12 +189,7 @@ try {
             <h2 class="bg-col-title"><i class="bi bi-question-circle"></i> 질문으로 찾기</h2>
             <div class="bg-question-mini-list">
                 <?php foreach ($feedPosts as $qi => $p): ?>
-                <a class="bg-question-mini<?= $qi >= 6 ? ' bg-more-item' : '' ?>" href="/src/blog/<?= rawurlencode($p['slug']) ?>">
-                    <?php if ($p['thumbnail_url']): ?>
-                    <div class="bg-question-mini-thumb">
-                        <img src="<?= htmlspecialchars($p['thumbnail_url']) ?>" alt="" loading="lazy">
-                    </div>
-                    <?php endif; ?>
+                <a class="bg-question-mini<?= $qi >= 10 ? ' bg-more-item' : '' ?>" href="/src/blog/<?= rawurlencode($p['slug']) ?>">
                     <div class="bg-question-mini-body">
                         <p class="bg-question-mini-q">Q. <?= htmlspecialchars($p['question'] ?: $p['title']) ?></p>
                         <p class="bg-question-mini-meta">
@@ -205,7 +200,7 @@ try {
                 </a>
                 <?php endforeach; ?>
             </div>
-            <?php if (count($feedPosts) > 6): ?>
+            <?php if (count($feedPosts) > 10): ?>
             <button type="button" class="bg-col-more-toggle" onclick="this.closest('.bg-col').classList.toggle('open')">
                 더보기 <i class="bi bi-chevron-down"></i>
             </button>
