@@ -152,7 +152,7 @@ body {
 @media (max-width: 480px)  { .db-grid { grid-template-columns: 1fr; } }
 
 .db-card {
-    background: var(--bg);
+    background: #fff;
     border-radius: var(--r);
     border: 1px solid var(--border);
     overflow: hidden;
@@ -304,13 +304,13 @@ body {
     align-items: center;
     gap: 4px;
     font-size: var(--fs-12);
-    color: var(--text-muted);
+    color: var(--text);
     min-width: 0;
 }
 
 .db-card-meta-row:nth-child(even) { justify-self: end; }
 .db-card-meta-row i { font-size: var(--fs-12); flex-shrink: 0; }
-.db-card-meta-row strong { color: var(--text-muted); font-weight: 500; }
+.db-card-meta-row strong { color: var(--text); font-weight: 500; }
 
 .db-cat-select {
     border: none;
@@ -332,7 +332,7 @@ body {
     text-align: center;
     color: var(--text-muted);
     font-size: var(--fs-14);
-    background: var(--bg);
+    background: #fff;
     border-radius: var(--r);
     border: 1px dashed var(--border);
 }
@@ -348,7 +348,7 @@ body {
 
 /* ── 로그인 유도 배너 ────────────────────────── */
 .db-auth-banner {
-    background: var(--bg);
+    background: #fff;
     border: 1px solid var(--border);
     border-radius: var(--r);
     padding: 48px 32px;
@@ -432,7 +432,7 @@ body {
 
 .db-delete-modal-box {
     position: relative;
-    background: var(--bg);
+    background: #fff;
     border-radius: 16px;
     padding: 32px 28px 24px;
     width: min(90vw, 360px);
@@ -530,7 +530,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--bg);
+    background: #fff;
 }
 
 /* ── 보드 모달 패턴 아이템 ───────────────────── */
@@ -540,7 +540,7 @@ body {
     border-radius: 8px;
     overflow: hidden;
     border: 1px solid var(--border);
-    background: var(--bg);
+    background: #fff;
 }
 
 .db-board-item img {
