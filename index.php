@@ -27,6 +27,18 @@ try {
 } catch (Throwable $e) {
     $latestPosts = [];
 }
+// 블로그 시리즈 명제 배너 — 썸네일 카드보다 문장이 이 블로그의 자산이라 순환 인용 배너로 노출
+try {
+    $blogQuotes = $pdo ? $pdo->query("
+        SELECT s.tagline, p.slug, s.name AS series_name
+        FROM blog_series s
+        JOIN blog_posts p ON p.series_id = s.id AND p.series_order = 1 AND p.is_active = 1
+        WHERE s.tagline <> ''
+    ")->fetchAll() : [];
+} catch (Throwable $e) {
+    $blogQuotes = [];
+}
+$blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -257,6 +269,12 @@ try {
                     </div>
                     <a href="/src/blog/" class="home-blog-more">전체 보기 <i class="bi bi-arrow-right"></i></a>
                 </div>
+                <?php if ($blogQuote): ?>
+                <a href="/src/blog/<?= rawurlencode($blogQuote['slug']) ?>" class="home-quote-banner">
+                    <p class="home-quote-text">"<?= htmlspecialchars($blogQuote['tagline']) ?>"</p>
+                    <p class="home-quote-sub"><?= htmlspecialchars($blogQuote['series_name']) ?> 이야기 읽어보기 <i class="bi bi-arrow-right"></i></p>
+                </a>
+                <?php endif; ?>
                 <div class="home-blog-grid">
                     <?php foreach ($latestPosts as $p): ?>
                     <a href="/src/blog/<?= rawurlencode($p['slug']) ?>" class="home-blog-card">
