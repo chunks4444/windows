@@ -3,8 +3,10 @@ header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../lib/db.php';
 try {
     $spaceOptions = db()->query("SELECT label, query AS collection_query FROM collection_space_filters WHERE is_active=1 ORDER BY sort_order, id")->fetchAll();
+    $totalPatterns = (int) db()->query("SELECT COUNT(*) FROM library_patterns WHERE is_active = 1")->fetchColumn();
 } catch (Throwable $e) {
     $spaceOptions = [];
+    $totalPatterns = 0;
 }
 ?>
 <!DOCTYPE html>
@@ -26,7 +28,10 @@ try {
     <div class="lib-hero-inner">
         <p class="lib-hero-label">Collection</p>
         <h1>컬렉션</h1>
-        <p class="lib-hero-sub">평목 스튜디오에서 제작된 창호 격자 패턴을 둘러보세요.</p>
+        <p class="lib-hero-sub">
+            평목 스튜디오에서 제작된 창호 격자 패턴을 둘러보세요.&ensp;
+            <span class="lib-count-badge"><?= $totalPatterns ?>개 패턴</span>
+        </p>
     </div>
 </div>
 
@@ -46,12 +51,12 @@ try {
             <button class="lib-filter-like" id="libLikeBtn"><i class="bi bi-heart-fill"></i> 좋아요</button>
         </div>
         <div class="lib-right-group">
+            <span class="lib-result-count" id="libResultCount"></span>
             <div class="lib-search">
                 <i class="bi bi-search"></i>
                 <input type="text" id="libSearch" placeholder="패턴 검색…" autocomplete="off">
             </div>
         </div>
-        <span class="lib-result-count" id="libResultCount"></span>
     </div>
 </div>
 

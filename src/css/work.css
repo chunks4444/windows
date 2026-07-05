@@ -1,14 +1,14 @@
 /* ── WORK INDEX — Slidesgo-style grid layout ──────────────── */
 
 /* body padding-top:68px → nav.css 에서 처리 */
-body { background: var(--bg, var(--bg)); }
+body { background: #fff; }
 
 /* ── 페이지 래퍼 ──────────────────────────────────────────── */
 .wk-page { min-height: calc(100vh - 68px); }
 
 /* ── 페이지 헤더 ──────────────────────────────────────────── */
 .wk-hero {
-    background: var(--bg, var(--bg));
+    background: #fff;
     border-bottom: 1px solid var(--border, var(--border));
     padding: 2.5rem 0 0;
 }
@@ -38,7 +38,7 @@ body { background: var(--bg, var(--bg)); }
 
 /* ── 필터 바 ──────────────────────────────────────────────── */
 .wk-filter-bar {
-    background: var(--bg, var(--bg));
+    background: #fff;
     border-bottom: 1px solid var(--border, var(--border));
     position: sticky; top: 68px; z-index: 50;
 }
