@@ -33,7 +33,7 @@ try {
         SELECT s.tagline, p.slug, s.name AS series_name
         FROM blog_series s
         JOIN blog_posts p ON p.series_id = s.id AND p.series_order = 1 AND p.is_active = 1
-        WHERE s.tagline <> ''
+        WHERE s.tagline <> '' AND s.show_on_home = 1
     ")->fetchAll() : [];
 } catch (Throwable $e) {
     $blogQuotes = [];
