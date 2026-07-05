@@ -1485,11 +1485,10 @@ async function draw() {
         rCtx.save();
         rCtx.setTransform(rDpr, 0, 0, rDpr, 0, 0);
 
-        const BG_IN  = 'rgba(150,150,150,0.95)';
-        const BG_OUT = 'rgba(173,173,173,0.95)';
+        const BG_IN  = 'rgba(168,175,183,0.95)';
+        const BG_OUT = 'rgba(138,145,153,0.95)';
         const LINE   = 'rgba(255,255,255,0.7)';
         const LBL    = '#ffffff';
-        const ZERO   = '#3A8C82';
 
         // 문 범위 (스크린 좌표)
         const doorL = ox;
@@ -1510,10 +1509,10 @@ async function draw() {
         for (let mm = xS; mm <= xE; mm += step) {
             const x = ox + mm * mmPx;
             if (x < R || x > logW) continue;
-            rCtx.strokeStyle = mm === 0 ? ZERO : LINE;
+            rCtx.strokeStyle = LINE;
             rCtx.lineWidth   = mm === 0 ? 1 : 0.5;
             rCtx.beginPath(); rCtx.moveTo(x, R - 8); rCtx.lineTo(x, R); rCtx.stroke();
-            rCtx.fillStyle    = mm === 0 ? ZERO : LBL;
+            rCtx.fillStyle    = LBL;
             rCtx.font         = '10px sans-serif';
             rCtx.textBaseline = 'top';
             rCtx.textAlign    = mm === 0 ? 'left' : 'center';
@@ -1533,13 +1532,13 @@ async function draw() {
         for (let mm = yS; mm <= yE; mm += step) {
             const y = oy + mm * mmPx;
             if (y < R || y > logH) continue;
-            rCtx.strokeStyle = mm === 0 ? ZERO : LINE;
+            rCtx.strokeStyle = LINE;
             rCtx.lineWidth   = mm === 0 ? 1 : 0.5;
             rCtx.beginPath(); rCtx.moveTo(R - 8, y); rCtx.lineTo(R, y); rCtx.stroke();
             rCtx.save();
             rCtx.translate(R / 2, y);
             rCtx.rotate(-Math.PI / 2);
-            rCtx.fillStyle    = mm === 0 ? ZERO : LBL;
+            rCtx.fillStyle    = LBL;
             rCtx.font         = '10px sans-serif';
             rCtx.textAlign    = 'center';
             rCtx.textBaseline = 'middle';
