@@ -150,7 +150,7 @@
 .ab-section-body {
     font-size: var(--fs-16);
     line-height: 1.9;
-    color: var(--accent-hover);
+    color: var(--text);
     margin-bottom: 0;
 }
 
