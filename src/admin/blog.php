@@ -212,13 +212,14 @@ $engineOptions = [
         </div>
         <div class="adm-modal-body">
             <table class="pc-table" id="seriesTable" style="width:100%;">
-                <thead><tr><th>이름</th><th>명제(tagline)</th><th style="width:52px;">순서</th><th></th></tr></thead>
+                <thead><tr><th>이름</th><th>명제(tagline)</th><th style="width:52px;">순서</th><th style="width:60px;">홈노출</th><th></th></tr></thead>
                 <tbody id="seriesTbody"></tbody>
             </table>
             <div class="pc-add-row" style="margin-top:14px;">
                 <input id="addSeriesName" placeholder="시리즈 이름" style="width:130px;">
                 <input id="addSeriesTagline" placeholder="핵심 명제 한 줄" style="width:220px;">
                 <input id="addSeriesOrder" type="number" value="0" placeholder="순서" style="width:64px;">
+                <label style="display:inline-flex;align-items:center;gap:4px;font-size:13px;"><input id="addSeriesShowOnHome" type="checkbox" checked> 홈노출</label>
                 <button class="pc-add-btn" onclick="addSeries()">추가</button>
             </div>
             <p id="seriesStatus" class="pc-status" style="display:block;margin-top:8px;"></p>

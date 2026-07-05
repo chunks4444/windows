@@ -26,6 +26,7 @@
 -- ALTER TABLE blog_posts ADD COLUMN related_drawing_id INT UNSIGNED NULL DEFAULT NULL COMMENT '연관 대표 도면 ID (drawings.id), 딥링크용' AFTER series_order;
 -- ALTER TABLE blog_posts ADD COLUMN related_engine VARCHAR(20) NULL DEFAULT NULL COMMENT '연관 엔진 (classic/square/cross/diamond/triangle/hexagon)' AFTER related_drawing_id;
 -- ALTER TABLE blog_posts ADD COLUMN question VARCHAR(200) NOT NULL DEFAULT '' COMMENT '질문형 인덱스용 한 줄 질문' AFTER related_engine;
+-- ALTER TABLE blog_series ADD COLUMN show_on_home TINYINT(1) NOT NULL DEFAULT 1 COMMENT '홈 인용 배너 노출 여부' AFTER tagline;
 
 -- 접속 통계 (6개월 rolling)
 CREATE TABLE IF NOT EXISTS page_views (

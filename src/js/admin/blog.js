@@ -199,21 +199,23 @@ function renderSeriesTable() {
             <td><input class="pc-name-input" id="series-name-${s.id}" value="${esc(s.name)}"></td>
             <td><input class="pc-name-input" id="series-tagline-${s.id}" value="${esc(s.tagline)}"></td>
             <td><input class="pc-sort-input" id="series-order-${s.id}" type="number" value="${s.sort_order}"></td>
+            <td style="text-align:center;"><input type="checkbox" id="series-showhome-${s.id}" ${Number(s.show_on_home) ? 'checked' : ''}></td>
             <td style="white-space:nowrap;">
                 <button class="pc-btn pc-btn-save" onclick="saveSeriesRow(${s.id})">저장</button>
                 <button class="pc-btn pc-btn-del" onclick="deleteSeriesRow(${s.id}, '${esc(s.name)}')">삭제</button>
             </td>
-        </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--text-3);padding:16px;">시리즈가 없습니다.</td></tr>';
+        </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--text-3);padding:16px;">시리즈가 없습니다.</td></tr>';
 }
 
 async function saveSeriesRow(id) {
     const name    = document.getElementById(`series-name-${id}`).value.trim();
     const tagline = document.getElementById(`series-tagline-${id}`).value.trim();
     const order   = parseInt(document.getElementById(`series-order-${id}`).value) || 0;
+    const showOnHome = document.getElementById(`series-showhome-${id}`).checked;
     const st = document.getElementById('seriesStatus');
     if (!name) { st.className = 'pc-status err'; st.textContent = '이름 필수'; return; }
     const data = await (await fetch(SERIES_API, { method: 'PUT', headers: _h(),
-        body: JSON.stringify({ id, name, tagline, sort_order: order }) })).json();
+        body: JSON.stringify({ id, name, tagline, sort_order: order, show_on_home: showOnHome }) })).json();
     st.className = data.ok ? 'pc-status ok' : 'pc-status err';
     st.textContent = data.ok ? '저장됨' : (data.error || '오류');
     if (data.ok) { await loadSeriesList(); setTimeout(() => st.textContent = '', 2000); }
@@ -229,10 +231,11 @@ async function addSeries() {
     const name    = document.getElementById('addSeriesName').value.trim();
     const tagline = document.getElementById('addSeriesTagline').value.trim();
     const order   = parseInt(document.getElementById('addSeriesOrder').value) || 0;
+    const showOnHome = document.getElementById('addSeriesShowOnHome').checked;
     const st = document.getElementById('seriesStatus');
     if (!name) { st.className = 'pc-status err'; st.textContent = '이름을 입력하세요'; return; }
     const data = await (await fetch(SERIES_API, { method: 'POST', headers: _h(),
-        body: JSON.stringify({ name, tagline, sort_order: order }) })).json();
+        body: JSON.stringify({ name, tagline, sort_order: order, show_on_home: showOnHome }) })).json();
     if (data.ok) {
         document.getElementById('addSeriesName').value = '';
         document.getElementById('addSeriesTagline').value = '';
