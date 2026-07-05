@@ -112,7 +112,7 @@ try {
     <?php else: ?>
 
     <div class="bg-layout">
-        <!-- ── 좌측 1/3: 시리즈물 ── -->
+        <!-- ── 좌측 1/4: 시리즈물 ── -->
         <aside class="bg-series-col">
             <h2 class="bg-col-title">시리즈로 읽기</h2>
             <?php foreach ($seriesGroups as $group):
@@ -150,7 +150,7 @@ try {
             <?php endif; ?>
         </aside>
 
-        <!-- ── 우측 2/3: 각개 블로그 리스트 ── -->
+        <!-- ── 중앙 2/4: 각개 블로그 리스트 ── -->
         <section class="bg-posts-col">
             <h2 class="bg-col-title">전체 글</h2>
             <?php foreach ($feedPosts as $p): ?>
@@ -173,6 +173,29 @@ try {
             </a>
             <?php endforeach; ?>
         </section>
+
+        <!-- ── 우측 1/4: 질문으로 찾기 ── -->
+        <aside class="bg-question-col">
+            <h2 class="bg-col-title">질문으로 찾기</h2>
+            <div class="bg-question-mini-list">
+                <?php foreach ($feedPosts as $p): ?>
+                <a class="bg-question-mini" href="/src/blog/<?= rawurlencode($p['slug']) ?>">
+                    <?php if ($p['thumbnail_url']): ?>
+                    <div class="bg-question-mini-thumb">
+                        <img src="<?= htmlspecialchars($p['thumbnail_url']) ?>" alt="" loading="lazy">
+                    </div>
+                    <?php endif; ?>
+                    <div class="bg-question-mini-body">
+                        <p class="bg-question-mini-q">Q. <?= htmlspecialchars($p['question'] ?: $p['title']) ?></p>
+                        <p class="bg-question-mini-meta">
+                            <?php if ($p['series_name']): ?><?= htmlspecialchars($p['series_name']) ?> · <?php endif; ?>
+                            <?= date('Y.m.d', strtotime($p['created_at'])) ?>
+                        </p>
+                    </div>
+                </a>
+                <?php endforeach; ?>
+            </div>
+        </aside>
     </div>
     <?php endif; ?>
 
