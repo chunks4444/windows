@@ -1289,8 +1289,8 @@ async function draw() {
             const GAP = 24, TICK = 5, ITICK = 12, R = 3, lw = 1, fs = 14;
             const extra = 30 * baseScale * scaleFactor;
             ctx.save();
-            ctx.strokeStyle = 'rgba(50,50,50,0.7)';
-            ctx.fillStyle   = 'rgba(50,50,50,0.7)';
+            ctx.strokeStyle = '#000';
+            ctx.fillStyle   = '#000';
             ctx.lineWidth   = lw;
             ctx.font        = `${fs}px -apple-system,sans-serif`;
             const _dot2 = (x, y) => { ctx.beginPath(); ctx.arc(x, y, R, 0, Math.PI * 2); ctx.fill(); };
@@ -1324,8 +1324,8 @@ async function draw() {
             const dL = offsetX - mFrame, dR = offsetX + totalWidth * baseScale + mFrame;
             const dT = offsetY - mFrame, dB = offsetY + totalH * baseScale + mFrame;
             ctx.save();
-            ctx.strokeStyle = 'rgba(50,50,50,0.7)';
-            ctx.fillStyle   = 'rgba(50,50,50,0.7)';
+            ctx.strokeStyle = '#000';
+            ctx.fillStyle   = '#000';
             ctx.lineWidth   = lw;
             ctx.font        = `${fs}px -apple-system,sans-serif`;
             const _dot = (x, y) => { ctx.beginPath(); ctx.arc(x, y, R, 0, Math.PI * 2); ctx.fill(); };
@@ -1439,7 +1439,7 @@ async function draw() {
         const GAP  = 24;
         const TICK = 5;
         const ITICK = 12;
-        const color = 'rgba(50,50,50,0.7)';
+        const color = '#000';
         rCtx.strokeStyle = color;
         rCtx.fillStyle   = color;
         rCtx.lineWidth   = 1;
@@ -1573,7 +1573,7 @@ async function draw() {
         rCtx.stroke();
 
         if (showDimensions && geo.outerW) {
-            rCtx.fillStyle = '#fff';
+            rCtx.fillStyle = '#000';
             rCtx.font = '12px -apple-system, sans-serif';
             rCtx.textAlign = 'left';
             rCtx.textBaseline = 'top';

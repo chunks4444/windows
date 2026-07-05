@@ -1219,8 +1219,8 @@ async function draw() {
             const GAP = 24, TICK = 5, ITICK = 12, R = 3, lw = 1, fs = 14;
             const extra = 30 * baseScale * scaleFactor;
             ctx.save();
-            ctx.strokeStyle = 'rgba(50,50,50,0.7)';
-            ctx.fillStyle   = 'rgba(50,50,50,0.7)';
+            ctx.strokeStyle = '#000';
+            ctx.fillStyle   = '#000';
             ctx.lineWidth   = lw;
             ctx.font        = `${fs}px -apple-system,sans-serif`;
             const _dot2 = (x, y) => { ctx.beginPath(); ctx.arc(x, y, R, 0, Math.PI * 2); ctx.fill(); };
@@ -1254,8 +1254,8 @@ async function draw() {
             const dL = offsetX - mFrame, dR = offsetX + totalWidth * baseScale + mFrame;
             const dT = offsetY - mFrame, dB = offsetY + totalH * baseScale + mFrame;
             ctx.save();
-            ctx.strokeStyle = 'rgba(50,50,50,0.7)';
-            ctx.fillStyle   = 'rgba(50,50,50,0.7)';
+            ctx.strokeStyle = '#000';
+            ctx.fillStyle   = '#000';
             ctx.lineWidth   = lw;
             ctx.font        = `${fs}px -apple-system,sans-serif`;
             const _dot = (x, y) => { ctx.beginPath(); ctx.arc(x, y, R, 0, Math.PI * 2); ctx.fill(); };
@@ -1376,7 +1376,7 @@ async function draw() {
         rCtx.save();
         rCtx.setTransform(window.devicePixelRatio||1, 0, 0, window.devicePixelRatio||1, 0, 0);
         const GAP=24, TICK=5, ITICK=12, R=3;
-        const color = 'rgba(50,50,50,0.7)';
+        const color = '#000';
         rCtx.strokeStyle = color; rCtx.fillStyle = color;
         rCtx.lineWidth = 1; rCtx.font = '15px -apple-system,sans-serif';
         function dot(x,y){rCtx.beginPath();rCtx.arc(x,y,R,0,Math.PI*2);rCtx.fill();}
@@ -1494,7 +1494,7 @@ async function draw() {
         rCtx.stroke();
 
         if (showDimensions && geo.outerW) {
-            rCtx.fillStyle = '#fff';
+            rCtx.fillStyle = '#000';
             rCtx.font = '12px -apple-system, sans-serif';
             rCtx.textAlign = 'left';
             rCtx.textBaseline = 'top';
