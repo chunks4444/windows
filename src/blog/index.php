@@ -167,6 +167,9 @@ try {
             <?php foreach ($allPosts as $p): ?>
             <li class="bg-question-item">
                 <a href="/src/blog/<?= rawurlencode($p['slug']) ?>">
+                    <?php if ($p['thumbnail_url']): ?>
+                    <span class="bg-question-thumb"><img src="<?= htmlspecialchars($p['thumbnail_url']) ?>" alt="" loading="lazy"></span>
+                    <?php endif; ?>
                     <span class="bg-question-q">Q. <?= htmlspecialchars($p['question'] ?: $p['title']) ?></span>
                     <span class="bg-question-meta">
                         <?php if ($p['series_name']): ?><?= htmlspecialchars($p['series_name']) ?> · <?php endif; ?>
