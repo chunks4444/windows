@@ -20,7 +20,12 @@ $pdo    = db();
 $method = $_SERVER['REQUEST_METHOD'];
 
 if ($method === 'GET') {
-    $rows = $pdo->query('SELECT * FROM blog_posts ORDER BY sort_order, id')->fetchAll();
+    $rows = $pdo->query('
+        SELECT p.*, s.name AS series_name
+        FROM blog_posts p
+        LEFT JOIN blog_series s ON s.id = p.series_id
+        ORDER BY p.sort_order, p.id
+    ')->fetchAll();
     echo json_encode(['posts' => $rows]);
     exit;
 }
@@ -52,12 +57,17 @@ function saveBlogImage(string $dataUrl): ?string {
 }
 
 if ($action === 'save') {
-    $id            = (int)($body['id'] ?? 0);
-    $title         = trim($body['title'] ?? '');
-    $summary       = trim($body['summary'] ?? '');
-    $cta_text      = trim($body['cta_text'] ?? '');
-    $content       = trim($body['content'] ?? '');
-    $thumbnail_url = trim($body['thumbnail_url'] ?? '');
+    $id             = (int)($body['id'] ?? 0);
+    $title          = trim($body['title'] ?? '');
+    $summary        = trim($body['summary'] ?? '');
+    $cta_text       = trim($body['cta_text'] ?? '');
+    $content        = trim($body['content'] ?? '');
+    $thumbnail_url  = trim($body['thumbnail_url'] ?? '');
+    $series_id      = (int)($body['series_id'] ?? 0) ?: null;
+    $series_order   = (int)($body['series_order'] ?? 0);
+    $related_engine = trim($body['related_engine'] ?? '') ?: null;
+    $related_drawing_id = (int)($body['related_drawing_id'] ?? 0) ?: null;
+    $question       = trim($body['question'] ?? '');
 
     if (!empty($body['thumbnail_data'])) {
         $saved = saveBlogImage($body['thumbnail_data']);
@@ -66,13 +76,17 @@ if ($action === 'save') {
     }
 
     if ($id) {
-        $pdo->prepare('UPDATE blog_posts SET title=?, summary=?, cta_text=?, content=?, thumbnail_url=? WHERE id=?')
-            ->execute([$title, $summary, $cta_text, $content, $thumbnail_url, $id]);
+        $pdo->prepare('UPDATE blog_posts SET title=?, summary=?, cta_text=?, content=?, thumbnail_url=?,
+                series_id=?, series_order=?, related_engine=?, related_drawing_id=?, question=? WHERE id=?')
+            ->execute([$title, $summary, $cta_text, $content, $thumbnail_url,
+                $series_id, $series_order, $related_engine, $related_drawing_id, $question, $id]);
     } else {
         $slug     = make_unique_slug($pdo, 'blog_posts', $title);
         $maxOrder = (int)$pdo->query('SELECT COALESCE(MAX(sort_order),0) FROM blog_posts')->fetchColumn();
-        $pdo->prepare('INSERT INTO blog_posts (title, slug, summary, cta_text, content, thumbnail_url, sort_order) VALUES (?,?,?,?,?,?,?)')
-            ->execute([$title, $slug, $summary, $cta_text, $content, $thumbnail_url, $maxOrder + 1]);
+        $pdo->prepare('INSERT INTO blog_posts (title, slug, summary, cta_text, content, thumbnail_url, sort_order,
+                series_id, series_order, related_engine, related_drawing_id, question) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)')
+            ->execute([$title, $slug, $summary, $cta_text, $content, $thumbnail_url, $maxOrder + 1,
+                $series_id, $series_order, $related_engine, $related_drawing_id, $question]);
         $id = (int)$pdo->lastInsertId();
     }
     $stmt = $pdo->prepare('SELECT * FROM blog_posts WHERE id=?');

@@ -2,6 +2,20 @@
 header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../lib/admin_guard.php';
 require_admin_role('s');
+require_once __DIR__ . '/../lib/db.php';
+try {
+    $blogSeriesList = db()->query('SELECT id, name FROM blog_series ORDER BY sort_order, id')->fetchAll();
+} catch (Throwable $e) {
+    $blogSeriesList = [];
+}
+$engineOptions = [
+    'classic'  => '정자살(Classic)',
+    'square'   => '완자살(Square)',
+    'cross'    => '교살(Cross)',
+    'triangle' => '세모 솟을살(Triangle)',
+    'diamond'  => '마름모살(Diamond)',
+    'hexagon'  => '육모 솟을살(Hexagon)',
+];
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -42,6 +56,19 @@ require_admin_role('s');
         .blog-info-section.collapsed .blog-info-toggle { border-radius:var(--r-sm); }
         .blog-info-section.collapsed .blog-info-toggle i { transform:rotate(-90deg); }
         .blog-info-section.collapsed .blog-info-body { display:none; }
+        .blog-series-manage-btn { border:none; background:none; color:var(--teal); font-size:12px; font-weight:700; cursor:pointer; text-decoration:underline; padding:0; margin-left:6px; }
+        .pc-table { width:100%; border-collapse:collapse; font-size:13px; }
+        .pc-table th { background:var(--input-bg); padding:8px 10px; text-align:left; font-weight:600; color:var(--text-2); border-bottom:2px solid var(--border-md); }
+        .pc-table td { padding:6px 10px; border-bottom:1px solid var(--border); vertical-align:middle; }
+        .pc-name-input { border:1px solid var(--border); border-radius:5px; padding:4px 8px; font-size:13px; width:100%; }
+        .pc-sort-input { border:1px solid var(--border); border-radius:5px; padding:4px 6px; font-size:13px; width:52px; text-align:center; }
+        .pc-btn { border:none; border-radius:5px; padding:4px 10px; font-size:12px; font-weight:600; cursor:pointer; }
+        .pc-btn-save { background:var(--teal); color:#fff; } .pc-btn-save:hover { opacity:.85; }
+        .pc-btn-del  { background:#f5f5f5; color:#c00; }    .pc-btn-del:hover  { background:#ffeaea; }
+        .pc-status { font-size:12px; } .pc-status.ok { color:#1a8a5a; } .pc-status.err { color:#c00; }
+        .pc-add-row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+        .pc-add-row input { border:1px solid var(--border-md); border-radius:6px; padding:6px 10px; font-size:13px; }
+        .pc-add-btn { background:var(--teal); color:#fff; border:none; border-radius:6px; padding:6px 18px; font-size:13px; font-weight:600; cursor:pointer; }
     </style>
 </head>
 <body>
@@ -69,6 +96,7 @@ require_admin_role('s');
                     <th style="width:32px;"></th>
                     <th style="width:96px;">썸네일</th>
                     <th>제목</th>
+                    <th style="width:110px;">시리즈</th>
                     <th>요약</th>
                     <th style="width:64px;">조회수</th>
                     <th style="width:72px;">상태</th>
@@ -123,6 +151,43 @@ require_admin_role('s');
                     </div>
                 </div>
             </div>
+            <div class="blog-info-section collapsed" id="blogSeriesSection">
+                <button type="button" class="blog-info-toggle" onclick="toggleInfoSection('blogSeriesSection')">
+                    <i class="bi bi-chevron-down"></i> 시리즈 / 엔진 연동 / 질문
+                </button>
+                <div class="blog-info-body" id="blogSeriesBody">
+                    <div class="adm-mfield">
+                        <label>시리즈 <button type="button" class="blog-series-manage-btn" onclick="openSeriesModal()">시리즈 관리</button></label>
+                        <select id="postSeriesId" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg-1);color:var(--text-1);font-size:14px;">
+                            <option value="">— 없음 —</option>
+                            <?php foreach ($blogSeriesList as $s): ?>
+                            <option value="<?= (int)$s['id'] ?>"><?= htmlspecialchars($s['name']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="adm-mfield">
+                        <label>시리즈 내 순서</label>
+                        <input id="postSeriesOrder" type="number" min="0" value="0" style="width:100px;">
+                    </div>
+                    <div class="adm-mfield">
+                        <label>질문형 인덱스용 한 줄 질문 <span style="font-size:11px;color:var(--text-3);font-weight:400;">(예: 귀신은 왜 벽을 뚫지 않고 문으로 다니는가)</span></label>
+                        <input id="postQuestion" type="text" maxlength="200" placeholder="비워두면 제목으로 대체됩니다">
+                    </div>
+                    <div class="adm-mfield">
+                        <label>연관 엔진 <span style="font-size:11px;color:var(--text-3);font-weight:400;">(있으면 글에 "직접 만들어보기" 버튼, 엔진 페이지에 "이 살의 이야기" 링크가 뜸)</span></label>
+                        <select id="postRelatedEngine" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg-1);color:var(--text-1);font-size:14px;">
+                            <option value="">— 없음 —</option>
+                            <?php foreach ($engineOptions as $key => $label): ?>
+                            <option value="<?= htmlspecialchars($key) ?>"><?= htmlspecialchars($label) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="adm-mfield">
+                        <label>연관 대표 도면 ID <span style="font-size:11px;color:var(--text-3);font-weight:400;">(선택, drawings.id — 지정하면 그 도면을 바로 불러온 상태로 엔진이 열림)</span></label>
+                        <input id="postRelatedDrawingId" type="number" min="0" placeholder="예: 123" style="width:150px;">
+                    </div>
+                </div>
+            </div>
             <div class="adm-mfield">
                 <label>본문</label>
                 <div id="postContentEditor"></div>
@@ -132,6 +197,32 @@ require_admin_role('s');
         <div class="adm-modal-foot">
             <button class="adm-btn-cancel" onclick="closeModal()">취소</button>
             <button class="adm-btn-save" onclick="savePost()">저장</button>
+        </div>
+    </div>
+</div>
+
+<!-- 시리즈 관리 모달 -->
+<div class="adm-modal-overlay" id="seriesModalOverlay">
+    <div class="adm-modal" style="max-width:560px;">
+        <div class="adm-modal-head">
+            <h3>시리즈 관리</h3>
+            <button class="adm-modal-close" onclick="closeSeriesModal()">&#x2715;</button>
+        </div>
+        <div class="adm-modal-body">
+            <table class="pc-table" id="seriesTable" style="width:100%;">
+                <thead><tr><th>이름</th><th>명제(tagline)</th><th style="width:52px;">순서</th><th></th></tr></thead>
+                <tbody id="seriesTbody"></tbody>
+            </table>
+            <div class="pc-add-row" style="margin-top:14px;">
+                <input id="addSeriesName" placeholder="시리즈 이름" style="width:130px;">
+                <input id="addSeriesTagline" placeholder="핵심 명제 한 줄" style="width:220px;">
+                <input id="addSeriesOrder" type="number" value="0" placeholder="순서" style="width:64px;">
+                <button class="pc-add-btn" onclick="addSeries()">추가</button>
+            </div>
+            <p id="seriesStatus" class="pc-status" style="display:block;margin-top:8px;"></p>
+        </div>
+        <div class="adm-modal-foot">
+            <button class="adm-btn-cancel" onclick="closeSeriesModal()">닫기</button>
         </div>
     </div>
 </div>
