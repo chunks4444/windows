@@ -49,29 +49,28 @@ try {
     ")->fetchAll();
     $total = count($allPosts);
 
-    // 시리즈별로 묶기 (없는 글은 '기타'로)
+    // 좌측 "시리즈로 읽기" 목록용 그룹핑 (시리즈 없는 글은 제외)
     $seriesGroups = [];
-    $noSeries     = [];
     foreach ($allPosts as $p) {
-        if ($p['series_id']) {
-            $sid = $p['series_id'];
-            if (!isset($seriesGroups[$sid])) {
-                $seriesGroups[$sid] = [
-                    'name'    => $p['series_name'],
-                    'tagline' => $p['series_tagline'],
-                    'posts'   => [],
-                ];
-            }
-            $seriesGroups[$sid]['posts'][] = $p;
-        } else {
-            $noSeries[] = $p;
+        if (!$p['series_id']) continue;
+        $sid = $p['series_id'];
+        if (!isset($seriesGroups[$sid])) {
+            $seriesGroups[$sid] = [
+                'name'    => $p['series_name'],
+                'tagline' => $p['series_tagline'],
+                'posts'   => [],
+            ];
         }
+        $seriesGroups[$sid]['posts'][] = $p;
     }
+    // 우측 "전체 글" 피드는 최신순
+    $feedPosts = $allPosts;
+    usort($feedPosts, fn($a, $b) => strtotime($b['created_at']) <=> strtotime($a['created_at']));
 } catch (Throwable $e) {
     $allPosts     = [];
     $total        = 0;
     $seriesGroups = [];
-    $noSeries     = [];
+    $feedPosts    = [];
 }
 ?>
 <!DOCTYPE html>
@@ -112,88 +111,61 @@ try {
     </section>
     <?php else: ?>
 
-    <!-- ── 보기 전환 ── -->
-    <div class="bg-view-toggle">
-        <button class="bg-view-btn active" data-view="series">시리즈로 보기</button>
-        <button class="bg-view-btn" data-view="question">질문으로 찾기</button>
-    </div>
-
-    <!-- ── 시리즈 허브 ── -->
-    <section class="bg-list-section bg-view-panel" id="bgViewSeries">
-        <div class="bg-series-grid">
+    <div class="bg-layout">
+        <!-- ── 좌측 1/3: 시리즈물 ── -->
+        <aside class="bg-series-col">
+            <h2 class="bg-col-title">시리즈로 읽기</h2>
             <?php foreach ($seriesGroups as $group):
                 $first = $group['posts'][0];
                 $count = count($group['posts']);
             ?>
-            <article class="bg-series-card" onclick="location.href='/src/blog/<?= rawurlencode($first['slug']) ?>'">
+            <a class="bg-series-mini" href="/src/blog/<?= rawurlencode($first['slug']) ?>">
                 <?php if ($first['thumbnail_url']): ?>
-                <div class="bg-series-thumb">
+                <div class="bg-series-mini-thumb">
                     <img src="<?= htmlspecialchars($first['thumbnail_url']) ?>" alt="<?= htmlspecialchars($group['name']) ?>" loading="lazy">
                 </div>
                 <?php endif; ?>
-                <div class="bg-series-body">
-                    <p class="bg-series-count">전 <?= $count ?>편 · 읽는 순서대로</p>
-                    <h2 class="bg-series-name"><?= htmlspecialchars($group['name']) ?></h2>
+                <div class="bg-series-mini-body">
+                    <p class="bg-series-mini-count">전 <?= $count ?>편</p>
+                    <h3 class="bg-series-mini-name"><?= htmlspecialchars($group['name']) ?></h3>
                     <?php if ($group['tagline']): ?>
-                    <p class="bg-series-tagline">"<?= htmlspecialchars($group['tagline']) ?>"</p>
+                    <p class="bg-series-mini-tagline">"<?= htmlspecialchars($group['tagline']) ?>"</p>
                     <?php endif; ?>
-                    <a class="bg-series-start" href="/src/blog/<?= rawurlencode($first['slug']) ?>">1편부터 읽기 →</a>
                 </div>
-            </article>
+            </a>
             <?php endforeach; ?>
+            <?php if (empty($seriesGroups)): ?>
+            <p class="bg-series-mini-empty">아직 등록된 시리즈가 없습니다.</p>
+            <?php endif; ?>
+        </aside>
 
-            <?php foreach ($noSeries as $p): ?>
-            <article class="bg-series-card" onclick="location.href='/src/blog/<?= rawurlencode($p['slug']) ?>'">
+        <!-- ── 우측 2/3: 각개 블로그 리스트 ── -->
+        <section class="bg-posts-col">
+            <h2 class="bg-col-title">전체 글</h2>
+            <?php foreach ($feedPosts as $p): ?>
+            <a class="bg-post-row" href="/src/blog/<?= rawurlencode($p['slug']) ?>">
                 <?php if ($p['thumbnail_url']): ?>
-                <div class="bg-series-thumb">
-                    <img src="<?= htmlspecialchars($p['thumbnail_url']) ?>" alt="<?= htmlspecialchars($p['title']) ?>" loading="lazy">
+                <div class="bg-post-row-thumb">
+                    <img src="<?= htmlspecialchars($p['thumbnail_url']) ?>" alt="" loading="lazy">
                 </div>
                 <?php endif; ?>
-                <div class="bg-series-body">
-                    <h2 class="bg-series-name"><?= htmlspecialchars($p['title']) ?></h2>
-                    <?php if ($p['summary']): ?>
-                    <p class="bg-series-tagline"><?= htmlspecialchars($p['summary']) ?></p>
-                    <?php endif; ?>
-                    <a class="bg-series-start" href="/src/blog/<?= rawurlencode($p['slug']) ?>">읽어보기 →</a>
-                </div>
-            </article>
-            <?php endforeach; ?>
-        </div>
-    </section>
-
-    <!-- ── 질문으로 찾기 ── -->
-    <section class="bg-list-section bg-view-panel" id="bgViewQuestion" style="display:none;">
-        <ul class="bg-question-list">
-            <?php foreach ($allPosts as $p): ?>
-            <li class="bg-question-item">
-                <a href="/src/blog/<?= rawurlencode($p['slug']) ?>">
-                    <?php if ($p['thumbnail_url']): ?>
-                    <span class="bg-question-thumb"><img src="<?= htmlspecialchars($p['thumbnail_url']) ?>" alt="" loading="lazy"></span>
-                    <?php endif; ?>
-                    <span class="bg-question-q">Q. <?= htmlspecialchars($p['question'] ?: $p['title']) ?></span>
-                    <span class="bg-question-meta">
-                        <?php if ($p['series_name']): ?><?= htmlspecialchars($p['series_name']) ?> · <?php endif; ?>
+                <div class="bg-post-row-body">
+                    <p class="bg-post-row-meta">
+                        <?php if ($p['series_name']): ?><span class="bg-post-row-series"><?= htmlspecialchars($p['series_name']) ?></span> · <?php endif; ?>
                         <?= date('Y.m.d', strtotime($p['created_at'])) ?>
-                    </span>
-                </a>
-            </li>
+                    </p>
+                    <h3 class="bg-post-row-title"><?= htmlspecialchars($p['title']) ?></h3>
+                    <?php if ($p['summary']): ?>
+                    <p class="bg-post-row-summary"><?= htmlspecialchars($p['summary']) ?></p>
+                    <?php endif; ?>
+                </div>
+            </a>
             <?php endforeach; ?>
-        </ul>
-    </section>
+        </section>
+    </div>
     <?php endif; ?>
 
 </div>
-<script>
-document.querySelectorAll('.bg-view-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.bg-view-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const view = btn.dataset.view;
-        document.getElementById('bgViewSeries').style.display   = view === 'series'   ? '' : 'none';
-        document.getElementById('bgViewQuestion').style.display = view === 'question' ? '' : 'none';
-    });
-});
-</script>
 <?php include __DIR__ . '/../components/footer.php'; ?>
 </body>
 </html>
