@@ -6,7 +6,7 @@
 $guide_nav = [
     [
         'title' => '평목 소개', 'icon' => 'bi-info-circle',
-        'bg' => '#E6F4F2', 'color' => '#3A8C82',
+        'bg' => 'var(--accent-tint)', 'color' => 'var(--accent)',
         'articles' => [
             ['file' => 'intro.php',           'title' => '평목 스튜디오란?'],
             ['file' => 'getting-started.php', 'title' => '시작하기'],
@@ -14,7 +14,7 @@ $guide_nav = [
     ],
     [
         'title' => '스튜디오', 'icon' => 'bi-pencil-square',
-        'bg' => '#FFF0EE', 'color' => '#cc2200',
+        'bg' => 'var(--danger-tint)', 'color' => 'var(--danger)',
         'articles' => [
             ['file' => 'studio-classic.php',  'title' => '세살',      'engine' => 'classic'],
             ['file' => 'studio-square.php',   'title' => '정자살',    'engine' => 'square'],
@@ -26,7 +26,7 @@ $guide_nav = [
     ],
     [
         'title' => '도면 관리', 'icon' => 'bi-folder2-open',
-        'bg' => '#F5F4EE', 'color' => '#7A6B40',
+        'bg' => 'var(--accent-tint)', 'color' => 'var(--accent)',
         'articles' => [
             ['file' => 'drawing.php', 'title' => '도면 저장 & 불러오기'],
             ['file' => 'export.php',  'title' => 'PDF / PNG 내보내기'],
@@ -34,42 +34,42 @@ $guide_nav = [
     ],
     [
         'title' => 'AI 렌더링', 'icon' => 'bi-stars',
-        'bg' => '#F2F0FB', 'color' => '#5A4DB8',
+        'bg' => 'var(--accent-tint)', 'color' => 'var(--accent)',
         'articles' => [
             ['file' => 'render.php', 'title' => 'AI 렌더링 사용법'],
         ],
     ],
     [
         'title' => '컬렉션', 'icon' => 'bi-collection',
-        'bg' => '#FFF8EE', 'color' => '#b8894a',
+        'bg' => 'var(--accent-tint)', 'color' => 'var(--accent)',
         'articles' => [
             ['file' => 'collection.php', 'title' => '컬렉션 & 내 보드'],
         ],
     ],
     [
         'title' => '계정 설정', 'icon' => 'bi-person-gear',
-        'bg' => '#EEF3F8', 'color' => '#2A6B8C',
+        'bg' => 'var(--accent-tint)', 'color' => 'var(--accent)',
         'articles' => [
             ['file' => 'account.php', 'title' => '프로필 & 회사 정보'],
         ],
     ],
     [
         'title' => '주문', 'icon' => 'bi-cart-check',
-        'bg' => '#FDF0E6', 'color' => '#B8662F',
+        'bg' => 'var(--accent-tint)', 'color' => 'var(--accent)',
         'articles' => [
             ['file' => 'order.php', 'title' => '주문 안내'],
         ],
     ],
     [
         'title' => '배송', 'icon' => 'bi-truck',
-        'bg' => '#EAF3FB', 'color' => '#2E6FA8',
+        'bg' => 'var(--accent-tint)', 'color' => 'var(--accent)',
         'articles' => [
             ['file' => 'delivery.php', 'title' => '배송 안내'],
         ],
     ],
     [
         'title' => 'FAQ', 'icon' => 'bi-patch-question',
-        'bg' => '#F0F4F0', 'color' => '#3A6B3A',
+        'bg' => 'var(--accent-tint)', 'color' => 'var(--accent)',
         'articles' => [
             ['file' => 'faq.php', 'title' => '자주 묻는 질문'],
         ],

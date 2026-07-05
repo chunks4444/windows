@@ -21,23 +21,23 @@ require_admin_role('s');
         @media (max-width:480px)  { .adm-home-grid { grid-template-columns:1fr; } }
         .adm-home-card {
             display:flex; align-items:center; gap:14px;
-            padding:18px; border:1px solid var(--border-md); border-radius:var(--r);
-            background:#fff; text-decoration:none; color:inherit;
+            padding:18px; border:1px solid var(--border); border-radius:var(--r);
+            background:var(--bg); text-decoration:none; color:inherit;
             transition:border-color .15s, box-shadow .15s;
         }
-        .adm-home-card:hover { border-color:var(--teal); box-shadow:0 4px 16px rgba(0,0,0,.06); color:inherit; }
+        .adm-home-card:hover { border-color:var(--accent); box-shadow:0 4px 16px rgba(var(--text-rgb), .06); color:inherit; }
         .adm-home-icon {
             flex-shrink:0; width:42px; height:42px; border-radius:10px;
             display:flex; align-items:center; justify-content:center;
-            font-size:19px; background:var(--accent-bg); color:var(--teal);
+            font-size:19px; background:var(--accent-tint); color:var(--accent);
         }
-        .adm-home-title { font-size:14px; font-weight:700; color:var(--text-1); margin-bottom:2px; }
-        .adm-home-desc { font-size:12px; color:var(--text-3); }
+        .adm-home-title { font-size:14px; font-weight:700; color:var(--text); margin-bottom:2px; }
+        .adm-home-desc { font-size:12px; color:var(--text-muted); }
         .adm-section { margin-bottom:36px; }
         .adm-section-title {
-            font-size:13px; font-weight:700; color:var(--teal);
+            font-size:13px; font-weight:700; color:var(--accent);
             letter-spacing:.03em; margin:0 0 12px; padding-bottom:8px;
-            border-bottom:1px solid var(--border-md);
+            border-bottom:1px solid var(--border);
         }
     </style>
 </head>

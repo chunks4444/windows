@@ -33,7 +33,7 @@ require_admin_role('s');
             <i class="bi bi-plus-lg"></i> 추가
         </button>
     </div>
-    <p style="font-size:12px;color:var(--text-3);margin:-8px 0 16px;">행을 드래그해 순서를 변경할 수 있습니다.</p>
+    <p style="font-size:12px;color:var(--text-muted);margin:-8px 0 16px;">행을 드래그해 순서를 변경할 수 있습니다.</p>
 
     <div class="adm-table-wrap">
         <table id="scTable">
@@ -77,7 +77,7 @@ require_admin_role('s');
                 </label>
                 <input type="file" id="scImgFile" accept="image/*" style="display:none;" onchange="previewImage(this)">
                 <input id="scImageUrl" type="text" placeholder="또는 https://... URL 직접 입력"
-                    style="height:38px;padding:0 10px;border:1px solid var(--border-md);border-radius:var(--r-sm);background:var(--input-bg);font-family:inherit;font-size:13px;color:var(--text-1);outline:none;width:100%;">
+                    style="height:38px;padding:0 10px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg);font-family:inherit;font-size:13px;color:var(--text);outline:none;width:100%;">
             </div>
         </div>
         <div class="adm-modal-foot">

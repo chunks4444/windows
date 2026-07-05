@@ -1,0 +1,308 @@
+﻿기존색,빈도,분류,대상변수,deltaE,분류근거,사용위치_예시(최대5)
+#fff,227,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg,src/guide/guide.css:8 | src/guide/guide.css:18 | src/guide/guide.css:24 | src/guide/guide.css:115 | src/guide/guide.css:134 외 222건
+#111,38,UI,--text,10.4,ΔE(Lab)=10.4 → --text,src/css/engine-common.css:157 | src/css/engine-common.css:290 | src/css/engine-common.css:292 | src/css/engine-common.css:354 | src/css/engine-common.css:930 외 33건
+#1A1F1E,32,UI,--text,5.3,ΔE(Lab)=5.3 → --text,src/guide/guide.css:12 | src/guide/guide.css:245 | src/css/engine-common.css:936 | src/css/work-detail.css:7 | src/css/work-detail.css:75 외 27건
+#97A8A6,31,UI,--text-muted,10.3,ΔE(Lab)=10.3 → --text-muted,src/css/engine-common.css:941 | src/css/common.css:19 | src/css/work-detail.css:92 | src/css/work-detail.css:170 | src/css/work-detail.css:185 외 26건
+#3A8C82,27,UI,--accent,18.5,ΔE(Lab)=18.5 → --accent,index.php:309 | src/guide/index.php:36 | src/guide/_head.php:9 | src/css/dashboard.css:124 | src/css/engine-common.css:34 외 22건
+#f0f2f1,24,UI,--bg,1.4,ΔE(Lab)=1.4 → --bg,src/components/mailform/order.php:27 | src/components/mailform/order.php:28 | src/components/mailform/order.php:31 | src/components/mailform/order.php:32 | src/components/mailform/order.php:35 외 19건
+#999,23,UI,--text-muted,6.2,ΔE(Lab)=6.2 → --text-muted,src/css/dashboard.css:625 | src/css/dashboard.css:653 | src/css/company.css:5 | src/css/company.css:333 | src/css/index.css:711 외 18건
+#E0E5E4,19,UI,--accent-tint,3.2,ΔE(Lab)=3.2 → --accent-tint,src/guide/guide.css:231 | src/guide/guide.css:303 | src/guide/guide.css:304 | src/css/common.css:22 | src/css/work-detail.css:107 외 14건
+#e03030,18,CONTENT,,,6엔진 문살 stroke/fill 색상피커 기본값 (konvaStrokeColor/konvaFillColor/slatOverrideColor) - 캔버스 렌더링 + JSON 저장 파라미터,src/engine/square/square.php:492 | src/engine/square/square.php:494 | src/engine/square/square.php:511 | src/engine/triangle/triangle.php:461 | src/engine/triangle/triangle.php:463 외 13건
+#2A7B70,17,UI,--accent,12.5,ΔE(Lab)=12.5 → --accent,src/css/nav.css:17 | src/css/nav.css:224 | src/css/nav.css:239 | src/admin/notice.php:70 | src/admin/notice.php:107 외 12건
+"rgba(255,255,255,0.15)",16,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.15,src/css/engine-common.css:9 | src/css/engine-common.css:150 | src/css/engine-common.css:215 | src/css/engine-common.css:223 | src/css/engine-common.css:238 외 11건
+#555,15,UI,--accent-hover,19.6,ΔE(Lab)=19.6 → --accent-hover,src/css/dashboard.css:656 | src/css/nav.css:165 | src/css/nav.css:199 | src/css/company.css:4 | src/css/index.css:49 외 10건
+#ccc,15,UI,--border,4.6,ΔE(Lab)=4.6 → --border,src/css/engine-common.css:1716 | src/css/engine-common.css:1717 | src/css/engine-common.css:1718 | src/css/engine-common.css:1719 | src/admin/svg_motifs.php:24 외 10건
+#ffffff,15,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; works.php work_panel_title_color 등 작품패널 커스텀 색(DB 데이터) 1건 포함 - 값 자체는 범용 흰색이라 전체 배제하지 않음,src/css/index.css:399 | src/css/index.css:438 | src/admin/works.php:133 | src/admin/works.php:263 | src/components/mailform/reset.php:7 외 10건
+#f9f9f9,14,UI,--bg,1.9,ΔE(Lab)=1.9 → --bg,src/css/collection.css:2 | src/css/common.css:11 | src/css/company.css:240 | src/css/work-detail.css:4 | src/css/work-detail.css:29 외 9건
+#e03,14,UNSURE,--text-muted,92.0,"ΔE(Lab)=92.0 → --text-muted; 채도(C*)=88.1, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/css/collection.css:106 | src/css/collection.css:266 | src/engine/square/square.php:514 | src/engine/square/square.php:514 | src/engine/triangle/triangle.php:482 외 9건
+#c8102e,13,CONTENT,,,6엔진 면색 피커 기본값 (faceColorInput) + guide 데모 스와치 - 캔버스 렌더링 + JSON 저장 파라미터,src/guide/studio-classic.php:95 | src/engine/square/square.php:642 | src/engine/square/square.php:643 | src/engine/triangle/triangle.php:611 | src/engine/triangle/triangle.php:612 외 8건
+#000,13,UI,--text,15.3,ΔE(Lab)=15.3 → --text,src/css/engine-common.css:317 | src/css/engine-common.css:491 | src/css/engine-common.css:514 | src/css/engine-common.css:545 | src/css/engine-common.css:587 외 8건
+#333,13,UI,--text,7.0,ΔE(Lab)=7.0 → --text,src/css/nav.css:78 | src/css/nav.css:233 | src/css/common.css:122 | src/css/index.css:316 | src/admin/ai_tuning.php:43 외 8건
+"rgba(255,255,255,0.97)",13,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.97,src/css/nav.css:123 | src/engine/square/square.php:487 | src/engine/square/square.php:506 | src/engine/triangle/triangle.php:456 | src/engine/triangle/triangle.php:474 외 8건
+#aaa,12,UI,--text-muted,11.0,ΔE(Lab)=11.0 → --text-muted,src/css/dashboard.css:657 | src/css/nav.css:202 | src/css/nav.css:260 | src/css/index.css:30 | src/admin/notice.php:51 외 7건
+"rgba(255,255,255,0.55)",12,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.55,src/css/engine-common.css:1161 | src/css/engine-common.css:1201 | src/css/engine-common.css:1396 | src/css/engine-common.css:1398 | src/css/engine-common.css:1399 외 7건
+"rgba(0,0,0,0.13)",12,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.13,src/engine/square/square.php:489 | src/engine/square/square.php:508 | src/engine/triangle/triangle.php:458 | src/engine/triangle/triangle.php:476 | src/engine/diamond/diamond.php:463 외 7건
+#4a4a4a,12,CONTENT,,,6엔진 문틀색 피커 기본값 (muntolColorInput) - 캔버스 렌더링 + JSON 저장 파라미터,src/engine/square/square.php:634 | src/engine/square/square.php:635 | src/engine/triangle/triangle.php:602 | src/engine/triangle/triangle.php:603 | src/engine/diamond/diamond.php:607 외 7건
+#cc2200,11,UNSURE,--text-muted,90.6,"ΔE(Lab)=90.6 → --text-muted; 채도(C*)=85.1, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",index.php:317 | src/guide/guide.css:400 | src/guide/index.php:45 | src/guide/_head.php:17 | src/css/nav.css:16 외 6건
+#e05218,11,UNSURE,--text-muted,83.4,"ΔE(Lab)=83.4 → --text-muted; 채도(C*)=78.8, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",color-migration/palette_root.css:38 | src/css/engine-common.css:654 | src/css/company.css:335 | src/css/index.css:713 | src/css/index.css:714 외 6건
+#c00,11,UNSURE,--text-muted,94.0,"ΔE(Lab)=94.0 → --text-muted; 채도(C*)=88.4, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/admin/render_settings.php:31 | src/admin/render_settings.php:34 | src/admin/blog.php:67 | src/admin/blog.php:68 | src/admin/collection_filters.php:27 외 6건
+"rgba(0,0,0,0.5)",10,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.5,src/css/dashboard.css:565 | src/css/engine-common.css:628 | src/css/engine-common.css:1436 | src/css/engine-common.css:1566 | src/css/company.css:34 외 5건
+#888,9,UI,--text-muted,6.1,ΔE(Lab)=6.1 → --text-muted,src/css/dashboard.css:113 | src/admin/render_settings.php:102 | src/admin/ai_tuning.php:30 | src/admin/ai_tuning.php:248 | src/admin/ai_stats.php:26 외 4건
+#666,9,UI,--text-muted,17.4,ΔE(Lab)=17.4 → --text-muted,src/css/nav.css:252 | src/css/company.css:316 | src/css/index.css:650 | src/css/index.css:694 | src/admin/ai_tuning.php:23 외 4건
+#5A6B69,9,UI,--accent,16.3,ΔE(Lab)=16.3 → --accent,src/css/common.css:18 | src/css/work-detail.css:192 | src/css/index.css:500 | src/css/index.css:579 | src/css/work.css:30 외 4건
+"rgba(255,255,255,0.9)",8,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.9,src/css/collection.css:255 | src/css/collection.css:310 | src/css/engine-common.css:225 | src/css/engine-common.css:238 | src/css/engine-common.css:277 외 3건
+#f2f3f4,8,UI,--bg,0.3,ΔE(Lab)=0.3 → --bg,src/components/mailform/reset.php:4 | src/components/mailform/reset.php:5 | src/components/mailform/welcome.php:4 | src/components/mailform/welcome.php:5 | src/components/mailform/order.php:4 외 3건
+"rgba(255,255,255,0.85)",7,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.85,src/css/dashboard.css:190 | src/css/dashboard.css:224 | src/css/engine-common.css:47 | src/css/engine-common.css:652 | src/css/engine-common.css:685 외 2건
+#ddd,7,UI,--border,2.9,ΔE(Lab)=2.9 → --border,src/css/dashboard.css:206 | src/admin/render_settings.php:67 | src/admin/render_settings.php:75 | src/admin/render_settings.php:95 | src/css/work.css:95 외 2건
+#f5f5f5,7,UI,--bg,0.7,ΔE(Lab)=0.7 → --bg,src/css/collection.css:203 | src/admin/render_settings.php:31 | src/admin/blog.php:67 | src/admin/collection_filters.php:27 | src/admin/pattern_categories.php:31 외 2건
+#5A4DB8,6,UNSURE,--text-muted,64.4,"ΔE(Lab)=64.4 → --text-muted; 채도(C*)=64.8, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",index.php:333 | color-migration/palette_root.css:38 | src/guide/guide.css:136 | src/guide/index.php:69 | src/guide/_head.php:37 외 1건
+#eee,6,UI,--bg,2.1,ΔE(Lab)=2.1 → --bg,src/guide/faq.php:81 | src/css/dashboard.css:653 | src/css/admin/cost_table.css:24 | src/css/admin/cost_table.css:35 | src/mypage/dashboard.php:44 외 1건
+"rgba(0,0,0,0.06)",6,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.06,src/css/engine-common.css:252 | src/css/nav.css:182 | src/css/nav.css:221 | src/css/company.css:186 | src/components/auth_modal.php:8 외 1건
+#E6F4F2,5,UI,--accent-tint,2.7,ΔE(Lab)=2.7 → --accent-tint,index.php:309 | src/guide/index.php:36 | src/guide/_head.php:9 | src/css/common.css:9 | src/css/work.css:34
+"rgba(0,0,0,0.08)",5,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.08,src/guide/guide.css:213 | src/css/nav.css:57 | src/css/nav.css:107 | src/css/nav.css:158 | src/css/nav.css:243
+#8B7355,5,CONTENT,,,"guide 목재/마감 톤 견본 스와치 (studio-classic.php, render.php)",src/guide/studio-classic.php:101 | src/guide/studio-classic.php:108 | src/guide/render.php:97 | src/guide/render.php:132 | src/guide/render.php:140
+#444,5,UI,--text,14.2,ΔE(Lab)=14.2 → --text,src/guide/faq.php:80 | src/css/engine-common.css:291 | src/css/index.css:335 | src/css/index.css:801 | src/css/index.css:878
+"rgba(255,255,255,0.08)",5,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.08,src/css/engine-common.css:55 | src/css/engine-common.css:432 | src/css/engine-common.css:617 | src/css/engine-common.css:1311 | src/css/engine-common.css:1446
+"rgba(255,255,255,0.6)",5,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.6,src/css/engine-common.css:95 | src/components/mailform/reset.php:13 | src/components/mailform/welcome.php:13 | src/components/mailform/order.php:13 | src/components/mailform/contact.php:13
+#e0e0e0,5,UI,--border,3.7,ΔE(Lab)=3.7 → --border,src/css/engine-common.css:291 | src/css/company.css:318 | src/css/admin/oauth.css:25 | src/css/index.css:696 | src/admin/meta.php:68
+"rgba(255,255,255,0.4)",5,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.4,src/css/engine-common.css:294 | src/css/engine-common.css:653 | src/css/engine-common.css:1093 | src/css/engine-common.css:1577 | src/css/engine-common.css:1770
+"rgba(255,255,255,0.25)",5,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.25,src/css/engine-common.css:317 | src/css/engine-common.css:532 | src/css/engine-common.css:550 | src/css/engine-common.css:587 | src/css/engine-common.css:922
+"rgba(0,0,0,0.35)",5,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.35,src/css/engine-common.css:712 | src/css/engine-common.css:1138 | src/css/engine-common.css:1282 | src/css/engine-common.css:1298 | src/css/users.css:109
+"rgba(0,0,0,0.22)",5,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.22,src/css/engine-common.css:794 | src/css/engine-common.css:870 | src/css/engine-common.css:957 | src/css/engine-common.css:1074 | src/css/engine-common.css:1692
+"rgba(0,0,0,0.1)",5,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.1,src/css/engine-common.css:794 | src/css/engine-common.css:870 | src/css/engine-common.css:957 | src/css/engine-common.css:1692 | src/css/admin/colors.css:1
+#bbb,5,UI,--border,10.5,ΔE(Lab)=10.5 → --border,src/css/index.css:656 | src/admin/ai_tuning.php:47 | src/admin/ai_tuning.php:51 | src/admin/ai_tuning.php:115 | src/admin/ai_stats.php:55
+#e8f5f3,5,UI,--accent-tint,2.8,ΔE(Lab)=2.8 → --accent-tint,src/admin/ai_tuning.php:18 | src/admin/ai_tuning.php:86 | src/admin/ai_tuning.php:87 | src/admin/ai_tuning.php:104 | src/admin/ai_tuning.php:112
+#f0f2f0,5,UI,--bg,1.8,ΔE(Lab)=1.8 → --bg,src/admin/ai_tuning.php:33 | src/admin/ai_stats.php:30 | src/admin/ai_stats.php:37 | src/admin/ai_stats.php:47 | src/admin/ai_stats.php:49
+#e5e9e7,5,UI,--accent-tint,2.1,ΔE(Lab)=2.1 → --accent-tint,src/admin/ai_tuning.php:45 | src/admin/ai_tuning.php:49 | src/admin/ai_tuning.php:56 | src/admin/ai_tuning.php:57 | src/admin/ai_tuning.php:116
+#FFF0EE,4,UI,--bg,5.9,ΔE(Lab)=5.9 → --bg,index.php:317 | src/guide/guide.css:400 | src/guide/index.php:45 | src/guide/_head.php:17
+#7A6B40,4,UNSURE,--accent,32.4,"ΔE(Lab)=32.4 → --accent; 채도(C*)=26.2, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",index.php:325 | src/guide/order.php:59 | src/guide/index.php:60 | src/guide/_head.php:29
+#b8894a,4,UNSURE,--text-muted,46.9,"ΔE(Lab)=46.9 → --text-muted; 채도(C*)=41.7, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",index.php:341 | src/guide/index.php:78 | src/guide/_head.php:44 | src/css/common.css:14
+#B8662F,4,UNSURE,--text-muted,58.0,"ΔE(Lab)=58.0 → --text-muted; 채도(C*)=52.6, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",index.php:357 | src/guide/order.php:47 | src/guide/index.php:96 | src/guide/_head.php:58
+#2E6FA8,4,UNSURE,--text-muted,34.6,"ΔE(Lab)=34.6 → --text-muted; 채도(C*)=36.5, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",index.php:365 | src/guide/order.php:53 | src/guide/index.php:105 | src/guide/_head.php:65
+#2a9d8f,4,UNSURE,--accent,26.3,"ΔE(Lab)=26.3 → --accent; 채도(C*)=34.6, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/css/dashboard.css:632 | src/css/dashboard.css:633 | src/css/dashboard.css:654 | src/css/dashboard.css:660
+"rgba(255,255,255,0.2)",4,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.2,src/css/engine-common.css:10 | src/css/engine-common.css:676 | src/css/engine-common.css:1675 | src/css/engine-common.css:1781
+"rgba(255,255,255,0.1)",4,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.1,src/css/engine-common.css:40 | src/css/engine-common.css:56 | src/css/engine-common.css:78 | src/css/engine-common.css:651
+#7dd9d0,4,UNSURE,--border,29.3,"ΔE(Lab)=29.3 → --border; 채도(C*)=29.9, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/css/engine-common.css:84 | src/css/engine-common.css:116 | src/css/engine-common.css:1757 | src/admin/ai_tuning.php:65
+"rgba(0,0,0,0.2)",4,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.2,src/css/engine-common.css:237 | src/css/engine-common.css:239 | src/css/engine-common.css:1362 | src/css/index.css:802
+"rgba(255,255,255,0.45)",4,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.45,src/css/engine-common.css:565 | src/css/engine-common.css:566 | src/css/engine-common.css:1365 | src/css/engine-common.css:1627
+#F2F3F4,4,UI,--bg,0.3,ΔE(Lab)=0.3 → --bg,src/css/engine-common.css:904 | src/css/engine-common.css:935 | src/css/index.css:729 | src/components/mailform/order.php:23
+#FFE066,4,UNSURE,--accent-tint,61.9,"ΔE(Lab)=61.9 → --accent-tint; 채도(C*)=62.4, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/css/engine-common.css:1611 | src/css/engine-common.css:1626 | src/css/engine-common.css:1629 | src/css/tokens.css:39
+#7A8C89,4,UI,--text-muted,8.3,ΔE(Lab)=8.3 → --text-muted,src/css/auth_modal.css:65 | src/css/auth_modal.css:170 | src/css/auth_modal.css:248 | src/css/admin/oauth.css:31
+#ffeaea,4,UI,--bg,8.1,ΔE(Lab)=8.1 → --bg,src/admin/render_settings.php:31 | src/admin/blog.php:67 | src/admin/collection_filters.php:27 | src/admin/pattern_categories.php:31
+#1a8a5a,4,UNSURE,--accent,29.2,"ΔE(Lab)=29.2 → --accent; 채도(C*)=45.3, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/admin/render_settings.php:34 | src/admin/blog.php:68 | src/admin/collection_filters.php:30 | src/admin/pattern_categories.php:34
+"rgba(0, 0, 0, 0.9)",4,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.9,src/css/index.css:386 | src/css/index.css:451 | src/css/index.css:474 | src/css/index.css:482
+#1a6b62,4,UI,--accent,7.9,ΔE(Lab)=7.9 → --accent,src/admin/ai_tuning.php:28 | src/admin/ai_tuning.php:86 | src/admin/ai_tuning.php:87 | src/admin/ai_stats.php:24
+#e8ece9,4,UI,--accent-tint,1.5,ΔE(Lab)=1.5 → --accent-tint,src/admin/ai_tuning.php:32 | src/admin/ai_tuning.php:89 | src/admin/ai_stats.php:29 | src/admin/ai_stats.php:46
+#e8ecea,4,UI,--accent-tint,1.6,ΔE(Lab)=1.6 → --accent-tint,src/components/mailform/reset.php:39 | src/components/mailform/welcome.php:36 | src/components/mailform/order.php:83 | src/components/mailform/contact.php:45
+#28241e,4,UI,--text,7.9,ΔE(Lab)=7.9 → --text,src/api/admin/ai_tuning.php:42 | src/api/admin/ai_tuning.php:43 | src/api/ai/chat.php:67 | src/api/ai/chat.php:68
+#F5F4EE,3,UI,--bg,3.6,ΔE(Lab)=3.6 → --bg,index.php:325 | src/guide/index.php:60 | src/guide/_head.php:29
+#F2F0FB,3,UI,--bg,5.3,ΔE(Lab)=5.3 → --bg,index.php:333 | src/guide/index.php:69 | src/guide/_head.php:37
+#FFF8EE,3,UI,--bg,6.5,ΔE(Lab)=6.5 → --bg,index.php:341 | src/guide/index.php:78 | src/guide/_head.php:44
+#EEF3F8,3,UI,--bg,2.5,ΔE(Lab)=2.5 → --bg,index.php:349 | src/guide/index.php:87 | src/guide/_head.php:51
+#2A6B8C,3,UNSURE,--text-muted,27.1,"ΔE(Lab)=27.1 → --text-muted; 채도(C*)=25.9, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",index.php:349 | src/guide/index.php:87 | src/guide/_head.php:51
+#FDF0E6,3,UI,--bg,7.6,ΔE(Lab)=7.6 → --bg,index.php:357 | src/guide/index.php:96 | src/guide/_head.php:58
+#EAF3FB,3,UI,--bg,4.5,ΔE(Lab)=4.5 → --bg,index.php:365 | src/guide/index.php:105 | src/guide/_head.php:65
+#8B5CF6,3,UNSURE,--text-muted,85.4,"ΔE(Lab)=85.4 → --text-muted; 채도(C*)=88.4, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",color-migration/palette_root.css:38 | src/guide/guide.css:136 | src/guide/render.php:223
+"rgba(0,0,0,.06)",3,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.06,src/guide/guide.css:9 | src/css/index.css:302 | src/admin/index.php:28
+#4a3728,3,CONTENT,,,"guide 목재/마감 톤 견본 스와치 (guide.css, studio-classic.php, render.php)",src/guide/guide.css:93 | src/guide/studio-classic.php:72 | src/guide/render.php:97
+#5C3D1E,3,CONTENT,,,"guide 목재/마감 톤 견본 스와치 (살색 데모, studio-classic.php, render.php)",src/guide/studio-classic.php:94 | src/guide/studio-classic.php:101 | src/guide/render.php:122
+#1a1a1a,3,UI,--text,6.5,ΔE(Lab)=6.5 → --text,src/guide/faq.php:62 | src/css/dashboard.css:630 | src/css/engine-common.css:1431
+"rgba(0,0,0,0.6)",3,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.6,src/css/dashboard.css:133 | src/css/index.css:553 | src/css/index.css:620
+#5a6b69,3,UI,--accent,16.3,ΔE(Lab)=16.3 → --accent,src/css/dashboard.css:590 | src/css/dashboard.css:640 | src/css/dashboard.css:648
+"rgba(255,255,255,0.3)",3,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.3,src/css/engine-common.css:45 | src/css/engine-common.css:491 | src/css/engine-common.css:617
+"rgba(0,0,0,0.3)",3,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.3,src/css/engine-common.css:431 | src/css/nav.css:69 | src/css/index.css:107
+"rgba(0,0,0,0.25)",3,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.25,src/css/engine-common.css:544 | src/css/engine-common.css:564 | src/css/engine-common.css:1783
+#BDBDBD,3,UI,--border,9.7,ΔE(Lab)=9.7 → --border,src/css/engine-common.css:1280 | src/css/engine-common.css:1296 | src/css/engine-common.css:1359
+"rgba(0,0,0,0.12)",3,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.12,src/css/engine-common.css:1533 | src/css/company.css:304 | src/css/index.css:682
+#E4EDEA,3,UI,--accent-tint,0.5,ΔE(Lab)=0.5 → --accent-tint,src/css/auth_modal.css:70 | src/css/auth_modal.css:192 | src/css/admin/oauth.css:32
+#B8C8C4,3,UI,--border,8.9,ΔE(Lab)=8.9 → --border,src/css/auth_modal.css:81 | src/css/auth_modal.css:120 | src/css/admin/oauth.css:36
+#191919,3,UI,--text,7.0,ΔE(Lab)=7.0 → --text,src/css/auth_modal.css:208 | src/css/auth_modal.css:213 | src/css/admin/oauth.css:26
+#C8D4D2,3,UI,--border,4.5,ΔE(Lab)=4.5 → --border,src/css/common.css:23 | src/css/work-detail.css:110 | src/css/work.css:57
+"rgba(58, 140, 130, 0.06)",3,UI,--accent,18.5,ΔE(Lab)=18.5 → --accent; alpha=0.06,src/css/blog-detail.css:44 | src/css/blog-detail.css:149 | src/css/index.css:511
+#d0e8e4,3,UI,--accent-tint,6.5,ΔE(Lab)=6.5 → --accent-tint,src/admin/ai_tuning.php:70 | src/admin/ai_tuning.php:75 | src/admin/ai_tuning.php:97
+#111111,3,UI,--text,10.4,ΔE(Lab)=10.4 → --text; works.php work_panel_bg 등 작품패널 커스텀 색(DB 데이터) 2건 포함 - 값 자체는 범용 근흑색이라 전체 배제하지 않음,src/admin/works.php:129 | src/admin/works.php:262 | src/api/admin/works.php:66
+#888888,3,UI,--text-muted,6.1,ΔE(Lab)=6.1 → --text-muted; works.php work_panel_desc_color 작품패널 커스텀 색(DB 데이터) 1건 포함 - 값 자체는 범용 회색이라 전체 배제하지 않음,src/admin/works.php:137 | src/admin/works.php:264 | src/api/admin/works.php:68
+#F3F4F5,2,UI,--bg,0.0,ΔE(Lab)=0.0 → --bg,color-migration/palette_root.css:4 | src/css/tokens.css:4
+#23262A,2,UI,--text,0.0,ΔE(Lab)=0.0 → --text,color-migration/palette_root.css:8 | src/css/tokens.css:8
+#8A9199,2,UI,--text-muted,0.0,ΔE(Lab)=0.0 → --text-muted,color-migration/palette_root.css:12 | src/css/tokens.css:12
+#D4D8DB,2,UI,--border,0.0,ΔE(Lab)=0.0 → --border,color-migration/palette_root.css:16 | src/css/tokens.css:16
+#2C5F51,2,UI,--accent,0.0,ΔE(Lab)=0.0 → --accent,color-migration/palette_root.css:20 | src/css/tokens.css:20
+#1F473C,2,UI,--accent-hover,0.0,ΔE(Lab)=0.0 → --accent-hover,color-migration/palette_root.css:22 | src/css/tokens.css:22
+#E6EEEB,2,UI,--accent-tint,0.0,ΔE(Lab)=0.0 → --accent-tint,color-migration/palette_root.css:24 | src/css/tokens.css:24
+"rgba(255,255,255,.6)",2,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.6,src/guide/guide.css:13 | src/css/work.css:136
+"rgba(0,0,0,.08)",2,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.08,src/guide/guide.css:273 | src/css/index.css:353
+#FFF2F0,2,UI,--bg,5.2,ΔE(Lab)=5.2 → --bg,src/guide/guide.css:464 | src/css/auth_modal.css:157
+#F4F6F6,2,UI,--bg,0.9,ΔE(Lab)=0.9 → --bg,src/guide/guide.css:482 | src/css/common.css:24
+#F0F4F0,2,UI,--accent-tint,2.8,ΔE(Lab)=2.8 → --accent-tint,src/guide/index.php:114 | src/guide/_head.php:72
+#3A6B3A,2,UNSURE,--accent,21.1,"ΔE(Lab)=21.1 → --accent; 채도(C*)=35.6, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/guide/index.php:114 | src/guide/_head.php:72
+#8B6914,2,CONTENT,,,"guide 목재/마감 톤 견본 스와치 (울거미색 데모, studio-classic.php, render.php)",src/guide/studio-classic.php:93 | src/guide/render.php:121
+#b8a98a,2,CONTENT,,,"guide 목재/마감 톤 견본 스와치 (studio-classic.php, render.php)",src/guide/studio-classic.php:108 | src/guide/render.php:140
+#8a5a00,2,UNSURE,--accent,59.1,"ΔE(Lab)=59.1 → --accent; 채도(C*)=52.3, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/css/dashboard.css:109 | src/css/tokens.css:36
+#E08A00,2,UNSURE,--border,79.9,"ΔE(Lab)=79.9 → --border; 채도(C*)=75.0, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/css/dashboard.css:174 | src/css/engine-common.css:1011
+"rgba(0,0,0,0.18)",2,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.18,src/css/dashboard.css:433 | src/css/collection.css:374
+#e5e5e5,2,UI,--accent-tint,4.1,ΔE(Lab)=4.1 → --accent-tint,src/css/dashboard.css:652 | src/css/admin/cost_table.css:9
+"rgba(0,0,0,0.04)",2,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.04,src/css/collection.css:179 | src/css/nav.css:238
+#f0f0f0,2,UI,--bg,1.5,ΔE(Lab)=1.5 → --bg,src/css/engine-common.css:292 | src/css/engine-common.css:769
+#ADADAD,2,UI,--text-muted,12.0,ΔE(Lab)=12.0 → --text-muted,src/css/engine-common.css:373 | src/css/engine-common.css:1114
+"rgba(20,20,20,0.92)",2,UI,--text,9.2,ΔE(Lab)=9.2 → --text; alpha=0.92,src/css/engine-common.css:419 | src/css/engine-common.css:442
+"rgba(255,255,255,0.12)",2,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.12,src/css/engine-common.css:452 | src/css/engine-common.css:1749
+"rgba(255,255,255,0.5)",2,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.5,src/css/engine-common.css:544 | src/css/engine-common.css:564
+"rgba(255,255,255,0.06)",2,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.06,src/css/engine-common.css:650 | src/css/engine-common.css:1423
+"rgba(15, 20, 20, 0.5)",2,UI,--text,9.6,ΔE(Lab)=9.6 → --text; alpha=0.5,src/css/engine-common.css:776 | src/css/engine-common.css:1684
+"rgba(255,255,255,0.92)",2,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.92,src/css/engine-common.css:1091 | src/css/engine-common.css:1575
+"rgba(255,255,255,0.65)",2,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.65,src/css/engine-common.css:1092 | src/css/engine-common.css:1576
+"rgba(0,0,0,0.4)",2,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.4,src/css/engine-common.css:1289 | src/admin/colors.php:52
+"rgba(255,255,255,0.75)",2,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.75,src/css/engine-common.css:1765 | src/css/engine-common.css:1772
+#ff8080,2,UNSURE,--text-muted,57.0,"ΔE(Lab)=57.0 → --text-muted; 채도(C*)=53.3, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/css/engine-common.css:1771 | src/admin/ai_tuning.php:67
+#F5F8F7,2,UI,--bg,1.7,ΔE(Lab)=1.7 → --bg,src/css/auth_modal.css:200 | src/css/admin/oauth.css:29
+"rgba(12,12,11,0.1)",2,UI,--text,12.2,ΔE(Lab)=12.2 → --text; alpha=0.1,src/css/nav.css:106 | src/css/company.css:2
+"rgba(0,0,0,0.03)",2,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.03,src/css/nav.css:198 | src/css/nav.css:223
+#DC2626,2,UNSURE,--text-muted,86.3,"ΔE(Lab)=86.3 → --text-muted; 채도(C*)=81.7, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/css/common.css:27 | src/css/tokens.css:28
+#B91C1C,2,UNSURE,--text,78.9,"ΔE(Lab)=78.9 → --text; 채도(C*)=72.7, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/css/common.css:28 | src/css/tokens.css:30
+#FEE2E2,2,UI,--bg,11.3,ΔE(Lab)=11.3 → --bg,src/css/common.css:29 | src/css/tokens.css:31
+#B45309,2,UNSURE,--text-muted,70.9,"ΔE(Lab)=70.9 → --text-muted; 채도(C*)=64.9, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/css/common.css:32 | src/css/tokens.css:34
+#FEF3C7,2,UNSURE,--accent-tint,22.2,"ΔE(Lab)=22.2 → --accent-tint; 채도(C*)=22.8, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/css/common.css:33 | src/css/tokens.css:35
+"rgba(0, 0, 0, 0.6)",2,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.6,src/css/common.css:143 | src/css/common.css:165
+#fff3f0,2,UI,--bg,5.1,ΔE(Lab)=5.1 → --bg,src/css/company.css:335 | src/css/index.css:713
+"rgba(0,0,0,.12)",2,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.12,src/css/work-detail.css:72 | src/css/index.css:293
+#eef1f0,2,UI,--bg,1.8,ΔE(Lab)=1.8 → --bg,src/css/admin/oauth.css:3 | src/admin/notice.php:98
+#6B5A3E,2,CONTENT,,,guide 목재/마감 톤 견본 스와치 (render.php),src/guide/render.php:97 | src/guide/render.php:132
+"rgba(255,255,255,.5)",2,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.5,src/guide/render.php:108 | src/css/work.css:149
+#5C4A3A,2,CONTENT,,,guide 목재/마감 톤 견본 스와치 (render.php),src/guide/render.php:133 | src/guide/render.php:141
+#f7f7f5,2,UI,--bg,1.9,ΔE(Lab)=1.9 → --bg,src/css/index.css:14 | src/mypage/dashboard.php:52
+"rgba(0,0,0,.1)",2,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.1,src/css/index.css:273 | src/css/index.css:329
+"rgba(255, 255, 255, .18)",2,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.18,src/css/index.css:414 | src/css/index.css:414
+"rgba(0,0,0,0.07)",2,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.07,src/css/index.css:552 | src/css/index.css:619
+#dec898,2,CONTENT,,,admin/colors.php 컬러 팔레트 관리 화면의 예시/기본 색상값 - 사용자 선택형 색상 옵션 데이터,src/admin/colors.php:63 | src/admin/colors.php:64
+#4285F4,2,EXTERNAL_BRAND,,,Google 로그인 버튼 공식 로고 색상 (SVG path fill),src/admin/oauth.php:36 | src/components/auth_modal.php:30
+#34A853,2,EXTERNAL_BRAND,,,Google 로그인 버튼 공식 로고 색상 (SVG path fill),src/admin/oauth.php:36 | src/components/auth_modal.php:30
+#FBBC05,2,EXTERNAL_BRAND,,,Google 로그인 버튼 공식 로고 색상 (SVG path fill),src/admin/oauth.php:36 | src/components/auth_modal.php:30
+#EA4335,2,EXTERNAL_BRAND,,,Google 로그인 버튼 공식 로고 색상 (SVG path fill),src/admin/oauth.php:36 | src/components/auth_modal.php:30
+#f4f6f5,2,UI,--bg,1.2,ΔE(Lab)=1.2 → --bg,src/admin/ai_tuning.php:19 | src/admin/ai_stats.php:18
+#c8e4df,2,UI,--accent-tint,8.6,ΔE(Lab)=8.6 → --accent-tint,src/admin/ai_tuning.php:103 | src/admin/ai_tuning.php:111
+#f8faf9,2,UI,--bg,2.2,ΔE(Lab)=2.2 → --bg,src/admin/ai_stats.php:49 | src/admin/ai_stats.php:59
+"rgba(0,0,0,0.14)",2,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.14,src/components/auth_modal.php:8 | src/components/auth_modal.php:111
+#8B4513,2,UNSURE,--text,56.2,"ΔE(Lab)=56.2 → --text; 채도(C*)=48.8, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/api/admin/ai_tuning.php:42 | src/api/ai/chat.php:67
+#c8a96e,2,UNSURE,--border,39.9,"ΔE(Lab)=39.9 → --border; 채도(C*)=34.8, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/api/admin/ai_tuning.php:43 | src/api/ai/chat.php:68
+#E5E7EA,1,UI,--accent-tint,4.2,ΔE(Lab)=4.2 → --accent-tint,src/guide/guide.css:61
+"rgba(255,255,255,.92)",1,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.92,src/guide/guide.css:68
+"rgba(255,255,255,.9)",1,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.9,src/guide/guide.css:77
+"rgba(255,255,255,.15)",1,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.15,src/guide/guide.css:96
+"rgba(74,55,40,.15)",1,UI,--text,19.6,ΔE(Lab)=19.6 → --text; alpha=0.15,src/guide/guide.css:107
+"rgba(139,115,85,.18)",1,UNSURE,--text-muted,27.7,"ΔE(Lab)=27.7 → --text-muted; 채도(C*)=20.7, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요; alpha=0.18",src/guide/guide.css:110
+"rgba(180,155,110,.1)",1,UNSURE,--text-muted,32.8,"ΔE(Lab)=32.8 → --text-muted; 채도(C*)=27.2, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요; alpha=0.1",src/guide/guide.css:110
+#d4c5a9,1,UI,--border,19.0,ΔE(Lab)=19.0 → --border,src/guide/guide.css:167
+#a8956e,1,UNSURE,--text-muted,28.5,"ΔE(Lab)=28.5 → --text-muted; 채도(C*)=23.2, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/guide/guide.css:167
+#1e5e58,1,UI,--accent,5.4,ΔE(Lab)=5.4 → --accent,src/guide/guide.css:462
+#8B2A16,1,UNSURE,--text,58.1,"ΔE(Lab)=58.1 → --text; 채도(C*)=53.2, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/guide/guide.css:464
+"rgba(255,255,255,.1)",1,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.1,src/guide/studio-classic.php:72
+"rgba(74,55,40,.5)",1,UI,--text,19.6,ΔE(Lab)=19.6 → --text; alpha=0.5,src/guide/studio-classic.php:75
+"rgba(255,255,255,.4)",1,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.4,src/guide/studio-classic.php:79
+#dee2e6,1,UI,--border,3.6,ΔE(Lab)=3.6 → --border,src/guide/faq.php:53
+#f7faf9,1,UI,--bg,2.3,ΔE(Lab)=2.3 → --bg,src/guide/faq.php:67
+#2d7a6e,1,UI,--accent,11.8,ΔE(Lab)=11.8 → --accent,src/guide/faq.php:68
+#fff4e5,1,UI,--bg,9.2,ΔE(Lab)=9.2 → --bg,src/css/dashboard.css:109
+#ffdca0,1,UNSURE,--accent-tint,34.5,"ΔE(Lab)=34.5 → --accent-tint; 채도(C*)=34.2, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/css/dashboard.css:109
+#f2f2f0,1,UI,--bg,1.7,ΔE(Lab)=1.7 → --bg,src/css/dashboard.css:123
+"rgba(0,0,0,0.65)",1,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.65,src/css/dashboard.css:128
+"rgba(58,140,130,0.12)",1,UI,--accent,18.5,ΔE(Lab)=18.5 → --accent; alpha=0.12,src/css/dashboard.css:160
+#D1FAF0,1,UI,--accent-tint,12.0,ΔE(Lab)=12.0 → --accent-tint,src/css/dashboard.css:201
+#dcdcda,1,UI,--border,3.4,ΔE(Lab)=3.4 → --border,src/css/dashboard.css:248
+"rgba(0, 0, 0, 0.45)",1,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.45,src/css/dashboard.css:413
+#f8f8f8,1,UI,--bg,1.6,ΔE(Lab)=1.6 → --bg,src/css/dashboard.css:527
+#e5e7ea,1,UI,--accent-tint,4.2,ΔE(Lab)=4.2 → --accent-tint,src/css/dashboard.css:585
+#e0e8e6,1,UI,--accent-tint,2.1,ΔE(Lab)=2.1 → --accent-tint,src/css/dashboard.css:614
+#f0f4f3,1,UI,--bg,1.5,ΔE(Lab)=1.5 → --bg,src/css/dashboard.css:639
+#d8e2e0,1,UI,--accent-tint,4.4,ΔE(Lab)=4.4 → --accent-tint,src/css/dashboard.css:646
+#e8f4f2,1,UI,--accent-tint,2.3,ΔE(Lab)=2.3 → --accent-tint,src/css/dashboard.css:660
+"rgba(247, 247, 246, 0.75)",1,UI,--bg,1.5,ΔE(Lab)=1.5 → --bg; alpha=0.75,src/css/collection.css:40
+"rgba(0,0,0,0.09)",1,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.09,src/css/collection.css:184
+"rgba(0,0,0,0.38)",1,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.38,src/css/collection.css:227
+"rgba(0,0,0,0.45)",1,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.45,src/css/collection.css:362
+"rgba(20,24,24,0.85)",1,UI,--text,7.7,ΔE(Lab)=7.7 → --text; alpha=0.85,src/css/engine-common.css:23
+"rgba(255,255,255,0.18)",1,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.18,src/css/engine-common.css:79
+"rgba(0,0,0,0.72)",1,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.72,src/css/engine-common.css:115
+"rgba(125,217,208,0.25)",1,UNSURE,--border,29.3,"ΔE(Lab)=29.3 → --border; 채도(C*)=29.9, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요; alpha=0.25",src/css/engine-common.css:122
+#ff9494,1,UNSURE,--border,47.3,"ΔE(Lab)=47.3 → --border; 채도(C*)=43.8, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/css/engine-common.css:127
+"rgba(255,100,100,0.25)",1,UNSURE,--text-muted,70.1,"ΔE(Lab)=70.1 → --text-muted; 채도(C*)=66.7, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요; alpha=0.25",src/css/engine-common.css:127
+"rgba(255,255,255,0.8)",1,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.8,src/css/engine-common.css:152
+"rgba(58, 140, 130, 0.25)",1,UI,--accent,18.5,ΔE(Lab)=18.5 → --accent; alpha=0.25,src/css/engine-common.css:181
+#FFB020,1,UNSURE,--accent-tint,80.0,"ΔE(Lab)=80.0 → --accent-tint; 채도(C*)=78.1, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/css/engine-common.css:213
+#fff0f0,1,UI,--bg,5.7,ΔE(Lab)=5.7 → --bg,src/css/engine-common.css:259
+"rgba(0, 0, 0, .18)",1,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.18,src/css/engine-common.css:342
+"rgba(255,255,255,0.95)",1,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.95,src/css/engine-common.css:405
+"rgba(0, 0, 0, 0.35)",1,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.35,src/css/engine-common.css:462
+"rgba(255, 255, 255, 0.15)",1,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.15,src/css/engine-common.css:463
+"rgba(255, 255, 255, 0.75)",1,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.75,src/css/engine-common.css:464
+"rgba(200,50,50,0.85)",1,UNSURE,--text-muted,73.7,"ΔE(Lab)=73.7 → --text-muted; 채도(C*)=68.7, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요; alpha=0.85",src/css/engine-common.css:527
+"rgba(255,255,255,0.7)",1,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.7,src/css/engine-common.css:605
+"rgba(224,82,24,0.12)",1,UNSURE,--text-muted,83.4,"ΔE(Lab)=83.4 → --text-muted; 채도(C*)=78.8, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요; alpha=0.12",src/css/engine-common.css:656
+"rgba(15, 20, 20, 0.6)",1,UI,--text,9.6,ΔE(Lab)=9.6 → --text; alpha=0.6,src/css/engine-common.css:663
+"rgba(10,15,15,0.6)",1,UI,--text,11.4,ΔE(Lab)=11.4 → --text; alpha=0.6,src/css/engine-common.css:697
+#FFF0EB,1,UI,--bg,6.5,ΔE(Lab)=6.5 → --bg,src/css/engine-common.css:820
+#ECEFEE,1,UI,--accent-tint,2.2,ΔE(Lab)=2.2 → --accent-tint,src/css/engine-common.css:897
+#E2E5E4,1,UI,--accent-tint,3.4,ΔE(Lab)=3.4 → --accent-tint,src/css/engine-common.css:937
+#5A6664,1,UI,--accent,17.2,ΔE(Lab)=17.2 → --accent,src/css/engine-common.css:949
+"rgba(224,48,48,0.1)",1,UNSURE,--text-muted,83.2,"ΔE(Lab)=83.2 → --text-muted; 채도(C*)=78.9, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요; alpha=0.1",src/css/engine-common.css:1047
+"rgba(255,255,255,1)",1,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg,src/css/engine-common.css:1195
+"rgba(0,0,0,0.15)",1,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.15,src/css/engine-common.css:1545
+#c0392b,1,UNSURE,--text-muted,71.3,"ΔE(Lab)=71.3 → --text-muted; 채도(C*)=65.9, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/css/engine-common.css:1676
+"rgba(192,57,43,0.15)",1,UNSURE,--text-muted,71.3,"ΔE(Lab)=71.3 → --text-muted; 채도(C*)=65.9, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요; alpha=0.15",src/css/engine-common.css:1680
+"rgba(58,140,130,0.18)",1,UI,--accent,18.5,ΔE(Lab)=18.5 → --accent; alpha=0.18,src/css/engine-common.css:1750
+"rgba(255,255,255,0.35)",1,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.35,src/css/engine-common.css:1792
+#c4cdc9,1,UI,--border,6.1,ΔE(Lab)=6.1 → --border,src/css/auth_modal.css:15
+#6b7b78,1,UI,--text-muted,12.1,ΔE(Lab)=12.1 → --text-muted,src/css/auth_modal.css:26
+#F8FAF9,1,UI,--bg,2.2,ΔE(Lab)=2.2 → --bg,src/css/auth_modal.css:76
+"rgba(58,140,130,.10)",1,UI,--accent,18.5,ΔE(Lab)=18.5 → --accent; alpha=0.1,src/css/auth_modal.css:86
+"rgba(58,140,130,.25)",1,UI,--accent,18.5,ΔE(Lab)=18.5 → --accent; alpha=0.25,src/css/auth_modal.css:108
+"rgba(58,140,130,.32)",1,UI,--accent,18.5,ΔE(Lab)=18.5 → --accent; alpha=0.32,src/css/auth_modal.css:112
+"rgba(58,140,130,.2)",1,UI,--accent,18.5,ΔE(Lab)=18.5 → --accent; alpha=0.2,src/css/auth_modal.css:117
+#A8BAB7,1,UI,--border,13.5,ΔE(Lab)=13.5 → --border,src/css/auth_modal.css:136
+#F5C6C0,1,UI,--border,20.2,ΔE(Lab)=20.2 → --border,src/css/auth_modal.css:159
+#EAF6F4,1,UI,--accent-tint,2.9,ΔE(Lab)=2.9 → --accent-tint,src/css/auth_modal.css:162
+#256E65,1,UI,--accent,7.9,ΔE(Lab)=7.9 → --accent,src/css/auth_modal.css:163
+#BAE0DB,1,UI,--accent-tint,12.5,ΔE(Lab)=12.5 → --accent-tint,src/css/auth_modal.css:164
+#C8D8D4,1,UI,--border,5.8,ΔE(Lab)=5.8 → --border,src/css/auth_modal.css:201
+#C4CDC9,1,UI,--border,6.1,ΔE(Lab)=6.1 → --border,src/css/auth_modal.css:232
+#E8EDEB,1,UI,--accent-tint,1.2,ΔE(Lab)=1.2 → --accent-tint,src/css/auth_modal.css:242
+"rgba(12,12,11,0.04)",1,UI,--text,12.2,ΔE(Lab)=12.2 → --text; alpha=0.04,src/css/nav.css:120
+"rgba(0,0,0,0.32)",1,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.32,src/css/nav.css:130
+#2F7169,1,UI,--accent,8.5,ΔE(Lab)=8.5 → --accent,src/css/common.css:7
+#5AADA2,1,UNSURE,--text-muted,27.9,"ΔE(Lab)=27.9 → --text-muted; 채도(C*)=28.1, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/css/common.css:8
+#EAF5F3,1,UI,--accent-tint,2.5,ΔE(Lab)=2.5 → --accent-tint,src/css/common.css:10
+#CC2200,1,UNSURE,--text-muted,90.6,"ΔE(Lab)=90.6 → --text-muted; 채도(C*)=85.1, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/css/common.css:12
+#A81D00,1,UNSURE,--text,78.5,"ΔE(Lab)=78.5 → --text; 채도(C*)=73.2, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/css/common.css:13
+"rgba(0, 0, 0, 0.95)",1,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.95,src/css/common.css:17
+#15803D,1,UNSURE,--accent,36.0,"ΔE(Lab)=36.0 → --accent; 채도(C*)=52.5, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/css/common.css:30
+#DCFCE7,1,UI,--accent-tint,12.9,ΔE(Lab)=12.9 → --accent-tint,src/css/common.css:31
+#6D28D9,1,UNSURE,--text-muted,100.4,"ΔE(Lab)=100.4 → --text-muted; 채도(C*)=101.2, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/css/common.css:34
+#EDE9FE,1,UI,--bg,10.9,ΔE(Lab)=10.9 → --bg,src/css/common.css:35
+#FEE500,1,EXTERNAL_BRAND,,,Kakao 브랜드 공식 색상 (--kakao),src/css/common.css:38
+#F5DA00,1,EXTERNAL_BRAND,,,Kakao 브랜드 공식 색상 (--kakao-dark),src/css/common.css:39
+#03C75A,1,EXTERNAL_BRAND,,,Naver 브랜드 공식 색상 (--naver),src/css/common.css:40
+#02B350,1,EXTERNAL_BRAND,,,Naver 브랜드 공식 색상 (--naver-dark),src/css/common.css:41
+#3A3A3A,1,UI,--text,9.9,ΔE(Lab)=9.9 → --text,src/css/common.css:60
+#EDEEF0,1,UI,--bg,2.1,ΔE(Lab)=2.1 → --bg,src/css/common.css:61
+"rgba(0, 0, 0, 0.08)",1,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.08,src/css/common.css:109
+"rgba(0, 0, 0, 0.4)",1,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.4,src/css/common.css:149
+"rgba(0,0,0,.14)",1,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.14,src/css/work-detail.css:57
+"rgba(58,140,130,.3)",1,UI,--accent,18.5,ΔE(Lab)=18.5 → --accent; alpha=0.3,src/css/work-detail.css:82
+#2d7a72,1,UI,--accent,12.2,ΔE(Lab)=12.2 → --accent,src/css/admin/oauth.css:38
+"rgba(210,170,100,.9)",1,UNSURE,--border,46.1,"ΔE(Lab)=46.1 → --border; 채도(C*)=41.8, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요; alpha=0.9",src/guide/render.php:99
+"rgba(210,170,100,.6)",1,UNSURE,--border,46.1,"ΔE(Lab)=46.1 → --border; 채도(C*)=41.8, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요; alpha=0.6",src/guide/render.php:102
+#3d2e1e,1,CONTENT,,,guide 목재/마감 톤 견본 스와치 (render.php),src/guide/render.php:133
+#7a6a50,1,CONTENT,,,guide 목재/마감 톤 견본 스와치 (render.php),src/guide/render.php:141
+#10a37f,1,EXTERNAL_BRAND,,,OpenAI 로고 색상 (admin/render_settings.php AI 카드),src/admin/render_settings.php:58
+#6B4FBB,1,EXTERNAL_BRAND,,,Anthropic 로고 색상 (admin/render_settings.php AI 카드),src/admin/render_settings.php:86
+"rgba(12, 12, 11, 0.1)",1,UI,--text,12.2,ΔE(Lab)=12.2 → --text; alpha=0.1,src/css/index.css:2
+#e0ddd8,1,UI,--border,5.3,ΔE(Lab)=5.3 → --border,src/css/index.css:15
+#222,1,UI,--text,3.6,ΔE(Lab)=3.6 → --text,src/css/index.css:27
+#f0f9f8,1,UI,--bg,3.2,ΔE(Lab)=3.2 → --bg,src/css/index.css:50
+#c5e6e3,1,UI,--accent-tint,9.7,ΔE(Lab)=9.7 → --accent-tint,src/css/index.css:51
+"rgba(0,0,0,.07)",1,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.07,src/css/index.css:265
+"rgba(0,0,0,.35)",1,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.35,src/css/index.css:287
+#f3f3f3,1,UI,--bg,0.7,ΔE(Lab)=0.7 → --bg,src/css/index.css:399
+"rgba(255, 255, 255, .9)",1,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.9,src/css/index.css:428
+"rgba(255, 255, 255, .8)",1,UI,--bg,3.9,ΔE(Lab)=3.9 → --bg; alpha=0.8,src/css/index.css:428
+#6366f1,1,UNSURE,--text-muted,77.0,"ΔE(Lab)=77.0 → --text-muted; 채도(C*)=80.4, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/css/index.css:442
+#8b5cf6,1,UNSURE,--text-muted,85.4,"ΔE(Lab)=85.4 → --text-muted; 채도(C*)=88.4, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/css/index.css:442
+"rgba(58, 140, 130, 0.1)",1,UI,--accent,18.5,ΔE(Lab)=18.5 → --accent; alpha=0.1,src/css/index.css:518
+#a81c00,1,UNSURE,--text,78.6,"ΔE(Lab)=78.6 → --text; 채도(C*)=73.4, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/css/index.css:710
+"rgba(0,0,0,0.16)",1,UI,--text,15.3,ΔE(Lab)=15.3 → --text; alpha=0.16,src/css/users.css:118
+#FECACA,1,UI,--border,21.2,ΔE(Lab)=21.2 → --border,src/css/users.css:175
+#BBF7D0,1,UNSURE,--accent-tint,26.3,"ΔE(Lab)=26.3 → --accent-tint; 채도(C*)=29.4, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/css/users.css:184
+#f0f8f7,1,UI,--bg,2.8,ΔE(Lab)=2.8 → --bg,src/admin/notice.php:102
+"rgba(15,20,18,.85)",1,UI,--text,10.1,ΔE(Lab)=10.1 → --text; alpha=0.85,src/css/work.css:114
+"rgba(15,20,18,.3)",1,UI,--text,10.1,ΔE(Lab)=10.1 → --text; alpha=0.3,src/css/work.css:115
+#f5faf9,1,UI,--bg,2.5,ΔE(Lab)=2.5 → --bg,src/admin/ai_tuning.php:70
+#2a6b62,1,UI,--accent,6.3,ΔE(Lab)=6.3 → --accent,src/admin/ai_tuning.php:71
+#e5edeb,1,UI,--accent-tint,0.6,ΔE(Lab)=0.6 → --accent-tint,src/admin/ai_tuning.php:83
+#e0ece9,1,UI,--accent-tint,1.7,ΔE(Lab)=1.7 → --accent-tint,src/admin/ai_tuning.php:96
+#1a5c54,1,UI,--accent,4.7,ΔE(Lab)=4.7 → --accent,src/admin/ai_tuning.php:104
+#e53,1,UNSURE,--text-muted,80.3,"ΔE(Lab)=80.3 → --text-muted; 채도(C*)=76.2, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/admin/ai_tuning.php:120
+#fff0ee,1,UI,--bg,5.9,ΔE(Lab)=5.9 → --bg,src/admin/ai_tuning.php:120
+#fff8e6,1,UI,--bg,10.2,ΔE(Lab)=10.2 → --bg,src/admin/ai_tuning.php:258
+#b07d00,1,UNSURE,--text-muted,68.1,"ΔE(Lab)=68.1 → --text-muted; 채도(C*)=62.8, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/admin/ai_tuning.php:258
+#4db8ac,1,UNSURE,--text-muted,33.9,"ΔE(Lab)=33.9 → --text-muted; 채도(C*)=33.7, 팔레트와 거리 큼 - 원색/브랜드성 색상 여부 확인 필요",src/admin/ai_stats.php:38
+#f5f7f5,1,UI,--bg,1.8,ΔE(Lab)=1.8 → --bg,src/admin/ai_stats.php:50
+#000000,1,UI,--text,15.3,ΔE(Lab)=15.3 → --text,src/components/auth_modal.php:34

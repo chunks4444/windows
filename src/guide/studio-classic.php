@@ -26,7 +26,7 @@ include __DIR__ . '/_head.php';
 
         <!-- 왼쪽 사이드바 -->
         <div class="guid-left">
-            <div style="padding:8px 12px 2px;font-size:10px;font-weight:700;color:var(--teal);">① 설계 파라미터</div>
+            <div style="padding:8px 12px 2px;font-size:10px;font-weight:700;color:var(--accent);">① 설계 파라미터</div>
             <div class="guid-left-section">문 설정</div>
             <div class="guid-left-item">여닫이 / 미서기</div>
             <div class="guid-left-item">1짝 ~ 4짝</div>
@@ -42,10 +42,10 @@ include __DIR__ . '/_head.php';
             <div class="guid-left-slider"></div>
             <div class="guid-left-item" style="font-size:10px;">창살 두께 12</div>
             <div class="guid-left-slider"></div>
-            <div class="guid-left-item" style="font-size:10px;color:var(--text-3);">상/중/하 배열…</div>
-            <div class="guid-left-item" style="font-size:10px;color:var(--text-3);">세로 비율, 풍판…</div>
+            <div class="guid-left-item" style="font-size:10px;color:var(--text-muted);">상/중/하 배열…</div>
+            <div class="guid-left-item" style="font-size:10px;color:var(--text-muted);">세로 비율, 풍판…</div>
             <div class="guid-left-section" style="margin-top:6px;">제작 시방서</div>
-            <div class="guid-left-item" style="font-size:10px;color:var(--text-3);">외경·내경·살 길이…</div>
+            <div class="guid-left-item" style="font-size:10px;color:var(--text-muted);">외경·내경·살 길이…</div>
         </div>
 
         <!-- 캔버스 -->
@@ -53,9 +53,9 @@ include __DIR__ . '/_head.php';
             <div class="guid-canvas-title">
                 <span class="dot"></span>
                 <span style="font-weight:600;font-size:11px;">청담동_한옥_정면창</span>
-                <span style="color:var(--text-3);font-size:10px;margin-left:6px;">새 도면</span>
-                <span style="color:var(--text-3);font-size:10px;">도면</span>
-                <span style="color:var(--text-3);font-size:10px;">v3 ▾</span>
+                <span style="color:var(--text-muted);font-size:10px;margin-left:6px;">새 도면</span>
+                <span style="color:var(--text-muted);font-size:10px;">도면</span>
+                <span style="color:var(--text-muted);font-size:10px;">v3 ▾</span>
             </div>
             <!-- 캔버스 조작 버튼 -->
             <div class="guid-canvas-controls" style="top:34px;">
@@ -69,19 +69,19 @@ include __DIR__ . '/_head.php';
                 <div class="guid-cv-btn" title="편집 초기화">⟳</div>
             </div>
             <!-- 도면 미리보기 -->
-            <div style="position:relative;width:120px;height:200px;margin-top:28px;border:3px solid #4a3728;border-radius:2px;background:rgba(255,255,255,.1);">
+            <div style="position:relative;width:120px;height:200px;margin-top:28px;border:3px solid #4a3728;border-radius:2px;background:rgba(var(--bg-rgb), .1);">
                 <div style="position:absolute;inset:8px;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(7,1fr);gap:2px;">
                     <?php for($i=0;$i<28;$i++): ?>
-                    <div style="border:1.5px solid rgba(74,55,40,.5);"></div>
+                    <div style="border:1.5px solid rgba(var(--text-rgb), .5);"></div>
                     <?php endfor; ?>
                 </div>
             </div>
-            <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-size:9px;color:rgba(255,255,255,.4);">② 캔버스 — 실시간 미리보기</div>
+            <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-size:9px;color:rgba(var(--bg-rgb), .4);">② 캔버스 — 실시간 미리보기</div>
         </div>
 
         <!-- 오른쪽 사이드바 -->
         <div class="guid-right">
-            <div style="padding:6px 10px 2px;font-size:10px;font-weight:700;color:var(--teal);">③ 마감·배경·저장</div>
+            <div style="padding:6px 10px 2px;font-size:10px;font-weight:700;color:var(--accent);">③ 마감·배경·저장</div>
             <div style="display:flex;gap:4px;padding:4px 10px;">
                 <div class="guid-right-btn outline" style="flex:1;">💾 저장</div>
                 <div class="guid-right-btn primary" style="flex:1;">주문</div>
@@ -94,11 +94,11 @@ include __DIR__ . '/_head.php';
                 <div style="width:18px;height:18px;background:#5C3D1E;border-radius:3px;" title="살 색"></div>
                 <div style="width:18px;height:18px;background:#c8102e;border-radius:3px;" title="면 색"></div>
             </div>
-            <div class="guid-right-section" style="color:var(--teal);">🖼 배경 사진</div>
+            <div class="guid-right-section" style="color:var(--accent);">🖼 배경 사진</div>
             <div class="guid-right-btn outline" style="font-size:10px;">↑ 사진 추가</div>
             <div class="guid-thumb-list">
                 <div class="guid-thumb-placeholder">＋</div>
-                <div style="width:32px;height:32px;border-radius:4px;background:linear-gradient(135deg,#8B7355,#5C3D1E);outline:2px solid var(--teal);"></div>
+                <div style="width:32px;height:32px;border-radius:4px;background:linear-gradient(135deg,#8B7355,#5C3D1E);outline:2px solid var(--accent);"></div>
             </div>
             <div class="guid-prompt">참나무 결, 옻칠 마감…</div>
             <div class="guid-right-btn ai" style="font-size:11px;">✨ Rendering</div>
@@ -221,7 +221,7 @@ include __DIR__ . '/_head.php';
 <h3>배경 사진 & AI 렌더링</h3>
 <p>
     현장 사진을 업로드해 도면과 합성한 뒤 AI로 렌더링합니다.
-    자세한 내용은 <a href="/src/guide/render.php" style="color:var(--teal);">AI 렌더링 사용법</a> 페이지를 참조하세요.
+    자세한 내용은 <a href="/src/guide/render.php" style="color:var(--accent);">AI 렌더링 사용법</a> 페이지를 참조하세요.
 </p>
 
 <h3>내보내기</h3>

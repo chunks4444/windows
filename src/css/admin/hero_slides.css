@@ -1,10 +1,10 @@
-.hs-thumb { width:96px; height:54px; object-fit:cover; border-radius:6px; background:var(--input-bg); }
-        .hs-thumb-empty { width:96px; height:54px; border-radius:6px; background:var(--input-bg); display:flex; align-items:center; justify-content:center; color:var(--text-3); font-size: var(--fs-18); }
-        .hs-img-preview { width:100%; max-height:200px; object-fit:cover; border-radius:8px; background:var(--input-bg); display:none; margin-bottom:8px; }
+.hs-thumb { width:96px; height:54px; object-fit:cover; border-radius:6px; background:var(--bg); }
+        .hs-thumb-empty { width:96px; height:54px; border-radius:6px; background:var(--bg); display:flex; align-items:center; justify-content:center; color:var(--text-muted); font-size: var(--fs-18); }
+        .hs-img-preview { width:100%; max-height:200px; object-fit:cover; border-radius:8px; background:var(--bg); display:none; margin-bottom:8px; }
         .hs-img-preview.show { display:block; }
-        .hs-upload-label { display:block; padding:10px; border:1.5px dashed var(--border-md); border-radius:8px; text-align:center; cursor:pointer; color:var(--text-3); font-size: var(--fs-14); margin-bottom:6px; }
-        .hs-upload-label:hover { border-color:var(--teal); color:var(--teal); }
-        .drag-handle { cursor:grab; color:var(--text-3); }
+        .hs-upload-label { display:block; padding:10px; border:1.5px dashed var(--border); border-radius:8px; text-align:center; cursor:pointer; color:var(--text-muted); font-size: var(--fs-14); margin-bottom:6px; }
+        .hs-upload-label:hover { border-color:var(--accent); color:var(--accent); }
+        .drag-handle { cursor:grab; color:var(--text-muted); }
         .drag-handle:active { cursor:grabbing; }
         tr.dragging { opacity:.4; }
-        tr.drag-over td { background:var(--accent-bg); }
+        tr.drag-over td { background:var(--accent-tint); }

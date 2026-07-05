@@ -5,7 +5,7 @@
 <!-- AUTH MODAL -->
 <div class="modal fade" id="authModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" style="max-width:400px;">
-        <div class="modal-content border-0" style="border-radius:16px;box-shadow:0 8px 16px rgba(0,0,0,0.06), 0 24px 64px rgba(0,0,0,0.14);overflow:hidden;">
+        <div class="modal-content border-0" style="border-radius:16px;box-shadow:0 8px 16px rgba(var(--text-rgb), 0.06), 0 24px 64px rgba(var(--text-rgb), 0.14);overflow:hidden;">
 
             <!-- 탭 헤더 -->
             <div class="modal-header border-0 pb-0 pt-4 px-4">
@@ -31,7 +31,7 @@
                             Google로 계속하기
                         </a>
                         <a href="/src/api/auth/oauth/redirect.php?provider=kakao" class="auth-sns-btn auth-sns-kakao">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="#000000"><path d="M12 3C6.477 3 2 6.477 2 10.8c0 2.7 1.696 5.077 4.273 6.496L5.1 21l4.91-2.618A11.6 11.6 0 0 0 12 18.6c5.523 0 10-3.477 10-7.8S17.523 3 12 3z"/></svg>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--text)"><path d="M12 3C6.477 3 2 6.477 2 10.8c0 2.7 1.696 5.077 4.273 6.496L5.1 21l4.91-2.618A11.6 11.6 0 0 0 12 18.6c5.523 0 10-3.477 10-7.8S17.523 3 12 3z"/></svg>
                             카카오로 계속하기
                         </a>
                         <a href="/src/api/auth/oauth/redirect.php?provider=naver" class="auth-sns-btn auth-sns-naver">
@@ -108,12 +108,12 @@
 <!-- WELCOME MODAL -->
 <div class="modal fade" id="welcomeModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered" style="max-width:400px;">
-        <div class="modal-content border-0" style="border-radius:16px;box-shadow:0 8px 16px rgba(0,0,0,0.06),0 24px 64px rgba(0,0,0,0.14);overflow:hidden;text-align:center;">
+        <div class="modal-content border-0" style="border-radius:16px;box-shadow:0 8px 16px rgba(var(--text-rgb), 0.06),0 24px 64px rgba(var(--text-rgb), 0.14);overflow:hidden;text-align:center;">
             <div class="modal-body px-5 py-5">
                 <div style="font-size:40px;margin-bottom:20px;">🎉</div>
                 <h4 style="font-family:'Noto Sans KR',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-bottom:10px;">평목에 오신 것을 환영합니다!</h4>
-                <p id="welcomeEmail" style="font-size:13px;color:#888;margin-bottom:6px;"></p>
-                <p style="font-size:13px;color:#555;line-height:1.8;margin-bottom:32px;">이제 창호를 직접 설계하고,<br>AI로 공간에 적용된 모습까지 확인해 보세요.</p>
+                <p id="welcomeEmail" style="font-size:13px;color:var(--text-muted);margin-bottom:6px;"></p>
+                <p style="font-size:13px;color:var(--accent-hover);line-height:1.8;margin-bottom:32px;">이제 창호를 직접 설계하고,<br>AI로 공간에 적용된 모습까지 확인해 보세요.</p>
                 <button class="auth-submit" onclick="welcomeGo()" style="max-width:240px;margin:0 auto;">스튜디오 시작하기</button>
             </div>
         </div>
@@ -351,7 +351,7 @@ async function loadNavBoards() {
                     `<li><a class="dropdown-item d-flex align-items-center gap-2" href="/src/mypage/dashboard.php?board=${b.id}">
                         <i class="bi bi-collection" style="font-size:14px;"></i>
                         <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${_escHtml(b.name)}</span>
-                        <span style="font-size:10px;color:#aaa;flex-shrink:0;">${b.item_count}</span>
+                        <span style="font-size:10px;color:var(--text-muted);flex-shrink:0;">${b.item_count}</span>
                     </a></li>`
                 ).join('');
             }

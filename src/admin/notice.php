@@ -33,7 +33,7 @@ require_admin_role('s');
     <div style="max-width:600px;">
         <div class="oauth-card">
             <div class="oauth-card-header">
-                <div class="oauth-card-logo" style="background:#111;color:#fff;font-size:14px;"><i class="bi bi-megaphone-fill"></i></div>
+                <div class="oauth-card-logo" style="background:var(--text);color:var(--bg);font-size:14px;"><i class="bi bi-megaphone-fill"></i></div>
                 <span class="oauth-card-title">배너 설정</span>
             </div>
 
@@ -48,13 +48,13 @@ require_admin_role('s');
             <div class="oauth-field">
                 <label>공지 문구</label>
                 <input type="text" id="noticeText" placeholder="7월 15일까지 접수분만 8월 납품 가능합니다." maxlength="120">
-                <div style="font-size:11px;color:#aaa;margin-top:4px;">최대 120자. 모바일에서는 말줄임 처리됩니다.</div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">최대 120자. 모바일에서는 말줄임 처리됩니다.</div>
             </div>
 
             <div class="oauth-field">
-                <label>링크 URL <span style="color:#aaa;font-weight:400;">(선택)</span></label>
+                <label>링크 URL <span style="color:var(--text-muted);font-weight:400;">(선택)</span></label>
                 <input type="text" id="noticeLink" placeholder="/src/guide/order.php">
-                <div style="font-size:11px;color:#aaa;margin-top:4px;">입력하면 문구 클릭 시 해당 페이지로 이동합니다.</div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">입력하면 문구 클릭 시 해당 페이지로 이동합니다.</div>
             </div>
 
             <div class="oauth-field">
@@ -62,17 +62,17 @@ require_admin_role('s');
                 <div style="display:flex;gap:8px;flex-wrap:wrap;">
                     <label class="notice-bg-opt" data-val="dark">
                         <input type="radio" name="noticeBg" value="dark" hidden>
-                        <span class="notice-bg-swatch" style="background:#111;"></span>
+                        <span class="notice-bg-swatch" style="background:var(--text);"></span>
                         <span>Dark</span>
                     </label>
                     <label class="notice-bg-opt" data-val="teal">
                         <input type="radio" name="noticeBg" value="teal" hidden>
-                        <span class="notice-bg-swatch" style="background:#2A7B70;"></span>
+                        <span class="notice-bg-swatch" style="background:var(--accent);"></span>
                         <span>Teal</span>
                     </label>
                     <label class="notice-bg-opt" data-val="red">
                         <input type="radio" name="noticeBg" value="red" hidden>
-                        <span class="notice-bg-swatch" style="background:#cc2200;"></span>
+                        <span class="notice-bg-swatch" style="background:var(--danger);"></span>
                         <span>Red</span>
                     </label>
                 </div>
@@ -86,7 +86,7 @@ require_admin_role('s');
                 </div>
             </div>
 
-            <div id="noticeSaveMsg" style="display:none;font-size:13px;color:var(--teal);margin-bottom:12px;font-weight:600;">저장되었습니다.</div>
+            <div id="noticeSaveMsg" style="display:none;font-size:13px;color:var(--accent);margin-bottom:12px;font-weight:600;">저장되었습니다.</div>
             <button class="oauth-save" onclick="saveNotice()">저장</button>
         </div>
     </div>
@@ -95,16 +95,16 @@ require_admin_role('s');
 <style>
 .notice-bg-opt {
     display: flex; align-items: center; gap: 6px;
-    padding: 7px 14px; border: 1.5px solid #eef1f0;
+    padding: 7px 14px; border: 1.5px solid var(--bg);
     border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600;
     transition: border-color .15s; user-select: none;
 }
-.notice-bg-opt:has(input:checked) { border-color: var(--teal); background: #f0f8f7; }
+.notice-bg-opt:has(input:checked) { border-color: var(--accent); background: var(--bg); }
 .notice-bg-swatch { width: 16px; height: 16px; border-radius: 3px; flex-shrink: 0; }
 </style>
 
 <script>
-const BG_COLORS = { dark: '#111', teal: '#2A7B70', red: '#cc2200' };
+const BG_COLORS = { dark: 'var(--text)', teal: 'var(--accent)', red: 'var(--danger)' };
 function _h(json) {
     const h = { 'Authorization': 'Bearer ' + localStorage.getItem('pmok_auth_token') };
     if (json) h['Content-Type'] = 'application/json';
@@ -121,8 +121,8 @@ function updatePreview() {
     const text = document.getElementById('noticeText').value || '공지 문구를 입력하세요.';
     const bg   = document.querySelector('input[name="noticeBg"]:checked')?.value || 'dark';
     const prev = document.getElementById('noticePreview');
-    prev.style.background = BG_COLORS[bg] || '#111';
-    prev.style.color = '#fff';
+    prev.style.background = BG_COLORS[bg] || 'var(--text)';
+    prev.style.color = 'var(--bg)';
     document.getElementById('noticePreviewText').textContent = text;
 }
 

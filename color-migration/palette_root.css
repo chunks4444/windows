@@ -1,0 +1,39 @@
+/* 평목 색상 시스템 — 기준 팔레트 5색 (2026-07-05 정리안, 미적용) */
+:root {
+    /* 바탕 (회벽) */
+    --bg:              #F3F4F5;
+    --bg-rgb:           243, 244, 245;
+
+    /* 텍스트 (청묵) */
+    --text:            #23262A;
+    --text-rgb:         35, 38, 42;
+
+    /* 보조 텍스트 (기와) */
+    --text-muted:      #8A9199;
+    --text-muted-rgb:   138, 145, 153;
+
+    /* 선 / 보더 (화강암) */
+    --border:          #D4D8DB;
+    --border-rgb:       212, 216, 219;
+
+    /* 강조 (뇌록) */
+    --accent:          #2C5F51;
+    --accent-rgb:       44, 95, 81;
+    --accent-hover:    #1F473C;
+    --accent-hover-rgb: 31, 71, 60;
+    --accent-tint:     #E6EEEB;
+    --accent-tint-rgb:  230, 238, 235;
+}
+
+/*
+ * 기존 common.css 토큰과의 대응 관계 (참고용 — 실제 치환 시 검토):
+ *   --teal, --teal-dark      -> --accent, --accent-hover
+ *   --teal-pale, --accent-bg -> --accent-tint
+ *   --page-bg, --input-bg    -> --bg
+ *   --text-1                 -> --text
+ *   --text-2, --text-3       -> --text-muted   (2단계였던 보조텍스트를 1단계로 통합)
+ *   --border, --border-md    -> --border       (2단계였던 보더를 1단계로 통합)
+ *
+ * 아래는 팔레트에 대응하는 색이 없는 기존 시맨틱 색상으로, 유지 여부 검토 필요 (UNSURE 목록 참조):
+ *   --red/--red-dark/--danger 계열, --gold, --warning, --purple, #e05218(주황), #5A4DB8/#8B5CF6(AI 강조색)
+ */

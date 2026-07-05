@@ -16,21 +16,21 @@ require_admin_role('s');
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
     <style>
         .cf-table { width:100%; border-collapse:collapse; font-size:13px; max-width:640px; }
-        .cf-table th { background:var(--input-bg); padding:8px 12px; text-align:left; font-weight:600; color:var(--text-2); border-bottom:2px solid var(--border-md); }
+        .cf-table th { background:var(--bg); padding:8px 12px; text-align:left; font-weight:600; color:var(--text-muted); border-bottom:2px solid var(--border); }
         .cf-table td { padding:8px 12px; border-bottom:1px solid var(--border); vertical-align:middle; }
-        .cf-table tr:hover td { background:var(--input-bg); }
-        .cf-id { font-family:monospace; font-size:11px; color:var(--text-3); background:var(--input-bg); padding:2px 6px; border-radius:4px; }
+        .cf-table tr:hover td { background:var(--bg); }
+        .cf-id { font-family:monospace; font-size:11px; color:var(--text-muted); background:var(--bg); padding:2px 6px; border-radius:4px; }
         .cf-name-input { border:1px solid var(--border); border-radius:5px; padding:4px 8px; font-size:13px; width:130px; }
         .cf-sort-input { border:1px solid var(--border); border-radius:5px; padding:4px 6px; font-size:13px; width:52px; text-align:center; }
         .cf-btn { border:none; border-radius:5px; padding:4px 10px; font-size:12px; font-weight:600; cursor:pointer; }
-        .cf-btn-save { background:var(--teal); color:#fff; } .cf-btn-save:hover { opacity:.85; }
-        .cf-btn-del  { background:#f5f5f5; color:#c00; }    .cf-btn-del:hover  { background:#ffeaea; }
+        .cf-btn-save { background:var(--accent); color:var(--bg); } .cf-btn-save:hover { opacity:.85; }
+        .cf-btn-del  { background:var(--bg); color:var(--danger); }    .cf-btn-del:hover  { background:var(--danger-tint); }
         .cf-inactive td { opacity:.4; }
         .cf-status { font-size:12px; margin-left:6px; }
-        .cf-status.ok { color:#1a8a5a; } .cf-status.err { color:#c00; }
+        .cf-status.ok { color:var(--accent); } .cf-status.err { color:var(--danger); }
         .cf-add-row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:16px; }
-        .cf-add-row input { border:1px solid var(--border-md); border-radius:6px; padding:6px 10px; font-size:13px; }
-        .cf-add-btn { background:var(--teal); color:#fff; border:none; border-radius:6px; padding:6px 18px; font-size:13px; font-weight:600; cursor:pointer; }
+        .cf-add-row input { border:1px solid var(--border); border-radius:6px; padding:6px 10px; font-size:13px; }
+        .cf-add-btn { background:var(--accent); color:var(--bg); border:none; border-radius:6px; padding:6px 18px; font-size:13px; font-weight:600; cursor:pointer; }
     </style>
 </head>
 <body>
@@ -41,7 +41,7 @@ require_admin_role('s');
     <div class="db-header">
         <h1 class="db-title"><i class="bi bi-funnel me-2"></i>컬렉션 필터 키워드</h1>
     </div>
-    <p style="font-size:13px;color:var(--text-3);margin:-8px 0 16px;">컬렉션 페이지 "공간" 드롭다운 전용 키워드입니다. 메인 페이지 큐레이션 카드(공간 카드 관리)와는 별개로 관리됩니다.</p>
+    <p style="font-size:13px;color:var(--text-muted);margin:-8px 0 16px;">컬렉션 페이지 "공간" 드롭다운 전용 키워드입니다. 메인 페이지 큐레이션 카드(공간 카드 관리)와는 별개로 관리됩니다.</p>
 
     <div style="overflow-x:auto;">
         <table class="cf-table" id="cfTable">

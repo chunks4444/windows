@@ -1,0 +1,40 @@
+/* 평목 색상 시스템 — 기준 팔레트 5색 */
+:root {
+    /* 바탕 (회벽) */
+    --bg:              #F3F4F5;
+    --bg-rgb:           243, 244, 245;
+
+    /* 텍스트 (청묵) */
+    --text:            #23262A;
+    --text-rgb:         35, 38, 42;
+
+    /* 보조 텍스트 (기와) */
+    --text-muted:      #8A9199;
+    --text-muted-rgb:   138, 145, 153;
+
+    /* 선 / 보더 (화강암) */
+    --border:          #D4D8DB;
+    --border-rgb:       212, 216, 219;
+
+    /* 강조 (뇌록) */
+    --accent:          #2C5F51;
+    --accent-rgb:       44, 95, 81;
+    --accent-hover:    #1F473C;
+    --accent-hover-rgb: 31, 71, 60;
+    --accent-tint:     #E6EEEB;
+    --accent-tint-rgb:  230, 238, 235;
+
+    /* 위험 (기존 --red/--danger 통합) */
+    --danger:          #DC2626;
+    --danger-rgb:       220, 38, 38;
+    --danger-hover:    #B91C1C;
+    --danger-tint:     #FEE2E2;
+
+    /* 경고 (기존 --warning 유지) */
+    --warning:         #B45309;
+    --warning-tint:    #FEF3C7;
+    --warning-text:    #8a5a00;
+
+    /* 기능색 (캔버스 선택 하이라이트, 팔레트 대응 없음 - 토큰명만 부여) */
+    --select:          #FFE066;
+}

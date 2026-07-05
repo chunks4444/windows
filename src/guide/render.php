@@ -27,7 +27,7 @@ include __DIR__ . '/_head.php';
         <div class="step-desc">왼쪽 사이드바로 창호 격자 파라미터 조정</div>
     </div>
     <div class="guide-flow-arrow">→</div>
-    <div class="guide-flow-step" style="border-color:var(--teal);background:var(--teal-pale);">
+    <div class="guide-flow-step" style="border-color:var(--accent);background:var(--accent-tint);">
         <span class="step-icon">✨</span>
         <div class="step-title">AI 합성</div>
         <div class="step-desc">배경+도면을 AI가 자연스럽게 합성</div>
@@ -57,21 +57,21 @@ include __DIR__ . '/_head.php';
 
         <!-- 왼쪽 사이드바 -->
         <div class="guid-left">
-            <div style="padding:6px 12px 4px;font-size:10px;color:var(--text-3);font-weight:700;letter-spacing:.06em;">설계 파라미터</div>
+            <div style="padding:6px 12px 4px;font-size:10px;color:var(--text-muted);font-weight:700;letter-spacing:.06em;">설계 파라미터</div>
             <div class="guid-left-section">문 설정</div>
-            <div class="guid-left-item">문 종류&nbsp;<span style="color:var(--teal);font-size:10px;">여닫이</span></div>
-            <div class="guid-left-item">문 짝수&nbsp;<span style="color:var(--teal);font-size:10px;">1짝</span></div>
+            <div class="guid-left-item">문 종류&nbsp;<span style="color:var(--accent);font-size:10px;">여닫이</span></div>
+            <div class="guid-left-item">문 짝수&nbsp;<span style="color:var(--accent);font-size:10px;">1짝</span></div>
             <div class="guid-left-section">문 치수</div>
-            <div class="guid-left-item" style="font-size:10px;">가로폭 <span style="margin-left:auto;color:var(--teal);">600mm</span></div>
+            <div class="guid-left-item" style="font-size:10px;">가로폭 <span style="margin-left:auto;color:var(--accent);">600mm</span></div>
             <div class="guid-left-slider"></div>
-            <div class="guid-left-item" style="font-size:10px;">세로높이 <span style="margin-left:auto;color:var(--teal);">1707mm</span></div>
+            <div class="guid-left-item" style="font-size:10px;">세로높이 <span style="margin-left:auto;color:var(--accent);">1707mm</span></div>
             <div class="guid-left-slider" style=""></div>
             <div class="guid-left-section">창살 설정</div>
-            <div class="guid-left-item" style="font-size:10px;">가로 칸수 <span style="margin-left:auto;color:var(--teal);">12</span></div>
+            <div class="guid-left-item" style="font-size:10px;">가로 칸수 <span style="margin-left:auto;color:var(--accent);">12</span></div>
             <div class="guid-left-slider"></div>
-            <div class="guid-left-item" style="font-size:10px;">창살 두께 <span style="margin-left:auto;color:var(--teal);">12mm</span></div>
+            <div class="guid-left-item" style="font-size:10px;">창살 두께 <span style="margin-left:auto;color:var(--accent);">12mm</span></div>
             <div class="guid-left-slider"></div>
-            <div style="padding:4px 12px;font-size:10px;color:var(--text-3);">마감 · 색상 · 치수표…</div>
+            <div style="padding:4px 12px;font-size:10px;color:var(--text-muted);">마감 · 색상 · 치수표…</div>
         </div>
 
         <!-- 캔버스 -->
@@ -79,9 +79,9 @@ include __DIR__ . '/_head.php';
             <div class="guid-canvas-title">
                 <span class="dot"></span>
                 <span style="font-weight:600;">청담동_한옥_정면창</span>
-                <span style="color:var(--text-3);margin-left:4px;">새 도면</span>
-                <span style="color:var(--text-3);">도면</span>
-                <span style="color:var(--text-3);">버전 ▾</span>
+                <span style="color:var(--text-muted);margin-left:4px;">새 도면</span>
+                <span style="color:var(--text-muted);">도면</span>
+                <span style="color:var(--text-muted);">버전 ▾</span>
             </div>
             <div class="guid-canvas-controls">
                 <div class="guid-cv-btn">✋</div>
@@ -103,9 +103,9 @@ include __DIR__ . '/_head.php';
                         <?php endfor; ?>
                     </div>
                 </div>
-                <div style="position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--text-3);white-space:nowrap;">배경+도면 실시간 합성</div>
+                <div style="position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--text-muted);white-space:nowrap;">배경+도면 실시간 합성</div>
             </div>
-            <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-size:10px;color:rgba(255,255,255,.5);">휠: 확대/축소 · 드래그: 이동</div>
+            <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-size:10px;color:rgba(var(--bg-rgb), .5);">휠: 확대/축소 · 드래그: 이동</div>
         </div>
 
         <!-- 오른쪽 사이드바 -->
@@ -123,13 +123,13 @@ include __DIR__ . '/_head.php';
             </div>
 
             <!-- ★ 핵심 섹션 ★ -->
-            <div class="guid-right-section" style="color:var(--teal);margin-top:10px;">🖼 배경 사진</div>
+            <div class="guid-right-section" style="color:var(--accent);margin-top:10px;">🖼 배경 사진</div>
             <div class="guid-right-btn outline" style="display:flex;align-items:center;gap:4px;justify-content:center;">
                 <span>↑</span> 사진 추가
             </div>
             <div class="guid-thumb-list">
                 <div class="guid-thumb-placeholder">＋</div>
-                <div style="width:32px;height:32px;border-radius:4px;background:linear-gradient(135deg,#8B7355,#6B5A3E);outline:2px solid var(--teal);"></div>
+                <div style="width:32px;height:32px;border-radius:4px;background:linear-gradient(135deg,#8B7355,#6B5A3E);outline:2px solid var(--accent);"></div>
                 <div style="width:32px;height:32px;border-radius:4px;background:linear-gradient(135deg,#5C4A3A,#3d2e1e);"></div>
             </div>
             <div class="guid-prompt">오래된 참나무 결, 옻칠 마감, 흰 한지…</div>
@@ -220,7 +220,7 @@ include __DIR__ . '/_head.php';
 <h3>④ 렌더링 실행</h3>
 <ol class="guide-steps">
     <li>
-        <span class="guide-ui" style="background:linear-gradient(135deg,#5A4DB8,#8B5CF6);color:#fff;border:none;">✨ Rendering</span> 버튼을 클릭합니다.
+        <span class="guide-ui" style="background:var(--accent);color:var(--bg);border:none;">✨ Rendering</span> 버튼을 클릭합니다.
     </li>
     <li>
         캔버스 위에 <strong>"AI 렌더링 중…"</strong> 로딩 오버레이가 표시됩니다.

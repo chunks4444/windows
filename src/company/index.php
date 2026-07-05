@@ -45,7 +45,7 @@ foreach ($studioCards as $sc) $cardsByKey[$sc['engine_key']] = $sc;
         <p class="ab-section-label">Philosophy</p>
         <div class="ab-phil-cols">
             <div class="ab-phil-left">
-                <h2 class="ab-section-title">평목(平木)<br><span style="font-size:0.6em;font-weight:400;color:var(--text-3);letter-spacing:0.05em;">workgroup pyeongmok</span></h2>
+                <h2 class="ab-section-title">평목(平木)<br><span style="font-size:0.6em;font-weight:400;color:var(--text-muted);letter-spacing:0.05em;">workgroup pyeongmok</span></h2>
                 <div class="ab-phil-text">
                     <p>곡식을 '되'나 '말' 단위로 깎아낼 때 쓰는<br>도구를 '평미레'라고 하는데<br>여기에 해당하는 한자어가 '평목(平木)'입니다.</p>
                     <p>평목은 넘쳐도 아니 되고,<br>모자라도 아니 되는,<br>균형을 잡아 주는 일을 합니다.</p>

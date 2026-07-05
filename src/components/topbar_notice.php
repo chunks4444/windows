@@ -15,14 +15,14 @@ try {
 
 if ($_noticeText):
     $_noticeHash = substr(md5($_noticeText), 0, 8);
-    $_bgColors = ['dark'=>'#111','teal'=>'#2A7B70','red'=>'#cc2200'];
-    $_bgColor  = $_bgColors[$_noticeBg] ?? '#111';
+    $_bgColors = ['dark'=>'var(--text)','teal'=>'var(--accent)','red'=>'var(--danger)'];
+    $_bgColor  = $_bgColors[$_noticeBg] ?? 'var(--text)';
 ?>
 <style id="pmNoticeStyle">
 body { padding-top: 108px !important; }
 .pm-navbar { top: 40px !important; }
 </style>
-<div id="pmTopbarNotice" style="background:<?= $_bgColor ?>;color:#fff;position:fixed;top:0;left:0;right:0;z-index:1031;height:40px;display:flex;align-items:center;justify-content:center;padding:0 48px;font-family:inherit;">
+<div id="pmTopbarNotice" style="background:<?= $_bgColor ?>;color:var(--bg);position:fixed;top:0;left:0;right:0;z-index:1031;height:40px;display:flex;align-items:center;justify-content:center;padding:0 48px;font-family:inherit;">
     <div style="flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;">
         <?php if ($_noticeLink): ?>
             <a href="<?= htmlspecialchars($_noticeLink) ?>" style="font-size:13px;font-weight:600;color:inherit;text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">

@@ -5,8 +5,8 @@
     gap: 20px;
 }
 .wt-card {
-    background: var(--surface-1, #fff);
-    border: 1px solid var(--border, #e5e5e5);
+    background: var(--surface-1, var(--bg));
+    border: 1px solid var(--border, var(--accent-tint));
     border-radius: 8px;
     padding: 16px 20px;
     min-width: 0;
@@ -18,10 +18,10 @@
     font-weight: 700;
     letter-spacing: .08em;
     text-transform: uppercase;
-    color: var(--text-3, #999);
+    color: var(--text-muted, var(--text-muted));
     margin-bottom: 14px;
     padding-bottom: 8px;
-    border-bottom: 1px solid var(--border, #eee);
+    border-bottom: 1px solid var(--border, var(--bg));
 }
 
 .wt-section-title {
@@ -29,17 +29,17 @@
     font-weight: 700;
     letter-spacing: .08em;
     text-transform: uppercase;
-    color: var(--text-3, #999);
+    color: var(--text-muted, var(--text-muted));
     margin: 20px 0 10px;
     padding-bottom: 6px;
-    border-bottom: 1px solid var(--border, #eee);
+    border-bottom: 1px solid var(--border, var(--bg));
 }
-.drag-handle { cursor:grab; color:var(--text-3); }
+.drag-handle { cursor:grab; color:var(--text-muted); }
         .drag-handle:active { cursor:grabbing; }
         tr.dragging { opacity:.4; }
-        tr.drag-over td { background:var(--accent-bg); }
+        tr.drag-over td { background:var(--accent-tint); }
         .num-input { text-align:right; }
-        .notes-cell { font-size: var(--fs-13); color:var(--text-3); max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .notes-cell { font-size: var(--fs-13); color:var(--text-muted); max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
         .wt-price-row { display:flex; gap:12px; }
         .wt-price-field { flex:2; }
         .wt-unit-field { flex:1; }

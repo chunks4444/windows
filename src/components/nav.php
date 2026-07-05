@@ -18,6 +18,7 @@ if (!defined('BOOTSTRAP_LOADED')) {
 }
 echo '<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">';
 ?>
+<?php css_tag('/src/css/tokens.css'); ?>
 <?php css_tag('/src/css/common.css'); ?>
 <?php css_tag('/src/css/nav.css'); ?>
 <?php include __DIR__ . '/topbar_notice.php'; ?>
@@ -189,15 +190,15 @@ $navStudioIcons = [
                     <i class="bi bi-person-circle"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
-                    <li><span class="dropdown-item-text" style="font-size:12px;font-weight:600;color:#111;padding:10px 18px 2px;display:flex;align-items:center;gap:6px;"><i class="bi bi-person-circle" style="font-size:16px;"></i><span id="navUserEmail"></span></span></li>
-                    <li><span class="dropdown-item-text" style="font-size:11px;color:#aaa;padding:2px 18px 6px;">마지막 접속 <span id="navLastLogin" style="color:#888;font-weight:600;">—</span></span></li>
+                    <li><span class="dropdown-item-text" style="font-size:12px;font-weight:600;color:var(--text);padding:10px 18px 2px;display:flex;align-items:center;gap:6px;"><i class="bi bi-person-circle" style="font-size:16px;"></i><span id="navUserEmail"></span></span></li>
+                    <li><span class="dropdown-item-text" style="font-size:11px;color:var(--text-muted);padding:2px 18px 6px;">마지막 접속 <span id="navLastLogin" style="color:var(--text-muted);font-weight:600;">—</span></span></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="/src/mypage/profile.php"><i class="bi bi-person me-1"></i>프로필</a></li>
                     <li><a class="dropdown-item" href="/src/mypage/company.php"><i class="bi bi-building me-1"></i>회사 정보</a></li>
                     <li><a class="dropdown-item" href="/src/mypage/dashboard.php"><i class="bi bi-grid me-1"></i>도면관리</a></li>
                     <li id="navBoardSection" style="display:none;">
                         <hr class="dropdown-divider">
-                        <span class="dropdown-header" style="font-size:10px;letter-spacing:.06em;color:#aaa;padding:4px 16px 2px;">내 보드</span>
+                        <span class="dropdown-header" style="font-size:10px;letter-spacing:.06em;color:var(--text-muted);padding:4px 16px 2px;">내 보드</span>
                     </li>
                     <div id="navBoardList"></div>
                     <li><hr class="dropdown-divider"></li>

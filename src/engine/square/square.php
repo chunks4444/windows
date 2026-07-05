@@ -18,6 +18,7 @@ header('Pragma: no-cache');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php require_once __DIR__ . '/../../lib/meta.php'; meta_tags(); ?>
+    <link rel="stylesheet" href="/src/css/tokens.css?v=<?= md5_file(__DIR__ . '/../../css/tokens.css') ?>">
     <link rel="stylesheet" href="/src/css/engine-common.css?v=<?= md5_file(__DIR__ . '/../../css/engine-common.css') ?>">
 
 </head>
@@ -463,7 +464,7 @@ header('Pragma: no-cache');
                             <div id="verList"></div>
                         </div>
                     </div>
-                    <select id="patternCategory" class="title-group-btn" title="패턴 분류" style="padding:0 6px;font-size:var(--fs-12);cursor:pointer;border:none;background:transparent;color:var(--text-2);font-weight:600;height:28px;">
+                    <select id="patternCategory" class="title-group-btn" title="패턴 분류" style="padding:0 6px;font-size:var(--fs-12);cursor:pointer;border:none;background:transparent;color:var(--text-muted);font-weight:600;height:28px;">
                         <option value="">분류 없음</option>
                         <?php foreach ($patternCategories as $pc): ?>
                         <option value="<?= (int)$pc['id'] ?>"><?= htmlspecialchars($pc['name']) ?></option>
@@ -484,34 +485,34 @@ header('Pragma: no-cache');
 
             <!-- 도형 스타일 패널 -->
             <div id="konvaShapePanel" style="display:none;position:absolute;top:44px;left:50%;transform:translateX(-50%);
-                display:none;align-items:center;gap:8px;background:rgba(255,255,255,0.97);
+                display:none;align-items:center;gap:8px;background:rgba(var(--bg-rgb), 0.97);
                 border:1px solid var(--border);border-radius:8px;padding:6px 12px;
-                box-shadow:0 2px 10px rgba(0,0,0,0.13);z-index:200;white-space:nowrap;">
-                <span style="font-size:11px;color:var(--text-3);font-weight:600;">도형</span>
-                <label style="font-size:11px;color:var(--text-2);">선</label>
+                box-shadow:0 2px 10px rgba(var(--text-rgb), 0.13);z-index:200;white-space:nowrap;">
+                <span style="font-size:11px;color:var(--text-muted);font-weight:600;">도형</span>
+                <label style="font-size:11px;color:var(--text-muted);">선</label>
                 <input type="color" id="konvaStrokeColor" value="#e03030" style="width:26px;height:22px;border:none;padding:0;cursor:pointer;border-radius:4px;">
-                <label style="font-size:11px;color:var(--text-2);">채우기</label>
+                <label style="font-size:11px;color:var(--text-muted);">채우기</label>
                 <input type="color" id="konvaFillColor" value="#e03030" style="width:26px;height:22px;border:none;padding:0;cursor:pointer;border-radius:4px;">
-                <label style="font-size:11px;color:var(--text-2);">두께</label>
+                <label style="font-size:11px;color:var(--text-muted);">두께</label>
                 <select id="konvaStrokeWidth" style="height:22px;font-size:11px;border:1px solid var(--border);border-radius:4px;padding:0 4px;">
                     <option value="1">1</option><option value="2" selected>2</option>
                     <option value="3">3</option><option value="5">5</option><option value="8">8</option>
                 </select>
-                <label style="font-size:11px;color:var(--text-2);">투명도</label>
+                <label style="font-size:11px;color:var(--text-muted);">투명도</label>
                 <input type="range" id="konvaOpacity" min="10" max="100" value="100" style="width:60px;">
             </div>
 
             <!-- 살 속성 패널 -->
             <div id="slatSelPanel" style="display:none;position:absolute;top:44px;left:50%;transform:translateX(-50%);
-                align-items:center;gap:8px;background:rgba(255,255,255,0.97);
+                align-items:center;gap:8px;background:rgba(var(--bg-rgb), 0.97);
                 border:1px solid var(--border);border-radius:8px;padding:6px 12px;
-                box-shadow:0 2px 10px rgba(0,0,0,0.13);z-index:200;white-space:nowrap;">
-                <span style="font-size:11px;color:var(--text-3);font-weight:600;">살</span>
-                <label style="font-size:11px;color:var(--text-2);">색상</label>
+                box-shadow:0 2px 10px rgba(var(--text-rgb), 0.13);z-index:200;white-space:nowrap;">
+                <span style="font-size:11px;color:var(--text-muted);font-weight:600;">살</span>
+                <label style="font-size:11px;color:var(--text-muted);">색상</label>
                 <input type="color" id="slatOverrideColor" value="#e03030" style="width:26px;height:22px;border:none;padding:0;cursor:pointer;border-radius:4px;">
-                <button id="btnApplySlatColor" style="height:22px;padding:0 8px;font-size:11px;border:1px solid var(--teal);border-radius:4px;background:var(--teal);color:#fff;cursor:pointer;">적용</button>
-                <button id="btnResetSlatColor" style="height:22px;padding:0 8px;font-size:11px;border:1px solid var(--border);border-radius:4px;background:#fff;cursor:pointer;">초기화</button>
-                <button id="btnDeleteSelectedSlat" style="height:22px;padding:0 8px;font-size:11px;border:1px solid #e03;border-radius:4px;background:#fff;color:#e03;cursor:pointer;">삭제</button>
+                <button id="btnApplySlatColor" style="height:22px;padding:0 8px;font-size:11px;border:1px solid var(--accent);border-radius:4px;background:var(--accent);color:var(--bg);cursor:pointer;">적용</button>
+                <button id="btnResetSlatColor" style="height:22px;padding:0 8px;font-size:11px;border:1px solid var(--border);border-radius:4px;background:var(--bg);cursor:pointer;">초기화</button>
+                <button id="btnDeleteSelectedSlat" style="height:22px;padding:0 8px;font-size:11px;border:1px solid var(--danger);border-radius:4px;background:var(--bg);color:var(--danger);cursor:pointer;">삭제</button>
             </div>
 
             <!-- 렌더링 로딩 오버레이 -->
@@ -660,7 +661,7 @@ header('Pragma: no-cache');
                             </svg>
                             배경 업로드
                         </button>
-                        <button id="btnClearBg" style="display:none;flex-shrink:0;width:28px;height:28px;border:none;background:none;padding:0;cursor:pointer;color:#e05218;align-items:center;justify-content:center;align-self:center;" title="배경 지우기">
+                        <button id="btnClearBg" style="display:none;flex-shrink:0;width:28px;height:28px;border:none;background:none;padding:0;cursor:pointer;color:var(--danger);align-items:center;justify-content:center;align-self:center;" title="배경 지우기">
                             <i class="bi bi-x-lg" style="font-size:13px;"></i>
                         </button>
                         </div>

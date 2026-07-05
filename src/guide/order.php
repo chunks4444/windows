@@ -38,25 +38,25 @@ include __DIR__ . '/_head.php';
 
 <div class="guide-flow">
     <div class="guide-flow-step">
-        <span class="step-icon"><i class="bi bi-pencil-square" style="color:var(--teal)"></i></span>
+        <span class="step-icon"><i class="bi bi-pencil-square" style="color:var(--accent)"></i></span>
         <div class="step-title">도면 설계</div>
         <div class="step-desc">스튜디오에서 창호 도면을 완성합니다.</div>
     </div>
     <div class="guide-flow-arrow"><i class="bi bi-chevron-right"></i></div>
     <div class="guide-flow-step">
-        <span class="step-icon"><i class="bi bi-cart-check" style="color:#B8662F"></i></span>
+        <span class="step-icon"><i class="bi bi-cart-check" style="color:var(--accent)"></i></span>
         <div class="step-title">견적요청 접수</div>
         <div class="step-desc">배송지·납기일을 입력하고 제출합니다.</div>
     </div>
     <div class="guide-flow-arrow"><i class="bi bi-chevron-right"></i></div>
     <div class="guide-flow-step">
-        <span class="step-icon"><i class="bi bi-telephone" style="color:#2E6FA8"></i></span>
+        <span class="step-icon"><i class="bi bi-telephone" style="color:var(--accent)"></i></span>
         <div class="step-title">담당자 연락</div>
         <div class="step-desc">담당자가 확인 후 견적서를 보내드립니다.</div>
     </div>
     <div class="guide-flow-arrow"><i class="bi bi-chevron-right"></i></div>
     <div class="guide-flow-step">
-        <span class="step-icon"><i class="bi bi-tools" style="color:#7A6B40"></i></span>
+        <span class="step-icon"><i class="bi bi-tools" style="color:var(--accent)"></i></span>
         <div class="step-title">제작 & 배송</div>
         <div class="step-desc">결제 확인 후 제작에 착수합니다.</div>
     </div>

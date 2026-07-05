@@ -1,5 +1,5 @@
 .pf-card {
-    background: #fff;
+    background: var(--bg);
     border: 1px solid var(--border);
     border-radius: var(--r);
     overflow: hidden;
@@ -17,7 +17,7 @@
 .pf-section-title {
     font-size: var(--fs-14);
     font-weight: 700;
-    color: var(--text-2);
+    color: var(--text-muted);
     letter-spacing: 0.04em;
     text-transform: uppercase;
     margin-bottom: 20px;
@@ -32,7 +32,7 @@
 .pf-email {
     font-size: var(--fs-16);
     font-weight: 500;
-    color: var(--text-1);
+    color: var(--text);
 }
 
 .pf-role-badge {
@@ -43,13 +43,13 @@
     font-weight: 700;
     letter-spacing: 0.03em;
     background: var(--border);
-    color: var(--text-2);
+    color: var(--text-muted);
 }
 
-.pf-role-badge[data-role="s"] { background: var(--warning-pale); color: var(--warning); }
-.pf-role-badge[data-role="m"] { background: var(--purple-pale); color: var(--purple); }
-.pf-role-badge[data-role="a"] { background: var(--success-pale); color: var(--success); }
-.pf-role-badge[data-role="u"] { background: var(--border); color: var(--text-2); }
+.pf-role-badge[data-role="s"] { background: var(--warning-tint); color: var(--warning); }
+.pf-role-badge[data-role="m"] { background: var(--accent-tint); color: var(--accent); }
+.pf-role-badge[data-role="a"] { background: var(--accent-tint); color: var(--accent); }
+.pf-role-badge[data-role="u"] { background: var(--border); color: var(--text-muted); }
 
 .pf-field {
     display: flex;
@@ -65,18 +65,18 @@
 .pf-label {
     font-size: var(--fs-13);
     font-weight: 600;
-    color: var(--text-2);
+    color: var(--text-muted);
 }
 
 .pf-input {
     height: 40px;
     padding: 0 12px;
-    border: 1px solid var(--border-md);
+    border: 1px solid var(--border);
     border-radius: var(--r-sm);
-    background: var(--input-bg);
+    background: var(--bg);
     font-family: inherit;
     font-size: var(--fs-14);
-    color: var(--text-1);
+    color: var(--text);
     outline: none;
     transition: border-color 0.15s;
     width: 100%;
@@ -88,12 +88,12 @@
 .pf-input--half { max-width: calc(50% - 6px); }
 
 .pf-input:focus {
-    border-color: var(--teal);
-    background: #fff;
+    border-color: var(--accent);
+    background: var(--bg);
 }
 
 .pf-input::placeholder {
-    color: var(--text-3);
+    color: var(--text-muted);
 }
 
 .pf-columns {
@@ -140,9 +140,9 @@
 .pf-btn-zip {
     height: 40px;
     padding: 0 16px;
-    background: #fff;
-    color: var(--text-1);
-    border: 1px solid var(--border-md);
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
     border-radius: var(--r-sm);
     font-family: inherit;
     font-size: var(--fs-13);
@@ -153,8 +153,8 @@
 }
 
 .pf-btn-zip:hover {
-    border-color: var(--teal);
-    color: var(--teal);
+    border-color: var(--accent);
+    color: var(--accent);
 }
 
 .pf-actions {
@@ -166,8 +166,8 @@
 .pf-btn-save {
     height: 40px;
     padding: 0 28px;
-    background: var(--teal);
-    color: #fff;
+    background: var(--accent);
+    color: var(--bg);
     border: none;
     border-radius: var(--r-sm);
     font-family: inherit;
@@ -178,7 +178,7 @@
 }
 
 .pf-btn-save:hover:not(:disabled) {
-    background: var(--teal-dark);
+    background: var(--accent-hover);
 }
 
 .pf-btn-save:disabled {
@@ -194,11 +194,11 @@
 }
 
 .pf-alert--success {
-    background: var(--teal-pale);
-    color: var(--teal);
+    background: var(--accent-tint);
+    color: var(--accent);
 }
 
 .pf-alert--error {
-    background: var(--danger-pale);
+    background: var(--danger-tint);
     color: var(--danger);
 }

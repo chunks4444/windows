@@ -3,36 +3,35 @@
 /* ── Design Tokens ───────────────────────────── */
 :root {
     /* 브랜드 */
-    --teal:         #3A8C82;
-    --teal-dark:    #2F7169;
-    --teal-mid:     #5AADA2;
-    --teal-pale:    #E6F4F2;
-    --accent-bg:    #EAF5F3;
-    --page-bg:      #f9f9f9;
-    --red:          #CC2200;
-    --red-dark:     #A81D00;
-    --gold:         #b8894a;
+    --teal:         var(--accent);
+    --teal-dark:    var(--accent);
+    --teal-mid:     var(--accent);
+    --teal-pale:    var(--accent-tint);
+    --accent-bg:    var(--accent-tint);
+    --page-bg:      var(--bg);
+    --red:          var(--danger);
+    --red-dark:     var(--danger-hover);
+    --gold:         var(--accent);
 
     /* 텍스트 */
-    --text-1:     rgba(0, 0, 0, 0.95);
-    --text-2:     #5A6B69;
-    --text-3:     #97A8A6;
+    --text-1:     rgba(var(--text-rgb), 0.95);
+    --text-2:     var(--text-muted);
+    --text-3:     var(--text-muted);
 
     /* 테두리 / 입력 */
-    --border:     #E0E5E4;
-    --border-md:  #C8D4D2;
-    --input-bg:   #F4F6F6;
+    --border-md:  var(--border);
+    --input-bg:   var(--bg);
 
     /* 상태 */
     --danger:       #DC2626;
-    --danger-dark:  #B91C1C;
-    --danger-pale:  #FEE2E2;
-    --success:      #15803D;
-    --success-pale: #DCFCE7;
+    --danger-dark:  var(--danger-hover);
+    --danger-pale:  var(--danger-tint);
+    --success:      var(--accent);
+    --success-pale: var(--accent-tint);
     --warning:      #B45309;
-    --warning-pale: #FEF3C7;
-    --purple:       #6D28D9;
-    --purple-pale:  #EDE9FE;
+    --warning-pale: var(--warning-tint);
+    --purple:       var(--accent);
+    --purple-pale:  var(--accent-tint);
 
     /* SNS 인증 */
     --kakao:        #FEE500;
@@ -57,8 +56,8 @@
     --r-xs:       4px;
 
     /* 엔진 레이아웃 */
-    --sidebar-bg: #3A3A3A;
-    --canvas-bg:  #EDEEF0;
+    --sidebar-bg: var(--text);
+    --canvas-bg:  var(--bg);
     --sidebar-w:  200px;
     --hdr-h:      52px;
 }
@@ -78,7 +77,7 @@ body {
     letter-spacing: -0.2px;
     word-break: keep-all;
     -webkit-font-smoothing: antialiased;
-    color: var(--text-1);
+    color: var(--text);
     -webkit-overflow-scrolling: touch;
 }
 
@@ -106,8 +105,8 @@ body:has(.global-footer) {
     gap: 10px;
     height: 56px;
     padding: 0 24px;
-    border-top: 1px solid rgba(0, 0, 0, 0.08);
-    background: #fff;
+    border-top: 1px solid rgba(var(--text-rgb), 0.08);
+    background: var(--bg);
 }
 
 .global-footer .footer-cta-center {
@@ -119,7 +118,7 @@ body:has(.global-footer) {
 
 .global-footer .footer-cta-sub {
     font-size: var(--fs-12);
-    color: #333;
+    color: var(--text);
     margin: 0;
     font-weight: 500;
     letter-spacing: 0.01em;
@@ -129,29 +128,29 @@ body:has(.global-footer) {
     font-family: 'Noto Sans KR', sans-serif;
     font-size: var(--fs-14);
     font-weight: 700;
-    color: #111;
+    color: var(--text);
     text-decoration: none;
     letter-spacing: -0.01em;
     transition: color 0.2s;
 }
 
-.global-footer .footer-cta-link:hover { color: var(--red); }
+.global-footer .footer-cta-link:hover { color: var(--danger); }
 
 .global-footer .footer-copy {
     font-size: var(--fs-12);
     font-weight: 300;
-    color: rgba(0, 0, 0, 0.6);
+    color: rgba(var(--text-rgb), 0.6);
     margin: 0;
 }
 
 .global-footer .footer-link {
     font-size: var(--fs-12);
-    color: rgba(0, 0, 0, 0.4);
+    color: rgba(var(--text-rgb), 0.4);
     text-decoration: none;
     transition: color 0.2s;
 }
 
-.global-footer .footer-link:hover { color: var(--gold); }
+.global-footer .footer-link:hover { color: var(--accent); }
 
 .global-footer .footer-links-right {
     display: flex;
@@ -162,7 +161,7 @@ body:has(.global-footer) {
 
 .global-footer .footer-link-strong {
     font-weight: 700;
-    color: rgba(0, 0, 0, 0.6);
+    color: rgba(var(--text-rgb), 0.6);
 }
 
 @media (max-width: 768px) {

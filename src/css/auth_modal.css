@@ -12,18 +12,18 @@
     padding: 4px 0 10px;
     font-size: var(--fs-16);
     font-weight: 700;
-    color: #c4cdc9;
+    color: var(--border);
     border-bottom: 2px solid transparent;
     cursor: pointer;
     letter-spacing: -0.3px;
     transition: color .18s, border-color .18s;
 }
 .auth-tab.active {
-    color: var(--text-1);
-    border-bottom-color: var(--teal);
+    color: var(--text);
+    border-bottom-color: var(--accent);
 }
 .auth-tab:hover:not(.active) {
-    color: #6b7b78;
+    color: var(--text-muted);
 }
 
 /* ── 뒤로가기 행 ── */
@@ -39,7 +39,7 @@
     border: none;
     padding: 4px 0 10px;
     font-size: var(--fs-13);
-    color: var(--teal);
+    color: var(--accent);
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -62,28 +62,28 @@
 .auth-field label {
     font-size: var(--fs-12);
     font-weight: 700;
-    color: #7A8C89;
+    color: var(--text-muted);
     letter-spacing: 0.06em;
     text-transform: uppercase;
 }
 .auth-field input {
-    border: 1.5px solid #E4EDEA;
+    border: 1.5px solid var(--accent-tint);
     border-radius: 10px;
     padding: 11px 14px;
     font-size: var(--fs-16);
-    color: var(--text-1);
+    color: var(--text);
     outline: none;
-    background: #F8FAF9;
+    background: var(--bg);
     font-family: inherit;
     transition: border-color .18s, background .18s, box-shadow .18s;
 }
 .auth-field input::placeholder {
-    color: #B8C8C4;
+    color: var(--border);
 }
 .auth-field input:focus {
-    border-color: var(--teal);
-    background: #fff;
-    box-shadow: 0 0 0 3px rgba(58,140,130,.10);
+    border-color: var(--accent);
+    background: var(--bg);
+    box-shadow: 0 0 0 3px rgba(var(--accent-rgb), .10);
 }
 
 /* ── 제출 버튼 ── */
@@ -91,8 +91,8 @@
     width: 100%;
     height: 44px;
     margin-top: 6px;
-    background: var(--teal);
-    color: #fff;
+    background: var(--accent);
+    color: var(--bg);
     border: none;
     border-radius: 10px;
     font-size: var(--fs-16);
@@ -105,19 +105,19 @@
     justify-content: center;
     gap: 6px;
     transition: background .15s, transform .1s, box-shadow .15s;
-    box-shadow: 0 2px 8px rgba(58,140,130,.25);
+    box-shadow: 0 2px 8px rgba(var(--accent-rgb), .25);
 }
 .auth-submit:hover {
-    background: var(--teal-dark);
-    box-shadow: 0 4px 14px rgba(58,140,130,.32);
+    background: var(--accent-hover);
+    box-shadow: 0 4px 14px rgba(var(--accent-rgb), .32);
     transform: translateY(-1px);
 }
 .auth-submit:active {
     transform: translateY(0);
-    box-shadow: 0 2px 6px rgba(58,140,130,.2);
+    box-shadow: 0 2px 6px rgba(var(--accent-rgb), .2);
 }
 .auth-submit:disabled {
-    background: #B8C8C4;
+    background: var(--border);
     box-shadow: none;
     cursor: not-allowed;
     transform: none;
@@ -133,13 +133,13 @@
     border: none;
     padding: 0;
     font-size: var(--fs-13);
-    color: #A8BAB7;
+    color: var(--border);
     cursor: pointer;
     font-family: inherit;
     transition: color .15s;
 }
 .auth-forgot-link button:hover {
-    color: var(--teal);
+    color: var(--accent);
 }
 
 /* ── 알림 박스 ── */
@@ -154,20 +154,20 @@
     gap: 8px;
 }
 .auth-notice-error {
-    background: #FFF2F0;
+    background: var(--danger-tint);
     color: var(--danger);
-    border: 1px solid #F5C6C0;
+    border: 1px solid var(--danger);
 }
 .auth-notice-success {
-    background: #EAF6F4;
-    color: #256E65;
-    border: 1px solid #BAE0DB;
+    background: var(--accent-tint);
+    color: var(--accent);
+    border: 1px solid var(--accent-tint);
 }
 
 /* ── forgot 안내 텍스트 ── */
 .auth-hint {
     font-size: var(--fs-14);
-    color: #7A8C89;
+    color: var(--text-muted);
     line-height: 1.75;
     margin: 0 0 20px;
 }
@@ -189,38 +189,38 @@
     font-size: var(--fs-14);
     font-weight: 600;
     text-decoration: none;
-    border: 1.5px solid #E4EDEA;
-    background: #fff;
-    color: var(--text-1);
+    border: 1.5px solid var(--accent-tint);
+    background: var(--bg);
+    color: var(--text);
     letter-spacing: -0.2px;
     transition: background .15s, border-color .15s;
     font-family: inherit;
 }
 .auth-sns-btn:hover {
-    background: #F5F8F7;
-    border-color: #C8D8D4;
-    color: var(--text-1);
+    background: var(--bg);
+    border-color: var(--border);
+    color: var(--text);
     text-decoration: none;
 }
 .auth-sns-kakao {
     background: var(--kakao);
     border-color: var(--kakao);
-    color: #191919;
+    color: var(--text);
 }
 .auth-sns-kakao:hover {
     background: var(--kakao-dark);
     border-color: var(--kakao-dark);
-    color: #191919;
+    color: var(--text);
 }
 .auth-sns-naver {
     background: var(--naver);
     border-color: var(--naver);
-    color: #fff;
+    color: var(--bg);
 }
 .auth-sns-naver:hover {
     background: var(--naver-dark);
     border-color: var(--naver-dark);
-    color: #fff;
+    color: var(--bg);
 }
 
 /* ── 구분선 ── */
@@ -229,7 +229,7 @@
     align-items: center;
     gap: 10px;
     margin: 16px 0 14px;
-    color: #C4CDC9;
+    color: var(--border);
     font-size: var(--fs-12);
     font-weight: 600;
     letter-spacing: 0.05em;
@@ -239,13 +239,13 @@
     content: '';
     flex: 1;
     height: 1px;
-    background: #E8EDEB;
+    background: var(--accent-tint);
 }
 
 /* ── reset 안내 텍스트 ── */
 .auth-reset-hint {
     font-size: var(--fs-14);
-    color: #7A8C89;
+    color: var(--text-muted);
     margin: 0 0 18px;
     line-height: 1.6;
 }

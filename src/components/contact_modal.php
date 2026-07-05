@@ -11,7 +11,7 @@
                 <div id="ctSuccess" class="ct-success" style="display:none;">
                     <strong>문의가 접수되었습니다.</strong>
                     확인 후 빠르게 답변 드리겠습니다.<br>
-                    <small style="color:var(--text-3);font-size:12px;">pyeongmok@gmail.com</small>
+                    <small style="color:var(--text-muted);font-size:12px;">pyeongmok@gmail.com</small>
                 </div>
                 <form id="contactForm" onsubmit="ctSubmit(event)">
                     <div class="ct-row-2">

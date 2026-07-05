@@ -29,7 +29,7 @@ require_admin_role('s');
     <div class="db-header">
         <h1 class="db-title"><i class="bi bi-grid-1x2 me-2"></i>스튜디오 카드 관리</h1>
     </div>
-    <p style="font-size:var(--fs-13);color:var(--text-3);margin:-8px 0 16px;">행을 드래그해 순서를 변경할 수 있습니다. 제목·설명·배경이미지를 수정할 수 있습니다.</p>
+    <p style="font-size:var(--fs-13);color:var(--text-muted);margin:-8px 0 16px;">행을 드래그해 순서를 변경할 수 있습니다. 제목·설명·배경이미지를 수정할 수 있습니다.</p>
 
     <div class="adm-table-wrap">
         <table id="scTable">
@@ -53,7 +53,7 @@ require_admin_role('s');
 <div class="adm-modal-overlay" id="scModalOverlay">
     <div class="adm-modal" style="max-width:520px;">
         <div class="adm-modal-head">
-            <h3>스튜디오 카드 수정 — <span id="scEngineLabel" style="color:var(--teal);"></span></h3>
+            <h3>스튜디오 카드 수정 — <span id="scEngineLabel" style="color:var(--accent);"></span></h3>
             <button class="adm-modal-close" onclick="closeModal()">&#x2715;</button>
         </div>
         <div class="adm-modal-body">
@@ -65,12 +65,12 @@ require_admin_role('s');
             </div>
             <div class="adm-mfield">
                 <label>설명</label>
-                <textarea id="scDesc" rows="3" style="width:100%;padding:8px 10px;border:1px solid var(--border-md);border-radius:var(--r-sm);background:var(--input-bg);font-family:inherit;font-size:var(--fs-14);color:var(--text-1);outline:none;resize:vertical;" placeholder="카드 설명 텍스트 (HTML 허용)"></textarea>
+                <textarea id="scDesc" rows="3" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg);font-family:inherit;font-size:var(--fs-14);color:var(--text);outline:none;resize:vertical;" placeholder="카드 설명 텍스트 (HTML 허용)"></textarea>
             </div>
             <div class="adm-mfield">
                 <label>배경 이미지</label>
                 <img id="scImgPreview" class="sc-img-preview" src="" alt="">
-                <p style="font-size:11px;color:var(--text-3);margin:0 0 6px;">표준 사이즈 1200 X 800 px 권장 (없으면 호버 시 이미지 없이 표시됩니다)</p>
+                <p style="font-size:11px;color:var(--text-muted);margin:0 0 6px;">표준 사이즈 1200 X 800 px 권장 (없으면 호버 시 이미지 없이 표시됩니다)</p>
                 <div style="display:flex;gap:8px;">
                     <label class="sc-upload-label" for="scImgFile">
                         <i class="bi bi-upload"></i> 이미지 업로드 (PNG/JPG, 최대 1200px)
@@ -81,7 +81,7 @@ require_admin_role('s');
                 </div>
                 <input type="file" id="scImgFile" accept="image/jpeg,image/png" style="display:none;" onchange="previewImage(this)">
                 <input id="scImageUrl" type="text" placeholder="또는 https://... URL 직접 입력" oninput="onImageUrlInput(this)"
-                    style="margin-top:6px;height:38px;padding:0 10px;border:1px solid var(--border-md);border-radius:var(--r-sm);background:var(--input-bg);font-family:inherit;font-size:var(--fs-14);color:var(--text-1);outline:none;width:100%;">
+                    style="margin-top:6px;height:38px;padding:0 10px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg);font-family:inherit;font-size:var(--fs-14);color:var(--text);outline:none;width:100%;">
             </div>
         </div>
         <div class="adm-modal-foot">

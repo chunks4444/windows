@@ -15,117 +15,117 @@ require_admin_role('s');
     <?php css_tag('/src/css/dashboard.css'); ?>
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
 <style>
-:root { --teal: #2A7B70; --teal-light: #e8f5f3; }
-body { background: #f4f6f5; }
+:root { --teal: var(--accent); --teal-light: var(--accent-tint); }
+body { background: var(--bg); }
 
 .at-wrap { max-width: 860px; margin: 0 auto; padding: 32px 20px 60px; }
-.at-breadcrumb { font-size: 12px; color: #999; margin-bottom: 20px; }
-.at-breadcrumb a { color: #666; text-decoration: none; }
-.at-breadcrumb a:hover { color: var(--teal); }
+.at-breadcrumb { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
+.at-breadcrumb a { color: var(--text-muted); text-decoration: none; }
+.at-breadcrumb a:hover { color: var(--accent); }
 .at-breadcrumb-sep { margin: 0 6px; }
 
 .at-header { display: flex; align-items: center; gap: 12px; margin-bottom: 32px; }
-.at-header-icon { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #1a6b62, #2A7B70); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; flex-shrink: 0; }
-.at-title { font-size: 22px; font-weight: 700; color: #111; margin: 0; }
-.at-subtitle { font-size: 13px; color: #888; margin: 2px 0 0; }
+.at-header-icon { width: 44px; height: 44px; border-radius: 12px; background: var(--accent); display: flex; align-items: center; justify-content: center; color: var(--bg); font-size: 20px; flex-shrink: 0; }
+.at-title { font-size: 22px; font-weight: 700; color: var(--text); margin: 0; }
+.at-subtitle { font-size: 13px; color: var(--text-muted); margin: 2px 0 0; }
 
-.at-section { background: #fff; border-radius: 14px; border: 1px solid #e8ece9; margin-bottom: 20px; overflow: hidden; }
-.at-section-head { padding: 18px 24px; border-bottom: 1px solid #f0f2f0; display: flex; align-items: center; gap: 10px; }
+.at-section { background: var(--bg); border-radius: 14px; border: 1px solid var(--accent-tint); margin-bottom: 20px; overflow: hidden; }
+.at-section-head { padding: 18px 24px; border-bottom: 1px solid var(--bg); display: flex; align-items: center; gap: 10px; }
 .at-section-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
-.at-section-title { font-size: 15px; font-weight: 700; color: #111; }
-.at-section-desc { font-size: 12px; color: #999; margin-left: auto; }
+.at-section-title { font-size: 15px; font-weight: 700; color: var(--text); }
+.at-section-desc { font-size: 12px; color: var(--text-muted); margin-left: auto; }
 .at-section-body { padding: 20px 24px; }
 
 .at-engine-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .at-engine-row { display: flex; flex-direction: column; gap: 5px; }
 .at-engine-label { display: flex; align-items: center; gap: 7px; }
-.at-engine-key { font-size: 10px; font-weight: 700; letter-spacing: .05em; background: #111; color: #fff; border-radius: 4px; padding: 2px 6px; font-family: monospace; }
-.at-engine-name { font-size: 12px; font-weight: 600; color: #333; }
-.at-engine-title-input { border: none; background: transparent; font-size: 13px; font-weight: 700; color: #555; outline: none; width: 90px; padding: 1px 4px; cursor: default; pointer-events: none; }
-.at-engine-input { border: 1.5px solid #e5e9e7; border-radius: 8px; padding: 8px 10px; font-size: 12px; color: #333; width: 100%; outline: none; transition: border-color .15s; font-family: inherit; }
-.at-engine-input:focus { border-color: var(--teal); background: var(--teal-light); }
-.at-engine-input::placeholder { color: #bbb; }
+.at-engine-key { font-size: 10px; font-weight: 700; letter-spacing: .05em; background: var(--text); color: var(--bg); border-radius: 4px; padding: 2px 6px; font-family: monospace; }
+.at-engine-name { font-size: 12px; font-weight: 600; color: var(--text); }
+.at-engine-title-input { border: none; background: transparent; font-size: 13px; font-weight: 700; color: var(--accent-hover); outline: none; width: 90px; padding: 1px 4px; cursor: default; pointer-events: none; }
+.at-engine-input { border: 1.5px solid var(--accent-tint); border-radius: 8px; padding: 8px 10px; font-size: 12px; color: var(--text); width: 100%; outline: none; transition: border-color .15s; font-family: inherit; }
+.at-engine-input:focus { border-color: var(--accent); background: var(--teal-light); }
+.at-engine-input::placeholder { color: var(--border); }
 
-.at-textarea { width: 100%; border: 1.5px solid #e5e9e7; border-radius: 8px; padding: 12px 14px; font-size: 13px; font-family: 'Noto Sans KR', monospace; color: #333; resize: vertical; outline: none; transition: border-color .15s; line-height: 1.6; }
-.at-textarea:focus { border-color: var(--teal); background: var(--teal-light); }
-.at-textarea::placeholder { color: #bbb; }
-.at-hint { font-size: 11px; color: #aaa; margin-top: 6px; }
+.at-textarea { width: 100%; border: 1.5px solid var(--accent-tint); border-radius: 8px; padding: 12px 14px; font-size: 13px; font-family: 'Noto Sans KR', monospace; color: var(--text); resize: vertical; outline: none; transition: border-color .15s; line-height: 1.6; }
+.at-textarea:focus { border-color: var(--accent); background: var(--teal-light); }
+.at-textarea::placeholder { color: var(--border); }
+.at-hint { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
 
 /* 테스트 패널 */
 .at-test-row { display: flex; gap: 10px; align-items: center; }
-.at-test-select { border: 1.5px solid #e5e9e7; border-radius: 8px; padding: 9px 12px; font-size: 13px; outline: none; background: #fff; color: #333; cursor: pointer; flex-shrink: 0; }
-.at-test-input { flex: 1; border: 1.5px solid #e5e9e7; border-radius: 8px; padding: 9px 14px; font-size: 13px; outline: none; transition: border-color .15s; font-family: inherit; }
-.at-test-input:focus { border-color: var(--teal); background: var(--teal-light); }
-.at-test-btn { background: var(--teal); color: #fff; border: none; border-radius: 8px; padding: 9px 20px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: opacity .15s; }
+.at-test-select { border: 1.5px solid var(--accent-tint); border-radius: 8px; padding: 9px 12px; font-size: 13px; outline: none; background: var(--bg); color: var(--text); cursor: pointer; flex-shrink: 0; }
+.at-test-input { flex: 1; border: 1.5px solid var(--accent-tint); border-radius: 8px; padding: 9px 14px; font-size: 13px; outline: none; transition: border-color .15s; font-family: inherit; }
+.at-test-input:focus { border-color: var(--accent); background: var(--teal-light); }
+.at-test-btn { background: var(--accent); color: var(--bg); border: none; border-radius: 8px; padding: 9px 20px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: opacity .15s; }
 .at-test-btn:hover { opacity: .85; }
 .at-test-btn:disabled { opacity: .45; cursor: default; }
 
-.at-result { margin-top: 16px; border-radius: 10px; background: #111; padding: 16px; display: none; }
-.at-result-label { font-size: 10px; color: #666; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; }
-.at-result-reply { font-size: 14px; color: #7dd9d0; font-weight: 600; margin-bottom: 10px; }
-.at-result-params { font-size: 12px; color: #aaa; font-family: monospace; white-space: pre-wrap; }
-.at-result-error { font-size: 13px; color: #ff8080; }
+.at-result { margin-top: 16px; border-radius: 10px; background: var(--text); padding: 16px; display: none; }
+.at-result-label { font-size: 10px; color: var(--text-muted); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; }
+.at-result-reply { font-size: 14px; color: var(--accent-tint); font-weight: 600; margin-bottom: 10px; }
+.at-result-params { font-size: 12px; color: var(--text-muted); font-family: monospace; white-space: pre-wrap; }
+.at-result-error { font-size: 13px; color: var(--danger); }
 
 /* 도움말 */
-.at-help { border-radius: 12px; border: 1.5px solid #d0e8e4; background: #f5faf9; margin-bottom: 16px; overflow: hidden; }
-.at-help-head { display: flex; align-items: center; gap: 8px; padding: 13px 18px; cursor: pointer; user-select: none; font-size: 13px; font-weight: 600; color: #2a6b62; }
-.at-help-icon { font-size: 15px; color: #2A7B70; }
+.at-help { border-radius: 12px; border: 1.5px solid var(--accent-tint); background: var(--bg); margin-bottom: 16px; overflow: hidden; }
+.at-help-head { display: flex; align-items: center; gap: 8px; padding: 13px 18px; cursor: pointer; user-select: none; font-size: 13px; font-weight: 600; color: var(--accent); }
+.at-help-icon { font-size: 15px; color: var(--accent); }
 .at-help-chevron { font-size: 12px; transition: transform .2s; }
 .at-help.open .at-help-chevron { transform: rotate(180deg); }
-.at-help-body { display: none; padding: 0 18px 16px; border-top: 1px solid #d0e8e4; }
+.at-help-body { display: none; padding: 0 18px 16px; border-top: 1px solid var(--accent-tint); }
 .at-help.open .at-help-body { display: block; }
 .at-help-group { margin-top: 14px; }
-.at-help-label { font-size: 11px; font-weight: 700; color: #999; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px; }
+.at-help-label { font-size: 11px; font-weight: 700; color: var(--text-muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px; }
 .at-help-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
 .at-help-table tr td { padding: 5px 10px 5px 0; vertical-align: top; }
-.at-help-table tr td:first-child { color: #555; white-space: nowrap; padding-right: 16px; width: 44%; }
-.at-help-table tr td:last-child { color: #333; }
-.at-help-table tr:not(:last-child) td { border-bottom: 1px solid #e5edeb; }
+.at-help-table tr td:first-child { color: var(--accent-hover); white-space: nowrap; padding-right: 16px; width: 44%; }
+.at-help-table tr td:last-child { color: var(--text); }
+.at-help-table tr:not(:last-child) td { border-bottom: 1px solid var(--accent-tint); }
 .at-help-list { margin: 0; padding-left: 18px; }
-.at-help-list li { font-size: 12.5px; color: #555; line-height: 1.7; }
-.at-help-list code { background: #e8f5f3; color: #1a6b62; border-radius: 4px; padding: 1px 5px; font-size: 11.5px; }
-.at-help-table code { background: #e8f5f3; color: #1a6b62; border-radius: 4px; padding: 1px 5px; font-size: 11px; }
+.at-help-list li { font-size: 12.5px; color: var(--accent-hover); line-height: 1.7; }
+.at-help-list code { background: var(--accent-tint); color: var(--accent); border-radius: 4px; padding: 1px 5px; font-size: 11.5px; }
+.at-help-table code { background: var(--accent-tint); color: var(--accent); border-radius: 4px; padding: 1px 5px; font-size: 11px; }
 /* 메인 설정 탭 */
-.at-mtabs { display: flex; border-bottom: 1px solid #e8ece9; padding: 0 20px; }
-.at-mtab { border: none; background: none; font-size: 13px; font-weight: 600; color: #999; padding: 13px 14px; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; display: flex; align-items: center; gap: 6px; transition: color .12s, border-color .12s; }
-.at-mtab:hover { color: #555; }
-.at-mtab.active { color: var(--teal); border-bottom-color: var(--teal); }
+.at-mtabs { display: flex; border-bottom: 1px solid var(--accent-tint); padding: 0 20px; }
+.at-mtab { border: none; background: none; font-size: 13px; font-weight: 600; color: var(--text-muted); padding: 13px 14px; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; display: flex; align-items: center; gap: 6px; transition: color .12s, border-color .12s; }
+.at-mtab:hover { color: var(--accent-hover); }
+.at-mtab.active { color: var(--accent); border-bottom-color: var(--accent); }
 .at-mtab-pane { display: none; }
 .at-mtab-pane.active { display: block; }
 
-.at-htabs { display: flex; gap: 4px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #e0ece9; }
-.at-htab { border: 1.5px solid #d0e8e4; background: #fff; color: #666; font-size: 12px; font-weight: 600; border-radius: 7px; padding: 5px 13px; cursor: pointer; transition: all .12s; }
-.at-htab:hover { border-color: var(--teal); color: var(--teal); }
-.at-htab.active { background: var(--teal); border-color: var(--teal); color: #fff; }
+.at-htabs { display: flex; gap: 4px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--accent-tint); }
+.at-htab { border: 1.5px solid var(--accent-tint); background: var(--bg); color: var(--text-muted); font-size: 12px; font-weight: 600; border-radius: 7px; padding: 5px 13px; cursor: pointer; transition: all .12s; }
+.at-htab:hover { border-color: var(--accent); color: var(--accent); }
+.at-htab.active { background: var(--accent); border-color: var(--accent); color: var(--bg); }
 .at-htab-pane { display: none; }
 .at-htab-pane.active { display: block; }
 .at-help-links { display: flex; flex-direction: column; gap: 6px; }
-.at-help-link { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; color: #2A7B70; text-decoration: none; padding: 6px 10px; border-radius: 7px; border: 1px solid #c8e4df; background: #fff; transition: background .12s, border-color .12s; width: fit-content; }
-.at-help-link:hover { background: #e8f5f3; border-color: #2A7B70; color: #1a5c54; }
+.at-help-link { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; color: var(--accent); text-decoration: none; padding: 6px 10px; border-radius: 7px; border: 1px solid var(--accent-tint); background: var(--bg); transition: background .12s, border-color .12s; width: fit-content; }
+.at-help-link:hover { background: var(--accent-tint); border-color: var(--accent); color: var(--accent); }
 
 /* 저장 버튼 */
 .at-save-row { display: flex; align-items: center; gap: 14px; padding: 4px 0; }
-.at-save-btn { background: #111; color: #fff; border: none; border-radius: 10px; padding: 12px 36px; font-size: 14px; font-weight: 700; cursor: pointer; transition: opacity .15s; }
+.at-save-btn { background: var(--text); color: var(--bg); border: none; border-radius: 10px; padding: 12px 36px; font-size: 14px; font-weight: 700; cursor: pointer; transition: opacity .15s; }
 .at-save-btn:hover { opacity: .8; }
-.at-save-msg { font-size: 13px; color: var(--teal); font-weight: 600; display: none; }
-.at-stats-link { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: #2A7B70; text-decoration: none; border: 1.5px solid #c8e4df; border-radius: 8px; padding: 6px 14px; background: #fff; transition: background .12s; }
-.at-stats-link:hover { background: #e8f5f3; }
+.at-save-msg { font-size: 13px; color: var(--accent); font-weight: 600; display: none; }
+.at-stats-link { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--accent); text-decoration: none; border: 1.5px solid var(--accent-tint); border-radius: 8px; padding: 6px 14px; background: var(--bg); transition: background .12s; }
+.at-stats-link:hover { background: var(--accent-tint); }
 
 .at-instr-row { display: flex; align-items: center; gap: 8px; }
-.at-instr-num { font-size: 11px; font-weight: 700; color: #bbb; width: 18px; flex-shrink: 0; text-align: right; }
-.at-instr-input { flex: 1; border: 1.5px solid #e5e9e7; border-radius: 8px; padding: 8px 12px; font-size: 13px; font-family: inherit; color: #333; outline: none; transition: border-color .15s; }
-.at-instr-input:focus { border-color: var(--teal); background: var(--teal-light); }
-.at-instr-input::placeholder { color: #ccc; }
-.at-instr-del { border: none; background: none; color: #ccc; font-size: 16px; cursor: pointer; padding: 4px; border-radius: 6px; flex-shrink: 0; line-height: 1; transition: color .12s, background .12s; }
-.at-instr-del:hover { color: #e53; background: #fff0ee; }
-.at-add-btn { border: 1.5px dashed #ccc; background: none; border-radius: 8px; padding: 8px 16px; font-size: 13px; color: #999; cursor: pointer; width: 100%; transition: border-color .15s, color .15s; }
-.at-add-btn:hover { border-color: var(--teal); color: var(--teal); }
+.at-instr-num { font-size: 11px; font-weight: 700; color: var(--border); width: 18px; flex-shrink: 0; text-align: right; }
+.at-instr-input { flex: 1; border: 1.5px solid var(--accent-tint); border-radius: 8px; padding: 8px 12px; font-size: 13px; font-family: inherit; color: var(--text); outline: none; transition: border-color .15s; }
+.at-instr-input:focus { border-color: var(--accent); background: var(--teal-light); }
+.at-instr-input::placeholder { color: var(--border); }
+.at-instr-del { border: none; background: none; color: var(--border); font-size: 16px; cursor: pointer; padding: 4px; border-radius: 6px; flex-shrink: 0; line-height: 1; transition: color .12s, background .12s; }
+.at-instr-del:hover { color: var(--danger); background: var(--danger-tint); }
+.at-add-btn { border: 1.5px dashed var(--border); background: none; border-radius: 8px; padding: 8px 16px; font-size: 13px; color: var(--text-muted); cursor: pointer; width: 100%; transition: border-color .15s, color .15s; }
+.at-add-btn:hover { border-color: var(--accent); color: var(--accent); }
 </style>
 </head>
 <body>
 <?php include __DIR__ . '/../components/nav.php'; ?>
 
-<div id="authWall" style="display:none;padding:60px 24px;text-align:center;color:#999;">슈퍼 권한이 필요합니다.</div>
+<div id="authWall" style="display:none;padding:60px 24px;text-align:center;color:var(--text-muted);">슈퍼 권한이 필요합니다.</div>
 
 <div class="at-wrap" id="mainPage" style="display:none;">
     <div class="at-breadcrumb"><a href="/src/admin/">어드민</a><span class="at-breadcrumb-sep">/</span>AI 튜닝</div>
@@ -244,8 +244,8 @@ body { background: #f4f6f5; }
 
         <div class="at-mtab-pane at-section-body" data-mpane="param">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-                <span id="paramDescStatus" style="font-size:12px;color:#999;"></span>
-                <button id="btnParamReset" onclick="resetParamDesc()" style="font-size:11px;color:#888;border:1.5px solid #ddd;background:#fff;border-radius:7px;padding:4px 12px;cursor:pointer;display:none;">기본값으로 초기화</button>
+                <span id="paramDescStatus" style="font-size:12px;color:var(--text-muted);"></span>
+                <button id="btnParamReset" onclick="resetParamDesc()" style="font-size:11px;color:var(--text-muted);border:1.5px solid var(--border);background:var(--bg);border-radius:7px;padding:4px 12px;cursor:pointer;display:none;">기본값으로 초기화</button>
             </div>
             <textarea id="aiParamDesc" class="at-textarea" rows="16" oninput="onParamDescInput()"></textarea>
             <div class="at-hint" style="margin-top:6px;">AI 시스템 프롬프트에 포함되는 파라미터 목록입니다. 새 파라미터 추가 시 수정하세요.</div>
@@ -255,7 +255,7 @@ body { background: #f4f6f5; }
     <!-- 테스트 -->
     <div class="at-section">
         <div class="at-section-head">
-            <div class="at-section-icon" style="background:#fff8e6;color:#b07d00;"><i class="bi bi-send-check"></i></div>
+            <div class="at-section-icon" style="background:var(--warning-tint);color:var(--warning);"><i class="bi bi-send-check"></i></div>
             <div class="at-section-title">프롬프트 테스트</div>
             <div class="at-section-desc">저장 전 바로 테스트</div>
         </div>
@@ -441,7 +441,7 @@ async function runTest() {
 function updateParamDescUI() {
     const isCustom = document.getElementById('aiParamDesc').value.trim() !== (window._paramDescDefault || '').trim();
     document.getElementById('paramDescStatus').textContent = isCustom ? '✎ 커스텀' : '기본값 사용 중';
-    document.getElementById('paramDescStatus').style.color  = isCustom ? '#2A7B70' : '#999';
+    document.getElementById('paramDescStatus').style.color  = isCustom ? 'var(--accent)' : 'var(--text-muted)';
     document.getElementById('btnParamReset').style.display  = isCustom ? '' : 'none';
 }
 function onParamDescInput() { updateParamDescUI(); }

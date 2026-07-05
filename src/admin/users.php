@@ -47,7 +47,7 @@ require_admin_role('s');
     <div class="adm-table-wrap">
         <div class="adm-toolbar">
             <div class="adm-search">
-                <i class="bi bi-search" style="color:var(--text-3);font-size:12px;flex-shrink:0;"></i>
+                <i class="bi bi-search" style="color:var(--text-muted);font-size:12px;flex-shrink:0;"></i>
                 <input type="text" id="admSearch" placeholder="이메일, 이름 또는 회사명 검색" oninput="onSearchInput()">
             </div>
             <span class="adm-total" id="admTotal"></span>
@@ -189,11 +189,11 @@ require_admin_role('s');
             <table style="width:100%;border-collapse:collapse;font-size:12px;">
                 <thead style="position:sticky;top:0;background:var(--card-bg);z-index:1;">
                     <tr>
-                        <th style="padding:10px 14px;text-align:left;border-bottom:1px solid var(--border-md);color:var(--text-3);font-weight:500;">일시</th>
-                        <th style="padding:10px 14px;text-align:left;border-bottom:1px solid var(--border-md);color:var(--text-3);font-weight:500;">엔진</th>
-                        <th style="padding:10px 14px;text-align:left;border-bottom:1px solid var(--border-md);color:var(--text-3);font-weight:500;">형식</th>
-                        <th style="padding:10px 14px;text-align:left;border-bottom:1px solid var(--border-md);color:var(--text-3);font-weight:500;">도면명</th>
-                        <th style="padding:10px 14px;text-align:left;border-bottom:1px solid var(--border-md);color:var(--text-3);font-weight:500;">버전</th>
+                        <th style="padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);color:var(--text-muted);font-weight:500;">일시</th>
+                        <th style="padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);color:var(--text-muted);font-weight:500;">엔진</th>
+                        <th style="padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);color:var(--text-muted);font-weight:500;">형식</th>
+                        <th style="padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);color:var(--text-muted);font-weight:500;">도면명</th>
+                        <th style="padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);color:var(--text-muted);font-weight:500;">버전</th>
                     </tr>
                 </thead>
                 <tbody id="exportModalTbody"></tbody>

@@ -1,0 +1,1588 @@
+#fff  (빈도 227, UI -> --bg)
+    src/guide/guide.css:8
+    src/guide/guide.css:18
+    src/guide/guide.css:24
+    src/guide/guide.css:115
+    src/guide/guide.css:134
+    src/guide/guide.css:137
+    src/guide/guide.css:178
+    src/guide/guide.css:197
+    src/guide/guide.css:224
+    src/guide/guide.css:263
+    src/guide/guide.css:310
+    src/guide/guide.css:373
+    src/guide/guide.css:450
+    src/guide/guide.css:470
+    src/guide/faq.php:61
+    src/css/dashboard.css:74
+    src/css/dashboard.css:129
+    src/css/dashboard.css:133
+    src/css/dashboard.css:149
+    src/css/dashboard.css:175
+    src/css/dashboard.css:329
+    src/css/dashboard.css:345
+    src/css/dashboard.css:367
+    src/css/dashboard.css:401
+    src/css/dashboard.css:429
+    src/css/dashboard.css:516
+    src/css/dashboard.css:537
+    src/css/dashboard.css:566
+    src/css/dashboard.css:586
+    src/css/dashboard.css:597
+    src/css/dashboard.css:652
+    src/css/collection.css:71
+    src/css/collection.css:97
+    src/css/collection.css:110
+    src/css/collection.css:115
+    src/css/collection.css:119
+    src/css/collection.css:134
+    src/css/collection.css:177
+    src/css/collection.css:264
+    src/css/collection.css:266
+    src/css/collection.css:305
+    src/css/collection.css:313
+    src/css/collection.css:318
+    src/css/collection.css:370
+    src/css/collection.css:477
+    src/css/collection.css:483
+    src/css/collection.css:502
+    src/css/collection.css:524
+    src/css/collection.css:535
+    src/css/engine-common.css:24
+    src/css/engine-common.css:35
+    src/css/engine-common.css:50
+    src/css/engine-common.css:54
+    src/css/engine-common.css:55
+    src/css/engine-common.css:91
+    src/css/engine-common.css:99
+    src/css/engine-common.css:157
+    src/css/engine-common.css:237
+    src/css/engine-common.css:239
+    src/css/engine-common.css:246
+    src/css/engine-common.css:289
+    src/css/engine-common.css:293
+    src/css/engine-common.css:317
+    src/css/engine-common.css:318
+    src/css/engine-common.css:319
+    src/css/engine-common.css:321
+    src/css/engine-common.css:322
+    src/css/engine-common.css:333
+    src/css/engine-common.css:420
+    src/css/engine-common.css:451
+    src/css/engine-common.css:452
+    src/css/engine-common.css:453
+    src/css/engine-common.css:491
+    src/css/engine-common.css:516
+    src/css/engine-common.css:535
+    src/css/engine-common.css:553
+    src/css/engine-common.css:574
+    src/css/engine-common.css:593
+    src/css/engine-common.css:709
+    src/css/engine-common.css:738
+    src/css/engine-common.css:792
+    src/css/engine-common.css:860
+    src/css/engine-common.css:861
+    src/css/engine-common.css:863
+    src/css/engine-common.css:868
+    src/css/engine-common.css:924
+    src/css/engine-common.css:946
+    src/css/engine-common.css:955
+    src/css/engine-common.css:1068
+    src/css/engine-common.css:1180
+    src/css/engine-common.css:1327
+    src/css/engine-common.css:1366
+    src/css/engine-common.css:1447
+    src/css/engine-common.css:1608
+    src/css/engine-common.css:1621
+    src/css/engine-common.css:1628
+    src/css/engine-common.css:1689
+    src/css/engine-common.css:1722
+    src/css/engine-common.css:1786
+    src/css/engine-common.css:1796
+    src/css/auth_modal.css:85
+    src/css/auth_modal.css:95
+    src/css/auth_modal.css:193
+    src/css/auth_modal.css:218
+    src/css/auth_modal.css:223
+    src/css/nav.css:15
+    src/css/nav.css:16
+    src/css/nav.css:17
+    src/css/nav.css:55
+    src/css/nav.css:143
+    src/css/common.css:110
+    src/css/company.css:10
+    src/css/company.css:47
+    src/css/company.css:56
+    src/css/company.css:59
+    src/css/company.css:64
+    src/css/company.css:294
+    src/css/company.css:327
+    src/css/work-detail.css:71
+    src/css/work-detail.css:81
+    src/css/admin/oauth.css:2
+    src/css/admin/oauth.css:25
+    src/css/admin/oauth.css:27
+    src/css/admin/oauth.css:34
+    src/guide/render.php:223
+    src/css/blog-detail.css:74
+    src/css/blog-detail.css:88
+    src/css/blog-detail.css:158
+    src/css/blog-detail.css:166
+    src/admin/render_settings.php:30
+    src/admin/render_settings.php:37
+    src/admin/render_settings.php:58
+    src/admin/render_settings.php:67
+    src/admin/render_settings.php:86
+    src/admin/render_settings.php:95
+    src/admin/render_settings.php:114
+    src/css/index.css:34
+    src/css/index.css:103
+    src/css/index.css:221
+    src/css/index.css:264
+    src/css/index.css:548
+    src/css/index.css:614
+    src/css/index.css:705
+    src/css/index.css:789
+    src/css/index.css:795
+    src/css/index.css:856
+    src/css/index.css:864
+    src/css/users.css:2
+    src/css/users.css:72
+    src/css/users.css:82
+    src/css/users.css:97
+    src/css/users.css:104
+    src/css/users.css:115
+    src/css/users.css:146
+    src/css/users.css:154
+    src/css/users.css:163
+    src/css/users.css:175
+    src/css/users.css:184
+    src/css/profile.css:2
+    src/css/profile.css:92
+    src/css/profile.css:143
+    src/css/profile.css:170
+    src/css/admin/cost_table.css:8
+    src/admin/blog.php:41
+    src/admin/blog.php:66
+    src/admin/blog.php:71
+    src/admin/colors.php:53
+    src/admin/collection_filters.php:26
+    src/admin/collection_filters.php:33
+    src/admin/svg_motifs.php:25
+    src/admin/svg_motifs.php:29
+    src/admin/notice.php:36
+    src/admin/notice.php:125
+    src/admin/pattern_categories.php:30
+    src/admin/pattern_categories.php:37
+    src/admin/pattern_categories.php:41
+    src/admin/pattern_categories.php:49
+    src/css/work.css:58
+    src/css/work.css:63
+    src/css/work.css:125
+    src/css/work.css:162
+    src/admin/ai_tuning.php:28
+    src/admin/ai_tuning.php:32
+    src/admin/ai_tuning.php:42
+    src/admin/ai_tuning.php:56
+    src/admin/ai_tuning.php:59
+    src/admin/ai_tuning.php:97
+    src/admin/ai_tuning.php:99
+    src/admin/ai_tuning.php:103
+    src/admin/ai_tuning.php:108
+    src/admin/ai_tuning.php:111
+    src/admin/ai_tuning.php:248
+    src/css/stats.css:5
+    src/css/stats.css:13
+    src/css/stats.css:27
+    src/css/stats.css:34
+    src/css/blog.css:94
+    src/admin/ai_stats.php:24
+    src/admin/ai_stats.php:29
+    src/admin/ai_stats.php:46
+    src/admin/ai_stats.php:52
+    src/admin/index.php:25
+    src/admin/faq.php:26
+    src/admin/mail_settings.php:34
+    src/admin/mail_settings.php:52
+    src/components/topbar_notice.php:25
+    src/mypage/dashboard.php:43
+    src/mypage/dashboard.php:47
+    src/mypage/dashboard.php:60
+    src/engine/square/square.php:512
+    src/engine/square/square.php:513
+    src/engine/square/square.php:514
+    src/engine/triangle/triangle.php:480
+    src/engine/triangle/triangle.php:481
+    src/engine/triangle/triangle.php:482
+    src/engine/diamond/diamond.php:485
+    src/engine/diamond/diamond.php:486
+    src/engine/diamond/diamond.php:487
+    src/engine/classic/classic.php:531
+    src/engine/classic/classic.php:532
+    src/engine/classic/classic.php:533
+    src/engine/cross/cross.php:481
+    src/engine/cross/cross.php:482
+    src/engine/cross/cross.php:483
+    src/engine/hexagon/hexagon.php:485
+    src/engine/hexagon/hexagon.php:486
+    src/engine/hexagon/hexagon.php:487
+#111  (빈도 38, UI -> --text)
+    src/css/engine-common.css:157
+    src/css/engine-common.css:290
+    src/css/engine-common.css:292
+    src/css/engine-common.css:354
+    src/css/engine-common.css:930
+    src/css/engine-common.css:1139
+    src/css/engine-common.css:1267
+    src/css/engine-common.css:1327
+    src/css/engine-common.css:1346
+    src/css/engine-common.css:1526
+    src/css/nav.css:15
+    src/css/nav.css:195
+    src/css/nav.css:217
+    src/css/common.css:132
+    src/css/company.css:3
+    src/css/company.css:323
+    src/css/index.css:643
+    src/css/index.css:701
+    src/css/index.css:755
+    src/css/index.css:788
+    src/css/index.css:790
+    src/css/index.css:806
+    src/css/index.css:855
+    src/admin/notice.php:36
+    src/admin/notice.php:65
+    src/admin/notice.php:107
+    src/admin/notice.php:124
+    src/admin/ai_tuning.php:29
+    src/admin/ai_tuning.php:35
+    src/admin/ai_tuning.php:42
+    src/admin/ai_tuning.php:63
+    src/admin/ai_tuning.php:108
+    src/admin/ai_stats.php:25
+    src/admin/ai_stats.php:41
+    src/admin/ai_stats.php:52
+    src/components/topbar_notice.php:18
+    src/components/topbar_notice.php:19
+    src/components/nav.php:192
+#1A1F1E  (빈도 32, UI -> --text)
+    src/guide/guide.css:12
+    src/guide/guide.css:245
+    src/css/engine-common.css:936
+    src/css/work-detail.css:7
+    src/css/work-detail.css:75
+    src/css/work-detail.css:96
+    src/css/work-detail.css:180
+    src/css/index.css:253
+    src/css/index.css:495
+    src/css/index.css:524
+    src/css/index.css:574
+    src/css/work.css:26
+    src/css/work.css:77
+    src/components/mailform/reset.php:20
+    src/components/mailform/reset.php:24
+    src/components/mailform/welcome.php:20
+    src/components/mailform/welcome.php:23
+    src/components/mailform/order.php:28
+    src/components/mailform/order.php:32
+    src/components/mailform/order.php:36
+    src/components/mailform/order.php:41
+    src/components/mailform/order.php:47
+    src/components/mailform/order.php:54
+    src/components/mailform/order.php:60
+    src/components/mailform/order.php:64
+    src/components/mailform/order.php:70
+    src/components/mailform/order.php:75
+    src/components/mailform/contact.php:20
+    src/components/mailform/contact.php:24
+    src/components/mailform/contact.php:28
+    src/components/mailform/contact.php:34
+    src/components/mailform/contact.php:38
+#97A8A6  (빈도 31, UI -> --text-muted)
+    src/css/engine-common.css:941
+    src/css/common.css:19
+    src/css/work-detail.css:92
+    src/css/work-detail.css:170
+    src/css/work-detail.css:185
+    src/css/work-detail.css:200
+    src/css/admin/oauth.css:29
+    src/css/index.css:584
+    src/css/work.css:80
+    src/css/work.css:168
+    src/components/mailform/reset.php:32
+    src/components/mailform/reset.php:44
+    src/components/mailform/welcome.php:41
+    src/components/mailform/order.php:20
+    src/components/mailform/order.php:27
+    src/components/mailform/order.php:31
+    src/components/mailform/order.php:35
+    src/components/mailform/order.php:40
+    src/components/mailform/order.php:46
+    src/components/mailform/order.php:53
+    src/components/mailform/order.php:55
+    src/components/mailform/order.php:59
+    src/components/mailform/order.php:63
+    src/components/mailform/order.php:69
+    src/components/mailform/order.php:74
+    src/components/mailform/order.php:88
+    src/components/mailform/contact.php:23
+    src/components/mailform/contact.php:27
+    src/components/mailform/contact.php:33
+    src/components/mailform/contact.php:37
+    src/components/mailform/contact.php:50
+#3A8C82  (빈도 27, UI -> --accent)
+    index.php:309
+    src/guide/index.php:36
+    src/guide/_head.php:9
+    src/css/dashboard.css:124
+    src/css/engine-common.css:34
+    src/css/common.css:6
+    src/admin/render_settings.php:114
+    src/css/index.css:19
+    src/css/index.css:33
+    src/css/index.css:512
+    src/css/index.css:531
+    src/admin/mail_settings.php:34
+    src/admin/mail_settings.php:52
+    src/components/mailform/reset.php:11
+    src/components/mailform/reset.php:28
+    src/components/mailform/reset.php:46
+    src/components/mailform/welcome.php:11
+    src/components/mailform/welcome.php:28
+    src/components/mailform/welcome.php:43
+    src/mypage/dashboard.php:47
+    src/mypage/dashboard.php:75
+    src/mypage/dashboard.php:83
+    src/components/mailform/order.php:11
+    src/components/mailform/order.php:21
+    src/components/mailform/order.php:48
+    src/components/mailform/contact.php:11
+    src/components/mailform/contact.php:29
+#f0f2f1  (빈도 24, UI -> --bg)
+    src/components/mailform/order.php:27
+    src/components/mailform/order.php:28
+    src/components/mailform/order.php:31
+    src/components/mailform/order.php:32
+    src/components/mailform/order.php:35
+    src/components/mailform/order.php:36
+    src/components/mailform/order.php:40
+    src/components/mailform/order.php:41
+    src/components/mailform/order.php:46
+    src/components/mailform/order.php:47
+    src/components/mailform/order.php:53
+    src/components/mailform/order.php:54
+    src/components/mailform/order.php:59
+    src/components/mailform/order.php:60
+    src/components/mailform/order.php:63
+    src/components/mailform/order.php:64
+    src/components/mailform/order.php:69
+    src/components/mailform/order.php:70
+    src/components/mailform/contact.php:23
+    src/components/mailform/contact.php:24
+    src/components/mailform/contact.php:27
+    src/components/mailform/contact.php:28
+    src/components/mailform/contact.php:33
+    src/components/mailform/contact.php:34
+#999  (빈도 23, UI -> --text-muted)
+    src/css/dashboard.css:625
+    src/css/dashboard.css:653
+    src/css/company.css:5
+    src/css/company.css:333
+    src/css/index.css:711
+    src/css/index.css:812
+    src/css/admin/cost_table.css:21
+    src/css/admin/cost_table.css:32
+    src/admin/ai_tuning.php:22
+    src/admin/ai_tuning.php:36
+    src/admin/ai_tuning.php:78
+    src/admin/ai_tuning.php:90
+    src/admin/ai_tuning.php:121
+    src/admin/ai_tuning.php:128
+    src/admin/ai_tuning.php:247
+    src/admin/ai_tuning.php:444
+    src/admin/ai_stats.php:20
+    src/admin/ai_stats.php:39
+    src/admin/ai_stats.php:42
+    src/admin/ai_stats.php:49
+    src/admin/ai_stats.php:65
+    src/mypage/dashboard.php:49
+    src/mypage/dashboard.php:63
+#E0E5E4  (빈도 19, UI -> --accent-tint)
+    src/guide/guide.css:231
+    src/guide/guide.css:303
+    src/guide/guide.css:304
+    src/css/common.css:22
+    src/css/work-detail.css:107
+    src/css/work-detail.css:143
+    src/css/work-detail.css:176
+    src/css/blog-detail.css:175
+    src/css/work.css:12
+    src/css/work.css:42
+    src/css/blog.css:11
+    src/css/blog.css:71
+    src/css/blog.css:92
+    src/css/blog.css:102
+    src/css/blog.css:138
+    src/css/blog.css:152
+    src/css/blog.css:169
+    src/css/blog.css:174
+    src/css/blog.css:197
+#e03030  (빈도 18, CONTENT)
+    src/engine/square/square.php:492
+    src/engine/square/square.php:494
+    src/engine/square/square.php:511
+    src/engine/triangle/triangle.php:461
+    src/engine/triangle/triangle.php:463
+    src/engine/triangle/triangle.php:479
+    src/engine/diamond/diamond.php:466
+    src/engine/diamond/diamond.php:468
+    src/engine/diamond/diamond.php:484
+    src/engine/classic/classic.php:511
+    src/engine/classic/classic.php:513
+    src/engine/classic/classic.php:530
+    src/engine/cross/cross.php:462
+    src/engine/cross/cross.php:464
+    src/engine/cross/cross.php:480
+    src/engine/hexagon/hexagon.php:466
+    src/engine/hexagon/hexagon.php:468
+    src/engine/hexagon/hexagon.php:484
+#2A7B70  (빈도 17, UI -> --accent)
+    src/css/nav.css:17
+    src/css/nav.css:224
+    src/css/nav.css:239
+    src/admin/notice.php:70
+    src/admin/notice.php:107
+    src/admin/ai_tuning.php:18
+    src/admin/ai_tuning.php:28
+    src/admin/ai_tuning.php:72
+    src/admin/ai_tuning.php:103
+    src/admin/ai_tuning.php:104
+    src/admin/ai_tuning.php:111
+    src/admin/ai_tuning.php:444
+    src/admin/ai_stats.php:22
+    src/admin/ai_stats.php:24
+    src/admin/ai_stats.php:31
+    src/admin/ai_stats.php:38
+    src/components/topbar_notice.php:18
+rgba(255,255,255,0.15)  (빈도 16, UI -> --bg)
+    src/css/engine-common.css:9
+    src/css/engine-common.css:150
+    src/css/engine-common.css:215
+    src/css/engine-common.css:223
+    src/css/engine-common.css:238
+    src/css/engine-common.css:303
+    src/css/engine-common.css:454
+    src/css/engine-common.css:477
+    src/css/engine-common.css:572
+    src/css/engine-common.css:603
+    src/css/engine-common.css:626
+    src/css/engine-common.css:859
+    src/css/engine-common.css:1432
+    src/css/engine-common.css:1619
+    src/css/engine-common.css:1624
+    src/css/engine-common.css:1628
+#555  (빈도 15, UI -> --accent-hover)
+    src/css/dashboard.css:656
+    src/css/nav.css:165
+    src/css/nav.css:199
+    src/css/company.css:4
+    src/css/index.css:49
+    src/css/index.css:153
+    src/css/index.css:343
+    src/css/index.css:762
+    src/admin/ai_tuning.php:44
+    src/admin/ai_tuning.php:81
+    src/admin/ai_tuning.php:85
+    src/admin/ai_tuning.php:91
+    src/admin/ai_stats.php:36
+    src/admin/ai_stats.php:53
+    src/components/auth_modal.php:116
+#ccc  (빈도 15, UI -> --border)
+    src/css/engine-common.css:1716
+    src/css/engine-common.css:1717
+    src/css/engine-common.css:1718
+    src/css/engine-common.css:1719
+    src/admin/svg_motifs.php:24
+    src/admin/svg_motifs.php:24
+    src/admin/svg_motifs.php:24
+    src/admin/svg_motifs.php:24
+    src/admin/svg_motifs.php:28
+    src/admin/svg_motifs.php:28
+    src/admin/svg_motifs.php:28
+    src/admin/svg_motifs.php:28
+    src/admin/ai_tuning.php:118
+    src/admin/ai_tuning.php:119
+    src/admin/ai_tuning.php:121
+#ffffff  (빈도 15, UI -> --bg)
+    src/css/index.css:399
+    src/css/index.css:438
+    src/admin/works.php:133
+    src/admin/works.php:263
+    src/components/mailform/reset.php:7
+    src/components/mailform/reset.php:12
+    src/components/mailform/reset.php:28
+    src/components/mailform/welcome.php:7
+    src/components/mailform/welcome.php:12
+    src/components/mailform/welcome.php:28
+    src/components/mailform/order.php:7
+    src/components/mailform/order.php:12
+    src/components/mailform/contact.php:7
+    src/components/mailform/contact.php:12
+    src/api/admin/works.php:67
+#f9f9f9  (빈도 14, UI -> --bg)
+    src/css/collection.css:2
+    src/css/common.css:11
+    src/css/company.css:240
+    src/css/work-detail.css:4
+    src/css/work-detail.css:29
+    src/css/work-detail.css:142
+    src/css/blog-detail.css:3
+    src/css/index.css:248
+    src/css/index.css:560
+    src/css/work.css:4
+    src/css/work.css:11
+    src/css/work.css:41
+    src/css/blog.css:3
+    src/css/blog.css:10
+#e03  (빈도 14, UNSURE -> --text-muted)
+    src/css/collection.css:106
+    src/css/collection.css:266
+    src/engine/square/square.php:514
+    src/engine/square/square.php:514
+    src/engine/triangle/triangle.php:482
+    src/engine/triangle/triangle.php:482
+    src/engine/diamond/diamond.php:487
+    src/engine/diamond/diamond.php:487
+    src/engine/classic/classic.php:533
+    src/engine/classic/classic.php:533
+    src/engine/cross/cross.php:483
+    src/engine/cross/cross.php:483
+    src/engine/hexagon/hexagon.php:487
+    src/engine/hexagon/hexagon.php:487
+#c8102e  (빈도 13, CONTENT)
+    src/guide/studio-classic.php:95
+    src/engine/square/square.php:642
+    src/engine/square/square.php:643
+    src/engine/triangle/triangle.php:611
+    src/engine/triangle/triangle.php:612
+    src/engine/diamond/diamond.php:616
+    src/engine/diamond/diamond.php:617
+    src/engine/classic/classic.php:661
+    src/engine/classic/classic.php:662
+    src/engine/cross/cross.php:612
+    src/engine/cross/cross.php:613
+    src/engine/hexagon/hexagon.php:616
+    src/engine/hexagon/hexagon.php:617
+#000  (빈도 13, UI -> --text)
+    src/css/engine-common.css:317
+    src/css/engine-common.css:491
+    src/css/engine-common.css:514
+    src/css/engine-common.css:545
+    src/css/engine-common.css:587
+    src/css/engine-common.css:593
+    src/css/engine-common.css:860
+    src/css/nav.css:94
+    src/css/nav.css:172
+    src/css/nav.css:223
+    src/css/nav.css:238
+    src/css/index.css:308
+    src/css/index.css:356
+#333  (빈도 13, UI -> --text)
+    src/css/nav.css:78
+    src/css/nav.css:233
+    src/css/common.css:122
+    src/css/index.css:316
+    src/admin/ai_tuning.php:43
+    src/admin/ai_tuning.php:45
+    src/admin/ai_tuning.php:49
+    src/admin/ai_tuning.php:56
+    src/admin/ai_tuning.php:82
+    src/admin/ai_tuning.php:116
+    src/admin/ai_stats.php:30
+    src/admin/ai_stats.php:47
+    src/admin/ai_stats.php:50
+rgba(255,255,255,0.97)  (빈도 13, UI -> --bg)
+    src/css/nav.css:123
+    src/engine/square/square.php:487
+    src/engine/square/square.php:506
+    src/engine/triangle/triangle.php:456
+    src/engine/triangle/triangle.php:474
+    src/engine/diamond/diamond.php:461
+    src/engine/diamond/diamond.php:479
+    src/engine/classic/classic.php:506
+    src/engine/classic/classic.php:525
+    src/engine/cross/cross.php:457
+    src/engine/cross/cross.php:475
+    src/engine/hexagon/hexagon.php:461
+    src/engine/hexagon/hexagon.php:479
+#aaa  (빈도 12, UI -> --text-muted)
+    src/css/dashboard.css:657
+    src/css/nav.css:202
+    src/css/nav.css:260
+    src/css/index.css:30
+    src/admin/notice.php:51
+    src/admin/notice.php:55
+    src/admin/notice.php:57
+    src/admin/ai_tuning.php:52
+    src/admin/ai_tuning.php:66
+    src/components/auth_modal.php:354
+    src/components/nav.php:193
+    src/components/nav.php:200
+rgba(255,255,255,0.55)  (빈도 12, UI -> --bg)
+    src/css/engine-common.css:1161
+    src/css/engine-common.css:1201
+    src/css/engine-common.css:1396
+    src/css/engine-common.css:1398
+    src/css/engine-common.css:1399
+    src/css/engine-common.css:1400
+    src/css/engine-common.css:1401
+    src/css/engine-common.css:1472
+    src/css/engine-common.css:1481
+    src/css/engine-common.css:1497
+    src/css/engine-common.css:1498
+    src/css/engine-common.css:1499
+rgba(0,0,0,0.13)  (빈도 12, UI -> --text)
+    src/engine/square/square.php:489
+    src/engine/square/square.php:508
+    src/engine/triangle/triangle.php:458
+    src/engine/triangle/triangle.php:476
+    src/engine/diamond/diamond.php:463
+    src/engine/diamond/diamond.php:481
+    src/engine/classic/classic.php:508
+    src/engine/classic/classic.php:527
+    src/engine/cross/cross.php:459
+    src/engine/cross/cross.php:477
+    src/engine/hexagon/hexagon.php:463
+    src/engine/hexagon/hexagon.php:481
+#4a4a4a  (빈도 12, CONTENT)
+    src/engine/square/square.php:634
+    src/engine/square/square.php:635
+    src/engine/triangle/triangle.php:602
+    src/engine/triangle/triangle.php:603
+    src/engine/diamond/diamond.php:607
+    src/engine/diamond/diamond.php:608
+    src/engine/classic/classic.php:653
+    src/engine/classic/classic.php:654
+    src/engine/cross/cross.php:603
+    src/engine/cross/cross.php:604
+    src/engine/hexagon/hexagon.php:607
+    src/engine/hexagon/hexagon.php:608
+#cc2200  (빈도 11, UNSURE -> --text-muted)
+    index.php:317
+    src/guide/guide.css:400
+    src/guide/index.php:45
+    src/guide/_head.php:17
+    src/css/nav.css:16
+    src/css/index.css:745
+    src/css/index.css:793
+    src/css/index.css:794
+    src/admin/notice.php:75
+    src/admin/notice.php:107
+    src/components/topbar_notice.php:18
+#e05218  (빈도 11, UNSURE -> --text-muted)
+    color-migration/palette_root.css:38
+    src/css/engine-common.css:654
+    src/css/company.css:335
+    src/css/index.css:713
+    src/css/index.css:714
+    src/engine/square/square.php:663
+    src/engine/triangle/triangle.php:632
+    src/engine/diamond/diamond.php:637
+    src/engine/classic/classic.php:682
+    src/engine/cross/cross.php:633
+    src/engine/hexagon/hexagon.php:637
+#c00  (빈도 11, UNSURE -> --text-muted)
+    src/admin/render_settings.php:31
+    src/admin/render_settings.php:34
+    src/admin/blog.php:67
+    src/admin/blog.php:68
+    src/admin/collection_filters.php:27
+    src/admin/collection_filters.php:30
+    src/admin/pattern_categories.php:31
+    src/admin/pattern_categories.php:34
+    src/admin/ai_stats.php:110
+    src/admin/works.php:206
+    src/mypage/dashboard.php:48
+rgba(0,0,0,0.5)  (빈도 10, UI -> --text)
+    src/css/dashboard.css:565
+    src/css/engine-common.css:628
+    src/css/engine-common.css:1436
+    src/css/engine-common.css:1566
+    src/css/company.css:34
+    src/css/index.css:96
+    src/css/index.css:214
+    src/css/index.css:805
+    src/mypage/dashboard.php:42
+    src/mypage/dashboard.php:59
+#888  (빈도 9, UI -> --text-muted)
+    src/css/dashboard.css:113
+    src/admin/render_settings.php:102
+    src/admin/ai_tuning.php:30
+    src/admin/ai_tuning.php:248
+    src/admin/ai_stats.php:26
+    src/admin/ai_stats.php:54
+    src/mypage/dashboard.php:45
+    src/components/auth_modal.php:115
+    src/components/nav.php:193
+#666  (빈도 9, UI -> --text-muted)
+    src/css/nav.css:252
+    src/css/company.css:316
+    src/css/index.css:650
+    src/css/index.css:694
+    src/admin/ai_tuning.php:23
+    src/admin/ai_tuning.php:64
+    src/admin/ai_tuning.php:97
+    src/css/admin/colors.css:3
+    src/admin/ai_stats.php:21
+#5A6B69  (빈도 9, UI -> --accent)
+    src/css/common.css:18
+    src/css/work-detail.css:192
+    src/css/index.css:500
+    src/css/index.css:579
+    src/css/work.css:30
+    src/css/work.css:58
+    src/components/mailform/reset.php:21
+    src/components/mailform/welcome.php:21
+    src/components/mailform/welcome.php:22
+rgba(255,255,255,0.9)  (빈도 8, UI -> --bg)
+    src/css/collection.css:255
+    src/css/collection.css:310
+    src/css/engine-common.css:225
+    src/css/engine-common.css:238
+    src/css/engine-common.css:277
+    src/css/engine-common.css:305
+    src/css/engine-common.css:480
+    src/css/engine-common.css:859
+#f2f3f4  (빈도 8, UI -> --bg)
+    src/components/mailform/reset.php:4
+    src/components/mailform/reset.php:5
+    src/components/mailform/welcome.php:4
+    src/components/mailform/welcome.php:5
+    src/components/mailform/order.php:4
+    src/components/mailform/order.php:5
+    src/components/mailform/contact.php:4
+    src/components/mailform/contact.php:5
+rgba(255,255,255,0.85)  (빈도 7, UI -> --bg)
+    src/css/dashboard.css:190
+    src/css/dashboard.css:224
+    src/css/engine-common.css:47
+    src/css/engine-common.css:652
+    src/css/engine-common.css:685
+    src/css/engine-common.css:1565
+    src/css/index.css:112
+#ddd  (빈도 7, UI -> --border)
+    src/css/dashboard.css:206
+    src/admin/render_settings.php:67
+    src/admin/render_settings.php:75
+    src/admin/render_settings.php:95
+    src/css/work.css:95
+    src/admin/ai_tuning.php:248
+    src/css/admin/colors.css:4
+#f5f5f5  (빈도 7, UI -> --bg)
+    src/css/collection.css:203
+    src/admin/render_settings.php:31
+    src/admin/blog.php:67
+    src/admin/collection_filters.php:27
+    src/admin/pattern_categories.php:31
+    src/css/admin/colors.css:3
+    src/mypage/dashboard.php:48
+#5A4DB8  (빈도 6, UNSURE -> --text-muted)
+    index.php:333
+    color-migration/palette_root.css:38
+    src/guide/guide.css:136
+    src/guide/index.php:69
+    src/guide/_head.php:37
+    src/guide/render.php:223
+#eee  (빈도 6, UI -> --bg)
+    src/guide/faq.php:81
+    src/css/dashboard.css:653
+    src/css/admin/cost_table.css:24
+    src/css/admin/cost_table.css:35
+    src/mypage/dashboard.php:44
+    src/mypage/dashboard.php:61
+rgba(0,0,0,0.06)  (빈도 6, UI -> --text)
+    src/css/engine-common.css:252
+    src/css/nav.css:182
+    src/css/nav.css:221
+    src/css/company.css:186
+    src/components/auth_modal.php:8
+    src/components/auth_modal.php:111
+#E6F4F2  (빈도 5, UI -> --accent-tint)
+    index.php:309
+    src/guide/index.php:36
+    src/guide/_head.php:9
+    src/css/common.css:9
+    src/css/work.css:34
+rgba(0,0,0,0.08)  (빈도 5, UI -> --text)
+    src/guide/guide.css:213
+    src/css/nav.css:57
+    src/css/nav.css:107
+    src/css/nav.css:158
+    src/css/nav.css:243
+#8B7355  (빈도 5, CONTENT)
+    src/guide/studio-classic.php:101
+    src/guide/studio-classic.php:108
+    src/guide/render.php:97
+    src/guide/render.php:132
+    src/guide/render.php:140
+#444  (빈도 5, UI -> --text)
+    src/guide/faq.php:80
+    src/css/engine-common.css:291
+    src/css/index.css:335
+    src/css/index.css:801
+    src/css/index.css:878
+rgba(255,255,255,0.08)  (빈도 5, UI -> --bg)
+    src/css/engine-common.css:55
+    src/css/engine-common.css:432
+    src/css/engine-common.css:617
+    src/css/engine-common.css:1311
+    src/css/engine-common.css:1446
+rgba(255,255,255,0.6)  (빈도 5, UI -> --bg)
+    src/css/engine-common.css:95
+    src/components/mailform/reset.php:13
+    src/components/mailform/welcome.php:13
+    src/components/mailform/order.php:13
+    src/components/mailform/contact.php:13
+#e0e0e0  (빈도 5, UI -> --border)
+    src/css/engine-common.css:291
+    src/css/company.css:318
+    src/css/admin/oauth.css:25
+    src/css/index.css:696
+    src/admin/meta.php:68
+rgba(255,255,255,0.4)  (빈도 5, UI -> --bg)
+    src/css/engine-common.css:294
+    src/css/engine-common.css:653
+    src/css/engine-common.css:1093
+    src/css/engine-common.css:1577
+    src/css/engine-common.css:1770
+rgba(255,255,255,0.25)  (빈도 5, UI -> --bg)
+    src/css/engine-common.css:317
+    src/css/engine-common.css:532
+    src/css/engine-common.css:550
+    src/css/engine-common.css:587
+    src/css/engine-common.css:922
+rgba(0,0,0,0.35)  (빈도 5, UI -> --text)
+    src/css/engine-common.css:712
+    src/css/engine-common.css:1138
+    src/css/engine-common.css:1282
+    src/css/engine-common.css:1298
+    src/css/users.css:109
+rgba(0,0,0,0.22)  (빈도 5, UI -> --text)
+    src/css/engine-common.css:794
+    src/css/engine-common.css:870
+    src/css/engine-common.css:957
+    src/css/engine-common.css:1074
+    src/css/engine-common.css:1692
+rgba(0,0,0,0.1)  (빈도 5, UI -> --text)
+    src/css/engine-common.css:794
+    src/css/engine-common.css:870
+    src/css/engine-common.css:957
+    src/css/engine-common.css:1692
+    src/css/admin/colors.css:1
+#bbb  (빈도 5, UI -> --border)
+    src/css/index.css:656
+    src/admin/ai_tuning.php:47
+    src/admin/ai_tuning.php:51
+    src/admin/ai_tuning.php:115
+    src/admin/ai_stats.php:55
+#e8f5f3  (빈도 5, UI -> --accent-tint)
+    src/admin/ai_tuning.php:18
+    src/admin/ai_tuning.php:86
+    src/admin/ai_tuning.php:87
+    src/admin/ai_tuning.php:104
+    src/admin/ai_tuning.php:112
+#f0f2f0  (빈도 5, UI -> --bg)
+    src/admin/ai_tuning.php:33
+    src/admin/ai_stats.php:30
+    src/admin/ai_stats.php:37
+    src/admin/ai_stats.php:47
+    src/admin/ai_stats.php:49
+#e5e9e7  (빈도 5, UI -> --accent-tint)
+    src/admin/ai_tuning.php:45
+    src/admin/ai_tuning.php:49
+    src/admin/ai_tuning.php:56
+    src/admin/ai_tuning.php:57
+    src/admin/ai_tuning.php:116
+#FFF0EE  (빈도 4, UI -> --bg)
+    index.php:317
+    src/guide/guide.css:400
+    src/guide/index.php:45
+    src/guide/_head.php:17
+#7A6B40  (빈도 4, UNSURE -> --accent)
+    index.php:325
+    src/guide/order.php:59
+    src/guide/index.php:60
+    src/guide/_head.php:29
+#b8894a  (빈도 4, UNSURE -> --text-muted)
+    index.php:341
+    src/guide/index.php:78
+    src/guide/_head.php:44
+    src/css/common.css:14
+#B8662F  (빈도 4, UNSURE -> --text-muted)
+    index.php:357
+    src/guide/order.php:47
+    src/guide/index.php:96
+    src/guide/_head.php:58
+#2E6FA8  (빈도 4, UNSURE -> --text-muted)
+    index.php:365
+    src/guide/order.php:53
+    src/guide/index.php:105
+    src/guide/_head.php:65
+#2a9d8f  (빈도 4, UNSURE -> --accent)
+    src/css/dashboard.css:632
+    src/css/dashboard.css:633
+    src/css/dashboard.css:654
+    src/css/dashboard.css:660
+rgba(255,255,255,0.2)  (빈도 4, UI -> --bg)
+    src/css/engine-common.css:10
+    src/css/engine-common.css:676
+    src/css/engine-common.css:1675
+    src/css/engine-common.css:1781
+rgba(255,255,255,0.1)  (빈도 4, UI -> --bg)
+    src/css/engine-common.css:40
+    src/css/engine-common.css:56
+    src/css/engine-common.css:78
+    src/css/engine-common.css:651
+#7dd9d0  (빈도 4, UNSURE -> --border)
+    src/css/engine-common.css:84
+    src/css/engine-common.css:116
+    src/css/engine-common.css:1757
+    src/admin/ai_tuning.php:65
+rgba(0,0,0,0.2)  (빈도 4, UI -> --text)
+    src/css/engine-common.css:237
+    src/css/engine-common.css:239
+    src/css/engine-common.css:1362
+    src/css/index.css:802
+rgba(255,255,255,0.45)  (빈도 4, UI -> --bg)
+    src/css/engine-common.css:565
+    src/css/engine-common.css:566
+    src/css/engine-common.css:1365
+    src/css/engine-common.css:1627
+#F2F3F4  (빈도 4, UI -> --bg)
+    src/css/engine-common.css:904
+    src/css/engine-common.css:935
+    src/css/index.css:729
+    src/components/mailform/order.php:23
+#FFE066  (빈도 4, UNSURE -> --accent-tint)
+    src/css/engine-common.css:1611
+    src/css/engine-common.css:1626
+    src/css/engine-common.css:1629
+    src/css/tokens.css:39
+#7A8C89  (빈도 4, UI -> --text-muted)
+    src/css/auth_modal.css:65
+    src/css/auth_modal.css:170
+    src/css/auth_modal.css:248
+    src/css/admin/oauth.css:31
+#ffeaea  (빈도 4, UI -> --bg)
+    src/admin/render_settings.php:31
+    src/admin/blog.php:67
+    src/admin/collection_filters.php:27
+    src/admin/pattern_categories.php:31
+#1a8a5a  (빈도 4, UNSURE -> --accent)
+    src/admin/render_settings.php:34
+    src/admin/blog.php:68
+    src/admin/collection_filters.php:30
+    src/admin/pattern_categories.php:34
+rgba(0, 0, 0, 0.9)  (빈도 4, UI -> --text)
+    src/css/index.css:386
+    src/css/index.css:451
+    src/css/index.css:474
+    src/css/index.css:482
+#1a6b62  (빈도 4, UI -> --accent)
+    src/admin/ai_tuning.php:28
+    src/admin/ai_tuning.php:86
+    src/admin/ai_tuning.php:87
+    src/admin/ai_stats.php:24
+#e8ece9  (빈도 4, UI -> --accent-tint)
+    src/admin/ai_tuning.php:32
+    src/admin/ai_tuning.php:89
+    src/admin/ai_stats.php:29
+    src/admin/ai_stats.php:46
+#e8ecea  (빈도 4, UI -> --accent-tint)
+    src/components/mailform/reset.php:39
+    src/components/mailform/welcome.php:36
+    src/components/mailform/order.php:83
+    src/components/mailform/contact.php:45
+#28241e  (빈도 4, UI -> --text)
+    src/api/admin/ai_tuning.php:42
+    src/api/admin/ai_tuning.php:43
+    src/api/ai/chat.php:67
+    src/api/ai/chat.php:68
+#F5F4EE  (빈도 3, UI -> --bg)
+    index.php:325
+    src/guide/index.php:60
+    src/guide/_head.php:29
+#F2F0FB  (빈도 3, UI -> --bg)
+    index.php:333
+    src/guide/index.php:69
+    src/guide/_head.php:37
+#FFF8EE  (빈도 3, UI -> --bg)
+    index.php:341
+    src/guide/index.php:78
+    src/guide/_head.php:44
+#EEF3F8  (빈도 3, UI -> --bg)
+    index.php:349
+    src/guide/index.php:87
+    src/guide/_head.php:51
+#2A6B8C  (빈도 3, UNSURE -> --text-muted)
+    index.php:349
+    src/guide/index.php:87
+    src/guide/_head.php:51
+#FDF0E6  (빈도 3, UI -> --bg)
+    index.php:357
+    src/guide/index.php:96
+    src/guide/_head.php:58
+#EAF3FB  (빈도 3, UI -> --bg)
+    index.php:365
+    src/guide/index.php:105
+    src/guide/_head.php:65
+#8B5CF6  (빈도 3, UNSURE -> --text-muted)
+    color-migration/palette_root.css:38
+    src/guide/guide.css:136
+    src/guide/render.php:223
+rgba(0,0,0,.06)  (빈도 3, UI -> --text)
+    src/guide/guide.css:9
+    src/css/index.css:302
+    src/admin/index.php:28
+#4a3728  (빈도 3, CONTENT)
+    src/guide/guide.css:93
+    src/guide/studio-classic.php:72
+    src/guide/render.php:97
+#5C3D1E  (빈도 3, CONTENT)
+    src/guide/studio-classic.php:94
+    src/guide/studio-classic.php:101
+    src/guide/render.php:122
+#1a1a1a  (빈도 3, UI -> --text)
+    src/guide/faq.php:62
+    src/css/dashboard.css:630
+    src/css/engine-common.css:1431
+rgba(0,0,0,0.6)  (빈도 3, UI -> --text)
+    src/css/dashboard.css:133
+    src/css/index.css:553
+    src/css/index.css:620
+#5a6b69  (빈도 3, UI -> --accent)
+    src/css/dashboard.css:590
+    src/css/dashboard.css:640
+    src/css/dashboard.css:648
+rgba(255,255,255,0.3)  (빈도 3, UI -> --bg)
+    src/css/engine-common.css:45
+    src/css/engine-common.css:491
+    src/css/engine-common.css:617
+rgba(0,0,0,0.3)  (빈도 3, UI -> --text)
+    src/css/engine-common.css:431
+    src/css/nav.css:69
+    src/css/index.css:107
+rgba(0,0,0,0.25)  (빈도 3, UI -> --text)
+    src/css/engine-common.css:544
+    src/css/engine-common.css:564
+    src/css/engine-common.css:1783
+#BDBDBD  (빈도 3, UI -> --border)
+    src/css/engine-common.css:1280
+    src/css/engine-common.css:1296
+    src/css/engine-common.css:1359
+rgba(0,0,0,0.12)  (빈도 3, UI -> --text)
+    src/css/engine-common.css:1533
+    src/css/company.css:304
+    src/css/index.css:682
+#E4EDEA  (빈도 3, UI -> --accent-tint)
+    src/css/auth_modal.css:70
+    src/css/auth_modal.css:192
+    src/css/admin/oauth.css:32
+#B8C8C4  (빈도 3, UI -> --border)
+    src/css/auth_modal.css:81
+    src/css/auth_modal.css:120
+    src/css/admin/oauth.css:36
+#191919  (빈도 3, UI -> --text)
+    src/css/auth_modal.css:208
+    src/css/auth_modal.css:213
+    src/css/admin/oauth.css:26
+#C8D4D2  (빈도 3, UI -> --border)
+    src/css/common.css:23
+    src/css/work-detail.css:110
+    src/css/work.css:57
+rgba(58, 140, 130, 0.06)  (빈도 3, UI -> --accent)
+    src/css/blog-detail.css:44
+    src/css/blog-detail.css:149
+    src/css/index.css:511
+#d0e8e4  (빈도 3, UI -> --accent-tint)
+    src/admin/ai_tuning.php:70
+    src/admin/ai_tuning.php:75
+    src/admin/ai_tuning.php:97
+#111111  (빈도 3, UI -> --text)
+    src/admin/works.php:129
+    src/admin/works.php:262
+    src/api/admin/works.php:66
+#888888  (빈도 3, UI -> --text-muted)
+    src/admin/works.php:137
+    src/admin/works.php:264
+    src/api/admin/works.php:68
+#F3F4F5  (빈도 2, UI -> --bg)
+    color-migration/palette_root.css:4
+    src/css/tokens.css:4
+#23262A  (빈도 2, UI -> --text)
+    color-migration/palette_root.css:8
+    src/css/tokens.css:8
+#8A9199  (빈도 2, UI -> --text-muted)
+    color-migration/palette_root.css:12
+    src/css/tokens.css:12
+#D4D8DB  (빈도 2, UI -> --border)
+    color-migration/palette_root.css:16
+    src/css/tokens.css:16
+#2C5F51  (빈도 2, UI -> --accent)
+    color-migration/palette_root.css:20
+    src/css/tokens.css:20
+#1F473C  (빈도 2, UI -> --accent-hover)
+    color-migration/palette_root.css:22
+    src/css/tokens.css:22
+#E6EEEB  (빈도 2, UI -> --accent-tint)
+    color-migration/palette_root.css:24
+    src/css/tokens.css:24
+rgba(255,255,255,.6)  (빈도 2, UI -> --bg)
+    src/guide/guide.css:13
+    src/css/work.css:136
+rgba(0,0,0,.08)  (빈도 2, UI -> --text)
+    src/guide/guide.css:273
+    src/css/index.css:353
+#FFF2F0  (빈도 2, UI -> --bg)
+    src/guide/guide.css:464
+    src/css/auth_modal.css:157
+#F4F6F6  (빈도 2, UI -> --bg)
+    src/guide/guide.css:482
+    src/css/common.css:24
+#F0F4F0  (빈도 2, UI -> --accent-tint)
+    src/guide/index.php:114
+    src/guide/_head.php:72
+#3A6B3A  (빈도 2, UNSURE -> --accent)
+    src/guide/index.php:114
+    src/guide/_head.php:72
+#8B6914  (빈도 2, CONTENT)
+    src/guide/studio-classic.php:93
+    src/guide/render.php:121
+#b8a98a  (빈도 2, CONTENT)
+    src/guide/studio-classic.php:108
+    src/guide/render.php:140
+#8a5a00  (빈도 2, UNSURE -> --accent)
+    src/css/dashboard.css:109
+    src/css/tokens.css:36
+#E08A00  (빈도 2, UNSURE -> --border)
+    src/css/dashboard.css:174
+    src/css/engine-common.css:1011
+rgba(0,0,0,0.18)  (빈도 2, UI -> --text)
+    src/css/dashboard.css:433
+    src/css/collection.css:374
+#e5e5e5  (빈도 2, UI -> --accent-tint)
+    src/css/dashboard.css:652
+    src/css/admin/cost_table.css:9
+rgba(0,0,0,0.04)  (빈도 2, UI -> --text)
+    src/css/collection.css:179
+    src/css/nav.css:238
+#f0f0f0  (빈도 2, UI -> --bg)
+    src/css/engine-common.css:292
+    src/css/engine-common.css:769
+#ADADAD  (빈도 2, UI -> --text-muted)
+    src/css/engine-common.css:373
+    src/css/engine-common.css:1114
+rgba(20,20,20,0.92)  (빈도 2, UI -> --text)
+    src/css/engine-common.css:419
+    src/css/engine-common.css:442
+rgba(255,255,255,0.12)  (빈도 2, UI -> --bg)
+    src/css/engine-common.css:452
+    src/css/engine-common.css:1749
+rgba(255,255,255,0.5)  (빈도 2, UI -> --bg)
+    src/css/engine-common.css:544
+    src/css/engine-common.css:564
+rgba(255,255,255,0.06)  (빈도 2, UI -> --bg)
+    src/css/engine-common.css:650
+    src/css/engine-common.css:1423
+rgba(15, 20, 20, 0.5)  (빈도 2, UI -> --text)
+    src/css/engine-common.css:776
+    src/css/engine-common.css:1684
+rgba(255,255,255,0.92)  (빈도 2, UI -> --bg)
+    src/css/engine-common.css:1091
+    src/css/engine-common.css:1575
+rgba(255,255,255,0.65)  (빈도 2, UI -> --bg)
+    src/css/engine-common.css:1092
+    src/css/engine-common.css:1576
+rgba(0,0,0,0.4)  (빈도 2, UI -> --text)
+    src/css/engine-common.css:1289
+    src/admin/colors.php:52
+rgba(255,255,255,0.75)  (빈도 2, UI -> --bg)
+    src/css/engine-common.css:1765
+    src/css/engine-common.css:1772
+#ff8080  (빈도 2, UNSURE -> --text-muted)
+    src/css/engine-common.css:1771
+    src/admin/ai_tuning.php:67
+#F5F8F7  (빈도 2, UI -> --bg)
+    src/css/auth_modal.css:200
+    src/css/admin/oauth.css:29
+rgba(12,12,11,0.1)  (빈도 2, UI -> --text)
+    src/css/nav.css:106
+    src/css/company.css:2
+rgba(0,0,0,0.03)  (빈도 2, UI -> --text)
+    src/css/nav.css:198
+    src/css/nav.css:223
+#DC2626  (빈도 2, UNSURE -> --text-muted)
+    src/css/common.css:27
+    src/css/tokens.css:28
+#B91C1C  (빈도 2, UNSURE -> --text)
+    src/css/common.css:28
+    src/css/tokens.css:30
+#FEE2E2  (빈도 2, UI -> --bg)
+    src/css/common.css:29
+    src/css/tokens.css:31
+#B45309  (빈도 2, UNSURE -> --text-muted)
+    src/css/common.css:32
+    src/css/tokens.css:34
+#FEF3C7  (빈도 2, UNSURE -> --accent-tint)
+    src/css/common.css:33
+    src/css/tokens.css:35
+rgba(0, 0, 0, 0.6)  (빈도 2, UI -> --text)
+    src/css/common.css:143
+    src/css/common.css:165
+#fff3f0  (빈도 2, UI -> --bg)
+    src/css/company.css:335
+    src/css/index.css:713
+rgba(0,0,0,.12)  (빈도 2, UI -> --text)
+    src/css/work-detail.css:72
+    src/css/index.css:293
+#eef1f0  (빈도 2, UI -> --bg)
+    src/css/admin/oauth.css:3
+    src/admin/notice.php:98
+#6B5A3E  (빈도 2, CONTENT)
+    src/guide/render.php:97
+    src/guide/render.php:132
+rgba(255,255,255,.5)  (빈도 2, UI -> --bg)
+    src/guide/render.php:108
+    src/css/work.css:149
+#5C4A3A  (빈도 2, CONTENT)
+    src/guide/render.php:133
+    src/guide/render.php:141
+#f7f7f5  (빈도 2, UI -> --bg)
+    src/css/index.css:14
+    src/mypage/dashboard.php:52
+rgba(0,0,0,.1)  (빈도 2, UI -> --text)
+    src/css/index.css:273
+    src/css/index.css:329
+rgba(255, 255, 255, .18)  (빈도 2, UI -> --bg)
+    src/css/index.css:414
+    src/css/index.css:414
+rgba(0,0,0,0.07)  (빈도 2, UI -> --text)
+    src/css/index.css:552
+    src/css/index.css:619
+#dec898  (빈도 2, CONTENT)
+    src/admin/colors.php:63
+    src/admin/colors.php:64
+#4285F4  (빈도 2, EXTERNAL_BRAND)
+    src/admin/oauth.php:36
+    src/components/auth_modal.php:30
+#34A853  (빈도 2, EXTERNAL_BRAND)
+    src/admin/oauth.php:36
+    src/components/auth_modal.php:30
+#FBBC05  (빈도 2, EXTERNAL_BRAND)
+    src/admin/oauth.php:36
+    src/components/auth_modal.php:30
+#EA4335  (빈도 2, EXTERNAL_BRAND)
+    src/admin/oauth.php:36
+    src/components/auth_modal.php:30
+#f4f6f5  (빈도 2, UI -> --bg)
+    src/admin/ai_tuning.php:19
+    src/admin/ai_stats.php:18
+#c8e4df  (빈도 2, UI -> --accent-tint)
+    src/admin/ai_tuning.php:103
+    src/admin/ai_tuning.php:111
+#f8faf9  (빈도 2, UI -> --bg)
+    src/admin/ai_stats.php:49
+    src/admin/ai_stats.php:59
+rgba(0,0,0,0.14)  (빈도 2, UI -> --text)
+    src/components/auth_modal.php:8
+    src/components/auth_modal.php:111
+#8B4513  (빈도 2, UNSURE -> --text)
+    src/api/admin/ai_tuning.php:42
+    src/api/ai/chat.php:67
+#c8a96e  (빈도 2, UNSURE -> --border)
+    src/api/admin/ai_tuning.php:43
+    src/api/ai/chat.php:68
+#E5E7EA  (빈도 1, UI -> --accent-tint)
+    src/guide/guide.css:61
+rgba(255,255,255,.92)  (빈도 1, UI -> --bg)
+    src/guide/guide.css:68
+rgba(255,255,255,.9)  (빈도 1, UI -> --bg)
+    src/guide/guide.css:77
+rgba(255,255,255,.15)  (빈도 1, UI -> --bg)
+    src/guide/guide.css:96
+rgba(74,55,40,.15)  (빈도 1, UI -> --text)
+    src/guide/guide.css:107
+rgba(139,115,85,.18)  (빈도 1, UNSURE -> --text-muted)
+    src/guide/guide.css:110
+rgba(180,155,110,.1)  (빈도 1, UNSURE -> --text-muted)
+    src/guide/guide.css:110
+#d4c5a9  (빈도 1, UI -> --border)
+    src/guide/guide.css:167
+#a8956e  (빈도 1, UNSURE -> --text-muted)
+    src/guide/guide.css:167
+#1e5e58  (빈도 1, UI -> --accent)
+    src/guide/guide.css:462
+#8B2A16  (빈도 1, UNSURE -> --text)
+    src/guide/guide.css:464
+rgba(255,255,255,.1)  (빈도 1, UI -> --bg)
+    src/guide/studio-classic.php:72
+rgba(74,55,40,.5)  (빈도 1, UI -> --text)
+    src/guide/studio-classic.php:75
+rgba(255,255,255,.4)  (빈도 1, UI -> --bg)
+    src/guide/studio-classic.php:79
+#dee2e6  (빈도 1, UI -> --border)
+    src/guide/faq.php:53
+#f7faf9  (빈도 1, UI -> --bg)
+    src/guide/faq.php:67
+#2d7a6e  (빈도 1, UI -> --accent)
+    src/guide/faq.php:68
+#fff4e5  (빈도 1, UI -> --bg)
+    src/css/dashboard.css:109
+#ffdca0  (빈도 1, UNSURE -> --accent-tint)
+    src/css/dashboard.css:109
+#f2f2f0  (빈도 1, UI -> --bg)
+    src/css/dashboard.css:123
+rgba(0,0,0,0.65)  (빈도 1, UI -> --text)
+    src/css/dashboard.css:128
+rgba(58,140,130,0.12)  (빈도 1, UI -> --accent)
+    src/css/dashboard.css:160
+#D1FAF0  (빈도 1, UI -> --accent-tint)
+    src/css/dashboard.css:201
+#dcdcda  (빈도 1, UI -> --border)
+    src/css/dashboard.css:248
+rgba(0, 0, 0, 0.45)  (빈도 1, UI -> --text)
+    src/css/dashboard.css:413
+#f8f8f8  (빈도 1, UI -> --bg)
+    src/css/dashboard.css:527
+#e5e7ea  (빈도 1, UI -> --accent-tint)
+    src/css/dashboard.css:585
+#e0e8e6  (빈도 1, UI -> --accent-tint)
+    src/css/dashboard.css:614
+#f0f4f3  (빈도 1, UI -> --bg)
+    src/css/dashboard.css:639
+#d8e2e0  (빈도 1, UI -> --accent-tint)
+    src/css/dashboard.css:646
+#e8f4f2  (빈도 1, UI -> --accent-tint)
+    src/css/dashboard.css:660
+rgba(247, 247, 246, 0.75)  (빈도 1, UI -> --bg)
+    src/css/collection.css:40
+rgba(0,0,0,0.09)  (빈도 1, UI -> --text)
+    src/css/collection.css:184
+rgba(0,0,0,0.38)  (빈도 1, UI -> --text)
+    src/css/collection.css:227
+rgba(0,0,0,0.45)  (빈도 1, UI -> --text)
+    src/css/collection.css:362
+rgba(20,24,24,0.85)  (빈도 1, UI -> --text)
+    src/css/engine-common.css:23
+rgba(255,255,255,0.18)  (빈도 1, UI -> --bg)
+    src/css/engine-common.css:79
+rgba(0,0,0,0.72)  (빈도 1, UI -> --text)
+    src/css/engine-common.css:115
+rgba(125,217,208,0.25)  (빈도 1, UNSURE -> --border)
+    src/css/engine-common.css:122
+#ff9494  (빈도 1, UNSURE -> --border)
+    src/css/engine-common.css:127
+rgba(255,100,100,0.25)  (빈도 1, UNSURE -> --text-muted)
+    src/css/engine-common.css:127
+rgba(255,255,255,0.8)  (빈도 1, UI -> --bg)
+    src/css/engine-common.css:152
+rgba(58, 140, 130, 0.25)  (빈도 1, UI -> --accent)
+    src/css/engine-common.css:181
+#FFB020  (빈도 1, UNSURE -> --accent-tint)
+    src/css/engine-common.css:213
+#fff0f0  (빈도 1, UI -> --bg)
+    src/css/engine-common.css:259
+rgba(0, 0, 0, .18)  (빈도 1, UI -> --text)
+    src/css/engine-common.css:342
+rgba(255,255,255,0.95)  (빈도 1, UI -> --bg)
+    src/css/engine-common.css:405
+rgba(0, 0, 0, 0.35)  (빈도 1, UI -> --text)
+    src/css/engine-common.css:462
+rgba(255, 255, 255, 0.15)  (빈도 1, UI -> --bg)
+    src/css/engine-common.css:463
+rgba(255, 255, 255, 0.75)  (빈도 1, UI -> --bg)
+    src/css/engine-common.css:464
+rgba(200,50,50,0.85)  (빈도 1, UNSURE -> --text-muted)
+    src/css/engine-common.css:527
+rgba(255,255,255,0.7)  (빈도 1, UI -> --bg)
+    src/css/engine-common.css:605
+rgba(224,82,24,0.12)  (빈도 1, UNSURE -> --text-muted)
+    src/css/engine-common.css:656
+rgba(15, 20, 20, 0.6)  (빈도 1, UI -> --text)
+    src/css/engine-common.css:663
+rgba(10,15,15,0.6)  (빈도 1, UI -> --text)
+    src/css/engine-common.css:697
+#FFF0EB  (빈도 1, UI -> --bg)
+    src/css/engine-common.css:820
+#ECEFEE  (빈도 1, UI -> --accent-tint)
+    src/css/engine-common.css:897
+#E2E5E4  (빈도 1, UI -> --accent-tint)
+    src/css/engine-common.css:937
+#5A6664  (빈도 1, UI -> --accent)
+    src/css/engine-common.css:949
+rgba(224,48,48,0.1)  (빈도 1, UNSURE -> --text-muted)
+    src/css/engine-common.css:1047
+rgba(255,255,255,1)  (빈도 1, UI -> --bg)
+    src/css/engine-common.css:1195
+rgba(0,0,0,0.15)  (빈도 1, UI -> --text)
+    src/css/engine-common.css:1545
+#c0392b  (빈도 1, UNSURE -> --text-muted)
+    src/css/engine-common.css:1676
+rgba(192,57,43,0.15)  (빈도 1, UNSURE -> --text-muted)
+    src/css/engine-common.css:1680
+rgba(58,140,130,0.18)  (빈도 1, UI -> --accent)
+    src/css/engine-common.css:1750
+rgba(255,255,255,0.35)  (빈도 1, UI -> --bg)
+    src/css/engine-common.css:1792
+#c4cdc9  (빈도 1, UI -> --border)
+    src/css/auth_modal.css:15
+#6b7b78  (빈도 1, UI -> --text-muted)
+    src/css/auth_modal.css:26
+#F8FAF9  (빈도 1, UI -> --bg)
+    src/css/auth_modal.css:76
+rgba(58,140,130,.10)  (빈도 1, UI -> --accent)
+    src/css/auth_modal.css:86
+rgba(58,140,130,.25)  (빈도 1, UI -> --accent)
+    src/css/auth_modal.css:108
+rgba(58,140,130,.32)  (빈도 1, UI -> --accent)
+    src/css/auth_modal.css:112
+rgba(58,140,130,.2)  (빈도 1, UI -> --accent)
+    src/css/auth_modal.css:117
+#A8BAB7  (빈도 1, UI -> --border)
+    src/css/auth_modal.css:136
+#F5C6C0  (빈도 1, UI -> --border)
+    src/css/auth_modal.css:159
+#EAF6F4  (빈도 1, UI -> --accent-tint)
+    src/css/auth_modal.css:162
+#256E65  (빈도 1, UI -> --accent)
+    src/css/auth_modal.css:163
+#BAE0DB  (빈도 1, UI -> --accent-tint)
+    src/css/auth_modal.css:164
+#C8D8D4  (빈도 1, UI -> --border)
+    src/css/auth_modal.css:201
+#C4CDC9  (빈도 1, UI -> --border)
+    src/css/auth_modal.css:232
+#E8EDEB  (빈도 1, UI -> --accent-tint)
+    src/css/auth_modal.css:242
+rgba(12,12,11,0.04)  (빈도 1, UI -> --text)
+    src/css/nav.css:120
+rgba(0,0,0,0.32)  (빈도 1, UI -> --text)
+    src/css/nav.css:130
+#2F7169  (빈도 1, UI -> --accent)
+    src/css/common.css:7
+#5AADA2  (빈도 1, UNSURE -> --text-muted)
+    src/css/common.css:8
+#EAF5F3  (빈도 1, UI -> --accent-tint)
+    src/css/common.css:10
+#CC2200  (빈도 1, UNSURE -> --text-muted)
+    src/css/common.css:12
+#A81D00  (빈도 1, UNSURE -> --text)
+    src/css/common.css:13
+rgba(0, 0, 0, 0.95)  (빈도 1, UI -> --text)
+    src/css/common.css:17
+#15803D  (빈도 1, UNSURE -> --accent)
+    src/css/common.css:30
+#DCFCE7  (빈도 1, UI -> --accent-tint)
+    src/css/common.css:31
+#6D28D9  (빈도 1, UNSURE -> --text-muted)
+    src/css/common.css:34
+#EDE9FE  (빈도 1, UI -> --bg)
+    src/css/common.css:35
+#FEE500  (빈도 1, EXTERNAL_BRAND)
+    src/css/common.css:38
+#F5DA00  (빈도 1, EXTERNAL_BRAND)
+    src/css/common.css:39
+#03C75A  (빈도 1, EXTERNAL_BRAND)
+    src/css/common.css:40
+#02B350  (빈도 1, EXTERNAL_BRAND)
+    src/css/common.css:41
+#3A3A3A  (빈도 1, UI -> --text)
+    src/css/common.css:60
+#EDEEF0  (빈도 1, UI -> --bg)
+    src/css/common.css:61
+rgba(0, 0, 0, 0.08)  (빈도 1, UI -> --text)
+    src/css/common.css:109
+rgba(0, 0, 0, 0.4)  (빈도 1, UI -> --text)
+    src/css/common.css:149
+rgba(0,0,0,.14)  (빈도 1, UI -> --text)
+    src/css/work-detail.css:57
+rgba(58,140,130,.3)  (빈도 1, UI -> --accent)
+    src/css/work-detail.css:82
+#2d7a72  (빈도 1, UI -> --accent)
+    src/css/admin/oauth.css:38
+rgba(210,170,100,.9)  (빈도 1, UNSURE -> --border)
+    src/guide/render.php:99
+rgba(210,170,100,.6)  (빈도 1, UNSURE -> --border)
+    src/guide/render.php:102
+#3d2e1e  (빈도 1, CONTENT)
+    src/guide/render.php:133
+#7a6a50  (빈도 1, CONTENT)
+    src/guide/render.php:141
+#10a37f  (빈도 1, EXTERNAL_BRAND)
+    src/admin/render_settings.php:58
+#6B4FBB  (빈도 1, EXTERNAL_BRAND)
+    src/admin/render_settings.php:86
+rgba(12, 12, 11, 0.1)  (빈도 1, UI -> --text)
+    src/css/index.css:2
+#e0ddd8  (빈도 1, UI -> --border)
+    src/css/index.css:15
+#222  (빈도 1, UI -> --text)
+    src/css/index.css:27
+#f0f9f8  (빈도 1, UI -> --bg)
+    src/css/index.css:50
+#c5e6e3  (빈도 1, UI -> --accent-tint)
+    src/css/index.css:51
+rgba(0,0,0,.07)  (빈도 1, UI -> --text)
+    src/css/index.css:265
+rgba(0,0,0,.35)  (빈도 1, UI -> --text)
+    src/css/index.css:287
+#f3f3f3  (빈도 1, UI -> --bg)
+    src/css/index.css:399
+rgba(255, 255, 255, .9)  (빈도 1, UI -> --bg)
+    src/css/index.css:428
+rgba(255, 255, 255, .8)  (빈도 1, UI -> --bg)
+    src/css/index.css:428
+#6366f1  (빈도 1, UNSURE -> --text-muted)
+    src/css/index.css:442
+#8b5cf6  (빈도 1, UNSURE -> --text-muted)
+    src/css/index.css:442
+rgba(58, 140, 130, 0.1)  (빈도 1, UI -> --accent)
+    src/css/index.css:518
+#a81c00  (빈도 1, UNSURE -> --text)
+    src/css/index.css:710
+rgba(0,0,0,0.16)  (빈도 1, UI -> --text)
+    src/css/users.css:118
+#FECACA  (빈도 1, UI -> --border)
+    src/css/users.css:175
+#BBF7D0  (빈도 1, UNSURE -> --accent-tint)
+    src/css/users.css:184
+#f0f8f7  (빈도 1, UI -> --bg)
+    src/admin/notice.php:102
+rgba(15,20,18,.85)  (빈도 1, UI -> --text)
+    src/css/work.css:114
+rgba(15,20,18,.3)  (빈도 1, UI -> --text)
+    src/css/work.css:115
+#f5faf9  (빈도 1, UI -> --bg)
+    src/admin/ai_tuning.php:70
+#2a6b62  (빈도 1, UI -> --accent)
+    src/admin/ai_tuning.php:71
+#e5edeb  (빈도 1, UI -> --accent-tint)
+    src/admin/ai_tuning.php:83
+#e0ece9  (빈도 1, UI -> --accent-tint)
+    src/admin/ai_tuning.php:96
+#1a5c54  (빈도 1, UI -> --accent)
+    src/admin/ai_tuning.php:104
+#e53  (빈도 1, UNSURE -> --text-muted)
+    src/admin/ai_tuning.php:120
+#fff0ee  (빈도 1, UI -> --bg)
+    src/admin/ai_tuning.php:120
+#fff8e6  (빈도 1, UI -> --bg)
+    src/admin/ai_tuning.php:258
+#b07d00  (빈도 1, UNSURE -> --text-muted)
+    src/admin/ai_tuning.php:258
+#4db8ac  (빈도 1, UNSURE -> --text-muted)
+    src/admin/ai_stats.php:38
+#f5f7f5  (빈도 1, UI -> --bg)
+    src/admin/ai_stats.php:50
+#000000  (빈도 1, UI -> --text)
+    src/components/auth_modal.php:34

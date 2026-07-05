@@ -1,6 +1,6 @@
 /* ── BLOG DETAIL — 아티클 레이아웃 ──────────────────────────── */
 
-body { background: var(--page-bg, #f9f9f9); }
+body { background: var(--bg, var(--bg)); }
 
 .bd-page {
     min-height: calc(100vh - 68px);
@@ -13,45 +13,45 @@ body { background: var(--page-bg, #f9f9f9); }
 .bd-back {
     display: inline-flex; align-items: center; gap: .4rem;
     font-size: var(--fs-13); font-weight: 700; letter-spacing: .04em;
-    color: var(--text-3);
+    color: var(--text-muted);
     text-decoration: none;
     margin-bottom: 1.25rem;
     transition: color .18s;
 }
-.bd-back:hover { color: var(--teal); }
+.bd-back:hover { color: var(--accent); }
 
 .bd-title {
     font-size: clamp(1.3rem, 2.8vw, 1.75rem);
     font-weight: 700; letter-spacing: -.02em;
-    color: var(--text-1);
+    color: var(--text);
     line-height: 1.3;
     margin-bottom: .6rem;
 }
 .bd-date {
     display: block;
-    font-size: var(--fs-13); color: var(--text-3);
+    font-size: var(--fs-13); color: var(--text-muted);
     margin-bottom: 1.75rem;
 }
 
 .bd-divider {
     border: none;
-    border-top: 2px solid var(--text-1);
+    border-top: 2px solid var(--text);
     margin: 0 0 2rem;
 }
 
 /* ── 이 시리즈 박스 ─────────────────────────────────────── */
 .bd-series-box {
-    background: rgba(58, 140, 130, 0.06);
+    background: rgba(var(--accent-rgb), 0.06);
     border-radius: var(--r);
     padding: 1.25rem 1.4rem;
     margin-bottom: 2rem;
 }
 .bd-series-box-label {
     font-size: var(--fs-12); font-weight: 700; letter-spacing: .04em;
-    color: var(--teal); margin: 0 0 .3rem;
+    color: var(--accent); margin: 0 0 .3rem;
 }
 .bd-series-box-tagline {
-    font-size: var(--fs-15); font-weight: 600; color: var(--text-1);
+    font-size: var(--fs-15); font-weight: 600; color: var(--text);
     margin: 0 0 .8rem;
 }
 .bd-series-box-list {
@@ -59,11 +59,11 @@ body { background: var(--page-bg, #f9f9f9); }
     display: flex; flex-direction: column; gap: .35rem;
 }
 .bd-series-box-list a {
-    color: var(--text-2); text-decoration: none; font-size: var(--fs-14);
+    color: var(--text-muted); text-decoration: none; font-size: var(--fs-14);
 }
-.bd-series-box-list a:hover { color: var(--teal); text-decoration: underline; }
+.bd-series-box-list a:hover { color: var(--accent); text-decoration: underline; }
 .bd-series-box-list li.current span {
-    font-size: var(--fs-14); font-weight: 700; color: var(--text-1);
+    font-size: var(--fs-14); font-weight: 700; color: var(--text);
 }
 
 /* ── 엔진 딥링크 박스 ───────────────────────────────────── */
@@ -71,21 +71,21 @@ body { background: var(--page-bg, #f9f9f9); }
     display: flex; flex-direction: column; align-items: flex-start; gap: .6rem;
     margin-top: 2.5rem;
     padding: 1.5rem 1.6rem;
-    background: #fff;
-    border: 1.5px solid var(--teal);
+    background: var(--bg);
+    border: 1.5px solid var(--accent);
     border-radius: var(--r);
 }
 .bd-engine-box-title {
-    font-size: var(--fs-16); font-weight: 700; color: var(--text-1);
+    font-size: var(--fs-16); font-weight: 700; color: var(--text);
     margin: 0;
 }
 .bd-engine-box-desc {
-    font-size: var(--fs-14); color: var(--text-2);
+    font-size: var(--fs-14); color: var(--text-muted);
     margin: 0;
 }
 .bd-engine-box-btn {
     display: inline-flex; align-items: center; gap: .5rem;
-    background: var(--teal); color: #fff;
+    background: var(--accent); color: var(--bg);
     font-size: var(--fs-14); font-weight: 700;
     padding: .65rem 1.4rem;
     border-radius: 999px;
@@ -109,14 +109,14 @@ body { background: var(--page-bg, #f9f9f9); }
     margin: 0;
     font-size: var(--fs-16);
     line-height: 1.7;
-    color: var(--text-1);
+    color: var(--text);
     word-break: keep-all;
 }
 .bd-body p {
     margin: 0;
 }
 .bd-body h2, .bd-body h3 {
-    font-weight: 600; letter-spacing: -.01em; color: var(--text-1);
+    font-weight: 600; letter-spacing: -.01em; color: var(--text);
     margin: 2rem 0 1rem;
 }
 .bd-body h2 { font-size: var(--fs-22); }
@@ -126,10 +126,10 @@ body { background: var(--page-bg, #f9f9f9); }
 }
 .bd-body li { margin-bottom: .4rem; }
 .bd-body strong, .bd-body b { font-weight: 600; }
-.bd-body a { color: var(--teal); text-decoration: underline; }
+.bd-body a { color: var(--accent); text-decoration: underline; }
 .bd-body blockquote {
-    border-left: 3px solid var(--teal);
-    color: var(--text-2);
+    border-left: 3px solid var(--accent);
+    color: var(--text-muted);
     padding: .2rem 0 .2rem 1rem;
     margin: 0 0 1.4rem;
 }
@@ -146,24 +146,24 @@ body { background: var(--page-bg, #f9f9f9); }
     text-align: center;
     margin-top: 3rem;
     padding: 2.25rem 1.5rem;
-    background: rgba(58, 140, 130, 0.06);
+    background: rgba(var(--accent-rgb), 0.06);
     border-radius: var(--r);
 }
 .bd-cta-title {
-    font-size: var(--fs-16); font-weight: 700; color: var(--text-1);
+    font-size: var(--fs-16); font-weight: 700; color: var(--text);
     margin: 0;
 }
 .bd-cta-btn {
     display: inline-flex; align-items: center; gap: .5rem;
-    background: #fff; color: var(--teal);
-    border: 1.5px solid var(--teal);
+    background: var(--bg); color: var(--accent);
+    border: 1.5px solid var(--accent);
     font-size: var(--fs-14); font-weight: 700;
     padding: .7rem 1.5rem;
     border-radius: 999px;
     text-decoration: none;
     transition: background .18s, color .18s;
 }
-.bd-cta-btn:hover { background: var(--teal); color: #fff; }
+.bd-cta-btn:hover { background: var(--accent); color: var(--bg); }
 
 /* ── 이전/다음 글 ───────────────────────────────────────── */
 .bd-pager {
@@ -172,7 +172,7 @@ body { background: var(--page-bg, #f9f9f9); }
     gap: 1rem;
     margin-top: 3rem;
     padding-top: 1.5rem;
-    border-top: 1px solid var(--border, #E0E5E4);
+    border-top: 1px solid var(--border, var(--border));
 }
 .bd-pager-link {
     display: flex; flex-direction: column; gap: .3rem;
@@ -182,13 +182,13 @@ body { background: var(--page-bg, #f9f9f9); }
 .bd-pager-next { text-align: right; grid-column: 2; }
 .bd-pager-label {
     font-size: var(--fs-12); font-weight: 700; letter-spacing: .06em;
-    text-transform: uppercase; color: var(--text-3);
+    text-transform: uppercase; color: var(--text-muted);
 }
 .bd-pager-title {
-    font-size: var(--fs-14); font-weight: 600; color: var(--text-1);
+    font-size: var(--fs-14); font-weight: 600; color: var(--text);
     transition: color .18s;
 }
-.bd-pager-link:hover .bd-pager-title { color: var(--teal); }
+.bd-pager-link:hover .bd-pager-title { color: var(--accent); }
 
 @media (max-width: 600px) {
     .bd-page { padding: 1.75rem 1rem 3rem; }

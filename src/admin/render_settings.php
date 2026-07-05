@@ -19,22 +19,22 @@ require_admin_role('s');
     <?php css_tag('/src/css/admin/oauth.css'); ?>
     <style>
         .rp-table { width:100%; border-collapse:collapse; font-size:13px; }
-        .rp-table th { background:var(--input-bg); padding:8px 12px; text-align:left; font-weight:600; color:var(--text-2); border-bottom:2px solid var(--border-md); }
+        .rp-table th { background:var(--bg); padding:8px 12px; text-align:left; font-weight:600; color:var(--text-muted); border-bottom:2px solid var(--border); }
         .rp-table td { padding:8px 12px; border-bottom:1px solid var(--border); vertical-align:middle; }
-        .rp-table tr:hover td { background:var(--input-bg); }
-        .rp-id { font-family:monospace; font-size:11px; color:var(--text-3); background:var(--input-bg); padding:2px 6px; border-radius:4px; }
+        .rp-table tr:hover td { background:var(--bg); }
+        .rp-id { font-family:monospace; font-size:11px; color:var(--text-muted); background:var(--bg); padding:2px 6px; border-radius:4px; }
         .rp-label-input  { border:1px solid var(--border); border-radius:5px; padding:4px 8px; font-size:13px; width:130px; }
         .rp-prompt-input { border:1px solid var(--border); border-radius:5px; padding:4px 8px; font-size:13px; width:100%; min-width:260px; }
         .rp-sort-input   { border:1px solid var(--border); border-radius:5px; padding:4px 6px; font-size:13px; width:52px; text-align:center; }
         .rp-btn { border:none; border-radius:5px; padding:4px 10px; font-size:12px; font-weight:600; cursor:pointer; white-space:nowrap; }
-        .rp-btn-save { background:var(--teal); color:#fff; } .rp-btn-save:hover { opacity:.85; }
-        .rp-btn-del  { background:#f5f5f5; color:#c00; }    .rp-btn-del:hover  { background:#ffeaea; }
+        .rp-btn-save { background:var(--accent); color:var(--bg); } .rp-btn-save:hover { opacity:.85; }
+        .rp-btn-del  { background:var(--bg); color:var(--danger); }    .rp-btn-del:hover  { background:var(--danger-tint); }
         .rp-inactive td { opacity:.4; }
         .rp-status { font-size:12px; margin-left:6px; }
-        .rp-status.ok { color:#1a8a5a; } .rp-status.err { color:#c00; }
+        .rp-status.ok { color:var(--accent); } .rp-status.err { color:var(--danger); }
         .rp-add-row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:16px; }
-        .rp-add-row input { border:1px solid var(--border-md); border-radius:6px; padding:6px 10px; font-size:13px; }
-        .rp-add-btn { background:var(--teal); color:#fff; border:none; border-radius:6px; padding:6px 18px; font-size:13px; font-weight:600; cursor:pointer; }
+        .rp-add-row input { border:1px solid var(--border); border-radius:6px; padding:6px 10px; font-size:13px; }
+        .rp-add-btn { background:var(--accent); color:var(--bg); border:none; border-radius:6px; padding:6px 18px; font-size:13px; font-weight:600; cursor:pointer; }
     </style>
 </head>
 <body>
@@ -55,7 +55,7 @@ require_admin_role('s');
     <div id="rsPanelOpenai">
         <div class="oauth-card">
             <div class="oauth-card-header">
-                <div class="oauth-card-logo" style="background:#10a37f;color:#fff;font-size:11px;font-weight:700;letter-spacing:-.5px;">AI</div>
+                <div class="oauth-card-logo" style="background:#10a37f;color:var(--bg);font-size:11px;font-weight:700;letter-spacing:-.5px;">AI</div>
                 <span class="oauth-card-title">OpenAI 이미지 렌더링</span>
             </div>
             <div class="oauth-field">
@@ -64,7 +64,7 @@ require_admin_role('s');
             </div>
             <div class="oauth-field">
                 <label>품질 (gpt-image-1 · 1024×1024)</label>
-                <select id="render_quality" style="width:100%;padding:8px 10px;border:1px solid var(--border-md,#ddd);border-radius:6px;font-size:13px;background:#fff;cursor:pointer;">
+                <select id="render_quality" style="width:100%;padding:8px 10px;border:1px solid var(--border,var(--border));border-radius:6px;font-size:13px;background:var(--bg);cursor:pointer;">
                     <option value="low">low — ~$0.011/장 &nbsp;(최저가)</option>
                     <option value="medium">medium — ~$0.042/장</option>
                     <option value="high">high — ~$0.167/장 &nbsp;(최고품질)</option>
@@ -72,8 +72,8 @@ require_admin_role('s');
             </div>
             <div class="oauth-field">
                 <label>렌더링 기본 명령어 (프롬프트 템플릿)</label>
-                <textarea id="render_base_prompt" rows="14" style="width:100%;padding:8px 10px;border:1px solid var(--border-md,#ddd);border-radius:6px;font-size:12px;font-family:monospace;resize:vertical;" placeholder="{{prompt}} 자리에 사용자가 고른/입력한 프롬프트가 삽입됩니다"></textarea>
-                <div style="font-size:11px;color:var(--text-3);margin-top:4px;">문살 구조를 바꾸지 말라는 지시문. <code>{{prompt}}</code> 위치에 사용자 입력이 들어갑니다.</div>
+                <textarea id="render_base_prompt" rows="14" style="width:100%;padding:8px 10px;border:1px solid var(--border,var(--border));border-radius:6px;font-size:12px;font-family:monospace;resize:vertical;" placeholder="{{prompt}} 자리에 사용자가 고른/입력한 프롬프트가 삽입됩니다"></textarea>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">문살 구조를 바꾸지 말라는 지시문. <code>{{prompt}}</code> 위치에 사용자 입력이 들어갑니다.</div>
             </div>
             <button class="oauth-save" onclick="saveRenderConfig()">저장</button>
             <span class="oauth-status" id="render_status"></span>
@@ -83,7 +83,7 @@ require_admin_role('s');
     <div id="rsPanelAnthropic" style="display:none;">
         <div class="oauth-card">
             <div class="oauth-card-header">
-                <div class="oauth-card-logo" style="background:#6B4FBB;color:#fff;font-size:10px;font-weight:700;letter-spacing:-.5px;">ANT</div>
+                <div class="oauth-card-logo" style="background:#6B4FBB;color:var(--bg);font-size:10px;font-weight:700;letter-spacing:-.5px;">ANT</div>
                 <span class="oauth-card-title">Anthropic Claude AI 채팅</span>
             </div>
             <div class="oauth-field">
@@ -92,14 +92,14 @@ require_admin_role('s');
             </div>
             <div class="oauth-field">
                 <label>모델</label>
-                <select id="ai_chat_model" style="width:100%;padding:8px 10px;border:1px solid var(--border-md,#ddd);border-radius:6px;font-size:13px;background:#fff;cursor:pointer;">
+                <select id="ai_chat_model" style="width:100%;padding:8px 10px;border:1px solid var(--border,var(--border));border-radius:6px;font-size:13px;background:var(--bg);cursor:pointer;">
                     <option value="claude-sonnet-4-6">Sonnet 4.6 — 고성능 (권장)</option>
                     <option value="claude-haiku-4-5-20251001">Haiku 4.5 — 빠르고 저렴</option>
                 </select>
             </div>
             <div style="display:flex;gap:8px;align-items:center;">
                 <button class="oauth-save" onclick="saveAiConfig()" style="margin:0;">저장</button>
-                <button class="oauth-save" id="btnTest" onclick="testAiConnection()" style="margin:0;background:var(--text-3,#888);">연결 테스트</button>
+                <button class="oauth-save" id="btnTest" onclick="testAiConnection()" style="margin:0;background:var(--text-muted,var(--text-muted));">연결 테스트</button>
             </div>
             <div style="margin-top:6px;display:flex;gap:10px;">
                 <span class="oauth-status" id="ai_status"></span>
@@ -111,10 +111,10 @@ require_admin_role('s');
     <div id="rsPanelPreset" style="display:none;">
         <div class="oauth-card">
             <div class="oauth-card-header">
-                <div class="oauth-card-logo" style="background:#3A8C82;color:#fff;font-size:11px;font-weight:700;letter-spacing:-.5px;"><i class="bi bi-palette"></i></div>
+                <div class="oauth-card-logo" style="background:var(--accent);color:var(--bg);font-size:11px;font-weight:700;letter-spacing:-.5px;"><i class="bi bi-palette"></i></div>
                 <span class="oauth-card-title">재질/조명 프리셋 (엔진 사이드바 선택 박스)</span>
             </div>
-            <p style="font-size:13px;color:var(--text-3);margin:-4px 0 12px;">여기서 추가·수정한 항목이 모든 엔진의 "렌더링" 선택 박스에 그대로 표시됩니다.</p>
+            <p style="font-size:13px;color:var(--text-muted);margin:-4px 0 12px;">여기서 추가·수정한 항목이 모든 엔진의 "렌더링" 선택 박스에 그대로 표시됩니다.</p>
             <div style="overflow-x:auto;">
                 <table class="rp-table" id="rpTable">
                     <thead><tr><th>ID</th><th>이름</th><th>프롬프트</th><th>정렬</th><th>활성</th><th></th></tr></thead>

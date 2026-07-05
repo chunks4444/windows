@@ -17,15 +17,15 @@ require_admin_role('s');
     <?php css_tag('/src/css/users.css'); ?>
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
     <style>
-        .drag-handle { cursor:grab; color:var(--text-3); }
+        .drag-handle { cursor:grab; color:var(--text-muted); }
         .drag-handle:active { cursor:grabbing; }
         tr.dragging { opacity:.4; }
-        tr.drag-over td { background:var(--accent-bg); }
-        .faq-answer-preview { font-size:12px; color:var(--text-3); max-width:400px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        tr.drag-over td { background:var(--accent-tint); }
+        .faq-answer-preview { font-size:12px; color:var(--text-muted); max-width:400px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
-        #faqEditor { height:180px; background:#fff; font-size:13px; }
-        .ql-toolbar { border-color:var(--border-md) !important; border-radius:var(--r-sm) var(--r-sm) 0 0; }
-        .ql-container { border-color:var(--border-md) !important; border-radius:0 0 var(--r-sm) var(--r-sm); font-family:inherit; }
+        #faqEditor { height:180px; background:var(--bg); font-size:13px; }
+        .ql-toolbar { border-color:var(--border) !important; border-radius:var(--r-sm) var(--r-sm) 0 0; }
+        .ql-container { border-color:var(--border) !important; border-radius:0 0 var(--r-sm) var(--r-sm); font-family:inherit; }
     </style>
 </head>
 <body>
@@ -42,14 +42,14 @@ require_admin_role('s');
         <div style="display:flex;align-items:center;gap:12px;">
             <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;cursor:pointer;user-select:none;" title="메인페이지 FAQ 섹션 노출 여부">
                 <input type="checkbox" id="faqSectionToggle" class="form-check-input" style="width:36px;height:20px;cursor:pointer;margin:0;" onchange="setSectionVisible(this.checked)">
-                <span id="faqSectionLabel" style="color:var(--text-2);">메인 노출</span>
+                <span id="faqSectionLabel" style="color:var(--text-muted);">메인 노출</span>
             </label>
             <button class="adm-edit-btn" style="height:32px;padding:0 14px;" onclick="openModal()">
                 <i class="bi bi-plus-lg"></i> 추가
             </button>
         </div>
     </div>
-    <p style="font-size:12px;color:var(--text-3);margin:-8px 0 16px;">행을 드래그해 순서를 변경할 수 있습니다.</p>
+    <p style="font-size:12px;color:var(--text-muted);margin:-8px 0 16px;">행을 드래그해 순서를 변경할 수 있습니다.</p>
 
     <div class="adm-table-wrap">
         <table id="faqTable">

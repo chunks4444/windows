@@ -16,20 +16,20 @@ require_admin_role('s');
     <?php css_tag('/src/css/users.css'); ?>
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
     <style>
-        .drag-handle { cursor:grab; color:var(--text-3); }
+        .drag-handle { cursor:grab; color:var(--text-muted); }
         .drag-handle:active { cursor:grabbing; }
         tr.dragging { opacity:.4; }
-        tr.drag-over td { background:var(--accent-bg); }
+        tr.drag-over td { background:var(--accent-tint); }
         .motif-thumb { width:56px; height:56px; object-fit:contain; border-radius:4px; padding:6px;
-            background-image:linear-gradient(45deg,#ccc 25%,transparent 25%),linear-gradient(-45deg,#ccc 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#ccc 75%),linear-gradient(-45deg,transparent 75%,#ccc 75%);
-            background-size:8px 8px; background-position:0 0,0 4px,4px -4px,-4px 0; background-color:#fff; }
-        .motif-thumb-empty { width:56px; height:56px; border-radius:4px; background:var(--input-bg); display:flex; align-items:center; justify-content:center; color:var(--text-3); font-size:16px; }
+            background-image:linear-gradient(45deg,var(--border) 25%,transparent 25%),linear-gradient(-45deg,var(--border) 25%,transparent 25%),linear-gradient(45deg,transparent 75%,var(--border) 75%),linear-gradient(-45deg,transparent 75%,var(--border) 75%);
+            background-size:8px 8px; background-position:0 0,0 4px,4px -4px,-4px 0; background-color:var(--bg); }
+        .motif-thumb-empty { width:56px; height:56px; border-radius:4px; background:var(--bg); display:flex; align-items:center; justify-content:center; color:var(--text-muted); font-size:16px; }
         .motif-preview { width:100%; max-height:160px; object-fit:contain; border-radius:8px; display:none; margin-bottom:8px; padding:12px;
-            background-image:linear-gradient(45deg,#ccc 25%,transparent 25%),linear-gradient(-45deg,#ccc 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#ccc 75%),linear-gradient(-45deg,transparent 75%,#ccc 75%);
-            background-size:10px 10px; background-position:0 0,0 5px,5px -5px,-5px 0; background-color:#fff; }
+            background-image:linear-gradient(45deg,var(--border) 25%,transparent 25%),linear-gradient(-45deg,var(--border) 25%,transparent 25%),linear-gradient(45deg,transparent 75%,var(--border) 75%),linear-gradient(-45deg,transparent 75%,var(--border) 75%);
+            background-size:10px 10px; background-position:0 0,0 5px,5px -5px,-5px 0; background-color:var(--bg); }
         .motif-preview.show { display:block; }
-        .motif-upload-label { display:block; padding:10px; border:1.5px dashed var(--border-md); border-radius:8px; text-align:center; cursor:pointer; color:var(--text-3); font-size:13px; margin-bottom:6px; }
-        .motif-upload-label:hover { border-color:var(--teal); color:var(--teal); }
+        .motif-upload-label { display:block; padding:10px; border:1.5px dashed var(--border); border-radius:8px; text-align:center; cursor:pointer; color:var(--text-muted); font-size:13px; margin-bottom:6px; }
+        .motif-upload-label:hover { border-color:var(--accent); color:var(--accent); }
     </style>
 </head>
 <body>
@@ -48,7 +48,7 @@ require_admin_role('s');
         </button>
     </div>
 
-    <p style="font-size:12px;color:var(--text-3);margin:-8px 0 16px;">행을 드래그해 순서를 변경할 수 있습니다. 엔진의 "문양 삽입" 라이브러리 피커에 여기 등록된 문양이 노출됩니다.</p>
+    <p style="font-size:12px;color:var(--text-muted);margin:-8px 0 16px;">행을 드래그해 순서를 변경할 수 있습니다. 엔진의 "문양 삽입" 라이브러리 피커에 여기 등록된 문양이 노출됩니다.</p>
 
     <div class="adm-table-wrap">
         <table id="svgMotifsTable">
@@ -89,7 +89,7 @@ require_admin_role('s');
                 <input id="motifName" type="text" placeholder="예: 매화 문양" maxlength="100">
             </div>
             <div class="adm-mfield">
-                <label>카테고리 <span style="font-size:11px;color:var(--text-3);font-weight:400;">(선택, 분류용)</span></label>
+                <label>카테고리 <span style="font-size:11px;color:var(--text-muted);font-weight:400;">(선택, 분류용)</span></label>
                 <input id="motifCategory" type="text" placeholder="예: 꽃살" maxlength="50">
             </div>
         </div>

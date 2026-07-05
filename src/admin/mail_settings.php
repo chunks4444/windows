@@ -31,7 +31,7 @@ require_admin_role('s');
 
         <div class="oauth-card">
             <div class="oauth-card-header">
-                <div class="oauth-card-logo" style="background:#3A8C82;color:#fff;font-size:14px;">✉</div>
+                <div class="oauth-card-logo" style="background:var(--accent);color:var(--bg);font-size:14px;">✉</div>
                 <span class="oauth-card-title">SMTP 인증 계정</span>
             </div>
             <div class="oauth-callback">사이트가 메일을 발송할 때 로그인하는 Gmail 계정입니다.</div>
@@ -49,7 +49,7 @@ require_admin_role('s');
 
         <div class="oauth-card" style="margin-top:32px;">
             <div class="oauth-card-header">
-                <div class="oauth-card-logo" style="background:#3A8C82;color:#fff;font-size:14px;">📨</div>
+                <div class="oauth-card-logo" style="background:var(--accent);color:var(--bg);font-size:14px;">📨</div>
                 <span class="oauth-card-title">발신/수신 주소</span>
             </div>
             <div class="oauth-callback">발송 목적별 주소입니다. 회원 계정 정보가 아닙니다.</div>

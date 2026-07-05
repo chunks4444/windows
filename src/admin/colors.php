@@ -49,8 +49,8 @@ require_admin_role('s');
 </div>
 
 <!-- 추가/수정 모달 -->
-<div id="colorModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:9000;align-items:center;justify-content:center;">
-    <div style="background:#fff;border-radius:12px;width:360px;padding:24px;">
+<div id="colorModal" style="display:none;position:fixed;inset:0;background:rgba(var(--text-rgb), 0.4);z-index:9000;align-items:center;justify-content:center;">
+    <div style="background:var(--bg);border-radius:12px;width:360px;padding:24px;">
         <h5 id="colorModalTitle" style="margin:0 0 16px;font-size:15px;font-weight:700;">색상 추가</h5>
         <input type="hidden" id="editId">
         <div style="display:flex;flex-direction:column;gap:10px;">

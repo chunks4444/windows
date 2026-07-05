@@ -1,6 +1,6 @@
 .oauth-card {
-            background: #fff;
-            border: 1px solid #eef1f0;
+            background: var(--bg);
+            border: 1px solid var(--bg);
             border-radius: 12px;
             padding: 24px 28px;
             margin-bottom: 16px;
@@ -22,18 +22,18 @@
             font-weight: 800;
             flex-shrink: 0;
         }
-        .oauth-logo-google { background: #fff; border: 1px solid #e0e0e0; }
-        .oauth-logo-kakao  { background: var(--kakao); color: #191919; }
-        .oauth-logo-naver  { background: var(--naver); color: #fff; }
-        .oauth-card-title  { font-size: var(--fs-16); font-weight: 700; color: var(--text-1); }
-        .oauth-callback    { font-size: var(--fs-12); color: #97A8A6; margin-bottom: 16px; background: #F5F8F7; padding: 8px 12px; border-radius: 6px; font-family: monospace; word-break: break-all; }
+        .oauth-logo-google { background: var(--bg); border: 1px solid var(--border); }
+        .oauth-logo-kakao  { background: var(--kakao); color: var(--text); }
+        .oauth-logo-naver  { background: var(--naver); color: var(--bg); }
+        .oauth-card-title  { font-size: var(--fs-16); font-weight: 700; color: var(--text); }
+        .oauth-callback    { font-size: var(--fs-12); color: var(--text-muted); margin-bottom: 16px; background: var(--bg); padding: 8px 12px; border-radius: 6px; font-family: monospace; word-break: break-all; }
         .oauth-field       { margin-bottom: 12px; }
-        .oauth-field label { font-size: var(--fs-12); font-weight: 700; color: #7A8C89; letter-spacing: 0.05em; text-transform: uppercase; display: block; margin-bottom: 5px; }
-        .oauth-field input { width: 100%; border: 1.5px solid #E4EDEA; border-radius: 8px; padding: 9px 12px; font-size: var(--fs-14); outline: none; font-family: monospace; color: var(--text-1); transition: border-color .15s; }
-        .oauth-field input:focus { border-color: var(--teal); }
-        .oauth-save { height: 36px; padding: 0 18px; background: var(--teal); color: #fff; border: none; border-radius: 8px; font-size: var(--fs-14); font-weight: 600; cursor: pointer; transition: background .15s; }
-        .oauth-save:hover { background: var(--teal-dark); }
-        .oauth-save:disabled { background: #B8C8C4; cursor: not-allowed; }
+        .oauth-field label { font-size: var(--fs-12); font-weight: 700; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; display: block; margin-bottom: 5px; }
+        .oauth-field input { width: 100%; border: 1.5px solid var(--accent-tint); border-radius: 8px; padding: 9px 12px; font-size: var(--fs-14); outline: none; font-family: monospace; color: var(--text); transition: border-color .15s; }
+        .oauth-field input:focus { border-color: var(--accent); }
+        .oauth-save { height: 36px; padding: 0 18px; background: var(--accent); color: var(--bg); border: none; border-radius: 8px; font-size: var(--fs-14); font-weight: 600; cursor: pointer; transition: background .15s; }
+        .oauth-save:hover { background: var(--accent-hover); }
+        .oauth-save:disabled { background: var(--border); cursor: not-allowed; }
         .oauth-status { font-size: var(--fs-13); margin-left: 10px; }
-        .oauth-status.ok  { color: #2d7a72; }
+        .oauth-status.ok  { color: var(--accent); }
         .oauth-status.err { color: var(--danger); }

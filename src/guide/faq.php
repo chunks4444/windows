@@ -50,7 +50,7 @@ $faqs = db()->query('SELECT * FROM faqs WHERE is_active=1 ORDER BY sort_order, i
 }
 .faq-guide-item h3 { margin: 0; }
 .faq-guide-item {
-    border: 1px solid var(--bs-border-color, #dee2e6) !important;
+    border: 1px solid var(--bs-border-color, var(--border)) !important;
     border-radius: 8px !important;
     margin-bottom: 8px;
     overflow: hidden;
@@ -58,14 +58,14 @@ $faqs = db()->query('SELECT * FROM faqs WHERE is_active=1 ORDER BY sort_order, i
 .faq-guide-btn {
     font-size: 15px;
     font-weight: 600;
-    background: #fff;
-    color: #1a1a1a;
+    background: var(--bg);
+    color: var(--text);
     padding: var(--bs-accordion-btn-padding-y) var(--bs-accordion-btn-padding-x) !important;
     box-shadow: none !important;
 }
 .faq-guide-btn:not(.collapsed) {
-    background: #f7faf9;
-    color: #2d7a6e;
+    background: var(--bg);
+    color: var(--accent);
 }
 .faq-guide-btn::after {
     filter: none;
@@ -77,8 +77,8 @@ $faqs = db()->query('SELECT * FROM faqs WHERE is_active=1 ORDER BY sort_order, i
     padding: 16px 20px 22px;
     font-size: 14px;
     line-height: 1.75;
-    color: #444;
-    border-top: 1px solid #eee;
+    color: var(--text);
+    border-top: 1px solid var(--bg);
 }
 .faq-guide-body p { margin-bottom: 8px; }
 .faq-guide-body p:last-child { margin-bottom: 0; }

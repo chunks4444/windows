@@ -77,14 +77,14 @@ $libPatternCats = get_pattern_categories();
                 <input type="text" id="lpName" placeholder="예: 정자살" maxlength="80">
             </div>
             <div class="adm-mfield">
-                <label>도면 <small style="color:var(--text-3);font-weight:400;">(선택)</small></label>
-                <select id="lpDrawingId" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg-1);color:var(--text-1);font-size:14px;">
+                <label>도면 <small style="color:var(--text-muted);font-weight:400;">(선택)</small></label>
+                <select id="lpDrawingId" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg-1);color:var(--text);font-size:14px;">
                     <option value="">— 연결 안함 —</option>
                 </select>
             </div>
             <div class="adm-mfield">
-                <label>모양 <small style="color:var(--text-3);font-weight:400;">컬렉션 페이지 "모양" 필터용 — 연결 도면의 분류와 별개</small></label>
-                <select id="lpCategory" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg-1);color:var(--text-1);font-size:14px;">
+                <label>모양 <small style="color:var(--text-muted);font-weight:400;">컬렉션 페이지 "모양" 필터용 — 연결 도면의 분류와 별개</small></label>
+                <select id="lpCategory" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg-1);color:var(--text);font-size:14px;">
                     <option value="">— 분류 없음 —</option>
                     <?php foreach ($libPatternCats as $c): ?>
                     <option value="<?= (int)$c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
@@ -92,7 +92,7 @@ $libPatternCats = get_pattern_categories();
                 </select>
             </div>
             <div class="adm-mfield">
-                <label>대표 이미지 <small style="color:var(--text-3);font-weight:400;">업로드 안 하면 연결된 도면의 썸네일을 사용합니다</small></label>
+                <label>대표 이미지 <small style="color:var(--text-muted);font-weight:400;">업로드 안 하면 연결된 도면의 썸네일을 사용합니다</small></label>
                 <img id="lpImgPreview" class="lib-img-preview" src="" alt="">
                 <label class="lib-upload-label" for="lpImgFile">
                     <i class="bi bi-upload"></i> 이미지 선택 (최대 10MB · 1024px)
