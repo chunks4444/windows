@@ -115,7 +115,7 @@ try {
         <!-- ── 좌측 1/4: 시리즈물 ── -->
         <aside class="bg-series-col bg-col">
             <h2 class="bg-col-title"><i class="bi bi-book"></i> 시리즈로 읽기</h2>
-            <?php foreach ($seriesGroups as $si => $group):
+            <?php foreach (array_values($seriesGroups) as $si => $group):
                 $first = $group['posts'][0];
                 $count = count($group['posts']);
                 $latestDate = max(array_column($group['posts'], 'created_at'));
