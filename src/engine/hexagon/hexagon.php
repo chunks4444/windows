@@ -23,6 +23,7 @@ header('Pragma: no-cache');
 <body class="pm-generator">
 
     <?php include __DIR__ . '/../../components/engine-nav.php'; ?>
+    <?php $blogEngineKey = 'hexagon'; include __DIR__ . '/../../components/blog_engine_link.php'; ?>
     <input type="file" id="aiFileUploader" accept="image/*" multiple style="display: none;">
     <!-- MAIN -->
     <div class="main">

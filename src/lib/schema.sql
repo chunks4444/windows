@@ -20,6 +20,12 @@
 -- CREATE TABLE pattern_categories (code VARCHAR(40) NOT NULL, engine VARCHAR(20) NOT NULL DEFAULT 'all', name VARCHAR(40) NOT NULL, sort_order TINYINT UNSIGNED NOT NULL DEFAULT 0, is_active TINYINT(1) NOT NULL DEFAULT 1, PRIMARY KEY (code, engine)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 -- ALTER TABLE blog_posts ADD COLUMN view_count INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '조회수 (방문자 쿠키 기준 24시간 중복 방지)' AFTER is_active;
 -- ALTER TABLE library_patterns ADD COLUMN pattern_category INT UNSIGNED NULL DEFAULT NULL COMMENT '컬렉션 "모양" 필터용 분류 — pattern_categories.id 참조 (연결 도면의 분류와 별개)' AFTER drawing_id;
+-- CREATE TABLE blog_series (id INT UNSIGNED NOT NULL AUTO_INCREMENT, name VARCHAR(80) NOT NULL, tagline VARCHAR(200) NOT NULL DEFAULT '', sort_order SMALLINT UNSIGNED NOT NULL DEFAULT 0, PRIMARY KEY (id), UNIQUE KEY uq_series_name (name)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='블로그 시리즈';
+-- ALTER TABLE blog_posts ADD COLUMN series_id INT UNSIGNED NULL DEFAULT NULL COMMENT '블로그 시리즈 FK' AFTER slug;
+-- ALTER TABLE blog_posts ADD COLUMN series_order SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '시리즈 내 순서' AFTER series_id;
+-- ALTER TABLE blog_posts ADD COLUMN related_drawing_id INT UNSIGNED NULL DEFAULT NULL COMMENT '연관 대표 도면 ID (drawings.id), 딥링크용' AFTER series_order;
+-- ALTER TABLE blog_posts ADD COLUMN related_engine VARCHAR(20) NULL DEFAULT NULL COMMENT '연관 엔진 (classic/square/cross/diamond/triangle/hexagon)' AFTER related_drawing_id;
+-- ALTER TABLE blog_posts ADD COLUMN question VARCHAR(200) NOT NULL DEFAULT '' COMMENT '질문형 인덱스용 한 줄 질문' AFTER related_engine;
 
 -- 접속 통계 (6개월 rolling)
 CREATE TABLE IF NOT EXISTS page_views (

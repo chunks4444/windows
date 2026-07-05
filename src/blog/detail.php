@@ -8,6 +8,9 @@ $slug = trim($_GET['slug'] ?? '');
 $post = null;
 $prev = null;
 $next = null;
+$nextSeries     = null;
+$seriesInfo     = null;
+$seriesEpisodes = [];
 try {
     $pdo = db();
     if ($slug !== '') {
@@ -21,8 +24,37 @@ try {
         $post = $stmt->fetch();
         if ($post) { header('Location: /src/blog/' . rawurlencode($post['slug']), true, 301); exit; }
     }
-    if ($post) {
-        // 이전 / 다음 글
+    if ($post && $post['series_id']) {
+        // 시리즈 내 이전/다음 (시간순이 아니라 읽는 순서 기준)
+        $prev = $pdo->prepare('SELECT id,title,slug FROM blog_posts WHERE is_active=1 AND series_id=? AND series_order<? ORDER BY series_order DESC LIMIT 1');
+        $prev->execute([$post['series_id'], $post['series_order']]);
+        $prev = $prev->fetch();
+
+        $next = $pdo->prepare('SELECT id,title,slug FROM blog_posts WHERE is_active=1 AND series_id=? AND series_order>? ORDER BY series_order ASC LIMIT 1');
+        $next->execute([$post['series_id'], $post['series_order']]);
+        $next = $next->fetch();
+
+        $si = $pdo->prepare('SELECT id,name,tagline,sort_order FROM blog_series WHERE id=?');
+        $si->execute([$post['series_id']]);
+        $seriesInfo = $si->fetch();
+
+        $eps = $pdo->prepare('SELECT id,title,slug,series_order FROM blog_posts WHERE is_active=1 AND series_id=? ORDER BY series_order');
+        $eps->execute([$post['series_id']]);
+        $seriesEpisodes = $eps->fetchAll();
+
+        if (!$next && $seriesInfo) {
+            // 마지막 편이면 다음 시리즈의 1편으로 안내
+            $ns = $pdo->prepare("
+                SELECT p.id, p.title, p.slug, s.name AS series_name
+                FROM blog_posts p JOIN blog_series s ON s.id = p.series_id
+                WHERE p.is_active=1 AND p.series_order=1 AND s.sort_order > ?
+                ORDER BY s.sort_order LIMIT 1
+            ");
+            $ns->execute([$seriesInfo['sort_order']]);
+            $nextSeries = $ns->fetch();
+        }
+    } elseif ($post) {
+        // 시리즈 미지정 글 — 기존 시간순 방식 유지
         $prev = $pdo->prepare('SELECT id,title,slug FROM blog_posts WHERE is_active=1 AND (sort_order < ? OR (sort_order=? AND id<?)) ORDER BY sort_order DESC, id DESC LIMIT 1');
         $prev->execute([$post['sort_order'], $post['sort_order'], $post['id']]);
         $prev = $prev->fetch();
@@ -35,6 +67,15 @@ try {
     $post = null;
 }
 if (!$post) { header('Location: /src/blog/'); exit; }
+
+$engineLabels = [
+    'classic'  => '정자살(Classic Lattice)',
+    'square'   => '완자살(Square Lattice)',
+    'cross'    => '교살(Cross Lattice)',
+    'triangle' => '세모 솟을살(Triangle Lattice)',
+    'diamond'  => '마름모살(Diamond Lattice)',
+    'hexagon'  => '육모 솟을살(Hexagon Lattice)',
+];
 
 // 조회수 집계 — 방문자당 24시간에 1회만 카운트 (쿠키 기반 중복 방지)
 $viewCookie = 'blog_view_' . $post['id'];
@@ -88,9 +129,40 @@ $metaImage = $post['thumbnail_url']
             </time>
         </header>
 
+        <?php if ($seriesInfo): ?>
+        <div class="bd-series-box">
+            <p class="bd-series-box-label">이 시리즈 · <?= htmlspecialchars($seriesInfo['name']) ?></p>
+            <?php if ($seriesInfo['tagline']): ?>
+            <p class="bd-series-box-tagline">"<?= htmlspecialchars($seriesInfo['tagline']) ?>"</p>
+            <?php endif; ?>
+            <ol class="bd-series-box-list">
+                <?php foreach ($seriesEpisodes as $ep): ?>
+                <li class="<?= $ep['id'] === $post['id'] ? 'current' : '' ?>">
+                    <?php if ($ep['id'] === $post['id']): ?>
+                    <span><?= $ep['series_order'] ?>. <?= htmlspecialchars($ep['title']) ?></span>
+                    <?php else: ?>
+                    <a href="/src/blog/<?= rawurlencode($ep['slug']) ?>"><?= $ep['series_order'] ?>. <?= htmlspecialchars($ep['title']) ?></a>
+                    <?php endif; ?>
+                </li>
+                <?php endforeach; ?>
+            </ol>
+        </div>
+        <?php endif; ?>
+
         <hr class="bd-divider">
 
         <div class="bd-body"><?= $post['content'] ?></div>
+
+        <?php if ($post['related_engine'] && isset($engineLabels[$post['related_engine']])): ?>
+        <div class="bd-engine-box">
+            <p class="bd-engine-box-title">이 살의 이야기, 직접 만들어보세요</p>
+            <p class="bd-engine-box-desc">글에서 다룬 <?= htmlspecialchars($engineLabels[$post['related_engine']]) ?> 패턴을 스튜디오에서 바로 조작해볼 수 있습니다.</p>
+            <a class="bd-engine-box-btn"
+               href="/src/engine/<?= htmlspecialchars($post['related_engine']) ?>/<?= htmlspecialchars($post['related_engine']) ?>.php<?= $post['related_drawing_id'] ? '?drawing_id=' . (int)$post['related_drawing_id'] : '' ?>">
+                <?= htmlspecialchars($engineLabels[$post['related_engine']]) ?> 스튜디오 열기 <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+        <?php endif; ?>
 
         <div class="bd-cta">
             <p class="bd-cta-title"><?= htmlspecialchars($post['cta_text'] ?: '평목 스튜디오의 다양한 패턴 디자인 보러가기') ?></p>
@@ -99,18 +171,23 @@ $metaImage = $post['thumbnail_url']
 
     </article>
 
-    <?php if ($prev || $next): ?>
+    <?php if ($prev || $next || $nextSeries): ?>
     <nav class="bd-pager">
         <?php if ($prev): ?>
         <a class="bd-pager-link bd-pager-prev" href="/src/blog/<?= rawurlencode($prev['slug']) ?>">
-            <span class="bd-pager-label">이전 글</span>
+            <span class="bd-pager-label">이전 편</span>
             <span class="bd-pager-title"><?= htmlspecialchars($prev['title']) ?></span>
         </a>
         <?php else: ?><span></span><?php endif; ?>
         <?php if ($next): ?>
         <a class="bd-pager-link bd-pager-next" href="/src/blog/<?= rawurlencode($next['slug']) ?>">
-            <span class="bd-pager-label">다음 글</span>
+            <span class="bd-pager-label">다음 편</span>
             <span class="bd-pager-title"><?= htmlspecialchars($next['title']) ?></span>
+        </a>
+        <?php elseif ($nextSeries): ?>
+        <a class="bd-pager-link bd-pager-next" href="/src/blog/<?= rawurlencode($nextSeries['slug']) ?>">
+            <span class="bd-pager-label">다음 시리즈 · <?= htmlspecialchars($nextSeries['series_name']) ?> 1편</span>
+            <span class="bd-pager-title"><?= htmlspecialchars($nextSeries['title']) ?></span>
         </a>
         <?php endif; ?>
     </nav>

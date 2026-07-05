@@ -10,6 +10,32 @@ body {
     --border:   rgba(255,255,255,0.2);
 }
 
+/* ── 블로그 딥링크 (좌하단 고정) ────────────────────── */
+.pm-engine-story-link {
+    position: fixed;
+    left: 16px;
+    bottom: 16px;
+    z-index: 40;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: rgba(20,24,24,0.85);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 999px;
+    text-decoration: none;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    transition: background 0.15s ease, transform 0.15s ease;
+}
+.pm-engine-story-link:hover {
+    background: var(--teal, #3A8C82);
+    color: #fff;
+    transform: translateY(-1px);
+}
+
 body.pm-generator { padding-top: 64px !important; }
 body.pm-generator .pm-navbar { background: var(--sidebar-bg) !important; border-bottom-color: rgba(255,255,255,0.1) !important; padding-top: 0 !important; padding-bottom: 0 !important; min-height: 64px; display: flex !important; align-items: center !important; }
 body.pm-generator .pm-navbar .navbar-brand { display: flex; align-items: center; padding-top: 0; padding-bottom: 0; }
