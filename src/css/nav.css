@@ -52,7 +52,7 @@ a.pm-topbar-notice-text:hover { opacity: 0.85; }
 
 /* ── NAV (공통) ───────────────────────────────────── */
 .pm-navbar {
-    background: var(--bg);
+    background: #fff;
     font-family: 'Noto Sans KR', -apple-system, sans-serif;
     border-bottom: 1px solid rgba(var(--text-rgb), 0.08);
 }
@@ -120,7 +120,7 @@ a.pm-topbar-notice-text:hover { opacity: 0.85; }
 .pm-navbar .dropdown-item:hover { background: rgba(var(--text-rgb), 0.04); color: var(--danger); }
 .pm-navbar .dropdown-item.active { font-weight: 600; color: var(--danger); background: none; }
 @media (max-width: 768px) {
-    .pm-navbar { background: rgba(var(--bg-rgb), 0.97); }
+    .pm-navbar { background: rgba(255, 255, 255, 0.97); }
 }
 
 /* ── 오른쪽 슬라이드 드로어 ─────────────────────────── */
