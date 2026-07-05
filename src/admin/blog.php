@@ -183,8 +183,10 @@ $engineOptions = [
                         </select>
                     </div>
                     <div class="adm-mfield">
-                        <label>연관 대표 도면 ID <span style="font-size:11px;color:var(--text-3);font-weight:400;">(선택, drawings.id — 지정하면 그 도면을 바로 불러온 상태로 엔진이 열림)</span></label>
-                        <input id="postRelatedDrawingId" type="number" min="0" placeholder="예: 123" style="width:150px;">
+                        <label>연관 대표 도면 <span style="font-size:11px;color:var(--text-3);font-weight:400;">(선택 — 컬렉션에 등록된 패턴 중에서만 고를 수 있습니다. 지정하면 그 도면을 바로 불러온 상태로 엔진이 열림)</span></label>
+                        <select id="postRelatedDrawingId" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg-1);color:var(--text-1);font-size:14px;">
+                            <option value="">— 없음 —</option>
+                        </select>
                     </div>
                 </div>
             </div>

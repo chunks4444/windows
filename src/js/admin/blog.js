@@ -11,6 +11,17 @@ async function loadPosts() {
     render();
 }
 
+// "연관 대표 도면" select — 컬렉션에 실제로 등록된 패턴만 고를 수 있게 한다.
+// (엔진의 드로잉 딥링크는 컬렉션에 공개된 도면만 불러올 수 있어, 임의 도면 ID를 적으면 조용히 실패함)
+async function loadCollectionPatternsForPicker() {
+    const res  = await fetch('/src/api/admin/collection.php', { headers: _h() });
+    const data = await res.json();
+    const patterns = (data.patterns || []).filter(p => p.drawing_id);
+    const sel = document.getElementById('postRelatedDrawingId');
+    sel.innerHTML = '<option value="">— 없음 —</option>' +
+        patterns.map(p => `<option value="${p.drawing_id}">${esc(p.name_ko)} (도면 #${p.drawing_id})</option>`).join('');
+}
+
 function render() {
     document.getElementById('blogBody').innerHTML = posts.map(p => `
         <tr data-id="${p.id}" draggable="true">
@@ -304,4 +315,5 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!user || user.role !== 's') { document.getElementById('blogAuthWall').style.display = ''; return; }
     document.getElementById('blogPage').style.display = '';
     loadPosts();
+    loadCollectionPatternsForPicker();
 });
