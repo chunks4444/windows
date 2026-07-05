@@ -243,7 +243,7 @@ body.pm-generator .pm-navbar .dropdown-menu { background: var(--sidebar-bg) !imp
     display: flex;
     align-items: center;
     gap: 6px;
-    background: var(--bg);
+    background: #3a3f45;
     border: 1px solid var(--border);
     border-radius: 20px;
     padding: 3px 12px 3px 8px;
@@ -286,11 +286,7 @@ body.pm-generator .pm-navbar .dropdown-menu { background: var(--sidebar-bg) !imp
 }
 
 .drawing-name-input:focus { width: 200px; }
-.title-btn-group:has(.drawing-name-input:focus) { background: var(--bg); border-color: var(--sidebar-bg); }
-.title-btn-group:has(.drawing-name-input:focus) .drawing-name-input { color: var(--text-1); }
-.title-btn-group:has(.drawing-name-input:focus) .title-group-btn { border-left-color: var(--border); background: transparent; color: var(--text-1); }
-.title-btn-group:has(.drawing-name-input:focus) .title-group-btn:hover { background: var(--bg); color: var(--text-1); }
-.title-btn-group:has(.drawing-name-input:focus) .title-group-btn.save-btn { background: var(--sidebar-bg); color: var(--bg); }
+.title-btn-group:has(.drawing-name-input:focus) { border-color: var(--accent); }
 .drawing-name-input::placeholder { color: rgba(var(--bg-rgb), 0.4); font-weight: 400; }
 
 .badge-dot { width: 6px; height: 6px; background: var(--border); border-radius: 50%; }
