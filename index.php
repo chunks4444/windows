@@ -396,7 +396,7 @@ try {
                         <button type="button" class="home-contact-btn home-contact-btn--primary" data-bs-toggle="modal" data-bs-target="#contactModal">
                             <i class="bi bi-envelope-fill"></i> 이메일로 문의하기
                         </button>
-                        <a href="tel:+82705124458" class="home-contact-btn home-contact-btn--ghost">
+                        <a href="tel:+827051244568" class="home-contact-btn home-contact-btn--ghost">
                             <i class="bi bi-telephone-fill"></i> 070-5124-4568
                         </a>
                     </div>

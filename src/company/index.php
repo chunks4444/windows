@@ -182,7 +182,7 @@ foreach ($studioCards as $sc) $cardsByKey[$sc['engine_key']] = $sc;
                     </div>
                     <div class="ab-contact-row">
                         <dt>전화</dt>
-                        <dd><a href="tel:+82705124458">070-5124-4568</a></dd>
+                        <dd><a href="tel:+827051244568">070-5124-4568</a></dd>
                     </div>
                     <div class="ab-contact-row">
                         <dt>이메일</dt>
