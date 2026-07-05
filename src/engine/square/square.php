@@ -666,7 +666,7 @@ header('Pragma: no-cache');
                         </button>
                         </div>
                         <div class="rp-thumb-list" id="thumbList"></div>
-                        <select id="aiPromptPreset" class="rp-prompt-select" onchange="if(this.value) document.getElementById('aiPrompt').value = this.value;">
+                        <select id="aiPromptPreset" class="sb-select rp-prompt-select" onchange="if(this.value) document.getElementById('aiPrompt').value = this.value;">
                             <option value="">재질/조명 선택…</option>
                             <?php foreach ($renderPresets as $rp): ?>
                             <option value="<?= htmlspecialchars($rp['prompt_text']) ?>"><?= htmlspecialchars($rp['label']) ?></option>
