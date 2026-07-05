@@ -435,7 +435,7 @@ body { font-weight: 900; }
 .service-card--diamond,
 .service-card--hexagon {
     background-image: none;
-    background-color: var(--bg);
+    background-color: #f9f9f9;
 }
 
 .custom-badge {
