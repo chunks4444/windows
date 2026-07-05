@@ -128,13 +128,16 @@ try {
                     </div>
                     <?php endif; ?>
                     <div class="bg-series-mini-body">
-                        <p class="bg-series-mini-count">전 <?= $count ?>편 · 최근 업데이트 <?= date('Y.m.d', strtotime($latestDate)) ?></p>
+                        <p class="bg-series-mini-date">최근 업데이트 <?= date('Y.m.d', strtotime($latestDate)) ?></p>
                         <h3 class="bg-series-mini-name"><?= htmlspecialchars($group['name']) ?></h3>
                         <?php if ($group['tagline']): ?>
                         <p class="bg-series-mini-tagline">"<?= htmlspecialchars($group['tagline']) ?>"</p>
                         <?php endif; ?>
                     </div>
                 </a>
+                <button type="button" class="bg-series-mini-eps-toggle" onclick="this.closest('.bg-series-mini').classList.toggle('open')">
+                    전 <?= $count ?>편 보기 <i class="bi bi-chevron-down"></i>
+                </button>
                 <ol class="bg-series-mini-eps">
                     <?php foreach ($group['posts'] as $i => $ep): ?>
                     <li><a href="/src/blog/<?= rawurlencode($ep['slug']) ?>"><?= $i + 1 ?>편. <?= htmlspecialchars($ep['title']) ?></a></li>
