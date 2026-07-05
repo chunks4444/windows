@@ -79,19 +79,26 @@ function saveLibraryImage(string $input): ?string {
     $img = fixImageOrientation($img, $binary);
 
     $w = imagesx($img); $h = imagesy($img);
+    $nw = $w; $nh = $h;
     if ($w > 1024 || $h > 1024) {
         $scale = min(1024 / $w, 1024 / $h);
         $nw = (int)($w * $scale); $nh = (int)($h * $scale);
-        $resized = imagecreatetruecolor($nw, $nh);
-        imagecopyresampled($resized, $img, 0, 0, 0, 0, $nw, $nh, $w, $h);
-        imagedestroy($img);
-        $img = $resized;
     }
+
+    // JPEG는 투명 채널을 지원하지 않는다. 흰색 채우기 없이 그대로 JPEG로 저장하면
+    // GD의 기본 캔버스 색(검정)이 그대로 비쳐 투명했던 배경이 검게 나온다 — 카드 배경색과
+    // 맞춰 연한 회색으로 먼저 채운 캔버스에 합성한 뒤 저장한다.
+    $canvas = imagecreatetruecolor($nw, $nh);
+    $bg     = imagecolorallocate($canvas, 0xf5, 0xf5, 0xf5);
+    imagefill($canvas, 0, 0, $bg);
+    imagecopyresampled($canvas, $img, 0, 0, 0, 0, $nw, $nh, $w, $h);
+    imagedestroy($img);
+
     $dir = __DIR__ . '/../../../uploads/library';
     if (!is_dir($dir)) mkdir($dir, 0755, true);
     $fname = time() . '_' . bin2hex(random_bytes(4)) . '.jpg';
-    imagejpeg($img, $dir . '/' . $fname, 85);
-    imagedestroy($img);
+    imagejpeg($canvas, $dir . '/' . $fname, 85);
+    imagedestroy($canvas);
     return '/uploads/library/' . $fname;
 }
 
