@@ -140,7 +140,7 @@ try {
                 </button>
                 <ol class="bg-series-mini-eps">
                     <?php foreach ($group['posts'] as $i => $ep): ?>
-                    <li><a href="/src/blog/<?= rawurlencode($ep['slug']) ?>"><?= $i + 1 ?>편. <?= htmlspecialchars($ep['title']) ?></a></li>
+                    <li><a href="/src/blog/<?= rawurlencode($ep['slug']) ?>"><span class="bg-series-mini-eps-num"><?= $i + 1 ?>편.</span><span class="bg-series-mini-eps-title"><?= htmlspecialchars($ep['title']) ?></span></a></li>
                     <?php endforeach; ?>
                 </ol>
             </article>
