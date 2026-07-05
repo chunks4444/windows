@@ -286,11 +286,11 @@ body.pm-generator .pm-navbar .dropdown-menu { background: var(--sidebar-bg) !imp
 }
 
 .drawing-name-input:focus { width: 200px; }
-.title-btn-group:focus-within { background: var(--bg); border-color: var(--sidebar-bg); }
-.title-btn-group:focus-within .drawing-name-input { color: var(--text-1); }
-.title-btn-group:focus-within .title-group-btn { border-left-color: var(--border); background: transparent; color: var(--text-1); }
-.title-btn-group:focus-within .title-group-btn:hover { background: var(--bg); color: var(--text-1); }
-.title-btn-group:focus-within .title-group-btn.save-btn { background: var(--sidebar-bg); color: var(--bg); }
+.title-btn-group:has(.drawing-name-input:focus) { background: var(--bg); border-color: var(--sidebar-bg); }
+.title-btn-group:has(.drawing-name-input:focus) .drawing-name-input { color: var(--text-1); }
+.title-btn-group:has(.drawing-name-input:focus) .title-group-btn { border-left-color: var(--border); background: transparent; color: var(--text-1); }
+.title-btn-group:has(.drawing-name-input:focus) .title-group-btn:hover { background: var(--bg); color: var(--text-1); }
+.title-btn-group:has(.drawing-name-input:focus) .title-group-btn.save-btn { background: var(--sidebar-bg); color: var(--bg); }
 .drawing-name-input::placeholder { color: rgba(var(--bg-rgb), 0.4); font-weight: 400; }
 
 .badge-dot { width: 6px; height: 6px; background: var(--border); border-radius: 50%; }
@@ -865,7 +865,7 @@ canvas:active { cursor: grabbing; }
 
 /* ── 견적요청 모달 ──────────────────────────────── */
 .order-modal {
-    background: var(--bg);
+    background: #fff;
     border-radius: 14px;
     box-shadow: 0 24px 64px rgba(var(--text-rgb), 0.22), 0 4px 16px rgba(var(--text-rgb), 0.1);
     width: 480px;
@@ -1264,7 +1264,7 @@ input[type="range"] {
     appearance: none;
     width: 100%;
     height: 3px;
-    background: var(--text-1);
+    background: rgba(var(--bg-rgb), 0.08);
     border-radius: 2px;
     outline: none;
     cursor: pointer;
@@ -1686,7 +1686,7 @@ input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
     align-items: center; justify-content: center;
 }
 .svg-picker-box {
-    background: var(--bg); border-radius: 14px;
+    background: #fff; border-radius: 14px;
     width: 480px; max-width: calc(100vw - 32px);
     max-height: 70vh;
     box-shadow: 0 24px 64px rgba(var(--text-rgb), 0.22), 0 4px 16px rgba(var(--text-rgb), 0.1);
@@ -1723,7 +1723,7 @@ input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
     border-radius: 3px;
 }
 .svg-picker-item span {
-    font-size: 11px; color: var(--text-2); text-align: center;
+    font-size: 11px; color: var(--text-1); text-align: center;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
 }
 @media (max-width: 480px) {
