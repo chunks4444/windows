@@ -1,13 +1,13 @@
 /* ── BLOG INDEX — 시리즈 허브 레이아웃 ────────────────────── */
 
-body { background: var(--bg, var(--bg)); }
+body { background: #fff; }
 
 /* ── 페이지 래퍼 ──────────────────────────────────────────── */
 .bg-page { min-height: calc(100vh - 68px); }
 
 /* ── 페이지 헤더 ──────────────────────────────────────────── */
 .bg-hero {
-    background: var(--bg, var(--bg));
+    background: #fff;
     border-bottom: 1px solid var(--border, var(--border));
     padding: 2.5rem 0;
 }
@@ -26,7 +26,7 @@ body { background: var(--bg, var(--bg)); }
     line-height: 1.3; margin-bottom: .5rem;
 }
 .bg-hero-sub {
-    font-size: var(--fs-13); font-weight: 700; color: var(--text);
+    font-size: var(--fs-13); font-weight: 400; color: var(--text);
 }
 
 /* ── 목록 래퍼 ────────────────────────────────────────────── */
@@ -68,7 +68,6 @@ body { background: var(--bg, var(--bg)); }
     display: flex; flex-direction: column;
     position: sticky; top: 90px;
     min-width: 0;
-    border-top: 1px solid var(--border, var(--border));
 }
 @media (max-width: 1100px) { .bg-series-col { position: static; } }
 
@@ -116,15 +115,15 @@ body { background: var(--bg, var(--bg)); }
 .bg-series-mini-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .bg-series-mini-body { min-width: 0; }
 .bg-series-mini-date {
-    font-size: var(--fs-12); color: var(--text-muted);
+    font-size: var(--fs-12); color: var(--text);
     margin: 0 0 .3rem;
 }
 .bg-series-mini-name {
-    font-size: var(--fs-16); font-weight: 700; color: var(--text);
+    font-size: var(--fs-14); font-weight: 700; color: var(--text);
     margin: 0 0 .2rem; line-height: 1.35;
 }
 .bg-series-mini-tagline {
-    font-size: var(--fs-12); color: var(--text-muted);
+    font-size: var(--fs-12); color: var(--text);
     margin: 0; line-height: 1.4;
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
     overflow: hidden;
@@ -153,7 +152,7 @@ body { background: var(--bg, var(--bg)); }
 .bg-series-mini-eps a {
     display: flex; align-items: baseline; gap: .3rem;
     padding: .55rem 0;
-    font-size: var(--fs-12); color: var(--text-muted);
+    font-size: var(--fs-12); color: var(--text);
     text-decoration: none;
     line-height: 1.4;
     transition: color .15s ease, background .15s ease;
@@ -176,14 +175,14 @@ body { background: var(--bg, var(--bg)); }
 }
 .bg-question-mini-body { min-width: 0; }
 .bg-question-mini-q {
-    font-size: var(--fs-12); font-weight: 700; color: var(--text);
+    font-size: var(--fs-14); font-weight: 700; color: var(--text);
     margin: 0 0 .2rem; line-height: 1.4;
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
     overflow: hidden;
 }
 .bg-question-mini:hover .bg-question-mini-q { color: var(--accent); }
 .bg-question-mini-meta {
-    font-size: var(--fs-11); color: var(--text-muted);
+    font-size: var(--fs-11); color: var(--text);
     margin: 0;
 }
 
@@ -208,17 +207,17 @@ body { background: var(--bg, var(--bg)); }
 .bg-post-row-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .bg-post-row-body { min-width: 0; flex: 1; }
 .bg-post-row-meta {
-    font-size: var(--fs-12); color: var(--text-muted);
+    font-size: var(--fs-12); color: var(--text);
     margin: 0 0 .3rem;
 }
 .bg-post-row-series { color: var(--accent); font-weight: 700; }
 .bg-post-row-title {
-    font-size: var(--fs-18); font-weight: 700; color: var(--text);
+    font-size: var(--fs-14); font-weight: 700; color: var(--text);
     margin: 0 0 .3rem; line-height: 1.4;
     transition: color .15s ease;
 }
 .bg-post-row-summary {
-    font-size: var(--fs-13); color: var(--text-muted);
+    font-size: var(--fs-13); color: var(--text);
     margin: 0; line-height: 1.5;
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
     overflow: hidden;

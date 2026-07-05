@@ -1,6 +1,6 @@
 /* ── BLOG DETAIL — 아티클 레이아웃 ──────────────────────────── */
 
-body { background: var(--bg, var(--bg)); }
+body { background: #fff; }
 
 .bd-page {
     min-height: calc(100vh - 68px);
@@ -29,7 +29,7 @@ body { background: var(--bg, var(--bg)); }
 }
 .bd-date {
     display: block;
-    font-size: var(--fs-13); color: var(--text-muted);
+    font-size: var(--fs-13); color: var(--text);
     margin-bottom: 1.75rem;
 }
 
