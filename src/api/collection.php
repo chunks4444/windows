@@ -38,7 +38,7 @@ $baseWhere = 'p.is_active = 1';
 $params    = [];
 
 if ($category !== '') {
-    $baseWhere .= ' AND d.pattern_category = :category';
+    $baseWhere .= ' AND p.pattern_category = :category';
     $params[':category'] = $category;
 } elseif ($q !== '') {
     $like = '%' . $q . '%';

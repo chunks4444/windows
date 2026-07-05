@@ -20,7 +20,7 @@ $pdo    = db();
 
 if ($method === 'GET') {
     $rows = $pdo->query(
-        'SELECT p.id, p.name_ko, p.drawing_id, p.image_path, p.sort_order, p.is_active,
+        'SELECT p.id, p.name_ko, p.drawing_id, p.pattern_category, p.image_path, p.sort_order, p.is_active,
                 GROUP_CONCAT(k.keyword ORDER BY k.id SEPARATOR ",") AS keywords
          FROM library_patterns p
          LEFT JOIN library_keywords k ON k.pattern_id = p.id
@@ -105,6 +105,7 @@ function drawingThumbnailImage(PDO $pdo, int $drawingId): ?string {
 if ($method === 'POST') {
     $name_ko    = trim($body['name_ko'] ?? '');
     $drawing_id = (int)($body['drawing_id'] ?? 0) ?: null;
+    $pattern_category = (int)($body['pattern_category'] ?? 0) ?: null;
     $order      = (int)($body['sort_order'] ?? 0);
     $keywords   = array_values(array_unique(array_filter(array_map('trim', (array)($body['keywords'] ?? [])))));
 
@@ -123,8 +124,8 @@ if ($method === 'POST') {
 
     $slug = bin2hex(random_bytes(6));
 
-    $pdo->prepare('INSERT INTO library_patterns (slug, name_ko, drawing_id, image_path, sort_order) VALUES (?,?,?,?,?)')
-        ->execute([$slug, $name_ko, $drawing_id, $image_path, $order]);
+    $pdo->prepare('INSERT INTO library_patterns (slug, name_ko, drawing_id, pattern_category, image_path, sort_order) VALUES (?,?,?,?,?,?)')
+        ->execute([$slug, $name_ko, $drawing_id, $pattern_category, $image_path, $order]);
     $id = (int)$pdo->lastInsertId();
 
     $stmt = $pdo->prepare('INSERT INTO library_keywords (pattern_id, keyword) VALUES (?,?)');
@@ -146,6 +147,8 @@ if ($method === 'PUT') {
         : null;
     $hasDrawingId = array_key_exists('drawing_id', $body);
     $drawing_id   = $hasDrawingId ? ((int)($body['drawing_id'] ?? 0) ?: null) : null;
+    $hasCategory  = array_key_exists('pattern_category', $body);
+    $pattern_category = $hasCategory ? ((int)($body['pattern_category'] ?? 0) ?: null) : null;
 
     if (!$id || !$name_ko) {
         http_response_code(400);
@@ -168,22 +171,17 @@ if ($method === 'PUT') {
             $f = __DIR__ . '/../../../' . ltrim($oldRow['image_path'], '/');
             if (file_exists($f)) unlink($f);
         }
-        if ($hasDrawingId) {
-            $pdo->prepare('UPDATE library_patterns SET name_ko=?, drawing_id=?, image_path=?, sort_order=?, is_active=? WHERE id=?')
-                ->execute([$name_ko, $drawing_id, $image_path, $order, $active, $id]);
-        } else {
-            $pdo->prepare('UPDATE library_patterns SET name_ko=?, image_path=?, sort_order=?, is_active=? WHERE id=?')
-                ->execute([$name_ko, $image_path, $order, $active, $id]);
-        }
-    } else {
-        if ($hasDrawingId) {
-            $pdo->prepare('UPDATE library_patterns SET name_ko=?, drawing_id=?, sort_order=?, is_active=? WHERE id=?')
-                ->execute([$name_ko, $drawing_id, $order, $active, $id]);
-        } else {
-            $pdo->prepare('UPDATE library_patterns SET name_ko=?, sort_order=?, is_active=? WHERE id=?')
-                ->execute([$name_ko, $order, $active, $id]);
-        }
     }
+
+    $setParts = ['name_ko=?', 'sort_order=?', 'is_active=?'];
+    $setArgs  = [$name_ko, $order, $active];
+    if ($hasDrawingId)         { $setParts[] = 'drawing_id=?';       $setArgs[] = $drawing_id; }
+    if ($hasCategory)         { $setParts[] = 'pattern_category=?'; $setArgs[] = $pattern_category; }
+    if ($image_path !== null) { $setParts[] = 'image_path=?';       $setArgs[] = $image_path; }
+    $setArgs[] = $id;
+
+    $pdo->prepare('UPDATE library_patterns SET ' . implode(', ', $setParts) . ' WHERE id=?')
+        ->execute($setArgs);
 
     if ($keywords !== null) {
         $pdo->prepare('DELETE FROM library_keywords WHERE pattern_id=?')->execute([$id]);

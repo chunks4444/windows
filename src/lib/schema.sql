@@ -19,6 +19,7 @@
 -- ALTER TABLE drawings ADD COLUMN pattern_category VARCHAR(40) NULL DEFAULT NULL COMMENT '전통 창호 패턴 분류 — pattern_categories.code 참조' AFTER title;
 -- CREATE TABLE pattern_categories (code VARCHAR(40) NOT NULL, engine VARCHAR(20) NOT NULL DEFAULT 'all', name VARCHAR(40) NOT NULL, sort_order TINYINT UNSIGNED NOT NULL DEFAULT 0, is_active TINYINT(1) NOT NULL DEFAULT 1, PRIMARY KEY (code, engine)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 -- ALTER TABLE blog_posts ADD COLUMN view_count INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '조회수 (방문자 쿠키 기준 24시간 중복 방지)' AFTER is_active;
+-- ALTER TABLE library_patterns ADD COLUMN pattern_category INT UNSIGNED NULL DEFAULT NULL COMMENT '컬렉션 "모양" 필터용 분류 — pattern_categories.id 참조 (연결 도면의 분류와 별개)' AFTER drawing_id;
 
 -- 접속 통계 (6개월 rolling)
 CREATE TABLE IF NOT EXISTS page_views (
@@ -139,6 +140,7 @@ CREATE TABLE IF NOT EXISTS library_patterns (
     id          INT UNSIGNED      NOT NULL AUTO_INCREMENT,
     name_ko     VARCHAR(80)       NOT NULL DEFAULT '' COMMENT '패턴 이름 (예: 정자살)',
     drawing_id  INT UNSIGNED      NULL               COMMENT '연결 도면 (drawings.id FK)',
+    pattern_category INT UNSIGNED NULL              COMMENT '컬렉션 "모양" 필터용 분류 — pattern_categories.id 참조',
     image_path  VARCHAR(500)      NOT NULL DEFAULT '' COMMENT '대표 이미지 경로 (/uploads/library/…)',
     sort_order  SMALLINT UNSIGNED NOT NULL DEFAULT 0,
     is_active   TINYINT(1)        NOT NULL DEFAULT 1,

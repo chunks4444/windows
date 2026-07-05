@@ -4,6 +4,7 @@ let pendingImg  = null;
 let allDrawings = [];
 let allPatterns = [];
 let statusFilter = 'all';
+let categoryNames = {};
 
 function token()   { return localStorage.getItem('pmok_auth_token'); }
 function headers() { return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token() }; }
@@ -15,6 +16,9 @@ async function init() {
         return;
     }
     document.getElementById('libPage').style.display = '';
+    document.querySelectorAll('#lpCategory option').forEach(o => {
+        if (o.value) categoryNames[o.value] = o.textContent;
+    });
     setStatusFilter('all');
     await Promise.all([loadDrawings(), loadPatterns()]);
 }
@@ -63,6 +67,7 @@ function renderTable(patterns) {
                 ? `<img class="lib-thumb" src="${esc(p.image_path)}" loading="lazy">`
                 : `<div class="lib-thumb-empty"><i class="bi bi-image"></i></div>`}</td>
             <td style="font-weight:600;">${esc(p.name_ko)}</td>
+            <td style="color:var(--text-3);font-size:12px;">${p.pattern_category ? esc(categoryNames[p.pattern_category] || p.pattern_category) : '—'}</td>
             <td><div class="kw-list">${(p.keywords||[]).map(k =>
                 `<span class="kw-badge">${esc(k)}</span>`).join('')}</div></td>
             <td style="color:var(--text-3);font-size:12px;">${p.drawing_id || '—'}</td>
@@ -78,7 +83,7 @@ function renderTable(patterns) {
                 <button class="adm-withdraw-btn" style="background:#c00;color:#fff;" onclick="deletePattern(${p.id}, '${esc(p.name_ko)}')">삭제</button>
             </div></td>
         </tr>
-    `).join('') || '<tr><td colspan="7" style="padding:40px;text-align:center;color:var(--text-3);">패턴이 없습니다.</td></tr>';
+    `).join('') || '<tr><td colspan="8" style="padding:40px;text-align:center;color:var(--text-3);">패턴이 없습니다.</td></tr>';
 }
 
 function openAddModal() {
@@ -86,6 +91,7 @@ function openAddModal() {
     document.getElementById('libModalTitle').textContent = '패턴 추가';
     document.getElementById('lpName').value      = '';
     document.getElementById('lpDrawingId').value = '';
+    document.getElementById('lpCategory').value  = '';
     document.getElementById('lpOrder').value     = '0';
     document.getElementById('lpImgFile').value   = '';
     document.getElementById('lpImgPreview').src  = '';
@@ -101,6 +107,7 @@ function openEditModal(p) {
     document.getElementById('libModalTitle').textContent = '패턴 수정';
     document.getElementById('lpName').value      = p.name_ko;
     document.getElementById('lpDrawingId').value = p.drawing_id || '';
+    document.getElementById('lpCategory').value  = p.pattern_category || '';
     // select가 아직 없는 값이면 빈 값 유지 (로딩 타이밍)
     document.getElementById('lpOrder').value     = p.sort_order;
     document.getElementById('lpImgFile').value   = '';
@@ -195,10 +202,11 @@ async function savePattern() {
     if (!name) { showAlert('이름을 입력하세요.'); return; }
 
     const body = {
-        name_ko:    name,
-        drawing_id: parseInt(document.getElementById('lpDrawingId').value) || 0,
-        sort_order: parseInt(document.getElementById('lpOrder').value) || 0,
-        keywords:   keywords,
+        name_ko:          name,
+        drawing_id:       parseInt(document.getElementById('lpDrawingId').value) || 0,
+        pattern_category: parseInt(document.getElementById('lpCategory').value) || 0,
+        sort_order:       parseInt(document.getElementById('lpOrder').value) || 0,
+        keywords:         keywords,
     };
     if (pendingImg) body.image = pendingImg;
     if (editingId !== null) body.id = editingId;

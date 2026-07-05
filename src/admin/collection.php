@@ -2,6 +2,8 @@
 header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../lib/admin_guard.php';
 require_admin_role('s');
+require_once __DIR__ . '/../lib/engine_settings.php';
+$libPatternCats = get_pattern_categories();
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -47,6 +49,7 @@ require_admin_role('s');
                 <tr>
                     <th style="width:64px;"></th>
                     <th>이름</th>
+                    <th style="width:80px;">모양</th>
                     <th>키워드</th>
                     <th style="width:80px;">도면 ID</th>
                     <th style="width:56px;">순서</th>
@@ -77,6 +80,15 @@ require_admin_role('s');
                 <label>도면 <small style="color:var(--text-3);font-weight:400;">(선택)</small></label>
                 <select id="lpDrawingId" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg-1);color:var(--text-1);font-size:14px;">
                     <option value="">— 연결 안함 —</option>
+                </select>
+            </div>
+            <div class="adm-mfield">
+                <label>모양 <small style="color:var(--text-3);font-weight:400;">컬렉션 페이지 "모양" 필터용 — 연결 도면의 분류와 별개</small></label>
+                <select id="lpCategory" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg-1);color:var(--text-1);font-size:14px;">
+                    <option value="">— 분류 없음 —</option>
+                    <?php foreach ($libPatternCats as $c): ?>
+                    <option value="<?= (int)$c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
+                    <?php endforeach; ?>
                 </select>
             </div>
             <div class="adm-mfield">
