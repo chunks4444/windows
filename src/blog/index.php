@@ -118,21 +118,29 @@ try {
             <?php foreach ($seriesGroups as $group):
                 $first = $group['posts'][0];
                 $count = count($group['posts']);
+                $latestDate = max(array_column($group['posts'], 'created_at'));
             ?>
-            <a class="bg-series-mini" href="/src/blog/<?= rawurlencode($first['slug']) ?>">
-                <?php if ($first['thumbnail_url']): ?>
-                <div class="bg-series-mini-thumb">
-                    <img src="<?= htmlspecialchars($first['thumbnail_url']) ?>" alt="<?= htmlspecialchars($group['name']) ?>" loading="lazy">
-                </div>
-                <?php endif; ?>
-                <div class="bg-series-mini-body">
-                    <p class="bg-series-mini-count">전 <?= $count ?>편</p>
-                    <h3 class="bg-series-mini-name"><?= htmlspecialchars($group['name']) ?></h3>
-                    <?php if ($group['tagline']): ?>
-                    <p class="bg-series-mini-tagline">"<?= htmlspecialchars($group['tagline']) ?>"</p>
+            <article class="bg-series-mini">
+                <a class="bg-series-mini-head" href="/src/blog/<?= rawurlencode($first['slug']) ?>">
+                    <?php if ($first['thumbnail_url']): ?>
+                    <div class="bg-series-mini-thumb">
+                        <img src="<?= htmlspecialchars($first['thumbnail_url']) ?>" alt="<?= htmlspecialchars($group['name']) ?>" loading="lazy">
+                    </div>
                     <?php endif; ?>
-                </div>
-            </a>
+                    <div class="bg-series-mini-body">
+                        <p class="bg-series-mini-count">전 <?= $count ?>편 · 최근 업데이트 <?= date('Y.m.d', strtotime($latestDate)) ?></p>
+                        <h3 class="bg-series-mini-name"><?= htmlspecialchars($group['name']) ?></h3>
+                        <?php if ($group['tagline']): ?>
+                        <p class="bg-series-mini-tagline">"<?= htmlspecialchars($group['tagline']) ?>"</p>
+                        <?php endif; ?>
+                    </div>
+                </a>
+                <ol class="bg-series-mini-eps">
+                    <?php foreach ($group['posts'] as $i => $ep): ?>
+                    <li><a href="/src/blog/<?= rawurlencode($ep['slug']) ?>"><?= $i + 1 ?>편. <?= htmlspecialchars($ep['title']) ?></a></li>
+                    <?php endforeach; ?>
+                </ol>
+            </article>
             <?php endforeach; ?>
             <?php if (empty($seriesGroups)): ?>
             <p class="bg-series-mini-empty">아직 등록된 시리즈가 없습니다.</p>

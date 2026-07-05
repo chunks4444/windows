@@ -64,15 +64,18 @@ body { background: var(--page-bg, #f9f9f9); }
 @media (max-width: 900px) { .bg-series-col { position: static; } }
 
 .bg-series-mini {
-    display: flex; gap: .9rem;
-    padding: .9rem;
     background: #fff;
     border: 1px solid var(--border, #E0E5E4);
     border-radius: var(--r);
-    text-decoration: none;
+    overflow: hidden;
     transition: border-color .15s ease, box-shadow .15s ease;
 }
 .bg-series-mini:hover { border-color: var(--teal); box-shadow: 0 6px 16px rgba(0,0,0,.06); }
+.bg-series-mini-head {
+    display: flex; gap: .9rem;
+    padding: .9rem;
+    text-decoration: none;
+}
 .bg-series-mini-thumb {
     flex-shrink: 0;
     width: 72px; height: 72px;
@@ -98,6 +101,22 @@ body { background: var(--page-bg, #f9f9f9); }
     overflow: hidden;
 }
 .bg-series-mini-empty { font-size: var(--fs-13); color: var(--text-3); }
+
+.bg-series-mini-eps {
+    list-style: none; margin: 0; padding: 0;
+    border-top: 1px solid var(--border, #E0E5E4);
+}
+.bg-series-mini-eps li { border-bottom: 1px solid var(--border, #E0E5E4); }
+.bg-series-mini-eps li:last-child { border-bottom: none; }
+.bg-series-mini-eps a {
+    display: block;
+    padding: .55rem .9rem;
+    font-size: var(--fs-12); color: var(--text-2);
+    text-decoration: none;
+    line-height: 1.4;
+    transition: color .15s ease, background .15s ease;
+}
+.bg-series-mini-eps a:hover { color: var(--teal); background: var(--input-bg); }
 
 /* 우측: 전체 글 */
 .bg-posts-col {
