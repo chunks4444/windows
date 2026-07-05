@@ -169,7 +169,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const canvas = document.createElement('canvas');
                 canvas.width = w; canvas.height = h;
                 canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                pendingImg = canvas.toDataURL('image/jpeg', 0.92);
+                // PNG로 내보내 투명 배경 유지 (JPEG로 내보내면 투명 영역이 브라우저에서도
+                // 검게 채워짐 — 서버 saveLibraryImage()와 동일한 이유)
+                pendingImg = canvas.toDataURL('image/png');
                 document.getElementById('lpImgPreview').src = pendingImg;
                 document.getElementById('lpImgPreview').classList.add('show');
             };
