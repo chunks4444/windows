@@ -3,8 +3,17 @@ header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../lib/db.php';
 require_once __DIR__ . '/../lib/meta.php';
 
+// 제목 개정으로 슬러그가 바뀐 글의 구주소 → 신주소 301 리다이렉트 (SEO 보존)
+$legacySlugRedirects = [
+    '벽사辟邪-1-인간의-안녕을-향한-거대한-투쟁' => '벽사辟邪-1-귀신을-발명한-뇌',
+];
+
 $id   = (int)($_GET['id'] ?? 0);
 $slug = trim($_GET['slug'] ?? '');
+if (isset($legacySlugRedirects[$slug])) {
+    header('Location: /src/blog/' . rawurlencode($legacySlugRedirects[$slug]), true, 301);
+    exit;
+}
 $post = null;
 $prev = null;
 $next = null;
