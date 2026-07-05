@@ -483,7 +483,7 @@ header('Pragma: no-cache');
                             <div id="verList"></div>
                         </div>
                     </div>
-                    <select id="patternCategory" class="title-group-btn" title="패턴 분류" style="padding:0 6px;font-size:var(--fs-12);cursor:pointer;border:none;background:transparent;color:var(--text-muted);font-weight:600;height:28px;">
+                    <select id="patternCategory" class="title-group-btn" title="패턴 분류" style="padding:0 6px;font-size:var(--fs-12);cursor:pointer;border:none;background:var(--sidebar-bg);color:rgba(255,255,255,0.75);font-weight:600;height:28px;border-radius:14px;">
                         <option value="">분류 없음</option>
                         <?php foreach ($patternCategories as $pc): ?>
                         <option value="<?= (int)$pc['id'] ?>"><?= htmlspecialchars($pc['name']) ?></option>
