@@ -54,12 +54,14 @@ body { background: var(--page-bg, #f9f9f9); }
 }
 
 .bg-col-title {
+    display: flex; align-items: center; gap: .4rem;
     font-size: var(--fs-14); font-weight: 700; letter-spacing: .02em;
     color: var(--text-1);
     margin: 0 0 1rem;
     padding-bottom: .6rem;
     border-bottom: 2px solid var(--text-1);
 }
+.bg-col-title i { color: var(--teal); font-size: var(--fs-16); }
 
 /* 좌측: 시리즈 */
 .bg-series-col {
@@ -71,10 +73,24 @@ body { background: var(--page-bg, #f9f9f9); }
 /* 우측: 질문으로 찾기 */
 .bg-question-col {
     position: sticky; top: 90px;
-    max-height: calc(100vh - 110px);
-    overflow-y: auto;
 }
-@media (max-width: 1100px) { .bg-question-col { position: static; max-height: none; overflow-y: visible; } }
+@media (max-width: 1100px) { .bg-question-col { position: static; } }
+
+/* 컬럼 공통: 더보기 */
+.bg-col:not(.open) .bg-more-item { display: none; }
+.bg-col-more-toggle {
+    display: flex; align-items: center; justify-content: center; gap: .3rem;
+    width: 100%;
+    margin-top: .6rem;
+    padding: .55rem .9rem;
+    border: 1px solid var(--border, #E0E5E4);
+    border-radius: var(--r);
+    background: #fff;
+    font-size: var(--fs-12); font-weight: 700; color: var(--teal);
+    cursor: pointer;
+}
+.bg-col-more-toggle i { transition: transform .15s ease; }
+.bg-col.open .bg-col-more-toggle i { transform: rotate(180deg); }
 
 .bg-series-mini {
     background: #fff;

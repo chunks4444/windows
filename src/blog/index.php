@@ -113,14 +113,14 @@ try {
 
     <div class="bg-layout">
         <!-- ── 좌측 1/4: 시리즈물 ── -->
-        <aside class="bg-series-col">
-            <h2 class="bg-col-title">시리즈로 읽기</h2>
-            <?php foreach ($seriesGroups as $group):
+        <aside class="bg-series-col bg-col">
+            <h2 class="bg-col-title"><i class="bi bi-book"></i> 시리즈로 읽기</h2>
+            <?php foreach ($seriesGroups as $si => $group):
                 $first = $group['posts'][0];
                 $count = count($group['posts']);
                 $latestDate = max(array_column($group['posts'], 'created_at'));
             ?>
-            <article class="bg-series-mini">
+            <article class="bg-series-mini<?= $si >= 4 ? ' bg-more-item' : '' ?>">
                 <a class="bg-series-mini-head" href="/src/blog/<?= rawurlencode($first['slug']) ?>">
                     <?php if ($first['thumbnail_url']): ?>
                     <div class="bg-series-mini-thumb">
@@ -148,13 +148,18 @@ try {
             <?php if (empty($seriesGroups)): ?>
             <p class="bg-series-mini-empty">아직 등록된 시리즈가 없습니다.</p>
             <?php endif; ?>
+            <?php if (count($seriesGroups) > 4): ?>
+            <button type="button" class="bg-col-more-toggle" onclick="this.closest('.bg-col').classList.toggle('open')">
+                더보기 <i class="bi bi-chevron-down"></i>
+            </button>
+            <?php endif; ?>
         </aside>
 
         <!-- ── 중앙 2/4: 각개 블로그 리스트 ── -->
-        <section class="bg-posts-col">
-            <h2 class="bg-col-title">전체 글</h2>
-            <?php foreach ($feedPosts as $p): ?>
-            <a class="bg-post-row" href="/src/blog/<?= rawurlencode($p['slug']) ?>">
+        <section class="bg-posts-col bg-col">
+            <h2 class="bg-col-title"><i class="bi bi-grid-3x3-gap"></i> 전체 글</h2>
+            <?php foreach ($feedPosts as $pi => $p): ?>
+            <a class="bg-post-row<?= $pi >= 8 ? ' bg-more-item' : '' ?>" href="/src/blog/<?= rawurlencode($p['slug']) ?>">
                 <?php if ($p['thumbnail_url']): ?>
                 <div class="bg-post-row-thumb">
                     <img src="<?= htmlspecialchars($p['thumbnail_url']) ?>" alt="" loading="lazy">
@@ -172,14 +177,19 @@ try {
                 </div>
             </a>
             <?php endforeach; ?>
+            <?php if (count($feedPosts) > 8): ?>
+            <button type="button" class="bg-col-more-toggle" onclick="this.closest('.bg-col').classList.toggle('open')">
+                더보기 <i class="bi bi-chevron-down"></i>
+            </button>
+            <?php endif; ?>
         </section>
 
         <!-- ── 우측 1/4: 질문으로 찾기 ── -->
-        <aside class="bg-question-col">
-            <h2 class="bg-col-title">질문으로 찾기</h2>
+        <aside class="bg-question-col bg-col">
+            <h2 class="bg-col-title"><i class="bi bi-question-circle"></i> 질문으로 찾기</h2>
             <div class="bg-question-mini-list">
-                <?php foreach ($feedPosts as $p): ?>
-                <a class="bg-question-mini" href="/src/blog/<?= rawurlencode($p['slug']) ?>">
+                <?php foreach ($feedPosts as $qi => $p): ?>
+                <a class="bg-question-mini<?= $qi >= 6 ? ' bg-more-item' : '' ?>" href="/src/blog/<?= rawurlencode($p['slug']) ?>">
                     <?php if ($p['thumbnail_url']): ?>
                     <div class="bg-question-mini-thumb">
                         <img src="<?= htmlspecialchars($p['thumbnail_url']) ?>" alt="" loading="lazy">
@@ -195,6 +205,11 @@ try {
                 </a>
                 <?php endforeach; ?>
             </div>
+            <?php if (count($feedPosts) > 6): ?>
+            <button type="button" class="bg-col-more-toggle" onclick="this.closest('.bg-col').classList.toggle('open')">
+                더보기 <i class="bi bi-chevron-down"></i>
+            </button>
+            <?php endif; ?>
         </aside>
     </div>
     <?php endif; ?>
