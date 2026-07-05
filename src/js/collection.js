@@ -105,7 +105,7 @@ function buildCard(p) {
         ? `<a href="${esc(p.editor_url)}?drawing_id=${p.drawing_id}" class="lib-btn lib-btn-primary"><i class="bi bi-pencil"></i> 열기</a>`
         : '';
 
-    const kwHtml = (p.keywords || []).slice(0, 3).map(k => `<span style="font-size:11px;color:var(--text-3);">${esc(k)}</span>`).join(' · ');
+    const kwHtml = (p.keywords || []).slice(0, 3).map(k => `<span style="font-size:11px;color:var(--text);">${esc(k)}</span>`).join(' · ');
 
     return `
         <div class="lib-item" data-id="${p.id}">
