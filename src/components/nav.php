@@ -36,7 +36,6 @@ $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/collection/') !== false);
 $isWork       = (strpos($_SERVER['PHP_SELF'], '/portfolio/') !== false);
 $isBlog       = (strpos($_SERVER['PHP_SELF'], '/blog/') !== false);
 $isGuide      = (strpos($_SERVER['PHP_SELF'], '/guide/') !== false);
-$isAbout      = (strpos($_SERVER['PHP_SELF'], '/company/') !== false || $isBlog);
 
 // Studio 드롭다운: 메인페이지 카드와 동일한 제목/순서를 쓰도록 DB에서 가져온다
 try {
@@ -175,15 +174,8 @@ $navStudioIcons = [
                     <li><a class="dropdown-item" href="/src/guide/faq.php"><i class="bi bi-question-circle me-2"></i>FAQ</a></li>
                 </ul>
             </li>
-            <li class="nav-item dropdown">
-                <a href="/src/company/" class="nav-link dropdown-toggle <?= $isAbout ? 'active' : '' ?>" data-bs-toggle="dropdown" aria-expanded="false">회사소개</a>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="/src/company/"><i class="bi bi-book me-2"></i>평목 소개</a></li>
-                    <li><a class="dropdown-item" href="/src/company/#studio"><i class="bi bi-pencil-square me-2"></i>스튜디오</a></li>
-                    <li><a class="dropdown-item" href="/src/company/#contact"><i class="bi bi-envelope me-2"></i>문의, 제작 상담, 협업 제안</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item <?= $isBlog ? 'active' : '' ?>" href="/src/blog/"><i class="bi bi-journal-text me-2"></i>블로그</a></li>
-                </ul>
+            <li class="nav-item">
+                <a href="/src/blog/" class="nav-link <?= $isBlog ? 'active' : '' ?>">블로그</a>
             </li>
             <?php if (!$navIsLoggedIn): ?>
             <!-- 비로그인 -->
@@ -271,15 +263,7 @@ $navStudioIcons = [
             </div>
         </div>
 
-        <!-- 회사소개 -->
-        <div class="pm-dw-acc">
-            <button class="pm-dw-acc-hd"><span><i class="bi bi-building pm-dw-acc-icon"></i>회사소개</span><i class="bi bi-chevron-down"></i></button>
-            <div class="pm-dw-acc-bd">
-                <a class="pm-dw-link" href="/src/company/"><i class="bi bi-book"></i><span>평목 소개</span></a>
-                <a class="pm-dw-link" href="/src/company/#contact"><i class="bi bi-envelope"></i><span>문의·제작상담</span></a>
-                <a class="pm-dw-link <?= $isBlog ? 'active' : '' ?>" href="/src/blog/"><i class="bi bi-journal-text"></i><span>블로그</span></a>
-            </div>
-        </div>
+        <a class="pm-dw-link-top <?= $isBlog ? 'active' : '' ?>" href="/src/blog/"><i class="bi bi-journal-text pm-dw-acc-icon"></i>블로그</a>
 
         <div class="pm-dw-divider"></div>
 

@@ -153,6 +153,18 @@ body:has(.global-footer) {
 
 .global-footer .footer-link:hover { color: var(--gold); }
 
+.global-footer .footer-links-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+}
+
+.global-footer .footer-link-strong {
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.6);
+}
+
 @media (max-width: 768px) {
     body:has(.global-footer) {
         padding-bottom: 76px;
