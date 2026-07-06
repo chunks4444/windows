@@ -171,11 +171,11 @@ require_admin_role('s');
                 </select>
             </div>
             <div class="adm-mfield" style="margin-bottom:0;">
-                <label>엔진 열람 권한 <small style="font-weight:400;color:var(--text-muted);">(role과 별개로 개별 승인)</small></label>
+                <label>엔진 열람 권한 <small style="font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:normal;">(role과 별개로 개별 승인)</small></label>
                 <div style="display:flex;flex-direction:column;gap:6px;">
-                    <label style="display:flex;align-items:center;gap:6px;font-weight:400;"><input type="checkbox" id="admMViewSpec"> 제작 시방서 열람 허용</label>
-                    <label style="display:flex;align-items:center;gap:6px;font-weight:400;"><input type="checkbox" id="admMViewParts"> 부재목록 열람 허용</label>
-                    <label style="display:flex;align-items:center;gap:6px;font-weight:400;"><input type="checkbox" id="admMViewCost"> 예산견적 상세 열람 허용</label>
+                    <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:400;color:var(--text);text-transform:none;letter-spacing:normal;"><input type="checkbox" id="admMViewSpec" style="width:auto;height:auto;"> 제작 시방서 열람 허용</label>
+                    <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:400;color:var(--text);text-transform:none;letter-spacing:normal;"><input type="checkbox" id="admMViewParts" style="width:auto;height:auto;"> 부재목록 열람 허용</label>
+                    <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:400;color:var(--text);text-transform:none;letter-spacing:normal;"><input type="checkbox" id="admMViewCost" style="width:auto;height:auto;"> 예산견적 상세 열람 허용</label>
                 </div>
             </div>
         </div>
