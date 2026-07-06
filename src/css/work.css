@@ -32,7 +32,7 @@ body { background: #fff; }
 .wk-count-badge {
     display: inline-flex; align-items: center; gap: .35rem;
     background: var(--accent-tint, var(--accent-tint)); color: var(--accent, var(--accent));
-    font-size: var(--fs-13); font-weight: 700; padding: .25rem .7rem;
+    font-size: var(--fs-13); font-weight: 400; padding: .25rem .7rem;
     border-radius: 999px;
 }
 
@@ -52,16 +52,18 @@ body { background: #fff; }
 
 .wk-tag {
     flex-shrink: 0;
-    padding: .35rem .9rem; border-radius: 999px;
-    font-size: var(--fs-14); font-weight: 600; cursor: pointer;
-    border: 1.5px solid var(--border, var(--border));
-    background: var(--bg); color: var(--text-muted, var(--text-muted));
+    height: 36px;
+    display: inline-flex; align-items: center;
+    padding: 0 16px; border-radius: 999px;
+    font-size: var(--fs-13); font-weight: 400; cursor: pointer;
+    border: 1px solid var(--border, var(--border));
+    background: var(--bg); color: var(--text);
     transition: all .18s ease; user-select: none;
 }
-.wk-tag:hover { border-color: var(--accent, var(--accent)); color: var(--accent, var(--accent)); }
+.wk-tag:hover { border-color: var(--text); color: var(--text); }
 .wk-tag.active {
-    background: var(--accent, var(--accent)); color: var(--bg);
-    border-color: var(--accent, var(--accent));
+    background: var(--text); color: var(--bg);
+    border-color: var(--text);
 }
 
 /* ── 그리드 영역 ──────────────────────────────────────────── */

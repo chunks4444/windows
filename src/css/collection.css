@@ -15,7 +15,7 @@ body { background: #fff; }
 .lib-hero-inner {
     max-width: 1320px;
     margin: 0 auto;
-    padding: 0 24px 1.75rem;
+    padding: 0 2rem;
 }
 .lib-hero-label {
     display: inline-block;
@@ -29,12 +29,12 @@ body { background: #fff; }
     line-height: 1.3; margin-bottom: .5rem;
 }
 .lib-hero-sub {
-    font-size: var(--fs-14); font-weight: 400; color: var(--text);
+    font-size: var(--fs-14); font-weight: 400; color: var(--text); margin-bottom: 1.75rem;
 }
 .lib-count-badge {
     display: inline-flex; align-items: center; gap: .35rem;
     background: var(--accent-tint); color: var(--accent);
-    font-size: var(--fs-13); font-weight: 700; padding: .25rem .7rem;
+    font-size: var(--fs-13); font-weight: 400; padding: .25rem .7rem;
     border-radius: 999px;
 }
 
@@ -46,13 +46,13 @@ body { background: #fff; }
     background: rgba(255, 255, 255, 0.75);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    padding: 16px 24px 12px;
     border-bottom: 1px solid var(--border);
 }
 
 .lib-toolbar-inner {
     max-width: 1320px;
     margin: 0 auto;
+    padding: .75rem 2rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -96,30 +96,30 @@ body { background: #fff; }
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    height: 32px;
-    padding: 0 14px;
+    height: 36px;
+    padding: 0 16px;
     border-radius: 999px;
     border: 1px solid var(--border);
     background: var(--bg);
     font-size: var(--fs-13);
-    font-weight: 500;
+    font-weight: 400;
     font-family: inherit;
-    color: var(--text-muted);
+    color: var(--text);
     cursor: pointer;
     transition: all 0.12s;
     white-space: nowrap;
 }
 .lib-filter-like i { font-size: var(--fs-12); color: var(--danger); }
 .lib-filter-like:hover {
-    background: var(--accent);
-    border-color: var(--accent);
+    background: var(--text);
+    border-color: var(--text);
     color: var(--bg);
 }
 .lib-filter-like.active {
-    background: var(--accent);
-    border-color: var(--accent);
+    background: var(--text);
+    border-color: var(--text);
     color: var(--bg);
-    font-weight: 700;
+    font-weight: 400;
 }
 .lib-filter-like.active i,
 .lib-filter-like:hover i { color: var(--bg); }
@@ -142,14 +142,14 @@ body { background: #fff; }
     appearance: none;
     -webkit-appearance: none;
     font-size: var(--fs-13);
-    font-weight: 500;
+    font-weight: 400;
     font-family: inherit;
-    color: var(--text-muted);
+    color: var(--text);
     cursor: pointer;
     transition: border-color 0.12s;
 }
-.lib-select:hover { border-color: var(--accent); }
-.lib-select:focus { outline: none; border-color: var(--accent); }
+.lib-select:hover { border-color: var(--text); }
+.lib-select:focus { outline: none; border-color: var(--text); }
 
 .lib-result-count {
     display: none;
@@ -163,7 +163,7 @@ body { background: #fff; }
 .lib-main {
     max-width: 1320px;
     margin: 0 auto;
-    padding: 24px 16px 80px;
+    padding: 2rem 2rem 4rem;
 }
 
 /* ── 매소너리 그리드 ──────────────────────────── */
@@ -556,7 +556,7 @@ body { background: #fff; }
 }
 @media (max-width: 600px) {
     .lib-masonry { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-    .lib-main { padding: 16px 10px 60px; }
+    .lib-main { padding: 1.4rem 1rem 3rem; }
     .lib-select-row { flex-basis: 100%; }
     .lib-select { flex: 1; }
     .lib-right-group { flex-basis: 100%; }
