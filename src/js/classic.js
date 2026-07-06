@@ -989,7 +989,7 @@ async function draw() {
     }   // ← 1차 루프 끝
 
     // ── 편집 반영 부재 목록 최종 업데이트 ──────
-    {
+    if (p) {
         const tenonLen = 2 * geo.slatT;
         const pxToMm   = geo.innerW / lastIW;
 

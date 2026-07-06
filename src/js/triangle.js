@@ -571,6 +571,7 @@ async function draw() {
     window.__pmokApplyPrice?.(data.price, data.costBreakdown);
 
     const p = data.parts;
+    const diagListEl = document.getElementById('spDiagList');
     if (p) {
         document.getElementById('spFrVLen').textContent = `${geo.frameW}×${p.frT}×${p.frVLen}mm`;
         document.getElementById('spFrVCnt').textContent = p.frVCnt;
@@ -590,7 +591,6 @@ async function draw() {
         document.getElementById('spHSlatLen').textContent = `${p.slatW}×${geo.slatT}×${p.hSlatLen}mm`;
         document.getElementById('spHSlatCnt').textContent = p.hSlatCnt;
 
-        const diagListEl = document.getElementById('spDiagList');
         diagListEl.innerHTML = '';
         p.diagList.forEach(({ len, cnt }) => {
             const el = document.createElement('div');
@@ -1015,7 +1015,7 @@ async function draw() {
     if (buildKonvaPattern) kv.endPatternClipGroup();
 
     // ── 편집 반영 부재 목록 최종 업데이트 ──────
-    {
+    if (p) {
         const tenonLen = 2 * geo.slatT;
         const pxToMm  = geo.innerW / lastIW;
 
