@@ -228,7 +228,7 @@
         requestAnimationFrame(() => pop.classList.add('rr-visible'));
     }
 
-    function resizeCanvas() {
+    function resizeCanvas(skipDraw) {
         const dpr = window.devicePixelRatio || 1;
         const w = container.clientWidth;
         const h = container.clientHeight;
@@ -246,7 +246,7 @@
         rulerCanvas.style.width  = w + 'px';
         rulerCanvas.style.height = h + 'px';
         kv.syncSize();
-        if (_versionsLoaded) draw();
+        if (_versionsLoaded && !skipDraw) draw();
     }
 
     let _resizeTimer;
@@ -2769,7 +2769,7 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
         btnRightSidebarTab.classList.add('collapsed');
         animatePanelResize();
     } else {
-        resizeCanvas();
+        resizeCanvas(true);
     }
 
     //출력
