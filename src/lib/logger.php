@@ -93,34 +93,38 @@ define('VISITOR_LOGGED', true);
 // API·beacon 엔드포인트는 자동 로그 제외 (client.php 에서 직접 호출)
 if (strpos($_SERVER['REQUEST_URI'] ?? '', '/src/api/') === 0) return;
 
-$ua      = $_SERVER['HTTP_USER_AGENT']     ?? '';
-$ip      = pm_get_ip();
-$os      = pm_detect_os($ua);
-$browser = pm_detect_browser($ua);
-$page    = $_SERVER['REQUEST_URI']         ?? '/';
-$time    = date('Y-m-d H:i:s');
-$country = $_SERVER['HTTP_CF_IPCOUNTRY']   ?? '-';        // Cloudflare 국가코드 (무료)
-$lang    = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '-', 0, 10);
-$ref     = '-';
+// 아래 변수들은 이 파일이 nav.php를 통해 각 페이지 스크립트의 전역 스코프에
+// require_once 되므로, 포함하는 페이지가 이미 쓰고 있는 변수명과 충돌하지
+// 않도록 반드시 pm 접두어를 붙인다 (예전에 $page를 썼다가 블로그 페이지네이션의
+// $page를 덮어써 버린 적이 있음).
+$pmUa      = $_SERVER['HTTP_USER_AGENT']     ?? '';
+$pmIp      = pm_get_ip();
+$pmOs      = pm_detect_os($pmUa);
+$pmBrowser = pm_detect_browser($pmUa);
+$pmPage    = $_SERVER['REQUEST_URI']         ?? '/';
+$pmTime    = date('Y-m-d H:i:s');
+$pmCountry = $_SERVER['HTTP_CF_IPCOUNTRY']   ?? '-';        // Cloudflare 국가코드 (무료)
+$pmLang    = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '-', 0, 10);
+$pmRef     = '-';
 if (!empty($_SERVER['HTTP_REFERER'])) {
-    $host = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
-    $ref  = $host ?: substr($_SERVER['HTTP_REFERER'], 0, 40);
+    $pmHost = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
+    $pmRef  = $pmHost ?: substr($_SERVER['HTTP_REFERER'], 0, 40);
 }
-$https  = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'Y' : 'N';
-$method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+$pmHttps  = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'Y' : 'N';
+$pmMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
 // 로그인 사용자 ID (JWT — 헤더·쿠키·세션 순으로 시도)
-$userId = '-';
+$pmUserId = '-';
 try {
     require_once __DIR__ . '/jwt.php';
-    $payload = jwt_from_request();
-    if ($payload && isset($payload['sub'])) $userId = (string) $payload['sub'];
+    $pmPayload = jwt_from_request();
+    if ($pmPayload && isset($pmPayload['sub'])) $pmUserId = (string) $pmPayload['sub'];
 } catch (Throwable $e) {}
 
-$line = sprintf(
+$pmLine = sprintf(
     "[%s] [S] IP:%-16s Country:%-4s OS:%-14s Browser:%-22s Lang:%-10s HTTPS:%s Ref:%-30s User:%-5s Page:%s\n",
-    $time, $ip, $country, $os, $browser, $lang, $https, $ref, $userId, $page
+    $pmTime, $pmIp, $pmCountry, $pmOs, $pmBrowser, $pmLang, $pmHttps, $pmRef, $pmUserId, $pmPage
 );
 
-pm_write_log($line);
-pm_record_pageview($page, $ip, $ua, $userId);
+pm_write_log($pmLine);
+pm_record_pageview($pmPage, $pmIp, $pmUa, $pmUserId);
