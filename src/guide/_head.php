@@ -157,24 +157,39 @@ foreach ($guide_nav as $sec) {
         <i class="bi bi-book-half"></i> 평목 가이드
     </a>
     <nav>
-    <?php foreach ($guide_nav as $sec): ?>
-        <div class="gs-section">
-            <div class="gs-section-hd">
+    <?php foreach ($guide_nav as $sec):
+        $secHasCurrent = false;
+        foreach ($sec['articles'] as $art) {
+            if ($art['file'] === ($guide_current ?? '')) { $secHasCurrent = true; break; }
+        }
+    ?>
+        <div class="gs-section<?= $secHasCurrent ? ' open' : '' ?>">
+            <button type="button" class="gs-section-hd">
                 <span class="gs-section-hd-icon" style="background:<?= htmlspecialchars($sec['bg']) ?>;color:<?= htmlspecialchars($sec['color']) ?>;"><i class="bi <?= htmlspecialchars($sec['icon']) ?>"></i></span>
-                <?= htmlspecialchars($sec['title']) ?>
+                <span class="gs-section-hd-title"><?= htmlspecialchars($sec['title']) ?></span>
+                <i class="bi bi-chevron-down gs-section-chevron"></i>
+            </button>
+            <div class="gs-section-body">
+                <?php foreach ($sec['articles'] as $art): ?>
+                <a href="/src/guide/<?= $art['file'] ?>"
+                   class="gs-link<?= ($art['file'] === ($guide_current ?? '')) ? ' active' : '' ?>">
+                    <?php if (isset($art['engine'])): ?>
+                    <span class="gs-link-icon"><?= $guideEngineIcons[$art['engine']] ?? '' ?></span>
+                    <?php endif; ?>
+                    <?= htmlspecialchars($art['title']) ?>
+                </a>
+                <?php endforeach; ?>
             </div>
-            <?php foreach ($sec['articles'] as $art): ?>
-            <a href="/src/guide/<?= $art['file'] ?>"
-               class="gs-link<?= ($art['file'] === ($guide_current ?? '')) ? ' active' : '' ?>">
-                <?php if (isset($art['engine'])): ?>
-                <span class="gs-link-icon"><?= $guideEngineIcons[$art['engine']] ?? '' ?></span>
-                <?php endif; ?>
-                <?= htmlspecialchars($art['title']) ?>
-            </a>
-            <?php endforeach; ?>
         </div>
     <?php endforeach; ?>
     </nav>
+    <script>
+    document.querySelectorAll('.gs-section-hd').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            btn.closest('.gs-section').classList.toggle('open');
+        });
+    });
+    </script>
 </aside>
 
 <!-- ── 본문 ── -->

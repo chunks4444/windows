@@ -222,17 +222,17 @@ body:has(.guide-wrap) {
 .guide-landing {
     flex: 1;
     background: #fff;
-    max-width: 1280px;
+    max-width: 1320px;
     margin: 0 auto;
     width: 100%;
 }
 
 .guide-hero {
     border-bottom: 1px solid var(--border, var(--border));
-    padding: 2.5rem 0;
+    padding: 2.5rem 0 0;
 }
 .guide-hero-inner {
-    max-width: 1280px; margin: 0 auto; padding: 0 24px;
+    max-width: 1320px; margin: 0 auto; padding: 0 2rem;
 }
 .guide-hero-label {
     display: inline-block;
@@ -246,12 +246,12 @@ body:has(.guide-wrap) {
     line-height: 1.3; margin-bottom: .5rem;
 }
 .guide-hero-sub {
-    font-size: var(--fs-14); font-weight: 400; color: var(--text);
+    font-size: var(--fs-14); font-weight: 400; color: var(--text); margin-bottom: 1.75rem;
 }
 
 /* ── 카테고리 카드 ────────────────────────────── */
 .guide-categories {
-    max-width: 1280px;
+    max-width: 1320px;
     margin: 0 auto;
     padding: 48px 24px 80px;
     display: grid;
@@ -297,11 +297,10 @@ body:has(.guide-wrap) {
 .guide-wrap {
     display: flex;
     flex: 1;
-    max-width: 1280px;
+    max-width: 1024px;
     margin: 0 auto;
+    padding: 0 1.5rem;
     width: 100%;
-    border-left: 1px solid var(--border, var(--border));
-    border-right: 1px solid var(--border, var(--border));
 }
 
 .guide-sidebar {
@@ -333,16 +332,26 @@ body:has(.guide-wrap) {
 .gs-section { margin-bottom: 2px; }
 .gs-section-hd {
     display: flex; align-items: center; gap: 6px;
-    padding: 14px 20px 4px;
-    font-size: 10px; font-weight: 700;
-    letter-spacing: .08em; text-transform: uppercase;
-    color: var(--text-muted);
+    width: 100%;
+    padding: 10px 20px;
+    font-size: 14px; font-weight: 500;
+    letter-spacing: .04em; text-transform: uppercase;
+    color: var(--text);
+    background: none; border: none;
+    cursor: pointer;
+    font-family: inherit;
 }
+.gs-section-hd:hover { color: var(--accent); }
+.gs-section-hd-title { flex: 1; text-align: left; }
+.gs-section-chevron { font-size: 11px; transition: transform .15s ease; }
+.gs-section.open .gs-section-chevron { transform: rotate(180deg); }
+.gs-section-body { display: none; }
+.gs-section.open .gs-section-body { display: block; }
 .gs-section-hd-icon {
-    width: 18px; height: 18px;
-    border-radius: 5px;
+    width: 22px; height: 22px;
+    border-radius: 6px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 10px;
+    font-size: 12px;
     flex-shrink: 0;
 }
 .gs-link {
@@ -374,7 +383,7 @@ body:has(.guide-wrap) {
     padding: 48px 60px 100px;
     min-width: 0;
 }
-.guide-article { max-width: 720px; }
+.guide-article { max-width: 100%; }
 
 /* 브레드크럼 */
 .guide-breadcrumb {
