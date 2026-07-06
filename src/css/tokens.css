@@ -16,13 +16,13 @@
     --border:          #D4D8DB;
     --border-rgb:       212, 216, 219;
 
-    /* 강조 (뇌록) */
-    --accent:          #2C5F51;
-    --accent-rgb:       44, 95, 81;
-    --accent-hover:    #1F473C;
-    --accent-hover-rgb: 31, 71, 60;
-    --accent-tint:     #E6EEEB;
-    --accent-tint-rgb:  230, 238, 235;
+    /* 강조 (먹) */
+    --accent:          #23262A;
+    --accent-rgb:       35, 38, 42;
+    --accent-hover:    #4A4E54;
+    --accent-hover-rgb: 74, 78, 84;
+    --accent-tint:     #E7E7E8;
+    --accent-tint-rgb:  231, 231, 232;
 
     /* 위험 (기존 --red/--danger 통합) */
     --danger:          #DC2626;

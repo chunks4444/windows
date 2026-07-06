@@ -51,15 +51,16 @@ body { background: #fff; }
     color: var(--accent); margin: 0 0 .3rem;
 }
 .bd-series-box-tagline {
-    font-size: var(--fs-15); font-weight: 600; color: var(--text);
+    font-size: var(--fs-18); font-weight: 600; color: var(--text);
     margin: 0 0 .8rem;
 }
 .bd-series-box-list {
-    list-style: none; margin: 0; padding: 0;
+    list-style: none; margin: 0; padding: .8rem 0 0;
+    border-top: 1px solid rgba(var(--accent-rgb), 0.15);
     display: flex; flex-direction: column; gap: .35rem;
 }
 .bd-series-box-list a {
-    color: var(--text-muted); text-decoration: none; font-size: var(--fs-14);
+    color: var(--text); text-decoration: none; font-size: var(--fs-14); font-weight: 400;
 }
 .bd-series-box-list a:hover { color: var(--accent); text-decoration: underline; }
 .bd-series-box-list li.current span {
@@ -181,8 +182,8 @@ body { background: #fff; }
 }
 .bd-pager-next { text-align: right; grid-column: 2; }
 .bd-pager-label {
-    font-size: var(--fs-12); font-weight: 700; letter-spacing: .06em;
-    text-transform: uppercase; color: var(--text-muted);
+    font-size: var(--fs-12); font-weight: 400; letter-spacing: .06em;
+    text-transform: uppercase; color: var(--text);
 }
 .bd-pager-title {
     font-size: var(--fs-14); font-weight: 600; color: var(--text);

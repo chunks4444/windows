@@ -542,7 +542,7 @@ header('Pragma: no-cache');
                             <div class="super-only" style="display:none">
                             <div class="sb-break-row"><span>문(창호) 목재</span><span id="spCostDoor">–</span></div>
                             <div class="sb-break-row"><span>문틀 목재</span><span id="spCostMuntol">–</span></div>
-                            <div class="sb-break-row sb-break-sub sb-break-key"><span>목재비</span><span id="spWoodCost">–</span></div>
+                            <div class="sb-break-row sb-break-key"><span>목재비</span><span id="spWoodCost">–</span></div>
                             <div class="sb-break-divider"></div>
                             <div class="sb-break-row sb-break-key"><span>제작비 <small id="spCraftTime"></small></span><span id="spCraftCost">–</span></div>
                             <div class="sb-break-row sb-break-key"><span>부자재</span><span id="spHardwareCost">–</span></div>

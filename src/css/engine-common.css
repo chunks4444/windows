@@ -313,6 +313,8 @@ body.pm-generator .pm-navbar .dropdown-menu { background: var(--sidebar-bg) !imp
 .hbtn:hover { background: rgba(255, 255, 255, 0.12); border-color: rgba(var(--bg-rgb), 0.25); color: var(--bg); }
 .hbtn-primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
 .hbtn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: var(--bg); }
+#btnOrder { background: var(--danger); border-color: var(--danger); }
+#btnOrder:hover { background: var(--danger-hover); border-color: var(--danger-hover); }
 .hbtn svg { flex-shrink: 0; }
 .hbtn.save-ok  { background: var(--accent); border-color: var(--accent); color: var(--bg); transition: background .15s, color .15s; }
 .hbtn.save-err { background: var(--danger);  border-color: var(--danger);  color: var(--bg); transition: background .15s, color .15s; }
@@ -1273,7 +1275,7 @@ input[type="range"]::-webkit-slider-thumb {
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    background: #fff;
+    background: var(--text-muted);
     border: 2px solid var(--accent);
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.35);
     cursor: pointer;
@@ -1289,7 +1291,7 @@ input[type="range"]::-moz-range-thumb {
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    background: #fff;
+    background: var(--text-muted);
     border: 2px solid var(--accent);
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.35);
     cursor: pointer;
@@ -1352,14 +1354,14 @@ input[type="range"]::-moz-range-thumb {
     height: 14px;
     left: 3px;
     top: 3px;
-    background: #fff;
+    background: var(--text-muted);
     border-radius: 50%;
     transition: transform 0.2s;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
 }
 
-.toggle-switch input:checked + .toggle-track { background: var(--accent); }
-.toggle-switch input:checked + .toggle-track::after { transform: translateX(16px); background: #fff; }
+.toggle-switch input:checked + .toggle-track { background: #000; }
+.toggle-switch input:checked + .toggle-track::after { transform: translateX(16px); background: var(--text-muted); }
 
 /* ── 터치 기기(아이패드 등) 터치 타겟 확대 ──────────── */
 @media (pointer: coarse) {
@@ -1507,7 +1509,7 @@ input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
     gap: 5px;
     height: 24px;
     padding: 0 7px 0 4px;
-    border: none;
+    border: 1px solid rgba(var(--bg-rgb), 0.15);
     border-radius: var(--r-xs);
     background: var(--sidebar-bg);
     cursor: pointer;
@@ -1515,11 +1517,11 @@ input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
     font-family: inherit;
     color: var(--text-1);
     font-weight: 600;
-    transition: background 0.12s;
+    transition: background 0.12s, border-color 0.12s;
     white-space: nowrap;
 }
 
-.color-preview-btn:hover { background: rgba(255, 255, 255, 0.12); }
+.color-preview-btn:hover { background: rgba(255, 255, 255, 0.12); border-color: rgba(var(--bg-rgb), 0.3); }
 
 .color-preview-dot {
     width: 14px;
