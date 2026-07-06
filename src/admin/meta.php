@@ -55,25 +55,25 @@ require_admin_role('s');
         <div class="adm-modal-body">
             <div id="metaModalAlert" style="display:none;"></div>
             <div class="adm-mfield">
-                <label>경로 <small style="color:var(--text-muted);font-weight:400;">(예: /src/company/index.php)</small></label>
+                <label>경로 <small style="color: var(--text);font-weight:400;">(예: /src/company/index.php)</small></label>
                 <input type="text" id="metaPath" placeholder="/index.php" maxlength="120">
             </div>
             <div class="adm-mfield">
-                <label>Title <small style="color:var(--text-muted);font-weight:400;">최대 60자 권장</small></label>
+                <label>Title <small style="color: var(--text);font-weight:400;">최대 60자 권장</small></label>
                 <input type="text" id="metaTitle" maxlength="200" oninput="updateCount('metaTitle', 'cntTitle', 60)">
-                <small id="cntTitle" style="color:var(--text-muted);font-size:11px;"></small>
+                <small id="cntTitle" style="color: var(--text);font-size:11px;"></small>
             </div>
             <div class="adm-mfield">
-                <label>Description <small style="color:var(--text-muted);font-weight:400;">최대 160자 권장</small></label>
+                <label>Description <small style="color: var(--text);font-weight:400;">최대 160자 권장</small></label>
                 <textarea id="metaDesc" rows="3" maxlength="320" style="resize:none;border:1px solid var(--border);border-radius:4px;padding:9px 12px;font-size:13px;font-family:inherit;width:100%;outline:none;" oninput="updateCount('metaDesc', 'cntDesc', 160)"></textarea>
-                <small id="cntDesc" style="color:var(--text-muted);font-size:11px;"></small>
+                <small id="cntDesc" style="color: var(--text);font-size:11px;"></small>
             </div>
             <div class="adm-mfield">
                 <label>Keywords</label>
                 <input type="text" id="metaKeywords" maxlength="500" placeholder="쉼표로 구분">
             </div>
             <div class="adm-mfield" style="margin-bottom:0;">
-                <label>OG Image <small style="color:var(--text-muted);font-weight:400;">공유 시 보일 썸네일, 권장 1200×630</small></label>
+                <label>OG Image <small style="color: var(--text);font-weight:400;">공유 시 보일 썸네일, 권장 1200×630</small></label>
                 <img id="metaOgImgPreview" class="meta-img-preview" src="" alt="">
                 <label class="meta-upload-label" for="metaOgImgFile">
                     <i class="bi bi-upload"></i> 이미지 업로드

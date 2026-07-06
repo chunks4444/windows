@@ -84,7 +84,7 @@ try {
             <!-- 엔진별 작업 시간 -->
             <div class="wt-card">
                 <div class="wt-card-title">엔진별 작업 시간</div>
-                <p style="font-size:12px;color:var(--text-muted);margin:0 0 12px;line-height:1.6;">
+                <p style="font-size:12px;color: var(--text);margin:0 0 12px;line-height:1.6;">
                     제작비 = (교차점 × 교차점당 시간<br>
                     + 짝 × (울거미 + 다듬기) + 문틀) ÷ 60 × 시간당 공임
                 </p>
@@ -111,7 +111,7 @@ try {
         </div>
         <div class="wt-card" style="max-width:440px;">
             <div class="wt-card-title">비율 설정</div>
-            <p style="font-size:12px;color:var(--text-muted);margin:0 0 12px;line-height:1.6;">
+            <p style="font-size:12px;color: var(--text);margin:0 0 12px;line-height:1.6;">
                 판매가 = 원가 합계 × (1 + 간접비율 + 이익률)
             </p>
             <div class="adm-table-wrap">
@@ -171,11 +171,11 @@ try {
             <div id="wtFinishRow" style="display:none;">
                 <div style="display:flex;gap:8px;margin-bottom:0;">
                     <div class="adm-mfield" style="flex:1;">
-                        <label>작업 시간 <small style="color:var(--text-muted);font-weight:400;">(분/㎡)</small></label>
+                        <label>작업 시간 <small style="color: var(--text);font-weight:400;">(분/㎡)</small></label>
                         <input id="wtWorkTimeMin" type="number" min="0" step="1" placeholder="10" class="num-input">
                     </div>
                     <div class="adm-mfield" style="flex:1;">
-                        <label>도포 횟수 <small style="color:var(--text-muted);font-weight:400;">(회)</small></label>
+                        <label>도포 횟수 <small style="color: var(--text);font-weight:400;">(회)</small></label>
                         <input id="wtCoatCount" type="number" min="1" step="1" placeholder="2" class="num-input">
                     </div>
                 </div>
@@ -185,7 +185,7 @@ try {
                 <input id="wtWeight" type="number" min="0" step="0.01" placeholder="1.00" class="num-input">
             </div>
             <div class="adm-mfield" id="wtEngineField" style="display:none;">
-                <label>엔진 <small style="color:var(--text-muted);font-weight:400;">(비우면 공통)</small></label>
+                <label>엔진 <small style="color: var(--text);font-weight:400;">(비우면 공통)</small></label>
                 <select id="wtEngine">
                     <option value="">— 공통 —</option>
                     <?php foreach ($studioCards as $c): ?>

@@ -116,7 +116,7 @@ body {
     border-radius: 8px; padding: 10px 14px; font-size: 13px; margin-bottom: 16px;
 }
 .rh-count {
-    font-size: 13px; color: var(--text-muted, var(--text-muted)); margin-bottom: 10px;
+    font-size: 13px; color: var(--text); margin-bottom: 10px;
 }
 .rh-grid {
     display: grid;
@@ -194,7 +194,7 @@ body {
     border-radius: 50%;
     border: none;
     background: rgba(var(--bg-rgb), 0.85);
-    color: var(--text-muted);
+    color: var(--text);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -228,7 +228,7 @@ body {
     border-radius: 50%;
     border: none;
     background: rgba(var(--bg-rgb), 0.85);
-    color: var(--text-muted);
+    color: var(--text);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -330,7 +330,7 @@ body {
     grid-column: 1 / -1;
     padding: 40px 24px;
     text-align: center;
-    color: var(--text-muted);
+    color: var(--text);
     font-size: var(--fs-14);
     background: #fff;
     border-radius: var(--r);
@@ -342,7 +342,7 @@ body {
     grid-column: 1 / -1;
     padding: 40px;
     text-align: center;
-    color: var(--text-muted);
+    color: var(--text);
     font-size: var(--fs-14);
 }
 
@@ -396,7 +396,7 @@ body {
     font-size: var(--fs-14);
     font-weight: 600;
     font-family: inherit;
-    color: var(--text-muted);
+    color: var(--text);
     cursor: pointer;
     transition: background 0.12s, color 0.12s, border-color 0.12s;
 }
@@ -446,7 +446,7 @@ body {
     top: 12px; right: 12px;
     width: 28px; height: 28px;
     border: none; background: none;
-    color: var(--text-muted); font-size: var(--fs-16);
+    color: var(--text); font-size: var(--fs-16);
     display: flex; align-items: center; justify-content: center;
     cursor: pointer; border-radius: 50%;
     transition: background .15s, color .15s;
@@ -481,7 +481,7 @@ body {
 
 .db-delete-modal-desc {
     font-size: var(--fs-14);
-    color: var(--text-muted);
+    color: var(--text);
     line-height: 1.6;
     margin-bottom: 24px;
     word-break: break-all;
@@ -509,7 +509,7 @@ body {
 
 .db-delete-modal-cancel {
     background: var(--bg);
-    color: var(--text-muted);
+    color: var(--text);
     border: 1px solid var(--border);
 }
 .db-delete-modal-cancel:hover {
@@ -553,7 +553,7 @@ body {
 .db-board-item-name {
     font-size: var(--fs-12);
     font-weight: 500;
-    color: var(--text-muted);
+    color: var(--text);
     padding: 6px 8px;
     white-space: nowrap;
     overflow: hidden;
@@ -593,7 +593,7 @@ body {
     font-size: var(--fs-14);
     font-weight: 600;
     font-family: inherit;
-    color: var(--text-muted, var(--text-muted));
+    color: var(--text);
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -628,7 +628,7 @@ body {
     padding: 8px 16px;
     font-size: 13px;
     font-weight: 500;
-    color: var(--text-muted, var(--text-muted));
+    color: var(--text);
     cursor: pointer;
     border-radius: 4px 4px 0 0;
     transition: color 0.15s, border-color 0.15s;
@@ -643,7 +643,7 @@ body {
 /* 엔진 기본값 관리 — 그룹 헤더 */
 .setting-group-header {
     background: var(--surface-2, var(--bg));
-    color: var(--text-muted, var(--text-muted));
+    color: var(--text);
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.04em;
@@ -651,16 +651,16 @@ body {
     padding: 6px 10px !important;
     border-top: 2px solid var(--border, var(--accent-tint));
 }
-.setting-label { color: var(--text-muted, var(--text-muted)); font-size: 12px; }
+.setting-label { color: var(--text); font-size: 12px; }
 
 /* 엔진 설정 어드민 */
 .eng-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(calc(33% - 8px), 1fr)); gap: 12px; margin-top: 12px; }
 .eng-section { background: var(--surface-1, var(--bg)); border: 1px solid var(--border, var(--accent-tint)); border-radius: 6px; padding: 10px 14px; }
-.eng-section-title { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted, var(--text-muted)); margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border, var(--bg)); }
+.eng-section-title { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text); margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border, var(--bg)); }
 .eng-section-title.accent { color: var(--accent, var(--accent)); }
 .field-row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
-.field-label { flex: 1; font-size: 11px; color: var(--text-muted, var(--accent-hover)); }
-.field-hint { display: block; font-size: 10px; color: var(--text-muted, var(--text-muted)); margin-top: 1px; }
+.field-label { flex: 1; font-size: 11px; color: var(--text); }
+.field-hint { display: block; font-size: 10px; color: var(--text); margin-top: 1px; }
 .field-input { flex: 0 0 90px; }
 .eng-full { grid-column: 1 / -1; }
 .common-badge { display:inline-block; font-size:9px; background:var(--accent-tint); color:var(--accent); border-radius:3px; padding:1px 5px; margin-left:6px; vertical-align:middle; }

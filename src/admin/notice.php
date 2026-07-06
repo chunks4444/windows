@@ -48,13 +48,13 @@ require_admin_role('s');
             <div class="oauth-field">
                 <label>공지 문구</label>
                 <input type="text" id="noticeText" placeholder="7월 15일까지 접수분만 8월 납품 가능합니다." maxlength="120">
-                <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">최대 120자. 모바일에서는 말줄임 처리됩니다.</div>
+                <div style="font-size:11px;color: var(--text);margin-top:4px;">최대 120자. 모바일에서는 말줄임 처리됩니다.</div>
             </div>
 
             <div class="oauth-field">
-                <label>링크 URL <span style="color:var(--text-muted);font-weight:400;">(선택)</span></label>
+                <label>링크 URL <span style="color: var(--text);font-weight:400;">(선택)</span></label>
                 <input type="text" id="noticeLink" placeholder="/src/guide/order.php">
-                <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">입력하면 문구 클릭 시 해당 페이지로 이동합니다.</div>
+                <div style="font-size:11px;color: var(--text);margin-top:4px;">입력하면 문구 클릭 시 해당 페이지로 이동합니다.</div>
             </div>
 
             <div class="oauth-field">

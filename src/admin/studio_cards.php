@@ -70,7 +70,7 @@ require_admin_role('s');
             <div class="adm-mfield">
                 <label>배경 이미지</label>
                 <img id="scImgPreview" class="sc-img-preview" src="" alt="">
-                <p style="font-size:11px;color:var(--text-muted);margin:0 0 6px;">표준 사이즈 1200 X 800 px 권장 (없으면 호버 시 이미지 없이 표시됩니다)</p>
+                <p style="font-size:11px;color: var(--text);margin:0 0 6px;">표준 사이즈 1200 X 800 px 권장 (없으면 호버 시 이미지 없이 표시됩니다)</p>
                 <div style="display:flex;gap:8px;">
                     <label class="sc-upload-label" for="scImgFile">
                         <i class="bi bi-upload"></i> 이미지 업로드 (PNG/JPG, 최대 1200px)

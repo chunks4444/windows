@@ -16,19 +16,19 @@ require_admin_role('s');
     <?php css_tag('/src/css/users.css'); ?>
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
     <style>
-        .drag-handle { cursor:grab; color:var(--text-muted); }
+        .drag-handle { cursor:grab; color: var(--text); }
         .drag-handle:active { cursor:grabbing; }
         tr.dragging { opacity:.4; }
         tr.drag-over td { background:var(--accent-tint); }
         .motif-thumb { width:56px; height:56px; object-fit:contain; border-radius:4px; padding:6px;
             background-image:linear-gradient(45deg,var(--border) 25%,transparent 25%),linear-gradient(-45deg,var(--border) 25%,transparent 25%),linear-gradient(45deg,transparent 75%,var(--border) 75%),linear-gradient(-45deg,transparent 75%,var(--border) 75%);
             background-size:8px 8px; background-position:0 0,0 4px,4px -4px,-4px 0; background-color:var(--bg); }
-        .motif-thumb-empty { width:56px; height:56px; border-radius:4px; background:var(--bg); display:flex; align-items:center; justify-content:center; color:var(--text-muted); font-size:16px; }
+        .motif-thumb-empty { width:56px; height:56px; border-radius:4px; background:var(--bg); display:flex; align-items:center; justify-content:center; color: var(--text); font-size:16px; }
         .motif-preview { width:100%; max-height:160px; object-fit:contain; border-radius:8px; display:none; margin-bottom:8px; padding:12px;
             background-image:linear-gradient(45deg,var(--border) 25%,transparent 25%),linear-gradient(-45deg,var(--border) 25%,transparent 25%),linear-gradient(45deg,transparent 75%,var(--border) 75%),linear-gradient(-45deg,transparent 75%,var(--border) 75%);
             background-size:10px 10px; background-position:0 0,0 5px,5px -5px,-5px 0; background-color:var(--bg); }
         .motif-preview.show { display:block; }
-        .motif-upload-label { display:block; padding:10px; border:1.5px dashed var(--border); border-radius:8px; text-align:center; cursor:pointer; color:var(--text-muted); font-size:13px; margin-bottom:6px; }
+        .motif-upload-label { display:block; padding:10px; border:1.5px dashed var(--border); border-radius:8px; text-align:center; cursor:pointer; color: var(--text); font-size:13px; margin-bottom:6px; }
         .motif-upload-label:hover { border-color:var(--accent); color:var(--accent); }
     </style>
 </head>
@@ -89,7 +89,7 @@ require_admin_role('s');
                 <input id="motifName" type="text" placeholder="예: 매화 문양" maxlength="100">
             </div>
             <div class="adm-mfield">
-                <label>카테고리 <span style="font-size:11px;color:var(--text-muted);font-weight:400;">(선택, 분류용)</span></label>
+                <label>카테고리 <span style="font-size:11px;color: var(--text);font-weight:400;">(선택, 분류용)</span></label>
                 <input id="motifCategory" type="text" placeholder="예: 꽃살" maxlength="50">
             </div>
         </div>

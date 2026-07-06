@@ -32,10 +32,10 @@ $engineOptions = [
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
     <style>
         .blog-thumb { width:80px; height:60px; object-fit:cover; border-radius:4px; background:var(--bg); }
-        .blog-thumb-empty { width:80px; height:60px; border-radius:4px; background:var(--bg); display:flex; align-items:center; justify-content:center; color:var(--text-muted); font-size:18px; }
+        .blog-thumb-empty { width:80px; height:60px; border-radius:4px; background:var(--bg); display:flex; align-items:center; justify-content:center; color: var(--text); font-size:18px; }
         .blog-img-preview { width:100%; max-height:220px; object-fit:cover; border-radius:8px; background:var(--bg); display:none; margin-bottom:8px; }
         .blog-img-preview.show { display:block; }
-        .blog-upload-label { display:block; padding:10px; border:1.5px dashed var(--border); border-radius:8px; text-align:center; cursor:pointer; color:var(--text-muted); font-size:13px; margin-bottom:6px; }
+        .blog-upload-label { display:block; padding:10px; border:1.5px dashed var(--border); border-radius:8px; text-align:center; cursor:pointer; color: var(--text); font-size:13px; margin-bottom:6px; }
         .blog-upload-label:hover { border-color:var(--accent); color:var(--accent); }
         .blog-textarea { resize:vertical; padding:8px 10px; border:1px solid var(--border); border-radius:var(--r-sm); background:var(--bg); font-family:inherit; font-size:13px; color:var(--text); outline:none; width:100%; }
         #postContentEditor { height:320px; background:var(--bg); font-size:13px; }
@@ -44,13 +44,13 @@ $engineOptions = [
         .ql-editor h1, .ql-editor h2, .ql-editor h3, .ql-editor h4 { font-weight: 600; }
         .ql-toolbar { border-color:var(--border) !important; border-radius:var(--r-sm) var(--r-sm) 0 0; }
         .ql-container { border-color:var(--border) !important; border-radius:0 0 var(--r-sm) var(--r-sm); font-family:inherit; }
-        .adm-modal-fullscreen-btn { background:none; border:none; cursor:pointer; color:var(--text-muted); font-size:16px; line-height:1; padding:0; margin-right:14px; }
+        .adm-modal-fullscreen-btn { background:none; border:none; cursor:pointer; color: var(--text); font-size:16px; line-height:1; padding:0; margin-right:14px; }
         .adm-modal-fullscreen-btn:hover { color:var(--text); }
         #blogModalOverlay.fullscreen-active { padding:0; }
         #blogModalOverlay.fullscreen-active .adm-modal { max-width:100%; width:100%; height:100%; max-height:100%; border-radius:0; }
         #blogModalOverlay.fullscreen-active #postContentEditor { height:calc(100vh - 220px); }
         .blog-info-section { border:1px solid var(--border); border-radius:var(--r-sm); margin-bottom:14px; }
-        .blog-info-toggle { width:100%; display:flex; align-items:center; gap:8px; background:var(--bg); border:none; padding:10px 12px; font-size:12px; font-weight:700; color:var(--text-muted); letter-spacing:0.04em; text-transform:uppercase; cursor:pointer; border-radius:var(--r-sm); }
+        .blog-info-toggle { width:100%; display:flex; align-items:center; gap:8px; background:var(--bg); border:none; padding:10px 12px; font-size:12px; font-weight:700; color: var(--text); letter-spacing:0.04em; text-transform:uppercase; cursor:pointer; border-radius:var(--r-sm); }
         .blog-info-toggle i { transition:transform .2s ease; }
         .blog-info-body { padding:14px 12px 2px; }
         .blog-info-section.collapsed .blog-info-toggle { border-radius:var(--r-sm); }
@@ -58,7 +58,7 @@ $engineOptions = [
         .blog-info-section.collapsed .blog-info-body { display:none; }
         .blog-series-manage-btn { border:none; background:none; color:var(--accent); font-size:12px; font-weight:700; cursor:pointer; text-decoration:underline; padding:0; margin-left:6px; }
         .pc-table { width:100%; border-collapse:collapse; font-size:13px; }
-        .pc-table th { background:var(--bg); padding:8px 10px; text-align:left; font-weight:600; color:var(--text-muted); border-bottom:2px solid var(--border); }
+        .pc-table th { background:var(--bg); padding:8px 10px; text-align:left; font-weight:600; color: var(--text); border-bottom:2px solid var(--border); }
         .pc-table td { padding:6px 10px; border-bottom:1px solid var(--border); vertical-align:middle; }
         .pc-name-input { border:1px solid var(--border); border-radius:5px; padding:4px 8px; font-size:13px; width:100%; }
         .pc-sort-input { border:1px solid var(--border); border-radius:5px; padding:4px 6px; font-size:13px; width:52px; text-align:center; }
@@ -128,7 +128,7 @@ $engineOptions = [
                 </button>
                 <div class="blog-info-body" id="blogInfoBody">
                     <div class="adm-mfield">
-                        <label>타이틀 이미지 <span style="font-size:11px;color:var(--text-muted);font-weight:400;">(상세페이지 제목 하단 + 목록 썸네일)</span></label>
+                        <label>타이틀 이미지 <span style="font-size:11px;color: var(--text);font-weight:400;">(상세페이지 제목 하단 + 목록 썸네일)</span></label>
                         <img id="postImgPreview" class="blog-img-preview" src="" alt="">
                         <label class="blog-upload-label" for="postImgFile">
                             <i class="bi bi-upload"></i> 이미지 업로드
@@ -142,11 +142,11 @@ $engineOptions = [
                         <input id="postTitle" type="text" placeholder="예: 한옥 살창, 사계절을 담다" maxlength="150">
                     </div>
                     <div class="adm-mfield">
-                        <label>요약 <span style="font-size:11px;color:var(--text-muted);font-weight:400;">(목록 카드 / 검색결과 설명)</span></label>
+                        <label>요약 <span style="font-size:11px;color: var(--text);font-weight:400;">(목록 카드 / 검색결과 설명)</span></label>
                         <textarea id="postSummary" class="blog-textarea" rows="2" maxlength="300" placeholder="목록과 검색엔진에 노출될 한 줄 요약"></textarea>
                     </div>
                     <div class="adm-mfield">
-                        <label>하단 CTA 문구 <span style="font-size:11px;color:var(--text-muted);font-weight:400;">(본문 하단 컬렉션 유도 문구, 비워두면 기본 문구 사용)</span></label>
+                        <label>하단 CTA 문구 <span style="font-size:11px;color: var(--text);font-weight:400;">(본문 하단 컬렉션 유도 문구, 비워두면 기본 문구 사용)</span></label>
                         <input id="postCtaText" type="text" maxlength="200" placeholder="예: 평목 스튜디오의 다양한 패턴 디자인 보러가기">
                     </div>
                 </div>
@@ -170,11 +170,11 @@ $engineOptions = [
                         <input id="postSeriesOrder" type="number" min="0" value="0" style="width:100px;">
                     </div>
                     <div class="adm-mfield">
-                        <label>질문형 인덱스용 한 줄 질문 <span style="font-size:11px;color:var(--text-muted);font-weight:400;">(예: 귀신은 왜 벽을 뚫지 않고 문으로 다니는가)</span></label>
+                        <label>질문형 인덱스용 한 줄 질문 <span style="font-size:11px;color: var(--text);font-weight:400;">(예: 귀신은 왜 벽을 뚫지 않고 문으로 다니는가)</span></label>
                         <input id="postQuestion" type="text" maxlength="200" placeholder="비워두면 제목으로 대체됩니다">
                     </div>
                     <div class="adm-mfield">
-                        <label>연관 엔진 <span style="font-size:11px;color:var(--text-muted);font-weight:400;">(있으면 글에 "직접 만들어보기" 버튼, 엔진 페이지에 "이 살의 이야기" 링크가 뜸)</span></label>
+                        <label>연관 엔진 <span style="font-size:11px;color: var(--text);font-weight:400;">(있으면 글에 "직접 만들어보기" 버튼, 엔진 페이지에 "이 살의 이야기" 링크가 뜸)</span></label>
                         <select id="postRelatedEngine" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg-1);color:var(--text);font-size:14px;">
                             <option value="">— 없음 —</option>
                             <?php foreach ($engineOptions as $key => $label): ?>
@@ -183,7 +183,7 @@ $engineOptions = [
                         </select>
                     </div>
                     <div class="adm-mfield">
-                        <label>연관 대표 도면 <span style="font-size:11px;color:var(--text-muted);font-weight:400;">(선택 — 컬렉션에 등록된 패턴 중에서만 고를 수 있습니다. 지정하면 그 도면을 바로 불러온 상태로 엔진이 열림)</span></label>
+                        <label>연관 대표 도면 <span style="font-size:11px;color: var(--text);font-weight:400;">(선택 — 컬렉션에 등록된 패턴 중에서만 고를 수 있습니다. 지정하면 그 도면을 바로 불러온 상태로 엔진이 열림)</span></label>
                         <select id="postRelatedDrawingId" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg-1);color:var(--text);font-size:14px;">
                             <option value="">— 없음 —</option>
                         </select>

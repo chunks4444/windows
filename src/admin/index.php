@@ -32,7 +32,7 @@ require_admin_role('s');
             font-size:19px; background:var(--accent-tint); color:var(--accent);
         }
         .adm-home-title { font-size:14px; font-weight:700; color:var(--text); margin-bottom:2px; }
-        .adm-home-desc { font-size:12px; color:var(--text-muted); }
+        .adm-home-desc { font-size:12px; color: var(--text); }
         .adm-section { margin-bottom:36px; }
         .adm-section-title {
             font-size:13px; font-weight:700; color:var(--accent);

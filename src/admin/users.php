@@ -47,7 +47,7 @@ require_admin_role('s');
     <div class="adm-table-wrap">
         <div class="adm-toolbar">
             <div class="adm-search">
-                <i class="bi bi-search" style="color:var(--text-muted);font-size:12px;flex-shrink:0;"></i>
+                <i class="bi bi-search" style="color: var(--text);font-size:12px;flex-shrink:0;"></i>
                 <input type="text" id="admSearch" placeholder="이메일, 이름 또는 회사명 검색" oninput="onSearchInput()">
             </div>
             <span class="adm-total" id="admTotal"></span>
@@ -171,7 +171,7 @@ require_admin_role('s');
                 </select>
             </div>
             <div class="adm-mfield" style="margin-bottom:0;">
-                <label>엔진 열람 권한 <small style="font-weight:400;color:var(--text-muted);text-transform:none;letter-spacing:normal;">(role과 별개로 개별 승인)</small></label>
+                <label>엔진 열람 권한 <small style="font-weight:400;color: var(--text);text-transform:none;letter-spacing:normal;">(role과 별개로 개별 승인)</small></label>
                 <div style="display:flex;flex-direction:column;gap:6px;">
                     <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:400;color:var(--text);text-transform:none;letter-spacing:normal;"><input type="checkbox" id="admMViewSpec" style="width:auto;height:auto;"> 제작 시방서 열람 허용</label>
                     <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:400;color:var(--text);text-transform:none;letter-spacing:normal;"><input type="checkbox" id="admMViewParts" style="width:auto;height:auto;"> 부재목록 열람 허용</label>
@@ -197,11 +197,11 @@ require_admin_role('s');
             <table style="width:100%;border-collapse:collapse;font-size:12px;">
                 <thead style="position:sticky;top:0;background:var(--card-bg);z-index:1;">
                     <tr>
-                        <th style="padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);color:var(--text-muted);font-weight:500;">일시</th>
-                        <th style="padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);color:var(--text-muted);font-weight:500;">엔진</th>
-                        <th style="padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);color:var(--text-muted);font-weight:500;">형식</th>
-                        <th style="padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);color:var(--text-muted);font-weight:500;">도면명</th>
-                        <th style="padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);color:var(--text-muted);font-weight:500;">버전</th>
+                        <th style="padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);color: var(--text);font-weight:500;">일시</th>
+                        <th style="padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);color: var(--text);font-weight:500;">엔진</th>
+                        <th style="padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);color: var(--text);font-weight:500;">형식</th>
+                        <th style="padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);color: var(--text);font-weight:500;">도면명</th>
+                        <th style="padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);color: var(--text);font-weight:500;">버전</th>
                     </tr>
                 </thead>
                 <tbody id="exportModalTbody"></tbody>

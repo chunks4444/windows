@@ -17,11 +17,11 @@ require_admin_role('s');
     <?php css_tag('/src/css/users.css'); ?>
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
     <style>
-        .drag-handle { cursor:grab; color:var(--text-muted); }
+        .drag-handle { cursor:grab; color: var(--text); }
         .drag-handle:active { cursor:grabbing; }
         tr.dragging { opacity:.4; }
         tr.drag-over td { background:var(--accent-tint); }
-        .faq-answer-preview { font-size:12px; color:var(--text-muted); max-width:400px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .faq-answer-preview { font-size:12px; color: var(--text); max-width:400px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
         #faqEditor { height:180px; background:var(--bg); font-size:13px; }
         .ql-toolbar { border-color:var(--border) !important; border-radius:var(--r-sm) var(--r-sm) 0 0; }
@@ -42,7 +42,7 @@ require_admin_role('s');
         <div style="display:flex;align-items:center;gap:12px;">
             <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;cursor:pointer;user-select:none;" title="메인페이지 FAQ 섹션 노출 여부">
                 <input type="checkbox" id="faqSectionToggle" class="form-check-input" style="width:36px;height:20px;cursor:pointer;margin:0;" onchange="setSectionVisible(this.checked)">
-                <span id="faqSectionLabel" style="color:var(--text-muted);">메인 노출</span>
+                <span id="faqSectionLabel" style="color: var(--text);">메인 노출</span>
             </label>
             <button class="adm-edit-btn" style="height:32px;padding:0 14px;" onclick="openModal()">
                 <i class="bi bi-plus-lg"></i> 추가

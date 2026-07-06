@@ -16,14 +16,14 @@ require_admin_role('s');
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
     <style>
         .pc-tabs { display:flex; gap:0; border-bottom:2px solid var(--border); margin-bottom:24px; }
-        .pc-tab  { padding:8px 22px; font-size:13px; font-weight:600; color:var(--text-muted); border:none; background:none; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px; }
+        .pc-tab  { padding:8px 22px; font-size:13px; font-weight:600; color: var(--text); border:none; background:none; cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-2px; }
         .pc-tab.active { color:var(--accent); border-bottom-color:var(--accent); }
 
         .pc-table { width:100%; border-collapse:collapse; font-size:13px; max-width:560px; }
-        .pc-table th { background:var(--bg); padding:8px 12px; text-align:left; font-weight:600; color:var(--text-muted); border-bottom:2px solid var(--border); }
+        .pc-table th { background:var(--bg); padding:8px 12px; text-align:left; font-weight:600; color: var(--text); border-bottom:2px solid var(--border); }
         .pc-table td { padding:8px 12px; border-bottom:1px solid var(--border); vertical-align:middle; }
         .pc-table tr:hover td { background:var(--bg); }
-        .pc-id { font-family:monospace; font-size:11px; color:var(--text-muted); background:var(--bg); padding:2px 6px; border-radius:4px; }
+        .pc-id { font-family:monospace; font-size:11px; color: var(--text); background:var(--bg); padding:2px 6px; border-radius:4px; }
         .pc-name-input { border:1px solid var(--border); border-radius:5px; padding:4px 8px; font-size:13px; width:150px; }
         .pc-sort-input { border:1px solid var(--border); border-radius:5px; padding:4px 6px; font-size:13px; width:52px; text-align:center; }
         .pc-btn { border:none; border-radius:5px; padding:4px 10px; font-size:12px; font-weight:600; cursor:pointer; }
@@ -37,14 +37,14 @@ require_admin_role('s');
         .pc-add-btn { background:var(--accent); color:var(--bg); border:none; border-radius:6px; padding:6px 18px; font-size:13px; font-weight:600; cursor:pointer; }
 
         .pc-dl-filters { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; align-items:center; }
-        .pc-dl-filter-btn { border:1px solid var(--border); background:var(--bg); border-radius:6px; padding:4px 12px; font-size:12px; font-weight:600; cursor:pointer; color:var(--text-muted); }
+        .pc-dl-filter-btn { border:1px solid var(--border); background:var(--bg); border-radius:6px; padding:4px 12px; font-size:12px; font-weight:600; cursor:pointer; color: var(--text); }
         .pc-dl-filter-btn.active { background:var(--accent); color:var(--bg); border-color:var(--accent); }
         .pc-dl-table { width:100%; border-collapse:collapse; font-size:13px; }
-        .pc-dl-table th { background:var(--bg); padding:7px 10px; text-align:left; font-weight:600; color:var(--text-muted); border-bottom:2px solid var(--border); }
+        .pc-dl-table th { background:var(--bg); padding:7px 10px; text-align:left; font-weight:600; color: var(--text); border-bottom:2px solid var(--border); }
         .pc-dl-table td { padding:7px 10px; border-bottom:1px solid var(--border); vertical-align:middle; }
         .pc-dl-table tr:hover td { background:var(--bg); }
         .pc-dl-cat-select { border:1px solid var(--border); border-radius:5px; padding:3px 7px; font-size:12px; font-weight:600; color:var(--accent); cursor:pointer; }
-        .pc-dl-type-badge { font-size:10px; font-weight:700; background:var(--bg); color:var(--text-muted); border-radius:4px; padding:2px 6px; }
+        .pc-dl-type-badge { font-size:10px; font-weight:700; background:var(--bg); color: var(--text); border-radius:4px; padding:2px 6px; }
         .pc-dl-load-more { text-align:center; padding:12px 0; }
         .pc-dl-load-more button { border:1px solid var(--border); background:var(--bg); border-radius:6px; padding:6px 20px; font-size:13px; cursor:pointer; }
     </style>
@@ -65,7 +65,7 @@ require_admin_role('s');
 
     <!-- 탭 1: 카테고리 관리 -->
     <div id="tabCats">
-        <p style="font-size:13px;color:var(--text-muted);margin:-8px 0 16px;">이름만 수정하면 모든 엔진·도면 목록에 즉시 반영됩니다.</p>
+        <p style="font-size:13px;color: var(--text);margin:-8px 0 16px;">이름만 수정하면 모든 엔진·도면 목록에 즉시 반영됩니다.</p>
         <div style="overflow-x:auto;">
             <table class="pc-table" id="pcTable">
                 <thead><tr><th>ID</th><th>이름</th><th>정렬</th><th>활성</th><th></th></tr></thead>
@@ -229,8 +229,8 @@ async function loadDrawings() {
         return `<tr>
             <td>${esc(d.title)}</td>
             <td><span class="pc-dl-type-badge">${esc(d.type)}</span></td>
-            <td style="font-size:11px;color:var(--text-muted);">${esc(d.user_email||'')}</td>
-            <td style="font-size:11px;color:var(--text-muted);">${fmtDate(d.updated_at)}</td>
+            <td style="font-size:11px;color: var(--text);">${esc(d.user_email||'')}</td>
+            <td style="font-size:11px;color: var(--text);">${fmtDate(d.updated_at)}</td>
             <td><select class="pc-dl-cat-select" onchange="saveDlCat(${d.id},this.value)">${catOpts}</select></td>
         </tr>`;
     }).join(''));

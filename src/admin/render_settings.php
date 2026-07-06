@@ -19,10 +19,10 @@ require_admin_role('s');
     <?php css_tag('/src/css/admin/oauth.css'); ?>
     <style>
         .rp-table { width:100%; border-collapse:collapse; font-size:13px; }
-        .rp-table th { background:var(--bg); padding:8px 12px; text-align:left; font-weight:600; color:var(--text-muted); border-bottom:2px solid var(--border); }
+        .rp-table th { background:var(--bg); padding:8px 12px; text-align:left; font-weight:600; color: var(--text); border-bottom:2px solid var(--border); }
         .rp-table td { padding:8px 12px; border-bottom:1px solid var(--border); vertical-align:middle; }
         .rp-table tr:hover td { background:var(--bg); }
-        .rp-id { font-family:monospace; font-size:11px; color:var(--text-muted); background:var(--bg); padding:2px 6px; border-radius:4px; }
+        .rp-id { font-family:monospace; font-size:11px; color: var(--text); background:var(--bg); padding:2px 6px; border-radius:4px; }
         .rp-label-input  { border:1px solid var(--border); border-radius:5px; padding:4px 8px; font-size:13px; width:130px; }
         .rp-prompt-input { border:1px solid var(--border); border-radius:5px; padding:4px 8px; font-size:13px; width:100%; min-width:260px; }
         .rp-sort-input   { border:1px solid var(--border); border-radius:5px; padding:4px 6px; font-size:13px; width:52px; text-align:center; }
@@ -73,7 +73,7 @@ require_admin_role('s');
             <div class="oauth-field">
                 <label>렌더링 기본 명령어 (프롬프트 템플릿)</label>
                 <textarea id="render_base_prompt" rows="14" style="width:100%;padding:8px 10px;border:1px solid var(--border,var(--border));border-radius:6px;font-size:12px;font-family:monospace;resize:vertical;" placeholder="{{prompt}} 자리에 사용자가 고른/입력한 프롬프트가 삽입됩니다"></textarea>
-                <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">문살 구조를 바꾸지 말라는 지시문. <code>{{prompt}}</code> 위치에 사용자 입력이 들어갑니다.</div>
+                <div style="font-size:11px;color: var(--text);margin-top:4px;">문살 구조를 바꾸지 말라는 지시문. <code>{{prompt}}</code> 위치에 사용자 입력이 들어갑니다.</div>
             </div>
             <button class="oauth-save" onclick="saveRenderConfig()">저장</button>
             <span class="oauth-status" id="render_status"></span>
@@ -114,7 +114,7 @@ require_admin_role('s');
                 <div class="oauth-card-logo" style="background:var(--accent);color:var(--bg);font-size:11px;font-weight:700;letter-spacing:-.5px;"><i class="bi bi-palette"></i></div>
                 <span class="oauth-card-title">재질/조명 프리셋 (엔진 사이드바 선택 박스)</span>
             </div>
-            <p style="font-size:13px;color:var(--text-muted);margin:-4px 0 12px;">여기서 추가·수정한 항목이 모든 엔진의 "렌더링" 선택 박스에 그대로 표시됩니다.</p>
+            <p style="font-size:13px;color: var(--text);margin:-4px 0 12px;">여기서 추가·수정한 항목이 모든 엔진의 "렌더링" 선택 박스에 그대로 표시됩니다.</p>
             <div style="overflow-x:auto;">
                 <table class="rp-table" id="rpTable">
                     <thead><tr><th>ID</th><th>이름</th><th>프롬프트</th><th>정렬</th><th>활성</th><th></th></tr></thead>

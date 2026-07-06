@@ -16,13 +16,13 @@ require_admin_role('s');
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
 <style>
 .as-wrap { max-width: 900px; margin: 0 auto; padding: 32px 20px 60px; }
-.as-breadcrumb { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
-.as-breadcrumb a { color: var(--text-muted); text-decoration: none; }
+.as-breadcrumb { font-size: 12px; color: var(--text); margin-bottom: 20px; }
+.as-breadcrumb a { color: var(--text); text-decoration: none; }
 .as-breadcrumb a:hover { color: var(--accent); }
 .as-header { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; }
 .as-header-icon { width: 44px; height: 44px; border-radius: 12px; background: var(--accent); display: flex; align-items: center; justify-content: center; color: var(--bg); font-size: 20px; flex-shrink: 0; }
 .as-title { font-size: 22px; font-weight: 700; color: var(--text); margin: 0; }
-.as-subtitle { font-size: 13px; color: var(--text-muted); margin: 2px 0 0; }
+.as-subtitle { font-size: 13px; color: var(--text); margin: 2px 0 0; }
 
 .as-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
 .as-card { background: var(--bg); border-radius: 14px; border: 1px solid var(--accent-tint); overflow: hidden; }
@@ -35,22 +35,22 @@ require_admin_role('s');
 .as-engine-name { font-size: 12px; color: var(--accent-hover); width: 68px; flex-shrink: 0; }
 .as-bar-wrap { flex: 1; background: var(--bg); border-radius: 4px; height: 8px; overflow: hidden; }
 .as-bar-fill { height: 8px; border-radius: 4px; background: var(--accent); transition: width .4s; }
-.as-bar-count { font-size: 12px; color: var(--text-muted); width: 36px; text-align: right; flex-shrink: 0; }
+.as-bar-count { font-size: 12px; color: var(--text); width: 36px; text-align: right; flex-shrink: 0; }
 
 .as-stat-num { font-size: 32px; font-weight: 800; color: var(--text); line-height: 1; }
-.as-stat-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+.as-stat-label { font-size: 12px; color: var(--text); margin-top: 4px; }
 .as-stat-row { display: flex; gap: 28px; }
 .as-stat-item { }
 
 .as-log { background: var(--bg); border-radius: 14px; border: 1px solid var(--accent-tint); overflow: hidden; }
 .as-log-head { padding: 16px 20px 12px; border-bottom: 1px solid var(--bg); font-size: 13px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 8px; }
 .as-log table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
-.as-log th { padding: 10px 16px; background: var(--bg); color: var(--text-muted); font-weight: 600; font-size: 11px; text-align: left; border-bottom: 1px solid var(--bg); }
+.as-log th { padding: 10px 16px; background: var(--bg); color: var(--text); font-weight: 600; font-size: 11px; text-align: left; border-bottom: 1px solid var(--bg); }
 .as-log td { padding: 10px 16px; border-bottom: 1px solid var(--bg); color: var(--text); vertical-align: top; }
 .as-log tr:last-child td { border-bottom: none; }
 .as-engine-tag { display: inline-block; font-size: 10px; font-weight: 700; background: var(--text); color: var(--bg); border-radius: 4px; padding: 2px 6px; font-family: monospace; }
 .as-msg { max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--accent-hover); }
-.as-reply { max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-muted); }
+.as-reply { max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); }
 .as-time { color: var(--border); white-space: nowrap; }
 .as-log tr.expanded .as-msg,
 .as-log tr.expanded .as-reply { white-space: normal; overflow: visible; text-overflow: unset; max-width: none; }
@@ -61,7 +61,7 @@ require_admin_role('s');
 <body>
 <?php include __DIR__ . '/../components/nav.php'; ?>
 
-<div id="authWall" style="display:none;padding:60px 24px;text-align:center;color:var(--text-muted);">슈퍼 권한이 필요합니다.</div>
+<div id="authWall" style="display:none;padding:60px 24px;text-align:center;color: var(--text);">슈퍼 권한이 필요합니다.</div>
 
 <div class="as-wrap" id="mainPage" style="display:none;">
     <div class="as-breadcrumb"><a href="/src/admin/">어드민</a> / <a href="/src/admin/ai_tuning.php">AI 튜닝</a> / 사용 통계</div>

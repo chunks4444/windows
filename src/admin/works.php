@@ -16,15 +16,15 @@ require_admin_role('s');
     <?php css_tag('/src/css/users.css'); ?>
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
     <style>
-        .drag-handle { cursor:grab; color:var(--text-muted); }
+        .drag-handle { cursor:grab; color: var(--text); }
         .drag-handle:active { cursor:grabbing; }
         tr.dragging { opacity:.4; }
         tr.drag-over td { background:var(--accent-tint); }
         .work-thumb { width:80px; height:60px; object-fit:cover; border-radius:4px; background:var(--bg); }
-        .work-thumb-empty { width:80px; height:60px; border-radius:4px; background:var(--bg); display:flex; align-items:center; justify-content:center; color:var(--text-muted); font-size:18px; }
+        .work-thumb-empty { width:80px; height:60px; border-radius:4px; background:var(--bg); display:flex; align-items:center; justify-content:center; color: var(--text); font-size:18px; }
         .work-img-preview { width:100%; max-height:220px; object-fit:cover; border-radius:8px; background:var(--bg); display:none; margin-bottom:8px; }
         .work-img-preview.show { display:block; }
-        .work-upload-label { display:block; padding:10px; border:1.5px dashed var(--border); border-radius:8px; text-align:center; cursor:pointer; color:var(--text-muted); font-size:13px; margin-bottom:6px; }
+        .work-upload-label { display:block; padding:10px; border:1.5px dashed var(--border); border-radius:8px; text-align:center; cursor:pointer; color: var(--text); font-size:13px; margin-bottom:6px; }
         .work-upload-label:hover { border-color:var(--accent); color:var(--accent); }
     </style>
 </head>
@@ -59,15 +59,15 @@ require_admin_role('s');
     <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:24px;">
         <div style="font-size:13px;font-weight:600;margin-bottom:14px;color:var(--text);">상세 페이지 패널 색상</div>
         <div style="display:flex;gap:24px;align-items:flex-end;flex-wrap:wrap;">
-            <label style="font-size:12px;color:var(--text-muted);display:flex;flex-direction:column;gap:6px;">
+            <label style="font-size:12px;color: var(--text);display:flex;flex-direction:column;gap:6px;">
                 배경색
                 <input type="color" id="settingPanelBg" style="width:52px;height:32px;border:none;padding:0;cursor:pointer;border-radius:4px;">
             </label>
-            <label style="font-size:12px;color:var(--text-muted);display:flex;flex-direction:column;gap:6px;">
+            <label style="font-size:12px;color: var(--text);display:flex;flex-direction:column;gap:6px;">
                 제목 색상
                 <input type="color" id="settingTitleColor" style="width:52px;height:32px;border:none;padding:0;cursor:pointer;border-radius:4px;">
             </label>
-            <label style="font-size:12px;color:var(--text-muted);display:flex;flex-direction:column;gap:6px;">
+            <label style="font-size:12px;color: var(--text);display:flex;flex-direction:column;gap:6px;">
                 설명 색상
                 <input type="color" id="settingDescColor" style="width:52px;height:32px;border:none;padding:0;cursor:pointer;border-radius:4px;">
             </label>
@@ -118,21 +118,21 @@ require_admin_role('s');
                 <input id="workTitle" type="text" placeholder="예: 한옥 중문 정자살" maxlength="100">
             </div>
             <div class="adm-mfield">
-                <label>설명 <span style="font-size:11px;color:var(--text-muted);font-weight:400;">(카드 호버 시 표시)</span></label>
+                <label>설명 <span style="font-size:11px;color: var(--text);font-weight:400;">(카드 호버 시 표시)</span></label>
                 <textarea id="workDesc" rows="2" maxlength="300" placeholder="예: 경기도 양평" style="resize:vertical;padding:8px 10px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg);font-family:inherit;font-size:13px;color:var(--text);outline:none;width:100%;"></textarea>
             </div>
             <div class="adm-mfield">
                 <label>패널 색상</label>
                 <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
-                    <label style="font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:6px;">
+                    <label style="font-size:11px;color: var(--text);display:flex;align-items:center;gap:6px;">
                         배경
                         <input type="color" id="workPanelBg" value="#111111" style="width:40px;height:28px;border:none;padding:0;cursor:pointer;border-radius:4px;">
                     </label>
-                    <label style="font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:6px;">
+                    <label style="font-size:11px;color: var(--text);display:flex;align-items:center;gap:6px;">
                         제목
                         <input type="color" id="workTitleColor" value="#ffffff" style="width:40px;height:28px;border:none;padding:0;cursor:pointer;border-radius:4px;">
                     </label>
-                    <label style="font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:6px;">
+                    <label style="font-size:11px;color: var(--text);display:flex;align-items:center;gap:6px;">
                         설명
                         <input type="color" id="workDescColor" value="#888888" style="width:40px;height:28px;border:none;padding:0;cursor:pointer;border-radius:4px;">
                     </label>
@@ -141,7 +141,7 @@ require_admin_role('s');
         </div>
         <!-- 다중 이미지 (기존 작품 편집 시만 표시) -->
         <div id="multiImgSection" style="display:none;border-top:1px solid var(--border);padding:16px 24px 16px;margin:0;overflow:hidden;">
-            <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:10px;">슬라이드 이미지</div>
+            <div style="font-size:12px;font-weight:600;color: var(--text);margin-bottom:10px;">슬라이드 이미지</div>
             <div id="multiImgList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;overflow:hidden;"></div>
             <div style="display:flex;gap:8px;align-items:center;min-width:0;">
                 <input type="file" id="multiImgFile" accept="image/*" style="display:none;" onchange="addImageFromFile(this)">
@@ -201,8 +201,8 @@ function renderTags() {
              border:1.5px solid ${t.is_active ? 'var(--accent)' : 'var(--border)'};
              background:${t.is_active ? 'var(--accent-tint)' : 'var(--bg)'};font-size:12px;">
             <span style="font-weight:600;color:${t.is_active ? 'var(--accent)' : 'var(--text-muted)'};">${esc(t.name)}</span>
-            <button onclick="openTagModal(${t.id})" style="border:none;background:none;cursor:pointer;color:var(--text-muted);padding:0;font-size:13px;line-height:1;" title="수정">✎</button>
-            <button onclick="toggleTag(${t.id})" style="border:none;background:none;cursor:pointer;color:var(--text-muted);padding:0;font-size:12px;line-height:1;" title="${t.is_active ? '숨김' : '표시'}">${t.is_active ? '●' : '○'}</button>
+            <button onclick="openTagModal(${t.id})" style="border:none;background:none;cursor:pointer;color: var(--text);padding:0;font-size:13px;line-height:1;" title="수정">✎</button>
+            <button onclick="toggleTag(${t.id})" style="border:none;background:none;cursor:pointer;color: var(--text);padding:0;font-size:12px;line-height:1;" title="${t.is_active ? '숨김' : '표시'}">${t.is_active ? '●' : '○'}</button>
             <button onclick="deleteTag(${t.id})" style="border:none;background:none;cursor:pointer;color:var(--danger);padding:0;font-size:13px;line-height:1;" title="삭제">✕</button>
         </div>`).join('');
 }
@@ -295,7 +295,7 @@ function renderImages(images, workId) {
     const list = document.getElementById('multiImgList');
     list.innerHTML = '';
     if (!images.length) {
-        list.innerHTML = '<div style="font-size:12px;color:var(--text-muted);">등록된 이미지 없음</div>';
+        list.innerHTML = '<div style="font-size:12px;color: var(--text);">등록된 이미지 없음</div>';
         return;
     }
     images.forEach(img => {
@@ -303,8 +303,8 @@ function renderImages(images, workId) {
         row.style.cssText = 'display:flex;align-items:center;gap:8px;';
         row.innerHTML = `
             <img src="${img.image_url}" style="width:56px;height:40px;object-fit:cover;border-radius:4px;flex-shrink:0;background:var(--bg);">
-            <span style="flex:1;min-width:0;font-size:11px;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${img.image_url}</span>
-            <button onclick="deleteImage(${img.id},${workId})" style="border:none;background:none;color:var(--text-muted);cursor:pointer;font-size:16px;padding:0 4px;flex-shrink:0;">&#x2715;</button>
+            <span style="flex:1;min-width:0;font-size:11px;color: var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${img.image_url}</span>
+            <button onclick="deleteImage(${img.id},${workId})" style="border:none;background:none;color: var(--text);cursor:pointer;font-size:16px;padding:0 4px;flex-shrink:0;">&#x2715;</button>
         `;
         list.appendChild(row);
     });

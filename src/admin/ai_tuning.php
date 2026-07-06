@@ -18,21 +18,21 @@ require_admin_role('s');
 :root { --teal: var(--accent); --teal-light: var(--accent-tint); }
 
 .at-wrap { max-width: 860px; margin: 0 auto; padding: 32px 20px 60px; }
-.at-breadcrumb { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
-.at-breadcrumb a { color: var(--text-muted); text-decoration: none; }
+.at-breadcrumb { font-size: 12px; color: var(--text); margin-bottom: 20px; }
+.at-breadcrumb a { color: var(--text); text-decoration: none; }
 .at-breadcrumb a:hover { color: var(--accent); }
 .at-breadcrumb-sep { margin: 0 6px; }
 
 .at-header { display: flex; align-items: center; gap: 12px; margin-bottom: 32px; }
 .at-header-icon { width: 44px; height: 44px; border-radius: 12px; background: var(--accent); display: flex; align-items: center; justify-content: center; color: var(--bg); font-size: 20px; flex-shrink: 0; }
 .at-title { font-size: 22px; font-weight: 700; color: var(--text); margin: 0; }
-.at-subtitle { font-size: 13px; color: var(--text-muted); margin: 2px 0 0; }
+.at-subtitle { font-size: 13px; color: var(--text); margin: 2px 0 0; }
 
 .at-section { background: var(--bg); border-radius: 14px; border: 1px solid var(--accent-tint); margin-bottom: 20px; overflow: hidden; }
 .at-section-head { padding: 18px 24px; border-bottom: 1px solid var(--bg); display: flex; align-items: center; gap: 10px; }
 .at-section-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
 .at-section-title { font-size: 15px; font-weight: 700; color: var(--text); }
-.at-section-desc { font-size: 12px; color: var(--text-muted); margin-left: auto; }
+.at-section-desc { font-size: 12px; color: var(--text); margin-left: auto; }
 .at-section-body { padding: 20px 24px; }
 
 .at-engine-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -48,7 +48,7 @@ require_admin_role('s');
 .at-textarea { width: 100%; border: 1.5px solid var(--accent-tint); border-radius: 8px; padding: 12px 14px; font-size: 13px; font-family: 'Noto Sans KR', monospace; color: var(--text); resize: vertical; outline: none; transition: border-color .15s; line-height: 1.6; }
 .at-textarea:focus { border-color: var(--accent); background: var(--teal-light); }
 .at-textarea::placeholder { color: var(--border); }
-.at-hint { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+.at-hint { font-size: 11px; color: var(--text); margin-top: 6px; }
 
 /* 테스트 패널 */
 .at-test-row { display: flex; gap: 10px; align-items: center; }
@@ -60,9 +60,9 @@ require_admin_role('s');
 .at-test-btn:disabled { opacity: .45; cursor: default; }
 
 .at-result { margin-top: 16px; border-radius: 10px; background: var(--text); padding: 16px; display: none; }
-.at-result-label { font-size: 10px; color: var(--text-muted); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; }
+.at-result-label { font-size: 10px; color: var(--text); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 8px; }
 .at-result-reply { font-size: 14px; color: var(--accent-tint); font-weight: 600; margin-bottom: 10px; }
-.at-result-params { font-size: 12px; color: var(--text-muted); font-family: monospace; white-space: pre-wrap; }
+.at-result-params { font-size: 12px; color: var(--text); font-family: monospace; white-space: pre-wrap; }
 .at-result-error { font-size: 13px; color: var(--danger); }
 
 /* 도움말 */
@@ -74,7 +74,7 @@ require_admin_role('s');
 .at-help-body { display: none; padding: 0 18px 16px; border-top: 1px solid var(--accent-tint); }
 .at-help.open .at-help-body { display: block; }
 .at-help-group { margin-top: 14px; }
-.at-help-label { font-size: 11px; font-weight: 700; color: var(--text-muted); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px; }
+.at-help-label { font-size: 11px; font-weight: 700; color: var(--text); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px; }
 .at-help-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
 .at-help-table tr td { padding: 5px 10px 5px 0; vertical-align: top; }
 .at-help-table tr td:first-child { color: var(--accent-hover); white-space: nowrap; padding-right: 16px; width: 44%; }
@@ -86,14 +86,14 @@ require_admin_role('s');
 .at-help-table code { background: var(--accent-tint); color: var(--accent); border-radius: 4px; padding: 1px 5px; font-size: 11px; }
 /* 메인 설정 탭 */
 .at-mtabs { display: flex; border-bottom: 1px solid var(--accent-tint); padding: 0 20px; }
-.at-mtab { border: none; background: none; font-size: 13px; font-weight: 600; color: var(--text-muted); padding: 13px 14px; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; display: flex; align-items: center; gap: 6px; transition: color .12s, border-color .12s; }
+.at-mtab { border: none; background: none; font-size: 13px; font-weight: 600; color: var(--text); padding: 13px 14px; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; display: flex; align-items: center; gap: 6px; transition: color .12s, border-color .12s; }
 .at-mtab:hover { color: var(--accent-hover); }
 .at-mtab.active { color: var(--accent); border-bottom-color: var(--accent); }
 .at-mtab-pane { display: none; }
 .at-mtab-pane.active { display: block; }
 
 .at-htabs { display: flex; gap: 4px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--accent-tint); }
-.at-htab { border: 1.5px solid var(--accent-tint); background: var(--bg); color: var(--text-muted); font-size: 12px; font-weight: 600; border-radius: 7px; padding: 5px 13px; cursor: pointer; transition: all .12s; }
+.at-htab { border: 1.5px solid var(--accent-tint); background: var(--bg); color: var(--text); font-size: 12px; font-weight: 600; border-radius: 7px; padding: 5px 13px; cursor: pointer; transition: all .12s; }
 .at-htab:hover { border-color: var(--accent); color: var(--accent); }
 .at-htab.active { background: var(--accent); border-color: var(--accent); color: var(--bg); }
 .at-htab-pane { display: none; }
@@ -117,14 +117,14 @@ require_admin_role('s');
 .at-instr-input::placeholder { color: var(--border); }
 .at-instr-del { border: none; background: none; color: var(--border); font-size: 16px; cursor: pointer; padding: 4px; border-radius: 6px; flex-shrink: 0; line-height: 1; transition: color .12s, background .12s; }
 .at-instr-del:hover { color: var(--danger); background: var(--danger-tint); }
-.at-add-btn { border: 1.5px dashed var(--border); background: none; border-radius: 8px; padding: 8px 16px; font-size: 13px; color: var(--text-muted); cursor: pointer; width: 100%; transition: border-color .15s, color .15s; }
+.at-add-btn { border: 1.5px dashed var(--border); background: none; border-radius: 8px; padding: 8px 16px; font-size: 13px; color: var(--text); cursor: pointer; width: 100%; transition: border-color .15s, color .15s; }
 .at-add-btn:hover { border-color: var(--accent); color: var(--accent); }
 </style>
 </head>
 <body>
 <?php include __DIR__ . '/../components/nav.php'; ?>
 
-<div id="authWall" style="display:none;padding:60px 24px;text-align:center;color:var(--text-muted);">슈퍼 권한이 필요합니다.</div>
+<div id="authWall" style="display:none;padding:60px 24px;text-align:center;color: var(--text);">슈퍼 권한이 필요합니다.</div>
 
 <div class="at-wrap" id="mainPage" style="display:none;">
     <div class="at-breadcrumb"><a href="/src/admin/">어드민</a><span class="at-breadcrumb-sep">/</span>AI 튜닝</div>
@@ -243,8 +243,8 @@ require_admin_role('s');
 
         <div class="at-mtab-pane at-section-body" data-mpane="param">
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-                <span id="paramDescStatus" style="font-size:12px;color:var(--text-muted);"></span>
-                <button id="btnParamReset" onclick="resetParamDesc()" style="font-size:11px;color:var(--text-muted);border:1.5px solid var(--border);background:var(--bg);border-radius:7px;padding:4px 12px;cursor:pointer;display:none;">기본값으로 초기화</button>
+                <span id="paramDescStatus" style="font-size:12px;color: var(--text);"></span>
+                <button id="btnParamReset" onclick="resetParamDesc()" style="font-size:11px;color: var(--text);border:1.5px solid var(--border);background:var(--bg);border-radius:7px;padding:4px 12px;cursor:pointer;display:none;">기본값으로 초기화</button>
             </div>
             <textarea id="aiParamDesc" class="at-textarea" rows="16" oninput="onParamDescInput()"></textarea>
             <div class="at-hint" style="margin-top:6px;">AI 시스템 프롬프트에 포함되는 파라미터 목록입니다. 새 파라미터 추가 시 수정하세요.</div>
