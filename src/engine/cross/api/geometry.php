@@ -4,7 +4,9 @@ error_reporting(0);
 header('Content-Type: application/json; charset=UTF-8');
 require_once __DIR__ . '/../../../lib/jwt.php';
 require_once __DIR__ . '/../../../lib/engine_settings.php';
+require_once __DIR__ . '/../../../lib/spec_access.php';
 if (!jwt_from_request()) { http_response_code(401); echo json_encode(['error' => '인증이 필요합니다.']); exit; }
+$perms = get_content_permissions();
 
 $cols      = max(2,   (int)($_POST['cols']      ?? 4));
 $pungpanH  = max(0,   (int)($_POST['pungpanH']  ?? 0));
@@ -207,4 +209,20 @@ $parts = [
     'joints'         => $cols * $rows,
 ];
 
-echo json_encode(['geo' => $geo, 'specs' => $specs, 'parts' => $parts]);
+$selection = [
+    'wood'      => (string)($_POST['wood']     ?? ''),
+    'hardware'  => (string)($_POST['hardware'] ?? ''),
+    'finish'    => (string)($_POST['finish']   ?? ''),
+    'muntolOn'  => (($_POST['muntolOn'] ?? '1') === '1'),
+    'doorCount' => $doorCount,
+];
+$_costCfg = get_cost_config('cross');
+$price    = compute_price_estimate($parts, $selection, $_es, $_costCfg);
+
+echo json_encode([
+    'geo'   => $geo,
+    'specs' => $perms['spec']  ? $specs : null,
+    'parts' => $perms['parts'] ? $parts : null,
+    'price' => ['total' => $price['total'], 'leadTimeDays' => $price['leadTimeDays']],
+    'costBreakdown' => $perms['cost'] ? $price['breakdown'] : null,
+]);

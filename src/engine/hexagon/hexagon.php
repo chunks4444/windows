@@ -2,8 +2,9 @@
 header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../../lib/colors.php';
 require_once __DIR__ . '/../../lib/engine_settings.php';
+require_once __DIR__ . '/../../lib/spec_access.php';
 $cfg = get_engine_settings('hexagon');
-$costCfg = get_cost_config('hexagon');
+$perms = get_content_permissions();
 $patternCategories = get_pattern_categories();
 $renderPresets = get_render_presets();
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
@@ -154,7 +155,8 @@ header('Pragma: no-cache');
                 </div>
 
                 <!-- ── 제작 시방서 ────────────────── -->
-                <div class="sb-section sb-collapsed admin-only" style="display:none">
+                <?php if ($perms['spec']): ?>
+                <div class="sb-section sb-collapsed">
                     <div class="sb-section-title">제작 시방서</div>
                     <div class="spec-grid">
                         <div class="spec-card">
@@ -231,9 +233,11 @@ header('Pragma: no-cache');
                         </div>
                     </div>
                 </div>
+                <?php endif; ?>
 
                 <!-- ── 부재 목록 ──────────────────── -->
-                <div class="sb-section sb-collapsed admin-only" style="display:none">
+                <?php if ($perms['parts']): ?>
+                <div class="sb-section sb-collapsed">
                     <div class="sb-section-title">부재 목록 <small>폭×두께×길이</small></div>
 
                     <div class="slat-group">
@@ -285,6 +289,7 @@ header('Pragma: no-cache');
                     </div>
 
                 </div>
+                <?php endif; ?>
             </div>
         </div>
 
@@ -512,7 +517,8 @@ header('Pragma: no-cache');
                         <div class="sb-price-label">예상가격</div>
                         <div class="sb-price-amount"><span class="sb-price-start">–</span><span class="sb-price-end"></span></div>
                         <div class="sb-price-breakdown">
-                            <div class="super-only" style="display:none">
+                            <?php if ($perms['cost']): ?>
+                            <div class="sb-cost-breakdown">
                             <div class="sb-break-row"><span>문(창호) 목재</span><span id="spCostDoor">–</span></div>
                             <div class="sb-break-row"><span>문틀 목재</span><span id="spCostMuntol">–</span></div>
                             <div class="sb-break-row sb-break-key"><span>목재비</span><span id="spWoodCost">–</span></div>
@@ -526,6 +532,7 @@ header('Pragma: no-cache');
                             <div class="sb-break-divider"></div>
                             <div class="sb-break-row sb-break-total sb-break-key"><span>판매가</span><span id="spTotalCost">–</span></div>
                             </div>
+                            <?php endif; ?>
                             <div class="sb-lead-time sb-break-row" data-min-days="<?= (int)$cfg['min_days'] ?>"><span>최소 납기</span><span><strong><?= (int)$cfg['min_days'] ?></strong>일</span></div>
                             <div class="sb-price-note">※ 배송비·시공비 제외</div>
                             <div class="sb-price-disclaimer">※ 본 금액은 예상 견적입니다. 사용자 편집 내용을 검토한 후 최종 견적이 확정됩니다.</div>
@@ -548,9 +555,7 @@ header('Pragma: no-cache');
                     <div class="ctrl">
                         <select id="txtWood" class="sb-select">
                             <?php foreach (get_wood_options() as $w): ?>
-                            <option value="<?= htmlspecialchars($w['name'], ENT_QUOTES) ?>"
-                                data-price="<?= (int)$w['unit_price'] ?>"
-                                data-weight="<?= (float)$w['weight'] ?>">
+                            <option value="<?= htmlspecialchars($w['name'], ENT_QUOTES) ?>">
                                 <?= htmlspecialchars($w['name'], ENT_QUOTES) ?>
                             </option>
                             <?php endforeach; ?>
@@ -558,12 +563,9 @@ header('Pragma: no-cache');
                     </div>
                     <div class="ctrl">
                         <select id="txtFinish" class="sb-select">
-                            <option value="" data-price="0" data-time="0" data-coats="0">마감 없음</option>
+                            <option value="">마감 없음</option>
                             <?php foreach (get_finish_options() as $f): ?>
-                            <option value="<?= htmlspecialchars($f['name'], ENT_QUOTES) ?>"
-                                data-price="<?= (int)$f['unit_price'] ?>"
-                                data-time="<?= (int)$f['work_time_min'] ?>"
-                                data-coats="<?= (int)$f['coat_count'] ?>">
+                            <option value="<?= htmlspecialchars($f['name'], ENT_QUOTES) ?>">
                                 <?= htmlspecialchars($f['name'], ENT_QUOTES) ?>
                             </option>
                             <?php endforeach; ?>
@@ -571,10 +573,9 @@ header('Pragma: no-cache');
                     </div>
                     <div class="ctrl">
                         <select id="txtHardware" class="sb-select">
-                            <option value="" data-price="0">부자재 없음</option>
+                            <option value="">부자재 없음</option>
                             <?php foreach (get_hardware_options() as $h): ?>
-                            <option value="<?= htmlspecialchars($h['name'], ENT_QUOTES) ?>"
-                                data-price="<?= (int)$h['unit_price'] ?>">
+                            <option value="<?= htmlspecialchars($h['name'], ENT_QUOTES) ?>">
                                 <?= htmlspecialchars($h['name'], ENT_QUOTES) ?>
                             </option>
                             <?php endforeach; ?>
@@ -754,8 +755,7 @@ header('Pragma: no-cache');
         window.__pmokOpenDrawing         = <?= isset($_POST['drawing'])    ? json_encode($_POST['drawing'],    JSON_UNESCAPED_UNICODE) : 'null' ?>;
         window.__pmokCollectionDrawingId = <?= isset($_GET['drawing_id']) ? (int)$_GET['drawing_id']          : 'null' ?>;
         window.__pmokColorGroups         = <?= json_encode(get_color_groups(), JSON_UNESCAPED_UNICODE) ?>;
-        window.__pmokEngineLayout        = <?= json_encode(['gap' => (float)$cfg['gap'], 'basePadding' => (float)$cfg['basePadding'], 'frameGap' => (float)$cfg['frameGap'], 'frameThick' => (float)$cfg['frameThick'], 'craftTime' => (float)$costCfg['craft_time'], 'ulgeomiTime' => (float)$costCfg['ulgeomi_time'], 'trimTime' => (float)$costCfg['trim_time'], 'muntolTime' => (float)$costCfg['muntol_time'], 'minWorkHours' => (float)$cfg['min_work_hours']], JSON_UNESCAPED_UNICODE) ?>;
-        window.__pmokCostConfig           = <?= json_encode(array_merge($costCfg, ['slatW' => (float)$cfg['slatW'], 'slatThick' => (float)$cfg['slat'], 'ulgeomiW' => (float)$cfg['ulgeomiW']]), JSON_UNESCAPED_UNICODE) ?>;
+        window.__pmokEngineLayout        = <?= json_encode(['gap' => (float)$cfg['gap'], 'basePadding' => (float)$cfg['basePadding'], 'frameGap' => (float)$cfg['frameGap'], 'frameThick' => (float)$cfg['frameThick']], JSON_UNESCAPED_UNICODE) ?>;
     </script>
     <script src="/src/js/drawing-sync.js?v=<?= md5_file(__DIR__ . '/../../js/drawing-sync.js') ?>"></script>
     <script src="/src/js/engine-common.js?v=<?= md5_file(__DIR__ . '/../../js/engine-common.js') ?>"></script>

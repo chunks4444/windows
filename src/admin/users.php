@@ -163,12 +163,20 @@ require_admin_role('s');
                 <label>연락처</label>
                 <input type="text" id="admMPhone" placeholder="010-0000-0000" maxlength="30">
             </div>
-            <div class="adm-mfield" style="margin-bottom:0;">
+            <div class="adm-mfield">
                 <label>계정 상태</label>
                 <select id="admMWithdrawn">
                     <option value="0">정상</option>
                     <option value="1">탈퇴</option>
                 </select>
+            </div>
+            <div class="adm-mfield" style="margin-bottom:0;">
+                <label>엔진 열람 권한 <small style="font-weight:400;color:var(--text-muted);">(role과 별개로 개별 승인)</small></label>
+                <div style="display:flex;flex-direction:column;gap:6px;">
+                    <label style="display:flex;align-items:center;gap:6px;font-weight:400;"><input type="checkbox" id="admMViewSpec"> 제작 시방서 열람 허용</label>
+                    <label style="display:flex;align-items:center;gap:6px;font-weight:400;"><input type="checkbox" id="admMViewParts"> 부재목록 열람 허용</label>
+                    <label style="display:flex;align-items:center;gap:6px;font-weight:400;"><input type="checkbox" id="admMViewCost"> 예산견적 상세 열람 허용</label>
+                </div>
             </div>
         </div>
         <div class="adm-modal-foot">

@@ -189,6 +189,98 @@ function get_finish_options(): array {
     return [['name'=>'들기름','unit_price'=>8000,'work_time_min'=>10,'coat_count'=>2]];
 }
 
+// cost_table에서 category+name으로 단건 조회 (선택된 목재/철물/마감의 단가 룩업용)
+function get_cost_table_item(string $category, string $name): ?array {
+    if ($name === '') return null;
+    try {
+        $stmt = db()->prepare("SELECT unit_price, weight, work_time_min, coat_count FROM cost_table WHERE category=? AND name=? AND is_active=1 LIMIT 1");
+        $stmt->execute([$category, $name]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    } catch (Throwable $e) {
+        return null;
+    }
+}
+
+// 예상가격(총액) + 예산견적 상세 breakdown 서버사이드 계산.
+// src/js/engine-common.js의 updateWoodCost()와 1:1 대응되는 공식 — 두 코드를 수정할 땐 반드시 함께 맞출 것.
+// $parts = geometry.php가 계산한 부재목록 배열, $selection = 사용자가 고른 목재/철물/마감/문틀/문짝수,
+// $cfg = get_engine_settings($engine), $costCfg = get_cost_config($engine).
+function compute_price_estimate(array $parts, array $selection, array $cfg, array $costCfg): array {
+    $leadDays = (int)($cfg['min_days'] ?? 0);
+
+    $wood   = get_cost_table_item('wood', $selection['wood'] ?? '');
+    $price  = $wood ? (float)$wood['unit_price'] : 0.0;
+    $weight = $wood ? (float)$wood['weight'] : 1.0;
+    if ($price <= 0) {
+        return ['total' => 0, 'leadTimeDays' => $leadDays, 'breakdown' => null];
+    }
+
+    $showMuntol = !empty($selection['muntolOn']);
+    $doorCost   = (int)round(($parts['woodJae_door']   ?? 0) * $weight * $price);
+    $muntolCost = $showMuntol ? (int)round(($parts['woodJae_muntol'] ?? 0) * $weight * $price) : 0;
+    $woodCost   = $doorCost + $muntolCost;
+
+    $craftTime   = (float)($costCfg['craft_time']   ?? 3);
+    $ulgeomiTime = (float)($costCfg['ulgeomi_time'] ?? 20);
+    $trimTime    = (float)($costCfg['trim_time']    ?? 40);
+    $hourlyRate  = (float)($costCfg['hourly_rate']  ?? 30000);
+    $joints      = (float)($parts['joints'] ?? 0);
+    $doorCount   = max(1, (int)($selection['doorCount'] ?? 1));
+    $muntolTime  = $showMuntol ? (float)($costCfg['muntol_time'] ?? 60) : 0.0;
+    $totalMin    = $joints * $craftTime + $doorCount * ($ulgeomiTime + $trimTime) + $muntolTime;
+    $craftCost   = (int)round($totalMin / 60 * $hourlyRate);
+
+    $hw     = get_cost_table_item('hardware', $selection['hardware'] ?? '');
+    $hwRate = $hw ? (float)$hw['unit_price'] : 0.0;
+    $hardwareCost = (int)round($doorCount * $hwRate);
+
+    // 도장 면적 (1재 = 33×33×3600mm³, 육면체 4면 기준)
+    $slatW     = (float)($cfg['slatW'] ?? 20);
+    $slatThick = (float)($cfg['slat']  ?? 12);
+    $JAE_VOL   = 33 * 33 * 3600;
+    $totalLenMm = ($slatW * $slatThick) > 0 ? ($parts['woodJae_door'] ?? 0) * $JAE_VOL / ($slatW * $slatThick) : 0;
+    $surfaceM2  = $totalLenMm * 2 * ($slatW + $slatThick) / 1_000_000;
+
+    $finish = get_cost_table_item('finish', $selection['finish'] ?? '');
+    $fPrice = $finish ? (float)$finish['unit_price']    : 0.0;
+    $fTime  = $finish ? (float)$finish['work_time_min'] : 0.0;
+    $fCoats = $finish ? (int)$finish['coat_count']      : 0;
+    $finishRate      = (float)($costCfg['finish_rate'] ?? 25000);
+    $finishMatCost   = $fPrice > 0 ? (int)round($fPrice * $surfaceM2 * $fCoats) : 0;
+    $finishLaborCost = $fTime  > 0 ? (int)round($surfaceM2 * $fTime * $fCoats / 60 * $finishRate) : 0;
+    $finishCost      = $finishMatCost + $finishLaborCost;
+
+    $base         = $woodCost + $craftCost + $hardwareCost + $finishCost;
+    $overheadRate = (float)($costCfg['overhead_rate'] ?? 0.20);
+    $profitRate   = (float)($costCfg['profit_rate']   ?? 0.30);
+    $overheadCost = (int)round($base * $overheadRate);
+    $profitCost   = (int)round($base * $profitRate);
+    $totalCost    = $base + $overheadCost + $profitCost;
+
+    $finishTimeMin = $fTime > 0 ? $surfaceM2 * $fTime * $fCoats : 0;
+    $totalWorkMin  = $totalMin + $finishTimeMin;
+    $minWorkHours  = (float)($cfg['min_work_hours'] ?? 0) * 60;
+    $displayMin    = max($totalWorkMin, $minWorkHours);
+    $calcDays      = (int)ceil($displayMin / 60 / 8);
+    $leadDays      = max($leadDays, $calcDays);
+
+    $h = (int)floor($displayMin / 60);
+    $m = (int)round(fmod($displayMin, 60));
+    $craftTimeStr = $h > 0 ? "{$h}시간 {$m}분" : "{$m}분";
+
+    return [
+        'total' => $totalCost,
+        'leadTimeDays' => $leadDays,
+        'breakdown' => [
+            'door' => $doorCost, 'muntol' => $muntolCost, 'wood' => $woodCost,
+            'craft' => $craftCost, 'craftTime' => $craftTimeStr,
+            'hardware' => $hardwareCost, 'finish' => $finishCost,
+            'overhead' => $overheadCost, 'profit' => $profitCost, 'total' => $totalCost,
+        ],
+    ];
+}
+
 // 엔진별 패턴 카테고리 목록 반환 [{code, name}] — 관리자가 name만 수정해도 반영됨
 function get_pattern_categories(): array {
     try {

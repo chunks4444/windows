@@ -27,6 +27,9 @@
 -- ALTER TABLE blog_posts ADD COLUMN related_engine VARCHAR(20) NULL DEFAULT NULL COMMENT '연관 엔진 (classic/square/cross/diamond/triangle/hexagon)' AFTER related_drawing_id;
 -- ALTER TABLE blog_posts ADD COLUMN question VARCHAR(200) NOT NULL DEFAULT '' COMMENT '질문형 인덱스용 한 줄 질문' AFTER related_engine;
 -- ALTER TABLE blog_series ADD COLUMN show_on_home TINYINT(1) NOT NULL DEFAULT 1 COMMENT '홈 인용 배너 노출 여부' AFTER tagline;
+-- ALTER TABLE users ADD COLUMN view_spec  TINYINT(1) NOT NULL DEFAULT 0 COMMENT '엔진 제작 시방서 열람 허용 (role과 별개, 회원별 개별 승인)' AFTER withdrawn_at;
+-- ALTER TABLE users ADD COLUMN view_parts TINYINT(1) NOT NULL DEFAULT 0 COMMENT '엔진 부재목록 열람 허용 (role과 별개, 회원별 개별 승인)' AFTER view_spec;
+-- ALTER TABLE users ADD COLUMN view_cost  TINYINT(1) NOT NULL DEFAULT 0 COMMENT '엔진 예산견적 상세내역 열람 허용 (role과 별개, 회원별 개별 승인)' AFTER view_parts;
 
 -- 접속 통계 (6개월 rolling)
 CREATE TABLE IF NOT EXISTS page_views (
@@ -54,6 +57,9 @@ CREATE TABLE IF NOT EXISTS users (
     last_login_at DATETIME        NULL COMMENT '최종 접속일시',
     last_login_ip VARCHAR(45)     NULL COMMENT '최종 접속 IP',
     withdrawn_at  DATETIME        NULL COMMENT '탈퇴일시 (NULL=정상, NOT NULL=탈퇴)',
+    view_spec     TINYINT(1)      NOT NULL DEFAULT 0 COMMENT '엔진 제작 시방서 열람 허용 (role과 별개, 회원별 개별 승인)',
+    view_parts    TINYINT(1)      NOT NULL DEFAULT 0 COMMENT '엔진 부재목록 열람 허용 (role과 별개, 회원별 개별 승인)',
+    view_cost     TINYINT(1)      NOT NULL DEFAULT 0 COMMENT '엔진 예산견적 상세내역 열람 허용 (role과 별개, 회원별 개별 승인)',
     PRIMARY KEY (id),
     UNIQUE KEY uq_users_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='회원 정보';

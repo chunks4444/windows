@@ -444,6 +444,10 @@ async function fetchGeometry() {
         vRatio:    txtRatio.value,
         doorType:  txtDoorType.value,
         doorCount: txtDoorCount.value,
+        wood:      document.getElementById('txtWood')?.value ?? '',
+        hardware:  document.getElementById('txtHardware')?.value ?? '',
+        finish:    document.getElementById('txtFinish')?.value ?? '',
+        muntolOn:  document.getElementById('chkMuntol')?.checked === false ? '0' : '1',
     });
     // ⚠️ 건드리지 말 것: 줌/팬/스케일은 이 캐시 덕분에 서버 호출이 없음.
     // 캐시를 빼거나 채우는 코드를 빠뜨리면 매 프레임 geometry.php 호출로 회귀함 (운영서버 줌/드래그 무거움 버그 원인이었음).
@@ -493,28 +497,30 @@ async function draw() {
     geo = data.geo;
 
     const s = data.specs;
-    document.getElementById('spFrameOpeningW').innerText = s.frameOpeningW;
-    document.getElementById('spFrameOpeningH').innerText = s.frameOpeningH;
-    document.getElementById('spOuterW').innerText     = s.outerW;
-    document.getElementById('spOuterH').innerText     = s.outerH;
-    document.getElementById('spInnerW').innerText     = s.innerW;
-    document.getElementById('spInnerH').innerText     = s.innerH;
-    document.getElementById('spCounts').innerText     = s.cols;
-    document.getElementById('spRows').innerText       = s.rows;
-    document.getElementById('spStep').innerText       = s.step;
-    document.getElementById('spStepV').innerText      = s.stepV;
-    document.getElementById('spHalfLapW').innerText   = s.halfLapW;
-    document.getElementById('spGrooveW').innerText    = s.grooveW;
-    document.getElementById('spGrooveWH').innerText   = s.grooveWH;
-    document.getElementById('spPungpan').innerText    = s.pungpan;
-    document.getElementById('spFrameHTop').innerText  = s.frameHTop;
-    document.getElementById('spTotalDoorW').innerText = s.totalDoorW;
+    if (s) {
+        document.getElementById('spFrameOpeningW').innerText = s.frameOpeningW;
+        document.getElementById('spFrameOpeningH').innerText = s.frameOpeningH;
+        document.getElementById('spOuterW').innerText     = s.outerW;
+        document.getElementById('spOuterH').innerText     = s.outerH;
+        document.getElementById('spInnerW').innerText     = s.innerW;
+        document.getElementById('spInnerH').innerText     = s.innerH;
+        document.getElementById('spCounts').innerText     = s.cols;
+        document.getElementById('spRows').innerText       = s.rows;
+        document.getElementById('spStep').innerText       = s.step;
+        document.getElementById('spStepV').innerText      = s.stepV;
+        document.getElementById('spHalfLapW').innerText   = s.halfLapW;
+        document.getElementById('spGrooveW').innerText    = s.grooveW;
+        document.getElementById('spGrooveWH').innerText   = s.grooveWH;
+        document.getElementById('spPungpan').innerText    = s.pungpan;
+        document.getElementById('spFrameHTop').innerText  = s.frameHTop;
+        document.getElementById('spTotalDoorW').innerText = s.totalDoorW;
 
-    const overlapCard = document.getElementById('spOverlapCard');
-    if (overlapCard) {
-        const isSlide = document.getElementById('txtDoorType').value === 'slide';
-        overlapCard.style.display = isSlide ? '' : 'none';
-        document.getElementById('spOverlap').innerText = s.overlap ?? '';
+        const overlapCard = document.getElementById('spOverlapCard');
+        if (overlapCard) {
+            const isSlide = document.getElementById('txtDoorType').value === 'slide';
+            overlapCard.style.display = isSlide ? '' : 'none';
+            document.getElementById('spOverlap').innerText = s.overlap ?? '';
+        }
     }
 
     // 세로 자동 맞춤: 마지막 격자 행이 하부 울거미에 닿도록 outerH 조정
@@ -535,29 +541,31 @@ async function draw() {
         }
     }
 
+    window.__pmokApplyPrice?.(data.price, data.costBreakdown);
+
     const p = data.parts;
-    window.__pmokLastParts = p;
-    window.__pmokUpdateWoodCost?.();
-    document.getElementById('spFrVLen').textContent = `${geo.frameW}×${p.frT}×${p.frVLen}mm`;
-    document.getElementById('spFrVCnt').textContent = p.frVCnt;
-    document.getElementById('spFrHLen').textContent = `${geo.frameH}×${p.frT}×${p.frHLen}mm`;
-    document.getElementById('spFrHCnt').textContent = p.frHCnt;
+    if (p) {
+        document.getElementById('spFrVLen').textContent = `${geo.frameW}×${p.frT}×${p.frVLen}mm`;
+        document.getElementById('spFrVCnt').textContent = p.frVCnt;
+        document.getElementById('spFrHLen').textContent = `${geo.frameH}×${p.frT}×${p.frHLen}mm`;
+        document.getElementById('spFrHCnt').textContent = p.frHCnt;
 
-    const ppGroup = document.getElementById('pungpanMaterialGroup');
-    if (p.pungpanVisible) {
-        ppGroup.style.display = '';
-        document.getElementById('spPpLen').textContent = `${p.ppVLen}×${p.pungpanT}×${p.ppHLen}mm`;
-        document.querySelector('#pungpanMaterialGroup .slat-count-badge').textContent = p.pungpanCnt;
-    } else {
-        ppGroup.style.display = 'none';
+        const ppGroup = document.getElementById('pungpanMaterialGroup');
+        if (p.pungpanVisible) {
+            ppGroup.style.display = '';
+            document.getElementById('spPpLen').textContent = `${p.ppVLen}×${p.pungpanT}×${p.ppHLen}mm`;
+            document.querySelector('#pungpanMaterialGroup .slat-count-badge').textContent = p.pungpanCnt;
+        } else {
+            ppGroup.style.display = 'none';
+        }
+
+        document.getElementById('spHSlatLen').textContent = `${p.slatW}×${geo.slatT}×${p.hSlatLen}mm`;
+        document.getElementById('spHSlatCnt').textContent = p.hSlatCnt;
+        document.getElementById('spVSlatLen').textContent = `${p.slatW}×${geo.slatT}×${p.vSlatLen}mm`;
+        document.getElementById('spVSlatCnt').textContent = p.vSlatCnt;
+        document.getElementById('spMtVLen').textContent   = `${p.mtFace}×${p.mtW}×${p.mtVLen}mm`;
+        document.getElementById('spMtHLen').textContent   = `${p.mtFace}×${p.mtW}×${p.mtHLen}mm`;
     }
-
-    document.getElementById('spHSlatLen').textContent = `${p.slatW}×${geo.slatT}×${p.hSlatLen}mm`;
-    document.getElementById('spHSlatCnt').textContent = p.hSlatCnt;
-    document.getElementById('spVSlatLen').textContent = `${p.slatW}×${geo.slatT}×${p.vSlatLen}mm`;
-    document.getElementById('spVSlatCnt').textContent = p.vSlatCnt;
-    document.getElementById('spMtVLen').textContent   = `${p.mtFace}×${p.mtW}×${p.mtVLen}mm`;
-    document.getElementById('spMtHLen').textContent   = `${p.mtFace}×${p.mtW}×${p.mtHLen}mm`;
 
     // draw() 안에서 ctx를 재할당 가능하도록 로컬 변수로 섀도잉
     let ctx = canvas.getContext('2d');
@@ -1148,8 +1156,10 @@ async function draw() {
             else adjVSlatCnt++;
         });
 
-        document.getElementById('spHSlatCnt').textContent = Math.max(0, adjHSlatCnt) + '개';
-        document.getElementById('spVSlatCnt').textContent = Math.max(0, adjVSlatCnt) + '개';
+        const hCntEl = document.getElementById('spHSlatCnt');
+        if (hCntEl) hCntEl.textContent = Math.max(0, adjHSlatCnt) + '개';
+        const vCntEl = document.getElementById('spVSlatCnt');
+        if (vCntEl) vCntEl.textContent = Math.max(0, adjVSlatCnt) + '개';
 
     }
 

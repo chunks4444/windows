@@ -31,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || (($_SERVER['REQUEST_METHOD'] === 'PO
     $q      = trim($_body['q'] ?? $_GET['q'] ?? '');
 
     $cols = 'id, email, role, name, phone, company, created_at, last_login_at, last_login_ip, withdrawn_at,
+        view_spec, view_parts, view_cost,
         company_name, company_biz_no, company_biz_type, company_biz_category, company_ceo, company_phone,
         company_zipcode, company_address, company_address_detail,
         (SELECT COUNT(*) FROM drawings WHERE user_id = users.id) AS drawing_count, (SELECT COUNT(*) FROM drawing_export_logs WHERE user_id = users.id) AS export_count';
@@ -64,6 +65,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     $name      = array_key_exists('name',      $body) ? trim($body['name'])  : null;
     $phone     = array_key_exists('phone',     $body) ? trim($body['phone']) : null;
     $withdrawn = array_key_exists('withdrawn', $body) ? (bool)$body['withdrawn'] : null;
+    $viewSpec  = array_key_exists('view_spec',  $body) ? (bool)$body['view_spec']  : null;
+    $viewParts = array_key_exists('view_parts', $body) ? (bool)$body['view_parts'] : null;
+    $viewCost  = array_key_exists('view_cost',  $body) ? (bool)$body['view_cost']  : null;
 
     $companyFields = [
         'company_name', 'company_biz_no', 'company_biz_type', 'company_biz_category',
@@ -82,6 +86,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     if ($name      !== null) { $sets[] = 'name = ?';          $binds[] = $name  ?: null; }
     if ($phone     !== null) { $sets[] = 'phone = ?';         $binds[] = $phone ?: null; }
     if ($withdrawn !== null) { $sets[] = 'withdrawn_at = ?';  $binds[] = $withdrawn ? date('Y-m-d H:i:s') : null; }
+    if ($viewSpec  !== null) { $sets[] = 'view_spec = ?';     $binds[] = $viewSpec  ? 1 : 0; }
+    if ($viewParts !== null) { $sets[] = 'view_parts = ?';    $binds[] = $viewParts ? 1 : 0; }
+    if ($viewCost  !== null) { $sets[] = 'view_cost = ?';     $binds[] = $viewCost  ? 1 : 0; }
     foreach ($companyFields as $f) {
         if (array_key_exists($f, $body)) {
             $v = trim((string) $body[$f]);

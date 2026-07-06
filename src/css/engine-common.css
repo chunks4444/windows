@@ -1615,7 +1615,7 @@ input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
 .sb-price-end { font-size: var(--fs-12); font-weight: 600; }
 .sb-price-start, .sb-price-end { transition: color 0.25s ease; }
 .sb-price-breakdown { display: flex; margin-top: 5px; border-top: 1px solid rgba(var(--bg-rgb), 0.15); padding-top: 5px; flex-direction: column; gap: 2px; }
-.sb-price-breakdown .super-only { display: flex; flex-direction: column; gap: 2px; }
+.sb-price-breakdown .sb-cost-breakdown { display: flex; flex-direction: column; gap: 2px; }
 .sb-break-row { display: flex; justify-content: space-between; font-size: var(--fs-11); color: var(--bg); }
 .sb-break-row span:last-child { font-variant-numeric: tabular-nums; }
 .sb-break-sub { opacity: 0.7; }
