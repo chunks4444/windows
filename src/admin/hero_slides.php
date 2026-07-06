@@ -33,7 +33,7 @@ require_admin_role('s');
             <i class="bi bi-plus-lg"></i> 추가
         </button>
     </div>
-    <p style="font-size:12px;color:var(--text-muted);margin:-8px 0 16px;">행을 드래그해 순서를 변경할 수 있습니다.</p>
+    <p style="font-size:12px;color:var(--text);margin:-8px 0 16px;">행을 드래그해 순서를 변경할 수 있습니다.</p>
 
     <div class="adm-table-wrap">
         <table id="hsTable">

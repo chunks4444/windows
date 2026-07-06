@@ -48,7 +48,7 @@ require_admin_role('s');
         </button>
     </div>
 
-    <p style="font-size:12px;color:var(--text-muted);margin:-8px 0 16px;">행을 드래그해 순서를 변경할 수 있습니다. 엔진의 "문양 삽입" 라이브러리 피커에 여기 등록된 문양이 노출됩니다.</p>
+    <p style="font-size:12px;color:var(--text);margin:-8px 0 16px;">행을 드래그해 순서를 변경할 수 있습니다. 엔진의 "문양 삽입" 라이브러리 피커에 여기 등록된 문양이 노출됩니다.</p>
 
     <div class="adm-table-wrap">
         <table id="svgMotifsTable">

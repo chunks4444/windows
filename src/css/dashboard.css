@@ -56,10 +56,10 @@ body {
 
 .adm-breadcrumb {
     font-size: var(--fs-12);
-    color: var(--text-muted);
+    color: var(--text);
     margin-bottom: 10px;
 }
-.adm-breadcrumb a { color: var(--text-muted); text-decoration: none; }
+.adm-breadcrumb a { color: var(--text); text-decoration: none; }
 .adm-breadcrumb a:hover { color: var(--accent); }
 .adm-breadcrumb-sep { margin: 0 6px; }
 

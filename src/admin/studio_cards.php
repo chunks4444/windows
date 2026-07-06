@@ -29,7 +29,7 @@ require_admin_role('s');
     <div class="db-header">
         <h1 class="db-title"><i class="bi bi-grid-1x2 me-2"></i>스튜디오 카드 관리</h1>
     </div>
-    <p style="font-size:var(--fs-13);color:var(--text-muted);margin:-8px 0 16px;">행을 드래그해 순서를 변경할 수 있습니다. 제목·설명·배경이미지를 수정할 수 있습니다.</p>
+    <p style="font-size:var(--fs-13);color:var(--text);margin:-8px 0 16px;">행을 드래그해 순서를 변경할 수 있습니다. 제목·설명·배경이미지를 수정할 수 있습니다.</p>
 
     <div class="adm-table-wrap">
         <table id="scTable">
