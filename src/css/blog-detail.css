@@ -80,7 +80,7 @@ body { background: #fff; }
     margin: 0;
 }
 .bd-engine-box-desc {
-    font-size: var(--fs-14); color: var(--text-muted);
+    font-size: var(--fs-14); color: var(--text);
     margin: 0;
 }
 .bd-engine-box-btn {
