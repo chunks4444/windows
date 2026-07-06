@@ -72,8 +72,7 @@ body { background: #fff; }
     display: flex; flex-direction: column; align-items: flex-start; gap: .6rem;
     margin-top: 2.5rem;
     padding: 1.5rem 1.6rem;
-    background: var(--bg);
-    border: 1.5px solid var(--accent);
+    background: rgba(var(--accent-rgb), 0.06);
     border-radius: var(--r);
 }
 .bd-engine-box-title {

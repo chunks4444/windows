@@ -15,7 +15,6 @@ require_admin_role('s');
     <?php css_tag('/src/css/dashboard.css'); ?>
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
 <style>
-body { background: var(--bg); }
 .as-wrap { max-width: 900px; margin: 0 auto; padding: 32px 20px 60px; }
 .as-breadcrumb { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
 .as-breadcrumb a { color: var(--text-muted); text-decoration: none; }
