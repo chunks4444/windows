@@ -70,6 +70,7 @@ body {
 .ab-section {
     padding: 80px 0;
     border-bottom: 1px solid var(--border);
+    scroll-margin-top: 88px;
 }
 .ab-section--no-border { border-bottom: none; }
 .ab-full-divider {
@@ -241,6 +242,7 @@ body {
     padding: 80px 0;
     border-top: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
+    scroll-margin-top: 88px;
 }
 
 /* ── CONTACT ─────────────────────────────────── */

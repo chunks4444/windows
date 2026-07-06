@@ -37,6 +37,7 @@ $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/collection/') !== false);
 $isWork       = (strpos($_SERVER['PHP_SELF'], '/portfolio/') !== false);
 $isBlog       = (strpos($_SERVER['PHP_SELF'], '/blog/') !== false);
 $isGuide      = (strpos($_SERVER['PHP_SELF'], '/guide/') !== false);
+$isCompany    = (strpos($_SERVER['PHP_SELF'], '/company/') !== false);
 
 // Studio 드롭다운: 메인페이지 카드와 동일한 제목/순서를 쓰도록 DB에서 가져온다
 try {
@@ -178,6 +179,14 @@ $navStudioIcons = [
             <li class="nav-item">
                 <a href="/src/blog/" class="nav-link <?= $isBlog ? 'active' : '' ?>">블로그</a>
             </li>
+            <li class="nav-item dropdown">
+                <a href="/src/company/" class="nav-link pm-nav-dropdown-toggle <?= $isCompany ? 'active' : '' ?>" data-bs-toggle="dropdown" aria-expanded="false">평목소개 <i class="bi bi-chevron-down pm-nav-caret"></i></a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/src/company/"><i class="bi bi-info-circle me-2"></i>소개</a></li>
+                    <li><a class="dropdown-item" href="/src/company/#studio"><i class="bi bi-pencil-square me-2"></i>스튜디오</a></li>
+                    <li><a class="dropdown-item" href="/src/company/#contact"><i class="bi bi-envelope me-2"></i>연락처</a></li>
+                </ul>
+            </li>
             <?php if (!$navIsLoggedIn): ?>
             <!-- 비로그인 -->
             <li class="nav-item" id="navLoginBtn">
@@ -265,6 +274,15 @@ $navStudioIcons = [
         </div>
 
         <a class="pm-dw-link-top <?= $isBlog ? 'active' : '' ?>" href="/src/blog/"><i class="bi bi-journal-text pm-dw-acc-icon"></i>블로그</a>
+
+        <div class="pm-dw-acc<?= $isCompany ? ' open' : '' ?>">
+            <button class="pm-dw-acc-hd"><span><i class="bi bi-building pm-dw-acc-icon"></i>평목소개</span><i class="bi bi-chevron-down"></i></button>
+            <div class="pm-dw-acc-bd">
+                <a class="pm-dw-link" href="/src/company/"><i class="bi bi-info-circle"></i><span>소개</span></a>
+                <a class="pm-dw-link" href="/src/company/#studio"><i class="bi bi-pencil-square"></i><span>스튜디오</span></a>
+                <a class="pm-dw-link" href="/src/company/#contact"><i class="bi bi-envelope"></i><span>연락처</span></a>
+            </div>
+        </div>
 
         <div class="pm-dw-divider"></div>
 

@@ -5,7 +5,6 @@
         <a href="/src/company/#contact" class="footer-cta-link">함께 만들어가요. <i class="bi bi-arrow-up-right"></i></a>
     </div>
     <div class="footer-links-right">
-        <a href="/src/company/" class="footer-link footer-link-strong">평목 소개</a>
         <a href="https://pyeongmok.com" class="footer-link">pyeongmok.com</a>
     </div>
 </footer>
