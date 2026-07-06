@@ -94,9 +94,13 @@ function openModal(id, u) {
     document.getElementById('admMName').value      = u.name   || '';
     document.getElementById('admMPhone').value     = u.phone  || '';
     document.getElementById('admMWithdrawn').value = u.withdrawn_at ? '1' : '0';
-    document.getElementById('admMViewSpec').checked  = Number(u.view_spec)  === 1;
-    document.getElementById('admMViewParts').checked = Number(u.view_parts) === 1;
-    document.getElementById('admMViewCost').checked  = Number(u.view_cost)  === 1;
+    document.getElementById('admMViewSpec').checked     = Number(u.view_spec)     === 1;
+    document.getElementById('admMViewParts').checked    = Number(u.view_parts)    === 1;
+    document.getElementById('admMViewCost').checked     = Number(u.view_cost)     === 1;
+    document.getElementById('admMViewPrice').checked    = Number(u.view_price)    === 1;
+    document.getElementById('admMViewLeadtime').checked = Number(u.view_leadtime) === 1;
+    document.getElementById('admMViewShipping').checked = Number(u.view_shipping) === 1;
+    document.getElementById('admMViewDesc').checked     = Number(u.view_desc)     === 1;
     document.getElementById('admModalAlert').style.display = 'none';
     document.getElementById('admModalOverlay').classList.add('open');
 }
@@ -135,9 +139,13 @@ async function saveUser() {
                 name:      document.getElementById('admMName').value.trim(),
                 phone:     document.getElementById('admMPhone').value.trim(),
                 withdrawn: document.getElementById('admMWithdrawn').value === '1',
-                view_spec:  document.getElementById('admMViewSpec').checked,
-                view_parts: document.getElementById('admMViewParts').checked,
-                view_cost:  document.getElementById('admMViewCost').checked,
+                view_spec:     document.getElementById('admMViewSpec').checked,
+                view_parts:    document.getElementById('admMViewParts').checked,
+                view_cost:     document.getElementById('admMViewCost').checked,
+                view_price:    document.getElementById('admMViewPrice').checked,
+                view_leadtime: document.getElementById('admMViewLeadtime').checked,
+                view_shipping: document.getElementById('admMViewShipping').checked,
+                view_desc:     document.getElementById('admMViewDesc').checked,
             }),
         });
         const data = await res.json();

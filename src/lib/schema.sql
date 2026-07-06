@@ -30,6 +30,11 @@
 -- ALTER TABLE users ADD COLUMN view_spec  TINYINT(1) NOT NULL DEFAULT 0 COMMENT '엔진 제작 시방서 열람 허용 (role과 별개, 회원별 개별 승인)' AFTER withdrawn_at;
 -- ALTER TABLE users ADD COLUMN view_parts TINYINT(1) NOT NULL DEFAULT 0 COMMENT '엔진 부재목록 열람 허용 (role과 별개, 회원별 개별 승인)' AFTER view_spec;
 -- ALTER TABLE users ADD COLUMN view_cost  TINYINT(1) NOT NULL DEFAULT 0 COMMENT '엔진 예산견적 상세내역 열람 허용 (role과 별개, 회원별 개별 승인)' AFTER view_parts;
+-- ALTER TABLE users ADD COLUMN view_price    TINYINT(1) NOT NULL DEFAULT 0 COMMENT '엔진 예상가격 총액 열람 허용 (role과 별개, 회원별 개별 승인)' AFTER view_cost;
+-- ALTER TABLE users ADD COLUMN view_leadtime TINYINT(1) NOT NULL DEFAULT 0 COMMENT '엔진 최소 납기 열람 허용 (role과 별개, 회원별 개별 승인)' AFTER view_price;
+-- ALTER TABLE users ADD COLUMN view_shipping TINYINT(1) NOT NULL DEFAULT 0 COMMENT '엔진 배송비 안내문구 열람 허용 (role과 별개, 회원별 개별 승인)' AFTER view_leadtime;
+-- ALTER TABLE users ADD COLUMN view_desc     TINYINT(1) NOT NULL DEFAULT 0 COMMENT '엔진 예상견적 설명(disclaimer) 열람 허용 (role과 별개, 회원별 개별 승인)' AFTER view_shipping;
+-- ALTER TABLE users MODIFY COLUMN view_spec TINYINT(1) NOT NULL DEFAULT 1 COMMENT '엔진 제작 시방서 열람 허용 (role과 별개, 회원별 개별 승인) - 임시로 기본 1 (2026-07-07~)'; -- 기존 회원 전체도 UPDATE users SET view_spec=1로 함께 적용
 
 -- 접속 통계 (6개월 rolling)
 CREATE TABLE IF NOT EXISTS page_views (
@@ -57,9 +62,13 @@ CREATE TABLE IF NOT EXISTS users (
     last_login_at DATETIME        NULL COMMENT '최종 접속일시',
     last_login_ip VARCHAR(45)     NULL COMMENT '최종 접속 IP',
     withdrawn_at  DATETIME        NULL COMMENT '탈퇴일시 (NULL=정상, NOT NULL=탈퇴)',
-    view_spec     TINYINT(1)      NOT NULL DEFAULT 0 COMMENT '엔진 제작 시방서 열람 허용 (role과 별개, 회원별 개별 승인)',
+    view_spec     TINYINT(1)      NOT NULL DEFAULT 1 COMMENT '엔진 제작 시방서 열람 허용 (role과 별개, 회원별 개별 승인) - 임시로 기본 1 (2026-07-07~)',
     view_parts    TINYINT(1)      NOT NULL DEFAULT 0 COMMENT '엔진 부재목록 열람 허용 (role과 별개, 회원별 개별 승인)',
     view_cost     TINYINT(1)      NOT NULL DEFAULT 0 COMMENT '엔진 예산견적 상세내역 열람 허용 (role과 별개, 회원별 개별 승인)',
+    view_price    TINYINT(1)      NOT NULL DEFAULT 0 COMMENT '엔진 예상가격 총액 열람 허용 (role과 별개, 회원별 개별 승인)',
+    view_leadtime TINYINT(1)      NOT NULL DEFAULT 0 COMMENT '엔진 최소 납기 열람 허용 (role과 별개, 회원별 개별 승인)',
+    view_shipping TINYINT(1)      NOT NULL DEFAULT 0 COMMENT '엔진 배송비 안내문구 열람 허용 (role과 별개, 회원별 개별 승인)',
+    view_desc     TINYINT(1)      NOT NULL DEFAULT 0 COMMENT '엔진 예상견적 설명(disclaimer) 열람 허용 (role과 별개, 회원별 개별 승인)',
     PRIMARY KEY (id),
     UNIQUE KEY uq_users_email (email)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='회원 정보';

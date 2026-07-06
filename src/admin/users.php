@@ -176,6 +176,10 @@ require_admin_role('s');
                     <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:400;color:var(--text);text-transform:none;letter-spacing:normal;"><input type="checkbox" id="admMViewSpec" style="width:auto;height:auto;"> 제작 시방서 열람 허용</label>
                     <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:400;color:var(--text);text-transform:none;letter-spacing:normal;"><input type="checkbox" id="admMViewParts" style="width:auto;height:auto;"> 부재목록 열람 허용</label>
                     <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:400;color:var(--text);text-transform:none;letter-spacing:normal;"><input type="checkbox" id="admMViewCost" style="width:auto;height:auto;"> 예산견적 상세 열람 허용</label>
+                    <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:400;color:var(--text);text-transform:none;letter-spacing:normal;"><input type="checkbox" id="admMViewPrice" style="width:auto;height:auto;"> 예상가격 열람 허용</label>
+                    <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:400;color:var(--text);text-transform:none;letter-spacing:normal;"><input type="checkbox" id="admMViewLeadtime" style="width:auto;height:auto;"> 최소 납기 열람 허용</label>
+                    <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:400;color:var(--text);text-transform:none;letter-spacing:normal;"><input type="checkbox" id="admMViewShipping" style="width:auto;height:auto;"> 배송비 안내문구 열람 허용</label>
+                    <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:400;color:var(--text);text-transform:none;letter-spacing:normal;"><input type="checkbox" id="admMViewDesc" style="width:auto;height:auto;"> 예상견적 설명(안내문구) 열람 허용</label>
                 </div>
             </div>
         </div>

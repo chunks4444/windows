@@ -560,8 +560,10 @@ header('Pragma: no-cache');
             <div class="sb-inner-right">
                 <div class="sb-section">
                     <div class="sb-price-box">
+                        <?php if ($perms['price']): ?>
                         <div class="sb-price-label">예상가격</div>
                         <div class="sb-price-amount"><span class="sb-price-start">–</span><span class="sb-price-end"></span></div>
+                        <?php endif; ?>
                         <div class="sb-price-breakdown">
                             <?php if ($perms['cost']): ?>
                             <div class="sb-cost-breakdown">
@@ -579,9 +581,15 @@ header('Pragma: no-cache');
                             <div class="sb-break-row sb-break-total sb-break-key"><span>판매가</span><span id="spTotalCost">–</span></div>
                             </div>
                             <?php endif; ?>
+                            <?php if ($perms['leadtime']): ?>
                             <div class="sb-lead-time sb-break-row" data-min-days="<?= (int)$cfg['min_days'] ?>"><span>최소 납기</span><span><strong><?= (int)$cfg['min_days'] ?></strong>일</span></div>
+                            <?php endif; ?>
+                            <?php if ($perms['shipping']): ?>
                             <div class="sb-price-note">※ 배송비·시공비 제외</div>
+                            <?php endif; ?>
+                            <?php if ($perms['desc']): ?>
                             <div class="sb-price-disclaimer">※ 본 금액은 예상 견적입니다. 사용자 편집 내용을 검토한 후 최종 견적이 확정됩니다.</div>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <div style="display:flex;gap:6px;width:100%;">

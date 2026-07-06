@@ -241,6 +241,6 @@ echo json_encode([
     'geo'   => $geo,
     'specs' => $perms['spec']  ? $specs : null,
     'parts' => $perms['parts'] ? $parts : null,
-    'price' => ['total' => $price['total'], 'leadTimeDays' => $price['leadTimeDays']],
+    'price' => ['total' => $perms['price'] ? $price['total'] : null, 'leadTimeDays' => $perms['leadtime'] ? $price['leadTimeDays'] : null],
     'costBreakdown' => $perms['cost'] ? $price['breakdown'] : null,
 ]);
