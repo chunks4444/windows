@@ -50,7 +50,7 @@ try {
         FROM blog_posts p
         LEFT JOIN blog_series s ON s.id = p.series_id
         WHERE p.is_active = 1
-        ORDER BY p.created_at DESC
+        ORDER BY p.sort_order, p.id
         LIMIT :lim OFFSET :off
     ");
     $stmt->bindValue(':lim', $perPage, PDO::PARAM_INT);
