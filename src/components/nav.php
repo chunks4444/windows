@@ -131,7 +131,7 @@ $navStudioIcons = [
     <div class="collapse navbar-collapse justify-content-end" id="pmNavMenu">
         <ul class="navbar-nav gap-3">
             <li class="nav-item dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">스튜디오</a>
+                <a href="#" class="nav-link pm-nav-dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">스튜디오 <i class="bi bi-chevron-down pm-nav-caret"></i></a>
                 <ul class="dropdown-menu">
                     <?php foreach ($navStudioItems as $navItem):
                         $navKey = $navItem['engine_key'];
@@ -159,7 +159,7 @@ $navStudioIcons = [
             </li>
             <li class="nav-item"><a href="/src/portfolio/" class="nav-link <?= $isWork ? 'active' : '' ?>">포트폴리오</a></li>
             <li class="nav-item dropdown">
-                <a href="/src/guide/" class="nav-link dropdown-toggle <?= $isGuide ? 'active' : '' ?>" data-bs-toggle="dropdown" aria-expanded="false">가이드</a>
+                <a href="/src/guide/" class="nav-link pm-nav-dropdown-toggle <?= $isGuide ? 'active' : '' ?>" data-bs-toggle="dropdown" aria-expanded="false">가이드 <i class="bi bi-chevron-down pm-nav-caret"></i></a>
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" href="/src/guide/"><i class="bi bi-book me-2"></i>가이드 홈</a></li>
                     <li><hr class="dropdown-divider"></li>
@@ -186,8 +186,8 @@ $navStudioIcons = [
             <?php else: ?>
             <!-- 로그인 후 -->
             <li class="nav-item dropdown" id="navUserMenu">
-                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-person-circle"></i>
+                <a href="#" class="nav-link pm-nav-dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-circle"></i> <i class="bi bi-chevron-down pm-nav-caret"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li><span class="dropdown-item-text" style="font-size:12px;font-weight:600;color:var(--text);padding:10px 18px 2px;display:flex;align-items:center;gap:6px;"><i class="bi bi-person-circle" style="font-size:16px;"></i><span id="navUserEmail"></span></span></li>

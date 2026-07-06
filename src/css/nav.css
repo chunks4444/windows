@@ -78,7 +78,18 @@ a.pm-topbar-notice-text:hover { opacity: 0.85; }
     color: var(--text) !important;
     transition: color .15s;
 }
-.pm-navbar .nav-link::after {
+.pm-nav-caret {
+    font-size: .68em;
+    margin-left: 2px;
+    text-shadow: 0 0 .4px currentColor, 0 0 .4px currentColor;
+    transition: transform .2s ease;
+    display: inline-block;
+}
+.pm-nav-dropdown-toggle:hover .pm-nav-caret,
+.pm-nav-dropdown-toggle[aria-expanded="true"] .pm-nav-caret {
+    transform: rotate(180deg);
+}
+.pm-navbar .nav-link::before {
     content: '';
     position: absolute;
     left: 0; right: 0; bottom: -2px;
@@ -93,9 +104,9 @@ a.pm-topbar-notice-text:hover { opacity: 0.85; }
 .pm-navbar .nav-link[aria-expanded="true"] {
     color: var(--text) !important;
 }
-.pm-navbar .nav-link:hover::after,
-.pm-navbar .nav-link.active::after,
-.pm-navbar .nav-link[aria-expanded="true"]::after {
+.pm-navbar .nav-link:hover::before,
+.pm-navbar .nav-link.active::before,
+.pm-navbar .nav-link[aria-expanded="true"]::before {
     transform: scaleX(1);
 }
 .pm-navbar .dropdown-menu {
