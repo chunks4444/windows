@@ -37,7 +37,7 @@ require_admin_role('s');
                 </div>
                 <span class="oauth-card-title">Google</span>
             </div>
-            <div class="oauth-callback">Redirect URI: https://windows.pyeongmok.com/src/api/auth/oauth/callback.php?provider=google</div>
+            <div class="oauth-callback">Redirect URI: https://studio.pyeongmok.com/src/api/auth/oauth/callback.php?provider=google</div>
             <div class="oauth-field">
                 <label>Client ID</label>
                 <input type="text" id="google_client_id" placeholder="123456789-xxx.apps.googleusercontent.com">
@@ -56,7 +56,7 @@ require_admin_role('s');
                 <div class="oauth-card-logo oauth-logo-kakao">K</div>
                 <span class="oauth-card-title">카카오</span>
             </div>
-            <div class="oauth-callback">Redirect URI: https://windows.pyeongmok.com/src/api/auth/oauth/callback.php?provider=kakao</div>
+            <div class="oauth-callback">Redirect URI: https://studio.pyeongmok.com/src/api/auth/oauth/callback.php?provider=kakao</div>
             <div class="oauth-field">
                 <label>REST API 키 (Client ID)</label>
                 <input type="text" id="kakao_client_id" placeholder="abc123def456…">
@@ -75,7 +75,7 @@ require_admin_role('s');
                 <div class="oauth-card-logo oauth-logo-naver">N</div>
                 <span class="oauth-card-title">네이버</span>
             </div>
-            <div class="oauth-callback">Redirect URI: https://windows.pyeongmok.com/src/api/auth/oauth/callback.php?provider=naver</div>
+            <div class="oauth-callback">Redirect URI: https://studio.pyeongmok.com/src/api/auth/oauth/callback.php?provider=naver</div>
             <div class="oauth-field">
                 <label>Client ID</label>
                 <input type="text" id="naver_client_id" placeholder="abc123XYZ…">

@@ -19,7 +19,7 @@ node --check src/js/engine-common.js
 node --check src/js/classic.js
 
 # 로컬 개발 서버 (포트 8899)
-php -S localhost:8899 -t /Users/kyungchun/web/windows.pyeongmok.com
+php -S localhost:8899 -t /Users/kyungchun/web/studio.pyeongmok.com
 
 # PHP 에러 로그 확인
 tail -f logs/php-error.log
@@ -81,7 +81,7 @@ JWT를 httpOnly 쿠키(`pmok_auth`)로 발급. `jwt_from_request()`가 쿠키 �
 ### 데이터베이스
 
 `db()` 함수가 PDO 싱글턴을 반환. 환경 감지:
-- `HTTP_HOST === 'windows.pyeongmok.com'` → Unix 소켓 (`/var/run/mysqld/mysqld.sock`)
+- `HTTP_HOST === 'studio.pyeongmok.com'` → Unix 소켓 (`/var/run/mysqld/mysqld.sock`)
 - 그 외 → TCP (`211.35.72.68:6836`)
 
 스키마 변경은 마이그레이션 프레임워크 없이 수동 `ALTER TABLE`. 신규 테이블은 `schema.sql`에 `CREATE TABLE IF NOT EXISTS`로 추가.

@@ -1,6 +1,6 @@
 import csv, os, re, glob
 
-ROOT = "/Users/kyungchun/web/windows.pyeongmok.com"
+ROOT = "/Users/kyungchun/web/studio.pyeongmok.com"
 CSV_PATH = os.path.join(ROOT, "color-migration", "color_mapping.csv")
 
 # ---------------- 1. legacy pastel-pairing overrides (found via manual context review) ----------------

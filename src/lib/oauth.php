@@ -1,7 +1,7 @@
 <?php
 if (!defined('OAUTH_CALLBACK_URL')) {
     $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    $host   = $_SERVER['HTTP_HOST'] ?? 'windows.pyeongmok.com';
+    $host   = $_SERVER['HTTP_HOST'] ?? 'studio.pyeongmok.com';
     define('OAUTH_CALLBACK_URL', $scheme . '://' . $host . '/src/api/auth/oauth/callback.php');
 }
 

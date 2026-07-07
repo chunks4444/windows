@@ -4,4 +4,4 @@ Disallow: /src/api/
 Disallow: /src/mypage/
 Disallow: /logs/
 
-Sitemap: https://windows.pyeongmok.com/sitemap.xml
+Sitemap: https://studio.pyeongmok.com/sitemap.xml
