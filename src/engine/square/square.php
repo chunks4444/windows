@@ -492,7 +492,7 @@ header('Pragma: no-cache');
             <div id="konvaShapePanel" style="display:none;position:absolute;top:44px;left:50%;transform:translateX(-50%);
                 display:none;align-items:center;gap:8px;background:rgba(var(--bg-rgb), 0.97);
                 border:1px solid var(--border);border-radius:8px;padding:6px 12px;
-                box-shadow:0 2px 10px rgba(var(--text-rgb), 0.13);z-index:200;white-space:nowrap;">
+                box-shadow:0 2px 10px rgba(var(--text-rgb), 0.13);z-index:200;flex-wrap:wrap;max-width:calc(100% - 24px);justify-content:center;">
                 <span style="font-size:11px;color:var(--text-muted);font-weight:600;">도형</span>
                 <label style="font-size:11px;color:var(--text-muted);">선</label>
                 <input type="color" id="konvaStrokeColor" value="#e03030" style="width:26px;height:22px;border:none;padding:0;cursor:pointer;border-radius:4px;">
@@ -501,7 +501,7 @@ header('Pragma: no-cache');
                 <label style="font-size:11px;color:var(--text-muted);">두께</label>
                 <select id="konvaStrokeWidth" style="height:22px;font-size:11px;border:1px solid var(--border);border-radius:4px;padding:0 4px;">
                     <option value="1">1</option><option value="2" selected>2</option>
-                    <option value="3">3</option><option value="5">5</option><option value="8">8</option>
+                    <option value="3">3</option><option value="5">5</option><option value="8">8</option><option value="12">12</option><option value="16">16</option><option value="20">20</option><option value="30">30</option>
                 </select>
                 <label style="font-size:11px;color:var(--text-muted);">투명도</label>
                 <input type="range" id="konvaOpacity" min="10" max="100" value="100" style="width:60px;">

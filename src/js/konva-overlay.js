@@ -200,6 +200,13 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
                 stroke: '#e03030', strokeWidth: 2 / getState().scaleFactor,
                 fill: 'rgba(224,48,48,0.08)',
                 strokeScaleEnabled: false,
+                // 채우기 투명도가 낮으면 안쪽 클릭이 히트되지 않는 경우가 있어 전체 영역을 명시적으로 히트 처리
+                hitFunc(context, shape) {
+                    context.beginPath();
+                    context.arc(0, 0, shape.radius(), 0, Math.PI * 2, false);
+                    context.closePath();
+                    context.fillStrokeShape(shape);
+                },
             }));
             konvaShapeLayer.batchDraw();
 
@@ -235,6 +242,13 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
                 stroke: '#e03030', strokeWidth: 2 / s.scaleFactor,
                 fill: 'rgba(224,48,48,0.06)', cornerRadius: 2,
                 strokeScaleEnabled: false,
+                // 채우기 투명도가 낮으면 안쪽 클릭이 히트되지 않는 경우가 있어 전체 영역을 명시적으로 히트 처리
+                hitFunc(context, shape) {
+                    context.beginPath();
+                    context.rect(0, 0, shape.width(), shape.height());
+                    context.closePath();
+                    context.fillStrokeShape(shape);
+                },
             });
             addShape(rect);
             konvaTransformer.nodes([rect]);
@@ -681,6 +695,21 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
                 if (!Cls) return;
                 const node = new Cls(attrs);
                 if (className === 'Text') node.on('dblclick dbltap', () => editText(node));
+                if (className === 'Circle') {
+                    node.hitFunc((context, shape) => {
+                        context.beginPath();
+                        context.arc(0, 0, shape.radius(), 0, Math.PI * 2, false);
+                        context.closePath();
+                        context.fillStrokeShape(shape);
+                    });
+                } else if (className === 'Rect') {
+                    node.hitFunc((context, shape) => {
+                        context.beginPath();
+                        context.rect(0, 0, shape.width(), shape.height());
+                        context.closePath();
+                        context.fillStrokeShape(shape);
+                    });
+                }
                 addShape(node);
             }
         });
