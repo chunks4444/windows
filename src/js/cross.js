@@ -1667,6 +1667,7 @@ async function draw() {
         deactivateAllModes();
         if (willActivate) {
             placementMode = true;
+            handlesVisible = true;
             const W = doorNaturalSize.w, H = doorNaturalSize.h;
             const sizeChanged = !placementNaturalSize ||
                 Math.abs(W - placementNaturalSize.w) > 1 ||
@@ -1691,6 +1692,7 @@ async function draw() {
     btnResetPlacement.addEventListener('click', () => {
         placementMode = false;
         doorCornerPositions = null;
+        handlesVisible = false;
         placementNaturalSize = null;
         canvas.style.cursor = panMode ? 'grab' : 'default';
         document.getElementById('btnScale').classList.remove('cv-btn-active');

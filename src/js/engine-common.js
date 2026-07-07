@@ -252,6 +252,7 @@
         document.getElementById('btnEditDelete').classList.remove('cv-btn-active');
         document.getElementById('btnEditAdd').classList.remove('cv-btn-active');
         placementMode = false;
+        handlesVisible = false;
         document.getElementById('btnScale').classList.remove('cv-btn-active');
         canvas.style.cursor = 'default';
         window.__pmokOnDeactivate?.();
@@ -768,7 +769,6 @@
         if (gesture.type === 'paint') facePaintIsDown = false;
         if (gesture.type === 'cornerDrag' && overlayDrag) {
             overlayDrag = null;
-            handlesVisible = false;
             draw();
         }
         gesture = null;
@@ -862,7 +862,6 @@
             // 활성 제스처가 없을 때: 배치 모드 마우스 호버 커서 갱신 (마우스 전용, 터치/펜슬엔 호버 개념 없음)
             if (e.pointerType === 'mouse' && placementMode) {
                 const near = isMouseNearOverlay(e.clientX, e.clientY);
-                if (near !== handlesVisible) { handlesVisible = near; draw(); }
                 const ch = getHitOverlayCorner(e.clientX, e.clientY);
                 if (ch === 'center') canvas.style.cursor = 'move';
                 else if (ch === 'transform') canvas.style.cursor = 'ns-resize';
