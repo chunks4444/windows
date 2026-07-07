@@ -897,6 +897,7 @@ async function draw() {
 
                     if (d === renderOrder[0]) {
                         lastNodeList.push({ cx: toCanvasX(jx0), cy: toCanvasY(jy0) });
+                        lastNodeList.push({ cx: toCanvasX(jxC), cy: toCanvasY(jyC) }); // 셀 중심도 대각선이 만나는 교점
                         if (col === geo.cols - 1)    lastNodeList.push({ cx: toCanvasX(jx1), cy: toCanvasY(jy0) });
                         if (row === geo.rowsInt - 1) lastNodeList.push({ cx: toCanvasX(jx0), cy: toCanvasY(jy1) });
                         if (col === geo.cols - 1 && row === geo.rowsInt - 1) lastNodeList.push({ cx: toCanvasX(jx1), cy: toCanvasY(jy1) });
