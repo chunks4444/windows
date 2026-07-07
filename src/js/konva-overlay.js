@@ -221,6 +221,7 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
                     lineCap: 'round', strokeScaleEnabled: false,
                 });
                 if (konvaLinePreview) { konvaLinePreview.destroy(); konvaLinePreview = null; }
+                konvaLineStart = null;
                 addShape(line);
                 konvaShapeLayer.batchDraw();
             }
