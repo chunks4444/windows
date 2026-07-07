@@ -692,7 +692,10 @@
     let gesture = null;
 
     function ignoreTarget(e) {
-        return !!(e.target.closest('.canvas-controls') || e.target.closest('.canvas-title-bar'));
+        // #konvaStageContainer: 도형 그리기/선택 모드에서 Konva가 직접 처리해야 함(pointer-events:auto일 때만 타겟이 됨).
+        // #konvaShapePanel: 도형 스타일·삭제 플로팅 툴바 — 캔버스 팬 제스처가 가로채면 클릭이 씹힘.
+        return !!(e.target.closest('.canvas-controls') || e.target.closest('.canvas-title-bar') ||
+                  e.target.closest('#konvaStageContainer') || e.target.closest('#konvaShapePanel'));
     }
 
     function clientToLogical(clientX, clientY) {
