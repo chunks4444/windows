@@ -219,6 +219,7 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
                     points: [konvaLineStart.x, konvaLineStart.y, lpos.x, lpos.y],
                     stroke: '#e03030', strokeWidth: 2 / getState().scaleFactor,
                     lineCap: 'round', strokeScaleEnabled: false,
+                    hitStrokeWidth: 24 / getState().scaleFactor, // 선이 얇아 터치로 선택하기 어려운 것 보완
                 });
                 if (konvaLinePreview) { konvaLinePreview.destroy(); konvaLinePreview = null; }
                 konvaLineStart = null;
