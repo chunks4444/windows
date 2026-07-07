@@ -448,7 +448,7 @@ canvas:active { cursor: grabbing; }
 
 .cv-btn svg { width: 14px; height: 14px; color: var(--bg); }
 .cv-btn:hover { background: rgba(var(--bg-rgb), 0.12); color: var(--bg); }
-.cv-btn-active { background: var(--accent) !important; color: var(--bg) !important; }
+.cv-btn-active { background: var(--danger) !important; color: var(--bg) !important; }
 .cv-sep { width: 1px; height: 16px; background: rgba(var(--bg-rgb), 0.15); margin: 0 2px; }
 
 
