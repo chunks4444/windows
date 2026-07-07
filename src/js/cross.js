@@ -1103,20 +1103,6 @@ async function draw() {
         if (!buildKonvaPattern) ctx.restore();
     }
 
-    if (lineEditMode === 'add' && addLineStart) {
-        const pt = normToCtx(addLineStart.nx, addLineStart.ny);
-        if (buildKonvaPattern) {
-            kv.addPatternCircle(pt.x, pt.y, lastSlatPx * 1.5, '#3A8C82');
-        } else {
-            ctx.save();
-            ctx.fillStyle = '#3A8C82';
-            ctx.beginPath();
-            ctx.arc(pt.x, pt.y, lastSlatPx * 1.5, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
-        }
-    }
-
     // ====== 2차 루프: 울거미만 그리기 (패턴 위에 덮음) ======
     for (const d of renderOrder) {
 
@@ -1193,6 +1179,21 @@ async function draw() {
                 ctx.fillRect(toCX(geo.outerW - geo.frameW), toCY(pungpanY), geo.frameW * baseScale, pungpanDrawH * baseScale);
                 ctx.fillRect(toCX(geo.frameW), toCY(pungpanY + pungpanDrawH - geo.frameH), geo.innerW * baseScale, geo.frameH * baseScale);
             }
+        }
+    }
+
+    // 선 추가 모드 — 시작점 표시 (울거미·풍판보다 나중에 그려야 가려지지 않음)
+    if (lineEditMode === 'add' && addLineStart) {
+        const pt = normToCtx(addLineStart.nx, addLineStart.ny);
+        if (buildKonvaPattern) {
+            kv.addPatternCircle(pt.x, pt.y, lastSlatPx * 1.5, '#3A8C82');
+        } else {
+            ctx.save();
+            ctx.fillStyle = '#3A8C82';
+            ctx.beginPath();
+            ctx.arc(pt.x, pt.y, lastSlatPx * 1.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
         }
     }
 
