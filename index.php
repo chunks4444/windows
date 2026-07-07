@@ -108,8 +108,11 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
             <div class="container">
                 <div class="mt-5 mb-4">
                     <p class="ab-section-label">Studio</p>
-                    <h2 class="ab-section-title">창호를 직접 설계하고 실시간 예상 견적을 확인하세요.</h2>
-                    <p class="ab-section-body">문틀 크기와 살 간격, 패턴을 자유롭게 조정하면 예상 견적이 즉시 반영됩니다.<br>완성된 설계는 <strong>평목 공방에서 제작해 드립니다.</strong></p>
+                    <h2 class="ab-section-title">그려지면, 만들 수 있습니다.<br><span class="small">창호를 직접 설계하고 실시간 예상 견적을 확인하세요.</span></h2>
+                    
+                    <p class="ab-section-body">문틀 크기, 살 간격, 패턴을 조정하면 예상 견적이 즉시 반영됩니다.</p>
+                    <p class="ab-section-body">설계 지식이 없어도 괜찮습니다. 제작 가능한 형태인지는 <strong>알고리즘이 판단합니다.</strong></p>
+                    <p class="ab-section-body">스튜디오는 만들 수 없는 창호를 그리지 않습니다. <strong>평목 공방에서 제작해 드립니다.</strong></p>
                 </div>
                 <?php
                 $svgIcons = [
