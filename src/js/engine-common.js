@@ -681,14 +681,18 @@
     });
 })();
 
-// 캔버스 터치 지원 (아이패드 등): 한 손가락 팬, 두 손가락 핀치줌, 탭으로 세그먼트 토글
+// 캔버스 입력 통합 (Pointer Events): 마우스·터치·아이패드 펜슬을 한 이벤트 체계로 처리.
+// 팬/핀치줌/그리기(facePaint·framePaint)/오버레이 배치 드래그/세그먼트 삭제(탭·클릭)를 여기서 일괄 라우팅하고,
+// 각 엔진 파일({type}.js)의 facePaintMode/placementMode/overlayDrag 등 모드 플래그와 함수(paintFaceCell 등)를 그대로 참조한다.
 (function () {
     const TAP_THRESHOLD = 8; // px
 
-    let touchMode  = null;  // 'pan' | 'pinch' | null
-    let startCX, startCY, startPanX, startPanY, moved;
-    let startDist, startScale;
-    let ignoreGesture = false; // 캔버스 컨트롤 버튼 위에서 시작한 터치는 무시
+    const pointers = new Map(); // pointerId -> {x, y}
+    let gesture = null;
+
+    function ignoreTarget(e) {
+        return !!(e.target.closest('.canvas-controls') || e.target.closest('.canvas-title-bar'));
+    }
 
     function clientToLogical(clientX, clientY) {
         const rect = canvas.getBoundingClientRect();
@@ -698,37 +702,150 @@
         };
     }
 
-    function onTouchStart(e) {
-        ignoreGesture = !!(e.target.closest('.canvas-controls') || e.target.closest('.canvas-title-bar'));
-        if (ignoreGesture) { touchMode = null; return; }
-        e.preventDefault();
-        if (e.touches.length === 1) {
-            const t = e.touches[0];
-            touchMode = 'pan';
-            startCX = t.clientX; startCY = t.clientY;
-            startPanX = panX; startPanY = panY;
-            moved = false;
-        } else if (e.touches.length === 2) {
-            const [t0, t1] = e.touches;
-            touchMode  = 'pinch';
-            startDist  = Math.hypot(t1.clientX - t0.clientX, t1.clientY - t0.clientY);
-            startScale = scaleFactor;
-            moved = true;
+    function defaultCornerDrag(corner, sp, dcx, dcy) {
+        if (corner === 'move') {
+            doorCornerPositions.tl = { cx: sp.tl.cx + dcx, cy: sp.tl.cy + dcy };
+            doorCornerPositions.tr = { cx: sp.tr.cx + dcx, cy: sp.tr.cy + dcy };
+            doorCornerPositions.br = { cx: sp.br.cx + dcx, cy: sp.br.cy + dcy };
+            doorCornerPositions.bl = { cx: sp.bl.cx + dcx, cy: sp.bl.cy + dcy };
+        } else {
+            doorCornerPositions[corner] = { cx: sp[corner].cx + dcx, cy: sp[corner].cy + dcy };
         }
     }
 
-    function onTouchMove(e) {
-        if (ignoreGesture) return;
-        e.preventDefault();
-        if (touchMode === 'pinch' && e.touches.length === 2) {
-            const [t0, t1] = e.touches;
-            const dist = Math.hypot(t1.clientX - t0.clientX, t1.clientY - t0.clientY);
-            const midClientX = (t0.clientX + t1.clientX) / 2;
-            const midClientY = (t0.clientY + t1.clientY) / 2;
-            const mid = clientToLogical(midClientX, midClientY);
+    function startCornerDrag(corner, clientX, clientY) {
+        handlesVisible = true;
+        const sp = () => ({
+            tl: { ...doorCornerPositions.tl },
+            tr: { ...doorCornerPositions.tr },
+            br: { ...doorCornerPositions.br },
+            bl: { ...doorCornerPositions.bl },
+        });
+        const startPos = sp();
+        const drag = { corner, startPositions: startPos, startMx: clientX, startMy: clientY };
+        if (corner === 'transform') {
+            const cCx = (startPos.tl.cx + startPos.tr.cx + startPos.br.cx + startPos.bl.cx) / 4;
+            const cCy = (startPos.tl.cy + startPos.tr.cy + startPos.br.cy + startPos.bl.cy) / 4;
+            const rect_ = canvas.getBoundingClientRect();
+            const mxC = (clientX - rect_.left) * (logW / rect_.width);
+            const myC = (clientY - rect_.top)  * (logH / rect_.height);
+            const ox_ = logW / 2 + panX, oy_ = logH / 2 + panY;
+            drag.scaleCenter = { cx: cCx, cy: cCy };
+            drag.startDist = Math.hypot(mxC - (ox_ + cCx * scaleFactor), myC - (oy_ + cCy * scaleFactor)) || 1;
+        }
+        overlayDrag = drag;
+    }
+
+    function applyCornerDragMove(drag, clientX, clientY) {
+        const dcx = (clientX - drag.startMx) / scaleFactor;
+        const dcy = (clientY - drag.startMy) / scaleFactor;
+        const { corner, startPositions: sp } = drag;
+        if (corner === 'transform') {
+            const rect_ = canvas.getBoundingClientRect();
+            const mxC = (clientX - rect_.left) * (logW / rect_.width);
+            const myC = (clientY - rect_.top)  * (logH / rect_.height);
+            const { scaleCenter, startDist } = drag;
+            const ox_ = logW / 2 + panX, oy_ = logH / 2 + panY;
+            const curDist = Math.hypot(mxC - (ox_ + scaleCenter.cx * scaleFactor), myC - (oy_ + scaleCenter.cy * scaleFactor)) || 0.001;
+            const s = Math.max(0.05, curDist / startDist);
+            for (const k of ['tl', 'tr', 'br', 'bl']) {
+                doorCornerPositions[k] = {
+                    cx: scaleCenter.cx + (sp[k].cx - scaleCenter.cx) * s,
+                    cy: scaleCenter.cy + (sp[k].cy - scaleCenter.cy) * s,
+                };
+            }
+        } else if (typeof applyCornerDrag === 'function') {
+            applyCornerDrag(corner, sp, dcx, dcy);
+        } else {
+            defaultCornerDrag(corner, sp, dcx, dcy);
+        }
+        if (typeof updateOverlayFromCorners === 'function') updateOverlayFromCorners();
+        draw();
+    }
+
+    function abortGesture() {
+        if (!gesture) return;
+        if (gesture.type === 'paint') facePaintIsDown = false;
+        if (gesture.type === 'cornerDrag' && overlayDrag) {
+            overlayDrag = null;
+            handlesVisible = false;
+            draw();
+        }
+        gesture = null;
+    }
+
+    function onPointerDown(e) {
+        if (ignoreTarget(e)) return;
+        pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+        if (pointers.size === 2) {
+            abortGesture();
+            const [p0, p1] = [...pointers.values()];
+            gesture = {
+                type: 'pinch',
+                startDist: Math.hypot(p1.x - p0.x, p1.y - p0.y) || 1,
+                startScale: scaleFactor,
+            };
+            if (e.pointerType !== 'mouse') e.preventDefault();
+            return;
+        }
+        if (pointers.size !== 1) return; // 3개 이상은 무시(기존 핀치 유지)
+
+        if (e.pointerType !== 'mouse') e.preventDefault();
+
+        if (lineEditMode) {
+            if (e.pointerType === 'mouse') { handleEditClick(e); pointers.delete(e.pointerId); return; }
+            gesture = { type: 'tapOrPan', pointerId: e.pointerId, startX: e.clientX, startY: e.clientY, startPanX: panX, startPanY: panY, moved: false };
+            return;
+        }
+        if (kv.slatSelectMode && !kv.usePatternLayer) {
+            if (e.pointerType === 'mouse') { kv.handleSlatSelect(e); pointers.delete(e.pointerId); return; }
+            gesture = { type: 'tapOrPan', pointerId: e.pointerId, startX: e.clientX, startY: e.clientY, startPanX: panX, startPanY: panY, moved: false, onTap: () => kv.handleSlatSelect(e) };
+            return;
+        }
+        if (facePaintMode) {
+            if (e.button === 2 || e.ctrlKey) { pointers.delete(e.pointerId); return; }
+            facePaintIsDown = true;
+            const coord = screenToCtxCoord(e.clientX, e.clientY);
+            paintFaceCell(coord.x, coord.y, false);
+            gesture = { type: 'paint', pointerId: e.pointerId };
+            return;
+        }
+        if (typeof framePaintMode !== 'undefined' && framePaintMode) {
+            if (e.button === 2 || e.ctrlKey) { pointers.delete(e.pointerId); return; }
+            const coord = screenToCtxCoord(e.clientX, e.clientY);
+            paintFramePart(coord.x, coord.y, false);
+            gesture = { type: 'framePaint', pointerId: e.pointerId };
+            return;
+        }
+        const cornerHit = getHitOverlayCorner(e.clientX, e.clientY);
+        const corner = cornerHit === 'center' ? 'move' : cornerHit;
+        if (corner) {
+            startCornerDrag(corner, e.clientX, e.clientY);
+            gesture = { type: 'cornerDrag', pointerId: e.pointerId };
+            return;
+        }
+        if (placementMode) {
+            startCornerDrag('move', e.clientX, e.clientY);
+            gesture = { type: 'cornerDrag', pointerId: e.pointerId };
+            return;
+        }
+        // 팬: 마우스는 panMode 켜져 있을 때만, 터치·펜슬은 항상 한 손가락 팬
+        if (e.pointerType === 'mouse' && !panMode) { pointers.delete(e.pointerId); return; }
+        gesture = { type: 'pan', pointerId: e.pointerId, startX: e.clientX - panX, startY: e.clientY - panY };
+    }
+
+    function onPointerMove(e) {
+        if (pointers.has(e.pointerId)) pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+        if (gesture && gesture.type === 'pinch' && pointers.size >= 2) {
+            if (e.pointerType !== 'mouse') e.preventDefault();
+            const [p0, p1] = [...pointers.values()];
+            const dist = Math.hypot(p1.x - p0.x, p1.y - p0.y);
+            const mid = clientToLogical((p0.x + p1.x) / 2, (p0.y + p1.y) / 2);
 
             const prevScale = scaleFactor;
-            let newScale = startScale * (dist / startDist);
+            let newScale = gesture.startScale * (dist / gesture.startDist);
             newScale = Math.max(0.3, Math.min(newScale, 20));
 
             const worldX = (mid.x - logW / 2 - panX) / prevScale;
@@ -738,44 +855,85 @@
             panX = mid.x - logW / 2 - worldX * scaleFactor;
             panY = mid.y - logH / 2 - worldY * scaleFactor;
             draw();
-        } else if (touchMode === 'pan' && e.touches.length === 1) {
-            const t  = e.touches[0];
-            const dx = t.clientX - startCX;
-            const dy = t.clientY - startCY;
-            if (!moved && Math.hypot(dx, dy) > TAP_THRESHOLD) moved = true;
-            if (!lineEditMode) {
-                panX = startPanX + dx;
-                panY = startPanY + dy;
+            return;
+        }
+
+        if (!gesture) {
+            // 활성 제스처가 없을 때: 배치 모드 마우스 호버 커서 갱신 (마우스 전용, 터치/펜슬엔 호버 개념 없음)
+            if (e.pointerType === 'mouse' && placementMode) {
+                const near = isMouseNearOverlay(e.clientX, e.clientY);
+                if (near !== handlesVisible) { handlesVisible = near; draw(); }
+                const ch = getHitOverlayCorner(e.clientX, e.clientY);
+                if (ch === 'center') canvas.style.cursor = 'move';
+                else if (ch === 'transform') canvas.style.cursor = 'ns-resize';
+                else if (ch === 'tl' || ch === 'br') canvas.style.cursor = 'nwse-resize';
+                else if (ch === 'tr' || ch === 'bl') canvas.style.cursor = 'nesw-resize';
+                else canvas.style.cursor = near ? 'move' : (panMode ? 'grab' : 'default');
+            }
+            return;
+        }
+        if (gesture.pointerId !== e.pointerId) return;
+        if (e.pointerType !== 'mouse') e.preventDefault();
+
+        if (gesture.type === 'paint' && facePaintIsDown && facePaintMode) {
+            const coord = screenToCtxCoord(e.clientX, e.clientY);
+            paintFaceCell(coord.x, coord.y, false);
+        } else if (gesture.type === 'framePaint' && typeof framePaintMode !== 'undefined' && framePaintMode) {
+            const coord = screenToCtxCoord(e.clientX, e.clientY);
+            paintFramePart(coord.x, coord.y, false);
+        } else if (gesture.type === 'cornerDrag' && overlayDrag) {
+            applyCornerDragMove(overlayDrag, e.clientX, e.clientY);
+        } else if (gesture.type === 'tapOrPan') {
+            const dx = e.clientX - gesture.startX;
+            const dy = e.clientY - gesture.startY;
+            if (!gesture.moved && Math.hypot(dx, dy) > TAP_THRESHOLD) gesture.moved = true;
+            if (gesture.moved) {
+                panX = gesture.startPanX + dx;
+                panY = gesture.startPanY + dy;
                 draw();
             }
+        } else if (gesture.type === 'pan') {
+            panX = e.clientX - gesture.startX;
+            panY = e.clientY - gesture.startY;
+            drawPan();
         }
     }
 
-    function onTouchEnd(e) {
-        if (ignoreGesture) {
-            if (e.touches.length === 0) ignoreGesture = false;
+    function onPointerUp(e) {
+        if (gesture && gesture.type === 'tapOrPan' && gesture.pointerId === e.pointerId && !gesture.moved) {
+            if (gesture.onTap) gesture.onTap();
+            else handleEditClick({ clientX: e.clientX, clientY: e.clientY });
+        }
+        pointers.delete(e.pointerId);
+
+        if (!gesture) return;
+
+        if (gesture.type === 'pinch') {
+            if (pointers.size >= 2) {
+                // 남은 포인터 기준으로 기준값 재설정(점프 방지)
+                const [p0, p1] = [...pointers.values()];
+                gesture.startDist = Math.hypot(p1.x - p0.x, p1.y - p0.y) || 1;
+                gesture.startScale = scaleFactor;
+            } else if (pointers.size === 1) {
+                const [pid] = [...pointers.keys()];
+                const p0 = pointers.get(pid);
+                gesture = { type: 'pan', pointerId: pid, startX: p0.x - panX, startY: p0.y - panY };
+            } else {
+                gesture = null;
+            }
             return;
         }
-        if (touchMode === 'pan' && !moved && lineEditMode && e.changedTouches.length === 1) {
-            const t = e.changedTouches[0];
-            handleEditClick({ clientX: t.clientX, clientY: t.clientY });
-        }
-        if (e.touches.length === 0) touchMode = null;
-        else if (e.touches.length === 1) {
-            const t = e.touches[0];
-            touchMode = 'pan';
-            startCX = t.clientX; startCY = t.clientY;
-            startPanX = panX; startPanY = panY;
-            moved = true;
-        }
+
+        if (gesture.pointerId !== e.pointerId) return;
+        abortGesture();
     }
 
     document.addEventListener('DOMContentLoaded', () => {
         if (!container) return;
-        container.addEventListener('touchstart', onTouchStart, { passive: false });
-        container.addEventListener('touchmove',  onTouchMove,  { passive: false });
-        container.addEventListener('touchend',   onTouchEnd,   { passive: false });
-        container.addEventListener('touchcancel', onTouchEnd,  { passive: false });
+        container.addEventListener('pointerdown', onPointerDown);
+        window.addEventListener('pointermove', onPointerMove);
+        window.addEventListener('pointerup', onPointerUp);
+        window.addEventListener('pointercancel', onPointerUp);
     });
 })();
 

@@ -115,8 +115,6 @@
     let panX = 0;
     let panY = 0;
     let logW = 0, logH = 0;
-    let isDragging = false;
-    let startX, startY;
     let panMode = false;
     let _versionsLoaded = false;
 
@@ -1613,122 +1611,7 @@ async function draw() {
         return best;
     }
 
-    container.addEventListener('mousedown', function(e) {
-        if (e.target.closest('.canvas-controls') || e.target.closest('.canvas-title-bar')) return;
-        if (lineEditMode) { handleEditClick(e); return; }
-        if (facePaintMode) {
-            if (e.button === 2 || e.ctrlKey) return;
-            facePaintIsDown = true;
-            const coord = screenToCtxCoord(e.clientX, e.clientY);
-            paintFaceCell(coord.x, coord.y, false);
-            return;
-        }
-        if (kv.slatSelectMode && !kv.usePatternLayer) { kv.handleSlatSelect(e); return; }
-        const cornerHit = getHitOverlayCorner(e.clientX, e.clientY);
-        const corner = cornerHit === 'center' ? 'move' : cornerHit;
-        const sp = () => ({
-            tl: { ...doorCornerPositions.tl },
-            tr: { ...doorCornerPositions.tr },
-            br: { ...doorCornerPositions.br },
-            bl: { ...doorCornerPositions.bl },
-        });
-        if (corner) {
-            handlesVisible = true;
-            const startPos = sp();
-            const drag = { corner, startPositions: startPos, startMx: e.clientX, startMy: e.clientY };
-            if (corner === 'transform') {
-                const cCx = (startPos.tl.cx + startPos.tr.cx + startPos.br.cx + startPos.bl.cx) / 4;
-                const cCy = (startPos.tl.cy + startPos.tr.cy + startPos.br.cy + startPos.bl.cy) / 4;
-                const rect_ = canvas.getBoundingClientRect();
-                const mxC = (e.clientX - rect_.left) * (logW / rect_.width);
-                const myC = (e.clientY - rect_.top)  * (logH / rect_.height);
-                const ox_ = logW / 2 + panX, oy_ = logH / 2 + panY;
-                drag.scaleCenter = { cx: cCx, cy: cCy };
-                drag.startDist = Math.hypot(mxC - (ox_ + cCx * scaleFactor), myC - (oy_ + cCy * scaleFactor)) || 1;
-            }
-            overlayDrag = drag;
-            return;
-        }
-        if (placementMode) {
-            overlayDrag = { corner: 'move', startPositions: sp(), startMx: e.clientX, startMy: e.clientY };
-            return;
-        }
-        if (!panMode) return;
-        isDragging = true;
-        startX = e.clientX - panX;
-        startY = e.clientY - panY;
-    });
-    window.addEventListener('mousemove', function(e) {
-        if (facePaintIsDown && facePaintMode) {
-            const coord = screenToCtxCoord(e.clientX, e.clientY);
-            paintFaceCell(coord.x, coord.y, false);
-            return;
-        }
-        if (overlayDrag) {
-            const dcx = (e.clientX - overlayDrag.startMx) / scaleFactor;
-            const dcy = (e.clientY - overlayDrag.startMy) / scaleFactor;
-            const { corner, startPositions: sp } = overlayDrag;
-
-            if (corner === 'move') {
-                doorCornerPositions.tl = { cx: sp.tl.cx + dcx, cy: sp.tl.cy + dcy };
-                doorCornerPositions.tr = { cx: sp.tr.cx + dcx, cy: sp.tr.cy + dcy };
-                doorCornerPositions.br = { cx: sp.br.cx + dcx, cy: sp.br.cy + dcy };
-                doorCornerPositions.bl = { cx: sp.bl.cx + dcx, cy: sp.bl.cy + dcy };
-            } else if (corner === 'tl') {
-                doorCornerPositions.tl = { cx: sp.tl.cx + dcx, cy: sp.tl.cy + dcy };
-            } else if (corner === 'tr') {
-                doorCornerPositions.tr = { cx: sp.tr.cx + dcx, cy: sp.tr.cy + dcy };
-            } else if (corner === 'br') {
-                doorCornerPositions.br = { cx: sp.br.cx + dcx, cy: sp.br.cy + dcy };
-            } else if (corner === 'bl') {
-                doorCornerPositions.bl = { cx: sp.bl.cx + dcx, cy: sp.bl.cy + dcy };
-            } else if (corner === 'transform') {
-                const rect_ = canvas.getBoundingClientRect();
-                const mxC = (e.clientX - rect_.left) * (logW / rect_.width);
-                const myC = (e.clientY - rect_.top)  * (logH / rect_.height);
-                const { scaleCenter, startDist } = overlayDrag;
-                const ox_ = logW / 2 + panX, oy_ = logH / 2 + panY;
-                const curDist = Math.hypot(mxC - (ox_ + scaleCenter.cx * scaleFactor), myC - (oy_ + scaleCenter.cy * scaleFactor)) || 0.001;
-                const s = Math.max(0.05, curDist / startDist);
-                for (const k of ['tl', 'tr', 'br', 'bl']) {
-                    doorCornerPositions[k] = {
-                        cx: scaleCenter.cx + (sp[k].cx - scaleCenter.cx) * s,
-                        cy: scaleCenter.cy + (sp[k].cy - scaleCenter.cy) * s,
-                    };
-                }
-            }
-
-            updateOverlayFromCorners();
-            draw();
-            return;
-        }
-        if (placementMode) {
-            const near = isMouseNearOverlay(e.clientX, e.clientY);
-            if (near !== handlesVisible) {
-                handlesVisible = near;
-                draw();
-            }
-            const ch = getHitOverlayCorner(e.clientX, e.clientY);
-            if (ch === 'center') canvas.style.cursor = 'move';
-            else if (ch === 'transform') canvas.style.cursor = 'ns-resize';
-            else if (ch === 'tl' || ch === 'br') canvas.style.cursor = 'nwse-resize';
-            else if (ch === 'tr' || ch === 'bl') canvas.style.cursor = 'nesw-resize';
-            else canvas.style.cursor = near ? 'move' : (panMode ? 'grab' : 'default');
-        }
-        if (!isDragging) return;
-        panX = e.clientX - startX;
-        panY = e.clientY - startY;
-        drawPan();
-    });
-    window.addEventListener('mouseup', function() {
-        facePaintIsDown = false;
-        if (overlayDrag) {
-            overlayDrag = null;
-            handlesVisible = false;
-            draw();
-        }
-        isDragging = false;
-    });
+    // 마우스/터치/펜슬 팬·핀치줌·그리기·오버레이드래그·삭제는 engine-common.js의 통합 Pointer Events 디스패처가 처리
     container.addEventListener('wheel', function(e) {
         if (e.target.closest('.canvas-title-bar') || e.target.closest('.canvas-controls')) return;
         e.preventDefault();
