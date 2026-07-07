@@ -1297,6 +1297,10 @@ input[type="range"]::-moz-range-thumb {
     cursor: pointer;
 }
 
+/* 기본 트랙(rgba(--bg-rgb, 0.08))은 어두운 사이드바 배경 기준이라
+   konvaShapePanel처럼 밝은(--bg 계열) 패널 위에서는 거의 안 보임 */
+#konvaShapePanel input[type="range"] { background: var(--border); }
+
 /* ── SLIDER + NUMBER INPUT ROW ───────────── */
 .slider-row { display: flex; align-items: center; gap: 8px; }
 .slider-row input[type="range"] { flex: 1; }
