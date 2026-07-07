@@ -1244,11 +1244,13 @@ async function draw() {
         }
     }
 
-    // 선 추가 모드 — 시작점 표시 (울거미·풍판보다 나중에 그려야 가려지지 않음)
+    // 선 추가 모드 — 시작점 표시
+    // buildKonvaPattern은 지오메트리 캐시 히트 시 false라서(=클릭만 해도 이 프레임은 재빌드 안 됨)
+    // useKonvaPattern 기준으로 분기하고, Konva는 패턴 재빌드와 무관한 지속 노드(setEditMarker)로 갱신
     if (lineEditMode === 'add' && addLineStart) {
         const p = normToCtx(addLineStart.nx, addLineStart.ny);
-        if (buildKonvaPattern) {
-            kv.addPatternCircle(p.x, p.y, lastSlatPx * 1.5, '#3A8C82');
+        if (useKonvaPattern) {
+            kv.setEditMarker(p.x, p.y, lastSlatPx * 1.5, '#3A8C82');
         } else {
             ctx.save();
             ctx.fillStyle = '#3A8C82';
@@ -1257,6 +1259,8 @@ async function draw() {
             ctx.fill();
             ctx.restore();
         }
+    } else if (useKonvaPattern) {
+        kv.clearEditMarker();
     }
 
     if (useKonvaPattern) {

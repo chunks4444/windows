@@ -519,6 +519,7 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
         _patternSlatNodes  = {};
         _activeClipGroup   = null;
         _usePatternLayer   = true;
+        _editMarkerNode    = null; // destroyChildren()이 같이 파괴함
     }
 
     function clearPattern() {
@@ -529,8 +530,27 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
             _patternClipGroups = {};
             _patternSlatNodes  = {};
             _activeClipGroup   = null;
+            _editMarkerNode    = null;
         }
         _usePatternLayer = false;
+    }
+
+    // 선 추가 모드 시작점 마커 — beginPattern()의 캐시 갱신(buildKonvaPattern)과 무관하게
+    // 매 draw()마다 즉시 갱신·표시되어야 하므로 별도 지속 노드로 관리
+    let _editMarkerNode = null;
+
+    function setEditMarker(x, y, radius, fill) {
+        if (_editMarkerNode) _editMarkerNode.destroy();
+        _editMarkerNode = new Konva.Circle({ x, y, radius, fill, listening: false, perfectDrawEnabled: false });
+        patternLayer.add(_editMarkerNode);
+        patternLayer.batchDraw();
+    }
+
+    function clearEditMarker() {
+        if (!_editMarkerNode) return;
+        _editMarkerNode.destroy();
+        _editMarkerNode = null;
+        patternLayer.batchDraw();
     }
 
     function addPatternBg(x, y, w, h) {
@@ -577,10 +597,6 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
 
     function addPatternPolygon(points, fill) {
         (_activeClipGroup || patternLayer).add(new Konva.Line({ points, fill, closed: true, strokeWidth: 0, listening: false, perfectDrawEnabled: false }));
-    }
-
-    function addPatternCircle(x, y, radius, fill) {
-        (_activeClipGroup || patternLayer).add(new Konva.Circle({ x, y, radius, fill, listening: false, perfectDrawEnabled: false }));
     }
 
     function commitPattern() {
@@ -691,7 +707,8 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
         addPatternFrameRect,
         addPatternLine,
         addPatternPolygon,
-        addPatternCircle,
+        setEditMarker,
+        clearEditMarker,
         commitPattern,
         syncPatternTransform,
         updatePatternHighlight,
