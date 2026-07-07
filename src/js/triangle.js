@@ -1167,12 +1167,16 @@ async function draw() {
     // 선 추가 모드 — 시작점 표시
     if (lineEditMode === 'add' && addLineStart) {
         const p = normToCtx(addLineStart.nx, addLineStart.ny);
-        ctx.save();
-        ctx.fillStyle = '#3A8C82';
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, lastSlatPx * 1.5, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
+        if (buildKonvaPattern) {
+            kv.addPatternCircle(p.x, p.y, lastSlatPx * 1.5, '#3A8C82');
+        } else {
+            ctx.save();
+            ctx.fillStyle = '#3A8C82';
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, lastSlatPx * 1.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
     }
 
     // ====== 2차 루프: 울거미만 그리기 (패턴 위에 덮음) ======

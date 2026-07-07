@@ -1133,11 +1133,14 @@ async function draw() {
 
     // ====== 추가 선 그리기 (모든 문짝에 동일하게 복제) ======
     if (addedLines.length > 0) {
-        ctx.save();
-        ctx.strokeStyle = patternBroken ? '#cc0000' : selectedSlatColor;
-        ctx.lineWidth   = lastSlatPx;
-        ctx.lineCap     = 'round';
-        ctx.setLineDash([]);
+        const addedColor = patternBroken ? '#cc0000' : selectedSlatColor;
+        if (!buildKonvaPattern) {
+            ctx.save();
+            ctx.strokeStyle = addedColor;
+            ctx.lineWidth   = lastSlatPx;
+            ctx.lineCap     = 'round';
+            ctx.setLineDash([]);
+        }
         for (const d of renderOrder) {
             const px = doorPanelOffsetX[d];
             const toX = rx => offsetX + (px + rx) * baseScale;
@@ -1148,23 +1151,31 @@ async function draw() {
                 const x2 = toX(geo.frameW + ln.nx2 * geo.innerW);
                 const y2 = toY(geo.frameHTop + ln.ny2 * geo.innerH);
                 lastSegMap.set(`added:${d}:${idx}`, { cx: x1, cy: y1, ex: x2, ey: y2, mx: (x1 + x2) / 2, my: (y1 + y2) / 2, normAngle: 0 });
-                ctx.beginPath();
-                ctx.moveTo(x1, y1);
-                ctx.lineTo(x2, y2);
-                ctx.stroke();
+                if (buildKonvaPattern) {
+                    kv.addPatternLine(x1, y1, x2, y2, addedColor, lastSlatPx);
+                } else {
+                    ctx.beginPath();
+                    ctx.moveTo(x1, y1);
+                    ctx.lineTo(x2, y2);
+                    ctx.stroke();
+                }
             });
         }
-        ctx.restore();
+        if (!buildKonvaPattern) ctx.restore();
     }
 
     if (lineEditMode === 'add' && addLineStart) {
         const pt = normToCtx(addLineStart.nx, addLineStart.ny);
-        ctx.save();
-        ctx.fillStyle = '#3A8C82';
-        ctx.beginPath();
-        ctx.arc(pt.x, pt.y, lastSlatPx * 1.5, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
+        if (buildKonvaPattern) {
+            kv.addPatternCircle(pt.x, pt.y, lastSlatPx * 1.5, '#3A8C82');
+        } else {
+            ctx.save();
+            ctx.fillStyle = '#3A8C82';
+            ctx.beginPath();
+            ctx.arc(pt.x, pt.y, lastSlatPx * 1.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
     }
 
     // ====== 2차 루프: 울거미만 그리기 (패턴 위에 덮음) ======

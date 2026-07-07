@@ -579,6 +579,10 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
         (_activeClipGroup || patternLayer).add(new Konva.Line({ points, fill, closed: true, strokeWidth: 0, listening: false, perfectDrawEnabled: false }));
     }
 
+    function addPatternCircle(x, y, radius, fill) {
+        (_activeClipGroup || patternLayer).add(new Konva.Circle({ x, y, radius, fill, listening: false, perfectDrawEnabled: false }));
+    }
+
     function commitPattern() {
         const s = getState();
         if (s.logW) {
@@ -687,6 +691,7 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
         addPatternFrameRect,
         addPatternLine,
         addPatternPolygon,
+        addPatternCircle,
         commitPattern,
         syncPatternTransform,
         updatePatternHighlight,
