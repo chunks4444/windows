@@ -155,6 +155,7 @@ $metaImage = $post['thumbnail_url']
             <div class="bd-share-row">
                 <button id="btnShare" type="button" class="bd-share-btn"><i class="bi bi-share"></i> 공유하기</button>
                 <a id="btnShareX" class="bd-share-btn" href="#" target="_blank" rel="noopener"><i class="bi bi-twitter-x"></i> X에 공유</a>
+                <a id="btnShareThreads" class="bd-share-btn" href="#" target="_blank" rel="noopener"><i class="bi bi-threads"></i> 스레드에 공유</a>
             </div>
         </header>
 
@@ -253,6 +254,8 @@ $metaImage = $post['thumbnail_url']
 
     document.getElementById('btnShareX').href =
         'https://twitter.com/intent/tweet?url=' + encodeURIComponent(shareUrl) + '&text=' + encodeURIComponent(shareTitle);
+    document.getElementById('btnShareThreads').href =
+        'https://www.threads.net/intent/post?text=' + encodeURIComponent(shareTitle + ' ' + shareUrl);
 })();
 </script>
 

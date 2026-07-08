@@ -96,6 +96,7 @@ $shareUrl   = SITE_URL . '/src/collection/detail.php?slug=' . rawurlencode($patt
     <div style="display:flex;gap:8px;flex-wrap:wrap;">
         <button id="btnShare" class="lib-btn lib-btn-primary"><i class="bi bi-share"></i> 공유하기</button>
         <a id="btnShareX" class="lib-btn lib-btn-secondary" href="#" target="_blank" rel="noopener"><i class="bi bi-twitter-x"></i> X에 공유</a>
+        <a id="btnShareThreads" class="lib-btn lib-btn-secondary" href="#" target="_blank" rel="noopener"><i class="bi bi-threads"></i> 스레드에 공유</a>
     </div>
 </div>
 
@@ -129,6 +130,8 @@ $shareUrl   = SITE_URL . '/src/collection/detail.php?slug=' . rawurlencode($patt
 
     document.getElementById('btnShareX').href =
         'https://twitter.com/intent/tweet?url=' + encodeURIComponent(shareUrl) + '&text=' + encodeURIComponent(shareTitle);
+    document.getElementById('btnShareThreads').href =
+        'https://www.threads.net/intent/post?text=' + encodeURIComponent(shareTitle + ' ' + shareUrl);
 })();
 </script>
 
