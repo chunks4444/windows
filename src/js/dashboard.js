@@ -754,7 +754,7 @@ function openOrderModal(o) {
         actions.push(`<button class="ord-modal-btn" onclick="openDrawing('${escAttr(o.engine)}','${escAttr(o.title)}')">도면 보기</button>`);
     }
     if (['pending_review', 'revision_requested'].includes(o.status)) {
-        actions.push(`<button class="ord-modal-btn ord-modal-btn-danger" onclick="cancelOrder(${o.id})">주문 취소</button>`);
+        actions.push(`<button class="ord-modal-btn ord-modal-btn-danger" onclick="cancelOrder(${o.id})">견적요청/주문취소</button>`);
     }
     if (actions.length) {
         html += `<div class="ord-modal-actions">${actions.join('')}</div>`;
@@ -778,7 +778,7 @@ function cancelOrder(id) {
             document.getElementById('dbOrderModal').style.display = 'none';
             loadOrders();
         },
-        { title: '주문을 취소하시겠습니까?', confirmText: '취소하기' }
+        { title: '견적요청/주문을 취소하시겠습니까?', confirmText: '취소하기' }
     );
 }
 
