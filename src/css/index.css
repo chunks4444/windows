@@ -146,6 +146,7 @@
     letter-spacing: -0.01em;
     margin-bottom: 16px;
 }
+.ab-section-title .small { font-size: 1em; } /* Bootstrap .small 기본값(0.875em)이 제목보다 작아 보이던 것 방지 */
 
 .ab-section-body {
     font-size: var(--fs-16);
