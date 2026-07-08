@@ -26,7 +26,7 @@ try {
         $stmt = $pdo->prepare('SELECT p.*, d.type AS engine FROM library_patterns p LEFT JOIN drawings d ON d.id = p.drawing_id WHERE p.id=? AND p.is_active=1');
         $stmt->execute([$id]);
         $pattern = $stmt->fetch();
-        if ($pattern && $pattern['slug']) { header('Location: /src/collection/detail.php?slug=' . rawurlencode($pattern['slug']), true, 301); exit; }
+        if ($pattern && $pattern['slug']) { header('Location: /collection/detail?slug=' . rawurlencode($pattern['slug']), true, 301); exit; }
     }
     if ($pattern) {
         $kstmt = $pdo->prepare('SELECT keyword FROM library_keywords WHERE pattern_id=? ORDER BY id');
@@ -39,7 +39,7 @@ try {
     $pattern = null;
     $keywords = [];
 }
-if (!$pattern) { header('Location: /src/collection/'); exit; }
+if (!$pattern) { header('Location: /collection/'); exit; }
 
 $engineKey  = strtolower($pattern['engine'] ?? '');
 $editorUrl  = $editorMap[$engineKey] ?? null;
@@ -48,7 +48,7 @@ $metaDesc   = $keywords ? implode(', ', $keywords) . ' — 평목 스튜디오 �
 $metaImage  = $pattern['image_path']
     ? (strpos($pattern['image_path'], 'http') === 0 ? $pattern['image_path'] : SITE_URL . $pattern['image_path'])
     : SITE_DEFAULT_IMAGE;
-$shareUrl   = SITE_URL . '/src/collection/detail.php?slug=' . rawurlencode($pattern['slug']);
+$shareUrl   = SITE_URL . '/collection/detail?slug=' . rawurlencode($pattern['slug']);
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -72,7 +72,7 @@ $shareUrl   = SITE_URL . '/src/collection/detail.php?slug=' . rawurlencode($patt
 <?php include __DIR__ . '/../components/nav.php'; ?>
 
 <div class="lib-main" style="max-width:640px;margin:0 auto;padding-top:2rem;">
-    <a href="/src/collection/" style="display:inline-flex;align-items:center;gap:4px;font-size:13px;color:var(--text-muted);text-decoration:none;margin-bottom:16px;">
+    <a href="/collection/" style="display:inline-flex;align-items:center;gap:4px;font-size:13px;color:var(--text-muted);text-decoration:none;margin-bottom:16px;">
         <i class="bi bi-arrow-left"></i> 컬렉션
     </a>
 

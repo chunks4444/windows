@@ -153,7 +153,7 @@ foreach ($guide_nav as $sec) {
 
 <!-- ── 사이드바 ── -->
 <aside class="guide-sidebar">
-    <a href="/src/guide/" class="gs-home">
+    <a href="/guide/" class="gs-home">
         <i class="bi bi-book-half"></i> 평목 가이드
     </a>
     <nav>
@@ -171,7 +171,7 @@ foreach ($guide_nav as $sec) {
             </button>
             <div class="gs-section-body">
                 <?php foreach ($sec['articles'] as $art): ?>
-                <a href="/src/guide/<?= $art['file'] ?>"
+                <a href="/guide/<?= basename($art['file'], '.php') ?>"
                    class="gs-link<?= ($art['file'] === ($guide_current ?? '')) ? ' active' : '' ?>">
                     <?php if (isset($art['engine'])): ?>
                     <span class="gs-link-icon"><?= $guideEngineIcons[$art['engine']] ?? '' ?></span>
@@ -198,7 +198,7 @@ foreach ($guide_nav as $sec) {
 
 <?php if ($current_cat): ?>
 <nav class="guide-breadcrumb">
-    <a href="/src/guide/">가이드</a>
+    <a href="/guide/">가이드</a>
     <span class="sep"><i class="bi bi-chevron-right"></i></span>
     <span><?= htmlspecialchars($current_cat) ?></span>
     <span class="sep"><i class="bi bi-chevron-right"></i></span>

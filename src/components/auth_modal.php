@@ -186,7 +186,7 @@ function pmokAfterLogin() {
         returnUrl = sessionStorage.getItem('pmok_return_url');
         sessionStorage.removeItem('pmok_return_url');
     } catch (e) {}
-    location.href = returnUrl || '/src/mypage/dashboard.php';
+    location.href = returnUrl || '/mypage/dashboard';
 }
 
 async function authLogin(e) {
@@ -348,7 +348,7 @@ async function loadNavBoards() {
             } else {
                 boardSection.style.display = '';
                 boardList.innerHTML = boards.map(b =>
-                    `<li><a class="dropdown-item d-flex align-items-center gap-2" href="/src/mypage/dashboard.php?board=${b.id}">
+                    `<li><a class="dropdown-item d-flex align-items-center gap-2" href="/mypage/dashboard?board=${b.id}">
                         <i class="bi bi-collection" style="font-size:14px;"></i>
                         <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${_escHtml(b.name)}</span>
                         <span style="font-size:10px;color:var(--text-muted);flex-shrink:0;">${b.item_count}</span>
@@ -365,7 +365,7 @@ async function loadNavBoards() {
             } else {
                 drawerBoardSection.style.display = '';
                 drawerBoardList.innerHTML = boards.map(b =>
-                    `<a class="pm-dw-link" href="/src/mypage/dashboard.php?board=${b.id}">
+                    `<a class="pm-dw-link" href="/mypage/dashboard?board=${b.id}">
                         <i class="bi bi-collection"></i>
                         <span>${_escHtml(b.name)}</span>
                     </a>`

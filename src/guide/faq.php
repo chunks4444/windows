@@ -12,7 +12,7 @@ $faqs = db()->query('SELECT * FROM faqs WHERE is_active=1 ORDER BY sort_order, i
 <h1>자주 묻는 질문</h1>
 <p class="guide-lead">
     평목 스튜디오 사용 중 자주 나오는 질문들을 모았습니다.
-    원하는 답변을 찾지 못하셨다면 <a href="/src/company/#contact">공방 문의</a>를 이용해 주세요.
+    원하는 답변을 찾지 못하셨다면 <a href="/company/#contact">공방 문의</a>를 이용해 주세요.
 </p>
 
 <?php if (empty($faqs)): ?>

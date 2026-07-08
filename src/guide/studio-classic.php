@@ -221,7 +221,7 @@ include __DIR__ . '/_head.php';
 <h3>배경 사진 & AI 렌더링</h3>
 <p>
     현장 사진을 업로드해 도면과 합성한 뒤 AI로 렌더링합니다.
-    자세한 내용은 <a href="/src/guide/render.php" style="color:var(--accent);">AI 렌더링 사용법</a> 페이지를 참조하세요.
+    자세한 내용은 <a href="/guide/render" style="color:var(--accent);">AI 렌더링 사용법</a> 페이지를 참조하세요.
 </p>
 
 <h3>내보내기</h3>

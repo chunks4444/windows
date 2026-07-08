@@ -401,7 +401,7 @@
             if (!user.name || !user.phone) {
                 pmConfirm(
                     '견적요청하려면 프로필에 이름과 연락처를 먼저 입력해주세요.',
-                    () => { location.href = '/src/mypage/profile.php'; },
+                    () => { location.href = '/mypage/profile'; },
                     { sub: '프로필 페이지에서 입력 후 다시 시도해주세요.', type: 'ok', confirmText: '프로필로 이동' }
                 );
                 return;

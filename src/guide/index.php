@@ -29,7 +29,7 @@
     <!-- 카테고리 카드 -->
     <div class="guide-categories">
 
-        <a href="/src/guide/intro.php" class="guide-cat-card">
+        <a href="/guide/intro" class="guide-cat-card">
             <div class="guide-cat-icon" style="background:var(--accent-tint);color:#000;">
                 <i class="bi bi-info-circle-fill"></i>
             </div>
@@ -38,7 +38,7 @@
             <div class="guide-cat-count">2개 아티클</div>
         </a>
 
-        <a href="/src/guide/studio-classic.php" class="guide-cat-card">
+        <a href="/guide/studio-classic" class="guide-cat-card">
             <div class="guide-cat-icon" style="background:var(--danger-tint);color:#000;">
                 <svg width="22" height="22" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
                     <rect fill="currentColor" x="148" y="204" width="384" height="46" rx="23"/>
@@ -53,7 +53,7 @@
             <div class="guide-cat-count">6개 아티클</div>
         </a>
 
-        <a href="/src/guide/drawing.php" class="guide-cat-card">
+        <a href="/guide/drawing" class="guide-cat-card">
             <div class="guide-cat-icon" style="background:var(--accent-tint);color:#000;">
                 <i class="bi bi-folder2-open"></i>
             </div>
@@ -62,7 +62,7 @@
             <div class="guide-cat-count">2개 아티클</div>
         </a>
 
-        <a href="/src/guide/render.php" class="guide-cat-card">
+        <a href="/guide/render" class="guide-cat-card">
             <div class="guide-cat-icon" style="background:var(--accent-tint);color:#000;">
                 <i class="bi bi-stars"></i>
             </div>
@@ -71,7 +71,7 @@
             <div class="guide-cat-count">1개 아티클</div>
         </a>
 
-        <a href="/src/guide/collection.php" class="guide-cat-card">
+        <a href="/guide/collection" class="guide-cat-card">
             <div class="guide-cat-icon" style="background:var(--accent-tint);color:#000;">
                 <i class="bi bi-collection-fill"></i>
             </div>
@@ -80,7 +80,7 @@
             <div class="guide-cat-count">1개 아티클</div>
         </a>
 
-        <a href="/src/guide/account.php" class="guide-cat-card">
+        <a href="/guide/account" class="guide-cat-card">
             <div class="guide-cat-icon" style="background:var(--accent-tint);color:#000;">
                 <i class="bi bi-person-gear"></i>
             </div>
@@ -89,7 +89,7 @@
             <div class="guide-cat-count">1개 아티클</div>
         </a>
 
-        <a href="/src/guide/order.php" class="guide-cat-card">
+        <a href="/guide/order" class="guide-cat-card">
             <div class="guide-cat-icon" style="background:var(--accent-tint);color:#000;">
                 <i class="bi bi-cart-check"></i>
             </div>
@@ -98,7 +98,7 @@
             <div class="guide-cat-count">1개 아티클</div>
         </a>
 
-        <a href="/src/guide/delivery.php" class="guide-cat-card">
+        <a href="/guide/delivery" class="guide-cat-card">
             <div class="guide-cat-icon" style="background:var(--accent-tint);color:#000;">
                 <i class="bi bi-truck"></i>
             </div>
@@ -107,7 +107,7 @@
             <div class="guide-cat-count">1개 아티클</div>
         </a>
 
-        <a href="/src/guide/faq.php" class="guide-cat-card">
+        <a href="/guide/faq" class="guide-cat-card">
             <div class="guide-cat-icon" style="background:var(--accent-tint);color:#000;">
                 <i class="bi bi-patch-question-fill"></i>
             </div>

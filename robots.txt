@@ -2,6 +2,7 @@ User-agent: *
 Disallow: /src/admin/
 Disallow: /src/api/
 Disallow: /src/mypage/
+Disallow: /mypage/
 Disallow: /logs/
 
 Sitemap: https://studio.pyeongmok.com/sitemap.xml

@@ -369,7 +369,7 @@ function showToast(msg) {
 async function shareCollectionPattern(e, slug, name) {
     e.stopPropagation(); e.preventDefault();
     if (!slug) return;
-    const url = location.origin + '/src/collection/detail.php?slug=' + encodeURIComponent(slug);
+    const url = location.origin + '/collection/detail?slug=' + encodeURIComponent(slug);
     if (navigator.share) {
         try { await navigator.share({ title: name, text: name, url }); }
         catch (err) { /* 사용자가 공유 취소한 경우 등 — 무시 */ }

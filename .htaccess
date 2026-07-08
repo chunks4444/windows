@@ -6,15 +6,48 @@ RewriteRule ^src/work/detail\.php$ /src/portfolio/detail.php [R=301,L,QSA]
 RewriteRule ^src/work/?$ /src/portfolio/ [R=301,L]
 SetEnv PMOK_JWT_SECRET "새로운-강력한-시크릿"
 
-# 블로그 글 시맨틱 URL: /src/blog/{slug} → detail.php?slug={slug}
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^src/blog/([^/]+)/?$ src/blog/detail.php?slug=$1 [L,QSA]
+# ============================================================
+# 깔끔한 URL: /src/{blog,portfolio,collection,guide,company,mypage}와 .php 확장자를 주소창에서 숨김.
+# admin/api/engine/css/js/lib/components/assets/img/uploads는 대상 아님 — 내부 전용·자산 경로라 그대로 /src/... 유지.
+# 2026-07-08 추가. 각 섹션 링크를 생성하는 PHP/JS도 함께 새 주소로 바꿔야 실제로 /src/가 안 보임(nav.php 등).
+# ============================================================
 
-# 포트폴리오 상세 시맨틱 URL: /src/portfolio/{slug} → detail.php?slug={slug}
+# 사용자가 /src/{6개 섹션}/... 로 직접 들어오면 새 주소로 301 (검색엔진 중복 색인 방지, 옛 링크 호환)
+# .php로 끝나는 옛 링크는 확장자까지 같이 제거해야 아래 페이지 규칙과 매칭됨(먼저 매칭되도록 위에 배치)
+RewriteCond %{THE_REQUEST} \s/src/(blog|portfolio|collection|guide|company|mypage)(/[^\s?]*)?\.php(\?[^\s]*)?\s [NC]
+RewriteRule ^src/(blog|portfolio|collection|guide|company|mypage)(.*)\.php$ /$1$2 [R=301,L,QSA]
+
+RewriteCond %{THE_REQUEST} \s/src/(blog|portfolio|collection|guide|company|mypage)([/?][^\s]*)?\s [NC]
+RewriteRule ^src/(blog|portfolio|collection|guide|company|mypage)(.*)$ /$1$2 [R=301,L,QSA]
+
+# 섹션 홈(디렉토리 인덱스)
+RewriteRule ^blog/?$        src/blog/index.php       [L]
+RewriteRule ^portfolio/?$   src/portfolio/index.php  [L]
+RewriteRule ^collection/?$  src/collection/index.php [L]
+RewriteRule ^guide/?$       src/guide/index.php      [L]
+RewriteRule ^company/?$     src/company/index.php    [L]
+
+# 블로그/포트폴리오 글 상세 시맨틱 URL: /blog/{slug}, /portfolio/{slug} → detail.php?slug={slug}
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^src/portfolio/([^/]+)/?$ src/portfolio/detail.php?slug=$1 [L,QSA]
+RewriteRule ^blog/([^/]+)/?$ src/blog/detail.php?slug=$1 [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^portfolio/([^/]+)/?$ src/portfolio/detail.php?slug=$1 [L,QSA]
+
+# 나머지 확장자 없는 페이지: /collection/detail, /guide/{name}, /mypage/{name} (밑줄로 시작하는 내부 include 파일은 제외)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^collection/([a-zA-Z][a-zA-Z0-9_-]*)/?$ src/collection/$1.php [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^guide/([a-zA-Z][a-zA-Z0-9_-]*)/?$ src/guide/$1.php [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^mypage/([a-zA-Z][a-zA-Z0-9_-]*)/?$ src/mypage/$1.php [L,QSA]
 
 # 동적 sitemap.xml
 RewriteRule ^sitemap\.xml$ /sitemap.php [L]

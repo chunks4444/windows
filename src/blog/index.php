@@ -137,7 +137,7 @@ try {
                 <div class="carousel-inner">
                     <?php foreach ($featurePosts as $i => $fp): ?>
                     <div class="carousel-item <?= $i === 0 ? 'active' : '' ?>">
-                        <a href="/src/blog/<?= rawurlencode($fp['slug']) ?>" class="bg-feature-link">
+                        <a href="/blog/<?= rawurlencode($fp['slug']) ?>" class="bg-feature-link">
                             <img src="<?= htmlspecialchars($fp['thumbnail_url']) ?>" class="bg-feature-img" alt="<?= htmlspecialchars($fp['title']) ?>">
                             <div class="bg-feature-caption">
                                 <?php if ($fp['series_name']): ?>
@@ -161,7 +161,7 @@ try {
             <ol class="bg-ranked-list" start="<?= $offset + 1 ?>">
                 <?php foreach ($pagePosts as $i => $p): ?>
                 <li class="bg-ranked-item">
-                    <a class="bg-ranked-link" href="/src/blog/<?= rawurlencode($p['slug']) ?>">
+                    <a class="bg-ranked-link" href="/blog/<?= rawurlencode($p['slug']) ?>">
                         <div class="bg-ranked-text">
                             <?php if ($p['series_name']): ?>
                             <p class="bg-ranked-cat"><?= htmlspecialchars($p['series_name']) ?></p>
@@ -205,7 +205,7 @@ try {
                 <ul class="bg-side-card-posts">
                     <?php foreach ($sc['posts'] as $sp): ?>
                     <li>
-                        <a href="/src/blog/<?= rawurlencode($sp['slug']) ?>"><?= htmlspecialchars($sp['title']) ?></a>
+                        <a href="/blog/<?= rawurlencode($sp['slug']) ?>"><?= htmlspecialchars($sp['title']) ?></a>
                         <span class="bg-side-card-date"><?= date('Y.m.d', strtotime($sp['created_at'])) ?></span>
                     </li>
                     <?php endforeach; ?>

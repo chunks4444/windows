@@ -43,7 +43,7 @@
         <td style="padding:20px 32px 28px;">
           <p style="font-size:11px;color:var(--text-muted);line-height:1.7;margin:0;">
             본 메일은 비밀번호 재설정 요청 시 자동으로 발송됩니다.<br>
-            문의사항은 <a href="<?= SITE_URL ?>/src/company/" style="color:var(--accent);text-decoration:none;">평목 문의 페이지</a>를 이용해 주세요.
+            문의사항은 <a href="<?= SITE_URL ?>/company/" style="color:var(--accent);text-decoration:none;">평목 문의 페이지</a>를 이용해 주세요.
           </p>
         </td>
       </tr>

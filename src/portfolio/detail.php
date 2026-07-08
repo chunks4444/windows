@@ -18,7 +18,7 @@ try {
         $stmt = $pdo->prepare('SELECT * FROM works WHERE id=? AND is_active=1');
         $stmt->execute([$id]);
         $work = $stmt->fetch();
-        if ($work) { header('Location: /src/portfolio/' . rawurlencode($work['slug']), true, 301); exit; }
+        if ($work) { header('Location: /portfolio/' . rawurlencode($work['slug']), true, 301); exit; }
     }
     if ($work) {
         // 이미지 목록
@@ -36,7 +36,7 @@ try {
 } catch (Throwable $e) {
     $work = null;
 }
-if (!$work) { header('Location: /src/portfolio/'); exit; }
+if (!$work) { header('Location: /portfolio/'); exit; }
 
 $total = count($images);
 $desc  = strip_tags($work['description'] ?? '');
@@ -51,7 +51,7 @@ $desc  = strip_tags($work['description'] ?? '');
     <?php require_once __DIR__ . '/../lib/meta.php'; ?>
     <link rel="icon" type="image/png" href="/src/assets/favicon.png">
     <link rel="apple-touch-icon" href="/src/assets/apple-touch-icon.png">
-    <link rel="canonical" href="<?= htmlspecialchars(SITE_URL . '/src/portfolio/' . rawurlencode($work['slug'])) ?>">
+    <link rel="canonical" href="<?= htmlspecialchars(SITE_URL . '/portfolio/' . rawurlencode($work['slug'])) ?>">
     <meta property="og:title" content="<?= htmlspecialchars($work['title']) ?>">
     <meta property="og:description" content="<?= htmlspecialchars($desc) ?>">
     <meta property="og:image" content="<?= htmlspecialchars($images[0] ?? SITE_DEFAULT_IMAGE) ?>">
@@ -115,7 +115,7 @@ $desc  = strip_tags($work['description'] ?? '');
     <div class="wd-info-bar">
       <div class="wd-info-bar-inner">
         <div class="wd-info-left">
-            <a href="/src/portfolio/" class="wd-back">
+            <a href="/portfolio/" class="wd-back">
                 <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
                     <path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -128,7 +128,7 @@ $desc  = strip_tags($work['description'] ?? '');
         </div>
 
         <?php if ($next && $next['id'] !== $work['id']): ?>
-        <a class="wd-next-link" href="/src/portfolio/<?= rawurlencode($next['slug']) ?>">
+        <a class="wd-next-link" href="/portfolio/<?= rawurlencode($next['slug']) ?>">
             <span class="wd-next-label">next</span>
             <?= htmlspecialchars($next['title']) ?>
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">

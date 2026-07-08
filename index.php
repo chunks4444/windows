@@ -169,7 +169,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                     <?php if (!empty($spaceCards)): ?>
                     <div class="space-cards-wrapper">
                         <?php foreach ($spaceCards as $sc): ?>
-                        <a class="space-card" href="/src/collection/?q=<?= urlencode($sc['collection_query']) ?>">
+                        <a class="space-card" href="/collection/?q=<?= urlencode($sc['collection_query']) ?>">
                             <img src="<?= htmlspecialchars($sc['image_url']) ?>" alt="<?= htmlspecialchars($sc['label']) ?>">
                             <div class="space-card-overlay"><span class="space-card-label"><?= htmlspecialchars($sc['label']) ?></span></div>
                         </a>
@@ -189,7 +189,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                         <p class="ab-section-label">사용법</p>
                         <h2 class="ab-section-title">이렇게 사용하세요.</h2>
                     </div>
-                    <a href="/src/guide/" class="home-blog-more">가이드 전체 보기 <i class="bi bi-arrow-right"></i></a>
+                    <a href="/guide/" class="home-blog-more">가이드 전체 보기 <i class="bi bi-arrow-right"></i></a>
                 </div>
                 <div class="process-container">
                     <div class="process-step">
@@ -205,7 +205,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                                 <li><i class="bi bi-check2"></i> 살 간격·두께 슬라이더 조정</li>
                                 <li><i class="bi bi-check2"></i> 실시간으로 결과 확인</li>
                             </ul>
-                            <a href="/src/guide/studio-classic.php" class="process-guide-link">스튜디오 가이드 보기 <i class="bi bi-arrow-right"></i></a>
+                            <a href="/guide/studio-classic" class="process-guide-link">스튜디오 가이드 보기 <i class="bi bi-arrow-right"></i></a>
                         </div>
                     </div>
                     <div class="process-step">
@@ -221,7 +221,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                                 <li><i class="bi bi-check2"></i> 컬렉션에서 다양한 패턴 탐색</li>
                                 <li><i class="bi bi-check2"></i> 보드에 마음에 드는 패턴 모으기</li>
                             </ul>
-                            <a href="/src/guide/drawing.php" class="process-guide-link">도면 관리 가이드 보기 <i class="bi bi-arrow-right"></i></a>
+                            <a href="/guide/drawing" class="process-guide-link">도면 관리 가이드 보기 <i class="bi bi-arrow-right"></i></a>
                         </div>
                     </div>
                     <div class="process-step">
@@ -237,7 +237,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                                 <li><i class="bi bi-check2"></i> AI 렌더링으로 공간 시각화</li>
                                 <li><i class="bi bi-check2"></i> 배경 이미지와 도면 합성 확인</li>
                             </ul>
-                            <a href="/src/guide/render.php" class="process-guide-link">렌더링 가이드 보기 <i class="bi bi-arrow-right"></i></a>
+                            <a href="/guide/render" class="process-guide-link">렌더링 가이드 보기 <i class="bi bi-arrow-right"></i></a>
                         </div>
                     </div>
                     <div class="process-step">
@@ -253,7 +253,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                                 <li><i class="bi bi-check2"></i> 저장한 도면 기반으로 상담</li>
                                 <li><i class="bi bi-check2"></i> 설계·제작·협업 모두 환영</li>
                             </ul>
-                            <a href="/src/guide/order.php" class="process-guide-link">주문 안내 보기 <i class="bi bi-arrow-right"></i></a>
+                            <a href="/guide/order" class="process-guide-link">주문 안내 보기 <i class="bi bi-arrow-right"></i></a>
                         </div>
                     </div>
                 </div>
@@ -270,17 +270,17 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                         <h2 class="ab-section-title">창호 이야기</h2>
                         <p class="ab-section-body">평목 공방이 전하는 창호와 한옥 살창 이야기.</p>
                     </div>
-                    <a href="/src/blog/" class="home-blog-more">전체 보기 <i class="bi bi-arrow-right"></i></a>
+                    <a href="/blog/" class="home-blog-more">전체 보기 <i class="bi bi-arrow-right"></i></a>
                 </div>
                 <?php if ($blogQuote): ?>
-                <a href="/src/blog/<?= rawurlencode($blogQuote['slug']) ?>" class="home-quote-banner">
+                <a href="/blog/<?= rawurlencode($blogQuote['slug']) ?>" class="home-quote-banner">
                     <p class="home-quote-text">"<?= htmlspecialchars($blogQuote['tagline']) ?>"</p>
                     <p class="home-quote-sub"><?= htmlspecialchars($blogQuote['series_name']) ?> 이야기 읽어보기 <i class="bi bi-arrow-right"></i></p>
                 </a>
                 <?php endif; ?>
                 <div class="home-blog-grid">
                     <?php foreach ($latestPosts as $p): ?>
-                    <a href="/src/blog/<?= rawurlencode($p['slug']) ?>" class="home-blog-card">
+                    <a href="/blog/<?= rawurlencode($p['slug']) ?>" class="home-blog-card">
                         <?php if ($p['thumbnail_url']): ?>
                         <div class="home-blog-card-thumb">
                             <img src="<?= htmlspecialchars($p['thumbnail_url']) ?>" alt="<?= htmlspecialchars($p['title']) ?>" loading="lazy">
@@ -308,7 +308,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                     <p class="ab-section-body">처음 사용하시나요? 단계별 가이드에서 모든 기능을 확인하세요.</p>
                 </div>
                 <div class="guide-cards-grid">
-                    <a href="/src/guide/intro.php" class="guide-card">
+                    <a href="/guide/intro" class="guide-card">
                         <div class="guide-card-icon" style="background:var(--accent-tint);color:var(--accent);"><i class="bi bi-info-circle-fill"></i></div>
                         <div class="guide-card-body">
                             <div class="guide-card-title">평목 소개</div>
@@ -316,7 +316,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                         </div>
                         <i class="bi bi-arrow-right guide-card-arrow"></i>
                     </a>
-                    <a href="/src/guide/studio-classic.php" class="guide-card">
+                    <a href="/guide/studio-classic" class="guide-card">
                         <div class="guide-card-icon" style="background:var(--danger-tint);color:var(--danger);"><i class="bi bi-pencil-square"></i></div>
                         <div class="guide-card-body">
                             <div class="guide-card-title">스튜디오 사용법</div>
@@ -324,7 +324,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                         </div>
                         <i class="bi bi-arrow-right guide-card-arrow"></i>
                     </a>
-                    <a href="/src/guide/drawing.php" class="guide-card">
+                    <a href="/guide/drawing" class="guide-card">
                         <div class="guide-card-icon" style="background:var(--accent-tint);color:var(--accent);"><i class="bi bi-folder2-open"></i></div>
                         <div class="guide-card-body">
                             <div class="guide-card-title">도면 관리</div>
@@ -332,7 +332,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                         </div>
                         <i class="bi bi-arrow-right guide-card-arrow"></i>
                     </a>
-                    <a href="/src/guide/render.php" class="guide-card">
+                    <a href="/guide/render" class="guide-card">
                         <div class="guide-card-icon" style="background:var(--accent-tint);color:var(--accent);"><i class="bi bi-stars"></i></div>
                         <div class="guide-card-body">
                             <div class="guide-card-title">AI 렌더링</div>
@@ -340,7 +340,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                         </div>
                         <i class="bi bi-arrow-right guide-card-arrow"></i>
                     </a>
-                    <a href="/src/guide/collection.php" class="guide-card">
+                    <a href="/guide/collection" class="guide-card">
                         <div class="guide-card-icon" style="background:var(--accent-tint);color:var(--accent);"><i class="bi bi-collection-fill"></i></div>
                         <div class="guide-card-body">
                             <div class="guide-card-title">컬렉션</div>
@@ -348,7 +348,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                         </div>
                         <i class="bi bi-arrow-right guide-card-arrow"></i>
                     </a>
-                    <a href="/src/guide/account.php" class="guide-card">
+                    <a href="/guide/account" class="guide-card">
                         <div class="guide-card-icon" style="background:var(--accent-tint);color:var(--accent);"><i class="bi bi-person-gear"></i></div>
                         <div class="guide-card-body">
                             <div class="guide-card-title">계정 설정</div>
@@ -356,7 +356,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                         </div>
                         <i class="bi bi-arrow-right guide-card-arrow"></i>
                     </a>
-                    <a href="/src/guide/order.php" class="guide-card">
+                    <a href="/guide/order" class="guide-card">
                         <div class="guide-card-icon" style="background:var(--accent-tint);color:var(--accent);"><i class="bi bi-cart-check"></i></div>
                         <div class="guide-card-body">
                             <div class="guide-card-title">주문</div>
@@ -364,7 +364,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                         </div>
                         <i class="bi bi-arrow-right guide-card-arrow"></i>
                     </a>
-                    <a href="/src/guide/delivery.php" class="guide-card">
+                    <a href="/guide/delivery" class="guide-card">
                         <div class="guide-card-icon" style="background:var(--accent-tint);color:var(--accent);"><i class="bi bi-truck"></i></div>
                         <div class="guide-card-body">
                             <div class="guide-card-title">배송</div>

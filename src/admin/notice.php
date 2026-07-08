@@ -53,7 +53,7 @@ require_admin_role('s');
 
             <div class="oauth-field">
                 <label>링크 URL <span style="color: var(--text);font-weight:400;">(선택)</span></label>
-                <input type="text" id="noticeLink" placeholder="/src/guide/order.php">
+                <input type="text" id="noticeLink" placeholder="/guide/order">
                 <div style="font-size:11px;color: var(--text);margin-top:4px;">입력하면 문구 클릭 시 해당 페이지로 이동합니다.</div>
             </div>
 

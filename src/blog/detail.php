@@ -27,7 +27,7 @@ $legacySlugRedirects = [
 $id   = (int)($_GET['id'] ?? 0);
 $slug = trim($_GET['slug'] ?? '');
 if (isset($legacySlugRedirects[$slug])) {
-    header('Location: /src/blog/' . rawurlencode($legacySlugRedirects[$slug]), true, 301);
+    header('Location: /blog/' . rawurlencode($legacySlugRedirects[$slug]), true, 301);
     exit;
 }
 $post = null;
@@ -47,7 +47,7 @@ try {
         $stmt = $pdo->prepare('SELECT * FROM blog_posts WHERE id=? AND is_active=1');
         $stmt->execute([$id]);
         $post = $stmt->fetch();
-        if ($post) { header('Location: /src/blog/' . rawurlencode($post['slug']), true, 301); exit; }
+        if ($post) { header('Location: /blog/' . rawurlencode($post['slug']), true, 301); exit; }
     }
     if ($post && $post['series_id']) {
         // 시리즈 내 이전/다음 (시간순이 아니라 읽는 순서 기준)
@@ -91,7 +91,7 @@ try {
 } catch (Throwable $e) {
     $post = null;
 }
-if (!$post) { header('Location: /src/blog/'); exit; }
+if (!$post) { header('Location: /blog/'); exit; }
 
 $engineLabels = [
     'classic'  => '정자살(Classic Lattice)',
@@ -127,7 +127,7 @@ $metaImage = $post['thumbnail_url']
     <?php require_once __DIR__ . '/../lib/meta.php'; ?>
     <link rel="icon" type="image/png" href="/src/assets/favicon.png">
     <link rel="apple-touch-icon" href="/src/assets/apple-touch-icon.png">
-    <link rel="canonical" href="<?= htmlspecialchars(SITE_URL . '/src/blog/' . rawurlencode($post['slug'])) ?>">
+    <link rel="canonical" href="<?= htmlspecialchars(SITE_URL . '/blog/' . rawurlencode($post['slug'])) ?>">
     <meta property="og:title" content="<?= htmlspecialchars($post['title']) ?>">
     <meta property="og:description" content="<?= htmlspecialchars($metaDesc) ?>">
     <meta property="og:image" content="<?= htmlspecialchars($metaImage) ?>">
@@ -142,7 +142,7 @@ $metaImage = $post['thumbnail_url']
     <article class="bd-article">
 
         <header class="bd-header">
-            <a href="/src/blog/" class="bd-back">
+            <a href="/blog/" class="bd-back">
                 <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
                     <path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -171,7 +171,7 @@ $metaImage = $post['thumbnail_url']
                     <?php if ($ep['id'] === $post['id']): ?>
                     <span><?= $ep['series_order'] ?>. <?= htmlspecialchars($ep['title']) ?></span>
                     <?php else: ?>
-                    <a href="/src/blog/<?= rawurlencode($ep['slug']) ?>"><?= $ep['series_order'] ?>. <?= htmlspecialchars($ep['title']) ?></a>
+                    <a href="/blog/<?= rawurlencode($ep['slug']) ?>"><?= $ep['series_order'] ?>. <?= htmlspecialchars($ep['title']) ?></a>
                     <?php endif; ?>
                 </li>
                 <?php endforeach; ?>
@@ -196,7 +196,7 @@ $metaImage = $post['thumbnail_url']
 
         <div class="bd-cta">
             <p class="bd-cta-title"><?= htmlspecialchars($post['cta_text'] ?: '평목 스튜디오의 다양한 패턴 디자인 보러가기') ?></p>
-            <a href="/src/collection/" class="bd-cta-btn">컬렉션 보러가기 <i class="bi bi-arrow-right"></i></a>
+            <a href="/collection/" class="bd-cta-btn">컬렉션 보러가기 <i class="bi bi-arrow-right"></i></a>
         </div>
 
     </article>
@@ -204,18 +204,18 @@ $metaImage = $post['thumbnail_url']
     <?php if ($prev || $next || $nextSeries): ?>
     <nav class="bd-pager">
         <?php if ($prev): ?>
-        <a class="bd-pager-link bd-pager-prev" href="/src/blog/<?= rawurlencode($prev['slug']) ?>">
+        <a class="bd-pager-link bd-pager-prev" href="/blog/<?= rawurlencode($prev['slug']) ?>">
             <span class="bd-pager-label">이전 편</span>
             <span class="bd-pager-title"><?= htmlspecialchars($prev['title']) ?></span>
         </a>
         <?php else: ?><span></span><?php endif; ?>
         <?php if ($next): ?>
-        <a class="bd-pager-link bd-pager-next" href="/src/blog/<?= rawurlencode($next['slug']) ?>">
+        <a class="bd-pager-link bd-pager-next" href="/blog/<?= rawurlencode($next['slug']) ?>">
             <span class="bd-pager-label">다음 편</span>
             <span class="bd-pager-title"><?= htmlspecialchars($next['title']) ?></span>
         </a>
         <?php elseif ($nextSeries): ?>
-        <a class="bd-pager-link bd-pager-next" href="/src/blog/<?= rawurlencode($nextSeries['slug']) ?>">
+        <a class="bd-pager-link bd-pager-next" href="/blog/<?= rawurlencode($nextSeries['slug']) ?>">
             <span class="bd-pager-label">다음 시리즈 · <?= htmlspecialchars($nextSeries['series_name']) ?> 1편</span>
             <span class="bd-pager-title"><?= htmlspecialchars($nextSeries['title']) ?></span>
         </a>
@@ -228,7 +228,7 @@ $metaImage = $post['thumbnail_url']
 
 <script>
 (function () {
-    const shareUrl   = <?= json_encode(SITE_URL . '/src/blog/' . rawurlencode($post['slug'])) ?>;
+    const shareUrl   = <?= json_encode(SITE_URL . '/blog/' . rawurlencode($post['slug'])) ?>;
     const shareTitle = <?= json_encode($post['title']) ?>;
 
     function showToast(msg) {

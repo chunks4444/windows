@@ -13,7 +13,7 @@ if (!empty($blogEngineKey)) {
     }
     if ($blogEngineLinkPost):
 ?>
-<a class="pm-engine-story-link" href="/src/blog/<?= rawurlencode($blogEngineLinkPost['slug']) ?>" title="<?= htmlspecialchars($blogEngineLinkPost['title']) ?>">
+<a class="pm-engine-story-link" href="/blog/<?= rawurlencode($blogEngineLinkPost['slug']) ?>" title="<?= htmlspecialchars($blogEngineLinkPost['title']) ?>">
     <i class="bi bi-book"></i> 이 살의 이야기
 </a>
 <?php endif; } ?>
