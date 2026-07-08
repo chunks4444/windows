@@ -143,7 +143,7 @@ body {
 /* ── 주문내역 탭 ──────────────────────────────── */
 .ord-list { display: flex; flex-direction: column; gap: 10px; }
 .ord-row {
-    display: grid; grid-template-columns: 56px 1fr 90px auto; align-items: center; gap: 14px;
+    display: grid; grid-template-columns: 56px 1fr 92px 80px; align-items: center; gap: 14px;
     padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--r-sm, 8px);
     cursor: pointer; transition: border-color .15s;
 }
@@ -153,8 +153,11 @@ body {
 .ord-row-main { min-width: 0; }
 .ord-row-title { font-size: 14px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ord-row-sub { font-size: 12px; color: var(--text); opacity: .65; margin-top: 2px; }
+/* 버튼/배지 칸을 고정폭으로 두고 안에서 가운데 정렬 — 라벨 글자 수가 달라도(수정요청 vs 취소) 모든 행이 같은 위치에 정렬됨 */
+.ord-row .ord-modal-btn { width: 100%; padding: 0 6px; text-align: center; }
+.ord-row .ord-status-pill { width: 100%; text-align: center; }
 @media (max-width: 560px) {
-    .ord-row { grid-template-columns: 44px 1fr auto; }
+    .ord-row { grid-template-columns: 44px 1fr 80px; }
     .ord-row .ord-modal-btn { display: none; }
 }
 /* 관리자 주문 목록의 .ord-status-badge(src/css/admin/orders.css)와 박스 모양 공유, 색상만 각자 정의 */
