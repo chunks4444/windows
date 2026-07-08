@@ -385,6 +385,11 @@
             return;
         }
         const { engine, getSpec, getDrawingId, getTitle, getThumbnail, getVersionLabel, onLocked } = opts;
+        // 저장 안 된 도면으로 주문하면 drawing_id 없이 접수돼 도면관리에서 잠금/연결이 전혀 안 됨 — 먼저 저장하도록 안내
+        if (!getDrawingId()) {
+            pmAlert('먼저 도면을 저장해주세요.', { sub: '저장 후 주문하셔야 도면관리에서 이 주문과 연결됩니다.', type: 'danger' });
+            return;
+        }
         const headers = { Authorization: 'Bearer ' + token };
         Promise.all([
             fetch('/src/api/auth/profile.php', { headers }).then(r => r.json()),

@@ -178,12 +178,14 @@ async function lazyLoadThumbnails(drawings) {
     } catch {}
 }
 
-function showDeleteModal(desc, onConfirm) {
+function showDeleteModal(desc, onConfirm, { title, confirmText } = {}) {
     const modal   = document.getElementById('dbDeleteModal');
     const descEl  = document.getElementById('dbDeleteModalDesc');
     const confirm = document.getElementById('dbDeleteModalConfirm');
     const cancel  = document.getElementById('dbDeleteModalCancel');
 
+    document.getElementById('dbDeleteModalTitle').textContent = title ?? '삭제하시겠습니까?';
+    confirm.textContent = confirmText ?? '삭제';
     descEl.textContent = desc;
     modal.style.display = 'flex';
 
@@ -724,7 +726,10 @@ function openOrderModal(o) {
     const cfg = TYPE_CONFIG[o.engine];
     document.getElementById('dbOrderModalTitle').textContent = `주문번호 #${o.id} · ${cfg?.label || o.engine} · ${o.title || '(제목 없음)'}`;
 
-    let html = `<div style="margin-bottom:14px;"><span class="ord-status-pill" data-tone="${st.tone}">${st.label}</span></div>`;
+    let html = `<div style="margin-bottom:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <span class="ord-status-pill" data-tone="${st.tone}">${st.label}</span>
+        ${o.drawing_id && o.title ? `<button class="db-auth-btn" style="padding:4px 12px;font-size:12px;" onclick="openDrawing('${escAttr(o.engine)}','${escAttr(o.title)}')">도면 보기</button>` : ''}
+    </div>`;
 
     if (o.status === 'revision_requested' && o.revision_note) {
         html += `<div class="ord-modal-note"><strong>수정요청 사유</strong><p>${escHtml(o.revision_note)}</p></div>`;
@@ -741,8 +746,32 @@ function openOrderModal(o) {
         <div><span>최근 처리일</span>${fmtOrderDatetime(o.reviewed_at)}</div>
     </div>`;
 
+    if (['pending_review', 'revision_requested'].includes(o.status)) {
+        html += `<div style="margin-top:16px;text-align:right;">
+            <button class="db-card-delete" style="position:static;width:auto;height:auto;padding:6px 14px;border-radius:6px;" onclick="cancelOrder(${o.id})">주문 취소</button>
+        </div>`;
+    }
+
     document.getElementById('dbOrderModalBody').innerHTML = html;
     document.getElementById('dbOrderModal').style.display = 'flex';
+}
+
+function cancelOrder(id) {
+    showDeleteModal(
+        '취소 후에는 되돌릴 수 없습니다.',
+        async () => {
+            const res  = await fetch('/src/api/orders/cancel.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + _token() },
+                body: JSON.stringify({ id }),
+            });
+            const data = await res.json();
+            if (!res.ok) { alert(data.error || '취소에 실패했습니다.'); return; }
+            document.getElementById('dbOrderModal').style.display = 'none';
+            loadOrders();
+        },
+        { title: '주문을 취소하시겠습니까?', confirmText: '취소하기' }
+    );
 }
 
 document.getElementById('dbOrderModal')?.addEventListener('click', e => {
