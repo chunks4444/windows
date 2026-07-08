@@ -710,7 +710,7 @@ function loadOrders() {
                         <div class="ord-row-title">주문번호 #${o.id} · ${(cfg?.label || o.engine)} · ${escHtml(o.title || '(제목 없음)')}</div>
                         <div class="ord-row-sub">주문일 ${o.created_at ? o.created_at.slice(0, 10) : '—'}${o.due_date ? ' · 납기희망 ' + o.due_date : ''}</div>
                     </div>
-                    ${o.drawing_id && o.title ? `<button class="ord-modal-btn" onclick="event.stopPropagation(); openDrawing('${escAttr(o.engine)}','${escAttr(o.title)}')">도면 보기</button>` : ''}
+                    ${o.drawing_id && o.title ? `<button class="ord-modal-btn" onclick="event.stopPropagation(); openDrawing('${escAttr(o.engine)}','${escAttr(o.title)}')">도면 보기</button>` : '<span></span>'}
                     <span class="ord-status-pill" data-tone="${st.tone}">${st.label}</span>
                 </div>`;
             }).join('') + '</div>';
