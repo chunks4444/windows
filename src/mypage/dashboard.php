@@ -126,8 +126,8 @@ header('Content-Type: text/html; charset=UTF-8');
     </div>
 </div>
 
-<script src="/src/js/order-status-labels.js"></script>
-<script src="/src/js/dashboard.js"></script>
+<script src="/src/js/order-status-labels.js?v=<?= md5_file(__DIR__ . '/../../js/order-status-labels.js') ?>"></script>
+<script src="/src/js/dashboard.js?v=<?= md5_file(__DIR__ . '/../../js/dashboard.js') ?>"></script>
 <script>
 if (location.hash === '#boards' || location.hash === '#orders') {
     const tab = location.hash.slice(1);
