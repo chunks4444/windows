@@ -258,7 +258,7 @@ body { background: #fff; }
     border-radius: 50%;
     border: none;
     background: rgba(var(--bg-rgb), 0.9);
-    color: var(--text-muted);
+    color: var(--text);
     display: flex;
     align-items: center;
     justify-content: center;
