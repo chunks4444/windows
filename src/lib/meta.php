@@ -40,6 +40,7 @@ const SITE_DEFAULT_DESC  = '평목 공방이 만드는 한옥 살창·창호 디
 const SITE_DEFAULT_IMAGE = SITE_URL . '/src/assets/logo.png';
 
 function meta_tags(): void {
+    echo '<meta name="google-site-verification" content="lNxBKwUVRTR6ewMlMqeNWIn_DfCn3ItScYvG-l6Yxr0">' . "\n    ";
     echo '<link rel="icon" type="image/png" href="/src/assets/favicon.png">' . "\n    ";
     echo '<link rel="apple-touch-icon" href="/src/assets/apple-touch-icon.png">' . "\n    ";
     $m = page_meta();
