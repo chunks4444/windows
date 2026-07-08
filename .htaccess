@@ -17,7 +17,10 @@ SetEnv PMOK_JWT_SECRET "새로운-강력한-시크릿"
 RewriteCond %{THE_REQUEST} \s/src/(blog|portfolio|collection|guide|company|mypage)(/[^\s?]*)?\.php(\?[^\s]*)?\s [NC]
 RewriteRule ^src/(blog|portfolio|collection|guide|company|mypage)(.*)\.php$ /$1$2 [R=301,L,QSA]
 
+# src/guide/guide.css처럼 페이지 폴더 안에 섞여 있는 정적 자산은 리다이렉트 대상에서 제외
+# (그대로 /src/... 경로로 서빙되어야 함 — 아니면 아래 페이지 규칙이 .확장자 있는 파일명을 안 받아줘서 404남)
 RewriteCond %{THE_REQUEST} \s/src/(blog|portfolio|collection|guide|company|mypage)([/?][^\s]*)?\s [NC]
+RewriteCond %{THE_REQUEST} !\.(css|js|map|png|jpe?g|gif|svg|webp|ico|woff2?|ttf)(\?[^\s]*)?\s [NC]
 RewriteRule ^src/(blog|portfolio|collection|guide|company|mypage)(.*)$ /$1$2 [R=301,L,QSA]
 
 # 섹션 홈(디렉토리 인덱스)
