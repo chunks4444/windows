@@ -726,11 +726,11 @@ function openOrderModal(o) {
     const cfg = TYPE_CONFIG[o.engine];
     document.getElementById('dbOrderModalTitle').textContent = `주문번호 #${o.id} · ${cfg?.label || o.engine} · ${o.title || '(제목 없음)'}`;
 
-    let html = `<div style="margin-bottom:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-        <span class="ord-status-pill" data-tone="${st.tone}">${st.label}</span>
-        ${o.drawing_id && o.title ? `<button class="db-auth-btn" style="padding:4px 12px;font-size:12px;" onclick="openDrawing('${escAttr(o.engine)}','${escAttr(o.title)}')">도면 보기</button>` : ''}
-    </div>`;
+    let html = `<div style="margin-bottom:14px;"><span class="ord-status-pill" data-tone="${st.tone}">${st.label}</span></div>`;
 
+    if (o.memo) {
+        html += `<div class="ord-modal-note"><strong>요청사항</strong><p>${escHtml(o.memo)}</p></div>`;
+    }
     if (o.status === 'revision_requested' && o.revision_note) {
         html += `<div class="ord-modal-note"><strong>수정요청 사유</strong><p>${escHtml(o.revision_note)}</p></div>`;
     }
@@ -740,16 +740,24 @@ function openOrderModal(o) {
         }
     }
 
+    const won = n => Number(n).toLocaleString() + '원';
     html += `<div class="ord-modal-meta">
         <div><span>주문일</span>${fmtOrderDatetime(o.created_at)}</div>
         <div><span>납기희망일</span>${o.due_date || '—'}</div>
         <div><span>최근 처리일</span>${fmtOrderDatetime(o.reviewed_at)}</div>
+        <div><span>예상견적</span>${o.estimated_price ? won(o.estimated_price) : '—'}</div>
+        ${o.final_price ? `<div><span>확정 가격</span>${won(o.final_price)}</div>` : ''}
     </div>`;
 
+    const actions = [];
+    if (o.drawing_id && o.title) {
+        actions.push(`<button class="ord-modal-btn" onclick="openDrawing('${escAttr(o.engine)}','${escAttr(o.title)}')">도면 보기</button>`);
+    }
     if (['pending_review', 'revision_requested'].includes(o.status)) {
-        html += `<div style="margin-top:16px;text-align:right;">
-            <button class="db-card-delete" style="position:static;width:auto;height:auto;padding:6px 14px;border-radius:6px;" onclick="cancelOrder(${o.id})">주문 취소</button>
-        </div>`;
+        actions.push(`<button class="ord-modal-btn ord-modal-btn-danger" onclick="cancelOrder(${o.id})">주문 취소</button>`);
+    }
+    if (actions.length) {
+        html += `<div class="ord-modal-actions">${actions.join('')}</div>`;
     }
 
     document.getElementById('dbOrderModalBody').innerHTML = html;

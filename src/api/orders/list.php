@@ -13,6 +13,7 @@ $uid = (int) $payload['sub'];
 
 $stmt = db()->prepare(
     'SELECT id, drawing_id, engine, title, version_label, thumbnail, due_date, status,
+            memo, estimated_price, final_price,
             revision_note, tracking_carrier, tracking_number,
             created_at, reviewed_at, shipped_at, delivered_at
      FROM orders
