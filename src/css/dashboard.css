@@ -204,7 +204,7 @@ body {
     transition: opacity 0.15s, background 0.15s, color 0.15s;
 }
 .db-card:hover .db-card-copy { opacity: 1; }
-.db-card-copy:hover { background: var(--accent-tint); color: var(--accent); }
+.db-card-copy:hover { background: var(--accent); color: var(--bg); }
 
 .db-copy-input {
     width: 100%;
@@ -243,8 +243,8 @@ body {
 }
 
 .db-card-delete:hover {
-    background: var(--danger-tint);
-    color: var(--danger);
+    background: var(--danger);
+    color: var(--bg);
 }
 
 /* ── 썸네일 ──────────────────────────────────── */

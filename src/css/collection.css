@@ -266,7 +266,7 @@ body { background: #fff; }
     cursor: pointer;
     transition: background 0.12s, color 0.12s, transform 0.12s;
 }
-.lib-icon-btn:hover { background: var(--bg); transform: scale(1.08); }
+.lib-icon-btn:hover { background: var(--accent); color: var(--bg); transform: scale(1.08); }
 
 .lib-like-btn.liked { color: var(--danger); background: var(--bg); }
 .lib-like-btn.liked i { animation: heartPop 0.25s ease; }
