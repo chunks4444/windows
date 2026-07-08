@@ -94,9 +94,9 @@ $shareUrl   = SITE_URL . '/src/collection/detail.php?slug=' . rawurlencode($patt
     </div>
 
     <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button id="btnShare" class="lib-icon-btn" title="공유하기"><i class="bi bi-share"></i></button>
-        <a id="btnShareX" class="lib-icon-btn" href="#" target="_blank" rel="noopener" title="X에 공유"><i class="bi bi-twitter-x"></i></a>
-        <a id="btnShareThreads" class="lib-icon-btn" href="#" target="_blank" rel="noopener" title="스레드에 공유"><i class="bi bi-threads"></i></a>
+        <button id="btnShare" class="lib-icon-btn" style="color:var(--text);" title="공유하기"><i class="bi bi-share"></i></button>
+        <a id="btnShareX" class="lib-icon-btn" style="color:var(--text);" href="#" target="_blank" rel="noopener" title="X에 공유"><i class="bi bi-twitter-x"></i></a>
+        <a id="btnShareThreads" class="lib-icon-btn" style="color:var(--text);" href="#" target="_blank" rel="noopener" title="스레드에 공유"><i class="bi bi-threads"></i></a>
     </div>
 </div>
 

@@ -43,7 +43,7 @@ body { background: #fff; }
     width: 34px; height: 34px;
     display: inline-flex; align-items: center; justify-content: center;
     background: rgba(var(--text-rgb), 0.06);
-    color: var(--text-muted);
+    color: var(--text);
     border: none;
     border-radius: 50%;
     font-size: var(--fs-15);
