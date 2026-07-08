@@ -260,6 +260,51 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
             </div>
         </section>
 
+        <!-- Guide (사용법과 겹치는 4개 카드는 제거, 나머지만 사용법 바로 옆에 배치) -->
+        <section class="guide-section">
+            <div class="container">
+                <div class="mb-4">
+                    <p class="ab-section-label">더 알아보기</p>
+                    <h2 class="ab-section-title">그 외 궁금한 점</h2>
+                    <p class="ab-section-body">평목 소개부터 컬렉션, 계정, 배송까지 자주 찾는 도움말을 모았습니다.</p>
+                </div>
+                <div class="guide-cards-grid">
+                    <a href="/guide/intro" class="guide-card">
+                        <div class="guide-card-icon" style="background:var(--accent-tint);color:var(--accent);"><i class="bi bi-info-circle-fill"></i></div>
+                        <div class="guide-card-body">
+                            <div class="guide-card-title">평목 소개</div>
+                            <div class="guide-card-desc">평목이 무엇인지, 어떻게 시작하는지 알아보세요.</div>
+                        </div>
+                        <i class="bi bi-arrow-right guide-card-arrow"></i>
+                    </a>
+                    <a href="/guide/collection" class="guide-card">
+                        <div class="guide-card-icon" style="background:var(--accent-tint);color:var(--accent);"><i class="bi bi-collection-fill"></i></div>
+                        <div class="guide-card-body">
+                            <div class="guide-card-title">컬렉션</div>
+                            <div class="guide-card-desc">공개 라이브러리 패턴을 열람하고 내 보드에 저장하세요.</div>
+                        </div>
+                        <i class="bi bi-arrow-right guide-card-arrow"></i>
+                    </a>
+                    <a href="/guide/account" class="guide-card">
+                        <div class="guide-card-icon" style="background:var(--accent-tint);color:var(--accent);"><i class="bi bi-person-gear"></i></div>
+                        <div class="guide-card-body">
+                            <div class="guide-card-title">계정 설정</div>
+                            <div class="guide-card-desc">프로필, 비밀번호, 회사 정보를 관리하는 방법을 안내합니다.</div>
+                        </div>
+                        <i class="bi bi-arrow-right guide-card-arrow"></i>
+                    </a>
+                    <a href="/guide/delivery" class="guide-card">
+                        <div class="guide-card-icon" style="background:var(--accent-tint);color:var(--accent);"><i class="bi bi-truck"></i></div>
+                        <div class="guide-card-body">
+                            <div class="guide-card-title">배송</div>
+                            <div class="guide-card-desc">택배·화물 배송 방법과 반품·교환 안내를 확인하세요.</div>
+                        </div>
+                        <i class="bi bi-arrow-right guide-card-arrow"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
         <!-- Blog -->
         <?php if ($latestPosts): ?>
         <section class="home-blog-section">
@@ -299,82 +344,6 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
             </div>
         </section>
         <?php endif; ?>
-        <!-- Guide -->
-        <section class="guide-section">
-            <div class="container">
-                <div class="mb-4">
-                    <p class="ab-section-label">가이드</p>
-                    <h2 class="ab-section-title">평목 스튜디오 가이드</h2>
-                    <p class="ab-section-body">처음 사용하시나요? 단계별 가이드에서 모든 기능을 확인하세요.</p>
-                </div>
-                <div class="guide-cards-grid">
-                    <a href="/guide/intro" class="guide-card">
-                        <div class="guide-card-icon" style="background:var(--accent-tint);color:var(--accent);"><i class="bi bi-info-circle-fill"></i></div>
-                        <div class="guide-card-body">
-                            <div class="guide-card-title">평목 소개</div>
-                            <div class="guide-card-desc">평목이 무엇인지, 어떻게 시작하는지 알아보세요.</div>
-                        </div>
-                        <i class="bi bi-arrow-right guide-card-arrow"></i>
-                    </a>
-                    <a href="/guide/studio-classic" class="guide-card">
-                        <div class="guide-card-icon" style="background:var(--danger-tint);color:var(--danger);"><i class="bi bi-pencil-square"></i></div>
-                        <div class="guide-card-body">
-                            <div class="guide-card-title">스튜디오 사용법</div>
-                            <div class="guide-card-desc">6가지 격자 패턴 엔진의 상세 사용 방법을 안내합니다.</div>
-                        </div>
-                        <i class="bi bi-arrow-right guide-card-arrow"></i>
-                    </a>
-                    <a href="/guide/drawing" class="guide-card">
-                        <div class="guide-card-icon" style="background:var(--accent-tint);color:var(--accent);"><i class="bi bi-folder2-open"></i></div>
-                        <div class="guide-card-body">
-                            <div class="guide-card-title">도면 관리</div>
-                            <div class="guide-card-desc">도면 저장, 버전 관리, PDF·PNG 내보내기 방법을 안내합니다.</div>
-                        </div>
-                        <i class="bi bi-arrow-right guide-card-arrow"></i>
-                    </a>
-                    <a href="/guide/render" class="guide-card">
-                        <div class="guide-card-icon" style="background:var(--accent-tint);color:var(--accent);"><i class="bi bi-stars"></i></div>
-                        <div class="guide-card-body">
-                            <div class="guide-card-title">AI 렌더링</div>
-                            <div class="guide-card-desc">배경 이미지와 도면을 합성해 AI로 공간을 시각화합니다.</div>
-                        </div>
-                        <i class="bi bi-arrow-right guide-card-arrow"></i>
-                    </a>
-                    <a href="/guide/collection" class="guide-card">
-                        <div class="guide-card-icon" style="background:var(--accent-tint);color:var(--accent);"><i class="bi bi-collection-fill"></i></div>
-                        <div class="guide-card-body">
-                            <div class="guide-card-title">컬렉션</div>
-                            <div class="guide-card-desc">공개 라이브러리 패턴을 열람하고 내 보드에 저장하세요.</div>
-                        </div>
-                        <i class="bi bi-arrow-right guide-card-arrow"></i>
-                    </a>
-                    <a href="/guide/account" class="guide-card">
-                        <div class="guide-card-icon" style="background:var(--accent-tint);color:var(--accent);"><i class="bi bi-person-gear"></i></div>
-                        <div class="guide-card-body">
-                            <div class="guide-card-title">계정 설정</div>
-                            <div class="guide-card-desc">프로필, 비밀번호, 회사 정보를 관리하는 방법을 안내합니다.</div>
-                        </div>
-                        <i class="bi bi-arrow-right guide-card-arrow"></i>
-                    </a>
-                    <a href="/guide/order" class="guide-card">
-                        <div class="guide-card-icon" style="background:var(--accent-tint);color:var(--accent);"><i class="bi bi-cart-check"></i></div>
-                        <div class="guide-card-body">
-                            <div class="guide-card-title">주문</div>
-                            <div class="guide-card-desc">완성된 도면으로 제작을 의뢰하는 방법을 안내합니다.</div>
-                        </div>
-                        <i class="bi bi-arrow-right guide-card-arrow"></i>
-                    </a>
-                    <a href="/guide/delivery" class="guide-card">
-                        <div class="guide-card-icon" style="background:var(--accent-tint);color:var(--accent);"><i class="bi bi-truck"></i></div>
-                        <div class="guide-card-body">
-                            <div class="guide-card-title">배송</div>
-                            <div class="guide-card-desc">택배·화물 배송 방법과 반품·교환 안내를 확인하세요.</div>
-                        </div>
-                        <i class="bi bi-arrow-right guide-card-arrow"></i>
-                    </a>
-                </div>
-            </div>
-        </section>
 
         <!-- FAQ -->
         <?php if ($faqVisible): ?>
