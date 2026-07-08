@@ -152,6 +152,10 @@ $metaImage = $post['thumbnail_url']
             <time class="bd-date" datetime="<?= date('Y-m-d', strtotime($post['created_at'])) ?>">
                 <?= date('Y.m.d', strtotime($post['created_at'])) ?>
             </time>
+            <div class="bd-share-row">
+                <button id="btnShare" type="button" class="bd-share-btn"><i class="bi bi-share"></i> 공유하기</button>
+                <a id="btnShareX" class="bd-share-btn" href="#" target="_blank" rel="noopener"><i class="bi bi-twitter-x"></i> X에 공유</a>
+            </div>
         </header>
 
         <?php if ($seriesInfo): ?>
@@ -218,6 +222,40 @@ $metaImage = $post['thumbnail_url']
     </nav>
     <?php endif; ?>
 </div>
+
+<div id="bdToast" class="bd-toast"></div>
+
+<script>
+(function () {
+    const shareUrl   = <?= json_encode(SITE_URL . '/src/blog/' . rawurlencode($post['slug'])) ?>;
+    const shareTitle = <?= json_encode($post['title']) ?>;
+
+    function showToast(msg) {
+        const t = document.getElementById('bdToast');
+        t.textContent = msg;
+        t.classList.add('visible');
+        setTimeout(() => t.classList.remove('visible'), 2400);
+    }
+
+    document.getElementById('btnShare').addEventListener('click', async () => {
+        if (navigator.share) {
+            try { await navigator.share({ title: shareTitle, text: shareTitle, url: shareUrl }); }
+            catch (e) { /* 사용자가 공유 취소한 경우 등 — 무시 */ }
+            return;
+        }
+        try {
+            await navigator.clipboard.writeText(shareUrl);
+            showToast('링크가 복사되었습니다.');
+        } catch (e) {
+            showToast('링크 복사에 실패했습니다.');
+        }
+    });
+
+    document.getElementById('btnShareX').href =
+        'https://twitter.com/intent/tweet?url=' + encodeURIComponent(shareUrl) + '&text=' + encodeURIComponent(shareTitle);
+})();
+</script>
+
 <?php include __DIR__ . '/../components/footer.php'; ?>
 </body>
 </html>

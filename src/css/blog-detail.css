@@ -30,8 +30,26 @@ body { background: #fff; }
 .bd-date {
     display: block;
     font-size: var(--fs-13); color: var(--text);
+    margin-bottom: .9rem;
+}
+
+/* ── 공유 버튼 ──────────────────────────────────────────── */
+.bd-share-row {
+    display: flex; align-items: center; gap: .5rem;
     margin-bottom: 1.75rem;
 }
+.bd-share-btn {
+    display: inline-flex; align-items: center; gap: .35rem;
+    background: transparent; color: var(--text-muted);
+    border: 1.5px solid var(--border);
+    font-size: var(--fs-13); font-weight: 600;
+    padding: .4rem .9rem;
+    border-radius: 999px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: border-color .18s, color .18s;
+}
+.bd-share-btn:hover { border-color: var(--accent); color: var(--accent); }
 
 .bd-divider {
     border: none;
@@ -164,6 +182,29 @@ body { background: #fff; }
     transition: background .18s, color .18s;
 }
 .bd-cta-btn:hover { background: var(--accent); color: var(--bg); }
+
+/* ── 공유 토스트 ────────────────────────────────────────── */
+.bd-toast {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%) translateY(12px);
+    background: var(--text);
+    color: var(--bg);
+    font-size: var(--fs-14);
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: 999px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
+    white-space: nowrap;
+    z-index: 9999;
+}
+.bd-toast.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
 
 /* ── 이전/다음 글 ───────────────────────────────────────── */
 .bd-pager {
