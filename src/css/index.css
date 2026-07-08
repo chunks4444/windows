@@ -656,7 +656,7 @@ body { font-weight: 900; }
 }
 
 .guide-card-arrow {
-    color: var(--border);
+    color: var(--text);
     font-size: var(--fs-16);
     flex-shrink: 0;
     transition: color 0.2s, transform 0.2s;
