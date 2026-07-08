@@ -55,6 +55,9 @@ RewriteRule ^mypage/([a-zA-Z][a-zA-Z0-9_-]*)/?$ src/mypage/$1.php [L,QSA]
 # 동적 sitemap.xml
 RewriteRule ^sitemap\.xml$ /sitemap.php [L]
 
+# 블로그 RSS 피드
+RewriteRule ^rss\.xml$ /rss.php [L]
+
 # 도면 썸네일 확장자 없는 주소 지원: /uploads/drawing_thumbs/{name} → {name}.png
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^uploads/drawing_thumbs/([A-Za-z0-9_]+)$ uploads/drawing_thumbs/$1.png [L]
