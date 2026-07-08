@@ -153,7 +153,6 @@ $navStudioIcons = [
                         </svg>
                         도면관리
                     </a></li>
-                    <li><a class="dropdown-item" href="/src/mypage/dashboard.php#orders"><i class="bi bi-receipt me-1"></i>주문내역</a></li>
                 </ul>
             </li>
             <li class="nav-item">
@@ -255,10 +254,6 @@ $navStudioIcons = [
                 <a class="pm-dw-link" href="/src/mypage/dashboard.php">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>
                     <span>도면관리</span>
-                </a>
-                <a class="pm-dw-link" href="/src/mypage/dashboard.php#orders">
-                    <i class="bi bi-receipt"></i>
-                    <span>주문내역</span>
                 </a>
             </div>
         </div>
