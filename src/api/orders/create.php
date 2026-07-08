@@ -9,7 +9,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 require_once __DIR__ . '/../../lib/jwt.php';
 require_once __DIR__ . '/../../lib/db.php';
-require_once __DIR__ . '/../../lib/drawing.php';
 require_once __DIR__ . '/../../lib/mailer.php';
 
 $payload = jwt_from_request();
@@ -90,10 +89,7 @@ $stmt->execute([
 ]);
 $orderId = (int) $pdo->lastInsertId();
 
-// 견적요청이 접수된 도면은 편집/삭제 불가하도록 잠금
-if ($drawingId) {
-    Drawing::lock($drawingId, $userId);
-}
+// 견적요청이 접수된 도면은 status='pending_review'인 동안 자동으로 편집/삭제 불가 (Drawing::lockedAtExpr 참고)
 
 // 관리자(슈퍼/관리자 권한) 계정의 이메일로 발송 — 고정 주소 대신 실제 등록된 관리자에게 전달
 $adminEmails = $pdo->query("SELECT email FROM users WHERE role IN ('s','m') AND withdrawn_at IS NULL")->fetchAll(PDO::FETCH_COLUMN);

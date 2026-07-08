@@ -16,6 +16,8 @@
 -- ALTER TABLE users ADD COLUMN last_login_at DATETIME NULL COMMENT '최종 접속일시' AFTER created_at;
 -- ALTER TABLE users ADD COLUMN withdrawn_at DATETIME NULL COMMENT '탈퇴일시 (NULL=정상, NOT NULL=탈퇴)' AFTER last_login_at;
 -- ALTER TABLE drawings ADD COLUMN locked_at DATETIME NULL COMMENT '잠금일시 (NULL=편집가능, 견적요청 중이면 잠김)' AFTER work_time_sec;
+-- 2026-07-08 locked_at 폐지 — 도면 잠금을 orders.status에서 파생시키도록 전환(Drawing::lockedAtExpr 참고), 물리 컬럼 삭제
+-- ALTER TABLE drawings DROP COLUMN locked_at;
 -- ALTER TABLE drawings ADD COLUMN pattern_category VARCHAR(40) NULL DEFAULT NULL COMMENT '전통 창호 패턴 분류 — pattern_categories.code 참조' AFTER title;
 -- CREATE TABLE pattern_categories (code VARCHAR(40) NOT NULL, engine VARCHAR(20) NOT NULL DEFAULT 'all', name VARCHAR(40) NOT NULL, sort_order TINYINT UNSIGNED NOT NULL DEFAULT 0, is_active TINYINT(1) NOT NULL DEFAULT 1, PRIMARY KEY (code, engine)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 -- ALTER TABLE blog_posts ADD COLUMN view_count INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '조회수 (방문자 쿠키 기준 24시간 중복 방지)' AFTER is_active;
@@ -85,7 +87,6 @@ CREATE TABLE IF NOT EXISTS drawings (
     updated_at    DATETIME        NOT NULL DEFAULT NOW() ON UPDATE NOW() COMMENT '최종 저장일시',
     thumbnail     MEDIUMTEXT      NULL COMMENT '썸네일 이미지 (data:image/jpeg;base64,…)',
     work_time_sec INT UNSIGNED    NOT NULL DEFAULT 0 COMMENT '누적 작업 시간(초)',
-    locked_at     DATETIME        NULL COMMENT '잠금일시 (NULL=편집가능, 견적요청 중이면 잠김)',
     PRIMARY KEY (id),
     UNIQUE KEY uq_drawings_user_type_title (user_id, type, title),
     KEY idx_drawings_user_type (user_id, type),
@@ -391,6 +392,20 @@ INSERT IGNORE INTO color_swatches (group_name, sort_order, code, name, hex) VALU
 -- ALTER TABLE orders ADD COLUMN final_price           DECIMAL(12,2) NULL COMMENT '서버가 계산/확정한 공식 가격' AFTER estimated_price;
 -- ALTER TABLE orders ADD COLUMN price_breakdown       MEDIUMTEXT    NULL COMMENT '항목별 가격 산출 내역 (JSON)' AFTER final_price;
 -- ALTER TABLE orders ADD COLUMN price_formula_version VARCHAR(20)   NULL COMMENT '계산에 사용된 가격 공식 버전' AFTER price_breakdown;
+-- 2026-07-08 가격 자동계산 공식 확정 전까지, 관리자가 고객과 협의해 확정한 가격을 수기로 입력하는 용도
+-- ALTER TABLE orders ADD COLUMN price_note TEXT NULL COMMENT '가격 협의 메모(관리자가 고객과 협의한 확정가격 근거)' AFTER final_price;
+-- 2026-07-08 주문 상태 모델 확장(견적검토~배송완료 9단계) — 도면 잠금은 status에서 파생(src/lib/drawing.php 참고)
+-- ALTER TABLE orders MODIFY COLUMN status ENUM(
+--     'pending_review','revision_requested','approved','quote_finalized',
+--     'deposit_paid','in_production','production_done','shipped','delivered','cancelled'
+-- ) NOT NULL DEFAULT 'pending_review' COMMENT '처리 상태';
+-- ALTER TABLE orders ADD COLUMN reviewed_by      INT UNSIGNED NULL COMMENT '검토한 관리자 user_id' AFTER status;
+-- ALTER TABLE orders ADD COLUMN reviewed_at      DATETIME     NULL COMMENT '검토 시각' AFTER reviewed_by;
+-- ALTER TABLE orders ADD COLUMN revision_note    TEXT         NULL COMMENT '수정요청 사유(관리자->고객)' AFTER reviewed_at;
+-- ALTER TABLE orders ADD COLUMN tracking_carrier VARCHAR(50)  NULL COMMENT '택배사' AFTER revision_note;
+-- ALTER TABLE orders ADD COLUMN tracking_number  VARCHAR(50)  NULL COMMENT '운송장번호' AFTER tracking_carrier;
+-- ALTER TABLE orders ADD COLUMN shipped_at       DATETIME     NULL COMMENT '발송 시각' AFTER tracking_number;
+-- ALTER TABLE orders ADD COLUMN delivered_at     DATETIME     NULL COMMENT '배송완료 시각' AFTER shipped_at;
 
 -- 제작 주문 (엔진 페이지의 "주문" 버튼에서 생성)
 -- customer_name/customer_phone/company_name은 주문 시점 users 테이블 값의 스냅샷
@@ -415,9 +430,20 @@ CREATE TABLE IF NOT EXISTS orders (
     spec_json           MEDIUMTEXT   NULL COMMENT '주문 시점 도면 사양 스냅샷 (JSON)',
     estimated_price     DECIMAL(12,2) NULL COMMENT '주문 시점 클라이언트 실시간 추정가 (참고용)',
     final_price         DECIMAL(12,2) NULL COMMENT '서버가 계산/확정한 공식 가격',
+    price_note          TEXT         NULL COMMENT '가격 협의 메모(관리자가 고객과 협의한 확정가격 근거)',
     price_breakdown     MEDIUMTEXT   NULL COMMENT '항목별 가격 산출 내역 (JSON)',
     price_formula_version VARCHAR(20) NULL COMMENT '계산에 사용된 가격 공식 버전',
-    status              ENUM('pending','confirmed','done','cancelled') NOT NULL DEFAULT 'pending' COMMENT '처리 상태',
+    status              ENUM(
+        'pending_review','revision_requested','approved','quote_finalized',
+        'deposit_paid','in_production','production_done','shipped','delivered','cancelled'
+    ) NOT NULL DEFAULT 'pending_review' COMMENT '처리 상태 (도면 잠금은 이 값에서 파생됨, src/lib/drawing.php)',
+    reviewed_by         INT UNSIGNED NULL COMMENT '검토한 관리자 user_id',
+    reviewed_at         DATETIME     NULL COMMENT '검토 시각',
+    revision_note       TEXT         NULL COMMENT '수정요청 사유(관리자->고객)',
+    tracking_carrier    VARCHAR(50)  NULL COMMENT '택배사',
+    tracking_number     VARCHAR(50)  NULL COMMENT '운송장번호',
+    shipped_at          DATETIME     NULL COMMENT '발송 시각',
+    delivered_at        DATETIME     NULL COMMENT '배송완료 시각',
     created_at          DATETIME     NOT NULL DEFAULT NOW() COMMENT '주문 접수일시',
     PRIMARY KEY (id),
     KEY idx_orders_user (user_id),

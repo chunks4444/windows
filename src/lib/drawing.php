@@ -3,6 +3,15 @@ require_once __DIR__ . '/db.php';
 
 class Drawing {
 
+    // 도면을 잠그는(편집/삭제 불가) 주문 상태. 수정요청/배송완료/취소 상태가 되면 다시 편집 가능해진다.
+    private const LOCKING_ORDER_STATUSES = "'pending_review','approved','quote_finalized','deposit_paid','in_production','production_done','shipped'";
+
+    // 도면이 진행 중인 주문에 묶여 잠겨 있는지 계산하는 SQL 조각. drawings 테이블의 물리 컬럼이 아니라
+    // orders.status에서 매번 파생한다 (locked_at 컬럼은 폐지됨).
+    static function lockedAtExpr(string $alias = 'd'): string {
+        return "EXISTS (SELECT 1 FROM orders o WHERE o.drawing_id = {$alias}.id AND o.status IN (" . self::LOCKING_ORDER_STATUSES . ")) AS locked_at";
+    }
+
     // /uploads/drawing_thumbs 아래 공개 경로(확장자 있든 없든)를 실제 파일 시스템 경로로 해석.
     // .htaccess가 확장자 없는 주소를 .png로 rewrite해주지만, 서버에서 직접 파일을 찾을 때는
     // 확장자를 붙여서 존재 여부를 확인해야 한다.
@@ -90,7 +99,8 @@ class Drawing {
     // 특정 도면 로드 (type + title)
     static function load(int $userId, string $type, string $title): ?array {
         $pdo  = db();
-        $stmt = $pdo->prepare('SELECT * FROM drawings WHERE user_id = ? AND type = ? AND title = ?');
+        $lockedAtExpr = self::lockedAtExpr('d');
+        $stmt = $pdo->prepare("SELECT d.*, {$lockedAtExpr} FROM drawings d WHERE d.user_id = ? AND d.type = ? AND d.title = ?");
         $stmt->execute([$userId, $type, $title]);
         $drawing = $stmt->fetch();
         if (!$drawing) return null;
@@ -109,15 +119,16 @@ class Drawing {
     // 유저의 타입별 도면 목록 (메타만, 버전·썸네일 미포함)
     static function list(int $userId, string $type): array {
         $pdo  = db();
-        $stmt = $pdo->prepare('
+        $lockedAtExpr = self::lockedAtExpr('d');
+        $stmt = $pdo->prepare("
             SELECT d.id, d.title, d.pattern_category,
                    pc.name AS pattern_category_name,
-                   d.work_time_sec, d.created_at, d.updated_at, d.locked_at
+                   d.work_time_sec, d.created_at, d.updated_at, {$lockedAtExpr}
             FROM drawings d
             LEFT JOIN pattern_categories pc ON pc.id = CAST(d.pattern_category AS UNSIGNED)
             WHERE d.user_id = ? AND d.type = ?
             ORDER BY d.updated_at DESC
-        ');
+        ");
         $stmt->execute([$userId, $type]);
         return $stmt->fetchAll();
     }
@@ -126,16 +137,17 @@ class Drawing {
     static function list_all(int $userId, int $page = 1, int $limit = 20): array {
         $pdo    = db();
         $offset = ($page - 1) * $limit;
+        $lockedAtExpr = self::lockedAtExpr('d');
         $stmt   = $pdo->prepare(
-            'SELECT d.id, d.type, d.title, d.pattern_category,
+            "SELECT d.id, d.type, d.title, d.pattern_category,
                     pc.name AS pattern_category_name,
-                    d.work_time_sec, d.created_at, d.updated_at, d.locked_at,
+                    d.work_time_sec, d.created_at, d.updated_at, {$lockedAtExpr},
                     (SELECT COUNT(*) FROM drawing_versions WHERE drawing_id = d.id) AS version_count
              FROM drawings d
              LEFT JOIN pattern_categories pc ON pc.id = CAST(d.pattern_category AS UNSIGNED)
              WHERE d.user_id = ?
              ORDER BY d.updated_at DESC
-             LIMIT ? OFFSET ?'
+             LIMIT ? OFFSET ?"
         );
         $stmt->execute([$userId, $limit, $offset]);
         return $stmt->fetchAll();
@@ -174,19 +186,17 @@ class Drawing {
         return $deleted;
     }
 
-    // 견적요청 중인 도면인지 확인 (잠금 여부)
+    // 진행 중인 주문에 묶여 잠긴 도면인지 확인 (orders.status에서 파생, 잠금 컬럼 없음)
     static function is_locked(int $userId, string $type, string $title): bool {
         $pdo  = db();
-        $stmt = $pdo->prepare('SELECT locked_at FROM drawings WHERE user_id = ? AND type = ? AND title = ?');
+        $stmt = $pdo->prepare('
+            SELECT 1 FROM drawings d
+            JOIN orders o ON o.drawing_id = d.id
+            WHERE d.user_id = ? AND d.type = ? AND d.title = ?
+              AND o.status IN (' . self::LOCKING_ORDER_STATUSES . ')
+            LIMIT 1
+        ');
         $stmt->execute([$userId, $type, $title]);
-        $row = $stmt->fetch();
-        return $row && $row['locked_at'] !== null;
-    }
-
-    // 견적요청 접수 시 해당 도면 잠금
-    static function lock(int $drawingId, int $userId): void {
-        $pdo = db();
-        $pdo->prepare('UPDATE drawings SET locked_at = NOW() WHERE id = ? AND user_id = ?')
-            ->execute([$drawingId, $userId]);
+        return (bool) $stmt->fetchColumn();
     }
 }

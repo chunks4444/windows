@@ -50,6 +50,7 @@ try {
     <div class="adm-tab-bar" id="wtTabs" style="margin-bottom:16px;">
         <button class="adm-tab-btn active" data-tab="wood">목재</button>
         <button class="adm-tab-btn" data-tab="finish">마감</button>
+        <button class="adm-tab-btn" data-tab="hardware">철물</button>
         <button class="adm-tab-btn" data-tab="labor">인건비</button>
         <button class="adm-tab-btn" data-tab="overhead">간접비</button>
     </div>

@@ -17,6 +17,7 @@ const ENGINE_LABEL = window.__pmokEngineLabels || {
 const TABS = {
     wood:     { label: '목재',   cats: ['wood', 'oil'],        cols: 'default'         },
     finish:   { label: '마감',   cats: ['finish', 'delivery'], cols: 'finish'          },
+    hardware: { label: '철물',   cats: ['hardware'],           cols: 'default'         },
     labor:    { label: '인건비', cats: ['labor'],              cols: 'labor_inline'    },
     overhead: { label: '간접비', cats: ['overhead'],           cols: 'overhead_inline' },
 };

@@ -100,6 +100,16 @@ require_admin_role('s');
     </div>
 
     <div class="adm-section">
+        <h2 class="adm-section-title">주문 관리</h2>
+        <div class="adm-home-grid">
+            <a href="/src/admin/orders.php" class="adm-home-card">
+                <div class="adm-home-icon"><i class="bi bi-receipt"></i></div>
+                <div><div class="adm-home-title">주문 관리</div><div class="adm-home-desc">견적요청부터 배송완료까지 상태 처리</div></div>
+            </a>
+        </div>
+    </div>
+
+    <div class="adm-section">
         <h2 class="adm-section-title">설정값 관리</h2>
         <div class="adm-home-grid">
             <a href="/src/admin/cost_table.php" class="adm-home-card">

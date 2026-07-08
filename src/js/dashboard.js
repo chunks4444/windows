@@ -334,11 +334,14 @@ function switchTab(tab) {
     document.getElementById('tabDrawings').classList.toggle('active', tab === 'drawings');
     document.getElementById('tabBoards').classList.toggle('active', tab === 'boards');
     document.getElementById('tabRenders').classList.toggle('active', tab === 'renders');
+    document.getElementById('tabOrders').classList.toggle('active', tab === 'orders');
     document.getElementById('dbContent').style.display        = tab === 'drawings' ? '' : 'none';
     document.getElementById('dbBoardsContent').style.display  = tab === 'boards'   ? '' : 'none';
     document.getElementById('dbRendersContent').style.display = tab === 'renders'  ? '' : 'none';
+    document.getElementById('dbOrdersContent').style.display  = tab === 'orders'   ? '' : 'none';
     if (tab === 'boards')  loadBoards();
     if (tab === 'renders') loadRenders();
+    if (tab === 'orders')  loadOrders();
 }
 
 function _token() { return localStorage.getItem('pmok_auth_token'); }
@@ -675,5 +678,84 @@ function openRenderModal(item) {
 }
 
 document.getElementById('dbRenderModal')?.addEventListener('click', e => {
+    if (e.target === e.currentTarget) e.currentTarget.style.display = 'none';
+});
+
+/* ── 주문내역 탭 ── */
+const ORDER_STATUS_MAP = {
+    pending_review:     { label: '견적검토', tone: 'wait' },
+    revision_requested: { label: '수정요청', tone: 'alert' },
+    approved:            { label: '승인',     tone: 'progress' },
+    quote_finalized:     { label: '견적확정', tone: 'progress' },
+    deposit_paid:         { label: '입금완료', tone: 'progress' },
+    in_production:       { label: '제작중',   tone: 'progress' },
+    production_done:     { label: '제작완료', tone: 'progress' },
+    shipped:              { label: '발송',     tone: 'progress' },
+    delivered:            { label: '배송완료', tone: 'done' },
+    cancelled:            { label: '취소',     tone: 'done' },
+};
+let _orderItemsCache = [];
+
+function loadOrders() {
+    const el = document.getElementById('dbOrdersContent');
+    fetch('/src/api/orders/list.php', { headers: { Authorization: 'Bearer ' + _token() } })
+        .then(r => r.json())
+        .then(data => {
+            if (data.error) { el.innerHTML = '<div class="db-empty">주문내역을 불러오지 못했습니다. 다시 로그인해주세요.</div>'; return; }
+            _orderItemsCache = data.orders || [];
+
+            if (!_orderItemsCache.length) {
+                el.innerHTML = '<div class="db-empty">주문내역이 없습니다.</div>';
+                return;
+            }
+
+            el.innerHTML = '<div class="ord-list">' + _orderItemsCache.map((o, i) => {
+                const st  = ORDER_STATUS_MAP[o.status] || { label: o.status, tone: 'wait' };
+                const cfg = TYPE_CONFIG[o.engine];
+                return `
+                <div class="ord-row" data-idx="${i}">
+                    ${o.thumbnail ? `<img class="ord-row-thumb" src="${o.thumbnail}" loading="lazy">` : '<div class="ord-row-thumb ord-row-thumb-empty"></div>'}
+                    <div class="ord-row-main">
+                        <div class="ord-row-title">${(cfg?.label || o.engine)} · ${escHtml(o.title || '(제목 없음)')}</div>
+                        <div class="ord-row-sub">주문일 ${o.created_at ? o.created_at.slice(0, 10) : '—'}${o.due_date ? ' · 납기희망 ' + o.due_date : ''}</div>
+                    </div>
+                    <span class="ord-status-pill" data-tone="${st.tone}">${st.label}</span>
+                </div>`;
+            }).join('') + '</div>';
+
+            el.querySelectorAll('.ord-row').forEach(node => {
+                node.addEventListener('click', () => openOrderModal(_orderItemsCache[parseInt(node.dataset.idx)]));
+            });
+        })
+        .catch(() => { el.innerHTML = '<div class="db-empty">주문내역을 불러오지 못했습니다.</div>'; });
+}
+
+function openOrderModal(o) {
+    const st = ORDER_STATUS_MAP[o.status] || { label: o.status, tone: 'wait' };
+    const cfg = TYPE_CONFIG[o.engine];
+    document.getElementById('dbOrderModalTitle').textContent = `${cfg?.label || o.engine} · ${o.title || '(제목 없음)'}`;
+
+    let html = `<div style="margin-bottom:14px;"><span class="ord-status-pill" data-tone="${st.tone}">${st.label}</span></div>`;
+
+    if (o.status === 'revision_requested' && o.revision_note) {
+        html += `<div class="ord-modal-note"><strong>수정요청 사유</strong><p>${escHtml(o.revision_note)}</p></div>`;
+    }
+    if (o.status === 'shipped' || o.status === 'delivered') {
+        if (o.tracking_carrier || o.tracking_number) {
+            html += `<div class="ord-modal-note"><strong>배송 정보</strong><p>${escHtml(o.tracking_carrier || '')} ${escHtml(o.tracking_number || '')}</p></div>`;
+        }
+    }
+
+    html += `<div class="ord-modal-meta">
+        <div><span>주문일</span>${o.created_at ? o.created_at.slice(0, 16).replace('T', ' ') : '—'}</div>
+        <div><span>납기희망일</span>${o.due_date || '—'}</div>
+        <div><span>최근 처리일</span>${o.reviewed_at ? o.reviewed_at.slice(0, 16).replace('T', ' ') : '—'}</div>
+    </div>`;
+
+    document.getElementById('dbOrderModalBody').innerHTML = html;
+    document.getElementById('dbOrderModal').style.display = 'flex';
+}
+
+document.getElementById('dbOrderModal')?.addEventListener('click', e => {
     if (e.target === e.currentTarget) e.currentTarget.style.display = 'none';
 });

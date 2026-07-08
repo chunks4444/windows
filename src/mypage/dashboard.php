@@ -34,11 +34,24 @@ header('Content-Type: text/html; charset=UTF-8');
             <button class="db-tab active" id="tabDrawings" onclick="switchTab('drawings')">내 도면</button>
             <button class="db-tab" id="tabBoards" onclick="switchTab('boards')">내 보드</button>
             <button class="db-tab" id="tabRenders" onclick="switchTab('renders')">렌더링</button>
+            <button class="db-tab" id="tabOrders" onclick="switchTab('orders')">주문내역</button>
         </div>
     </div>
     <div id="dbContent"></div>
     <div id="dbBoardsContent" style="display:none;"></div>
     <div id="dbRendersContent" style="display:none;"></div>
+    <div id="dbOrdersContent" style="display:none;"></div>
+</div>
+
+<!-- 주문 상세 모달 -->
+<div id="dbOrderModal" style="display:none;position:fixed;inset:0;background:rgba(var(--text-rgb), 0.5);z-index:1000;align-items:center;justify-content:center;">
+    <div style="background:var(--bg);border-radius:16px;width:min(90vw,560px);max-height:85vh;display:flex;flex-direction:column;overflow:hidden;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);">
+            <h3 id="dbOrderModalTitle" style="margin:0;font-size:16px;font-weight:700;"></h3>
+            <button onclick="document.getElementById('dbOrderModal').style.display='none'" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-muted);">&times;</button>
+        </div>
+        <div id="dbOrderModalBody" style="overflow-y:auto;padding:20px;"></div>
+    </div>
 </div>
 
 <!-- 렌더링 상세 모달 -->

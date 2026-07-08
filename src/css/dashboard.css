@@ -140,6 +140,33 @@ body {
     font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px; letter-spacing: -0.2px;
 }
 
+/* ── 주문내역 탭 ──────────────────────────────── */
+.ord-list { display: flex; flex-direction: column; gap: 10px; }
+.ord-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--r-sm, 8px);
+    cursor: pointer; transition: border-color .15s;
+}
+.ord-row:hover { border-color: var(--accent); }
+.ord-row-thumb { width: 56px; height: 56px; border-radius: 6px; object-fit: cover; flex-shrink: 0; background: var(--bg); }
+.ord-row-thumb-empty { background: var(--border); }
+.ord-row-main { flex: 1; min-width: 0; }
+.ord-row-title { font-size: 14px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ord-row-sub { font-size: 12px; color: var(--text); opacity: .65; margin-top: 2px; }
+.ord-status-pill {
+    flex-shrink: 0; padding: 3px 10px; border-radius: 99px; font-size: 12px; font-weight: 700; white-space: nowrap;
+}
+.ord-status-pill[data-tone="wait"]     { background: var(--warning-tint); color: var(--warning); }
+.ord-status-pill[data-tone="alert"]    { background: var(--danger-tint);  color: var(--danger); }
+.ord-status-pill[data-tone="progress"] { background: var(--accent-tint);  color: var(--accent); }
+.ord-status-pill[data-tone="done"]     { background: var(--border);       color: var(--text); }
+.ord-modal-note { margin-bottom: 14px; padding: 10px 12px; border-radius: var(--r-sm, 8px); background: var(--bg); border: 1px solid var(--border); }
+.ord-modal-note strong { display: block; font-size: 12px; color: var(--text); opacity: .7; margin-bottom: 4px; }
+.ord-modal-note p { margin: 0; font-size: 13px; color: var(--text); white-space: pre-wrap; }
+.ord-modal-meta { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--text); }
+.ord-modal-meta div { display: flex; justify-content: space-between; }
+.ord-modal-meta span { opacity: .6; }
+
 
 /* ── 카드 그리드 ──────────────────────────────── */
 .db-grid {

@@ -7,6 +7,7 @@ set_exception_handler(function(Throwable $e) {
 });
 require_once __DIR__ . '/../../lib/db.php';
 require_once __DIR__ . '/../../lib/jwt.php';
+require_once __DIR__ . '/../../lib/drawing.php';
 
 $payload = jwt_from_request();
 if (!$payload || ($payload['role'] ?? '') !== 's') {
@@ -49,11 +50,12 @@ if (isset($_GET['page']) || isset($_GET['category'])) {
 
     $whereClause = $where ? ('WHERE ' . implode(' AND ', $where)) : '';
 
+    $lockedAtExpr = Drawing::lockedAtExpr('d');
     $stmt = $pdo->prepare("
         SELECT d.id, d.type, d.title, d.pattern_category,
                pc.name AS pattern_category_name,
                u.email AS user_email,
-               d.updated_at, d.locked_at,
+               d.updated_at, {$lockedAtExpr},
                (SELECT COUNT(*) FROM drawing_versions WHERE drawing_id = d.id) AS version_count
         FROM drawings d
         LEFT JOIN pattern_categories pc ON pc.id = CAST(d.pattern_category AS UNSIGNED)

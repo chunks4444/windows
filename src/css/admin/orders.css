@@ -1,0 +1,31 @@
+.ord-status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-size: var(--fs-12);
+    font-weight: 700;
+    white-space: nowrap;
+}
+.ord-status-badge[data-status="pending_review"]      { background: var(--warning-tint); color: var(--warning); }
+.ord-status-badge[data-status="revision_requested"]  { background: var(--danger-tint);  color: var(--danger); }
+.ord-status-badge[data-status="approved"]            { background: var(--accent-tint);  color: var(--accent); }
+.ord-status-badge[data-status="quote_finalized"]     { background: var(--accent-tint);  color: var(--accent); }
+.ord-status-badge[data-status="deposit_paid"]        { background: var(--accent-tint);  color: var(--accent); }
+.ord-status-badge[data-status="in_production"]       { background: var(--accent-tint);  color: var(--accent); }
+.ord-status-badge[data-status="production_done"]     { background: var(--accent-tint);  color: var(--accent); }
+.ord-status-badge[data-status="shipped"]             { background: var(--accent-tint);  color: var(--accent); }
+.ord-status-badge[data-status="delivered"]           { background: var(--border);       color: var(--text); }
+.ord-status-badge[data-status="cancelled"]           { background: var(--border);       color: var(--text); }
+
+.ord-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 20px;
+    margin-bottom: 16px;
+    font-size: var(--fs-13);
+}
+.ord-detail-grid .full { grid-column: 1 / -1; }
+.ord-detail-label { color: var(--text); font-weight: 700; font-size: var(--fs-12); letter-spacing: .04em; text-transform: uppercase; margin-top: 10px; }
+.ord-detail-value { color: var(--text); word-break: break-all; }
+.ord-thumb { max-width: 160px; border: 1px solid var(--border); border-radius: var(--r-sm); display: block; margin-bottom: 10px; }
+.ord-section-title { font-size: var(--fs-13); font-weight: 700; color: var(--text); margin: 18px 0 8px; padding-top: 12px; border-top: 1px solid var(--border); }
