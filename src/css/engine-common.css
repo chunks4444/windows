@@ -1028,8 +1028,8 @@ canvas:active { cursor: grabbing; }
 }
 .dm-item:hover .dm-actions { opacity: 1; }
 .dm-btn {
-    width: 26px;
-    height: 26px;
+    width: 34px;
+    height: 34px;
     border: none;
     background: transparent;
     color: var(--text-2);
@@ -1038,7 +1038,7 @@ canvas:active { cursor: grabbing; }
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: var(--fs-12);
+    font-size: var(--fs-16);
     transition: background 0.1s, color 0.1s;
 }
 .dm-btn:hover { background: var(--border); color: var(--text-1); }
