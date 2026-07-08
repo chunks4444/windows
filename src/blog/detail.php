@@ -153,9 +153,9 @@ $metaImage = $post['thumbnail_url']
                 <?= date('Y.m.d', strtotime($post['created_at'])) ?>
             </time>
             <div class="bd-share-row">
-                <button id="btnShare" type="button" class="bd-share-btn"><i class="bi bi-share"></i> 공유하기</button>
-                <a id="btnShareX" class="bd-share-btn" href="#" target="_blank" rel="noopener"><i class="bi bi-twitter-x"></i> X에 공유</a>
-                <a id="btnShareThreads" class="bd-share-btn" href="#" target="_blank" rel="noopener"><i class="bi bi-threads"></i> 스레드에 공유</a>
+                <button id="btnShare" type="button" class="bd-share-btn" title="공유하기"><i class="bi bi-share"></i></button>
+                <a id="btnShareX" class="bd-share-btn" href="#" target="_blank" rel="noopener" title="X에 공유"><i class="bi bi-twitter-x"></i></a>
+                <a id="btnShareThreads" class="bd-share-btn" href="#" target="_blank" rel="noopener" title="스레드에 공유"><i class="bi bi-threads"></i></a>
             </div>
         </header>
 
