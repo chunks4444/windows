@@ -170,6 +170,16 @@ require_admin_role('s');
             </a>
         </div>
     </div>
+
+    <div class="adm-section">
+        <h2 class="adm-section-title">배포 점검</h2>
+        <div class="adm-home-grid">
+            <a href="/src/admin/smoke_test.php" class="adm-home-card">
+                <div class="adm-home-icon"><i class="bi bi-activity"></i></div>
+                <div><div class="adm-home-title">스모크 테스트</div><div class="adm-home-desc">배포 직후 핵심 기능 점검</div></div>
+            </a>
+        </div>
+    </div>
 </div>
 
 <script>
