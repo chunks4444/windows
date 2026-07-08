@@ -143,6 +143,7 @@ $metaKeywords = implode(', ', array_unique(array_filter([
     <meta property="og:title" content="<?= htmlspecialchars($post['title']) ?>">
     <meta property="og:description" content="<?= htmlspecialchars($metaDesc) ?>">
     <meta property="og:image" content="<?= htmlspecialchars($metaImage) ?>">
+    <?php article_jsonld($post, SITE_URL . '/blog/' . rawurlencode($post['slug']), $metaImage, $metaDesc); ?>
     <?php define('BOOTSTRAP_LOADED', true); ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <?php css_tag('/src/css/blog-detail.css'); ?>

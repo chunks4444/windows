@@ -19,6 +19,15 @@ $urls = [
     ['loc' => '/src/engine/hexagon/hexagon.php',     'priority' => '0.9'],
 ];
 
+// 가이드 개별 아티클 (src/guide/_head.php의 $guide_nav와 동일한 파일 목록 — 새 아티클 추가 시 여기도 같이 추가)
+foreach ([
+    'intro', 'getting-started',
+    'studio-classic', 'studio-square', 'studio-cross', 'studio-diamond', 'studio-triangle', 'studio-hexagon',
+    'drawing', 'export', 'render', 'collection', 'account', 'order', 'delivery', 'faq',
+] as $guideFile) {
+    $urls[] = ['loc' => "/guide/$guideFile", 'priority' => '0.5'];
+}
+
 try {
     $pdo = db();
 
@@ -37,6 +46,15 @@ try {
             'loc'     => '/portfolio/' . rawurlencode($w['slug']),
             'lastmod' => date('Y-m-d', strtotime($w['created_at'])),
             'priority'=> '0.6',
+        ];
+    }
+
+    $patterns = $pdo->query("SELECT slug, created_at FROM library_patterns WHERE is_active=1 AND slug != ''")->fetchAll();
+    foreach ($patterns as $p) {
+        $urls[] = [
+            'loc'     => '/collection/detail?slug=' . rawurlencode($p['slug']),
+            'lastmod' => date('Y-m-d', strtotime($p['created_at'])),
+            'priority'=> '0.5',
         ];
     }
 } catch (Throwable $e) {

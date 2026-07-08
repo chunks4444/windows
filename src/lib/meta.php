@@ -56,3 +56,34 @@ function meta_tags(): void {
     echo '<meta property="og:description" content="' . htmlspecialchars($desc, ENT_QUOTES) . '">' . "\n    ";
     echo '<meta property="og:image"       content="' . htmlspecialchars($image, ENT_QUOTES) . '">' . "\n    ";
 }
+
+// 조직 정보 구조화 데이터(JSON-LD) — 홈페이지 등 대표 페이지에서 1회 출력
+function organization_jsonld(): void {
+    echo '<script type="application/ld+json">' . json_encode([
+        '@context'    => 'https://schema.org',
+        '@type'       => 'Organization',
+        'name'        => '평목',
+        'url'         => SITE_URL,
+        'logo'        => SITE_DEFAULT_IMAGE,
+        'description' => SITE_DEFAULT_DESC,
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . '</script>' . "\n    ";
+}
+
+// 블로그 글 구조화 데이터(JSON-LD) — blog/detail.php에서 글마다 호출
+function article_jsonld(array $post, string $url, string $image, string $description): void {
+    echo '<script type="application/ld+json">' . json_encode([
+        '@context'      => 'https://schema.org',
+        '@type'         => 'Article',
+        'headline'      => $post['title'],
+        'description'   => $description,
+        'image'         => $image,
+        'datePublished' => date('c', strtotime($post['created_at'])),
+        'url'           => $url,
+        'author'        => ['@type' => 'Organization', 'name' => '평목'],
+        'publisher'     => [
+            '@type' => 'Organization',
+            'name'  => '평목',
+            'logo'  => ['@type' => 'ImageObject', 'url' => SITE_DEFAULT_IMAGE],
+        ],
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . '</script>' . "\n    ";
+}
