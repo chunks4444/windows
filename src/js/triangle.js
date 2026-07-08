@@ -2500,7 +2500,7 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
             item.className = 'dm-item' + (d.title === curTitle ? ' dm-active' : '');
             item.innerHTML = `
                 <div class="dm-item-info">
-                    <div class="dm-title">${escHtml(d.title)}${d.locked_at ? ' <i class="bi bi-lock-fill dm-lock-icon" title="견적요청 중"></i>' : ''}</div>
+                    <div class="dm-title">${escHtml(d.title)}${d.locked_at ? ` <i class="bi bi-lock-fill dm-lock-icon" title="${escHtml((ORDER_STATUS_LABELS[d.order_status] || {}).label || '견적요청 중')}"></i>` : ''}</div>
                     <div class="dm-date">${fmtDate(new Date(d.updated_at).getTime())}</div>
                 </div>
                 <div class="dm-actions">

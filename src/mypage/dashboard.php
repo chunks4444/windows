@@ -129,11 +129,12 @@ header('Content-Type: text/html; charset=UTF-8');
 <script src="/src/js/order-status-labels.js"></script>
 <script src="/src/js/dashboard.js"></script>
 <script>
-if (location.hash === '#boards') {
+if (location.hash === '#boards' || location.hash === '#orders') {
+    const tab = location.hash.slice(1);
     const observer = new MutationObserver(() => {
         const page = document.getElementById('dbPage');
         if (page && page.style.display !== 'none') {
-            switchTab('boards');
+            switchTab(tab);
             observer.disconnect();
         }
     });

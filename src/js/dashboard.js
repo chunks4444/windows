@@ -114,8 +114,9 @@ function renderCard(d) {
                  <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
              </svg>
            </div>`;
+    const orderStatus = ORDER_STATUS_LABELS[d.order_status];
     const lockedBadge = d.locked_at
-        ? `<div class="db-quote-badge"><i class="bi bi-lock-fill"></i> 견적요청중</div>`
+        ? `<div class="db-quote-badge"><i class="bi bi-lock-fill"></i> ${orderStatus ? escHtml(orderStatus.label) : '견적요청중'}</div>`
         : '';
     return `
         <div class="db-card" data-id="${d.id}" onclick="openDrawing('${escAttr(d.type)}', '${escAttr(d.title)}')">

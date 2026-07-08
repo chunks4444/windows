@@ -11,6 +11,14 @@ class Drawing {
         return "EXISTS (SELECT 1 FROM orders o WHERE o.drawing_id = {$alias}.id AND o.status IN ({$statuses})) AS locked_at";
     }
 
+    // 도면을 잠그고 있는 주문의 status 문자열('pending_review' 등)을 반환하는 SQL 조각. 잠긴 주문이 없으면 NULL.
+    // 프론트에서 이 값을 src/js/order-status-labels.js의 ORDER_STATUS_LABELS로 한글 라벨/색으로 변환해 표시한다
+    // (도면관리 카드, 엔진 사이드바 "내 도면" 목록 등).
+    static function orderStatusExpr(string $alias = 'd'): string {
+        $statuses = "'" . implode("','", ORDER_LOCKING_STATUSES) . "'";
+        return "(SELECT o.status FROM orders o WHERE o.drawing_id = {$alias}.id AND o.status IN ({$statuses}) ORDER BY o.created_at DESC LIMIT 1) AS order_status";
+    }
+
     // /uploads/drawing_thumbs 아래 공개 경로(확장자 있든 없든)를 실제 파일 시스템 경로로 해석.
     // .htaccess가 확장자 없는 주소를 .png로 rewrite해주지만, 서버에서 직접 파일을 찾을 때는
     // 확장자를 붙여서 존재 여부를 확인해야 한다.
@@ -119,10 +127,11 @@ class Drawing {
     static function list(int $userId, string $type): array {
         $pdo  = db();
         $lockedAtExpr = self::lockedAtExpr('d');
+        $orderStatusExpr = self::orderStatusExpr('d');
         $stmt = $pdo->prepare("
             SELECT d.id, d.title, d.pattern_category,
                    pc.name AS pattern_category_name,
-                   d.work_time_sec, d.created_at, d.updated_at, {$lockedAtExpr}
+                   d.work_time_sec, d.created_at, d.updated_at, {$lockedAtExpr}, {$orderStatusExpr}
             FROM drawings d
             LEFT JOIN pattern_categories pc ON pc.id = CAST(d.pattern_category AS UNSIGNED)
             WHERE d.user_id = ? AND d.type = ?
@@ -137,10 +146,11 @@ class Drawing {
         $pdo    = db();
         $offset = ($page - 1) * $limit;
         $lockedAtExpr = self::lockedAtExpr('d');
+        $orderStatusExpr = self::orderStatusExpr('d');
         $stmt   = $pdo->prepare(
             "SELECT d.id, d.type, d.title, d.pattern_category,
                     pc.name AS pattern_category_name,
-                    d.work_time_sec, d.created_at, d.updated_at, {$lockedAtExpr},
+                    d.work_time_sec, d.created_at, d.updated_at, {$lockedAtExpr}, {$orderStatusExpr},
                     (SELECT COUNT(*) FROM drawing_versions WHERE drawing_id = d.id) AS version_count
              FROM drawings d
              LEFT JOIN pattern_categories pc ON pc.id = CAST(d.pattern_category AS UNSIGNED)

@@ -153,6 +153,7 @@ $navStudioIcons = [
                         </svg>
                         도면관리
                     </a></li>
+                    <li><a class="dropdown-item" href="/src/mypage/dashboard.php#orders"><i class="bi bi-receipt me-1"></i>주문내역</a></li>
                 </ul>
             </li>
             <li class="nav-item">
@@ -205,6 +206,7 @@ $navStudioIcons = [
                     <li><a class="dropdown-item" href="/src/mypage/profile.php"><i class="bi bi-person me-1"></i>프로필</a></li>
                     <li><a class="dropdown-item" href="/src/mypage/company.php"><i class="bi bi-building me-1"></i>회사 정보</a></li>
                     <li><a class="dropdown-item" href="/src/mypage/dashboard.php"><i class="bi bi-grid me-1"></i>도면관리</a></li>
+                    <li><a class="dropdown-item" href="/src/mypage/dashboard.php#orders"><i class="bi bi-receipt me-1"></i>주문내역</a></li>
                     <li id="navBoardSection" style="display:none;">
                         <hr class="dropdown-divider">
                         <span class="dropdown-header" style="font-size:10px;letter-spacing:.06em;color:var(--text-muted);padding:4px 16px 2px;">내 보드</span>
@@ -254,6 +256,10 @@ $navStudioIcons = [
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>
                     <span>도면관리</span>
                 </a>
+                <a class="pm-dw-link" href="/src/mypage/dashboard.php#orders">
+                    <i class="bi bi-receipt"></i>
+                    <span>주문내역</span>
+                </a>
             </div>
         </div>
 
@@ -300,6 +306,7 @@ $navStudioIcons = [
             </div>
             <a class="pm-dw-link" href="/src/mypage/profile.php"><i class="bi bi-person"></i><span>프로필</span></a>
             <a class="pm-dw-link" href="/src/mypage/dashboard.php"><i class="bi bi-grid"></i><span>도면관리</span></a>
+            <a class="pm-dw-link" href="/src/mypage/dashboard.php#orders"><i class="bi bi-receipt"></i><span>주문내역</span></a>
             <div id="drawerBoardSection" style="display:none;">
                 <div class="pm-dw-board-label">내 보드</div>
                 <div id="drawerBoardList"></div>

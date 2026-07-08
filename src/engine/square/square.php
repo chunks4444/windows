@@ -794,6 +794,7 @@ header('Pragma: no-cache');
         window.__pmokEngineLayout        = <?= json_encode(['gap' => (float)$cfg['gap'], 'basePadding' => (float)$cfg['basePadding'], 'frameGap' => (float)$cfg['frameGap'], 'frameThick' => (float)$cfg['frameThick']], JSON_UNESCAPED_UNICODE) ?>;
     </script>
     <script src="/src/js/drawing-sync.js?v=<?= md5_file(__DIR__ . '/../../js/drawing-sync.js') ?>"></script>
+    <script src="/src/js/order-status-labels.js?v=<?= md5_file(__DIR__ . '/../../js/order-status-labels.js') ?>"></script>
     <script src="/src/js/engine-common.js?v=<?= md5_file(__DIR__ . '/../../js/engine-common.js') ?>"></script>
     <script src="/src/js/square.js?v=<?= md5_file(__DIR__ . '/../../js/square.js') ?>"></script>
 </body>
