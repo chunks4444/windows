@@ -63,11 +63,26 @@ CREATE TABLE IF NOT EXISTS users (
     id          INT UNSIGNED    NOT NULL AUTO_INCREMENT COMMENT '사용자 고유 ID',
     email         VARCHAR(255)    NOT NULL COMMENT '이메일 (로그인 아이디)',
     role          ENUM('s','m','a','u') NOT NULL DEFAULT 'u' COMMENT '권한: s=슈퍼, m=관리자, a=작가, u=회원',
+    name            VARCHAR(100) NULL COMMENT '이름',
+    phone           VARCHAR(30)  NULL COMMENT '연락처',
+    address         VARCHAR(255) NULL COMMENT '배송지 주소',
+    zipcode         VARCHAR(10)  NULL COMMENT '배송지 우편번호',
+    address_detail  VARCHAR(100) NULL COMMENT '배송지 상세주소',
+    company         VARCHAR(100) NULL COMMENT '(구) 회사명 필드 — company_name으로 대체됨, 하위호환용으로 남아있음',
     password_hash VARCHAR(255)    NOT NULL COMMENT '비밀번호 해시 (bcrypt)',
     created_at    DATETIME        NOT NULL DEFAULT NOW() COMMENT '가입일시',
     last_login_at DATETIME        NULL COMMENT '최종 접속일시',
     last_login_ip VARCHAR(45)     NULL COMMENT '최종 접속 IP',
     withdrawn_at  DATETIME        NULL COMMENT '탈퇴일시 (NULL=정상, NOT NULL=탈퇴)',
+    company_name            VARCHAR(100) NULL COMMENT '회사명',
+    company_biz_no          VARCHAR(20)  NULL COMMENT '사업자등록번호',
+    company_ceo             VARCHAR(100) NULL COMMENT '대표자명',
+    company_phone           VARCHAR(30)  NULL COMMENT '대표 연락처',
+    company_zipcode         VARCHAR(10)  NULL COMMENT '회사 우편번호',
+    company_address         VARCHAR(255) NULL COMMENT '회사 주소',
+    company_address_detail  VARCHAR(100) NULL COMMENT '회사 상세주소',
+    company_biz_type        VARCHAR(100) NULL COMMENT '업태',
+    company_biz_category    VARCHAR(100) NULL COMMENT '업종',
     view_spec     TINYINT(1)      NOT NULL DEFAULT 1 COMMENT '엔진 제작 시방서 열람 허용 (role과 별개, 회원별 개별 승인) - 임시로 기본 1 (2026-07-07~)',
     view_parts    TINYINT(1)      NOT NULL DEFAULT 0 COMMENT '엔진 부재목록 열람 허용 (role과 별개, 회원별 개별 승인)',
     view_cost     TINYINT(1)      NOT NULL DEFAULT 0 COMMENT '엔진 예산견적 상세내역 열람 허용 (role과 별개, 회원별 개별 승인)',
@@ -135,14 +150,12 @@ CREATE TABLE IF NOT EXISTS wallpapers (
     user_id          INT UNSIGNED    NOT NULL COMMENT '소유 사용자 ID (users.id FK)',
     engine           VARCHAR(64)     NOT NULL DEFAULT '' COMMENT '엔진 구분 (예: classic, square, diamond, cross, triangle)',
     drawing_id       INT UNSIGNED    NULL COMMENT '소속 도면 ID (drawings.id FK, nullable)',
-    version_saved_at INT UNSIGNED    NULL COMMENT '소속 버전 savedAt (Unix초, nullable)',
     filename         VARCHAR(255)    NOT NULL DEFAULT '' COMMENT '원본 파일명',
     filepath         VARCHAR(500)    NOT NULL DEFAULT '' COMMENT '저장 파일 경로 (/uploads/wallpapers/…)',
     created_at       DATETIME        NOT NULL DEFAULT NOW() COMMENT '업로드 일시',
     PRIMARY KEY (id),
     KEY idx_wallpapers_user_engine (user_id, engine),
-    KEY idx_wallpapers_drawing_id (drawing_id),
-    KEY idx_wallpapers_version (drawing_id, version_saved_at),
+    KEY idx_wallpapers_drawing (drawing_id),
     CONSTRAINT fk_wallpapers_user    FOREIGN KEY (user_id)    REFERENCES users(id)    ON DELETE CASCADE,
     CONSTRAINT fk_wallpapers_drawing FOREIGN KEY (drawing_id) REFERENCES drawings(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='엔진 배경 이미지';
@@ -175,6 +188,7 @@ CREATE TABLE IF NOT EXISTS page_meta (
 -- (기존 library_categories 테이블을 대체: RENAME TABLE library_categories TO library_patterns; 후 컬럼 추가)
 CREATE TABLE IF NOT EXISTS library_patterns (
     id          INT UNSIGNED      NOT NULL AUTO_INCREMENT,
+    slug        VARCHAR(60)       NOT NULL DEFAULT '' COMMENT '시맨틱 URL slug (컬렉션 상세 페이지, src/lib/slug.php)',
     name_ko     VARCHAR(80)       NOT NULL DEFAULT '' COMMENT '패턴 이름 (예: 정자살)',
     drawing_id  INT UNSIGNED      NULL               COMMENT '연결 도면 (drawings.id FK)',
     pattern_category INT UNSIGNED NULL              COMMENT '컬렉션 "모양" 필터용 분류 — pattern_categories.id 참조',
@@ -183,6 +197,7 @@ CREATE TABLE IF NOT EXISTS library_patterns (
     is_active   TINYINT(1)        NOT NULL DEFAULT 1,
     created_at  DATETIME          NOT NULL DEFAULT NOW(),
     PRIMARY KEY (id),
+    UNIQUE KEY uq_cat_slug (slug),
     KEY idx_lp_drawing (drawing_id),
     CONSTRAINT fk_lp_drawing FOREIGN KEY (drawing_id) REFERENCES drawings(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='라이브러리 패턴 카드';
@@ -260,6 +275,30 @@ INSERT IGNORE INTO space_cards (id, label, image_url, collection_query, sort_ord
 (9,  '주방',   'https://picsum.photos/seed/sp09/600/400', '주방',   8),
 (10, '갤러리', 'https://picsum.photos/seed/sp10/600/400', '갤러리', 9);
 
+-- 메인 히어로 캐러셀 슬라이드
+CREATE TABLE IF NOT EXISTS hero_slides (
+    id        INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    title     VARCHAR(120) NOT NULL DEFAULT '',
+    subtitle  VARCHAR(255) NOT NULL DEFAULT '',
+    image_url VARCHAR(512) NOT NULL DEFAULT '',
+    sort_order SMALLINT    NOT NULL DEFAULT 0,
+    is_active TINYINT(1)   NOT NULL DEFAULT 1,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='메인 페이지 최상단 히어로 캐러셀 슬라이드';
+
+-- 메인 페이지 "스튜디오 소개" 카드 (엔진별 1장, engine_key로 매칭)
+CREATE TABLE IF NOT EXISTS studio_cards (
+    id          INT          NOT NULL AUTO_INCREMENT,
+    engine_key  VARCHAR(20)  NOT NULL COMMENT '엔진명 (classic/square/cross/diamond/triangle/hexagon)',
+    title       VARCHAR(100) NOT NULL,
+    description TEXT         NULL,
+    image_url   VARCHAR(500) NULL,
+    sort_order  INT          NOT NULL DEFAULT 0,
+    is_active   TINYINT(1)   NOT NULL DEFAULT 1,
+    PRIMARY KEY (id),
+    UNIQUE KEY engine_key (engine_key)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='메인 페이지 "스튜디오 소개" 6개 엔진 카드 (엔진당 1행, engine_key로 고정 매칭)';
+
 -- 컬렉션 페이지 "공간" 드롭다운 필터 키워드 (메인 큐레이션 space_cards와 독립)
 CREATE TABLE IF NOT EXISTS collection_space_filters (
     id         INT UNSIGNED      NOT NULL AUTO_INCREMENT,
@@ -287,10 +326,17 @@ INSERT IGNORE INTO collection_space_filters (id, label, query, sort_order) VALUE
 -- 사이트 설정 (OAuth 키 등)
 CREATE TABLE IF NOT EXISTS site_config (
     key_name   VARCHAR(80) NOT NULL,
-    value      TEXT        NOT NULL DEFAULT '',
+    value      TEXT        NOT NULL COMMENT 'TEXT 컬럼이라 DEFAULT 지정 불가 (MySQL 제약) — INSERT 시 항상 명시적으로 값을 넣어야 함',
     updated_at DATETIME    NOT NULL DEFAULT NOW() ON UPDATE NOW(),
     PRIMARY KEY (key_name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='사이트 설정 (OAuth 키 등)';
+
+-- 범용 key/value 사이트 설정 (site_config와 별도). 현재는 Works 갤러리 카드 기본 색상(work_panel_bg 등) 저장용 — src/api/admin/work_settings.php
+CREATE TABLE IF NOT EXISTS site_settings (
+    setting_key   VARCHAR(100) NOT NULL,
+    setting_value VARCHAR(500) NOT NULL DEFAULT '',
+    PRIMARY KEY (setting_key)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='범용 key/value 사이트 설정. 현재는 work_panel_bg 등 Works 갤러리 카드 기본 색상 저장에만 쓰임';
 
 -- SNS OAuth 연결 이력
 CREATE TABLE IF NOT EXISTS user_oauth (
@@ -324,9 +370,37 @@ CREATE TABLE IF NOT EXISTS drawing_versions (
     params      JSON            NOT NULL COMMENT '설계 파라미터 (JSON)',
     saved_at    DATETIME        NOT NULL DEFAULT NOW() COMMENT '버전 저장일시',
     PRIMARY KEY (id),
-    KEY idx_drawing_versions_drawing_id (drawing_id),
+    KEY idx_drawing (drawing_id),
+    KEY idx_dv_drawing_saved (drawing_id, saved_at),
     CONSTRAINT fk_drawing_versions_drawing FOREIGN KEY (drawing_id) REFERENCES drawings (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='도면 버전 이력';
+
+-- 도면에 첨부되는 개별 리소스(문양/배경 등 원본 자산). type으로 종류 구분
+CREATE TABLE IF NOT EXISTS drawing_assets (
+    id         INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    drawing_id INT UNSIGNED NOT NULL,
+    type       VARCHAR(30)  NOT NULL COMMENT '자산 종류',
+    src        MEDIUMTEXT   NOT NULL COMMENT '자산 데이터 (data URI 등)',
+    created_at DATETIME     NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (id),
+    KEY idx_drawing_type (drawing_id, type),
+    CONSTRAINT drawing_assets_ibfk_1 FOREIGN KEY (drawing_id) REFERENCES drawings (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='도면에 첨부된 개별 자산(문양/배경 등) — drawing_versions.params의 JSON 스냅샷과 별개로 원본을 보관';
+
+-- 도면 PNG/PDF 내보내기 로그 (mypage 도면관리 "내보내기 내역" 모달에서 조회)
+CREATE TABLE IF NOT EXISTS drawing_export_logs (
+    id           INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    user_id      INT UNSIGNED NOT NULL,
+    drawing_id   INT UNSIGNED NULL,
+    engine       VARCHAR(20)  NOT NULL DEFAULT '',
+    format       ENUM('png','pdf') NOT NULL,
+    drawing_name VARCHAR(100) NOT NULL DEFAULT '',
+    version      VARCHAR(10)  NOT NULL DEFAULT '',
+    created_at   DATETIME     NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (id),
+    KEY idx_del_user (user_id, created_at),
+    KEY idx_del_drawing (drawing_id, created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='도면 PNG/PDF 내보내기 로그';
 
 -- ── 컬러 스와치 ─────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS color_swatches (
@@ -354,10 +428,35 @@ CREATE TABLE IF NOT EXISTS works (
     sort_order  SMALLINT UNSIGNED NOT NULL DEFAULT 0,
     is_active   TINYINT(1)        NOT NULL DEFAULT 1,
     created_at  DATETIME          NOT NULL DEFAULT NOW(),
+    panel_bg    VARCHAR(20)       NOT NULL DEFAULT '#111111' COMMENT '카드 배경색',
+    title_color VARCHAR(20)       NOT NULL DEFAULT '#ffffff' COMMENT '카드 제목 색상',
+    desc_color  VARCHAR(20)       NOT NULL DEFAULT '#888888' COMMENT '카드 설명 색상',
     PRIMARY KEY (id),
     UNIQUE KEY uq_works_slug (slug),
     KEY idx_works_sort (sort_order, is_active)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='완성 작품 갤러리';
+
+-- 작품 상세 이미지 (works.id 참조, FK 제약은 없음 — 애플리케이션 레벨로만 연결)
+CREATE TABLE IF NOT EXISTS work_images (
+    id         INT UNSIGNED      NOT NULL AUTO_INCREMENT,
+    work_id    INT UNSIGNED      NOT NULL,
+    image_url  VARCHAR(500)      NOT NULL DEFAULT '',
+    sort_order SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    PRIMARY KEY (id),
+    KEY idx_work_images_work (work_id, sort_order)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='작품 상세 페이지에 나열되는 추가 이미지 (works.image_url은 대표 이미지 1장, 이 테이블은 상세 갤러리)';
+
+-- 작품 태그 목록. src/api/admin/work_tags.php가 자체적으로 CREATE TABLE IF NOT EXISTS를 실행해 부트스트랩하므로
+-- 여기 없어도 동작하지만, DB 전체 구조 문서화를 위해 함께 기록
+CREATE TABLE IF NOT EXISTS work_tags (
+    id         INT UNSIGNED      NOT NULL AUTO_INCREMENT,
+    name       VARCHAR(50)       NOT NULL DEFAULT '',
+    sort_order SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    is_active  TINYINT(1)        NOT NULL DEFAULT 1,
+    created_at DATETIME          NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (id),
+    KEY idx_wt_sort (sort_order, is_active)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='작품 갤러리 필터용 태그 목록 (works와 직접 FK 연결 없이 어드민 화면 필터 UI용으로만 존재)';
 
 -- FAQ
 CREATE TABLE IF NOT EXISTS faqs (
@@ -366,10 +465,10 @@ CREATE TABLE IF NOT EXISTS faqs (
     answer      TEXT              NOT NULL COMMENT '답변',
     sort_order  SMALLINT UNSIGNED NOT NULL DEFAULT 0,
     is_active   TINYINT(1)        NOT NULL DEFAULT 1,
+    show_on_main TINYINT(1)       NOT NULL DEFAULT 0 COMMENT '메인페이지 노출',
     created_at  DATETIME          NOT NULL DEFAULT NOW(),
     PRIMARY KEY (id),
     KEY idx_faqs_sort (sort_order, is_active)
--- ALTER TABLE faqs ADD COLUMN show_on_main TINYINT(1) NOT NULL DEFAULT 0 COMMENT '메인페이지 노출' AFTER is_active; -- 2026-06-29
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='자주 묻는 질문';
 
 -- 초기 데이터 (스테인)
@@ -472,7 +571,7 @@ CREATE TABLE IF NOT EXISTS orders (
 -- 이 CREATE TABLE은 2026-07-08에 기존 운영 DB 구조를 그대로 문서화한 것 — 위쪽 ALTER 이력과 함께 참고
 CREATE TABLE IF NOT EXISTS cost_table (
     id            INT UNSIGNED      NOT NULL AUTO_INCREMENT,
-    category      VARCHAR(50)       NOT NULL DEFAULT '' COMMENT '구분',
+    category      VARCHAR(50)       NOT NULL DEFAULT '' COMMENT '원가 대분류 — wood(목재)/oil(오일마감)/finish(마감)/delivery(배송)/labor(인건비)/overhead(간접비·이윤)/hardware(철물)',
     engine        VARCHAR(20)       NULL COMMENT '엔진명 (classic/square/…, NULL=공통)',
     name          VARCHAR(100)      NOT NULL DEFAULT '',
     unit_price    DECIMAL(12,2)     NOT NULL DEFAULT 0.00 COMMENT '원/사이',
@@ -527,3 +626,52 @@ CREATE TABLE IF NOT EXISTS ai_chat_history (
     KEY idx_session_created (session_key, created_at),
     KEY idx_engine_created  (engine,      created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='AI 설계 도우미 대화 히스토리';
+-- ============================================================
+
+-- 엔진 "문양 삽입" 기능에서 고르는 어드민 등록 SVG 라이브러리 (사용자 개인 업로드는 별도, uploads/svg_insert/{userId}에 파일로만 저장됨)
+CREATE TABLE IF NOT EXISTS svg_motifs (
+    id         INT UNSIGNED      NOT NULL AUTO_INCREMENT,
+    name       VARCHAR(100)      NOT NULL DEFAULT '' COMMENT '문양 이름 (관리자 표시용)',
+    svg_url    VARCHAR(500)      NOT NULL DEFAULT '' COMMENT '/uploads/svg_motifs/ 아래 파일 경로',
+    category   VARCHAR(50)       NOT NULL DEFAULT '' COMMENT '분류 태그 (예: 꽃살, 기하학)',
+    sort_order SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    is_active  TINYINT(1)        NOT NULL DEFAULT 1,
+    created_at DATETIME          NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (id),
+    KEY idx_svg_motifs_sort (sort_order, is_active)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='어드민 등록 SVG 문양 라이브러리 (엔진 문양 삽입 패널에서 선택)';
+
+-- 블로그 시리즈 (연재 묶음). blog_posts.series_id가 이 테이블을 참조하며, 홈 화면 인용 배너에 노출할 시리즈를 show_on_home으로 고름
+CREATE TABLE IF NOT EXISTS blog_series (
+    id           INT UNSIGNED      NOT NULL AUTO_INCREMENT,
+    name         VARCHAR(80)       NOT NULL COMMENT '시리즈명',
+    tagline      VARCHAR(200)      NOT NULL DEFAULT '' COMMENT '시리즈 한줄 소개',
+    show_on_home TINYINT(1)        NOT NULL DEFAULT 1 COMMENT '홈 화면 인용 배너 노출 여부',
+    sort_order   SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_series_name (name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='블로그 시리즈 (연재 묶음)';
+
+-- 블로그 글. 시리즈에 속하거나(series_id) 독립 글일 수 있고, related_drawing_id/related_engine으로 특정 엔진·도면과 양방향 링크됨
+-- (엔진 페이지 → 관련 블로그 글, 블로그 글 → "이 엔진으로 만들어보기" 딥링크)
+CREATE TABLE IF NOT EXISTS blog_posts (
+    id                 INT UNSIGNED      NOT NULL AUTO_INCREMENT,
+    title              VARCHAR(150)      NOT NULL DEFAULT '',
+    slug               VARCHAR(200)      NOT NULL DEFAULT '' COMMENT '시맨틱 URL slug (/blog/{slug})',
+    series_id          INT UNSIGNED      NULL     COMMENT '소속 시리즈 (blog_series.id FK, 독립 글이면 NULL)',
+    series_order       SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '시리즈 내 순서',
+    related_drawing_id INT UNSIGNED      NULL     COMMENT '연관 대표 도면 ID (drawings.id), 글 상단 썸네일/딥링크용',
+    related_engine     VARCHAR(20)       NULL     COMMENT '연관 엔진 (classic/square/cross/diamond/triangle/hexagon)',
+    question           VARCHAR(200)      NOT NULL DEFAULT '' COMMENT '질문형 인덱스 목록에 쓰이는 한 줄 질문 (예: "정자살과 완자살, 뭐가 다른가요?")',
+    summary            VARCHAR(300)      NOT NULL DEFAULT '' COMMENT '목록/카드에 노출되는 요약',
+    cta_text           VARCHAR(200)      NOT NULL DEFAULT '' COMMENT '글 하단 행동유도 문구',
+    content            TEXT              NOT NULL COMMENT '본문 (HTML)',
+    thumbnail_url      VARCHAR(500)      NOT NULL DEFAULT '',
+    sort_order         SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    is_active          TINYINT(1)        NOT NULL DEFAULT 1,
+    view_count         INT UNSIGNED      NOT NULL DEFAULT 0 COMMENT '조회수 (방문자 쿠키 기준 24시간 중복 방지)',
+    created_at         DATETIME          NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_blog_posts_slug (slug),
+    KEY idx_blog_posts_sort (sort_order, is_active)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='블로그 글 (창호 이야기)';
