@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:has.works)",
+      "WebFetch(domain:pyeongmok.com)",
+      "PowerShell(New-Item -ItemType Directory -Force \"c:\\\\www\\\\d.pyeongmok\\\\www\\\\logs\")",
+      "Bash(New-Item -ItemType Directory -Force \"c:\\\\www\\\\d.pyeongmok\\\\www\\\\src\\\\engine\\\\sambuntok\\\\api\")",
+      "PowerShell(New-Item -ItemType Directory -Force \"c:\\\\www\\\\d.pyeongmok\\\\www\\\\src\\\\engine\\\\sambuntok\\\\api\")",
+      "PowerShell(New-Item -ItemType Directory -Force \"c:\\\\www\\\\d.pyeongmok\\\\www\\\\src\\\\js\")",
+      "Bash(Get-ChildItem -Path \"c:\\\\www\\\\d.pyeongmok\\\\www\" -Recurse -Directory)",
+      "Bash(Select-Object -First 20)",
+      "Bash(Select-String -Path \"c:\\\\www\\\\d.pyeongmok\\\\www\\\\src\\\\js\\\\Sabunteok.js\" -Pattern \"DOMContentLoaded|window.onload\")",
+      "Bash(Select-Object -First 5)"
+    ]
+  }
+}
