@@ -704,7 +704,7 @@ function loadOrders() {
                 <div class="ord-row" data-idx="${i}">
                     ${o.thumbnail ? `<img class="ord-row-thumb" src="${o.thumbnail}" loading="lazy">` : '<div class="ord-row-thumb ord-row-thumb-empty"></div>'}
                     <div class="ord-row-main">
-                        <div class="ord-row-title">#${o.id} · ${(cfg?.label || o.engine)} · ${escHtml(o.title || '(제목 없음)')}</div>
+                        <div class="ord-row-title">주문번호 #${o.id} · ${(cfg?.label || o.engine)} · ${escHtml(o.title || '(제목 없음)')}</div>
                         <div class="ord-row-sub">주문일 ${o.created_at ? o.created_at.slice(0, 10) : '—'}${o.due_date ? ' · 납기희망 ' + o.due_date : ''}</div>
                     </div>
                     <span class="ord-status-pill" data-tone="${st.tone}">${st.label}</span>
@@ -721,7 +721,7 @@ function loadOrders() {
 function openOrderModal(o) {
     const st = ORDER_STATUS_LABELS[o.status] || { label: o.status, tone: 'wait' };
     const cfg = TYPE_CONFIG[o.engine];
-    document.getElementById('dbOrderModalTitle').textContent = `#${o.id} · ${cfg?.label || o.engine} · ${o.title || '(제목 없음)'}`;
+    document.getElementById('dbOrderModalTitle').textContent = `주문번호 #${o.id} · ${cfg?.label || o.engine} · ${o.title || '(제목 없음)'}`;
 
     let html = `<div style="margin-bottom:14px;"><span class="ord-status-pill" data-tone="${st.tone}">${st.label}</span></div>`;
 

@@ -48,7 +48,7 @@ function renderTable(orders) {
     }
     tbody.innerHTML = orders.map(o => `
         <tr>
-            <td class="adm-id">${o.id}</td>
+            <td class="adm-id">#${o.id}</td>
             <td style="color:var(--text-3);font-size:12px;">${o.created_at ? o.created_at.slice(0, 10) : '—'}</td>
             <td>${esc(o.customer_name)}<br><span style="color:var(--text-3);font-size:12px;">${esc(o.customer_phone)}</span></td>
             <td>${o.company_name ? esc(o.company_name) : '<span class="adm-null">—</span>'}</td>
@@ -84,7 +84,7 @@ function onSearchInput() {
 
 async function openModal(id) {
     editingId = id;
-    document.getElementById('admModalTitle').textContent = `주문 상세 #${id}`;
+    document.getElementById('admModalTitle').textContent = `주문번호 #${id} 상세`;
     document.getElementById('admDetailContent').innerHTML = '<p style="color:var(--text-3);">로딩 중…</p>';
     document.getElementById('admModalAlert').style.display = 'none';
     document.getElementById('admModalOverlay').classList.add('open');

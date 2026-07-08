@@ -61,7 +61,7 @@ require_admin_role('s');
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>주문번호</th>
                         <th>주문일</th>
                         <th>고객</th>
                         <th>회사</th>

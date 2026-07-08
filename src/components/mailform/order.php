@@ -18,7 +18,7 @@
       <tr>
         <td style="padding:36px 32px 24px;">
           <p style="font-size:14px;font-weight:600;color:var(--text-muted);margin:0 0 4px;letter-spacing:-0.2px;">새 견적요청이 접수되었습니다</p>
-          <p style="font-size:34px;font-weight:800;color:var(--accent);margin:0 0 20px;letter-spacing:-0.5px;">요청번호 #<?= (int)$orderId ?></p>
+          <p style="font-size:34px;font-weight:800;color:var(--accent);margin:0 0 20px;letter-spacing:-0.5px;">주문번호 #<?= (int)$orderId ?></p>
           <?php if (!empty($thumbnail)): ?>
           <img src="<?= htmlspecialchars($thumbnail) ?>" alt="도면 미리보기" style="display:block;width:100%;max-width:496px;border-radius:8px;margin-bottom:20px;background:var(--bg);">
           <?php endif; ?>
