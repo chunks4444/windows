@@ -126,6 +126,7 @@ header('Content-Type: text/html; charset=UTF-8');
     </div>
 </div>
 
+<script src="/src/js/order-status-labels.js"></script>
 <script src="/src/js/dashboard.js"></script>
 <script>
 if (location.hash === '#boards') {

@@ -681,19 +681,7 @@ document.getElementById('dbRenderModal')?.addEventListener('click', e => {
     if (e.target === e.currentTarget) e.currentTarget.style.display = 'none';
 });
 
-/* ── 주문내역 탭 ── */
-const ORDER_STATUS_MAP = {
-    pending_review:     { label: '견적검토', tone: 'wait' },
-    revision_requested: { label: '수정요청', tone: 'alert' },
-    approved:            { label: '승인',     tone: 'progress' },
-    quote_finalized:     { label: '견적확정', tone: 'progress' },
-    deposit_paid:         { label: '입금완료', tone: 'progress' },
-    in_production:       { label: '제작중',   tone: 'progress' },
-    production_done:     { label: '제작완료', tone: 'progress' },
-    shipped:              { label: '발송',     tone: 'progress' },
-    delivered:            { label: '배송완료', tone: 'done' },
-    cancelled:            { label: '취소',     tone: 'done' },
-};
+/* ── 주문내역 탭 (라벨/톤은 src/js/order-status-labels.js의 ORDER_STATUS_LABELS 공유) ── */
 let _orderItemsCache = [];
 
 function loadOrders() {
@@ -710,7 +698,7 @@ function loadOrders() {
             }
 
             el.innerHTML = '<div class="ord-list">' + _orderItemsCache.map((o, i) => {
-                const st  = ORDER_STATUS_MAP[o.status] || { label: o.status, tone: 'wait' };
+                const st  = ORDER_STATUS_LABELS[o.status] || { label: o.status, tone: 'wait' };
                 const cfg = TYPE_CONFIG[o.engine];
                 return `
                 <div class="ord-row" data-idx="${i}">
@@ -731,7 +719,7 @@ function loadOrders() {
 }
 
 function openOrderModal(o) {
-    const st = ORDER_STATUS_MAP[o.status] || { label: o.status, tone: 'wait' };
+    const st = ORDER_STATUS_LABELS[o.status] || { label: o.status, tone: 'wait' };
     const cfg = TYPE_CONFIG[o.engine];
     document.getElementById('dbOrderModalTitle').textContent = `${cfg?.label || o.engine} · ${o.title || '(제목 없음)'}`;
 
@@ -747,9 +735,9 @@ function openOrderModal(o) {
     }
 
     html += `<div class="ord-modal-meta">
-        <div><span>주문일</span>${o.created_at ? o.created_at.slice(0, 16).replace('T', ' ') : '—'}</div>
+        <div><span>주문일</span>${fmtOrderDatetime(o.created_at)}</div>
         <div><span>납기희망일</span>${o.due_date || '—'}</div>
-        <div><span>최근 처리일</span>${o.reviewed_at ? o.reviewed_at.slice(0, 16).replace('T', ' ') : '—'}</div>
+        <div><span>최근 처리일</span>${fmtOrderDatetime(o.reviewed_at)}</div>
     </div>`;
 
     document.getElementById('dbOrderModalBody').innerHTML = html;

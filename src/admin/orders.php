@@ -125,6 +125,7 @@ require_admin_role('s');
     </div>
 </div>
 
+<script src="/src/js/order-status-labels.js"></script>
 <script src="/src/js/admin/orders.js"></script>
 </body>
 </html>

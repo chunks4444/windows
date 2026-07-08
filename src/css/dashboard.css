@@ -153,8 +153,10 @@ body {
 .ord-row-main { flex: 1; min-width: 0; }
 .ord-row-title { font-size: 14px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ord-row-sub { font-size: 12px; color: var(--text); opacity: .65; margin-top: 2px; }
-.ord-status-pill {
-    flex-shrink: 0; padding: 3px 10px; border-radius: 99px; font-size: 12px; font-weight: 700; white-space: nowrap;
+/* 관리자 주문 목록의 .ord-status-badge(src/css/admin/orders.css)와 박스 모양 공유, 색상만 각자 정의 */
+.ord-status-pill, .ord-status-badge {
+    display: inline-block; flex-shrink: 0;
+    padding: 3px 10px; border-radius: 99px; font-size: 12px; font-weight: 700; white-space: nowrap;
 }
 .ord-status-pill[data-tone="wait"]     { background: var(--warning-tint); color: var(--warning); }
 .ord-status-pill[data-tone="alert"]    { background: var(--danger-tint);  color: var(--danger); }

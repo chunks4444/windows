@@ -269,25 +269,28 @@ function compute_price_estimate(array $parts, array $selection, array $cfg, arra
     $m = (int)round(fmod($displayMin, 60));
     $craftTimeStr = $h > 0 ? "{$h}시간 {$m}분" : "{$m}분";
 
+    $breakdown = [
+        'door' => $doorCost, 'muntol' => $muntolCost, 'wood' => $woodCost,
+        'craft' => $craftCost, 'craftTime' => $craftTimeStr,
+        'hardware' => $hardwareCost, 'finish' => $finishCost,
+        'overhead' => $overheadCost, 'profit' => $profitCost, 'total' => $totalCost,
+    ];
+    // 대분류 5종(wood/labor/hardware/finish/overhead) 소계 — cost_table.category와 1:1 대응.
+    // 위 $breakdown에서 읽어와 파생시키므로(재계산 아님) breakdown 쪽 계산이 바뀌어도 항상 따라간다.
+    // 카테고리 안의 개별 항목(오일/한지 등)이 늘어나도 이 소계 구조 자체는 안 바뀜.
+    $breakdown['categories'] = [
+        'wood'     => $breakdown['wood'],
+        'labor'    => $breakdown['craft'],
+        'hardware' => $breakdown['hardware'],
+        'finish'   => $breakdown['finish'],
+        'overhead' => $breakdown['overhead'] + $breakdown['profit'],
+        'total'    => $breakdown['total'],
+    ];
+
     return [
         'total' => $totalCost,
         'leadTimeDays' => $leadDays,
-        'breakdown' => [
-            'door' => $doorCost, 'muntol' => $muntolCost, 'wood' => $woodCost,
-            'craft' => $craftCost, 'craftTime' => $craftTimeStr,
-            'hardware' => $hardwareCost, 'finish' => $finishCost,
-            'overhead' => $overheadCost, 'profit' => $profitCost, 'total' => $totalCost,
-            // 대분류 5종(wood/labor/hardware/finish/overhead) 소계 — cost_table.category와 1:1 대응.
-            // 카테고리 안의 개별 항목(오일/한지 등)이 늘어나도 이 소계 구조 자체는 안 바뀜.
-            'categories' => [
-                'wood'     => $woodCost,
-                'labor'    => $craftCost,
-                'hardware' => $hardwareCost,
-                'finish'   => $finishCost,
-                'overhead' => $overheadCost + $profitCost,
-                'total'    => $totalCost,
-            ],
-        ],
+        'breakdown' => $breakdown,
     ];
 }
 

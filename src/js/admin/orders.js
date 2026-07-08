@@ -1,15 +1,3 @@
-const STATUS_MAP = {
-    pending_review:     '견적검토',
-    revision_requested: '수정요청',
-    approved:            '승인',
-    quote_finalized:     '견적확정',
-    deposit_paid:         '입금완료',
-    in_production:       '제작중',
-    production_done:     '제작완료',
-    shipped:              '발송',
-    delivered:            '배송완료',
-    cancelled:            '취소',
-};
 const ENGINE_MAP = { square: '정자살', classic: '완자살', cross: '아자살', diamond: '완자문살', triangle: '세모솟을살', hexagon: '육모살' };
 
 let currentPage = 1;
@@ -29,7 +17,7 @@ async function init() {
 function populateStatusOptions() {
     const filter = document.getElementById('admStatusFilter');
     const modal  = document.getElementById('admMStatus');
-    for (const [value, label] of Object.entries(STATUS_MAP)) {
+    for (const [value, { label }] of Object.entries(ORDER_STATUS_LABELS)) {
         filter.insertAdjacentHTML('beforeend', `<option value="${value}">${label}</option>`);
         modal.insertAdjacentHTML('beforeend', `<option value="${value}">${label}</option>`);
     }
@@ -66,7 +54,7 @@ function renderTable(orders) {
             <td>${o.company_name ? esc(o.company_name) : '<span class="adm-null">—</span>'}</td>
             <td>${ENGINE_MAP[o.engine] || esc(o.engine)}${o.title ? ' · ' + esc(o.title) : ''}</td>
             <td style="color:var(--text-3);font-size:12px;">${o.due_date || '—'}</td>
-            <td><span class="ord-status-badge" data-status="${esc(o.status)}">${STATUS_MAP[o.status] || o.status}</span></td>
+            <td><span class="ord-status-badge" data-status="${esc(o.status)}">${ORDER_STATUS_LABELS[o.status]?.label || o.status}</span></td>
             <td><div class="adm-action-cell">
                 <button class="adm-edit-btn" onclick="openModal(${o.id})">상세</button>
             </div></td>
@@ -150,8 +138,8 @@ function renderDetail(o) {
 
             <div class="ord-detail-label">주문일시</div>
             <div class="ord-detail-label">최근 처리일시</div>
-            <div class="ord-detail-value">${fmtDatetime(o.created_at)}</div>
-            <div class="ord-detail-value">${fmtDatetime(o.reviewed_at)}</div>
+            <div class="ord-detail-value">${fmtOrderDatetime(o.created_at)}</div>
+            <div class="ord-detail-value">${fmtOrderDatetime(o.reviewed_at)}</div>
         </div>
     `;
 }
@@ -198,11 +186,6 @@ async function saveOrder() {
     } finally {
         btn.disabled = false; btn.textContent = '저장';
     }
-}
-
-function fmtDatetime(dt) {
-    if (!dt) return '—';
-    return dt.slice(0, 16).replace('T', ' ');
 }
 
 function esc(str) {

@@ -1,11 +1,4 @@
-.ord-status-badge {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 99px;
-    font-size: var(--fs-12);
-    font-weight: 700;
-    white-space: nowrap;
-}
+/* 배지 박스 모양(padding/border-radius/font-weight)은 .ord-status-pill과 공유 — src/css/dashboard.css 참고 */
 .ord-status-badge[data-status="pending_review"]      { background: var(--warning-tint); color: var(--warning); }
 .ord-status-badge[data-status="revision_requested"]  { background: var(--danger-tint);  color: var(--danger); }
 .ord-status-badge[data-status="approved"]            { background: var(--accent-tint);  color: var(--accent); }

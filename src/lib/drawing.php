@@ -1,15 +1,14 @@
 <?php
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/order_status.php';
 
 class Drawing {
 
-    // 도면을 잠그는(편집/삭제 불가) 주문 상태. 수정요청/배송완료/취소 상태가 되면 다시 편집 가능해진다.
-    private const LOCKING_ORDER_STATUSES = "'pending_review','approved','quote_finalized','deposit_paid','in_production','production_done','shipped'";
-
     // 도면이 진행 중인 주문에 묶여 잠겨 있는지 계산하는 SQL 조각. drawings 테이블의 물리 컬럼이 아니라
-    // orders.status에서 매번 파생한다 (locked_at 컬럼은 폐지됨).
+    // orders.status에서 매번 파생한다 (locked_at 컬럼은 폐지됨). 어떤 상태가 잠그는지는 order_status.php 참고.
     static function lockedAtExpr(string $alias = 'd'): string {
-        return "EXISTS (SELECT 1 FROM orders o WHERE o.drawing_id = {$alias}.id AND o.status IN (" . self::LOCKING_ORDER_STATUSES . ")) AS locked_at";
+        $statuses = "'" . implode("','", ORDER_LOCKING_STATUSES) . "'";
+        return "EXISTS (SELECT 1 FROM orders o WHERE o.drawing_id = {$alias}.id AND o.status IN ({$statuses})) AS locked_at";
     }
 
     // /uploads/drawing_thumbs 아래 공개 경로(확장자 있든 없든)를 실제 파일 시스템 경로로 해석.
@@ -188,14 +187,15 @@ class Drawing {
 
     // 진행 중인 주문에 묶여 잠긴 도면인지 확인 (orders.status에서 파생, 잠금 컬럼 없음)
     static function is_locked(int $userId, string $type, string $title): bool {
-        $pdo  = db();
-        $stmt = $pdo->prepare('
+        $pdo      = db();
+        $statuses = "'" . implode("','", ORDER_LOCKING_STATUSES) . "'";
+        $stmt = $pdo->prepare("
             SELECT 1 FROM drawings d
             JOIN orders o ON o.drawing_id = d.id
             WHERE d.user_id = ? AND d.type = ? AND d.title = ?
-              AND o.status IN (' . self::LOCKING_ORDER_STATUSES . ')
+              AND o.status IN ({$statuses})
             LIMIT 1
-        ');
+        ");
         $stmt->execute([$userId, $type, $title]);
         return (bool) $stmt->fetchColumn();
     }

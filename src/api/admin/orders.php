@@ -6,6 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') exit;
 
 require_once __DIR__ . '/../../lib/db.php';
 require_once __DIR__ . '/../../lib/jwt.php';
+require_once __DIR__ . '/../../lib/order_status.php';
 
 $payload = jwt_from_request();
 if (!$payload || ($payload['role'] ?? '') !== 's') {
@@ -14,11 +15,6 @@ if (!$payload || ($payload['role'] ?? '') !== 's') {
 $adminId = (int) $payload['sub'];
 
 $pdo = db();
-
-const ORDER_STATUSES = [
-    'pending_review', 'revision_requested', 'approved', 'quote_finalized',
-    'deposit_paid', 'in_production', 'production_done', 'shipped', 'delivered', 'cancelled',
-];
 
 $_body = json_decode(file_get_contents('php://input'), true) ?? [];
 
@@ -99,13 +95,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     if ($status === 'shipped' && (!$carrier && !$trackNo)) {
         http_response_code(422); echo json_encode(['error' => '택배사와 운송장번호를 입력해주세요.']); exit;
     }
-    // 자동 가격공식이 확정되기 전까지는 견적확정 단계에서 협의된 확정가격을 수기로 입력받는다
-    $effectiveFinalPrice = $finalPrice !== null && $finalPrice !== '' ? $finalPrice : $current['final_price'];
-    if ($status === 'quote_finalized' && (!is_numeric($effectiveFinalPrice) || (float) $effectiveFinalPrice <= 0)) {
-        http_response_code(422); echo json_encode(['error' => '확정 가격을 입력해주세요.']); exit;
-    }
     if ($finalPrice !== null && $finalPrice !== '' && !is_numeric($finalPrice)) {
         http_response_code(422); echo json_encode(['error' => '확정 가격은 숫자로 입력해주세요.']); exit;
+    }
+    // 자동 가격공식이 확정되기 전까지는 견적확정 단계에서 협의된 확정가격을 수기로 입력받는다
+    $effectiveFinalPrice = $finalPrice !== null && $finalPrice !== '' ? $finalPrice : $current['final_price'];
+    if ($status === 'quote_finalized' && (float) $effectiveFinalPrice <= 0) {
+        http_response_code(422); echo json_encode(['error' => '확정 가격을 입력해주세요.']); exit;
     }
     if (mb_strlen((string) $note) > 2000 || mb_strlen((string) $carrier) > 50 || mb_strlen((string) $trackNo) > 50 || mb_strlen((string) $priceNote) > 2000) {
         http_response_code(422); echo json_encode(['error' => '입력값이 너무 깁니다.']); exit;
@@ -126,7 +122,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     if ($carrier    !== null) { $sets[] = 'tracking_carrier = ?'; $binds[] = $carrier ?: null; }
     if ($trackNo    !== null) { $sets[] = 'tracking_number = ?';  $binds[] = $trackNo ?: null; }
     if ($note       !== null) { $sets[] = 'revision_note = ?';    $binds[] = $note ?: null; }
-    if ($finalPrice !== null) { $sets[] = 'final_price = ?';      $binds[] = $finalPrice !== '' ? $finalPrice : null; }
+    if ($finalPrice !== null) {
+        $sets[] = 'final_price = ?'; $binds[] = $finalPrice !== '' ? $finalPrice : null;
+        // 자동계산 공식이 아직 없어 수기로 입력한 가격임을 표시 — 나중에 공식이 붙으면 이 값으로 구분한다
+        $sets[] = 'price_formula_version = ?'; $binds[] = $finalPrice !== '' ? 'manual' : null;
+    }
     if ($priceNote  !== null) { $sets[] = 'price_note = ?';       $binds[] = $priceNote ?: null; }
 
     if (!$sets) { http_response_code(422); echo json_encode(['error' => '변경할 내용이 없습니다.']); exit; }
