@@ -595,8 +595,8 @@ body { font-weight: 900; }
 
 /* GUIDE SECTION */
 .guide-section {
+    background: #f9f9f9;
     padding: 32px 0 80px;
-    border-top: 1px solid var(--border);
 }
 
 .guide-cards-grid {
