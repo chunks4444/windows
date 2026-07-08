@@ -438,8 +438,9 @@
             document.getElementById('orderBackdrop').classList.add('pm-active');
 
             const thumbImg = document.getElementById('orderThumbImg');
+            let thumbSrc = null;
             try {
-                const thumbSrc = getThumbnail ? getThumbnail() : null;
+                thumbSrc = getThumbnail ? getThumbnail() : null;
                 if (thumbSrc) {
                     thumbImg.src = thumbSrc;
                     thumbImg.style.display = 'block';
