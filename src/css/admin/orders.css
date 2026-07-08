@@ -22,3 +22,8 @@
 .ord-detail-value { color: var(--text); word-break: break-all; }
 .ord-thumb { max-width: 160px; border: 1px solid var(--border); border-radius: var(--r-sm); display: block; margin-bottom: 10px; }
 .ord-section-title { font-size: var(--fs-13); font-weight: 700; color: var(--text); margin: 18px 0 8px; padding-top: 12px; border-top: 1px solid var(--border); }
+
+.ord-price-table { width: 100%; border-collapse: collapse; font-size: var(--fs-13); }
+.ord-price-table td { padding: 5px 4px; border-bottom: 1px solid var(--border); }
+.ord-price-table td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+.ord-price-total td { font-weight: 700; border-bottom: none; border-top: 1px solid var(--text); }

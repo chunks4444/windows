@@ -107,6 +107,30 @@ async function openModal(id) {
     toggleConditionalFields();
 }
 
+function renderPriceBreakdown(breakdownJson) {
+    if (!breakdownJson) return '<div class="full ord-detail-value">견적 산출 내역이 없습니다 (구버전 주문이거나 도면 없이 접수됨).</div>';
+    let b;
+    try { b = JSON.parse(breakdownJson); } catch { return '<div class="full ord-detail-value">견적 내역을 읽을 수 없습니다.</div>'; }
+
+    const won = n => Number(n || 0).toLocaleString() + '원';
+    const rows = [
+        ['문',   b.door],
+        ['문틀', b.muntol],
+        ['목재비 합계', b.wood],
+        ['가공비' + (b.craftTime ? ` (${esc(b.craftTime)})` : ''), b.craft],
+        ['철물', b.hardware],
+        ['마감', b.finish],
+        ['부자재/간접비', b.overhead],
+        ['이윤', b.profit],
+    ];
+    return `
+        <table class="ord-price-table">
+            ${rows.map(([label, val]) => `<tr><td>${label}</td><td>${won(val)}</td></tr>`).join('')}
+            <tr class="ord-price-total"><td>합계</td><td>${won(b.total)}</td></tr>
+        </table>
+    `;
+}
+
 function renderDetail(o) {
     const shipAddr = [o.ship_zipcode, o.ship_address, o.ship_address_detail].filter(Boolean).join(' ');
     document.getElementById('admDetailContent').innerHTML = `
@@ -131,14 +155,15 @@ function renderDetail(o) {
             <div class="full ord-detail-label">요청사항</div>
             <div class="full ord-detail-value">${o.memo ? esc(o.memo) : '—'}</div>
 
-            <div class="ord-detail-label">참고 추정가(고객 화면)</div>
-            <div class="ord-detail-label">확정 가격</div>
-            <div class="ord-detail-value">${o.estimated_price ? Number(o.estimated_price).toLocaleString() + '원' : '—'}</div>
-            <div class="ord-detail-value">${o.final_price ? Number(o.final_price).toLocaleString() + '원' : '미입력'}</div>
+            <div class="full ord-detail-label">주문 시점 예상견적 상세 (도면 화면과 동일한 산출 내역 — 상담 참고용)</div>
+            <div class="full ord-detail-value">${renderPriceBreakdown(o.price_breakdown)}</div>
 
+            <div class="ord-detail-label">확정 가격</div>
             <div class="ord-detail-label">주문일시</div>
-            <div class="ord-detail-label">최근 처리일시</div>
+            <div class="ord-detail-value">${o.final_price ? Number(o.final_price).toLocaleString() + '원' : '미입력'}</div>
             <div class="ord-detail-value">${fmtOrderDatetime(o.created_at)}</div>
+
+            <div class="ord-detail-label">최근 처리일시</div>
             <div class="ord-detail-value">${fmtOrderDatetime(o.reviewed_at)}</div>
         </div>
     `;

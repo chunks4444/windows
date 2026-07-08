@@ -478,6 +478,8 @@
                         ship_phone:          shipPhone,
                         memo,
                         spec:                getSpec(),
+                        estimated_price:     window.__pmokEstimatedPrice || null,
+                        price_breakdown:     window.__pmokPriceBreakdown || null,
                     }),
                 }).then(r => r.json()).then(data => {
                     if (data.error) { pmAlert(data.error, { type: 'danger' }); return; }
@@ -1385,6 +1387,7 @@ function drawSvgInserts() {
         if (priceStart) priceStart.textContent = total > 0 ? won(total) : '–';
         if (priceEnd)   priceEnd.textContent   = '';
         window.__pmokEstimatedPrice = total;
+        window.__pmokPriceBreakdown = breakdown || null;
 
         const leadEl = document.querySelector('.sb-lead-time');
         if (leadEl && price?.leadTimeDays != null) {

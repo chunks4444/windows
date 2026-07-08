@@ -32,6 +32,8 @@ $shipZip      = trim($body['ship_zipcode'] ?? '');
 $shipAddr     = trim($body['ship_address'] ?? '');
 $shipAddr2    = trim($body['ship_address_detail'] ?? '');
 $shipPhone    = trim($body['ship_phone'] ?? '');
+$estimatedPrice = isset($body['estimated_price']) && is_numeric($body['estimated_price']) ? (float) $body['estimated_price'] : null;
+$priceBreakdown = $body['price_breakdown'] ?? null;
 
 if (!in_array($engine, $validEngines, true)) {
     http_response_code(422); echo json_encode(['error' => '엔진 종류가 올바르지 않습니다.']); exit;
@@ -77,8 +79,8 @@ $stmt = $pdo->prepare(
         user_id, drawing_id, engine, title, version_label, thumbnail,
         customer_name, customer_phone, company_name,
         due_date, ship_zipcode, ship_address, ship_address_detail, ship_phone,
-        memo, spec_json, status, created_at
-     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, \'pending\', NOW())'
+        memo, spec_json, estimated_price, price_breakdown, created_at
+     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())'
 );
 $stmt->execute([
     $userId, $drawingId, $engine, $title, $versionLabel ?: null, $thumbnail,
@@ -86,6 +88,8 @@ $stmt->execute([
     $dueDate, $shipZip ?: null, $shipAddr, $shipAddr2 ?: null, $shipPhone,
     $memo ?: null,
     $spec !== null ? json_encode($spec, JSON_UNESCAPED_UNICODE) : null,
+    $estimatedPrice,
+    $priceBreakdown !== null ? json_encode($priceBreakdown, JSON_UNESCAPED_UNICODE) : null,
 ]);
 $orderId = (int) $pdo->lastInsertId();
 
