@@ -10,6 +10,10 @@
 -- ALTER TABLE cost_table ADD COLUMN engine       VARCHAR(20)       NULL                COMMENT '엔진명 (classic/square/…, NULL=공통)' AFTER category;
 -- ALTER TABLE cost_table ADD COLUMN thickness_mm SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '부재 두께 mm (문틀만 사용, 살=slatT·울거미=frameW/H)' AFTER weight;
 -- ALTER TABLE cost_table ADD COLUMN width_mm     SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '부재 폭 mm (울거미·살·문틀 공통)' AFTER thickness_mm;
+-- 2026-07-08 hardware(철물) 카테고리 신설 — 기존 category 값(wood/oil/finish/delivery/labor/overhead)과 나란히 사용, 컬럼 추가 없음
+-- INSERT INTO cost_table (category, engine, name, unit_price, unit, unit_name, weight, thickness_mm, width_mm, work_time_min, coat_count, notes, sort_order, is_active) VALUES
+--     ('hardware', '', '여닫이 기본철물', 15000, '조', '', 1, 0, 0, 0, 1, '', 0, 1),
+--     ('hardware', '', '미서기 기본철물', 25000, '조', '', 1, 0, 0, 0, 1, '', 1, 1);
 -- ALTER TABLE drawings ADD COLUMN thumbnail   MEDIUMTEXT   NULL    COMMENT '썸네일 이미지 (data:image/jpeg;base64,…)' AFTER updated_at;
 -- ALTER TABLE drawings ADD COLUMN work_time_sec INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '누적 작업 시간(초)' AFTER thumbnail;
 -- ALTER TABLE users ADD COLUMN role ENUM('s','m','a','u') NOT NULL DEFAULT 'u' COMMENT '권한: s=슈퍼, m=관리자, a=작가, u=회원' AFTER email;
@@ -19,7 +23,7 @@
 -- 2026-07-08 locked_at 폐지 — 도면 잠금을 orders.status에서 파생시키도록 전환(Drawing::lockedAtExpr 참고), 물리 컬럼 삭제
 -- ALTER TABLE drawings DROP COLUMN locked_at;
 -- ALTER TABLE drawings ADD COLUMN pattern_category VARCHAR(40) NULL DEFAULT NULL COMMENT '전통 창호 패턴 분류 — pattern_categories.code 참조' AFTER title;
--- CREATE TABLE pattern_categories (code VARCHAR(40) NOT NULL, engine VARCHAR(20) NOT NULL DEFAULT 'all', name VARCHAR(40) NOT NULL, sort_order TINYINT UNSIGNED NOT NULL DEFAULT 0, is_active TINYINT(1) NOT NULL DEFAULT 1, PRIMARY KEY (code, engine)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- pattern_categories 최초 설계는 (code, engine) 복합키였으나 실제로는 id 단일PK로 운영됨(2026-07-08 CREATE TABLE 블록으로 정정, 아래 참고)
 -- ALTER TABLE blog_posts ADD COLUMN view_count INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '조회수 (방문자 쿠키 기준 24시간 중복 방지)' AFTER is_active;
 -- ALTER TABLE library_patterns ADD COLUMN pattern_category INT UNSIGNED NULL DEFAULT NULL COMMENT '컬렉션 "모양" 필터용 분류 — pattern_categories.id 참조 (연결 도면의 분류와 별개)' AFTER drawing_id;
 -- CREATE TABLE blog_series (id INT UNSIGNED NOT NULL AUTO_INCREMENT, name VARCHAR(80) NOT NULL, tagline VARCHAR(200) NOT NULL DEFAULT '', sort_order SMALLINT UNSIGNED NOT NULL DEFAULT 0, PRIMARY KEY (id), UNIQUE KEY uq_series_name (name)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='블로그 시리즈';
@@ -83,6 +87,7 @@ CREATE TABLE IF NOT EXISTS drawings (
     user_id     INT UNSIGNED    NOT NULL COMMENT '소유 사용자 ID (users.id FK)',
     type        VARCHAR(64)     NOT NULL COMMENT '도면 종류 (예: classic, square, diamond, cross, triangle)',
     title       VARCHAR(100)    NOT NULL DEFAULT '' COMMENT '도면 제목 (유저가 직접 지정, 버전과 독립 관리)',
+    pattern_category VARCHAR(40) NULL DEFAULT NULL COMMENT '전통 창호 패턴 분류 — pattern_categories.id를 문자열로 저장(CAST(... AS UNSIGNED)로 조인)',
     created_at  DATETIME        NOT NULL DEFAULT NOW() COMMENT '최초 작성일시',
     updated_at    DATETIME        NOT NULL DEFAULT NOW() ON UPDATE NOW() COMMENT '최종 저장일시',
     thumbnail     MEDIUMTEXT      NULL COMMENT '썸네일 이미지 (data:image/jpeg;base64,…)',
@@ -92,6 +97,15 @@ CREATE TABLE IF NOT EXISTS drawings (
     KEY idx_drawings_user_type (user_id, type),
     CONSTRAINT fk_drawings_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='도면 메타 정보 (제목별로 독립 관리)';
+
+-- 전통 창호 패턴 분류 (정자살/완자살 등). drawings.pattern_category(코드 문자열)가 이 테이블의 id를 참조
+CREATE TABLE IF NOT EXISTS pattern_categories (
+    id         INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    name       VARCHAR(40)      NOT NULL,
+    sort_order TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    is_active  TINYINT(1)       NOT NULL DEFAULT 1,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='전통 창호 패턴 카테고리';
 
 -- 문의 메일 발송 이력 (rate limit용)
 CREATE TABLE IF NOT EXISTS contact_log (
@@ -451,6 +465,30 @@ CREATE TABLE IF NOT EXISTS orders (
     CONSTRAINT fk_orders_user     FOREIGN KEY (user_id)    REFERENCES users (id)    ON DELETE CASCADE,
     CONSTRAINT fk_orders_drawing FOREIGN KEY (drawing_id) REFERENCES drawings (id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='제작 주문';
+-- ============================================================
+
+-- 원가/가격 산출 기준 데이터. src/lib/engine_settings.php의 compute_price_estimate()가 참조.
+-- category: wood(목재)/oil(오일마감)/finish(마감)/delivery(배송)/labor(인건비)/overhead(간접비·이윤)/hardware(철물)
+-- 이 CREATE TABLE은 2026-07-08에 기존 운영 DB 구조를 그대로 문서화한 것 — 위쪽 ALTER 이력과 함께 참고
+CREATE TABLE IF NOT EXISTS cost_table (
+    id            INT UNSIGNED      NOT NULL AUTO_INCREMENT,
+    category      VARCHAR(50)       NOT NULL DEFAULT '' COMMENT '구분',
+    engine        VARCHAR(20)       NULL COMMENT '엔진명 (classic/square/…, NULL=공통)',
+    name          VARCHAR(100)      NOT NULL DEFAULT '',
+    unit_price    DECIMAL(12,2)     NOT NULL DEFAULT 0.00 COMMENT '원/사이',
+    unit          VARCHAR(30)       NOT NULL DEFAULT '' COMMENT '단위',
+    unit_name     VARCHAR(50)       NOT NULL DEFAULT '' COMMENT '단위명',
+    weight        DECIMAL(8,4)      NOT NULL DEFAULT 1.0000 COMMENT '가중치',
+    thickness_mm  SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '부재 두께 mm (문틀만 사용, 살=slatT·울거미=frameW/H)',
+    width_mm      SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '부재 폭 mm (울거미·살·문틀 공통)',
+    work_time_min SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    coat_count    TINYINT UNSIGNED  NOT NULL DEFAULT 1,
+    notes         VARCHAR(500)      NOT NULL DEFAULT '' COMMENT '메모',
+    sort_order    SMALLINT          NOT NULL DEFAULT 0,
+    is_active     TINYINT(1)        NOT NULL DEFAULT 1,
+    PRIMARY KEY (id),
+    KEY idx_ct_engine (engine)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='목재 단가';
 -- ============================================================
 
 -- 엔진별 기본 설정값 (좌측 패널 슬라이더 기본값 + gap/basePadding 같은 레이아웃 상수)
