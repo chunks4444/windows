@@ -119,6 +119,9 @@ function buildCard(p) {
                         <button class="lib-icon-btn lib-board-btn" onclick="openBoardModal(event,${p.id},'${esc(p.name_ko)}')" title="보드에 저장">
                             <i class="bi bi-collection"></i>
                         </button>
+                        <button class="lib-icon-btn lib-share-btn" onclick="shareCollectionPattern(event,'${esc(p.slug)}','${esc(p.name_ko)}')" title="공유">
+                            <i class="bi bi-share"></i>
+                        </button>
                     </div>
                     <div class="lib-overlay-bottom">
                         <div class="lib-overlay-title">${esc(p.name_ko)}</div>
@@ -360,6 +363,24 @@ function showToast(msg) {
     t.textContent = msg;
     t.classList.add('visible');
     setTimeout(() => t.classList.remove('visible'), 2400);
+}
+
+/* ── 공유 ─────────────────────────────────────── */
+async function shareCollectionPattern(e, slug, name) {
+    e.stopPropagation(); e.preventDefault();
+    if (!slug) return;
+    const url = location.origin + '/src/collection/detail.php?slug=' + encodeURIComponent(slug);
+    if (navigator.share) {
+        try { await navigator.share({ title: name, text: name, url }); }
+        catch (err) { /* 사용자가 공유 취소한 경우 등 — 무시 */ }
+        return;
+    }
+    try {
+        await navigator.clipboard.writeText(url);
+        showToast('링크가 복사되었습니다.');
+    } catch (err) {
+        showToast('링크 복사에 실패했습니다.');
+    }
 }
 
 function engineIconHtml(engine) {

@@ -61,7 +61,7 @@ if ($page === 1) {
 
 // 페이징된 패턴
 $stmt = $pdo->prepare(
-    "SELECT p.id, p.name_ko, p.drawing_id, p.image_path, d.type AS engine,
+    "SELECT p.id, p.slug, p.name_ko, p.drawing_id, p.image_path, d.type AS engine,
             GROUP_CONCAT(k.keyword ORDER BY k.id SEPARATOR ',') AS keywords
      FROM library_patterns p
      LEFT JOIN drawings d ON d.id = p.drawing_id
