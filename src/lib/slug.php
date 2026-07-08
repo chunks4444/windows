@@ -12,7 +12,9 @@ function make_slug(string $title): string {
     $s = mb_strtolower($s, 'UTF-8');
     // 한글 등 비ASCII 문자는 URL 인코딩 시 글자당 최대 9배(UTF-8 3바이트 → %XX%XX%XX)로
     // 길이가 늘어나 URL 전체가 검색엔진 권장 길이를 훌쩍 넘길 수 있어 slug 자체를 짧게 제한한다.
-    $s = trim(mb_substr($s, 0, 20, 'UTF-8'), '-');
+    // 20자였을 때도 도메인+경로(/src/blog/) 포함 250자를 넘는 사례가 있어 14자로 축소
+    // (한글 14자 * 9 = 126자 인코딩, 중복 방지 접미사(-2 등) 여유분 포함해도 충분히 여유 있음).
+    $s = trim(mb_substr($s, 0, 14, 'UTF-8'), '-');
     return $s !== '' ? $s : 'post';
 }
 
