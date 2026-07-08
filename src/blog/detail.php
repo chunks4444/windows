@@ -116,6 +116,17 @@ $metaDesc = $post['summary'] ?: mb_substr(strip_tags($post['content']), 0, 120);
 $metaImage = $post['thumbnail_url']
     ? (strpos($post['thumbnail_url'], 'http') === 0 ? $post['thumbnail_url'] : SITE_URL . $post['thumbnail_url'])
     : SITE_DEFAULT_IMAGE;
+
+// SEO 키워드: 글마다 DB에 별도로 입력받지 않고, 이미 있는 필드(제목·질문·시리즈명·연관엔진)에서
+// 자동으로 뽑아서 "이 글 고유 문화 키워드"와 "평목 상품 브릿지 키워드"를 항상 함께 노출한다.
+// 문화 콘텐츠로 유입된 검색엔진 트래픽이 제품 키워드와도 매칭되도록 하기 위함 — 새 글을 써도 자동 적용됨.
+$metaKeywords = implode(', ', array_unique(array_filter([
+    preg_replace('/^\[.*?\]\s*/', '', $post['title']),
+    $seriesInfo['name'] ?? null,
+    $post['question'] ?: null,
+    ($post['related_engine'] && isset($engineLabels[$post['related_engine']])) ? $engineLabels[$post['related_engine']] : null,
+    '평목', '전통창호 제작', '맞춤 창호 디자인', '격자무늬 창호',
+])));
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -124,6 +135,7 @@ $metaImage = $post['thumbnail_url']
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($post['title']) ?> — 평목 공방 블로그</title>
     <meta name="description" content="<?= htmlspecialchars($metaDesc) ?>">
+    <meta name="keywords" content="<?= htmlspecialchars($metaKeywords) ?>">
     <?php require_once __DIR__ . '/../lib/meta.php'; ?>
     <link rel="icon" type="image/png" href="/src/assets/favicon.png">
     <link rel="apple-touch-icon" href="/src/assets/apple-touch-icon.png">
