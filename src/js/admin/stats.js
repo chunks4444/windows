@@ -26,6 +26,7 @@ async function loadStats(months) {
     if (!res.ok) return;
 
     renderSummary(data.summary);
+    document.getElementById('sumShared').textContent = (+data.sharedCount || 0).toLocaleString();
     renderDailyChart(data.daily);
     renderTopPages(data.topPages);
     renderTopUsers(data.topUsers);

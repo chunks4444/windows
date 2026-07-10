@@ -56,6 +56,11 @@ require_admin_role('s');
             <div class="st-card-value" id="sumMobile">—</div>
             <div class="st-card-sub">모바일 PV</div>
         </div>
+        <div class="st-card">
+            <div class="st-card-label">공유중인 도면</div>
+            <div class="st-card-value" id="sumShared">—</div>
+            <div class="st-card-sub">현재 시점</div>
+        </div>
     </div>
 
     <!-- 일별 차트 -->

@@ -77,9 +77,13 @@ $stmt = $pdo->prepare("
 $stmt->execute([$months]);
 $summary = $stmt->fetch();
 
+// 5. 현재 공유 중인 도면 수 (기간 필터와 무관한 현재 시점 스냅샷)
+$sharedCount = (int) $pdo->query('SELECT COUNT(*) FROM drawings WHERE is_shared = 1')->fetchColumn();
+
 echo json_encode([
-    'daily'    => $daily,
-    'topPages' => $topPages,
-    'topUsers' => $topUsers,
-    'summary'  => $summary,
+    'daily'       => $daily,
+    'topPages'    => $topPages,
+    'topUsers'    => $topUsers,
+    'summary'     => $summary,
+    'sharedCount' => $sharedCount,
 ]);
