@@ -15,7 +15,7 @@ header('Pragma: no-cache');
 require_once __DIR__ . '/../../lib/meta.php';
 $shareMeta = null;
 if (!empty($_GET['drawing_id'])) {
-    $stmt = db()->prepare('SELECT title, thumbnail FROM drawings WHERE id = ? AND is_shared = 1');
+    $stmt = db()->prepare('SELECT d.title, d.thumbnail, u.email FROM drawings d JOIN users u ON u.id = d.user_id WHERE d.id = ? AND d.is_shared = 1');
     $stmt->execute([(int)$_GET['drawing_id']]);
     if ($row = $stmt->fetch()) {
         $shareMeta = [
@@ -33,6 +33,12 @@ if ($_pmokIsSharedView && !jwt_from_request()) {
     $shareDrawingId = (int) $_GET['drawing_id'];
     $shareTitle     = $row['title'] ?: '평목 도면';
     $shareThumb     = (strpos((string) $row['thumbnail'], '/uploads/') === 0) ? $row['thumbnail'] : null;
+    $shareOwnerSub  = '평목에서 공유한 도면입니다.';
+    if (!empty($row['email']) && strpos($row['email'], '@') !== false) {
+        [$shareLocal, $shareDomain] = explode('@', $row['email'], 2);
+        $shareMasked   = mb_substr($shareLocal, 0, min(3, mb_strlen($shareLocal))) . '***@' . $shareDomain;
+        $shareOwnerSub = htmlspecialchars($shareMasked, ENT_QUOTES) . ' 님께서 공유하신 도면입니다.';
+    }
     ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -66,7 +72,7 @@ if ($_pmokIsSharedView && !jwt_from_request()) {
             <div class="share-preview-img" style="height:300px;display:flex;align-items:center;justify-content:center;background:#f2f2f2;color:#aaa;">미리보기 이미지 없음</div>
         <?php endif; ?>
         <div class="share-preview-title"><?= htmlspecialchars($shareTitle) ?></div>
-        <div class="share-preview-sub">평목에서 공유한 도면입니다. 로그인하면 내 도면함에 복사해서 편집할 수 있어요.</div>
+        <div class="share-preview-sub"><?= $shareOwnerSub ?> 로그인하면 내 도면함에 복사해서 편집할 수 있어요.</div>
         <button class="share-preview-btn" id="btnCopyShared">로그인하고 내 도면함에 복사</button>
     </div>
     </div>
