@@ -267,14 +267,14 @@ body {
 .db-card-share {
     position: absolute;
     top: 8px;
-    right: 88px;
+    right: 8px;
     z-index: 2;
     width: 34px;
     height: 34px;
     border-radius: 50%;
     border: none;
-    background: rgba(var(--bg-rgb), 0.85);
-    color: var(--text);
+    background: rgba(0, 0, 0, 0.85);
+    color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -291,7 +291,7 @@ body {
 .db-card-delete {
     position: absolute;
     top: 8px;
-    right: 8px;
+    right: 88px;
     z-index: 2;
     width: 34px;
     height: 34px;

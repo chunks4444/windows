@@ -66,6 +66,10 @@ $shareUrl   = SITE_URL . '/collection/detail?slug=' . rawurlencode($pattern['slu
     <?php define('BOOTSTRAP_LOADED', true); ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <?php css_tag('/src/css/collection.css'); ?>
+    <?php if ($kakaoJsKey = kakao_js_key()): ?>
+    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js"></script>
+    <script>if (window.Kakao && !Kakao.isInitialized()) Kakao.init('<?= addslashes($kakaoJsKey) ?>');</script>
+    <?php endif; ?>
 </head>
 <body>
 
@@ -94,45 +98,49 @@ $shareUrl   = SITE_URL . '/collection/detail?slug=' . rawurlencode($pattern['slu
     </div>
 
     <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button id="btnShare" class="lib-icon-btn" title="공유하기"><i class="bi bi-share"></i></button>
-        <a id="btnShareX" class="lib-icon-btn" href="#" target="_blank" rel="noopener" title="X에 공유"><i class="bi bi-twitter-x"></i></a>
-        <a id="btnShareThreads" class="lib-icon-btn" href="#" target="_blank" rel="noopener" title="스레드에 공유"><i class="bi bi-threads"></i></a>
+        <button id="btnShare" class="lib-icon-btn lib-share-btn" title="공유하기"><i class="bi bi-share"></i></button>
     </div>
 </div>
 
 <div id="libToast" class="lib-toast"></div>
 
+<!-- 공유 모달 -->
+<div id="libShareModal" class="bm-backdrop" style="display:none;">
+    <div class="bm-modal">
+        <div class="bm-header">
+            <span class="bm-title">공유하기</span>
+            <button class="bm-close" id="libShareModalClose"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="lib-share-linkrow">
+            <input type="text" id="libShareModalLink" readonly>
+            <button type="button" id="libShareModalCopy">복사</button>
+        </div>
+        <div class="lib-share-channels">
+            <button type="button" id="libShareModalKakao" title="카카오톡 공유">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.8 5.3 4.6 6.7-.2.7-.7 2.6-.8 3-.1.5.2.5.4.4.2-.1 2.6-1.8 3.6-2.5.7.1 1.4.2 2.2.2 5.5 0 10-3.6 10-8 0-4.4-4.5-7.8-10-7.8z"/></svg>
+                <span>카카오</span>
+            </button>
+            <button type="button" id="libShareModalFb" title="페이스북 공유">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7.9h2.7l.4-3.1h-3.1V8.1c0-.9.3-1.5 1.6-1.5h1.7V3.8C15.9 3.7 14.8 3.6 13.6 3.6c-2.5 0-4.2 1.5-4.2 4.3v2.1H6.7v3.1h2.7V21h4.1z"/></svg>
+                <span>FB</span>
+            </button>
+            <button type="button" id="libShareModalX" title="X(트위터) 공유">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 3H22l-7.5 8.6L23 21h-6.9l-5.4-6.6L4.4 21H1.3l8-9.2L1 3h7l4.9 6.1L18.9 3zm-1.2 16h1.9L7.4 4.9H5.4L17.7 19z"/></svg>
+                <span>X</span>
+            </button>
+            <button type="button" id="libShareModalThreads" title="스레드에 공유">
+                <i class="bi bi-threads"></i>
+                <span>스레드</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="/src/js/collection-share.js?v=<?= md5_file(__DIR__ . '/../js/collection-share.js') ?>"></script>
 <script>
-(function () {
-    const shareUrl   = <?= json_encode($shareUrl) ?>;
-    const shareTitle = <?= json_encode($pattern['name_ko']) ?>;
-
-    function showToast(msg) {
-        const t = document.getElementById('libToast');
-        t.textContent = msg;
-        t.classList.add('visible');
-        setTimeout(() => t.classList.remove('visible'), 2400);
-    }
-
-    document.getElementById('btnShare').addEventListener('click', async () => {
-        if (navigator.share) {
-            try { await navigator.share({ title: shareTitle, text: shareTitle, url: shareUrl }); }
-            catch (e) { /* 사용자가 공유 취소한 경우 등 — 무시 */ }
-            return;
-        }
-        try {
-            await navigator.clipboard.writeText(shareUrl);
-            showToast('링크가 복사되었습니다.');
-        } catch (e) {
-            showToast('링크 복사에 실패했습니다.');
-        }
+    document.getElementById('btnShare').addEventListener('click', () => {
+        openCollectionShareModal(<?= json_encode($shareUrl) ?>, <?= json_encode($pattern['name_ko']) ?>, <?= json_encode($metaImage) ?>);
     });
-
-    document.getElementById('btnShareX').href =
-        'https://twitter.com/intent/tweet?url=' + encodeURIComponent(shareUrl) + '&text=' + encodeURIComponent(shareTitle);
-    document.getElementById('btnShareThreads').href =
-        'https://www.threads.net/intent/post?text=' + encodeURIComponent(shareTitle + ' ' + shareUrl);
-})();
 </script>
 
 <?php include __DIR__ . '/../components/footer.php'; ?>

@@ -497,6 +497,55 @@ body { background: #fff; }
 }
 .bm-create-btn:hover { background: var(--accent-hover); }
 
+/* ── 공유 아이콘 (검정 배경으로 강조) ─────────── */
+.lib-share-btn { background: rgba(0,0,0,0.85); color: #fff; }
+.lib-share-btn:hover { background: var(--accent); color: var(--bg); }
+
+/* ── 공유 모달 ────────────────────────────────── */
+.lib-share-linkrow { display: flex; gap: 6px; padding: 16px 18px 0; }
+.lib-share-linkrow input {
+    flex: 1;
+    min-width: 0;
+    height: 34px;
+    padding: 0 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    background: var(--bg);
+    color: var(--text);
+    font-size: var(--fs-13);
+}
+.lib-share-linkrow button {
+    height: 34px;
+    padding: 0 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    background: var(--bg);
+    color: var(--text);
+    font-size: var(--fs-13);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s;
+}
+.lib-share-linkrow button:hover { background: var(--border); }
+.lib-share-channels { display: flex; gap: 8px; padding: 12px 18px 18px; }
+.lib-share-channels button {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 36px;
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    background: var(--bg);
+    color: var(--text);
+    font-size: var(--fs-13);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s;
+}
+.lib-share-channels button:hover { background: var(--border); }
+
 /* ── 토스트 ──────────────────────────────────── */
 .lib-toast {
     position: fixed;

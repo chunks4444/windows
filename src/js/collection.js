@@ -119,7 +119,7 @@ function buildCard(p) {
                         <button class="lib-icon-btn lib-board-btn" onclick="openBoardModal(event,${p.id},'${esc(p.name_ko)}')" title="보드에 저장">
                             <i class="bi bi-collection"></i>
                         </button>
-                        <button class="lib-icon-btn lib-share-btn" onclick="shareCollectionPattern(event,'${esc(p.slug)}','${esc(p.name_ko)}')" title="공유">
+                        <button class="lib-icon-btn lib-share-btn" onclick="shareCollectionPattern(event,'${esc(p.slug)}','${esc(p.name_ko)}','${esc(p.image_path || '')}')" title="공유">
                             <i class="bi bi-share"></i>
                         </button>
                     </div>
@@ -366,21 +366,12 @@ function showToast(msg) {
 }
 
 /* ── 공유 ─────────────────────────────────────── */
-async function shareCollectionPattern(e, slug, name) {
+function shareCollectionPattern(e, slug, name, image) {
     e.stopPropagation(); e.preventDefault();
     if (!slug) return;
     const url = location.origin + '/collection/detail?slug=' + encodeURIComponent(slug);
-    if (navigator.share) {
-        try { await navigator.share({ title: name, text: name, url }); }
-        catch (err) { /* 사용자가 공유 취소한 경우 등 — 무시 */ }
-        return;
-    }
-    try {
-        await navigator.clipboard.writeText(url);
-        showToast('링크가 복사되었습니다.');
-    } catch (err) {
-        showToast('링크 복사에 실패했습니다.');
-    }
+    const imageUrl = image ? (image.startsWith('http') ? image : location.origin + image) : '';
+    openCollectionShareModal(url, name, imageUrl);
 }
 
 function engineIconHtml(engine) {
