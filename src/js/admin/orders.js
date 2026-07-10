@@ -48,7 +48,7 @@ function renderTable(orders) {
     }
     tbody.innerHTML = orders.map(o => `
         <tr>
-            <td class="adm-id">#${o.id}</td>
+            <td class="adm-id">${fmtOrderCode(o.engine, o.id)}</td>
             <td style="color:var(--text-3);font-size:12px;">${o.created_at ? o.created_at.slice(0, 10) : '—'}</td>
             <td>${esc(o.customer_name)}<br><span style="color:var(--text-3);font-size:12px;">${esc(o.customer_phone)}</span></td>
             <td>${o.company_name ? esc(o.company_name) : '<span class="adm-null">—</span>'}</td>
@@ -97,7 +97,8 @@ async function openModal(id) {
     const data = await res.json();
     if (!res.ok) { document.getElementById('admDetailContent').innerHTML = `<p style="color:var(--danger);">${esc(data.error || '불러오기 실패')}</p>`; return; }
 
-    renderDetail(data.order);
+    document.getElementById('admModalTitle').textContent = `${fmtOrderCode(data.order.engine, id)} 상세`;
+    renderDetail(data.order, data.history || []);
     document.getElementById('admMStatus').value     = data.order.status;
     document.getElementById('admMNote').value        = data.order.revision_note || '';
     document.getElementById('admMCarrier').value     = data.order.tracking_carrier || '';
@@ -131,13 +132,41 @@ function renderPriceBreakdown(breakdownJson) {
     `;
 }
 
-function renderDetail(o) {
+function renderHistory(history, engine) {
+    if (!history.length) return '';
+    return `
+        <div class="full ord-detail-label">같은 도면의 이전 주문 이력</div>
+        <div class="full ord-detail-value">
+            <div class="ord-history-list">
+                ${history.map(h => `
+                    <div class="ord-history-item">
+                        ${h.thumbnail ? `<img src="${h.thumbnail}" class="ord-history-thumb" alt="이전 도면 썸네일">` : ''}
+                        <div class="ord-history-body">
+                            <div>
+                                <span class="ord-status-badge" data-status="${esc(h.status)}">${ORDER_STATUS_LABELS[h.status]?.label || h.status}</span>
+                                <span style="color:var(--text-3);font-size:12px;">${fmtOrderCode(engine, h.id)} · ${fmtOrderDatetime(h.created_at)}</span>
+                            </div>
+                            ${h.title ? `<div>${esc(h.title)}${h.version_label ? ' (' + esc(h.version_label) + ')' : ''}</div>` : ''}
+                            ${h.memo ? `<div class="ord-history-note"><strong>요청사항</strong> ${esc(h.memo)}</div>` : ''}
+                            ${h.revision_note ? `<div class="ord-history-note"><strong>수정요청 사유</strong> ${esc(h.revision_note)}</div>` : ''}
+                            ${h.price_note ? `<div class="ord-history-note"><strong>가격 협의 메모</strong> ${esc(h.price_note)}</div>` : ''}
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+}
+
+function renderDetail(o, history = []) {
     const shipAddr = [o.ship_zipcode, o.ship_address, o.ship_address_detail].filter(Boolean).join(' ');
     document.getElementById('admDetailContent').innerHTML = `
         ${o.thumbnail ? `<img src="${o.thumbnail}" class="ord-thumb" alt="도면 썸네일">` : ''}
         <div class="ord-detail-grid">
             <div class="full ord-detail-label">엔진/도면</div>
             <div class="full ord-detail-value">${ENGINE_MAP[o.engine] || esc(o.engine)} — ${esc(o.title || '(제목 없음)')}${o.version_label ? ' (' + esc(o.version_label) + ')' : ''}</div>
+
+            ${renderHistory(history, o.engine)}
 
             <div class="ord-detail-label">고객명</div>
             <div class="ord-detail-label">연락처</div>

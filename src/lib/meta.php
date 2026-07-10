@@ -38,8 +38,11 @@ const SITE_URL          = 'https://studio.pyeongmok.com';
 const SITE_DEFAULT_TITLE = '평목 - DESIGN IN REAL TIME';
 const SITE_DEFAULT_DESC  = '평목 공방이 만드는 한옥 살창·창호 디자인 스튜디오. 나만의 문살 패턴을 직접 설계하고 주문하세요.';
 const SITE_DEFAULT_IMAGE = SITE_URL . '/src/assets/logo.png';
+const GA4_MEASUREMENT_ID = 'G-P6LFE8ECVG';
 
 function meta_tags(): void {
+    echo '<script async src="https://www.googletagmanager.com/gtag/js?id=' . GA4_MEASUREMENT_ID . '"></script>' . "\n    ";
+    echo '<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","' . GA4_MEASUREMENT_ID . '");</script>' . "\n    ";
     echo '<meta name="google-site-verification" content="lNxBKwUVRTR6ewMlMqeNWIn_DfCn3ItScYvG-l6Yxr0">' . "\n    ";
     echo '<link rel="icon" type="image/png" href="/src/assets/favicon.png">' . "\n    ";
     echo '<link rel="apple-touch-icon" href="/src/assets/apple-touch-icon.png">' . "\n    ";

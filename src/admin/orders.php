@@ -125,7 +125,7 @@ require_admin_role('s');
     </div>
 </div>
 
-<script src="/src/js/order-status-labels.js"></script>
-<script src="/src/js/admin/orders.js"></script>
+<script src="/src/js/order-status-labels.js?v=<?= md5_file(__DIR__ . '/../js/order-status-labels.js') ?>"></script>
+<script src="/src/js/admin/orders.js?v=<?= md5_file(__DIR__ . '/../js/admin/orders.js') ?>"></script>
 </body>
 </html>

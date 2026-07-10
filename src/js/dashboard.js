@@ -725,7 +725,7 @@ function loadOrders() {
 function openOrderModal(o) {
     const st = ORDER_STATUS_LABELS[o.status] || { label: o.status, tone: 'wait' };
     const cfg = TYPE_CONFIG[o.engine];
-    document.getElementById('dbOrderModalTitle').textContent = `주문번호 #${o.id} · ${cfg?.label || o.engine} · ${o.title || '(제목 없음)'}`;
+    document.getElementById('dbOrderModalTitle').textContent = `${fmtOrderCode(o.engine, o.id)} · ${cfg?.label || o.engine} · ${o.title || '(제목 없음)'}`;
 
     let html = `<div style="margin-bottom:14px;"><span class="ord-status-pill" data-tone="${st.tone}">${st.label}</span></div>`;
 

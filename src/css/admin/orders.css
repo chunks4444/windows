@@ -27,3 +27,9 @@
 .ord-price-table td { padding: 5px 4px; border-bottom: 1px solid var(--border); }
 .ord-price-table td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
 .ord-price-total td { font-weight: 700; border-bottom: none; border-top: 1px solid var(--text); }
+
+.ord-history-list { display: flex; flex-direction: column; gap: 10px; }
+.ord-history-item { display: flex; gap: 10px; padding: 10px; border: 1px solid var(--border); border-radius: var(--r-sm); }
+.ord-history-thumb { width: 64px; height: 64px; object-fit: cover; border: 1px solid var(--border); border-radius: var(--r-sm); flex-shrink: 0; }
+.ord-history-body { display: flex; flex-direction: column; gap: 4px; font-size: var(--fs-13); }
+.ord-history-note { color: var(--text-3); }

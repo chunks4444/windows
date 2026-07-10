@@ -27,7 +27,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || ($_SERVER['REQUEST_METHOD'] === 'POS
         $stmt->execute([$id]);
         $order = $stmt->fetch();
         if (!$order) { http_response_code(404); echo json_encode(['error' => '주문을 찾을 수 없습니다.']); exit; }
-        echo json_encode(['order' => $order]);
+
+        // 같은 도면(drawing_id)의 과거 주문 이력 — 취소/수정요청으로 재접수된 경우 이전 협의 내용을 관리자가 참고할 수 있도록
+        $history = [];
+        if ($order['drawing_id']) {
+            $histStmt = $pdo->prepare(
+                'SELECT id, status, revision_note, price_note, memo, created_at, title, version_label, thumbnail FROM orders
+                 WHERE drawing_id = ? AND id != ? ORDER BY created_at DESC'
+            );
+            $histStmt->execute([$order['drawing_id'], $id]);
+            $history = $histStmt->fetchAll();
+        }
+
+        echo json_encode(['order' => $order, 'history' => $history]);
         exit;
     }
 
