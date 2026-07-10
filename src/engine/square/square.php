@@ -26,6 +26,83 @@ if (!empty($_GET['drawing_id'])) {
     }
 }
 $_pmokIsSharedView = ($shareMeta !== null);
+
+// 비로그인 공유 뷰어는 geometry.php(로그인 필수, 안티스크래핑 보호) 호출이 필요한 인터랙티브 에디터 대신
+// 읽기 전용 미리보기만 보여준다. 로그인하면 "내 도면함에 복사"로 fork해서 편집 가능.
+if ($_pmokIsSharedView && !jwt_from_request()) {
+    $shareDrawingId = (int) $_GET['drawing_id'];
+    $shareTitle     = $row['title'] ?: '평목 도면';
+    $shareThumb     = (strpos((string) $row['thumbnail'], '/uploads/') === 0) ? $row['thumbnail'] : null;
+    ?>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?php meta_tags($shareMeta); ?>
+    <?php if ($kakaoJsKeyPreview = kakao_js_key()): ?>
+    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js"></script>
+    <script>if (window.Kakao && !Kakao.isInitialized()) Kakao.init('<?= addslashes($kakaoJsKeyPreview) ?>');</script>
+    <?php endif; ?>
+    <style>
+        .share-preview-wrap { max-width: 720px; margin: 0 auto; padding: 60px 20px; text-align: center; }
+        .share-preview-img { max-width: 100%; border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12); margin-bottom: 24px; }
+        .share-preview-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+        .share-preview-sub { color: #888; margin-bottom: 28px; }
+        .share-preview-btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 32px; background: var(--accent); color: #fff; border-radius: 999px; font-weight: 600; border: none; cursor: pointer; font-size: 15px; }
+        .share-preview-btn:hover { background: var(--accent-hover, var(--accent)); }
+    </style>
+</head>
+<body>
+    <?php include __DIR__ . '/../../components/nav.php'; ?>
+    <div class="share-preview-wrap">
+        <?php if ($shareThumb): ?>
+            <img class="share-preview-img" src="<?= htmlspecialchars($shareThumb) ?>" alt="<?= htmlspecialchars($shareTitle) ?>">
+        <?php else: ?>
+            <div class="share-preview-img" style="height:300px;display:flex;align-items:center;justify-content:center;background:#f2f2f2;color:#aaa;">미리보기 이미지 없음</div>
+        <?php endif; ?>
+        <div class="share-preview-title"><?= htmlspecialchars($shareTitle) ?></div>
+        <div class="share-preview-sub">평목에서 공유한 도면입니다. 로그인하면 내 도면함에 복사해서 편집할 수 있어요.</div>
+        <button class="share-preview-btn" id="btnCopyShared">로그인하고 내 도면함에 복사</button>
+    </div>
+    <?php include __DIR__ . '/../../components/footer.php'; ?>
+    <script>
+    document.getElementById('btnCopyShared').addEventListener('click', function () {
+        pmokRequireAuth(async function () {
+            try {
+                const token = localStorage.getItem('pmok_auth_token');
+                const loadRes = await fetch('/src/api/drawings/load_by_id.php', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: <?= $shareDrawingId ?> }),
+                });
+                const data = await loadRes.json();
+                if (!data?.versions?.length) { alert('도면을 불러올 수 없습니다.'); return; }
+                const last = data.versions[data.versions.length - 1];
+                const now  = Date.now();
+                const saveRes = await fetch('/src/api/drawings/save.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                    body: JSON.stringify({
+                        type: 'square',
+                        title: <?= json_encode($shareTitle, JSON_UNESCAPED_UNICODE) ?> + ' - 복사',
+                        created_at: now,
+                        versions: [{ savedAt: now, params: last.params }],
+                        thumbnail: null,
+                        work_time_sec: 0,
+                    }),
+                });
+                const result = await saveRes.json();
+                if (result.ok) { location.href = '/mypage/dashboard'; }
+                else { alert(result.error || '복사에 실패했습니다.'); }
+            } catch { alert('복사 중 오류가 발생했습니다.'); }
+        });
+    });
+    </script>
+</body>
+</html>
+    <?php
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="ko">
