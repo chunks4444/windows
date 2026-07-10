@@ -1339,7 +1339,7 @@ input[type="range"]::-moz-range-thumb {
 .slider-num::-webkit-inner-spin-button,
 .slider-num::-webkit-outer-spin-button { -webkit-appearance: none; }
 
-.slider-num:focus { border-color: var(--accent); background: var(--bg); color: var(--text-1); }
+.slider-num:focus { border-color: var(--accent); background: var(--bg); color: var(--text); }
 .slider-num:hover { border-color: var(--accent); }
 
 /* ── TOGGLE SWITCH ───────────────────────── */

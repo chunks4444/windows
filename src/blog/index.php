@@ -159,14 +159,14 @@ try {
             <?php endif; ?>
 
             <ol class="bg-ranked-list" start="<?= $offset + 1 ?>">
-                <?php foreach ($pagePosts as $i => $p): ?>
+                <?php foreach ($pagePosts as $p): ?>
                 <li class="bg-ranked-item">
                     <a class="bg-ranked-link" href="/blog/<?= rawurlencode($p['slug']) ?>">
                         <div class="bg-ranked-text">
                             <?php if ($p['series_name']): ?>
                             <p class="bg-ranked-cat"><?= htmlspecialchars($p['series_name']) ?></p>
                             <?php endif; ?>
-                            <h3 class="bg-ranked-title"><span class="bg-ranked-num"><?= $offset + $i + 1 ?></span><?= htmlspecialchars($p['title']) ?></h3>
+                            <h3 class="bg-ranked-title"><?= htmlspecialchars($p['title']) ?></h3>
                             <?php if ($p['summary']): ?>
                             <p class="bg-ranked-summary"><?= htmlspecialchars($p['summary']) ?></p>
                             <?php endif; ?>
