@@ -23,6 +23,7 @@ if (!empty($_GET['drawing_id'])) {
         ];
     }
 }
+$_pmokIsSharedView = ($shareMeta !== null);
 ?>
 <!DOCTYPE html>
 <html lang="ko">

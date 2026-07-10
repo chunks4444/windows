@@ -295,14 +295,16 @@
         draw();
     }
 
+    let _wpAuthWarned = false;
     async function uploadWallpaperToServer(dataUrl, filename, drawingId, versionSavedAt) {
         try {
-            const res  = await fetch(WALLPAPER_API + 'upload.php', {
+            const res = await fetch(WALLPAPER_API + 'upload.php', {
                 method: 'POST', headers: _wpHeaders(),
                 body: JSON.stringify({ image: dataUrl, filename, engine: WALLPAPER_ENGINE, drawing_id: drawingId || null, version_saved_at: versionSavedAt || null }),
             });
+            if (res.status === 401) return 'auth';
             const data = await res.json();
-            if (!res.ok || data.error) { console.warn('배경 업로드 실패:', data.error); return null; }
+            if (data.error) { console.warn('배경 업로드 실패:', data.error); return null; }
             return { id: data.id, url: data.url };
         } catch { return null; }
     }
@@ -335,7 +337,12 @@
                         setActiveThumb(id);
                     };
                     const result = await uploadWallpaperToServer(dataUrl, file.name, drawingId, _currentVersionSavedAt());
-                    if (result) {
+                    if (result === 'auth') {
+                        if (!_wpAuthWarned) {
+                            _wpAuthWarned = true;
+                            pmAlert('배경 이미지는 로그인해야 서버에 저장됩니다. 지금은 화면에서만 보이고, 로그인 후 다시 저장하면 함께 저장됩니다.', { type: 'danger' });
+                        }
+                    } else if (result) {
                         const thumb = thumbImages.find(t => t.id === id);
                         if (thumb) {
                             thumb.serverId = result.id;

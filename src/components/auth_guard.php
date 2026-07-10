@@ -1,8 +1,11 @@
 <?php
 // 사용법: include 전에 $authRequireRole 변수 설정 가능 (예: 's', 'm' 등)
 // 미설정 시 로그인 여부만 확인
+// $authGuardSkip = true 로 설정하면 가드 자체를 건너뜀 (예: 공유 링크로 들어온 비로그인 뷰어)
 $_guardRole = $authRequireRole ?? null;
+$_guardSkip = $authGuardSkip ?? false;
 ?>
+<?php if (!$_guardSkip): ?>
 <script>
 window.addEventListener('load', function () {
     var token = localStorage.getItem('pmok_auth_token');
@@ -27,3 +30,4 @@ window.addEventListener('load', function () {
     <?php endif; ?>
 });
 </script>
+<?php endif; ?>
