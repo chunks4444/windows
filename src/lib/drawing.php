@@ -148,7 +148,7 @@ class Drawing {
         $lockedAtExpr = self::lockedAtExpr('d');
         $orderStatusExpr = self::orderStatusExpr('d');
         $stmt   = $pdo->prepare(
-            "SELECT d.id, d.type, d.title, d.pattern_category,
+            "SELECT d.id, d.type, d.title, d.pattern_category, d.is_shared,
                     pc.name AS pattern_category_name,
                     d.work_time_sec, d.created_at, d.updated_at, {$lockedAtExpr}, {$orderStatusExpr},
                     (SELECT COUNT(*) FROM drawing_versions WHERE drawing_id = d.id) AS version_count

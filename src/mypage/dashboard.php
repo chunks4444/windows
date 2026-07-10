@@ -10,6 +10,10 @@ header('Content-Type: text/html; charset=UTF-8');
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <?php require_once __DIR__ . '/../lib/meta.php'; ?>
     <?php meta_tags(); ?>
+    <?php if ($kakaoJsKey = kakao_js_key()): ?>
+    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js"></script>
+    <script>if (window.Kakao && !Kakao.isInitialized()) Kakao.init('<?= addslashes($kakaoJsKey) ?>');</script>
+    <?php endif; ?>
 <?php css_tag('/src/css/dashboard.css'); ?>
 </head>
 <body>
@@ -97,6 +101,42 @@ header('Content-Type: text/html; charset=UTF-8');
         <div class="db-delete-modal-actions">
             <button class="db-delete-modal-cancel" id="dbCopyModalCancel">취소</button>
             <button class="db-delete-modal-confirm" id="dbCopyModalConfirm" style="background:var(--accent);">복사</button>
+        </div>
+    </div>
+</div>
+
+<!-- 공유 모달 -->
+<div id="dbShareModal" class="db-delete-modal" style="display:none;" role="dialog" aria-modal="true">
+    <div class="db-delete-modal-box">
+        <button type="button" class="db-delete-modal-close" id="dbShareModalClose" aria-label="닫기">
+            <i class="bi bi-x-lg"></i>
+        </button>
+        <div class="db-delete-modal-icon" style="background:var(--accent-tint,#eee);color:var(--accent);">
+            <i class="bi bi-share-fill"></i>
+        </div>
+        <div class="db-delete-modal-title" id="dbShareModalTitle">도면 공유</div>
+        <div class="db-delete-modal-desc" id="dbShareModalId">도면 #—</div>
+        <div class="db-share-linkrow">
+            <input type="text" id="dbShareModalLink" readonly>
+            <button type="button" id="dbShareModalCopy">복사</button>
+        </div>
+        <div class="db-share-channels">
+            <button type="button" id="dbShareModalKakao" title="카카오톡 공유">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.8 5.3 4.6 6.7-.2.7-.7 2.6-.8 3-.1.5.2.5.4.4.2-.1 2.6-1.8 3.6-2.5.7.1 1.4.2 2.2.2 5.5 0 10-3.6 10-8 0-4.4-4.5-7.8-10-7.8z"/></svg>
+                <span>카카오</span>
+            </button>
+            <button type="button" id="dbShareModalFb" title="페이스북 공유">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7.9h2.7l.4-3.1h-3.1V8.1c0-.9.3-1.5 1.6-1.5h1.7V3.8C15.9 3.7 14.8 3.6 13.6 3.6c-2.5 0-4.2 1.5-4.2 4.3v2.1H6.7v3.1h2.7V21h4.1z"/></svg>
+                <span>FB</span>
+            </button>
+            <button type="button" id="dbShareModalX" title="X(트위터) 공유">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 3H22l-7.5 8.6L23 21h-6.9l-5.4-6.6L4.4 21H1.3l8-9.2L1 3h7l4.9 6.1L18.9 3zm-1.2 16h1.9L7.4 4.9H5.4L17.7 19z"/></svg>
+                <span>X</span>
+            </button>
+        </div>
+        <div class="db-delete-modal-actions">
+            <button class="db-delete-modal-cancel" id="dbShareModalOff">공유 끄기</button>
+            <button class="db-delete-modal-confirm" id="dbShareModalDone" style="background:var(--accent);">닫기</button>
         </div>
     </div>
 </div>

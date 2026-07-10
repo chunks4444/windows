@@ -124,6 +124,9 @@ function renderCard(d) {
             <button class="db-card-copy" onclick="copyDrawing(event,'${escAttr(d.type)}','${escAttr(d.title)}')" title="복사">
                 <i class="bi bi-copy"></i>
             </button>
+            <button class="db-card-share${d.is_shared ? ' db-card-share-on' : ''}" onclick="openShareModal(event,${d.id},'${escAttr(d.type)}','${escAttr(d.title)}',${d.is_shared ? 'true' : 'false'})" title="공유">
+                <i class="bi bi-share-fill"></i>
+            </button>
             <button class="db-card-delete" onclick="deleteDrawing(event,'${escAttr(d.type)}','${escAttr(d.title)}')" title="삭제">
                 <i class="bi bi-trash"></i>
             </button>
@@ -301,6 +304,97 @@ async function deleteDrawing(e, type, title) {
         }
     });
 }
+
+/* ── 공유 ─────────────────────────────── */
+let _shareCtx = null; // { id, type, title, isShared, card }
+
+function _shareUrl() {
+    const cfg = TYPE_CONFIG[_shareCtx.type] || {};
+    return location.origin + (cfg.editorUrl || '') + '?drawing_id=' + _shareCtx.id;
+}
+
+function _updateShareModalUI() {
+    document.getElementById('dbShareModalId').textContent   = '도면 #' + _shareCtx.id;
+    document.getElementById('dbShareModalLink').value       = _shareUrl();
+    document.getElementById('dbShareModalOff').style.display = _shareCtx.isShared ? '' : 'none';
+    const card = _shareCtx.card;
+    if (card) {
+        const btn = card.querySelector('.db-card-share');
+        btn?.classList.toggle('db-card-share-on', !!_shareCtx.isShared);
+    }
+}
+
+async function openShareModal(e, id, type, title, isShared) {
+    e.stopPropagation();
+    _shareCtx = { id, type, title, isShared, card: e.target.closest('.db-card') };
+    document.getElementById('dbShareModalTitle').textContent = `"${title}" 공유`;
+    _updateShareModalUI();
+    document.getElementById('dbShareModal').style.display = 'flex';
+
+    if (!isShared) {
+        const res  = await fetch('/src/api/drawings/share.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ..._headers() },
+            body: JSON.stringify({ id, shared: true }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.ok) { alert(data.error || '공유 설정에 실패했습니다.'); document.getElementById('dbShareModal').style.display = 'none'; return; }
+        _shareCtx.isShared = true;
+        _updateShareModalUI();
+    }
+}
+
+async function turnShareOffFromDashboard() {
+    if (!_shareCtx) return;
+    const res  = await fetch('/src/api/drawings/share.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ..._headers() },
+        body: JSON.stringify({ id: _shareCtx.id, shared: false }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok) { alert(data.error || '공유 설정에 실패했습니다.'); return; }
+    _shareCtx.isShared = false;
+    _updateShareModalUI();
+}
+
+async function copyShareLinkFromDashboard() {
+    const url = _shareUrl();
+    if (navigator.clipboard?.writeText) {
+        try { await navigator.clipboard.writeText(url); return; }
+        catch { /* 권한 거부 등 — 아래 prompt로 대체 */ }
+    }
+    window.prompt('아래 링크를 복사하세요:', url);
+}
+
+function shareToKakaoFromDashboard() {
+    if (!window.Kakao?.isInitialized?.()) { copyShareLinkFromDashboard(); return; }
+    const thumbImg = _shareCtx.card?.querySelector('.db-thumb img');
+    Kakao.Share.sendDefault({
+        objectType: 'feed',
+        content: {
+            title: _shareCtx.title || '평목 도면',
+            description: '평목에서 설계한 문살 도면을 확인해보세요.',
+            imageUrl: thumbImg?.src || (location.origin + '/src/assets/logo.png'),
+            link: { mobileWebUrl: _shareUrl(), webUrl: _shareUrl() },
+        },
+    });
+}
+
+function shareToFacebookFromDashboard() {
+    window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(_shareUrl()), '_blank', 'noopener,width=600,height=500');
+}
+
+function shareToXFromDashboard() {
+    window.open('https://twitter.com/intent/tweet?url=' + encodeURIComponent(_shareUrl()) + '&text=' + encodeURIComponent(_shareCtx.title || '평목 도면'), '_blank', 'noopener,width=600,height=500');
+}
+
+document.getElementById('dbShareModalCopy')?.addEventListener('click', copyShareLinkFromDashboard);
+document.getElementById('dbShareModalKakao')?.addEventListener('click', shareToKakaoFromDashboard);
+document.getElementById('dbShareModalFb')?.addEventListener('click', shareToFacebookFromDashboard);
+document.getElementById('dbShareModalX')?.addEventListener('click', shareToXFromDashboard);
+document.getElementById('dbShareModalOff')?.addEventListener('click', turnShareOffFromDashboard);
+document.getElementById('dbShareModalDone')?.addEventListener('click', () => { document.getElementById('dbShareModal').style.display = 'none'; });
+document.getElementById('dbShareModalClose')?.addEventListener('click', () => { document.getElementById('dbShareModal').style.display = 'none'; });
 
 function escHtml(str) {
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');

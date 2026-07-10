@@ -40,16 +40,18 @@ const SITE_DEFAULT_DESC  = '평목 공방이 만드는 한옥 살창·창호 디
 const SITE_DEFAULT_IMAGE = SITE_URL . '/src/assets/logo.png';
 const GA4_MEASUREMENT_ID = 'G-P6LFE8ECVG';
 
-function meta_tags(): void {
+// $override로 title/description/image를 지정하면 DB의 page_meta보다 우선한다
+// (예: 도면 공유 페이지에서 도면 제목/썸네일로 OG 태그를 바꿔치기할 때 사용)
+function meta_tags(?array $override = null): void {
     echo '<script async src="https://www.googletagmanager.com/gtag/js?id=' . GA4_MEASUREMENT_ID . '"></script>' . "\n    ";
     echo '<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","' . GA4_MEASUREMENT_ID . '");</script>' . "\n    ";
     echo '<meta name="google-site-verification" content="lNxBKwUVRTR6ewMlMqeNWIn_DfCn3ItScYvG-l6Yxr0">' . "\n    ";
     echo '<link rel="icon" type="image/png" href="/src/assets/favicon.png">' . "\n    ";
     echo '<link rel="apple-touch-icon" href="/src/assets/apple-touch-icon.png">' . "\n    ";
     $m = page_meta();
-    $title = $m['title'] ?: SITE_DEFAULT_TITLE;
-    $desc  = $m['description'] ?: SITE_DEFAULT_DESC;
-    $image = $m['og_image'] ?: SITE_DEFAULT_IMAGE;
+    $title = $override['title'] ?? ($m['title'] ?: SITE_DEFAULT_TITLE);
+    $desc  = $override['description'] ?? ($m['description'] ?: SITE_DEFAULT_DESC);
+    $image = $override['image'] ?? ($m['og_image'] ?: SITE_DEFAULT_IMAGE);
     $path  = strtok($_SERVER['REQUEST_URI'] ?? ($_SERVER['PHP_SELF'] ?? '/'), '?');
 
     echo '<title>' . htmlspecialchars($title, ENT_QUOTES) . '</title>' . "\n    ";
@@ -59,6 +61,21 @@ function meta_tags(): void {
     echo '<meta property="og:title"       content="' . htmlspecialchars($title, ENT_QUOTES) . '">' . "\n    ";
     echo '<meta property="og:description" content="' . htmlspecialchars($desc, ENT_QUOTES) . '">' . "\n    ";
     echo '<meta property="og:image"       content="' . htmlspecialchars($image, ENT_QUOTES) . '">' . "\n    ";
+}
+
+// 카카오톡 공유(Kakao Share SDK)용 JavaScript 키. site_config(key_name='kakao_js_key')에서 읽어온다.
+// OAuth 로그인용 REST 키와는 별개 값 — Kakao Developers 콘솔의 "카카오톡 공유" 제품에서 발급.
+function kakao_js_key(): ?string {
+    static $key = null;
+    if ($key !== null) return $key ?: null;
+    require_once __DIR__ . '/db.php';
+    try {
+        $row = db()->query("SELECT value FROM site_config WHERE key_name = 'kakao_js_key'")->fetch();
+        $key = $row['value'] ?? '';
+    } catch (Throwable $e) {
+        $key = '';
+    }
+    return $key ?: null;
 }
 
 // 조직 정보 구조화 데이터(JSON-LD) — 홈페이지 등 대표 페이지에서 1회 출력

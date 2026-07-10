@@ -1993,6 +1993,128 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
     let drawingId = null;
     let isDrawingLocked = false;
 
+    let isShared = false;
+
+    const PENDING_SAVE_KEY = 'pmok_pending_save';
+
+    function stashPendingSave() {
+        try {
+            sessionStorage.setItem(PENDING_SAVE_KEY, JSON.stringify({
+                type: 'diamond',
+                collectionId: window.__pmokCollectionDrawingId || null,
+                title: document.getElementById('drawingName').value.trim(),
+                params: getParams(),
+                ts: Date.now(),
+            }));
+        } catch {}
+    }
+
+    async function tryResumePendingSave() {
+        const raw = sessionStorage.getItem(PENDING_SAVE_KEY);
+        if (!raw) return false;
+        if (!localStorage.getItem('pmok_auth_token')) return false;
+        sessionStorage.removeItem(PENDING_SAVE_KEY);
+        let pending;
+        try { pending = JSON.parse(raw); } catch { return false; }
+        if (pending.type !== 'diamond') return false;
+        if (Date.now() - (pending.ts || 0) > 30 * 60 * 1000) return false;
+        if ((pending.collectionId || null) !== (window.__pmokCollectionDrawingId || null)) return false;
+
+        versions = []; currentVerIdx = -1; drawingId = null; isShared = false;
+        _versionsLoaded = true;
+        applyParams(pending.params);
+        document.getElementById('drawingName').value    = pending.title || '';
+        document.getElementById('verLabel').textContent = '—';
+        updateShareButtonUI();
+        renderVerList();
+        draw();
+        await saveVersion();
+        return 'resumed';
+    }
+
+    function shareUrl() {
+        return location.origin + location.pathname + '?drawing_id=' + drawingId;
+    }
+
+    function updateShareButtonUI() {
+        const btn = document.getElementById('btnShare');
+        if (!btn) return;
+        btn.disabled = !drawingId;
+        btn.classList.toggle('share-on', !!isShared);
+        btn.title = !drawingId ? '먼저 저장해주세요' : (isShared ? '공유 중' : '공유하기');
+        const label = btn.querySelector('span');
+        if (label) label.textContent = isShared ? '공유중' : '공유';
+
+        const idEl   = document.getElementById('shareDdId');
+        const linkEl = document.getElementById('shareDdLink');
+        const offBtn = document.getElementById('shareDdOff');
+        if (idEl)   idEl.textContent = drawingId ? ('도면 #' + drawingId) : '도면 #—';
+        if (linkEl) linkEl.value     = drawingId ? shareUrl() : '';
+        if (offBtn) offBtn.style.display = isShared ? 'block' : 'none';
+    }
+
+    // 공유 버튼을 누르면 아직 공유 중이 아닐 때만 켜고(서버 확인), 패널을 열어 링크/SNS 아이콘을 보여준다.
+    async function openShareDropdown(e) {
+        e.stopPropagation();
+        if (!drawingId) return;
+        const dd = document.getElementById('shareDropdown');
+        if (!dd) return;
+        if (dd.classList.contains('open')) { dd.classList.remove('open'); return; }
+        dd.classList.add('open');
+        updateShareButtonUI();
+        if (!isShared) {
+            const result = await /** @type {any} */ (window.DrawingSync).setShared(drawingId, true);
+            if (!result.ok) { pmAlert('공유 설정에 실패했습니다.', { type: 'danger' }); dd.classList.remove('open'); return; }
+            isShared = result.is_shared;
+            updateShareButtonUI();
+        }
+    }
+
+    async function turnShareOff() {
+        if (!drawingId) return;
+        const result = await /** @type {any} */ (window.DrawingSync).setShared(drawingId, false);
+        if (!result.ok) { pmAlert('공유 설정에 실패했습니다.', { type: 'danger' }); return; }
+        isShared = result.is_shared;
+        updateShareButtonUI();
+        document.getElementById('shareDropdown')?.classList.remove('open');
+        pmShowSaveToast('공유를 껐습니다.');
+    }
+
+    // 클립보드 API는 클릭 직후 곧바로 호출해야 브라우저가 허용하므로, 이 버튼 전용 클릭 핸들러에서 바로 호출한다.
+    async function copyShareLink() {
+        const url = shareUrl();
+        if (navigator.clipboard?.writeText) {
+            try { await navigator.clipboard.writeText(url); pmShowSaveToast('링크가 복사되었습니다.'); return; }
+            catch { /* 권한 거부 등 — 아래 prompt로 대체 */ }
+        }
+        window.prompt('아래 링크를 복사하세요:', url);
+    }
+
+    function shareToKakao() {
+        if (!window.Kakao?.isInitialized?.()) { copyShareLink(); return; }
+        const titleMeta = document.querySelector('meta[property="og:title"]');
+        const descMeta  = document.querySelector('meta[property="og:description"]');
+        const imgMeta   = document.querySelector('meta[property="og:image"]');
+        Kakao.Share.sendDefault({
+            objectType: 'feed',
+            content: {
+                title:       titleMeta?.content || '평목 도면',
+                description: descMeta?.content  || '',
+                imageUrl:    imgMeta?.content    || '',
+                link: { mobileWebUrl: shareUrl(), webUrl: shareUrl() },
+            },
+        });
+    }
+
+    function shareToFacebook() {
+        window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(shareUrl()), '_blank', 'noopener,width=600,height=500');
+    }
+
+    function shareToX() {
+        const text = document.getElementById('drawingName').value.trim() || '평목 도면';
+        window.open('https://twitter.com/intent/tweet?url=' + encodeURIComponent(shareUrl()) + '&text=' + encodeURIComponent(text), '_blank', 'noopener,width=600,height=500');
+    }
+
     function pauseWorkTimer() { workAccum += Math.floor((Date.now() - workStart) / 1000); }
     function resumeWorkTimer() { workStart = Date.now(); }
 
@@ -2222,6 +2344,7 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
         const btn = document.getElementById('btnSave');
         if (result.ok) {
             if (result.drawingId) drawingId = result.drawingId;
+            updateShareButtonUI();
             btn.classList.add('save-ok');
             setTimeout(() => btn.classList.remove('save-ok'), 1200);
             pmShowSaveToast();
@@ -2253,6 +2376,8 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
             drawingId = data.drawing.id ?? null;
             isDrawingLocked = !!data.drawing.locked_at;
             updateLockBanner(isDrawingLocked);
+            isShared = !!data.drawing.is_shared;
+            updateShareButtonUI();
             const catEl = document.getElementById('patternCategory');
             if (catEl) catEl.value = data.drawing.pattern_category || '';
             const cAt = new Date(data.drawing.created_at).getTime();
@@ -2276,6 +2401,8 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
             if (!data?.versions?.length) return false;
             _versionsLoaded = true;
             versions = []; currentVerIdx = -1; drawingId = null;
+            isShared = false;
+            updateShareButtonUI();
             applyParams(data.versions[0].params);
             document.getElementById('drawingName').value    = '';
             document.getElementById('verLabel').textContent = '—';
@@ -2314,6 +2441,9 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
         const _finishEl = document.getElementById('txtFinish'); if (_finishEl) _finishEl.value = '';
         const _hwEl = document.getElementById('txtHardware');  if (_hwEl) _hwEl.value = '';
 
+        const resumed = await tryResumePendingSave();
+        if (resumed) return resumed;
+
         const pendingTitle = window.__pmokOpenDrawing || null;
         if (pendingTitle) {
             const ok = await loadFromDb(pendingTitle);
@@ -2328,6 +2458,8 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
 
         versions = []; currentVerIdx = -1;
         drawingId = null;
+        isShared = false;
+        updateShareButtonUI();
         _versionsLoaded = true;
         localStorage.removeItem(CURRENT_TITLE_KEY);
         localStorage.removeItem(NAME_KEY);
@@ -2397,7 +2529,23 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
         }
     }
 
-    document.getElementById('btnSave').addEventListener('click', saveVersion);
+    document.getElementById('btnSave').addEventListener('click', () => {
+        if (!localStorage.getItem('pmok_auth_token')) {
+            stashPendingSave();
+            pmokRequireAuth(() => {});
+            return;
+        }
+        saveVersion();
+    });
+
+    document.getElementById('btnShare')?.addEventListener('click', openShareDropdown);
+    document.getElementById('shareDropdown')?.addEventListener('click', (e) => e.stopPropagation());
+    document.getElementById('shareDdCopy')?.addEventListener('click', copyShareLink);
+    document.getElementById('shareDdKakao')?.addEventListener('click', shareToKakao);
+    document.getElementById('shareDdFb')?.addEventListener('click', shareToFacebook);
+    document.getElementById('shareDdX')?.addEventListener('click', shareToX);
+    document.getElementById('shareDdOff')?.addEventListener('click', turnShareOff);
+    document.addEventListener('click', () => document.getElementById('shareDropdown')?.classList.remove('open'));
 
     const verBtn      = document.getElementById('verBtn');
     const verDropdown = document.getElementById('verDropdown');
@@ -2471,6 +2619,8 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
             drawingId = data.drawing.id ?? null;
             isDrawingLocked = !!data.drawing.locked_at;
             updateLockBanner(isDrawingLocked);
+            isShared = !!data.drawing.is_shared;
+            updateShareButtonUI();
             const catEl = document.getElementById('patternCategory');
             if (catEl) catEl.value = data.drawing.pattern_category || '';
             const cAt = new Date(data.drawing.created_at).getTime();
@@ -2489,6 +2639,8 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
         drawingId = null;
         isDrawingLocked = false;
         updateLockBanner(false);
+        isShared = false;
+        updateShareButtonUI();
         document.getElementById('drawingName').value    = '';
         document.getElementById('verLabel').textContent = '—';
         const now = Date.now();

@@ -68,6 +68,22 @@ window.DrawingSync = (function () {
         } catch { return false; }
     }
 
+    async function setShared(id, shared) {
+        if (!_token() || !id) return { ok: false };
+        try {
+            const res  = await fetch('/src/api/drawings/share.php', {
+                method: 'POST',
+                headers: _headers(),
+                body: JSON.stringify({ id, shared }),
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) return { ok: false, reason: data.error || 'server_error' };
+            return { ok: true, is_shared: data.is_shared, share_url: data.share_url };
+        } catch {
+            return { ok: false, reason: 'network' };
+        }
+    }
+
     function logExport(drawingId, engine, format, drawingName, version) {
         if (!_token()) return;
         fetch('/src/api/drawings/export_log.php', {
@@ -77,7 +93,7 @@ window.DrawingSync = (function () {
         }).catch(() => {});
     }
 
-    return { save, load, list, rename, delete: del, logExport };
+    return { save, load, list, rename, delete: del, setShared, logExport };
 })();
 
 // ── 저장 완료 토스트 ──────────────────────────────

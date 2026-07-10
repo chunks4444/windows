@@ -103,9 +103,10 @@ CREATE TABLE IF NOT EXISTS drawings (
     type        VARCHAR(64)     NOT NULL COMMENT '도면 종류 (예: classic, square, diamond, cross, triangle)',
     title       VARCHAR(100)    NOT NULL DEFAULT '' COMMENT '도면 제목 (유저가 직접 지정, 버전과 독립 관리)',
     pattern_category VARCHAR(40) NULL DEFAULT NULL COMMENT '전통 창호 패턴 분류 — pattern_categories.id를 문자열로 저장(CAST(... AS UNSIGNED)로 조인)',
+    is_shared   TINYINT(1)      NOT NULL DEFAULT 0 COMMENT '공유 링크 on/off — 켜면 로그인 없이 drawing_id로 열람 가능(원본 실시간 반영, 뷰어는 fork로만 저장 가능)',
     created_at  DATETIME        NOT NULL DEFAULT NOW() COMMENT '최초 작성일시',
     updated_at    DATETIME        NOT NULL DEFAULT NOW() ON UPDATE NOW() COMMENT '최종 저장일시',
-    thumbnail     MEDIUMTEXT      NULL COMMENT '썸네일 이미지 (data:image/jpeg;base64,…)',
+    thumbnail     MEDIUMTEXT      NULL COMMENT '썸네일 이미지 — 실제로는 base64가 아니라 /uploads/drawing_thumbs/ 아래 저장된 정적 파일의 공개 경로 문자열 (Drawing::persistThumbnail 참고)',
     work_time_sec INT UNSIGNED    NOT NULL DEFAULT 0 COMMENT '누적 작업 시간(초)',
     PRIMARY KEY (id),
     UNIQUE KEY uq_drawings_user_type_title (user_id, type, title),
@@ -519,6 +520,8 @@ INSERT IGNORE INTO color_swatches (group_name, sort_order, code, name, hex) VALU
 -- ALTER TABLE orders ADD COLUMN tracking_number  VARCHAR(50)  NULL COMMENT '운송장번호' AFTER tracking_carrier;
 -- ALTER TABLE orders ADD COLUMN shipped_at       DATETIME     NULL COMMENT '발송 시각' AFTER tracking_number;
 -- ALTER TABLE orders ADD COLUMN delivered_at     DATETIME     NULL COMMENT '배송완료 시각' AFTER shipped_at;
+-- 2026-07-11 도면 공유 링크 기능 — 소유자가 켜면 로그인 없이 drawing_id로 열람 가능(뷰어는 캔버스 편집 가능하나 서버엔 저장 못하고, 저장하려면 로그인 후 새 도면으로 fork됨)
+-- ALTER TABLE drawings ADD COLUMN is_shared TINYINT(1) NOT NULL DEFAULT 0 COMMENT '공유 링크 on/off — 켜면 로그인 없이 drawing_id로 열람 가능(원본 실시간 반영, 뷰어는 fork로만 저장 가능)' AFTER pattern_category;
 
 -- 제작 주문 (엔진 페이지의 "주문" 버튼에서 생성)
 -- customer_name/customer_phone/company_name은 주문 시점 users 테이블 값의 스냅샷

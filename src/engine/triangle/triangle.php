@@ -9,6 +9,20 @@ $patternCategories = get_pattern_categories();
 $renderPresets = get_render_presets();
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
 header('Pragma: no-cache');
+
+require_once __DIR__ . '/../../lib/meta.php';
+$shareMeta = null;
+if (!empty($_GET['drawing_id'])) {
+    $stmt = db()->prepare('SELECT title, thumbnail FROM drawings WHERE id = ? AND is_shared = 1');
+    $stmt->execute([(int)$_GET['drawing_id']]);
+    if ($row = $stmt->fetch()) {
+        $shareMeta = [
+            'title'       => ($row['title'] ?: '평목 도면') . ' - 평목',
+            'description' => '평목에서 설계한 문살 도면을 확인해보세요.',
+            'image'       => (strpos((string)$row['thumbnail'], '/uploads/') === 0) ? SITE_URL . $row['thumbnail'] : SITE_DEFAULT_IMAGE,
+        ];
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -16,7 +30,7 @@ header('Pragma: no-cache');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <?php require_once __DIR__ . '/../../lib/meta.php'; meta_tags(); ?>
+    <?php meta_tags($shareMeta); ?>
     <link rel="stylesheet" href="/src/css/tokens.css?v=<?= md5_file(__DIR__ . '/../../css/tokens.css') ?>">
     <link rel="stylesheet" href="/src/css/engine-common.css?v=<?= md5_file(__DIR__ . '/../../css/engine-common.css') ?>">
 
@@ -451,6 +465,37 @@ header('Pragma: no-cache');
                         </svg>
                         <span>저장</span>
                     </button>
+                    <div class="ver-wrap" style="margin:0;">
+                        <button class="title-group-btn" id="btnShare" title="먼저 저장해주세요" disabled>
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                                <line x1="8.6" y1="10.5" x2="15.4" y2="6.5"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/>
+                            </svg>
+                            <span>공유</span>
+                        </button>
+                        <div class="ver-dropdown share-dropdown" id="shareDropdown">
+                            <div class="share-dd-id" id="shareDdId">도면 #—</div>
+                            <div class="share-dd-linkrow">
+                                <input type="text" id="shareDdLink" readonly>
+                                <button type="button" id="shareDdCopy">복사</button>
+                            </div>
+                            <div class="share-dd-channels">
+                                <button type="button" id="shareDdKakao" title="카카오톡 공유">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.8 5.3 4.6 6.7-.2.7-.7 2.6-.8 3-.1.5.2.5.4.4.2-.1 2.6-1.8 3.6-2.5.7.1 1.4.2 2.2.2 5.5 0 10-3.6 10-8 0-4.4-4.5-7.8-10-7.8z"/></svg>
+                                    <span>카카오</span>
+                                </button>
+                                <button type="button" id="shareDdFb" title="페이스북 공유">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7.9h2.7l.4-3.1h-3.1V8.1c0-.9.3-1.5 1.6-1.5h1.7V3.8C15.9 3.7 14.8 3.6 13.6 3.6c-2.5 0-4.2 1.5-4.2 4.3v2.1H6.7v3.1h2.7V21h4.1z"/></svg>
+                                    <span>FB</span>
+                                </button>
+                                <button type="button" id="shareDdX" title="X(트위터) 공유">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 3H22l-7.5 8.6L23 21h-6.9l-5.4-6.6L4.4 21H1.3l8-9.2L1 3h7l4.9 6.1L18.9 3zm-1.2 16h1.9L7.4 4.9H5.4L17.7 19z"/></svg>
+                                    <span>X</span>
+                                </button>
+                            </div>
+                            <button type="button" id="shareDdOff" class="share-dd-off">공유 끄기</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -754,6 +799,10 @@ header('Pragma: no-cache');
     <script src="https://unpkg.com/konva@9/konva.min.js"></script>
     <script src="/src/js/konva-overlay.js?v=<?= md5_file(__DIR__ . '/../../js/konva-overlay.js') ?>"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <?php if ($kakaoJsKey = kakao_js_key()): ?>
+    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js"></script>
+    <script>if (window.Kakao && !Kakao.isInitialized()) Kakao.init('<?= addslashes($kakaoJsKey) ?>');</script>
+    <?php endif; ?>
     <script>
         window.__pmokOpenDrawing         = <?= isset($_POST['drawing'])    ? json_encode($_POST['drawing'],    JSON_UNESCAPED_UNICODE) : 'null' ?>;
         window.__pmokCollectionDrawingId = <?= isset($_GET['drawing_id']) ? (int)$_GET['drawing_id']          : 'null' ?>;
