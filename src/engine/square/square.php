@@ -45,16 +45,20 @@ if ($_pmokIsSharedView && !jwt_from_request()) {
     <script>if (window.Kakao && !Kakao.isInitialized()) Kakao.init('<?= addslashes($kakaoJsKeyPreview) ?>');</script>
     <?php endif; ?>
     <style>
-        .share-preview-wrap { max-width: 720px; margin: 0 auto; padding: 60px 20px; text-align: center; }
-        .share-preview-img { max-width: 100%; border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12); margin-bottom: 24px; }
-        .share-preview-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
-        .share-preview-sub { color: #888; margin-bottom: 28px; }
-        .share-preview-btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 32px; background: var(--accent); color: #fff; border-radius: 999px; font-weight: 600; border: none; cursor: pointer; font-size: 15px; }
+        html, body { height: 100%; overflow: hidden; }
+        body { display: flex; flex-direction: column; margin: 0; }
+        .share-preview-page { flex: 1 1 auto; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .share-preview-wrap { max-width: 560px; width: 100%; text-align: center; }
+        .share-preview-img { max-width: 100%; max-height: 48vh; border-radius: 12px; box-shadow: 0 12px 40px rgba(0,0,0,0.12); margin-bottom: 20px; object-fit: contain; }
+        .share-preview-title { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+        .share-preview-sub { color: #888; margin-bottom: 20px; font-size: 14px; }
+        .share-preview-btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px; background: var(--accent); color: #fff; border-radius: 999px; font-weight: 600; border: none; cursor: pointer; font-size: 15px; }
         .share-preview-btn:hover { background: var(--accent-hover, var(--accent)); }
     </style>
 </head>
 <body>
     <?php include __DIR__ . '/../../components/nav.php'; ?>
+    <div class="share-preview-page">
     <div class="share-preview-wrap">
         <?php if ($shareThumb): ?>
             <img class="share-preview-img" src="<?= htmlspecialchars($shareThumb) ?>" alt="<?= htmlspecialchars($shareTitle) ?>">
@@ -65,7 +69,7 @@ if ($_pmokIsSharedView && !jwt_from_request()) {
         <div class="share-preview-sub">평목에서 공유한 도면입니다. 로그인하면 내 도면함에 복사해서 편집할 수 있어요.</div>
         <button class="share-preview-btn" id="btnCopyShared">로그인하고 내 도면함에 복사</button>
     </div>
-    <?php include __DIR__ . '/../../components/footer.php'; ?>
+    </div>
     <script>
     document.getElementById('btnCopyShared').addEventListener('click', function () {
         pmokRequireAuth(async function () {
