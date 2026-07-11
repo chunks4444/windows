@@ -1,7 +1,7 @@
 const API = '/src/api/admin/space_cards.php';
 function _h() { return { 'Authorization': 'Bearer ' + localStorage.getItem('pmok_auth_token'), 'Content-Type': 'application/json' }; }
 
-let cards = [], dragSrc, availableKeywords = [];
+let cards = [], availableKeywords = [];
 
 async function loadCards() {
     const res  = await fetch(API, { headers: _h() });
@@ -16,7 +16,7 @@ async function loadCards() {
 
 function render() {
     document.getElementById('scBody').innerHTML = cards.map(c => `
-        <tr data-id="${c.id}" draggable="true">
+        <tr data-id="${c.id}">
             <td style="text-align:center;"><span class="drag-handle"><i class="bi bi-grip-vertical"></i></span></td>
             <td>${c.image_url
                 ? `<img class="sc-thumb" src="${esc(c.image_url)}" alt="" draggable="false">`
@@ -118,23 +118,40 @@ async function toggleCard(id) {
     loadCards();
 }
 
+// 네이티브 HTML5 draggable은 <tr>에서 브라우저마다(특히 Safari) 아예 안 먹는 경우가 있어
+// mousedown/mousemove/mouseup 기반으로 직접 구현한다.
+let dragRow = null;
+
 function bindDrag() {
-    document.querySelectorAll('#scBody tr').forEach(tr => {
-        tr.addEventListener('dragstart', () => { dragSrc = tr; tr.classList.add('dragging'); });
-        tr.addEventListener('dragend',   () => tr.classList.remove('dragging'));
-        tr.addEventListener('dragover',  e => { e.preventDefault(); tr.classList.add('drag-over'); });
-        tr.addEventListener('dragleave', () => tr.classList.remove('drag-over'));
-        tr.addEventListener('drop', async e => {
+    document.querySelectorAll('#scBody .drag-handle').forEach(handle => {
+        handle.onmousedown = e => {
             e.preventDefault();
-            tr.classList.remove('drag-over');
-            if (dragSrc === tr) return;
-            tr.parentNode.insertBefore(dragSrc, tr.nextSibling);
-            const ids = [...tr.parentNode.querySelectorAll('tr')].map(r => +r.dataset.id);
-            await fetch(API, { method: 'POST', headers: _h(), body: JSON.stringify({ action: 'reorder', ids }) });
-            await loadCards();
-        });
+            dragRow = handle.closest('tr');
+            dragRow.classList.add('dragging');
+        };
     });
 }
+
+document.addEventListener('mousemove', e => {
+    if (!dragRow) return;
+    const tbody = document.getElementById('scBody');
+    const rows  = [...tbody.querySelectorAll('tr')].filter(r => r !== dragRow);
+    const after = rows.find(r => {
+        const rect = r.getBoundingClientRect();
+        return e.clientY < rect.top + rect.height / 2;
+    });
+    if (after) tbody.insertBefore(dragRow, after);
+    else tbody.appendChild(dragRow);
+});
+
+document.addEventListener('mouseup', async () => {
+    if (!dragRow) return;
+    dragRow.classList.remove('dragging');
+    const ids = [...document.getElementById('scBody').querySelectorAll('tr')].map(r => +r.dataset.id);
+    dragRow = null;
+    await fetch(API, { method: 'POST', headers: _h(), body: JSON.stringify({ action: 'reorder', ids }) });
+    await loadCards();
+});
 
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('scModalOverlay').addEventListener('click', e => {

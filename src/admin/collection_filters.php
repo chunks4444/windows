@@ -77,7 +77,7 @@ async function load() {
 
 function render() {
     document.getElementById('cfBody').innerHTML = _filters.map(f => `
-        <tr class="${f.is_active=='1'?'':'cf-inactive'}" id="row-${f.id}" data-id="${f.id}" draggable="true">
+        <tr class="${f.is_active=='1'?'':'cf-inactive'}" id="row-${f.id}" data-id="${f.id}">
             <td style="text-align:center;"><span class="cf-drag-handle"><i class="bi bi-grip-vertical"></i></span></td>
             <td><span class="cf-id">${f.id}</span></td>
             <td><input class="cf-name-input" value="${esc(f.label)}" id="label-${f.id}"></td>
@@ -93,25 +93,41 @@ function render() {
     bindDrag();
 }
 
-let dragSrc;
+// 네이티브 HTML5 draggable은 <tr>에서 브라우저마다(특히 Safari) 아예 안 먹는 경우가 있어
+// mousedown/mousemove/mouseup 기반으로 직접 구현한다.
+let dragRow = null;
+
 function bindDrag() {
-    document.querySelectorAll('#cfBody tr').forEach(tr => {
-        tr.addEventListener('dragstart', () => { dragSrc = tr; tr.classList.add('dragging'); });
-        tr.addEventListener('dragend',   () => tr.classList.remove('dragging'));
-        tr.addEventListener('dragover',  e => { e.preventDefault(); tr.classList.add('drag-over'); });
-        tr.addEventListener('dragleave', () => tr.classList.remove('drag-over'));
-        tr.addEventListener('drop', async e => {
+    document.querySelectorAll('#cfBody .cf-drag-handle').forEach(handle => {
+        handle.onmousedown = e => {
             e.preventDefault();
-            tr.classList.remove('drag-over');
-            if (dragSrc === tr) return;
-            tr.parentNode.insertBefore(dragSrc, tr.nextSibling);
-            const ids = [...tr.parentNode.querySelectorAll('tr')].map(r => +r.dataset.id);
-            await fetch(API, { method:'PATCH', headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN()},
-                body: JSON.stringify({ ids }) });
-            await load();
-        });
+            dragRow = handle.closest('tr');
+            dragRow.classList.add('dragging');
+        };
     });
 }
+
+document.addEventListener('mousemove', e => {
+    if (!dragRow) return;
+    const tbody = document.getElementById('cfBody');
+    const rows  = [...tbody.querySelectorAll('tr')].filter(r => r !== dragRow);
+    const after = rows.find(r => {
+        const rect = r.getBoundingClientRect();
+        return e.clientY < rect.top + rect.height / 2;
+    });
+    if (after) tbody.insertBefore(dragRow, after);
+    else tbody.appendChild(dragRow);
+});
+
+document.addEventListener('mouseup', async () => {
+    if (!dragRow) return;
+    dragRow.classList.remove('dragging');
+    const ids = [...document.getElementById('cfBody').querySelectorAll('tr')].map(r => +r.dataset.id);
+    dragRow = null;
+    await fetch(API, { method:'PATCH', headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN()},
+        body: JSON.stringify({ ids }) });
+    await load();
+});
 
 async function save(id) {
     const label = document.getElementById(`label-${id}`).value.trim();
