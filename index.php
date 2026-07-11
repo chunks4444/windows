@@ -225,11 +225,10 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                 var cards = track.querySelectorAll('.collection-strip-card');
                 var totalCount = cards.length / 2; // 무한 루프용으로 두 벌 렌더링된 원본 개수
 
-                // 뷰포트 너비를 카드 개수로 정확히 나눠, 잘린 카드가 보이지 않게 함
+                // 뷰포트 너비를 4등분해 카드 크기를 계산 (잘린 카드가 보이지 않게 함)
                 function measure() {
                     var vw = viewport.clientWidth;
-                    var idealWidth = 240;
-                    var count = Math.max(2, Math.min(totalCount, Math.round(vw / idealWidth)));
+                    var count = Math.min(4, totalCount);
                     var cardWidth = (vw - (count - 1) * gap) / count;
                     cards.forEach(function (el) { el.style.width = cardWidth + 'px'; });
                     step = cardWidth + gap;

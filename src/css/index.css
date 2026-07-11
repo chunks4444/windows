@@ -185,14 +185,9 @@ body { font-weight: 900; }
 
 .collection-strip-outer {
     position: relative;
-    display: flex;
-    align-items: center;
-    gap: 8px;
 }
 
 .collection-strip-viewport {
-    flex: 1;
-    min-width: 0;
     overflow: hidden;
     padding: 8px 0 32px;
 }
@@ -205,7 +200,9 @@ body { font-weight: 900; }
 }
 
 .collection-strip-nav {
-    flex: 0 0 auto;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
     z-index: 2;
     width: 36px;
     height: 36px;
@@ -220,6 +217,9 @@ body { font-weight: 900; }
     box-shadow: 0 2px 8px rgba(var(--text-rgb), 0.12);
     transition: background 0.15s ease;
 }
+
+.collection-strip-nav-prev { left: 8px; }
+.collection-strip-nav-next { right: 8px; }
 
 .collection-strip-nav:hover {
     background: var(--border);
