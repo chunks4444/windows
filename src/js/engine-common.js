@@ -1042,13 +1042,13 @@ function renderPresentationThumbnail(kv, targetW = 1024, targetH = 1024) {
         return { x, y, w, h };
     };
 
-    ctx.fillStyle = '#2E2A26';
-    frameRects.forEach(r => {
-        const c = clampRect(r, 3);
-        ctx.fillRect(c.x, c.y, c.w, c.h);
-    });
-
+    // 살(대각선 포함)은 원래 라이브 캔버스에서 문틀 안쪽으로 클리핑되어 그려지지만,
+    // Konva 지오메트리는 클리핑 전 원본 좌표라 문틀 밖으로 삐져나올 수 있다 —
+    // 문/창 전체 바운딩박스로 다시 클리핑해서 방지 (프레임을 나중에 그려 경계도 깔끔하게 덮는다).
     ctx.save();
+    ctx.beginPath();
+    ctx.rect(offX, offY, bboxW * fitScale, bboxH * fitScale);
+    ctx.clip();
     ctx.shadowColor  = 'rgba(46,42,38,0.10)';
     ctx.shadowBlur   = 1;
     ctx.shadowOffsetY = 1;
@@ -1067,6 +1067,12 @@ function renderPresentationThumbnail(kv, targetW = 1024, targetH = 1024) {
         ctx.stroke();
     });
     ctx.restore();
+
+    ctx.fillStyle = '#2E2A26';
+    frameRects.forEach(r => {
+        const c = clampRect(r, 3);
+        ctx.fillRect(c.x, c.y, c.w, c.h);
+    });
 
     return canvas.toDataURL('image/png');
 }
