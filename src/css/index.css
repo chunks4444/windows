@@ -231,18 +231,10 @@ body { font-weight: 900; }
     transform: scale(1.05);
 }
 
-.collection-strip-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgba(var(--text-rgb), 0.6) 0%, transparent 55%);
-    display: flex;
-    align-items: flex-end;
-    pointer-events: none;
-}
-
 .collection-strip-label {
-    padding: 12px 14px;
-    color: var(--bg);
+    margin-top: 10px;
+    text-align: center;
+    color: var(--text);
     font-size: var(--fs-14);
     font-weight: 600;
     letter-spacing: -0.01em;

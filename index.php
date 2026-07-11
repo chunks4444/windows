@@ -21,13 +21,31 @@ try {
 } catch (Throwable $e) {
     $studioCards = [];
 }
-// 컬렉션 슬라이드 카드 (최근 등록 패턴)
+// 컬렉션 슬라이드 카드 (최근 등록 패턴) — 클릭 시 바로 엔진 에디터로 열림
 try {
+    $collectionEditorMap = [
+        'classic'  => '/src/engine/classic/classic.php',
+        'square'   => '/src/engine/square/square.php',
+        'diamond'  => '/src/engine/diamond/diamond.php',
+        'cross'    => '/src/engine/cross/cross.php',
+        'triangle' => '/src/engine/triangle/triangle.php',
+        'hexagon'  => '/src/engine/hexagon/hexagon.php',
+    ];
     $collectionCards = $pdo ? $pdo->query(
-        "SELECT slug, name_ko, image_path FROM library_patterns
-         WHERE is_active = 1 AND image_path <> ''
-         ORDER BY id DESC LIMIT 14"
+        "SELECT p.slug, p.name_ko, p.image_path, p.drawing_id, d.type AS engine
+         FROM library_patterns p
+         LEFT JOIN drawings d ON d.id = p.drawing_id
+         WHERE p.is_active = 1 AND p.image_path <> ''
+         ORDER BY p.id DESC LIMIT 14"
     )->fetchAll() : [];
+    foreach ($collectionCards as &$cc) {
+        $engineKey  = strtolower($cc['engine'] ?? '');
+        $editorUrl  = $collectionEditorMap[$engineKey] ?? null;
+        $cc['href'] = ($editorUrl && $cc['drawing_id'])
+            ? $editorUrl . '?drawing_id=' . (int)$cc['drawing_id']
+            : '/collection/detail?slug=' . urlencode($cc['slug']);
+    }
+    unset($cc);
 } catch (Throwable $e) {
     $collectionCards = [];
 }
@@ -180,11 +198,9 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                     <div class="collection-strip-outer">
                         <div class="collection-strip-track">
                             <?php foreach (array_merge($collectionCards, $collectionCards) as $cc): ?>
-                            <a class="collection-strip-card" href="/collection/detail?slug=<?= urlencode($cc['slug']) ?>">
+                            <a class="collection-strip-card" href="<?= htmlspecialchars($cc['href']) ?>">
                                 <img src="<?= htmlspecialchars($cc['image_path']) ?>" alt="<?= htmlspecialchars($cc['name_ko']) ?>" loading="lazy">
-                                <div class="collection-strip-overlay">
-                                    <div class="collection-strip-label"><?= htmlspecialchars($cc['name_ko']) ?></div>
-                                </div>
+                                <div class="collection-strip-label"><?= htmlspecialchars($cc['name_ko']) ?></div>
                             </a>
                             <?php endforeach; ?>
                         </div>
