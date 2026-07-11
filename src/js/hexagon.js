@@ -1038,7 +1038,10 @@ async function draw() {
                         const y1 = y0 + m * (size / 2);
                         const y2 = y0 + (m + 1) * (size / 2);
                         const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
-                        const lineKey = makeLineKey(mx, my, drNorm);
+                        // makeLineKey(좌표 기반)는 셀마다 살짝 어긋나는 부동소수점 오차 때문에
+                        // 같은 사선 줄(strip)인데도 칸(m)마다 다른 키가 나올 수 있어, 대신 줄
+                        // 인덱스(k)로 명시적으로 묶어 전체 선택/삭제가 되도록 한다.
+                        const lineKey = `${d}:dr:${k}`;
                         const segKey  = `${d}:dr:${k}:${m}`;
                         lastSegMap.set(segKey, { cx: x1, cy: y1, ex: x2, ey: y2, mx, my, normAngle: drNorm, lineKey });
                         lastNodeList.push({ cx: x1, cy: y1 }, { cx: x2, cy: y2 });
@@ -1069,7 +1072,7 @@ async function draw() {
                         const y1 = y0 - m * (size / 2);
                         const y2 = y0 - (m + 1) * (size / 2);
                         const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
-                        const lineKey = makeLineKey(mx, my, urNorm);
+                        const lineKey = `${d}:ur:${k}`;
                         const segKey  = `${d}:ur:${k}:${m}`;
                         lastSegMap.set(segKey, { cx: x1, cy: y1, ex: x2, ey: y2, mx, my, normAngle: urNorm, lineKey });
                         lastNodeList.push({ cx: x1, cy: y1 }, { cx: x2, cy: y2 });
