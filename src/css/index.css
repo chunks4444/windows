@@ -284,7 +284,10 @@ body { font-weight: 900; }
 }
 
 @media (max-width: 576px) {
-    .collection-strip-nav { display: none; }
+    .collection-strip-nav {
+        width: 32px;
+        height: 32px;
+    }
 }
 
 /* SPACE CARDS */
