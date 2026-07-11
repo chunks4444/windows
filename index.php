@@ -36,7 +36,7 @@ try {
          FROM library_patterns p
          LEFT JOIN drawings d ON d.id = p.drawing_id
          WHERE p.is_active = 1 AND p.image_path <> ''
-         ORDER BY p.id DESC LIMIT 14"
+         ORDER BY p.sort_order, p.id LIMIT 14"
     )->fetchAll() : [];
     foreach ($collectionCards as &$cc) {
         $engineKey  = strtolower($cc['engine'] ?? '');
