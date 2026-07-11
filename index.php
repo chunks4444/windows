@@ -215,45 +215,59 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
             (function () {
                 var track = document.getElementById('collectionStripTrack');
                 if (!track) return;
-                var outer  = track.closest('.collection-strip-outer');
-                var prevBtn = outer.querySelector('.collection-strip-nav-prev');
-                var nextBtn = outer.querySelector('.collection-strip-nav-next');
+                var outer    = track.closest('.collection-strip-outer');
+                var viewport = outer.querySelector('.collection-strip-viewport');
+                var prevBtn  = outer.querySelector('.collection-strip-nav-prev');
+                var nextBtn  = outer.querySelector('.collection-strip-nav-next');
                 var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-                var pos = 0, half = 0, paused = false;
-                function recalc() { half = track.scrollWidth / 2; }
-                recalc();
-                window.addEventListener('resize', recalc);
+                var gap = 16;
+                var pos = 0, half = 0, step = 0, paused = false, autoTimer = null;
+                var cards = track.querySelectorAll('.collection-strip-card');
+                var totalCount = cards.length / 2; // 무한 루프용으로 두 벌 렌더링된 원본 개수
 
-                function apply() { track.style.transform = 'translateX(' + pos + 'px)'; }
-
-                function tick() {
-                    if (!paused && !reduceMotion) {
-                        pos -= 0.4;
-                        if (half && pos <= -half) pos += half;
-                        apply();
-                    }
-                    requestAnimationFrame(tick);
+                // 뷰포트 너비를 카드 개수로 정확히 나눠, 잘린 카드가 보이지 않게 함
+                function measure() {
+                    var vw = viewport.clientWidth;
+                    var idealWidth = 240;
+                    var count = Math.max(2, Math.min(totalCount, Math.round(vw / idealWidth)));
+                    var cardWidth = (vw - (count - 1) * gap) / count;
+                    cards.forEach(function (el) { el.style.width = cardWidth + 'px'; });
+                    step = cardWidth + gap;
+                    half = step * totalCount;
+                    pos = Math.round(pos / step) * step;
+                    apply(false);
                 }
-                requestAnimationFrame(tick);
+
+                function apply(withTransition) {
+                    track.style.transition = withTransition && !reduceMotion ? 'transform 0.45s ease' : 'none';
+                    track.style.transform = 'translateX(' + pos + 'px)';
+                }
+
+                function move(direction) {
+                    pos -= direction * step;
+                    if (pos <= -half) pos += half;
+                    if (pos > 0) pos -= half;
+                    apply(true);
+                }
+
+                function startAuto() {
+                    stopAuto();
+                    if (reduceMotion) return;
+                    autoTimer = setInterval(function () {
+                        if (!paused) move(1);
+                    }, 3200);
+                }
+                function stopAuto() { if (autoTimer) clearInterval(autoTimer); }
+
+                measure();
+                window.addEventListener('resize', measure);
+                startAuto();
 
                 outer.addEventListener('mouseenter', function () { paused = true; });
                 outer.addEventListener('mouseleave', function () { paused = false; });
 
-                function jump(direction) {
-                    var cardEl = track.querySelector('.collection-strip-card');
-                    var cardWidth = cardEl ? cardEl.getBoundingClientRect().width : 200;
-                    var amount = (cardWidth + 16) * 3;
-                    track.style.transition = reduceMotion ? 'none' : 'transform 0.35s ease';
-                    pos -= direction * amount;
-                    if (half) {
-                        if (pos <= -half) pos += half;
-                        if (pos > 0) pos -= half;
-                    }
-                    apply();
-                    setTimeout(function () { track.style.transition = ''; }, 360);
-                }
-                prevBtn.addEventListener('click', function () { jump(-1); });
-                nextBtn.addEventListener('click', function () { jump(1); });
+                prevBtn.addEventListener('click', function () { move(-1); });
+                nextBtn.addEventListener('click', function () { move(1); });
             })();
             </script>
             <?php endif; ?>

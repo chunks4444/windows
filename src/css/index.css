@@ -195,8 +195,6 @@ body { font-weight: 900; }
     min-width: 0;
     overflow: hidden;
     padding: 8px 0 32px;
-    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%);
-    mask-image: linear-gradient(to right, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%);
 }
 
 .collection-strip-track {
@@ -227,23 +225,17 @@ body { font-weight: 900; }
     background: var(--border);
 }
 
-/* 카드 너비 = 각 브레이크포인트의 .container 너비 기준으로 4장이 딱 보이는 크기 */
+/* 카드 너비는 JS가 뷰포트 폭에 맞춰 정확히 계산해 인라인으로 지정 (잘린 카드 노출 방지) */
 .collection-strip-card {
     position: relative;
     flex: 0 0 auto;
-    width: 140px;
+    width: 220px;
     border-radius: 12px;
     overflow: hidden;
     display: block;
     text-decoration: none;
     color: inherit;
 }
-
-@media (min-width: 576px) { .collection-strip-card { width: 160px; } }
-@media (min-width: 768px) { .collection-strip-card { width: 168px; } }
-@media (min-width: 992px) { .collection-strip-card { width: 228px; } }
-@media (min-width: 1200px) { .collection-strip-card { width: 273px; } }
-@media (min-width: 1400px) { .collection-strip-card { width: 318px; } }
 
 .collection-strip-card img {
     width: 100%;
