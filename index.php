@@ -196,17 +196,66 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                         <a href="/collection/" class="home-blog-more">컬렉션 전체 보기 <i class="bi bi-arrow-right"></i></a>
                     </div>
                     <div class="collection-strip-outer">
-                        <div class="collection-strip-track">
-                            <?php foreach (array_merge($collectionCards, $collectionCards) as $cc): ?>
-                            <a class="collection-strip-card" href="<?= htmlspecialchars($cc['href']) ?>">
-                                <img src="<?= htmlspecialchars($cc['image_path']) ?>" alt="<?= htmlspecialchars($cc['name_ko']) ?>" loading="lazy">
-                                <div class="collection-strip-label"><?= htmlspecialchars($cc['name_ko']) ?></div>
-                            </a>
-                            <?php endforeach; ?>
+                        <button type="button" class="collection-strip-nav collection-strip-nav-prev" aria-label="이전 패턴 보기"><i class="bi bi-chevron-left"></i></button>
+                        <div class="collection-strip-viewport">
+                            <div class="collection-strip-track" id="collectionStripTrack">
+                                <?php foreach (array_merge($collectionCards, $collectionCards) as $cc): ?>
+                                <a class="collection-strip-card" href="<?= htmlspecialchars($cc['href']) ?>">
+                                    <img src="<?= htmlspecialchars($cc['image_path']) ?>" alt="<?= htmlspecialchars($cc['name_ko']) ?>" loading="lazy">
+                                    <div class="collection-strip-label"><?= htmlspecialchars($cc['name_ko']) ?></div>
+                                </a>
+                                <?php endforeach; ?>
+                            </div>
                         </div>
+                        <button type="button" class="collection-strip-nav collection-strip-nav-next" aria-label="다음 패턴 보기"><i class="bi bi-chevron-right"></i></button>
                     </div>
                 </div>
             </section>
+            <script>
+            (function () {
+                var track = document.getElementById('collectionStripTrack');
+                if (!track) return;
+                var outer  = track.closest('.collection-strip-outer');
+                var prevBtn = outer.querySelector('.collection-strip-nav-prev');
+                var nextBtn = outer.querySelector('.collection-strip-nav-next');
+                var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                var pos = 0, half = 0, paused = false;
+                function recalc() { half = track.scrollWidth / 2; }
+                recalc();
+                window.addEventListener('resize', recalc);
+
+                function apply() { track.style.transform = 'translateX(' + pos + 'px)'; }
+
+                function tick() {
+                    if (!paused && !reduceMotion) {
+                        pos -= 0.4;
+                        if (half && pos <= -half) pos += half;
+                        apply();
+                    }
+                    requestAnimationFrame(tick);
+                }
+                requestAnimationFrame(tick);
+
+                outer.addEventListener('mouseenter', function () { paused = true; });
+                outer.addEventListener('mouseleave', function () { paused = false; });
+
+                function jump(direction) {
+                    var cardEl = track.querySelector('.collection-strip-card');
+                    var cardWidth = cardEl ? cardEl.getBoundingClientRect().width : 200;
+                    var amount = (cardWidth + 16) * 3;
+                    track.style.transition = reduceMotion ? 'none' : 'transform 0.35s ease';
+                    pos -= direction * amount;
+                    if (half) {
+                        if (pos <= -half) pos += half;
+                        if (pos > 0) pos -= half;
+                    }
+                    apply();
+                    setTimeout(function () { track.style.transition = ''; }, 360);
+                }
+                prevBtn.addEventListener('click', function () { jump(-1); });
+                nextBtn.addEventListener('click', function () { jump(1); });
+            })();
+            </script>
             <?php endif; ?>
             <section class="values-section mt-5 ">
                 <div class="values-inner container">

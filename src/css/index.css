@@ -184,6 +184,15 @@ body { font-weight: 900; }
 }
 
 .collection-strip-outer {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.collection-strip-viewport {
+    flex: 1;
+    min-width: 0;
     overflow: hidden;
     padding: 8px 0 32px;
     -webkit-mask-image: linear-gradient(to right, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%);
@@ -194,11 +203,28 @@ body { font-weight: 900; }
     display: flex;
     width: max-content;
     gap: 16px;
-    animation: collection-strip-scroll 50s linear infinite;
+    will-change: transform;
 }
 
-.collection-strip-outer:hover .collection-strip-track {
-    animation-play-state: paused;
+.collection-strip-nav {
+    flex: 0 0 auto;
+    z-index: 2;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(var(--text-rgb), 0.12);
+    transition: background 0.15s ease;
+}
+
+.collection-strip-nav:hover {
+    background: var(--border);
 }
 
 /* 카드 너비 = 각 브레이크포인트의 .container 너비 기준으로 4장이 딱 보이는 크기 */
@@ -231,13 +257,29 @@ body { font-weight: 900; }
     transform: scale(1.05);
 }
 
+.collection-strip-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0);
+    transition: background 0.2s ease;
+    pointer-events: none;
+}
+
+.collection-strip-card:hover::after {
+    background: rgba(0, 0, 0, 0.45);
+}
+
 .collection-strip-label {
     position: absolute;
-    left: 10px;
-    right: 10px;
-    bottom: 10px;
-    text-align: left;
-    color: var(--text);
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 12px;
+    color: var(--bg);
     font-size: var(--fs-14);
     font-weight: 600;
     letter-spacing: -0.01em;
@@ -249,14 +291,8 @@ body { font-weight: 900; }
     opacity: 1;
 }
 
-@keyframes collection-strip-scroll {
-    from { transform: translateX(0); }
-    to   { transform: translateX(-50%); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .collection-strip-track { animation: none; }
-    .collection-strip-outer { overflow-x: auto; }
+@media (max-width: 576px) {
+    .collection-strip-nav { display: none; }
 }
 
 /* SPACE CARDS */
