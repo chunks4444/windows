@@ -1784,16 +1784,26 @@ async function draw() {
         });
     });
 
+    function distToSeg(px, py, seg) {
+        const { cx, cy, ex, ey } = seg;
+        const dx = ex - cx, dy = ey - cy;
+        const lenSq = dx * dx + dy * dy;
+        if (lenSq === 0) return Math.hypot(px - cx, py - cy);
+        const t = Math.max(0, Math.min(1, ((px - cx) * dx + (py - cy) * dy) / lenSq));
+        return Math.hypot(px - cx - t * dx, py - cy - t * dy);
+    }
+
     function handleEditClick(e) {
         const coord = screenToCtxCoord(e.clientX, e.clientY);
 
         if (lineEditMode === 'delete') {
             let bestKey = null, bestDist = Infinity;
-            for (const [key, pos] of lastSegMap) {
-                const dist = Math.hypot(coord.x - pos.mx, coord.y - pos.my);
+            const threshold = Math.max(lastSlatPx * 4, lastCellSize * 0.35);
+            for (const [key, seg] of lastSegMap) {
+                const dist = distToSeg(coord.x, coord.y, seg);
                 if (dist < bestDist) { bestDist = dist; bestKey = key; }
             }
-            if (!bestKey || bestDist > lastCellSize * 1.2) return;
+            if (!bestKey || bestDist > threshold) return;
             if (bestKey.startsWith('added:')) {
                 const idx = parseInt(bestKey.split(':')[2]);
                 addedLines.splice(idx, 1);
