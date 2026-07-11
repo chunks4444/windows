@@ -407,7 +407,7 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
         updatePatternHighlight();
         updatePanels();
     });
-    el('btnDeleteSelectedSlat')?.addEventListener('click', () => {
+    function deleteSelectedSlat() {
         if (!_selectedLineKey || !deletedSegs) return;
         const segMap = getSegMap();
         for (const [key, seg] of segMap) {
@@ -416,6 +416,17 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
         _selectedLineKey = null;
         updatePanels();
         draw();
+    }
+    el('btnDeleteSelectedSlat')?.addEventListener('click', deleteSelectedSlat);
+
+    // 살을 선택한 상태에서 Delete/Backspace로도 삭제 (텍스트 입력 중일 땐 무시)
+    document.addEventListener('keydown', e => {
+        if (!_selectedLineKey) return;
+        if (e.key !== 'Delete' && e.key !== 'Backspace') return;
+        const tag = document.activeElement?.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || document.activeElement?.isContentEditable) return;
+        e.preventDefault();
+        deleteSelectedSlat();
     });
 
     // ── 살 선택 버튼 ──────────────────────────────────────

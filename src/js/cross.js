@@ -927,8 +927,8 @@ async function draw() {
 
                     const dBsA = !deletedSegs.has(bsaKey), dBsB = !deletedSegs.has(bsbKey);
                     if (buildKonvaPattern) {
-                        if (dBsA) kv.addPatternLine(bsaCx, bsaCy, bsaEx, bsaEy, _diagStroke, _diagW);
-                        if (dBsB) kv.addPatternLine(bsbCx, bsbCy, bsbEx, bsbEy, _diagStroke, _diagW);
+                        if (dBsA) kv.addPatternSlatLine(bsaCx, bsaCy, bsaEx, bsaEy, _diagStroke, bsaKey, bsFullLK, _diagW);
+                        if (dBsB) kv.addPatternSlatLine(bsbCx, bsbCy, bsbEx, bsbEy, _diagStroke, bsbKey, bsFullLK, _diagW);
                     } else if (dBsA || dBsB) {
                         ctx.beginPath();
                         if (dBsA && dBsB)     { ctx.moveTo(bsaCx, bsaCy); ctx.lineTo(bsbEx, bsbEy); }
@@ -951,8 +951,8 @@ async function draw() {
 
                     const dFsA = !deletedSegs.has(fsaKey), dFsB = !deletedSegs.has(fsbKey);
                     if (buildKonvaPattern) {
-                        if (dFsA) kv.addPatternLine(fsaCx, fsaCy, fsaEx, fsaEy, _diagStroke, _diagW);
-                        if (dFsB) kv.addPatternLine(fsbCx, fsbCy, fsbEx, fsbEy, _diagStroke, _diagW);
+                        if (dFsA) kv.addPatternSlatLine(fsaCx, fsaCy, fsaEx, fsaEy, _diagStroke, fsaKey, fsFullLK, _diagW);
+                        if (dFsB) kv.addPatternSlatLine(fsbCx, fsbCy, fsbEx, fsbEy, _diagStroke, fsbKey, fsFullLK, _diagW);
                     } else if (dFsA || dFsB) {
                         ctx.beginPath();
                         if (dFsA && dFsB)     { ctx.moveTo(fsaCx, fsaCy); ctx.lineTo(fsbEx, fsbEy); }

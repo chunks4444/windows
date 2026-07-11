@@ -946,7 +946,7 @@ async function draw() {
                         lastNodeList.push({ cx: x1, cy: y1 });
                         if (deletedSegs.has(segKey)) continue;
                         if (buildKonvaPattern) {
-                            kv.addPatternLine(x1, y1, x2, y2, Color_Slat_Fill, slatPx);
+                            kv.addPatternSlatLine(x1, y1, x2, y2, Color_Slat_Fill, segKey, lineKey, slatPx);
                         } else {
                             ctx.beginPath();
                             ctx.moveTo(x1, y1);
@@ -1014,7 +1014,7 @@ async function draw() {
                     lastNodeList.push({ cx: x, cy: y1 }, { cx: x, cy: y2 });
                     if (deletedSegs.has(segKey)) continue;
                     if (buildKonvaPattern) {
-                        kv.addPatternLine(x, y1, x, y2, Color_Slat_Fill, slatPx);
+                        kv.addPatternSlatLine(x, y1, x, y2, Color_Slat_Fill, segKey, lineKey, slatPx);
                     } else {
                         ctx.beginPath();
                         ctx.moveTo(x, y1);
@@ -1044,7 +1044,7 @@ async function draw() {
                         lastNodeList.push({ cx: x1, cy: y1 }, { cx: x2, cy: y2 });
                         if (deletedSegs.has(segKey)) continue;
                         if (buildKonvaPattern) {
-                            kv.addPatternLine(x1, y1, x2, y2, Color_Slat_Fill, slatPx);
+                            kv.addPatternSlatLine(x1, y1, x2, y2, Color_Slat_Fill, segKey, lineKey, slatPx);
                         } else {
                             ctx.beginPath();
                             ctx.moveTo(x1, y1);
@@ -1075,7 +1075,7 @@ async function draw() {
                         lastNodeList.push({ cx: x1, cy: y1 }, { cx: x2, cy: y2 });
                         if (deletedSegs.has(segKey)) continue;
                         if (buildKonvaPattern) {
-                            kv.addPatternLine(x1, y1, x2, y2, Color_Slat_Fill, slatPx);
+                            kv.addPatternSlatLine(x1, y1, x2, y2, Color_Slat_Fill, segKey, lineKey, slatPx);
                         } else {
                             ctx.beginPath();
                             ctx.moveTo(x1, y1);
