@@ -934,7 +934,7 @@ async function draw() {
                         if (i === 0) lastNodeList.push({ cx, cy });
                         if (deletedSegs.has(segKey)) continue;
                         if (buildKonvaPattern) {
-                            kv.addPatternLine(cx, cy, ex, ey, _slatColor, slatPx);
+                            kv.addPatternSlatLine(cx, cy, ex, ey, _slatColor, segKey, lineKey, slatPx);
                         } else {
                             ctx.beginPath();
                             ctx.moveTo(cx, cy);
@@ -1002,7 +1002,7 @@ async function draw() {
                         if (i === 0) lastNodeList.push({ cx, cy });
                         if (deletedSegs.has(segKey)) continue;
                         if (buildKonvaPattern) {
-                            kv.addPatternLine(cx, cy, ex, ey, _slatColor, slatPx);
+                            kv.addPatternSlatLine(cx, cy, ex, ey, _slatColor, segKey, lineKey, slatPx);
                         } else {
                             ctx.beginPath();
                             ctx.moveTo(cx, cy);

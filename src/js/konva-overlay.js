@@ -613,6 +613,32 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
         (_activeClipGroup || patternLayer).add(new Konva.Line({ points: [x1, y1, x2, y2], stroke, strokeWidth: width, lineCap: 'round', listening: false }));
     }
 
+    // addPatternLine과 달리 클릭으로 선택 가능한(listening) 살. 대각선/방사형 살처럼
+    // 축에 맞지 않는 살은 addPatternSlatRect(회전 없는 사각형)로 표현할 수 없어
+    // Konva.Line + hitStrokeWidth로 클릭 판정 폭을 넓혀서 대신한다.
+    function addPatternSlatLine(x1, y1, x2, y2, baseFill, segKey, lineKey, width) {
+        const oc = slatColorOverrides[lineKey];
+        const line = new Konva.Line({
+            points: [x1, y1, x2, y2],
+            stroke: oc || baseFill,
+            strokeWidth: width,
+            lineCap: 'round',
+            listening: true,
+            hitStrokeWidth: Math.max(width * 3, 16),
+        });
+        line.setAttr('_pmok_type',     'slat');
+        line.setAttr('_pmok_segKey',   segKey);
+        line.setAttr('_pmok_lineKey',  lineKey);
+        line.setAttr('_pmok_baseFill', baseFill);
+        _patternSlatNodes[segKey] = line;
+        (_activeClipGroup || patternLayer).add(line);
+    }
+
+    function _applySlatColor(node, color) {
+        if (node.getClassName() === 'Line') node.stroke(color);
+        else node.fill(color);
+    }
+
     function addPatternPolygon(points, fill, pmokType) {
         const line = new Konva.Line({ points, fill, closed: true, strokeWidth: 0, listening: false, perfectDrawEnabled: false });
         if (pmokType) line.setAttr('_pmok_type', pmokType);
@@ -670,7 +696,7 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
             const lineKey  = rect.getAttr('_pmok_lineKey');
             const baseFill = rect.getAttr('_pmok_baseFill');
             const oc       = slatColorOverrides[lineKey];
-            rect.fill(lineKey === _selectedLineKey ? 'rgba(41,121,255,0.55)' : (oc || baseFill));
+            _applySlatColor(rect, lineKey === _selectedLineKey ? 'rgba(41,121,255,0.55)' : (oc || baseFill));
         }
         patternLayer.draw(); // 동기 렌더 — canvas와 같은 프레임에 출력
     }
@@ -694,7 +720,7 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
             const lineKey  = rect.getAttr('_pmok_lineKey');
             const baseFill = rect.getAttr('_pmok_baseFill');
             const oc       = slatColorOverrides[lineKey];
-            rect.fill(lineKey === _selectedLineKey ? 'rgba(41,121,255,0.55)' : (oc || baseFill));
+            _applySlatColor(rect, lineKey === _selectedLineKey ? 'rgba(41,121,255,0.55)' : (oc || baseFill));
         }
         patternLayer.batchDraw();
     }
@@ -778,6 +804,7 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
         addPatternClipGroup,
         endPatternClipGroup,
         addPatternSlatRect,
+        addPatternSlatLine,
         addPatternRectToGroup,
         addPatternFrameRect,
         addPatternLine,
