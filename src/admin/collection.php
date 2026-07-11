@@ -43,10 +43,13 @@ $libPatternCats = get_pattern_categories();
         </div>
     </div>
 
+    <p style="font-size:12px;color:var(--text);margin:-8px 0 16px;">정렬 순서 열의 그립 아이콘을 드래그해 순서를 변경할 수 있습니다.</p>
+
     <div class="adm-table-wrap">
         <table>
             <thead>
                 <tr>
+                    <th style="width:32px;"></th>
                     <th style="width:64px;"></th>
                     <th>이름</th>
                     <th style="width:80px;">모양</th>

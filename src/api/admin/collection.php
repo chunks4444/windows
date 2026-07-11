@@ -204,6 +204,16 @@ if ($method === 'PUT') {
     exit;
 }
 
+if ($method === 'PATCH') {
+    $ids  = $body['ids'] ?? [];
+    $stmt = $pdo->prepare('UPDATE library_patterns SET sort_order=? WHERE id=?');
+    foreach ($ids as $i => $id) {
+        $stmt->execute([$i, (int)$id]);
+    }
+    echo json_encode(['ok' => true]);
+    exit;
+}
+
 if ($method === 'DELETE') {
     $id = (int)($body['id'] ?? 0);
     if (!$id) { http_response_code(400); echo json_encode(['error' => 'id 필요']); exit; }

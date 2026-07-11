@@ -62,7 +62,8 @@ function applyFilter() {
 
 function renderTable(patterns) {
     document.getElementById('libTbody').innerHTML = patterns.map(p => `
-        <tr>
+        <tr data-id="${p.id}">
+            <td style="text-align:center;"><span class="lib-drag-handle"><i class="bi bi-grip-vertical"></i></span></td>
             <td>${p.image_path
                 ? `<img class="lib-thumb" src="${esc(p.image_path)}" loading="lazy">`
                 : `<div class="lib-thumb-empty"><i class="bi bi-image"></i></div>`}</td>
@@ -83,8 +84,44 @@ function renderTable(patterns) {
                 <button class="adm-withdraw-btn" style="background:#c00;color:#fff;" onclick="deletePattern(${p.id}, '${esc(p.name_ko)}')">삭제</button>
             </div></td>
         </tr>
-    `).join('') || '<tr><td colspan="8" style="padding:40px;text-align:center;color:var(--text-3);">패턴이 없습니다.</td></tr>';
+    `).join('') || '<tr><td colspan="9" style="padding:40px;text-align:center;color:var(--text-3);">패턴이 없습니다.</td></tr>';
+    bindDrag();
 }
+
+// 네이티브 HTML5 draggable은 <tr>에서 브라우저마다(특히 Safari) 아예 안 먹는 경우가 있어
+// mousedown/mousemove/mouseup 기반으로 직접 구현한다.
+let dragRow = null;
+
+function bindDrag() {
+    document.querySelectorAll('#libTbody .lib-drag-handle').forEach(handle => {
+        handle.onmousedown = e => {
+            e.preventDefault();
+            dragRow = handle.closest('tr');
+            dragRow.classList.add('dragging');
+        };
+    });
+}
+
+document.addEventListener('mousemove', e => {
+    if (!dragRow) return;
+    const tbody = document.getElementById('libTbody');
+    const rows  = [...tbody.querySelectorAll('tr[data-id]')].filter(r => r !== dragRow);
+    const after = rows.find(r => {
+        const rect = r.getBoundingClientRect();
+        return e.clientY < rect.top + rect.height / 2;
+    });
+    if (after) tbody.insertBefore(dragRow, after);
+    else tbody.appendChild(dragRow);
+});
+
+document.addEventListener('mouseup', async () => {
+    if (!dragRow) return;
+    dragRow.classList.remove('dragging');
+    const ids = [...document.getElementById('libTbody').querySelectorAll('tr[data-id]')].map(r => +r.dataset.id);
+    dragRow = null;
+    await fetch('/src/api/admin/collection.php', { method: 'PATCH', headers: headers(), body: JSON.stringify({ ids }) });
+    await loadPatterns();
+});
 
 function openAddModal() {
     editingId = null; keywords = []; pendingImg = null;

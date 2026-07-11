@@ -10,3 +10,6 @@
         .lib-img-preview.show { display:block; }
         .lib-upload-label { display:block; padding:10px; border:1.5px dashed var(--border); border-radius:8px; text-align:center; cursor:pointer; color:var(--text-muted); font-size: var(--fs-14); }
         .lib-upload-label:hover { border-color:var(--accent); color:var(--accent); }
+        .lib-drag-handle { cursor:grab; color:var(--text-muted); }
+        .lib-drag-handle:active { cursor:grabbing; }
+        #libTbody tr.dragging { opacity:.4; }
