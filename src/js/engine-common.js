@@ -988,9 +988,25 @@
 // 고정 팔레트로 새 캔버스에 다시 그린다. 사용자가 그때그때 고른 색/배경과 무관하게
 // 카드 썸네일은 항상 이 스타일로 통일된다. 지오메트리가 비어있으면(배치모드 등) null 반환 → 호출부 폴백.
 function renderPresentationThumbnail(kv, targetW = 1024, targetH = 1024) {
+    try {
+        return _renderPresentationThumbnailImpl(kv, targetW, targetH);
+    } catch (e) {
+        console.warn('[presentation thumbnail] 렌더링 실패, 스크린샷 방식으로 폴백', e);
+        return null;
+    }
+}
+
+function _renderPresentationThumbnailImpl(kv, targetW, targetH) {
     if (!kv || !kv.getPatternGeometry) return null;
     const { frameRects, slatRects, slatLines } = kv.getPatternGeometry();
     if (!frameRects.length && !slatRects.length && !slatLines.length) return null;
+    // 프레임은 있는데 살이 하나도 없는 상태는 정상적인 창호 패턴이 아니다 —
+    // patternLayer가 아직 완전히 채워지기 전(캐시 히트 등)에 읽었을 가능성이 높으므로
+    // 신뢰하지 않고 기존 스크린샷 방식으로 폴백한다.
+    if (frameRects.length && !slatRects.length && !slatLines.length) {
+        console.warn('[presentation thumbnail] frame은 있는데 slat이 비어있음 — 폴백');
+        return null;
+    }
 
     const bboxSrc = frameRects.length ? frameRects : slatRects;
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
