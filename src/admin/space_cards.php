@@ -43,6 +43,7 @@ require_admin_role('s');
                     <th style="width:80px;">이미지</th>
                     <th>라벨</th>
                     <th>컬렉션 검색어</th>
+                    <th style="width:64px;">매칭</th>
                     <th style="width:72px;">상태</th>
                     <th style="width:160px;"></th>
                 </tr>
@@ -67,7 +68,9 @@ require_admin_role('s');
             </div>
             <div class="adm-mfield">
                 <label>컬렉션 검색어 (?q=)</label>
-                <input id="scQuery" type="text" placeholder="예: 중문" maxlength="100">
+                <input id="scQuery" type="text" placeholder="예: 중문" maxlength="100" list="scQueryList">
+                <datalist id="scQueryList"></datalist>
+                <span style="font-size:11px;color:var(--text-3);">실제 컬렉션에 등록된 키워드 중에서 고르는 걸 권장합니다. 목록에 없는 검색어는 매칭되는 도면이 없을 수 있습니다.</span>
             </div>
             <div class="adm-mfield">
                 <label>이미지</label>

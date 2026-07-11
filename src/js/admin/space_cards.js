@@ -1,13 +1,16 @@
 const API = '/src/api/admin/space_cards.php';
 function _h() { return { 'Authorization': 'Bearer ' + localStorage.getItem('pmok_auth_token'), 'Content-Type': 'application/json' }; }
 
-let cards = [], dragSrc;
+let cards = [], dragSrc, availableKeywords = [];
 
 async function loadCards() {
     const res  = await fetch(API, { headers: _h() });
     const data = await res.json();
     if (!res.ok) { document.getElementById('scAuthWall').style.display = ''; return; }
     cards = data.cards || [];
+    availableKeywords = data.keywords || [];
+    const dl = document.getElementById('scQueryList');
+    if (dl) dl.innerHTML = availableKeywords.map(k => `<option value="${esc(k)}">`).join('');
     render();
 }
 
@@ -20,6 +23,9 @@ function render() {
                 : `<div class="sc-thumb-empty"><i class="bi bi-image"></i></div>`}</td>
             <td><strong>${esc(c.label)}</strong></td>
             <td style="color:var(--text-3);">${esc(c.collection_query)}</td>
+            <td style="text-align:center;">${c.match_count > 0
+                ? `<span title="매칭되는 컬렉션 도면 수">${c.match_count}</span>`
+                : `<span class="sc-zero-match" title="이 검색어와 매칭되는 컬렉션 도면이 없습니다">0개!</span>`}</td>
             <td><span class="${c.is_active ? 'adm-active-badge' : 'adm-withdrawn-badge'}">${c.is_active ? '노출' : '숨김'}</span></td>
             <td>
                 <div class="adm-action-cell">

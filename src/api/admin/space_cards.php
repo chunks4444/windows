@@ -20,7 +20,24 @@ $pdo    = db();
 
 if ($method === 'GET') {
     $rows = $pdo->query('SELECT * FROM space_cards ORDER BY sort_order, id')->fetchAll();
-    echo json_encode(['cards' => $rows]);
+
+    $countStmt = $pdo->prepare(
+        "SELECT COUNT(DISTINCT p.id) FROM library_patterns p
+         LEFT JOIN library_keywords k ON k.pattern_id = p.id
+         WHERE p.is_active = 1 AND (p.name_ko LIKE :q OR p.id IN (SELECT pattern_id FROM library_keywords WHERE keyword LIKE :q2))"
+    );
+    foreach ($rows as &$row) {
+        $like = '%' . $row['collection_query'] . '%';
+        $countStmt->execute([':q' => $like, ':q2' => $like]);
+        $row['match_count'] = (int)$countStmt->fetchColumn();
+    }
+    unset($row);
+
+    $keywords = $pdo->query(
+        "SELECT DISTINCT k.keyword FROM library_keywords k JOIN library_patterns p ON p.id = k.pattern_id WHERE p.is_active = 1 ORDER BY k.keyword"
+    )->fetchAll(PDO::FETCH_COLUMN);
+
+    echo json_encode(['cards' => $rows, 'keywords' => $keywords]);
     exit;
 }
 

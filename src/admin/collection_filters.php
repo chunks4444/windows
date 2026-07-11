@@ -31,6 +31,10 @@ require_admin_role('s');
         .cf-add-row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:16px; }
         .cf-add-row input { border:1px solid var(--border); border-radius:6px; padding:6px 10px; font-size:13px; }
         .cf-add-btn { background:var(--accent); color:var(--bg); border:none; border-radius:6px; padding:6px 18px; font-size:13px; font-weight:600; cursor:pointer; }
+        .cf-drag-handle { cursor:grab; color:var(--text-muted); }
+        .cf-drag-handle:active { cursor:grabbing; }
+        #cfBody tr.dragging { opacity:.4; }
+        #cfBody tr.drag-over td { background:var(--accent-tint); }
     </style>
 </head>
 <body>
@@ -41,11 +45,11 @@ require_admin_role('s');
     <div class="db-header">
         <h1 class="db-title"><i class="bi bi-funnel me-2"></i>컬렉션 필터 키워드</h1>
     </div>
-    <p style="font-size:13px;color: var(--text);margin:-8px 0 16px;">컬렉션 페이지 "공간" 드롭다운 전용 키워드입니다. 메인 페이지 큐레이션 카드(공간 카드 관리)와는 별개로 관리됩니다.</p>
+    <p style="font-size:13px;color: var(--text);margin:-8px 0 16px;">컬렉션 페이지 "공간" 드롭다운 전용 키워드입니다. 메인 페이지 큐레이션 카드(공간 카드 관리)와는 별개로 관리됩니다. 행을 드래그해 순서를 바꿀 수 있습니다.</p>
 
     <div style="overflow-x:auto;">
         <table class="cf-table" id="cfTable">
-            <thead><tr><th>ID</th><th>라벨</th><th>검색어</th><th>정렬</th><th>활성</th><th></th></tr></thead>
+            <thead><tr><th style="width:28px;"></th><th>ID</th><th>라벨</th><th>검색어</th><th>정렬</th><th>활성</th><th></th></tr></thead>
             <tbody id="cfBody"></tbody>
         </table>
     </div>
@@ -73,7 +77,8 @@ async function load() {
 
 function render() {
     document.getElementById('cfBody').innerHTML = _filters.map(f => `
-        <tr class="${f.is_active=='1'?'':'cf-inactive'}" id="row-${f.id}">
+        <tr class="${f.is_active=='1'?'':'cf-inactive'}" id="row-${f.id}" data-id="${f.id}" draggable="true">
+            <td style="text-align:center;"><span class="cf-drag-handle"><i class="bi bi-grip-vertical"></i></span></td>
             <td><span class="cf-id">${f.id}</span></td>
             <td><input class="cf-name-input" value="${esc(f.label)}" id="label-${f.id}"></td>
             <td><input class="cf-name-input" value="${esc(f.query)}" id="query-${f.id}"></td>
@@ -85,6 +90,27 @@ function render() {
                 <span class="cf-status" id="st-${f.id}"></span>
             </td>
         </tr>`).join('');
+    bindDrag();
+}
+
+let dragSrc;
+function bindDrag() {
+    document.querySelectorAll('#cfBody tr').forEach(tr => {
+        tr.addEventListener('dragstart', () => { dragSrc = tr; tr.classList.add('dragging'); });
+        tr.addEventListener('dragend',   () => tr.classList.remove('dragging'));
+        tr.addEventListener('dragover',  e => { e.preventDefault(); tr.classList.add('drag-over'); });
+        tr.addEventListener('dragleave', () => tr.classList.remove('drag-over'));
+        tr.addEventListener('drop', async e => {
+            e.preventDefault();
+            tr.classList.remove('drag-over');
+            if (dragSrc === tr) return;
+            tr.parentNode.insertBefore(dragSrc, tr.nextSibling);
+            const ids = [...tr.parentNode.querySelectorAll('tr')].map(r => +r.dataset.id);
+            await fetch(API, { method:'PATCH', headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN()},
+                body: JSON.stringify({ ids }) });
+            await load();
+        });
+    });
 }
 
 async function save(id) {

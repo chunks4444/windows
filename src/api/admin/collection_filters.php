@@ -41,6 +41,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     exit;
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'PATCH') {
+    $ids  = $body['ids'] ?? [];
+    $stmt = $pdo->prepare("UPDATE collection_space_filters SET sort_order=? WHERE id=?");
+    foreach ($ids as $i => $id) {
+        $stmt->execute([$i, (int)$id]);
+    }
+    echo json_encode(['ok' => true]);
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
     $id = (int)($body['id'] ?? 0);
     if (!$id) { http_response_code(422); echo json_encode(['error' => 'id 필수']); exit; }

@@ -8,3 +8,4 @@
         .drag-handle:active { cursor:grabbing; }
         tr.dragging { opacity:.4; }
         tr.drag-over td { background:var(--accent-tint); }
+        .sc-zero-match { display:inline-block; padding:2px 8px; border-radius:99px; font-size: var(--fs-12); font-weight:700; background:var(--danger-tint); color:var(--danger); }
