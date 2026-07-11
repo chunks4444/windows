@@ -34,13 +34,10 @@ function ai_get_render_quality(): string {
 
 // AI 렌더링 기본 지시문 템플릿 — {{prompt}} 자리에 사용자가 고른/입력한 프롬프트가 삽입됨
 function ai_default_base_prompt_template(): string {
-    return 'ABSOLUTE CRITICAL RULE — HIGHEST PRIORITY, OVERRIDES EVERYTHING ELSE: '
-        . 'The window frame (문틀) and every lattice/muntin bar (문살) must remain EXACTLY, PIXEL-FOR-PIXEL identical to the input image. '
-        . 'Do NOT change their shape, count, spacing, thickness, position, angle, or proportions by even a single pixel. '
-        . 'Do NOT shift, resize, add, remove, merge, redraw, reinterpret, or "improve" any structural line, bar, or frame edge — treat the entire structure as a fixed, immutable mask that must be copied through unchanged. '
-        . 'You are ONLY allowed to change surface material, texture, color, and lighting on top of this untouched geometry. '
-        . 'Render this scene as: {{prompt}}. '
-        . 'Final check before responding: overlay the output on the input — the frame and lattice geometry must match with zero deviation, down to the pixel.';
+    return 'Keep the window frame and lattice bars structurally identical to the input: '
+        . 'same bar count, spacing, and proportions. '
+        . 'Do not add, remove, merge, or reshape any bar or frame edge. '
+        . 'Everything else — surface material, texture, color, lighting, and the surrounding scene — should match: {{prompt}}.';
 }
 
 function ai_get_base_prompt_template(): string {
@@ -96,6 +93,55 @@ function ai_pad_to_1024($src, int $srcW, int $srcH): array {
     file_put_contents($tmpPath, $pngBytes);
 
     return ['path' => $tmpPath, 'scale' => $scale, 'offX' => $offX, 'offY' => $offY, 'dstW' => $dstW, 'dstH' => $dstH];
+}
+
+/**
+ * 이미지 중앙부 가로 스캔라인의 명도 프로파일에서 "골짜기"(어두운 살) 개수를 센다.
+ * 살 구조 보존 여부를 정량적으로 어림잡기 위한 러프한 신호일 뿐, 정확한 부재 개수 카운터가 아니다
+ * — 재시도 없이 로그만 남겨서 실제 불일치율을 관찰하는 용도(ai_render_qa.log).
+ */
+function ai_count_valleys($img): int {
+    $w = imagesx($img);
+    $h = imagesy($img);
+    $rows = [(int)($h * 0.5), (int)($h * 0.4), (int)($h * 0.6)];
+
+    $brightness = array_fill(0, $w, 0);
+    foreach ($rows as $y) {
+        if ($y < 0 || $y >= $h) continue;
+        for ($x = 0; $x < $w; $x++) {
+            $rgb = imagecolorat($img, $x, $y);
+            $r = ($rgb >> 16) & 0xFF; $g = ($rgb >> 8) & 0xFF; $b = $rgb & 0xFF;
+            $brightness[$x] += (0.299 * $r + 0.587 * $g + 0.114 * $b) / count($rows);
+        }
+    }
+
+    // 노이즈 완화용 이동평균(윈도우 3)
+    $smoothed = $brightness;
+    for ($x = 1; $x < $w - 1; $x++) {
+        $smoothed[$x] = ($brightness[$x - 1] + $brightness[$x] + $brightness[$x + 1]) / 3;
+    }
+
+    $mean = array_sum($smoothed) / max(1, count($smoothed));
+    $count = 0;
+    $inDark = false;
+    $darkRun = 0;
+    foreach ($smoothed as $v) {
+        if ($v < $mean) {
+            $darkRun++;
+            if (!$inDark && $darkRun >= 2) { $inDark = true; $count++; }
+        } else {
+            $inDark  = false;
+            $darkRun = 0;
+        }
+    }
+    return $count;
+}
+
+function ai_log_qa(string $line): void {
+    $logDir = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'logs';
+    if (!is_dir($logDir)) @mkdir($logDir, 0755, true);
+    $file = $logDir . DIRECTORY_SEPARATOR . 'ai_render_qa.log';
+    @file_put_contents($file, '[' . date('Y-m-d H:i:s') . '] ' . rtrim($line) . "\n", FILE_APPEND | LOCK_EX);
 }
 
 /**
@@ -166,6 +212,7 @@ function ai_render_openai(string $imageBase64, string $prompt, ?array $rect = nu
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $curlErr  = curl_error($ch);
     curl_close($ch);
+    $inputImgForQa = @imagecreatefrompng($tmpImg);
     unlink($tmpImg);
 
     if ($curlErr) { imagedestroy($full); return ['error' => "네트워크 오류: {$curlErr}"]; }
@@ -186,6 +233,22 @@ function ai_render_openai(string $imageBase64, string $prompt, ?array $rect = nu
 
     $aiImg = @imagecreatefromstring($outBytes);
     if (!$aiImg) { imagedestroy($full); return ['error' => 'AI 결과 디코딩 실패']; }
+
+    // 살 구조 보존 여부 러프 측정 — 재시도는 하지 않고 로그만 남김 (실제 불일치율 관찰용)
+    if ($inputImgForQa) {
+        try {
+            $inCount  = ai_count_valleys($inputImgForQa);
+            $outCount = ai_count_valleys($aiImg);
+            if (abs($inCount - $outCount) > 1) {
+                ai_log_qa("MISMATCH input={$inCount} output={$outCount} diff=" . abs($inCount - $outCount));
+            } else {
+                ai_log_qa("ok input={$inCount} output={$outCount}");
+            }
+        } catch (Throwable $e) {
+            ai_log_qa("측정 실패: " . $e->getMessage());
+        }
+        imagedestroy($inputImgForQa);
+    }
 
     // 1024 패딩을 역산해 편집 영역만큼만 잘라 원래 크기(rw×rh)로 축소
     $renderedCrop = imagecreatetruecolor($rw, $rh);
