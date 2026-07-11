@@ -115,6 +115,43 @@ include __DIR__ . '/_head.php';
     등록된 이메일 또는 연락처로 견적서와 함께 세부 사항을 안내해드립니다.
 </p>
 
+<h2>주문 상태 확인</h2>
+<p>
+    견적요청 접수 시 <strong>"주문번호 #N"</strong>이 발급되며, 이후 진행 상황은 상단 내비게이션
+    <span class="guide-ui">마이페이지</span> → <span class="guide-ui">도면관리</span> →
+    <span class="guide-ui">주문내역</span> 탭에서 확인할 수 있습니다.
+</p>
+<p>각 주문은 아래 순서로 상태가 변경됩니다.</p>
+<table class="guide-table">
+    <thead><tr><th>상태</th><th>의미</th></tr></thead>
+    <tbody>
+        <tr><td>견적검토</td><td>접수된 요청을 담당자가 검토 중입니다.</td></tr>
+        <tr><td>수정요청</td><td>담당자가 도면 사양에 대해 수정을 요청한 상태입니다.</td></tr>
+        <tr><td>승인</td><td>사양이 확정되어 견적 산출을 진행합니다.</td></tr>
+        <tr><td>견적확정</td><td>최종 견적이 확정되었습니다.</td></tr>
+        <tr><td>입금완료</td><td>결제(입금)가 확인되었습니다.</td></tr>
+        <tr><td>제작중</td><td>공방에서 제작이 진행 중입니다.</td></tr>
+        <tr><td>제작완료</td><td>제작이 완료되어 발송 준비 중입니다.</td></tr>
+        <tr><td>발송</td><td>제품이 발송되었습니다.</td></tr>
+        <tr><td>배송완료</td><td>배송이 완료되었습니다.</td></tr>
+    </tbody>
+</table>
+
+<p>주문내역 목록의 각 행을 클릭하면 상세 모달에서 다음 정보를 확인할 수 있습니다.</p>
+<ul>
+    <li>현재 상태 배지, 요청사항 메모</li>
+    <li>수정요청 상태인 경우 담당자가 남긴 수정요청 사유</li>
+    <li>발송·배송완료 상태인 경우 배송 정보(택배사·운송장번호)</li>
+    <li>주문일 · 납기희망일 · 최근 처리일</li>
+    <li>예상견적 및 확정 가격</li>
+    <li><span class="guide-ui">도면 보기</span> 버튼으로 해당 도면 바로 이동</li>
+</ul>
+
+<div class="guide-note">
+    <i class="bi bi-info-circle"></i>
+    <span>상태가 <strong>견적검토</strong> 또는 <strong>수정요청</strong>일 때만 주문내역에서 직접 <span class="guide-ui">주문취소</span>가 가능합니다. 이후 단계는 담당자에게 연락해주세요.</span>
+</div>
+
 <h2>자주 묻는 질문</h2>
 
 <h3>견적요청 버튼이 보이지 않아요.</h3>
