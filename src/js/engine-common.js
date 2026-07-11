@@ -983,6 +983,95 @@
     }
 })();
 
+// ── 프리젠테이션 모드 썸네일 (컬렉션/마이페이지 카드용) — 6개 엔진 공용 ──────
+// kv.getPatternGeometry()가 돌려주는 살/울거미 지오메트리(팬·줌 무관 raw 좌표)를
+// 고정 팔레트로 새 캔버스에 다시 그린다. 사용자가 그때그때 고른 색/배경과 무관하게
+// 카드 썸네일은 항상 이 스타일로 통일된다. 지오메트리가 비어있으면(배치모드 등) null 반환 → 호출부 폴백.
+function renderPresentationThumbnail(kv, targetW = 1024, targetH = 1024) {
+    if (!kv || !kv.getPatternGeometry) return null;
+    const { frameRects, slatRects, slatLines } = kv.getPatternGeometry();
+    if (!frameRects.length && !slatRects.length && !slatLines.length) return null;
+
+    const bboxSrc = frameRects.length ? frameRects : slatRects;
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    bboxSrc.forEach(r => {
+        minX = Math.min(minX, r.x);           minY = Math.min(minY, r.y);
+        maxX = Math.max(maxX, r.x + r.width);  maxY = Math.max(maxY, r.y + r.height);
+    });
+    if (!bboxSrc.length) {
+        slatLines.forEach(l => {
+            minX = Math.min(minX, l.x1, l.x2); minY = Math.min(minY, l.y1, l.y2);
+            maxX = Math.max(maxX, l.x1, l.x2); maxY = Math.max(maxY, l.y1, l.y2);
+        });
+    }
+    const bboxW = Math.max(1, maxX - minX);
+    const bboxH = Math.max(1, maxY - minY);
+
+    const pad = Math.round(Math.min(targetW, targetH) * 0.08);
+    const innerW = targetW - pad * 2;
+    const innerH = targetH - pad * 2;
+    const fitScale = Math.min(innerW / bboxW, innerH / bboxH);
+    const offX = (targetW - bboxW * fitScale) / 2;
+    const offY = (targetH - bboxH * fitScale) / 2;
+    const toX = x => (x - minX) * fitScale + offX;
+    const toY = y => (y - minY) * fitScale + offY;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = targetW; canvas.height = targetH;
+    const ctx = canvas.getContext('2d');
+
+    // 배경: radial-gradient(ellipse 75% 75% at 50% 42%, #FEFDFA 0%, #FAF7F0 60%, #F3EFE5 100%)
+    ctx.save();
+    const cx = targetW * 0.5, cy = targetH * 0.42;
+    const rx = targetW * 0.75, ry = targetH * 0.75;
+    ctx.translate(cx, cy);
+    ctx.scale(1, ry / rx);
+    const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, rx);
+    grad.addColorStop(0,    '#FEFDFA');
+    grad.addColorStop(0.6,  '#FAF7F0');
+    grad.addColorStop(1,    '#F3EFE5');
+    ctx.fillStyle = grad;
+    ctx.fillRect(-cx, -cy * (rx / ry), targetW, targetH * (rx / ry));
+    ctx.restore();
+
+    const clampRect = (r, minPx) => {
+        const x = toX(r.x), y = toY(r.y);
+        let w = r.width * fitScale, h = r.height * fitScale;
+        if (w < minPx) { const dx = (minPx - w) / 2; w = minPx; return { x: x - dx, y, w, h: Math.max(h, minPx) }; }
+        if (h < minPx) { const dy = (minPx - h) / 2; h = minPx; return { x, y: y - dy, w, h }; }
+        return { x, y, w, h };
+    };
+
+    ctx.fillStyle = '#2E2A26';
+    frameRects.forEach(r => {
+        const c = clampRect(r, 3);
+        ctx.fillRect(c.x, c.y, c.w, c.h);
+    });
+
+    ctx.save();
+    ctx.shadowColor  = 'rgba(46,42,38,0.10)';
+    ctx.shadowBlur   = 1;
+    ctx.shadowOffsetY = 1;
+    ctx.fillStyle   = 'rgba(74,68,60,0.92)';
+    slatRects.forEach(r => {
+        const c = clampRect(r, 1);
+        ctx.fillRect(c.x, c.y, c.w, c.h);
+    });
+    ctx.strokeStyle = 'rgba(74,68,60,0.92)';
+    ctx.lineCap     = 'round';
+    slatLines.forEach(l => {
+        ctx.lineWidth = Math.max(l.strokeWidth * fitScale, 1);
+        ctx.beginPath();
+        ctx.moveTo(toX(l.x1), toY(l.y1));
+        ctx.lineTo(toX(l.x2), toY(l.y2));
+        ctx.stroke();
+    });
+    ctx.restore();
+
+    return canvas.toDataURL('image/png');
+}
+window.pmokRenderPresentationThumbnail = renderPresentationThumbnail;
+
 // ── SVG 문양 삽입 (꽃살 등 장식 문양) — 6개 엔진 공용 ──────
 // baseScale: 삽입 시 자동으로 맞춘 기준 크기(로직단위/원본px), scaleMul: 슬라이더(1.0 = 100% = 처음 삽입된 크기)
 let svgInserts        = []; // [{ id, url, cx, cy, baseScale, scaleMul, rotation, w, h }] cx/cy는 로직 좌표

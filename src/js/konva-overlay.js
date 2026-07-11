@@ -611,6 +611,30 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
         (_activeClipGroup || patternLayer).add(new Konva.Line({ points: [x1, y1, x2, y2], stroke, strokeWidth: width, lineCap: 'round', listening: false }));
     }
 
+    // 프리젠테이션 모드 썸네일용 — patternLayer에 쌓인 살/울거미 지오메트리만 읽어서 반환.
+    // 사용자가 칠한 면색(addPatternRectToGroup)·면칠 다각형(addPatternPolygon)·배경(addPatternBg)은
+    // _pmok_type 태그가 없거나 폐곡선(closed)이라 여기서 자동 제외된다.
+    function getPatternGeometry() {
+        const frameRects = [];
+        const slatRects  = [];
+        const slatLines  = [];
+        patternLayer.find('Rect').forEach(node => {
+            const type = node.getAttr('_pmok_type');
+            if (type !== 'frame' && type !== 'slat') return;
+            const box = node.getClientRect({ relativeTo: patternLayer });
+            (type === 'frame' ? frameRects : slatRects).push(box);
+        });
+        patternLayer.find('Line').forEach(node => {
+            if (node.closed() || !node.stroke()) return;
+            const t  = node.getAbsoluteTransform(patternLayer);
+            const pt = node.points();
+            const p1 = t.point({ x: pt[0], y: pt[1] });
+            const p2 = t.point({ x: pt[2], y: pt[3] });
+            slatLines.push({ x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, strokeWidth: node.strokeWidth() });
+        });
+        return { frameRects, slatRects, slatLines };
+    }
+
     function addPatternPolygon(points, fill) {
         (_activeClipGroup || patternLayer).add(new Konva.Line({ points, fill, closed: true, strokeWidth: 0, listening: false, perfectDrawEnabled: false }));
     }
@@ -738,6 +762,7 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
         addPatternFrameRect,
         addPatternLine,
         addPatternPolygon,
+        getPatternGeometry,
         setEditMarker,
         clearEditMarker,
         commitPattern,

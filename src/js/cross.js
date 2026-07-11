@@ -2099,6 +2099,8 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
     function resumeWorkTimer() { workStart = Date.now(); }
 
     function captureThumbnail() {
+        const presentational = window.pmokRenderPresentationThumbnail?.(kv, 1024, 1024);
+        if (presentational) return presentational;
         const dpr = window.devicePixelRatio || 1;
         if (!lastDoorWpx || !lastDoorHpx) return null;
         const pad = 20;
