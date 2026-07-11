@@ -987,14 +987,14 @@ async function draw() {
                 lastSegMap.set(bsKey1, { cx: bsMx, cy: bsMy, ex: bsEx, ey: bsEy, mx: (bsMx + bsEx) / 2, my: (bsMy + bsEy) / 2, normAngle: Math.PI / 4, lineKey: bsLineKey });
                 if (!deletedSegs.has(bsKey0)) {
                     if (buildKonvaPattern) {
-                        kv.addPatternLine(bsCx, bsCy, bsMx, bsMy, diagStroke, diagWidth);
+                        kv.addPatternSlatLine(bsCx, bsCy, bsMx, bsMy, diagStroke, bsKey0, bsLineKey, diagWidth);
                     } else {
                         ctx.beginPath(); ctx.moveTo(bsCx, bsCy); ctx.lineTo(bsMx, bsMy); ctx.stroke();
                     }
                 }
                 if (!deletedSegs.has(bsKey1)) {
                     if (buildKonvaPattern) {
-                        kv.addPatternLine(bsMx, bsMy, bsEx, bsEy, diagStroke, diagWidth);
+                        kv.addPatternSlatLine(bsMx, bsMy, bsEx, bsEy, diagStroke, bsKey1, bsLineKey, diagWidth);
                     } else {
                         ctx.beginPath(); ctx.moveTo(bsMx, bsMy); ctx.lineTo(bsEx, bsEy); ctx.stroke();
                     }
@@ -1011,14 +1011,14 @@ async function draw() {
                 lastSegMap.set(fsKey1, { cx: fsMx, cy: fsMy, ex: fsEx, ey: fsEy, mx: (fsMx + fsEx) / 2, my: (fsMy + fsEy) / 2, normAngle: 3 * Math.PI / 4, lineKey: fsLineKey });
                 if (!deletedSegs.has(fsKey0)) {
                     if (buildKonvaPattern) {
-                        kv.addPatternLine(fsCx, fsCy, fsMx, fsMy, diagStroke, diagWidth);
+                        kv.addPatternSlatLine(fsCx, fsCy, fsMx, fsMy, diagStroke, fsKey0, fsLineKey, diagWidth);
                     } else {
                         ctx.beginPath(); ctx.moveTo(fsCx, fsCy); ctx.lineTo(fsMx, fsMy); ctx.stroke();
                     }
                 }
                 if (!deletedSegs.has(fsKey1)) {
                     if (buildKonvaPattern) {
-                        kv.addPatternLine(fsMx, fsMy, fsEx, fsEy, diagStroke, diagWidth);
+                        kv.addPatternSlatLine(fsMx, fsMy, fsEx, fsEy, diagStroke, fsKey1, fsLineKey, diagWidth);
                     } else {
                         ctx.beginPath(); ctx.moveTo(fsMx, fsMy); ctx.lineTo(fsEx, fsEy); ctx.stroke();
                     }
