@@ -13,13 +13,24 @@ async function init() {
     await loadUsers(1);
 }
 
+const PERM_LABELS = {
+    view_spec:     '제작 시방서',
+    view_parts:    '부재목록',
+    view_cost:     '예산견적 상세',
+    view_price:    '예상가격',
+    view_leadtime: '최소 납기',
+    view_shipping: '배송비',
+    view_desc:     '설명',
+};
+
 async function loadUsers(page) {
     currentPage = page;
     const q    = document.getElementById('admSearch').value.trim();
+    const perm = document.getElementById('admPermFilter').value;
     const res  = await fetch('/src/api/admin/users.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token() },
-        body: JSON.stringify({ page, q }),
+        body: JSON.stringify({ page, q, perm }),
     });
     const data = await res.json();
     if (!res.ok) return;
@@ -39,7 +50,10 @@ function renderTable(users) {
         <tr>
             <td class="adm-id">${u.id}</td>
             <td class="adm-email">${esc(u.email)}</td>
-            <td><span class="role-badge" data-role="${esc(u.role)}">${ROLE_MAP[u.role] || u.role}</span></td>
+            <td>
+                <span class="role-badge" data-role="${esc(u.role)}">${ROLE_MAP[u.role] || u.role}</span>
+                <span class="perm-hover-badge" title="${esc(permTooltip(u))}"><i class="bi bi-shield-lock"></i> ${permCount(u)}/7</span>
+            </td>
             <td>${u.name  ? esc(u.name)  : '<span class="adm-null">—</span>'}</td>
             <td>${u.phone ? esc(u.phone) : '<span class="adm-null">—</span>'}</td>
             <td style="color:var(--text-3);font-size:12px;">${u.created_at ? u.created_at.slice(0,10) : '—'}</td>
@@ -65,6 +79,16 @@ function renderTable(users) {
             </div></td>
         </tr>
     `).join('');
+}
+
+function permCount(u) {
+    return Object.keys(PERM_LABELS).filter(k => Number(u[k]) === 1).length;
+}
+
+function permTooltip(u) {
+    return '열람 권한\n' + Object.entries(PERM_LABELS)
+        .map(([k, label]) => `${Number(u[k]) === 1 ? '✓' : '✗'} ${label}`)
+        .join('\n');
 }
 
 function renderPagination(total, page, limit) {

@@ -29,6 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || (($_SERVER['REQUEST_METHOD'] === 'PO
     $limit  = 20;
     $offset = ($page - 1) * $limit;
     $q      = trim($_body['q'] ?? $_GET['q'] ?? '');
+    $perm   = trim($_body['perm'] ?? $_GET['perm'] ?? '');
+    $permCols = ['view_spec', 'view_parts', 'view_cost', 'view_price', 'view_leadtime', 'view_shipping', 'view_desc'];
 
     $cols = 'id, email, role, name, phone, company, created_at, last_login_at, last_login_ip, withdrawn_at,
         view_spec, view_parts, view_cost, view_price, view_leadtime, view_shipping, view_desc,
@@ -36,17 +38,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || (($_SERVER['REQUEST_METHOD'] === 'PO
         company_zipcode, company_address, company_address_detail,
         (SELECT COUNT(*) FROM drawings WHERE user_id = users.id) AS drawing_count, (SELECT COUNT(*) FROM drawing_export_logs WHERE user_id = users.id) AS export_count';
 
+    $where = []; $params = [];
     if ($q) {
-        $like    = '%' . $q . '%';
-        $stmt    = $pdo->prepare("SELECT $cols FROM users WHERE email LIKE ? OR name LIKE ? OR company_name LIKE ? ORDER BY id DESC LIMIT ? OFFSET ?");
-        $stmt->execute([$like, $like, $like, $limit, $offset]);
-        $cntStmt = $pdo->prepare('SELECT COUNT(*) FROM users WHERE email LIKE ? OR name LIKE ? OR company_name LIKE ?');
-        $cntStmt->execute([$like, $like, $like]);
-    } else {
-        $stmt    = $pdo->prepare("SELECT $cols FROM users ORDER BY id DESC LIMIT ? OFFSET ?");
-        $stmt->execute([$limit, $offset]);
-        $cntStmt = $pdo->query('SELECT COUNT(*) FROM users');
+        $like = '%' . $q . '%';
+        $where[] = '(email LIKE ? OR name LIKE ? OR company_name LIKE ?)';
+        array_push($params, $like, $like, $like);
     }
+    if ($perm && in_array($perm, $permCols, true)) {
+        $where[] = "$perm = 1";
+    }
+    $whereSql = $where ? ('WHERE ' . implode(' AND ', $where)) : '';
+
+    $stmt = $pdo->prepare("SELECT $cols FROM users $whereSql ORDER BY id DESC LIMIT ? OFFSET ?");
+    $stmt->execute([...$params, $limit, $offset]);
+    $cntStmt = $pdo->prepare("SELECT COUNT(*) FROM users $whereSql");
+    $cntStmt->execute($params);
 
     echo json_encode([
         'users' => $stmt->fetchAll(),

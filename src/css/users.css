@@ -67,6 +67,14 @@ tbody td {
 .role-badge[data-role="a"] { background: var(--accent-tint); color: var(--accent); }
 .role-badge[data-role="u"] { background: var(--border); color: var(--text); }
 
+.perm-hover-badge {
+    display: inline-flex; align-items: center; gap: 3px;
+    margin-left: 6px; padding: 2px 7px;
+    border-radius: 99px; font-size: var(--fs-12); font-weight: 600;
+    background: var(--bg); color: var(--text-3); border: 1px solid var(--border);
+    cursor: default; white-space: nowrap;
+}
+
 .adm-edit-btn {
     height: 28px; padding: 0 12px;
     background: var(--bg); border: 1px solid var(--border);

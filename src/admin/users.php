@@ -50,6 +50,16 @@ require_admin_role('s');
                 <i class="bi bi-search" style="color: var(--text);font-size:12px;flex-shrink:0;"></i>
                 <input type="text" id="admSearch" placeholder="이메일, 이름 또는 회사명 검색" oninput="onSearchInput()">
             </div>
+            <select id="admPermFilter" onchange="loadUsers(1)" style="height:34px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg);color:var(--text);padding:0 8px;font-size:13px;">
+                <option value="">전체 열람 권한</option>
+                <option value="view_spec">제작 시방서 허용된 회원</option>
+                <option value="view_parts">부재목록 허용된 회원</option>
+                <option value="view_cost">예산견적 상세 허용된 회원</option>
+                <option value="view_price">예상가격 허용된 회원</option>
+                <option value="view_leadtime">최소 납기 허용된 회원</option>
+                <option value="view_shipping">배송비 허용된 회원</option>
+                <option value="view_desc">설명 허용된 회원</option>
+            </select>
             <span class="adm-total" id="admTotal"></span>
         </div>
 
