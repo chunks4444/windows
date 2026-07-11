@@ -19,7 +19,7 @@ function render() {
         <tr data-id="${c.id}" draggable="true">
             <td style="text-align:center;"><span class="drag-handle"><i class="bi bi-grip-vertical"></i></span></td>
             <td>${c.image_url
-                ? `<img class="sc-thumb" src="${esc(c.image_url)}" alt="">`
+                ? `<img class="sc-thumb" src="${esc(c.image_url)}" alt="" draggable="false">`
                 : `<div class="sc-thumb-empty"><i class="bi bi-image"></i></div>`}</td>
             <td><strong>${esc(c.label)}</strong></td>
             <td style="color:var(--text-3);">${esc(c.collection_query)}</td>
