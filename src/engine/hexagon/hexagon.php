@@ -13,7 +13,7 @@ header('Pragma: no-cache');
 require_once __DIR__ . '/../../lib/meta.php';
 $shareMeta = null;
 if (!empty($_GET['drawing_id'])) {
-    $stmt = db()->prepare('SELECT d.title, d.thumbnail, u.email FROM drawings d JOIN users u ON u.id = d.user_id WHERE d.id = ? AND d.is_shared = 1');
+    $stmt = db()->prepare('SELECT d.title, d.thumbnail, u.email FROM drawings d JOIN users u ON u.id = d.user_id WHERE d.id = ? AND (d.is_shared = 1 OR EXISTS (SELECT 1 FROM library_patterns lp WHERE lp.drawing_id = d.id AND lp.is_active = 1))');
     $stmt->execute([(int)$_GET['drawing_id']]);
     if ($row = $stmt->fetch()) {
         $shareMeta = [
