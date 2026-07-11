@@ -596,8 +596,10 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
         (_activeClipGroup || patternLayer).add(rect);
     }
 
-    function addPatternRectToGroup(groupId, x, y, w, h, fill) {
-        (_activeClipGroup || patternLayer).add(new Konva.Rect({ x, y, width: w, height: h, fill, listening: false, perfectDrawEnabled: false }));
+    function addPatternRectToGroup(groupId, x, y, w, h, fill, pmokType) {
+        const rect = new Konva.Rect({ x, y, width: w, height: h, fill, listening: false, perfectDrawEnabled: false });
+        if (pmokType) rect.setAttr('_pmok_type', pmokType);
+        (_activeClipGroup || patternLayer).add(rect);
     }
 
     function addPatternFrameRect(x, y, w, h, fill) {

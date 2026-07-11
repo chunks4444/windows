@@ -952,7 +952,7 @@ async function draw() {
                             kv.addPatternRectToGroup(d, toCanvasX(left), toCanvasY(geo.frameHTop - geo.tenonDepth), geo.slatV * baseScale, geo.tenonDepth * baseScale, Color_Tenon_Fill);
                         if (ln.to > geo.innerH - EPS)
                             kv.addPatternRectToGroup(d, toCanvasX(left), toCanvasY(geo.frameHTop + geo.innerH), geo.slatV * baseScale, geo.tenonDepth * baseScale, Color_Tenon_Fill);
-                        kv.addPatternRectToGroup(d, toCanvasX(left), toCanvasY(geo.frameHTop + ln.from), geo.slatV * baseScale, (ln.to - ln.from) * baseScale, Color_Slat_Fill);
+                        kv.addPatternRectToGroup(d, toCanvasX(left), toCanvasY(geo.frameHTop + ln.from), geo.slatV * baseScale, (ln.to - ln.from) * baseScale, Color_Slat_Fill, 'slat');
                     } else {
                         ctx.fillStyle = Color_Tenon_Fill;
                         if (ln.from < EPS)
@@ -969,7 +969,7 @@ async function draw() {
                             kv.addPatternRectToGroup(d, toCanvasX(geo.frameW - geo.tenonDepth), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale, Color_Tenon_Fill);
                         if (ln.to > geo.innerW - EPS)
                             kv.addPatternRectToGroup(d, toCanvasX(geo.frameW + geo.innerW), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale, Color_Tenon_Fill);
-                        kv.addPatternRectToGroup(d, toCanvasX(geo.frameW + ln.from), toCanvasY(top), (ln.to - ln.from) * baseScale, geo.slatH * baseScale, Color_Slat_Fill);
+                        kv.addPatternRectToGroup(d, toCanvasX(geo.frameW + ln.from), toCanvasY(top), (ln.to - ln.from) * baseScale, geo.slatH * baseScale, Color_Slat_Fill, 'slat');
                     } else {
                         ctx.fillStyle = Color_Tenon_Fill;
                         if (ln.from < EPS)
