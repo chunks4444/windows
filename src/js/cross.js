@@ -851,7 +851,7 @@ async function draw() {
                         toCanvasX(xC + hW), toCanvasY(yC),
                         toCanvasX(xC),      toCanvasY(yC + hH),
                         toCanvasX(xC - hW), toCanvasY(yC),
-                    ], fc);
+                    ], fc, 'facepaint');
                 } else {
                     ctx.fillStyle = fc;
                     ctx.beginPath();

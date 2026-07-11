@@ -852,7 +852,7 @@ async function draw() {
                 const _fc = faceColorMap[`cell:${col}:${row}`] ?? null;
                 if (_fc) {
                     if (buildKonvaPattern) {
-                        kv.addPatternRectToGroup(d, toCanvasX(geo.frameW + col * stepV), toCanvasY(geo.frameHTop + row * stepH_), stepV * baseScale, stepH_ * baseScale, _fc);
+                        kv.addPatternRectToGroup(d, toCanvasX(geo.frameW + col * stepV), toCanvasY(geo.frameHTop + row * stepH_), stepV * baseScale, stepH_ * baseScale, _fc, 'facepaint');
                     } else {
                         ctx.fillStyle = _fc;
                         ctx.fillRect(toCanvasX(geo.frameW + col * stepV), toCanvasY(geo.frameHTop + row * stepH_), stepV * baseScale, stepH_ * baseScale);

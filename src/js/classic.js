@@ -890,7 +890,8 @@ async function draw() {
                                 toCanvasY(geo.frameHTop + cb.y0),
                                 stepV * baseScale,
                                 (cb.y1 - cb.y0 + geo.slatH) * baseScale,
-                                _fc
+                                _fc,
+                                'facepaint'
                             );
                         } else {
                             ctx.fillStyle = _fc;

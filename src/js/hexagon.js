@@ -907,7 +907,7 @@ async function draw() {
                             const _fc = faceColorMap[`hex:${rIdx2}:${cIdx2}:${w}`] ?? null;
                             if (_fc) {
                                 const a1 = w * Math.PI / 3, a2 = (w + 1) * Math.PI / 3;
-                                kv.addPatternPolygon([cx2, cy2, cx2 + size * Math.cos(a1), cy2 + size * Math.sin(a1), cx2 + size * Math.cos(a2), cy2 + size * Math.sin(a2)], _fc);
+                                kv.addPatternPolygon([cx2, cy2, cx2 + size * Math.cos(a1), cy2 + size * Math.sin(a1), cx2 + size * Math.cos(a2), cy2 + size * Math.sin(a2)], _fc, 'facepaint');
                             }
                         }
                     }
@@ -985,7 +985,7 @@ async function draw() {
                             if (_fc) {
                                 const a1 = Math.PI / 2 + w * Math.PI / 3, a2 = Math.PI / 2 + (w + 1) * Math.PI / 3;
                                 if (buildKonvaPattern) {
-                                    kv.addPatternPolygon([cx, cy, cx + size * Math.cos(a1), cy + size * Math.sin(a1), cx + size * Math.cos(a2), cy + size * Math.sin(a2)], _fc);
+                                    kv.addPatternPolygon([cx, cy, cx + size * Math.cos(a1), cy + size * Math.sin(a1), cx + size * Math.cos(a2), cy + size * Math.sin(a2)], _fc, 'facepaint');
                                 } else {
                                     ctx.beginPath(); ctx.moveTo(cx, cy);
                                     ctx.lineTo(cx + size * Math.cos(a1), cy + size * Math.sin(a1));

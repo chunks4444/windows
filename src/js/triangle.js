@@ -905,7 +905,7 @@ async function draw() {
                             const _fc = faceColorMap[`tri:${rIdx2}:${cIdx2}:${i}`] ?? null;
                             if (_fc) {
                                 const a1 = i * Math.PI / 3, a2 = (i + 1) * Math.PI / 3;
-                                kv.addPatternPolygon([cx2, cy2, cx2 + size * Math.cos(a1), cy2 + size * Math.sin(a1), cx2 + size * Math.cos(a2), cy2 + size * Math.sin(a2)], _fc);
+                                kv.addPatternPolygon([cx2, cy2, cx2 + size * Math.cos(a1), cy2 + size * Math.sin(a1), cx2 + size * Math.cos(a2), cy2 + size * Math.sin(a2)], _fc, 'facepaint');
                             }
                         }
                     }
@@ -973,7 +973,7 @@ async function draw() {
                             const _fc = faceColorMap[`tri:${cIdx2}:${rowIdx2}:${i}`] ?? null;
                             if (_fc) {
                                 const a1 = i * Math.PI / 3 + Math.PI / 2, a2 = (i + 1) * Math.PI / 3 + Math.PI / 2;
-                                kv.addPatternPolygon([cx2, cy2, cx2 + size * Math.cos(a1), cy2 + size * Math.sin(a1), cx2 + size * Math.cos(a2), cy2 + size * Math.sin(a2)], _fc);
+                                kv.addPatternPolygon([cx2, cy2, cx2 + size * Math.cos(a1), cy2 + size * Math.sin(a1), cx2 + size * Math.cos(a2), cy2 + size * Math.sin(a2)], _fc, 'facepaint');
                             }
                         }
                     }

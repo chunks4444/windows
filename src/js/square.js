@@ -912,7 +912,8 @@ async function draw() {
                             toCanvasY(geo.frameHTop + rect.y),
                             rect.w * baseScale,
                             rect.h * baseScale,
-                            rect.color
+                            rect.color,
+                            'facepaint'
                         );
                     } else {
                         ctx.fillStyle = rect.color;
@@ -934,7 +935,7 @@ async function draw() {
                         const _fc = faceColorMap[`cell:${col}:${row}`] ?? null;
                         if (!_fc) continue;
                         if (buildKonvaPattern) {
-                            kv.addPatternRectToGroup(d, toCanvasX(geo.frameW + col * stepV), toCanvasY(geo.frameHTop + row * stepH), stepV * baseScale, stepH * baseScale, _fc);
+                            kv.addPatternRectToGroup(d, toCanvasX(geo.frameW + col * stepV), toCanvasY(geo.frameHTop + row * stepH), stepV * baseScale, stepH * baseScale, _fc, 'facepaint');
                         } else {
                             ctx.fillStyle = _fc;
                             ctx.fillRect(toCanvasX(geo.frameW + col * stepV), toCanvasY(geo.frameHTop + row * stepH), stepV * baseScale, stepH * baseScale);
@@ -990,7 +991,7 @@ async function draw() {
                         const _fc = faceColorMap[`cell:${col}:${row}`] ?? null;
                         if (!_fc) continue;
                         if (buildKonvaPattern) {
-                            kv.addPatternRectToGroup(d, toCanvasX(geo.frameW + col * stepV), toCanvasY(geo.frameHTop + row * stepH), stepV * baseScale, stepH * baseScale, _fc);
+                            kv.addPatternRectToGroup(d, toCanvasX(geo.frameW + col * stepV), toCanvasY(geo.frameHTop + row * stepH), stepV * baseScale, stepH * baseScale, _fc, 'facepaint');
                         } else {
                             ctx.fillStyle = _fc;
                             ctx.fillRect(toCanvasX(geo.frameW + col * stepV), toCanvasY(geo.frameHTop + row * stepH), stepV * baseScale, stepH * baseScale);

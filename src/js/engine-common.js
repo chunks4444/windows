@@ -998,7 +998,7 @@ function renderPresentationThumbnail(kv, targetW = 1024, targetH = 1024) {
 
 function _renderPresentationThumbnailImpl(kv, targetW, targetH) {
     if (!kv || !kv.getPatternGeometry) return null;
-    const { frameRects, slatRects, slatLines } = kv.getPatternGeometry();
+    const { frameRects, slatRects, slatLines, paintRects = [], paintPolygons = [] } = kv.getPatternGeometry();
     if (!frameRects.length && !slatRects.length && !slatLines.length) return null;
     // 프레임은 있는데 살이 하나도 없는 상태는 정상적인 창호 패턴이 아니다 —
     // patternLayer가 아직 완전히 채워지기 전(캐시 히트 등)에 읽었을 가능성이 높으므로
@@ -1065,6 +1065,24 @@ function _renderPresentationThumbnailImpl(kv, targetW, targetH) {
     ctx.beginPath();
     ctx.rect(offX, offY, bboxW * fitScale, bboxH * fitScale);
     ctx.clip();
+
+    // 사용자가 칠한 면색 — 몬드리안처럼 색 자체가 도면의 핵심인 경우가 있어
+    // 고정 팔레트로 덮지 않고 원래 색 그대로 유지, 살보다 아래 레이어로 그린다.
+    paintRects.forEach(r => {
+        ctx.fillStyle = r.fill;
+        ctx.fillRect(toX(r.x), toY(r.y), r.width * fitScale, r.height * fitScale);
+    });
+    paintPolygons.forEach(p => {
+        ctx.fillStyle = p.fill;
+        ctx.beginPath();
+        for (let i = 0; i < p.points.length; i += 2) {
+            const x = toX(p.points[i]), y = toY(p.points[i + 1]);
+            if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.fill();
+    });
+
     ctx.shadowColor  = 'rgba(46,42,38,0.10)';
     ctx.shadowBlur   = 1;
     ctx.shadowOffsetY = 1;
