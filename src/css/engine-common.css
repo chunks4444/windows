@@ -1509,10 +1509,17 @@ select.sb-select { display: none; }
     border: 1px solid rgba(var(--bg-rgb), 0.15);
     border-radius: var(--r-sm);
     z-index: 600;
-    overflow: hidden;
+    max-height: 240px;
+    overflow-x: hidden;
+    overflow-y: auto;
     box-shadow: 0 6px 20px rgba(var(--text-rgb), 0.5);
 }
 .cs-wrap.open .cs-dropdown { display: block; }
+/* 아래쪽에 공간이 부족하면 위로 열림 (JS가 .dropup 부여) */
+.cs-wrap.dropup .cs-dropdown {
+    top: auto;
+    bottom: calc(100% + 2px);
+}
 .cs-option {
     padding: 7px 12px;
     font-size: var(--fs-11);

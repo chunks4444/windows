@@ -668,8 +668,20 @@
         trigger.addEventListener('click', e => {
             e.stopPropagation();
             const isOpen = wrap.classList.contains('open');
-            document.querySelectorAll('.cs-wrap.open').forEach(w => w.classList.remove('open'));
-            if (!isOpen) { buildOptions(); syncDisplay(); wrap.classList.add('open'); }
+            document.querySelectorAll('.cs-wrap.open').forEach(w => w.classList.remove('open', 'dropup'));
+            if (isOpen) return;
+            buildOptions();
+            syncDisplay();
+            wrap.classList.remove('dropup');
+            wrap.classList.add('open');
+            // 아래쪽 공간이 부족하고 위쪽이 더 넓으면 위로 열기
+            const wrapRect = wrap.getBoundingClientRect();
+            const dropH    = dropdown.getBoundingClientRect().height;
+            const spaceBelow = window.innerHeight - wrapRect.bottom;
+            const spaceAbove = wrapRect.top;
+            if (dropH > spaceBelow && spaceAbove > spaceBelow) {
+                wrap.classList.add('dropup');
+            }
         });
 
         wrap.appendChild(trigger);
