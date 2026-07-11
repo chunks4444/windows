@@ -178,6 +178,73 @@ body { font-weight: 900; }
     border-top: 1px solid var(--border);
 }
 
+/* COLLECTION STRIP (마퀴 슬라이드) */
+.collection-strip-outer {
+    overflow: hidden;
+    padding: 8px 0 32px;
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%);
+}
+
+.collection-strip-track {
+    display: flex;
+    width: max-content;
+    gap: 16px;
+    animation: collection-strip-scroll 50s linear infinite;
+}
+
+.collection-strip-outer:hover .collection-strip-track {
+    animation-play-state: paused;
+}
+
+.collection-strip-card {
+    position: relative;
+    flex: 0 0 auto;
+    width: 220px;
+    border-radius: 12px;
+    overflow: hidden;
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.collection-strip-card img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+}
+
+.collection-strip-card:hover img {
+    transform: scale(1.05);
+}
+
+.collection-strip-label {
+    position: absolute;
+    inset: auto 0 0 0;
+    padding: 12px 14px;
+    background: linear-gradient(to top, rgba(var(--text-rgb), 0.55) 0%, transparent 65%);
+    color: var(--bg);
+    font-size: var(--fs-14);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+@keyframes collection-strip-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+}
+
+@media (max-width: 768px) {
+    .collection-strip-card { width: 160px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .collection-strip-track { animation: none; }
+    .collection-strip-outer { overflow-x: auto; }
+}
+
 /* SPACE CARDS */
 .space-cards-wrapper {
     display: grid;

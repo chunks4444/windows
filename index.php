@@ -21,6 +21,16 @@ try {
 } catch (Throwable $e) {
     $studioCards = [];
 }
+// 컬렉션 슬라이드 카드 (최근 등록 패턴)
+try {
+    $collectionCards = $pdo ? $pdo->query(
+        "SELECT slug, name_ko, image_path FROM library_patterns
+         WHERE is_active = 1 AND image_path <> ''
+         ORDER BY id DESC LIMIT 14"
+    )->fetchAll() : [];
+} catch (Throwable $e) {
+    $collectionCards = [];
+}
 // 블로그 글 3개 (테이블 없으면 빈 배열)
 try {
     $latestPosts = $pdo ? $pdo->query('SELECT * FROM blog_posts WHERE is_active=1 ORDER BY sort_order, id LIMIT 3')->fetchAll() : [];
@@ -156,6 +166,27 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                 <?php endforeach; ?>
                 </div>
             <!-- card -->
+            <?php if (!empty($collectionCards)): ?>
+            <section class="collection-strip-section mt-5">
+                <div class="container">
+                    <div class="mb-4">
+                        <p class="ab-section-label">Collection</p>
+                        <h2 class="ab-section-title">마음에 드는 패턴을 골라 편집해보세요.</h2>
+                        <p class="ab-section-body">컬렉션에서 다른 사람들의 패턴을 둘러보고, 마음에 드는 걸 그대로 에디터로 불러와 나만의 크기·색상으로 편집해 사용할 수 있습니다.</p>
+                    </div>
+                </div>
+                <div class="collection-strip-outer">
+                    <div class="collection-strip-track">
+                        <?php foreach (array_merge($collectionCards, $collectionCards) as $cc): ?>
+                        <a class="collection-strip-card" href="/collection/detail?slug=<?= urlencode($cc['slug']) ?>">
+                            <img src="<?= htmlspecialchars($cc['image_path']) ?>" alt="<?= htmlspecialchars($cc['name_ko']) ?>" loading="lazy">
+                            <div class="collection-strip-label"><?= htmlspecialchars($cc['name_ko']) ?></div>
+                        </a>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </section>
+            <?php endif; ?>
             <section class="values-section mt-5 ">
                 <div class="values-inner container">
                     <!-- Curation Header -->
