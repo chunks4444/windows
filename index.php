@@ -167,22 +167,27 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                 </div>
             <!-- card -->
             <?php if (!empty($collectionCards)): ?>
-            <section class="collection-strip-section mt-5">
+            <section class="collection-strip-section">
                 <div class="container">
-                    <div class="mb-4">
-                        <p class="ab-section-label">Collection</p>
-                        <h2 class="ab-section-title">마음에 드는 패턴을 골라 편집해보세요.</h2>
-                        <p class="ab-section-body">컬렉션에서 다른 사람들의 패턴을 둘러보고, 마음에 드는 걸 그대로 에디터로 불러와 나만의 크기·색상으로 편집해 사용할 수 있습니다.</p>
+                    <div class="mb-4 d-flex align-items-end justify-content-between flex-wrap gap-2">
+                        <div>
+                            <p class="ab-section-label">Collection</p>
+                            <h2 class="ab-section-title">마음에 드는 패턴을 골라 편집해보세요.</h2>
+                            <p class="ab-section-body">컬렉션에서 다른 사람들의 패턴을 둘러보고,<br>마음에 드는 걸 그대로 에디터로 불러와 나만의 크기·색상으로 편집해 사용할 수 있습니다.</p>
+                        </div>
+                        <a href="/collection/" class="home-blog-more">컬렉션 전체 보기 <i class="bi bi-arrow-right"></i></a>
                     </div>
-                </div>
-                <div class="collection-strip-outer">
-                    <div class="collection-strip-track">
-                        <?php foreach (array_merge($collectionCards, $collectionCards) as $cc): ?>
-                        <a class="collection-strip-card" href="/collection/detail?slug=<?= urlencode($cc['slug']) ?>">
-                            <img src="<?= htmlspecialchars($cc['image_path']) ?>" alt="<?= htmlspecialchars($cc['name_ko']) ?>" loading="lazy">
-                            <div class="collection-strip-label"><?= htmlspecialchars($cc['name_ko']) ?></div>
-                        </a>
-                        <?php endforeach; ?>
+                    <div class="collection-strip-outer">
+                        <div class="collection-strip-track">
+                            <?php foreach (array_merge($collectionCards, $collectionCards) as $cc): ?>
+                            <a class="collection-strip-card" href="/collection/detail?slug=<?= urlencode($cc['slug']) ?>">
+                                <img src="<?= htmlspecialchars($cc['image_path']) ?>" alt="<?= htmlspecialchars($cc['name_ko']) ?>" loading="lazy">
+                                <div class="collection-strip-overlay">
+                                    <div class="collection-strip-label"><?= htmlspecialchars($cc['name_ko']) ?></div>
+                                </div>
+                            </a>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
                 </div>
             </section>

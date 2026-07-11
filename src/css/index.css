@@ -179,11 +179,15 @@ body { font-weight: 900; }
 }
 
 /* COLLECTION STRIP (마퀴 슬라이드) */
+.collection-strip-section {
+    margin-top: 140px;
+}
+
 .collection-strip-outer {
     overflow: hidden;
     padding: 8px 0 32px;
-    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%);
-    mask-image: linear-gradient(to right, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0, #000 24px, #000 calc(100% - 24px), transparent 100%);
 }
 
 .collection-strip-track {
@@ -197,16 +201,23 @@ body { font-weight: 900; }
     animation-play-state: paused;
 }
 
+/* 카드 너비 = 각 브레이크포인트의 .container 너비 기준으로 4장이 딱 보이는 크기 */
 .collection-strip-card {
     position: relative;
     flex: 0 0 auto;
-    width: 220px;
+    width: 140px;
     border-radius: 12px;
     overflow: hidden;
     display: block;
     text-decoration: none;
     color: inherit;
 }
+
+@media (min-width: 576px) { .collection-strip-card { width: 160px; } }
+@media (min-width: 768px) { .collection-strip-card { width: 168px; } }
+@media (min-width: 992px) { .collection-strip-card { width: 228px; } }
+@media (min-width: 1200px) { .collection-strip-card { width: 273px; } }
+@media (min-width: 1400px) { .collection-strip-card { width: 318px; } }
 
 .collection-strip-card img {
     width: 100%;
@@ -220,11 +231,17 @@ body { font-weight: 900; }
     transform: scale(1.05);
 }
 
-.collection-strip-label {
+.collection-strip-overlay {
     position: absolute;
-    inset: auto 0 0 0;
+    inset: 0;
+    background: linear-gradient(to top, rgba(var(--text-rgb), 0.6) 0%, transparent 55%);
+    display: flex;
+    align-items: flex-end;
+    pointer-events: none;
+}
+
+.collection-strip-label {
     padding: 12px 14px;
-    background: linear-gradient(to top, rgba(var(--text-rgb), 0.55) 0%, transparent 65%);
     color: var(--bg);
     font-size: var(--fs-14);
     font-weight: 600;
@@ -234,10 +251,6 @@ body { font-weight: 900; }
 @keyframes collection-strip-scroll {
     from { transform: translateX(0); }
     to   { transform: translateX(-50%); }
-}
-
-@media (max-width: 768px) {
-    .collection-strip-card { width: 160px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
