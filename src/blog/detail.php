@@ -146,6 +146,10 @@ $metaKeywords = implode(', ', array_unique(array_filter([
     <?php article_jsonld($post, SITE_URL . '/blog/' . rawurlencode($post['slug']), $metaImage, $metaDesc); ?>
     <?php define('BOOTSTRAP_LOADED', true); ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <?php if ($kakaoJsKey = kakao_js_key()): ?>
+    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js"></script>
+    <script>if (window.Kakao && !Kakao.isInitialized()) Kakao.init('<?= addslashes($kakaoJsKey) ?>');</script>
+    <?php endif; ?>
 <?php css_tag('/src/css/blog-detail.css'); ?>
 </head>
 <body>
@@ -167,6 +171,12 @@ $metaKeywords = implode(', ', array_unique(array_filter([
             </time>
             <div class="bd-share-row">
                 <button id="btnShare" type="button" class="bd-share-btn" title="공유하기"><i class="bi bi-share"></i></button>
+                <button id="btnShareKakao" type="button" class="bd-share-btn" title="카카오톡 공유">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.8 5.3 4.6 6.7-.2.7-.7 2.6-.8 3-.1.5.2.5.4.4.2-.1 2.6-1.8 3.6-2.5.7.1 1.4.2 2.2.2 5.5 0 10-3.6 10-8 0-4.4-4.5-7.8-10-7.8z"/></svg>
+                </button>
+                <button id="btnShareFb" type="button" class="bd-share-btn" title="페이스북 공유">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7.9h2.7l.4-3.1h-3.1V8.1c0-.9.3-1.5 1.6-1.5h1.7V3.8C15.9 3.7 14.8 3.6 13.6 3.6c-2.5 0-4.2 1.5-4.2 4.3v2.1H6.7v3.1h2.7V21h4.1z"/></svg>
+                </button>
                 <a id="btnShareX" class="bd-share-btn" href="#" target="_blank" rel="noopener" title="X에 공유"><i class="bi bi-twitter-x"></i></a>
                 <a id="btnShareThreads" class="bd-share-btn" href="#" target="_blank" rel="noopener" title="스레드에 공유"><i class="bi bi-threads"></i></a>
             </div>
@@ -243,6 +253,7 @@ $metaKeywords = implode(', ', array_unique(array_filter([
 (function () {
     const shareUrl   = <?= json_encode(SITE_URL . '/blog/' . rawurlencode($post['slug'])) ?>;
     const shareTitle = <?= json_encode($post['title']) ?>;
+    const shareImage = <?= json_encode($metaImage) ?>;
 
     function showToast(msg) {
         const t = document.getElementById('bdToast');
@@ -269,6 +280,25 @@ $metaKeywords = implode(', ', array_unique(array_filter([
         'https://twitter.com/intent/tweet?url=' + encodeURIComponent(shareUrl) + '&text=' + encodeURIComponent(shareTitle);
     document.getElementById('btnShareThreads').href =
         'https://www.threads.net/intent/post?text=' + encodeURIComponent(shareTitle + ' ' + shareUrl);
+
+    document.getElementById('btnShareKakao').addEventListener('click', () => {
+        if (!window.Kakao?.isInitialized?.()) {
+            navigator.clipboard?.writeText(shareUrl).then(() => showToast('링크가 복사되었습니다.'));
+            return;
+        }
+        Kakao.Share.sendDefault({
+            objectType: 'feed',
+            content: {
+                title: shareTitle,
+                description: '평목 블로그에서 이 글을 확인해보세요.',
+                imageUrl: shareImage,
+                link: { mobileWebUrl: shareUrl, webUrl: shareUrl },
+            },
+        });
+    });
+    document.getElementById('btnShareFb').addEventListener('click', () => {
+        window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(shareUrl), '_blank', 'noopener,width=600,height=500');
+    });
 })();
 </script>
 

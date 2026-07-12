@@ -51,7 +51,7 @@ body { background: #fff; }
     cursor: pointer;
     transition: background .15s, color .15s, transform .15s;
 }
-.bd-share-btn:hover { background: rgba(var(--text-rgb), 0.12); color: var(--accent); transform: scale(1.06); }
+.bd-share-btn:hover { background: var(--text); color: var(--bg); transform: scale(1.06); }
 .bd-share-btn::before {
     content: attr(title);
     position: absolute;
