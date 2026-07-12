@@ -306,17 +306,18 @@ async function deleteDrawing(e, type, title) {
 }
 
 /* ── 공유 ─────────────────────────────── */
-let _shareCtx = null; // { id, type, title, isShared, card }
+let _shareCtx = null; // { kind: 'drawing'|'render', id, type, title, isShared, card, url, imageUrl }
 
 function _shareUrl() {
+    if (_shareCtx.kind === 'render') return _shareCtx.url;
     const cfg = TYPE_CONFIG[_shareCtx.type] || {};
     return location.origin + (cfg.editorUrl || '') + '?drawing_id=' + _shareCtx.id;
 }
 
 function _updateShareModalUI() {
-    document.getElementById('dbShareModalId').textContent   = '도면 #' + _shareCtx.id;
+    document.getElementById('dbShareModalId').textContent   = _shareCtx.kind === 'render' ? _shareCtx.title : '도면 #' + _shareCtx.id;
     document.getElementById('dbShareModalLink').value       = _shareUrl();
-    document.getElementById('dbShareModalOff').style.display = _shareCtx.isShared ? '' : 'none';
+    document.getElementById('dbShareModalOff').style.display = (_shareCtx.kind !== 'render' && _shareCtx.isShared) ? '' : 'none';
     const card = _shareCtx.card;
     if (card) {
         const btn = card.querySelector('.db-card-share');
@@ -326,7 +327,7 @@ function _updateShareModalUI() {
 
 async function openShareModal(e, id, type, title, isShared) {
     e.stopPropagation();
-    _shareCtx = { id, type, title, isShared, card: e.target.closest('.db-card') };
+    _shareCtx = { kind: 'drawing', id, type, title, isShared, card: e.target.closest('.db-card') };
     document.getElementById('dbShareModalTitle').textContent = `"${title}" 공유`;
     _updateShareModalUI();
     document.getElementById('dbShareModal').style.display = 'flex';
@@ -342,6 +343,15 @@ async function openShareModal(e, id, type, title, isShared) {
         _shareCtx.isShared = true;
         _updateShareModalUI();
     }
+}
+
+// 렌더링 이미지는 항상 공개 정적 URL(/uploads/renders/...)이라 on/off 토글 없이 바로 공유
+function openRenderShareModal(item) {
+    const url = location.origin + item.filepath;
+    _shareCtx = { kind: 'render', url, imageUrl: url, title: `${TYPE_CONFIG[item.engine]?.label || item.engine} 렌더링`, isShared: true, card: null };
+    document.getElementById('dbShareModalTitle').textContent = '렌더링 이미지 공유';
+    _updateShareModalUI();
+    document.getElementById('dbShareModal').style.display = 'flex';
 }
 
 async function turnShareOffFromDashboard() {
@@ -373,8 +383,8 @@ function shareToKakaoFromDashboard() {
         objectType: 'feed',
         content: {
             title: _shareCtx.title || '평목 도면',
-            description: '평목에서 설계한 문살 도면을 확인해보세요.',
-            imageUrl: thumbImg?.src || (location.origin + '/src/assets/logo.png'),
+            description: _shareCtx.kind === 'render' ? '평목에서 렌더링한 창호 이미지를 확인해보세요.' : '평목에서 설계한 문살 도면을 확인해보세요.',
+            imageUrl: _shareCtx.imageUrl || thumbImg?.src || (location.origin + '/src/assets/logo.png'),
             link: { mobileWebUrl: _shareUrl(), webUrl: _shareUrl() },
         },
     });
@@ -761,6 +771,7 @@ function openRenderModal(item) {
 
     document.getElementById('dbRenderModalTitle').textContent = `${TYPE_CONFIG[item.engine]?.label || item.engine} · ${dateText}`;
     document.getElementById('dbRenderModalImg').src = item.filepath;
+    document.getElementById('dbRenderModalShare').onclick = () => openRenderShareModal(item);
     document.getElementById('dbRenderModalDownload').onclick = () => {
         const link = document.createElement('a');
         link.download = filename;
