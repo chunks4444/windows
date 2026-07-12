@@ -156,8 +156,8 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                 foreach ($studioCards as $sc) $cardsByKey[$sc['engine_key']] = $sc;
                 // 기본값 (DB 없을 때)
                 $defaultCards = [
-                    ['engine_key'=>'classic',  'title'=>'Classic Lattice',  'description'=>'전통 창호의 기본이 되는 격자 문살 패턴.<br>균형 잡힌 비례와 절제된 구조가 특징입니다.',          'image_url'=>''],
-                    ['engine_key'=>'square',   'title'=>'Square Lattice',   'description'=>'가로살과 세로살이 직각으로 교차하는 정방형 문살 패턴.<br>단아하고 절제된 아름다움을 표현합니다.',   'image_url'=>''],
+                    ['engine_key'=>'classic',  'title'=>'Classic Lattice',  'description'=>'가는 살대를 성기게 세로·가로로만 짜 넣은 가장 단순한 전통 문살 패턴.<br>여백이 넓어 담백하고 개방감 있는 인상을 줍니다.',          'image_url'=>''],
+                    ['engine_key'=>'square',   'title'=>'Square Lattice',   'description'=>'가로살과 세로살이 촘촘하게 井(우물 정)자를 이루며 교차하는 정방형 문살 패턴.<br>단아하고 절제된 아름다움을 표현합니다.',   'image_url'=>''],
                     ['engine_key'=>'cross',    'title'=>'Cross Lattice',    'description'=>'45° 대각선으로 교차하는 마름모 문살 패턴.<br>역동적인 사선의 흐름이 공간에 긴장감을 더합니다.', 'image_url'=>''],
                     ['engine_key'=>'triangle', 'title'=>'Triangle Lattice', 'description'=>'세 방향의 살이 60° 각도로 교차하는 삼각형 문살 패턴.<br>역동적이고 세련된 인상을 공간에 더합니다.','image_url'=>''],
                     ['engine_key'=>'diamond',  'title'=>'Diamond Lattice',  'description'=>'4방향 살이 대각선을 포함해 방사형으로 교차하는 패턴.<br>화려하고 입체적인 구조감을 연출합니다.',   'image_url'=>''],
@@ -175,6 +175,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                             <div class="mb-4" style="height:120px;display:flex;align-items:center;justify-content:center;">
                                 <a href="/src/engine/<?= htmlspecialchars($key) ?>/<?= htmlspecialchars($key) ?>.php" class="pm-symbol-link" aria-label="<?= htmlspecialchars($sc['title']) ?> 패턴 미리보기">
                                     <?= $svgIcons[$key] ?? '' ?>
+                                    <span class="visually-hidden"><?= htmlspecialchars($sc['title']) ?> 패턴 미리보기</span>
                                 </a>
                             </div>
                             <h3 class="service-title text-center mb-3"><?= htmlspecialchars($sc['title']) ?></h3>
