@@ -151,7 +151,7 @@ $navStudioIcons = [
                             <rect x="3" y="13" width="8" height="8" rx="1.5"/>
                             <rect x="13" y="13" width="8" height="8" rx="1.5"/>
                         </svg>
-                        도면관리
+                        도면 관리
                     </a></li>
                 </ul>
             </li>
@@ -180,7 +180,7 @@ $navStudioIcons = [
                 <a href="/blog/" class="nav-link <?= $isBlog ? 'active' : '' ?>">블로그</a>
             </li>
             <li class="nav-item dropdown">
-                <a href="/company/" class="nav-link pm-nav-dropdown-toggle <?= $isCompany ? 'active' : '' ?>" data-bs-toggle="dropdown" aria-expanded="false">평목소개 <i class="bi bi-chevron-down pm-nav-caret"></i></a>
+                <a href="/company/" class="nav-link pm-nav-dropdown-toggle <?= $isCompany ? 'active' : '' ?>" data-bs-toggle="dropdown" aria-expanded="false">평목 소개 <i class="bi bi-chevron-down pm-nav-caret"></i></a>
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" href="/company/"><i class="bi bi-info-circle me-2"></i>소개</a></li>
                     <li><a class="dropdown-item" href="/company/#studio"><i class="bi bi-pencil-square me-2"></i>스튜디오</a></li>
@@ -204,7 +204,7 @@ $navStudioIcons = [
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="/mypage/profile"><i class="bi bi-person me-1"></i>프로필</a></li>
                     <li><a class="dropdown-item" href="/mypage/company"><i class="bi bi-building me-1"></i>회사 정보</a></li>
-                    <li><a class="dropdown-item" href="/mypage/dashboard"><i class="bi bi-grid me-1"></i>도면관리</a></li>
+                    <li><a class="dropdown-item" href="/mypage/dashboard"><i class="bi bi-grid me-1"></i>도면 관리</a></li>
                     <li><a class="dropdown-item" href="/mypage/dashboard#orders"><i class="bi bi-receipt me-1"></i>주문내역</a></li>
                     <li id="navBoardSection" style="display:none;">
                         <hr class="dropdown-divider">
@@ -253,7 +253,7 @@ $navStudioIcons = [
                 <?php endforeach; ?>
                 <a class="pm-dw-link" href="/mypage/dashboard">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>
-                    <span>도면관리</span>
+                    <span>도면 관리</span>
                 </a>
             </div>
         </div>
@@ -277,7 +277,7 @@ $navStudioIcons = [
         <a class="pm-dw-link-top <?= $isBlog ? 'active' : '' ?>" href="/blog/"><i class="bi bi-journal-text pm-dw-acc-icon"></i>블로그</a>
 
         <div class="pm-dw-acc<?= $isCompany ? ' open' : '' ?>">
-            <button class="pm-dw-acc-hd"><span><i class="bi bi-building pm-dw-acc-icon"></i>평목소개</span><i class="bi bi-chevron-down"></i></button>
+            <button class="pm-dw-acc-hd"><span><i class="bi bi-building pm-dw-acc-icon"></i>평목 소개</span><i class="bi bi-chevron-down"></i></button>
             <div class="pm-dw-acc-bd">
                 <a class="pm-dw-link" href="/company/"><i class="bi bi-info-circle"></i><span>소개</span></a>
                 <a class="pm-dw-link" href="/company/#studio"><i class="bi bi-pencil-square"></i><span>스튜디오</span></a>
@@ -300,7 +300,7 @@ $navStudioIcons = [
                 <span id="drawerUserEmail" class="pm-dw-user-email"></span>
             </div>
             <a class="pm-dw-link" href="/mypage/profile"><i class="bi bi-person"></i><span>프로필</span></a>
-            <a class="pm-dw-link" href="/mypage/dashboard"><i class="bi bi-grid"></i><span>도면관리</span></a>
+            <a class="pm-dw-link" href="/mypage/dashboard"><i class="bi bi-grid"></i><span>도면 관리</span></a>
             <a class="pm-dw-link" href="/mypage/dashboard#orders"><i class="bi bi-receipt"></i><span>주문내역</span></a>
             <div id="drawerBoardSection" style="display:none;">
                 <div class="pm-dw-board-label">내 보드</div>

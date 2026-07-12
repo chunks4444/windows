@@ -316,7 +316,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                         </div>
                         <div class="process-card-overlay">
                             <h3 class="process-title">패턴 설계</h3>
-                            <p class="process-desc">상단 Studio 메뉴에서 원하는 창호 패턴을 선택하세요.</p>
+                            <p class="process-desc">상단 스튜디오 메뉴에서 원하는 창호 패턴을 선택하세요.</p>
                             <ul class="process-hints">
                                 <li><i class="bi bi-check2"></i> 문틀 가로·세로 크기 입력</li>
                                 <li><i class="bi bi-check2"></i> 살 간격·두께 슬라이더 조정</li>
@@ -368,7 +368,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                             <ul class="process-hints">
                                 <li><i class="bi bi-check2"></i> 도면 오른쪽 상단 견적요청 버튼 클릭</li>
                                 <li><i class="bi bi-check2"></i> 저장한 도면 기반으로 상담</li>
-                                <li><i class="bi bi-check2"></i> 설계·제작·협업 모두 환영</li>
+                                <li><i class="bi bi-check2"></i> 공방 검토 후 최종 견적 회신</li>
                             </ul>
                             <a href="/guide/order" class="process-guide-link">주문 안내 보기 <i class="bi bi-arrow-right"></i></a>
                         </div>
