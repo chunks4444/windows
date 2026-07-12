@@ -331,8 +331,6 @@ body {
     height: 100%;
     object-fit: cover;
     display: block;
-    image-rendering: -webkit-optimize-contrast;
-    image-rendering: crisp-edges;
 }
 
 .db-thumb-placeholder {
