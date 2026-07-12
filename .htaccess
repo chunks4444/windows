@@ -25,6 +25,10 @@ RewriteCond %{THE_REQUEST} \s/src/(blog|portfolio|collection|guide|company|mypag
 RewriteCond %{THE_REQUEST} !\.(css|js|map|png|jpe?g|gif|svg|webp|ico|woff2?|ttf)(\?[^\s]*)?\s [NC]
 RewriteRule ^src/(blog|portfolio|collection|guide|company|mypage)(.*)$ /$1$2 [R=301,L,QSA]
 
+# 섹션 홈: 슬래시 없는 형태(/blog)는 슬래시 있는 정규 주소(/blog/)로 301
+# — 두 형태가 각각 서빙되면 canonical이 요청 URL을 따라가면서 갈라짐(중복 색인 원인)
+RewriteRule ^(blog|portfolio|collection|guide|company)$ /$1/ [R=301,L]
+
 # 섹션 홈(디렉토리 인덱스)
 RewriteRule ^blog/?$        src/blog/index.php       [L]
 RewriteRule ^portfolio/?$   src/portfolio/index.php  [L]

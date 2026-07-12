@@ -57,7 +57,8 @@ function meta_tags(?array $override = null): void {
     echo '<title>' . htmlspecialchars($title, ENT_QUOTES) . '</title>' . "\n    ";
     echo '<meta name="description" content="' . htmlspecialchars($desc, ENT_QUOTES) . '">' . "\n    ";
     if ($m['keywords']) echo '<meta name="keywords" content="' . htmlspecialchars($m['keywords'], ENT_QUOTES) . '">' . "\n    ";
-    echo '<link rel="canonical" href="' . htmlspecialchars(SITE_URL . $path, ENT_QUOTES) . '">' . "\n    ";
+    $canonical = $override['canonical'] ?? (SITE_URL . $path);
+    echo '<link rel="canonical" href="' . htmlspecialchars($canonical, ENT_QUOTES) . '">' . "\n    ";
     echo '<meta property="og:title"       content="' . htmlspecialchars($title, ENT_QUOTES) . '">' . "\n    ";
     echo '<meta property="og:description" content="' . htmlspecialchars($desc, ENT_QUOTES) . '">' . "\n    ";
     echo '<meta property="og:image"       content="' . htmlspecialchars($image, ENT_QUOTES) . '">' . "\n    ";
