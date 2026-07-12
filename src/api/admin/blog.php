@@ -81,11 +81,13 @@ if ($action === 'save') {
             ->execute([$title, $summary, $cta_text, $content, $thumbnail_url,
                 $series_id, $series_order, $related_engine, $related_drawing_id, $question, $id]);
     } else {
-        $slug     = make_unique_slug($pdo, 'blog_posts', $title);
-        $maxOrder = (int)$pdo->query('SELECT COALESCE(MAX(sort_order),0) FROM blog_posts')->fetchColumn();
+        $slug = make_unique_slug($pdo, 'blog_posts', $title);
+        // 새 글은 목록 맨 앞(sort_order=0)에 놓는다 — 블로그 인덱스가 최신 글을 앞에 기대하므로
+        // 기존 글들을 전부 한 칸씩 뒤로 미룸(MAX+1로 맨 뒤에 붙이면 관리자가 매번 수동으로 끌어올려야 했음)
+        $pdo->exec('UPDATE blog_posts SET sort_order = sort_order + 1');
         $pdo->prepare('INSERT INTO blog_posts (title, slug, summary, cta_text, content, thumbnail_url, sort_order,
-                series_id, series_order, related_engine, related_drawing_id, question) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)')
-            ->execute([$title, $slug, $summary, $cta_text, $content, $thumbnail_url, $maxOrder + 1,
+                series_id, series_order, related_engine, related_drawing_id, question) VALUES (?,?,?,?,?,?,0,?,?,?,?,?)')
+            ->execute([$title, $slug, $summary, $cta_text, $content, $thumbnail_url,
                 $series_id, $series_order, $related_engine, $related_drawing_id, $question]);
         $id = (int)$pdo->lastInsertId();
     }
