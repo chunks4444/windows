@@ -64,7 +64,7 @@ header('Content-Type: text/html; charset=UTF-8');
         <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--bg);">
             <h3 id="dbRenderModalTitle" style="margin:0;font-size:15px;font-weight:700;color:var(--text-muted,var(--text-muted));"></h3>
             <div style="display:flex;gap:8px;align-items:center;">
-                <button id="dbRenderModalShare" style="border:none;background:var(--bg);color:var(--text);border-radius:6px;padding:6px 14px;font-size:13px;font-weight:600;cursor:pointer;">공유</button>
+                <button id="dbRenderModalShare" title="공유" style="border:none;background:var(--bg);color:var(--text);border-radius:6px;padding:6px 12px;font-size:14px;display:flex;align-items:center;cursor:pointer;"><i class="bi bi-share-fill"></i></button>
                 <button id="dbRenderModalDownload" style="border:none;background:var(--accent,var(--accent));color:var(--bg);border-radius:6px;padding:6px 14px;font-size:13px;font-weight:600;cursor:pointer;">다운로드</button>
                 <button id="dbRenderModalDelete" style="border:none;background:var(--bg);color:var(--danger);border-radius:6px;padding:6px 14px;font-size:13px;font-weight:600;cursor:pointer;">삭제</button>
                 <button onclick="document.getElementById('dbRenderModal').style.display='none'" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-muted);">&times;</button>

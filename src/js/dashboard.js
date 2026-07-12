@@ -347,8 +347,11 @@ async function openShareModal(e, id, type, title, isShared) {
 
 // 렌더링 이미지는 항상 공개 정적 URL(/uploads/renders/...)이라 on/off 토글 없이 바로 공유
 function openRenderShareModal(item) {
-    const url = location.origin + item.filepath;
-    _shareCtx = { kind: 'render', url, imageUrl: url, title: `${TYPE_CONFIG[item.engine]?.label || item.engine} 렌더링`, isShared: true, card: null };
+    // 공유 링크는 원본 업로드 경로 대신, 파일명에 박힌 랜덤 토큰만 넘기는 전용 페이지로 연결
+    // (경로 구조 노출 방지 + 카카오/X/FB에 og:image 붙은 정상 미리보기 카드 제공)
+    const fname = item.filepath.split('/').pop().replace(/\.png$/, '');
+    const url = location.origin + '/src/renders/view.php?r=' + encodeURIComponent(fname);
+    _shareCtx = { kind: 'render', url, imageUrl: location.origin + item.filepath, title: `${TYPE_CONFIG[item.engine]?.label || item.engine} 렌더링`, isShared: true, card: null };
     document.getElementById('dbShareModalTitle').textContent = '렌더링 이미지 공유';
     _updateShareModalUI();
     document.getElementById('dbShareModal').style.display = 'flex';
@@ -743,6 +746,7 @@ function loadRenders() {
                 <div class="rh-item" data-idx="${i}">
                     <img src="${r.filepath}" loading="lazy">
                     <span class="rh-item-engine">${(TYPE_CONFIG[r.engine]?.label || r.engine)}</span>
+                    <span class="rh-item-share" title="공유" onclick="event.stopPropagation(); openRenderShareModal(_renderItemsCache[${i}])"><i class="bi bi-share-fill"></i></span>
                     <span class="rh-item-del" title="삭제" onclick="event.stopPropagation(); deleteRenderItem(${r.id})"><i class="bi bi-x"></i></span>
                 </div>`).join('') + '</div>';
             el.innerHTML = html;
