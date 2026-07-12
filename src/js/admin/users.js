@@ -50,7 +50,7 @@ function renderTable(users) {
         <tr>
             <td class="adm-id">${u.id}</td>
             <td class="adm-email">${esc(u.email)}</td>
-            <td>
+            <td class="adm-role-cell">
                 <span class="role-badge" data-role="${esc(u.role)}">${ROLE_MAP[u.role] || u.role}</span>
                 <span class="perm-hover-badge" title="${esc(permTooltip(u))}"><i class="bi bi-shield-lock"></i> ${permCount(u)}/7</span>
             </td>
