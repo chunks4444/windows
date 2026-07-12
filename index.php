@@ -477,7 +477,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                             <button class="accordion-button faq-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq<?= $faq['id'] ?>">
                                 <?= htmlspecialchars($faq['question']) ?>
                             </button>
-                        </h2>
+                        </h3>
                         <div id="faq<?= $faq['id'] ?>" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
                             <div class="accordion-body faq-body">
                                 <?= $faq['answer'] ?>

@@ -1,7 +1,3 @@
-:root {
-    --border: rgba(var(--text-rgb), 0.1);
-}
-
 /* AI 프롬프트 바 */
 .idx-ai-wrap {
     max-width: 600px;
@@ -154,8 +150,6 @@
     color: var(--text);
     margin-bottom: 0;
 }
-
-body { font-weight: 900; }
 
 /* HERO WRAPPER */
 .home-wrapper {
