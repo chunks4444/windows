@@ -624,10 +624,11 @@ async function openBoard(boardId, boardName) {
             const clickAttr = cfg
                 ? `onclick="openBoardItem(event,${p.drawing_id},'${escAttr(p.engine)}')" style="cursor:pointer;"`
                 : '';
+            const displayName = p.display_name || p.name_ko || (p.slug || '').toUpperCase();
             return `
             <div class="db-board-item" ${clickAttr}>
-                <img src="${escAttr(p.image_path)}" alt="${escAttr(p.name_ko)}" loading="lazy">
-                <div class="db-board-item-name">${escHtml(p.name_ko)}</div>
+                <img src="${escAttr(p.image_path)}" alt="${escAttr(displayName)}" loading="lazy">
+                <div class="db-board-item-name">${escHtml(displayName)}</div>
                 <button class="db-board-item-remove" onclick="removeBoardItem(event,${boardId},${p.id},this)" title="제거">
                     <i class="bi bi-x"></i>
                 </button>

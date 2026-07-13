@@ -4,6 +4,7 @@ require_once __DIR__ . '/../lib/admin_guard.php';
 require_admin_role('s');
 require_once __DIR__ . '/../lib/engine_settings.php';
 $libPatternCats = get_pattern_categories();
+$libPatternMods = get_pattern_modifiers();
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -51,7 +52,8 @@ $libPatternCats = get_pattern_categories();
                 <tr>
                     <th style="width:32px;"></th>
                     <th style="width:64px;"></th>
-                    <th>이름</th>
+                    <th style="width:90px;">코드</th>
+                    <th>메모</th>
                     <th style="width:80px;">모양</th>
                     <th>키워드</th>
                     <th style="width:80px;">도면 ID</th>
@@ -69,16 +71,15 @@ $libPatternCats = get_pattern_categories();
 <div class="adm-modal-overlay" id="libModalOverlay">
     <div class="adm-modal" style="max-width:520px;">
         <div class="adm-modal-head">
-            <h3 id="libModalTitle">패턴 추가</h3>
+            <div>
+                <h3 id="libModalTitle">패턴 추가</h3>
+                <div id="libModalCode" style="font-family:monospace;font-size:13px;font-weight:700;color:var(--accent);margin-top:2px;">모양을 선택하면 코드가 표시됩니다</div>
+            </div>
             <button class="adm-modal-close" onclick="closeModal()">&#x2715;</button>
         </div>
         <div class="adm-modal-body">
             <div id="libModalAlert" style="display:none;"></div>
 
-            <div class="adm-mfield">
-                <label>이름</label>
-                <input type="text" id="lpName" placeholder="예: 정자살" maxlength="80">
-            </div>
             <div class="adm-mfield">
                 <label>도면 <small style="color: var(--text);font-weight:400;">(선택)</small></label>
                 <select id="lpDrawingId" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg-1);color:var(--text);font-size:14px;">
@@ -90,9 +91,22 @@ $libPatternCats = get_pattern_categories();
                 <select id="lpCategory" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg-1);color:var(--text);font-size:14px;">
                     <option value="">— 분류 없음 —</option>
                     <?php foreach ($libPatternCats as $c): ?>
-                    <option value="<?= (int)$c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
+                    <option value="<?= (int)$c['id'] ?>"><?= htmlspecialchars($c['name']) ?><?= $c['code'] ? ' (' . htmlspecialchars($c['code']) . ')' : '' ?></option>
                     <?php endforeach; ?>
                 </select>
+            </div>
+            <div class="adm-mfield" id="lpModifierField">
+                <label>수식어 <small style="color: var(--text);font-weight:400;">코드 세부 구분용, 선택 — 저장 후에는 바꿀 수 없습니다</small></label>
+                <select id="lpModifier" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg-1);color:var(--text);font-size:14px;">
+                    <option value="">— 기본형(수식어 없음) —</option>
+                    <?php foreach ($libPatternMods as $m): ?>
+                    <option value="<?= htmlspecialchars($m['code']) ?>"><?= htmlspecialchars($m['name']) ?> (<?= htmlspecialchars($m['code']) ?>)</option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="adm-mfield">
+                <label>메모 <small style="color: var(--text);font-weight:400;">(선택) 관리자 참고용 — 코드가 있는 계열이면 컬렉션 화면에는 코드가 노출되고, 코드가 없으면 이 메모가 노출됩니다</small></label>
+                <input type="text" id="lpName" placeholder="예: 정자살 3분합" maxlength="80">
             </div>
             <div class="adm-mfield">
                 <label>대표 이미지 <small style="color: var(--text);font-weight:400;">업로드 안 하면 연결된 도면의 썸네일을 사용합니다</small></label>

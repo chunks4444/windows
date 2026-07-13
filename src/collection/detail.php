@@ -2,6 +2,7 @@
 header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../lib/db.php';
 require_once __DIR__ . '/../lib/meta.php';
+require_once __DIR__ . '/../lib/slug.php';
 
 $slug = trim($_GET['slug'] ?? '');
 $id   = (int)($_GET['id'] ?? 0);
@@ -49,18 +50,19 @@ $metaImage  = $pattern['image_path']
     ? (strpos($pattern['image_path'], 'http') === 0 ? $pattern['image_path'] : SITE_URL . $pattern['image_path'])
     : SITE_DEFAULT_IMAGE;
 $shareUrl   = SITE_URL . '/collection/detail?slug=' . rawurlencode($pattern['slug']);
+$displayName = library_pattern_display_name($pattern['slug'], $pattern['name_ko']);
 ?>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($pattern['name_ko']) ?> — 평목 컬렉션</title>
+    <title><?= htmlspecialchars($displayName) ?> — 평목 컬렉션</title>
     <meta name="description" content="<?= htmlspecialchars($metaDesc) ?>">
     <link rel="icon" type="image/png" href="/src/assets/favicon.png">
     <link rel="apple-touch-icon" href="/src/assets/apple-touch-icon.png">
     <link rel="canonical" href="<?= htmlspecialchars($shareUrl) ?>">
-    <meta property="og:title" content="<?= htmlspecialchars($pattern['name_ko']) ?>">
+    <meta property="og:title" content="<?= htmlspecialchars($displayName) ?>">
     <meta property="og:description" content="<?= htmlspecialchars($metaDesc) ?>">
     <meta property="og:image" content="<?= htmlspecialchars($metaImage) ?>">
     <?php define('BOOTSTRAP_LOADED', true); ?>
@@ -82,11 +84,11 @@ $shareUrl   = SITE_URL . '/collection/detail?slug=' . rawurlencode($pattern['slu
 
     <div style="border-radius:12px;overflow:hidden;aspect-ratio:1/1;background:var(--bg);">
         <?php if ($pattern['image_path']): ?>
-        <img src="<?= htmlspecialchars($pattern['image_path']) ?>" alt="<?= htmlspecialchars($pattern['name_ko']) ?>" style="width:100%;height:100%;object-fit:cover;">
+        <img src="<?= htmlspecialchars($pattern['image_path']) ?>" alt="<?= htmlspecialchars($displayName) ?>" style="width:100%;height:100%;object-fit:cover;">
         <?php endif; ?>
     </div>
 
-    <h1 style="font-size:20px;font-weight:700;margin:16px 0 4px;"><?= htmlspecialchars($pattern['name_ko']) ?></h1>
+    <h1 style="font-size:20px;font-weight:700;margin:16px 0 4px;"><?= htmlspecialchars($displayName) ?></h1>
     <?php if ($keywords): ?>
     <p style="font-size:13px;color:var(--text-muted);margin:0 0 20px;"><?= htmlspecialchars(implode(' · ', $keywords)) ?></p>
     <?php endif; ?>
@@ -139,7 +141,7 @@ $shareUrl   = SITE_URL . '/collection/detail?slug=' . rawurlencode($pattern['slu
 <script src="/src/js/collection-share.js?v=<?= md5_file(__DIR__ . '/../js/collection-share.js') ?>"></script>
 <script>
     document.getElementById('btnShare').addEventListener('click', () => {
-        openCollectionShareModal(<?= json_encode($shareUrl) ?>, <?= json_encode($pattern['name_ko']) ?>, <?= json_encode($metaImage) ?>);
+        openCollectionShareModal(<?= json_encode($shareUrl) ?>, <?= json_encode($displayName) ?>, <?= json_encode($metaImage) ?>);
     });
 </script>
 

@@ -7,6 +7,7 @@ set_exception_handler(function(Throwable $e) {
 });
 require_once __DIR__ . '/../lib/db.php';
 require_once __DIR__ . '/../lib/jwt.php';
+require_once __DIR__ . '/../lib/slug.php';
 
 $payload = jwt_from_request();
 if (!$payload) {
@@ -39,7 +40,7 @@ if ($method === 'GET') {
 
         $placeholders = implode(',', array_fill(0, count($ids), '?'));
         $stmt = $pdo->prepare(
-            "SELECT p.id, p.name_ko, p.drawing_id, p.image_path, d.type AS engine,
+            "SELECT p.id, p.slug, p.name_ko, p.drawing_id, p.image_path, d.type AS engine,
                     GROUP_CONCAT(k.keyword ORDER BY k.id SEPARATOR ',') AS keywords
              FROM library_patterns p
              LEFT JOIN drawings d ON d.id = p.drawing_id
@@ -51,9 +52,10 @@ if ($method === 'GET') {
         $stmt->execute(array_values($ids));
         $patterns = $stmt->fetchAll();
         foreach ($patterns as &$r) {
-            $r['keywords']   = $r['keywords'] ? explode(',', $r['keywords']) : [];
-            $engineKey       = strtolower($r['engine'] ?? '');
-            $r['editor_url'] = $editorMap[$engineKey] ?? null;
+            $r['keywords']     = $r['keywords'] ? explode(',', $r['keywords']) : [];
+            $engineKey         = strtolower($r['engine'] ?? '');
+            $r['editor_url']   = $editorMap[$engineKey] ?? null;
+            $r['display_name'] = library_pattern_display_name($r['slug'], $r['name_ko']);
         }
         $out['patterns'] = $patterns;
     } elseif (!empty($_GET['full'])) {

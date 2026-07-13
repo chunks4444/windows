@@ -25,6 +25,7 @@ require_admin_role('s');
         .pc-table tr:hover td { background:var(--bg); }
         .pc-id { font-family:monospace; font-size:11px; color: var(--text); background:var(--bg); padding:2px 6px; border-radius:4px; }
         .pc-name-input { border:1px solid var(--border); border-radius:5px; padding:4px 8px; font-size:13px; width:150px; }
+        .pc-code-input { border:1px solid var(--border); border-radius:5px; padding:4px 8px; font-size:13px; width:56px; text-align:center; text-transform:uppercase; font-family:monospace; }
         .pc-sort-input { border:1px solid var(--border); border-radius:5px; padding:4px 6px; font-size:13px; width:52px; text-align:center; }
         .pc-btn { border:none; border-radius:5px; padding:4px 10px; font-size:12px; font-weight:600; cursor:pointer; }
         .pc-btn-save { background:var(--accent); color:var(--bg); } .pc-btn-save:hover { opacity:.85; }
@@ -60,27 +61,47 @@ require_admin_role('s');
 
     <div class="pc-tabs">
         <button class="pc-tab active" onclick="switchTab('cats', this)">카테고리 관리</button>
+        <button class="pc-tab"       onclick="switchTab('mods', this)">수식어 관리</button>
         <button class="pc-tab"       onclick="switchTab('drawings', this)">도면 분류</button>
     </div>
 
     <!-- 탭 1: 카테고리 관리 -->
     <div id="tabCats">
-        <p style="font-size:13px;color: var(--text);margin:-8px 0 16px;">이름만 수정하면 모든 엔진·도면 목록에 즉시 반영됩니다.</p>
+        <p style="font-size:13px;color: var(--text);margin:-8px 0 16px;">이름만 수정하면 모든 엔진·도면 목록에 즉시 반영됩니다. 코드는 평목 컬렉션 코드 체계 v1.0의 계열 코드(영문 3자, 예: JEO)로, 컬렉션 아이템 슬러그 생성에 쓰입니다. 비워두면 코드 없는 카테고리로 유지됩니다.</p>
         <div style="overflow-x:auto;">
             <table class="pc-table" id="pcTable">
-                <thead><tr><th>ID</th><th>이름</th><th>정렬</th><th>활성</th><th></th></tr></thead>
+                <thead><tr><th>ID</th><th>이름</th><th>코드</th><th>정렬</th><th>활성</th><th></th></tr></thead>
                 <tbody id="pcBody"></tbody>
             </table>
         </div>
         <div class="pc-add-row">
             <input id="addName" placeholder="새 카테고리 이름" style="width:160px;">
+            <input id="addCode" placeholder="코드(3자)" maxlength="3" style="width:80px;text-transform:uppercase;">
             <input id="addSort" type="number" value="0" placeholder="정렬" style="width:64px;">
             <button class="pc-add-btn" onclick="addCategory()">추가</button>
             <span class="pc-status" id="addStatus"></span>
         </div>
     </div>
 
-    <!-- 탭 2: 도면 분류 -->
+    <!-- 탭 2: 수식어 관리 -->
+    <div id="tabMods" style="display:none;">
+        <p style="font-size:13px;color: var(--text);margin:-8px 0 16px;">평목 컬렉션 코드 체계 v1.0의 수식어(계열 안에서 세부 구분, 예: JEO-SE-001)입니다. 컬렉션 아이템 생성 시 이 목록 중에서만 고를 수 있습니다.</p>
+        <div style="overflow-x:auto;">
+            <table class="pc-table" id="modTable">
+                <thead><tr><th>ID</th><th>이름</th><th>코드</th><th>정렬</th><th>활성</th><th></th></tr></thead>
+                <tbody id="modBody"></tbody>
+            </table>
+        </div>
+        <div class="pc-add-row">
+            <input id="modAddName" placeholder="새 수식어 이름" style="width:160px;">
+            <input id="modAddCode" placeholder="코드(2자)" maxlength="2" style="width:80px;text-transform:uppercase;">
+            <input id="modAddSort" type="number" value="0" placeholder="정렬" style="width:64px;">
+            <button class="pc-add-btn" onclick="addModifier()">추가</button>
+            <span class="pc-status" id="modAddStatus"></span>
+        </div>
+    </div>
+
+    <!-- 탭 3: 도면 분류 -->
     <div id="tabDrawings" style="display:none;">
         <div class="pc-dl-filters" id="dlFilters">
             <button class="pc-dl-filter-btn active" data-cat="" onclick="setFilter(this,'')">전체</button>
@@ -99,10 +120,13 @@ require_admin_role('s');
 </div>
 
 <script>
-const TOKEN = () => localStorage.getItem('pmok_auth_token');
-const API   = '/src/api/admin/pattern_categories.php';
+const TOKEN     = () => localStorage.getItem('pmok_auth_token');
+const API       = '/src/api/admin/pattern_categories.php';
+const MOD_API   = '/src/api/admin/pattern_modifiers.php';
 let _cats   = [];
-let _dlInited = false;
+let _mods   = [];
+let _dlInited  = false;
+let _modInited = false;
 
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
@@ -110,7 +134,9 @@ function switchTab(name, btn) {
     document.querySelectorAll('.pc-tab').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('tabCats').style.display     = name === 'cats'     ? '' : 'none';
+    document.getElementById('tabMods').style.display     = name === 'mods'     ? '' : 'none';
     document.getElementById('tabDrawings').style.display = name === 'drawings' ? '' : 'none';
+    if (name === 'mods' && !_modInited) { _modInited = true; loadMods(); }
     if (name === 'drawings' && !_dlInited) { _dlInited = true; initDrawingsTab(); }
 }
 
@@ -126,6 +152,7 @@ function render() {
         <tr class="${c.is_active=='1'?'':'pc-inactive'}" id="row-${c.id}">
             <td><span class="pc-id">${c.id}</span></td>
             <td><input class="pc-name-input" value="${esc(c.name)}" id="name-${c.id}"></td>
+            <td><input class="pc-code-input" value="${esc(c.code||'')}" maxlength="3" id="code-${c.id}"></td>
             <td><input class="pc-sort-input" type="number" value="${c.sort_order}" id="sort-${c.id}"></td>
             <td><input type="checkbox" ${c.is_active=='1'?'checked':''} onchange="toggleActive(${c.id},this.checked)"></td>
             <td style="display:flex;gap:6px;align-items:center;">
@@ -138,16 +165,17 @@ function render() {
 
 async function save(id) {
     const name = document.getElementById(`name-${id}`).value.trim();
+    const code = document.getElementById(`code-${id}`).value.trim();
     const sort = parseInt(document.getElementById(`sort-${id}`).value) || 0;
     const act  = document.querySelector(`#row-${id} input[type=checkbox]`).checked ? 1 : 0;
     const st   = document.getElementById(`st-${id}`);
     if (!name) { st.className='pc-status err'; st.textContent='이름 필수'; return; }
     const data = await (await fetch(API, { method:'PUT',
         headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN()},
-        body: JSON.stringify({ id, name, sort_order:sort, is_active:act }) })).json();
+        body: JSON.stringify({ id, name, code, sort_order:sort, is_active:act }) })).json();
     st.className = data.ok ? 'pc-status ok' : 'pc-status err';
     st.textContent = data.ok ? '저장됨' : (data.error||'오류');
-    if (data.ok) { const c=_cats.find(x=>x.id==id); if(c){c.name=name;c.sort_order=sort;c.is_active=act;} setTimeout(()=>st.textContent='',2500); }
+    if (data.ok) { const c=_cats.find(x=>x.id==id); if(c){c.name=name;c.code=code;c.sort_order=sort;c.is_active=act;} setTimeout(()=>st.textContent='',2500); }
 }
 
 async function toggleActive(id, checked) {
@@ -169,16 +197,94 @@ async function del(id, name) {
 async function addCategory() {
     const st   = document.getElementById('addStatus');
     const name = document.getElementById('addName').value.trim();
+    const code = document.getElementById('addCode').value.trim();
     const sort = parseInt(document.getElementById('addSort').value) || 0;
     if (!name) { st.className='pc-status err'; st.textContent='이름을 입력하세요'; return; }
     const data = await (await fetch(API, { method:'POST',
         headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN()},
-        body: JSON.stringify({ name, sort_order:sort }) })).json();
+        body: JSON.stringify({ name, code, sort_order:sort }) })).json();
     if (data.ok) {
         st.className='pc-status ok'; st.textContent='추가됨';
         document.getElementById('addName').value = '';
-        _cats.push({ id:data.id, name, sort_order:sort, is_active:'1' });
+        document.getElementById('addCode').value = '';
+        _cats.push({ id:data.id, name, code:code.toUpperCase(), sort_order:sort, is_active:'1' });
         render();
+        setTimeout(()=>st.textContent='',2500);
+    } else {
+        st.className='pc-status err'; st.textContent=data.error||'오류';
+    }
+}
+
+/* ── 수식어 관리 ── */
+async function loadMods() {
+    const res = await fetch(MOD_API, { headers:{ Authorization:'Bearer '+TOKEN() } });
+    _mods = (await res.json()).modifiers || [];
+    renderMods();
+}
+
+function renderMods() {
+    document.getElementById('modBody').innerHTML = _mods.map(m => `
+        <tr class="${m.is_active=='1'?'':'pc-inactive'}" id="modRow-${m.id}">
+            <td><span class="pc-id">${m.id}</span></td>
+            <td><input class="pc-name-input" value="${esc(m.name)}" id="modName-${m.id}"></td>
+            <td><input class="pc-code-input" value="${esc(m.code||'')}" maxlength="2" id="modCode-${m.id}"></td>
+            <td><input class="pc-sort-input" type="number" value="${m.sort_order}" id="modSort-${m.id}"></td>
+            <td><input type="checkbox" ${m.is_active=='1'?'checked':''} onchange="toggleModActive(${m.id},this.checked)"></td>
+            <td style="display:flex;gap:6px;align-items:center;">
+                <button class="pc-btn pc-btn-save" onclick="saveMod(${m.id})">저장</button>
+                <button class="pc-btn pc-btn-del"  onclick="delMod(${m.id},'${esc(m.name)}')">삭제</button>
+                <span class="pc-status" id="modSt-${m.id}"></span>
+            </td>
+        </tr>`).join('');
+}
+
+async function saveMod(id) {
+    const name = document.getElementById(`modName-${id}`).value.trim();
+    const code = document.getElementById(`modCode-${id}`).value.trim();
+    const sort = parseInt(document.getElementById(`modSort-${id}`).value) || 0;
+    const act  = document.querySelector(`#modRow-${id} input[type=checkbox]`).checked ? 1 : 0;
+    const st   = document.getElementById(`modSt-${id}`);
+    if (!name) { st.className='pc-status err'; st.textContent='이름 필수'; return; }
+    const data = await (await fetch(MOD_API, { method:'PUT',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN()},
+        body: JSON.stringify({ id, name, code, sort_order:sort, is_active:act }) })).json();
+    st.className = data.ok ? 'pc-status ok' : 'pc-status err';
+    st.textContent = data.ok ? '저장됨' : (data.error||'오류');
+    if (data.ok) { const m=_mods.find(x=>x.id==id); if(m){m.name=name;m.code=code;m.sort_order=sort;m.is_active=act;} setTimeout(()=>st.textContent='',2500); }
+}
+
+async function toggleModActive(id, checked) {
+    const name = document.getElementById(`modName-${id}`).value.trim();
+    const code = document.getElementById(`modCode-${id}`).value.trim();
+    const sort = parseInt(document.getElementById(`modSort-${id}`).value) || 0;
+    await fetch(MOD_API, { method:'PUT', headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN()},
+        body: JSON.stringify({ id, name, code, sort_order:sort, is_active:checked?1:0 }) });
+    document.getElementById(`modRow-${id}`).className = checked ? '' : 'pc-inactive';
+}
+
+async function delMod(id, name) {
+    if (!confirm(`"${name}" 수식어를 삭제하시겠습니까?`)) return;
+    const data = await (await fetch(MOD_API, { method:'DELETE',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN()},
+        body: JSON.stringify({ id }) })).json();
+    if (data.ok) { _mods = _mods.filter(m=>m.id!=id); renderMods(); }
+}
+
+async function addModifier() {
+    const st   = document.getElementById('modAddStatus');
+    const name = document.getElementById('modAddName').value.trim();
+    const code = document.getElementById('modAddCode').value.trim();
+    const sort = parseInt(document.getElementById('modAddSort').value) || 0;
+    if (!name) { st.className='pc-status err'; st.textContent='이름을 입력하세요'; return; }
+    const data = await (await fetch(MOD_API, { method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN()},
+        body: JSON.stringify({ name, code, sort_order:sort }) })).json();
+    if (data.ok) {
+        st.className='pc-status ok'; st.textContent='추가됨';
+        document.getElementById('modAddName').value = '';
+        document.getElementById('modAddCode').value = '';
+        _mods.push({ id:data.id, name, code:code.toUpperCase(), sort_order:sort, is_active:'1' });
+        renderMods();
         setTimeout(()=>st.textContent='',2500);
     } else {
         st.className='pc-status err'; st.textContent=data.error||'오류';

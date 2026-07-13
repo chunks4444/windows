@@ -14,27 +14,26 @@ if (!$payload || ($payload['role'] ?? '') !== 's') {
 $pdo  = db();
 $body = json_decode(file_get_contents('php://input'), true) ?? [];
 
-// 평목 컬렉션 코드 체계 v1.0 계열 코드 — 한글 첫 음절 로마자 3자, 빈 문자열이면 NULL(코드 없는 카테고리)로 저장
-function normalizeCategoryCode(string $raw) {
+// 평목 컬렉션 코드 체계 v1.0 수식어 코드 — 한글 첫 음절 로마자 2자, 항상 필수(카테고리 코드와 달리 NULL 없음)
+function normalizeModifierCode(string $raw) {
     $code = strtoupper(trim($raw));
-    if ($code === '') return null;
-    if (!preg_match('/^[A-Z]{3}$/', $code)) return false;
+    if (!preg_match('/^[A-Z]{2}$/', $code)) return false;
     return $code;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $rows = $pdo->query("SELECT id, name, code, sort_order, is_active FROM pattern_categories ORDER BY sort_order, id")->fetchAll();
-    echo json_encode(['categories' => $rows]);
+    $rows = $pdo->query("SELECT id, name, code, sort_order, is_active FROM pattern_modifiers ORDER BY sort_order, id")->fetchAll();
+    echo json_encode(['modifiers' => $rows]);
     exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($body['name'] ?? '');
     if (!$name) { http_response_code(422); echo json_encode(['error' => 'name 필수']); exit; }
-    $code = normalizeCategoryCode((string)($body['code'] ?? ''));
-    if ($code === false) { http_response_code(422); echo json_encode(['error' => '코드는 영문 3자입니다.']); exit; }
+    $code = normalizeModifierCode((string)($body['code'] ?? ''));
+    if ($code === false) { http_response_code(422); echo json_encode(['error' => '코드는 영문 2자입니다.']); exit; }
     try {
-        $pdo->prepare("INSERT INTO pattern_categories (name, code, sort_order) VALUES (?,?,?)")
+        $pdo->prepare("INSERT INTO pattern_modifiers (name, code, sort_order) VALUES (?,?,?)")
             ->execute([$name, $code, (int)($body['sort_order'] ?? 0)]);
     } catch (PDOException $e) {
         if ($e->getCode() === '23000') { http_response_code(422); echo json_encode(['error' => '이미 사용 중인 코드입니다.']); exit; }
@@ -48,10 +47,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     $id   = (int)($body['id'] ?? 0);
     $name = trim($body['name'] ?? '');
     if (!$id || !$name) { http_response_code(422); echo json_encode(['error' => 'id, name 필수']); exit; }
-    $code = normalizeCategoryCode((string)($body['code'] ?? ''));
-    if ($code === false) { http_response_code(422); echo json_encode(['error' => '코드는 영문 3자입니다.']); exit; }
+    $code = normalizeModifierCode((string)($body['code'] ?? ''));
+    if ($code === false) { http_response_code(422); echo json_encode(['error' => '코드는 영문 2자입니다.']); exit; }
     try {
-        $pdo->prepare("UPDATE pattern_categories SET name=?, code=?, sort_order=?, is_active=? WHERE id=?")
+        $pdo->prepare("UPDATE pattern_modifiers SET name=?, code=?, sort_order=?, is_active=? WHERE id=?")
             ->execute([$name, $code, (int)($body['sort_order'] ?? 0), isset($body['is_active']) ? (int)$body['is_active'] : 1, $id]);
     } catch (PDOException $e) {
         if ($e->getCode() === '23000') { http_response_code(422); echo json_encode(['error' => '이미 사용 중인 코드입니다.']); exit; }
@@ -64,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
 if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
     $id = (int)($body['id'] ?? 0);
     if (!$id) { http_response_code(422); echo json_encode(['error' => 'id 필수']); exit; }
-    $pdo->prepare("DELETE FROM pattern_categories WHERE id=?")->execute([$id]);
+    $pdo->prepare("DELETE FROM pattern_modifiers WHERE id=?")->execute([$id]);
     echo json_encode(['ok' => true]);
     exit;
 }

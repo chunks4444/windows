@@ -18,9 +18,26 @@ if (!$payload || ($payload['role'] ?? '') !== 's') {
 $method = $_SERVER['REQUEST_METHOD'];
 $pdo    = db();
 
+// 코드 미리보기 — 실제 저장 없이, 모양/수식어 선택에 따라 생성될 코드를 조회 전용으로 계산해 보여준다
+if ($method === 'GET' && isset($_GET['preview_slug'])) {
+    $catId    = (int)($_GET['pattern_category'] ?? 0) ?: null;
+    $modifier = (string)($_GET['code_modifier'] ?? '');
+    try {
+        $slug = generateLibrarySlug($pdo, $catId, $modifier);
+    } catch (InvalidArgumentException $e) {
+        http_response_code(422);
+        echo json_encode(['error' => $e->getMessage()]);
+        exit;
+    }
+    // 코드화된 카테고리가 아니면 랜덤 hex라 미리보기 의미가 없음 — null로 응답해 프런트가 안내 문구를 보여주게 함
+    $preview = preg_match('/^[a-z]{3}(-[a-z]{2})?-\d{3}$/', $slug) ? $slug : null;
+    echo json_encode(['slug' => $preview]);
+    exit;
+}
+
 if ($method === 'GET') {
     $rows = $pdo->query(
-        'SELECT p.id, p.name_ko, p.drawing_id, p.pattern_category, p.image_path, p.sort_order, p.is_active,
+        'SELECT p.id, p.slug, p.name_ko, p.drawing_id, p.pattern_category, p.image_path, p.sort_order, p.is_active,
                 GROUP_CONCAT(k.keyword ORDER BY k.id SEPARATOR ",") AS keywords
          FROM library_patterns p
          LEFT JOIN library_keywords k ON k.pattern_id = p.id
@@ -111,18 +128,45 @@ function drawingThumbnailImage(PDO $pdo, int $drawingId): ?string {
     return $thumb ? saveLibraryImage($thumb) : null;
 }
 
+// 평목 컬렉션 코드 체계 v1.0: {계열3자}(-{수식어2자})?-{일련번호3자리}, 전체 소문자
+// 카테고리에 code가 없으면(코드 없는 자유입력 카테고리·미분류) 랜덤 hex로 폴백
+function generateLibrarySlug(PDO $pdo, ?int $patternCategoryId, string $modifierRaw): string {
+    $modifier = strtolower(trim($modifierRaw));
+    if ($modifier !== '' && !preg_match('/^[a-z]{2}$/', $modifier)) {
+        throw new InvalidArgumentException('수식어는 영문 2자입니다.');
+    }
+
+    $catCode = null;
+    if ($patternCategoryId) {
+        $stmt = $pdo->prepare('SELECT code FROM pattern_categories WHERE id=?');
+        $stmt->execute([$patternCategoryId]);
+        $catCode = $stmt->fetchColumn() ?: null;
+    }
+
+    if (!$catCode) {
+        return bin2hex(random_bytes(6));
+    }
+
+    $prefix = strtolower($catCode) . ($modifier !== '' ? '-' . $modifier : '');
+
+    $stmt = $pdo->prepare('SELECT slug FROM library_patterns WHERE slug LIKE ?');
+    $stmt->execute([$prefix . '-%']);
+    $maxSerial = 0;
+    foreach ($stmt->fetchAll(PDO::FETCH_COLUMN) as $existingSlug) {
+        if (preg_match('/^' . preg_quote($prefix, '/') . '-(\d{3})$/', $existingSlug, $m)) {
+            $maxSerial = max($maxSerial, (int)$m[1]);
+        }
+    }
+
+    return $prefix . '-' . str_pad((string)($maxSerial + 1), 3, '0', STR_PAD_LEFT);
+}
+
 if ($method === 'POST') {
     $name_ko    = trim($body['name_ko'] ?? '');
     $drawing_id = (int)($body['drawing_id'] ?? 0) ?: null;
     $pattern_category = (int)($body['pattern_category'] ?? 0) ?: null;
     $order      = (int)($body['sort_order'] ?? 0);
     $keywords   = array_values(array_unique(array_filter(array_map('trim', (array)($body['keywords'] ?? [])))));
-
-    if (!$name_ko) {
-        http_response_code(400);
-        echo json_encode(['error' => '이름은 필수입니다.']);
-        exit;
-    }
 
     $image_path = '';
     if (!empty($body['image'])) {
@@ -131,7 +175,13 @@ if ($method === 'POST') {
         $image_path = drawingThumbnailImage($pdo, $drawing_id) ?? '';
     }
 
-    $slug = bin2hex(random_bytes(6));
+    try {
+        $slug = generateLibrarySlug($pdo, $pattern_category, (string)($body['code_modifier'] ?? ''));
+    } catch (InvalidArgumentException $e) {
+        http_response_code(422);
+        echo json_encode(['error' => $e->getMessage()]);
+        exit;
+    }
 
     $pdo->prepare('INSERT INTO library_patterns (slug, name_ko, drawing_id, pattern_category, image_path, sort_order) VALUES (?,?,?,?,?,?)')
         ->execute([$slug, $name_ko, $drawing_id, $pattern_category, $image_path, $order]);
@@ -159,9 +209,9 @@ if ($method === 'PUT') {
     $hasCategory  = array_key_exists('pattern_category', $body);
     $pattern_category = $hasCategory ? ((int)($body['pattern_category'] ?? 0) ?: null) : null;
 
-    if (!$id || !$name_ko) {
+    if (!$id) {
         http_response_code(400);
-        echo json_encode(['error' => 'id와 이름은 필수입니다.']);
+        echo json_encode(['error' => 'id는 필수입니다.']);
         exit;
     }
 

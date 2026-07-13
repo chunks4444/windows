@@ -7,6 +7,7 @@ set_exception_handler(function(Throwable $e) {
 });
 require_once __DIR__ . '/../lib/db.php';
 require_once __DIR__ . '/../lib/jwt.php';
+require_once __DIR__ . '/../lib/slug.php';
 
 $_input   = json_decode(file_get_contents('php://input'), true) ?? [];
 $q        = trim($_input['q'] ?? $_GET['q'] ?? '');
@@ -81,9 +82,10 @@ $has_more = count($rows) > $limit;
 if ($has_more) array_pop($rows);
 
 foreach ($rows as &$r) {
-    $r['keywords']   = $r['keywords'] ? explode(',', $r['keywords']) : [];
-    $engineKey       = strtolower($r['engine'] ?? '');
-    $r['editor_url'] = $editorMap[$engineKey] ?? null;
+    $r['keywords']     = $r['keywords'] ? explode(',', $r['keywords']) : [];
+    $engineKey         = strtolower($r['engine'] ?? '');
+    $r['editor_url']   = $editorMap[$engineKey] ?? null;
+    $r['display_name'] = library_pattern_display_name($r['slug'], $r['name_ko']);
 }
 
 $out = ['patterns' => $rows, 'has_more' => $has_more];

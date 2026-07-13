@@ -97,8 +97,9 @@ function setupObserver() {
 
 /* ── 카드 HTML ────────────────────────────────── */
 function buildCard(p) {
+    const displayName = p.display_name || p.name_ko || (p.slug || '').toUpperCase();
     const imgHtml = p.image_path
-        ? `<img src="${esc(p.image_path)}" alt="${esc(p.name_ko)}" loading="lazy" style="width:100%;height:100%;object-fit:cover;">`
+        ? `<img src="${esc(p.image_path)}" alt="${esc(displayName)}" loading="lazy" style="width:100%;height:100%;object-fit:cover;">`
         : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--text-3);font-size:40px;"><i class="bi bi-image"></i></div>`;
 
     const editorBtn = p.editor_url && p.drawing_id
@@ -116,21 +117,21 @@ function buildCard(p) {
                         <button class="lib-icon-btn lib-like-btn${likes[p.id] ? ' liked' : ''}" onclick="toggleLike(event,${p.id})" title="좋아요">
                             <i class="bi bi-heart${likes[p.id] ? '-fill' : ''}"></i>
                         </button>
-                        <button class="lib-icon-btn lib-board-btn" onclick="openBoardModal(event,${p.id},'${esc(p.name_ko)}')" title="보드에 저장">
+                        <button class="lib-icon-btn lib-board-btn" onclick="openBoardModal(event,${p.id},'${esc(displayName)}')" title="보드에 저장">
                             <i class="bi bi-collection"></i>
                         </button>
-                        <button class="lib-icon-btn lib-share-btn" onclick="shareCollectionPattern(event,'${esc(p.slug)}','${esc(p.name_ko)}','${esc(p.image_path || '')}')" title="공유">
+                        <button class="lib-icon-btn lib-share-btn" onclick="shareCollectionPattern(event,'${esc(p.slug)}','${esc(displayName)}','${esc(p.image_path || '')}')" title="공유">
                             <i class="bi bi-share"></i>
                         </button>
                     </div>
                     <div class="lib-overlay-bottom">
-                        <div class="lib-overlay-title">${esc(p.name_ko)}</div>
+                        <div class="lib-overlay-title">${esc(displayName)}</div>
                         <div class="lib-overlay-actions">${editorBtn}</div>
                     </div>
                 </div>
             </div>
             <div class="lib-card-body">
-                <div class="lib-card-name">${engineIconHtml(p.engine)}${esc(p.name_ko)}</div>
+                <div class="lib-card-name">${engineIconHtml(p.engine)}${esc(displayName)}</div>
                 <div class="lib-card-sub">${kwHtml}</div>
             </div>
         </div>`;

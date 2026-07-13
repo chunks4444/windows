@@ -294,10 +294,20 @@ function compute_price_estimate(array $parts, array $selection, array $cfg, arra
     ];
 }
 
-// 엔진별 패턴 카테고리 목록 반환 [{code, name}] — 관리자가 name만 수정해도 반영됨
+// 엔진별 패턴 카테고리 목록 반환 [{id, name, code}] — 관리자가 name만 수정해도 반영됨
+// code는 평목 컬렉션 코드 체계 v1.0 계열 코드(NULL이면 코드 없는 카테고리), library_patterns.slug 생성에 사용
 function get_pattern_categories(): array {
     try {
-        $rows = db()->query("SELECT id, name FROM pattern_categories WHERE is_active = 1 ORDER BY sort_order, id")->fetchAll(PDO::FETCH_ASSOC);
+        $rows = db()->query("SELECT id, name, code FROM pattern_categories WHERE is_active = 1 ORDER BY sort_order, id")->fetchAll(PDO::FETCH_ASSOC);
+        if ($rows) return $rows;
+    } catch (Throwable $e) {}
+    return [];
+}
+
+// 평목 컬렉션 코드 체계 v1.0 수식어 목록 [{id, name, code}] — library_patterns 생성 시 select 옵션으로 사용
+function get_pattern_modifiers(): array {
+    try {
+        $rows = db()->query("SELECT id, name, code FROM pattern_modifiers WHERE is_active = 1 ORDER BY sort_order, id")->fetchAll(PDO::FETCH_ASSOC);
         if ($rows) return $rows;
     } catch (Throwable $e) {}
     return [];

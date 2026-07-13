@@ -5,6 +5,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') exit;
 
 require_once __DIR__ . '/../../lib/jwt.php';
 require_once __DIR__ . '/../../lib/db.php';
+require_once __DIR__ . '/../../lib/slug.php';
 
 $payload = jwt_from_request();
 if (!$payload) { http_response_code(401); echo json_encode(['error' => '인증이 필요합니다.']); exit; }
@@ -21,7 +22,7 @@ $board = $stmt->fetch();
 if (!$board) { http_response_code(403); echo json_encode(['error' => '권한이 없습니다.']); exit; }
 
 $stmt = $pdo->prepare('
-    SELECT p.id, p.name_ko, p.image_path, p.drawing_id, d.type AS engine
+    SELECT p.id, p.slug, p.name_ko, p.image_path, p.drawing_id, d.type AS engine
     FROM board_items bi
     JOIN library_patterns p ON p.id = bi.pattern_id
     LEFT JOIN drawings d ON d.id = p.drawing_id
@@ -29,4 +30,8 @@ $stmt = $pdo->prepare('
     ORDER BY bi.created_at DESC
 ');
 $stmt->execute([$boardId]);
-echo json_encode(['board' => $board, 'items' => $stmt->fetchAll()]);
+$items = $stmt->fetchAll();
+foreach ($items as &$it) {
+    $it['display_name'] = library_pattern_display_name($it['slug'], $it['name_ko']);
+}
+echo json_encode(['board' => $board, 'items' => $items]);

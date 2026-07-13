@@ -67,6 +67,7 @@ function renderTable(patterns) {
             <td>${p.image_path
                 ? `<img class="lib-thumb" src="${esc(p.image_path)}" loading="lazy">`
                 : `<div class="lib-thumb-empty"><i class="bi bi-image"></i></div>`}</td>
+            <td style="color:var(--text-3);font-size:11px;font-family:monospace;">${/^[a-z]{3}(-[a-z]{2})?-\d{3}$/.test(p.slug||'') ? esc(p.slug.toUpperCase()) : '—'}</td>
             <td style="font-weight:600;">${esc(p.name_ko)}</td>
             <td style="color:var(--text-3);font-size:12px;">${p.pattern_category ? esc(categoryNames[p.pattern_category] || p.pattern_category) : '—'}</td>
             <td><div class="kw-list">${(p.keywords||[]).map(k =>
@@ -84,7 +85,7 @@ function renderTable(patterns) {
                 <button class="adm-withdraw-btn" style="background:#c00;color:#fff;" onclick="deletePattern(${p.id}, '${esc(p.name_ko)}')">삭제</button>
             </div></td>
         </tr>
-    `).join('') || '<tr><td colspan="9" style="padding:40px;text-align:center;color:var(--text-3);">패턴이 없습니다.</td></tr>';
+    `).join('') || '<tr><td colspan="10" style="padding:40px;text-align:center;color:var(--text-3);">패턴이 없습니다.</td></tr>';
     bindDrag();
 }
 
@@ -129,6 +130,8 @@ function openAddModal() {
     document.getElementById('lpName').value      = '';
     document.getElementById('lpDrawingId').value = '';
     document.getElementById('lpCategory').value  = '';
+    document.getElementById('lpModifier').value  = '';
+    document.getElementById('lpModifierField').style.display = '';
     document.getElementById('lpOrder').value     = '0';
     document.getElementById('lpImgFile').value   = '';
     document.getElementById('lpImgPreview').src  = '';
@@ -137,6 +140,7 @@ function openAddModal() {
     renderKeywords();
     document.getElementById('libModalOverlay').classList.add('open');
     document.getElementById('lpName').focus();
+    updateCodePreview();
 }
 
 function openEditModal(p) {
@@ -146,6 +150,7 @@ function openEditModal(p) {
     document.getElementById('lpDrawingId').value = p.drawing_id || '';
     document.getElementById('lpCategory').value  = p.pattern_category || '';
     // select가 아직 없는 값이면 빈 값 유지 (로딩 타이밍)
+    document.getElementById('lpModifierField').style.display = 'none';
     document.getElementById('lpOrder').value     = p.sort_order;
     document.getElementById('lpImgFile').value   = '';
     if (p.image_path) {
@@ -159,6 +164,28 @@ function openEditModal(p) {
     renderKeywords();
     document.getElementById('libModalOverlay').classList.add('open');
     document.getElementById('lpName').focus();
+
+    const codeEl = document.getElementById('libModalCode');
+    const isCoded = p.slug && /^[a-z]{3}(-[a-z]{2})?-\d{3}$/.test(p.slug);
+    codeEl.textContent = isCoded ? p.slug.toUpperCase() : '코드 없음 (구버전 항목 — 메모가 노출됩니다)';
+}
+
+/* ── 코드 미리보기 (모양·수식어 선택에 따라 실시간 갱신, 추가 모드에서만) ── */
+let _previewSeq = 0;
+async function updateCodePreview() {
+    const codeEl = document.getElementById('libModalCode');
+    if (editingId !== null) return; // 수정 모드에선 openEditModal이 최종 코드를 표시함
+    const catId = document.getElementById('lpCategory').value;
+    if (!catId) { codeEl.textContent = '모양을 선택하면 코드가 표시됩니다'; return; }
+
+    const modifier = document.getElementById('lpModifier').value;
+    const seq = ++_previewSeq;
+    codeEl.textContent = '계산 중…';
+    const params = new URLSearchParams({ preview_slug: '1', pattern_category: catId, code_modifier: modifier });
+    const res  = await fetch(`/src/api/admin/collection.php?${params}`, { headers: headers() });
+    const data = await res.json();
+    if (seq !== _previewSeq) return; // 응답 도착 전에 선택이 또 바뀐 경우 무시
+    codeEl.textContent = data.slug ? data.slug.toUpperCase() : '코드 없는 모양 — 저장 시 임의 코드가 부여됩니다';
 }
 
 function closeModal() {
@@ -191,6 +218,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('kwInput').addEventListener('keydown', e => {
         if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); addKeyword(); }
     });
+
+    document.getElementById('lpCategory').addEventListener('change', updateCodePreview);
+    document.getElementById('lpModifier').addEventListener('change', updateCodePreview);
 
     document.getElementById('lpImgFile').addEventListener('change', e => {
         const file = e.target.files[0];
@@ -238,7 +268,6 @@ document.addEventListener('DOMContentLoaded', () => {
 async function savePattern() {
     const btn  = document.getElementById('lpSaveBtn');
     const name = document.getElementById('lpName').value.trim();
-    if (!name) { showAlert('이름을 입력하세요.'); return; }
 
     const body = {
         name_ko:          name,
@@ -248,8 +277,12 @@ async function savePattern() {
         keywords:         keywords,
     };
     if (pendingImg) body.image = pendingImg;
-    if (editingId !== null) body.id = editingId;
-    if (editingId !== null) body.is_active = 1;
+    if (editingId !== null) {
+        body.id        = editingId;
+        body.is_active = 1;
+    } else {
+        body.code_modifier = document.getElementById('lpModifier').value.trim();
+    }
 
     btn.disabled = true; btn.textContent = '저장 중…';
     try {
@@ -270,8 +303,8 @@ async function savePattern() {
 }
 
 async function toggleActive(id, active) {
-    const row  = document.querySelector(`[onclick*="toggleActive(${id},"]`).closest('tr');
-    const name = row.querySelector('td:nth-child(2)').textContent.trim();
+    const p    = allPatterns.find(x => x.id == id);
+    const name = p ? p.name_ko : '';
     const res  = await fetch('/src/api/admin/collection.php', {
         method:  'PUT',
         headers: headers(),

@@ -18,6 +18,16 @@ function make_slug(string $title): string {
     return $s !== '' ? $s : 'post';
 }
 
+// 컬렉션 아이템(library_patterns) 화면 표시 이름. slug가 평목 컬렉션 코드 체계 v1.0
+// 형식(계열-수식어-일련번호)이면 코드를 대문자로 노출하고, 코드 없는 구버전 항목이면
+// name_ko(관리자 메모)로 폴백한다 — name_ko가 비어 있으면 최후 수단으로 slug를 그대로 노출.
+function library_pattern_display_name(string $slug, string $nameKo): string {
+    if (preg_match('/^[a-z]{3}(-[a-z]{2})?-\d{3}$/', $slug)) {
+        return strtoupper($slug);
+    }
+    return $nameKo !== '' ? $nameKo : strtoupper($slug);
+}
+
 function make_unique_slug(PDO $pdo, string $table, string $title, ?int $excludeId = null): string {
     $base = make_slug($title);
     $slug = $base;

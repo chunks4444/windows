@@ -115,13 +115,49 @@ CREATE TABLE IF NOT EXISTS drawings (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='도면 메타 정보 (제목별로 독립 관리)';
 
 -- 전통 창호 패턴 분류 (정자살/완자살 등). drawings.pattern_category(코드 문자열)가 이 테이블의 id를 참조
+-- ALTER TABLE pattern_categories ADD COLUMN code CHAR(3) NULL DEFAULT NULL COMMENT '평목 컬렉션 코드 체계 v1.0 계열 코드 (예: JEO, WAN) — 한글 첫 음절 로마자, library_patterns.slug 생성에 사용. 12계열 외 관리자 자유입력 카테고리는 NULL 허용' AFTER name, ADD UNIQUE KEY uq_pattern_categories_code (code)
 CREATE TABLE IF NOT EXISTS pattern_categories (
     id         INT UNSIGNED     NOT NULL AUTO_INCREMENT,
     name       VARCHAR(40)      NOT NULL,
+    code       CHAR(3)          NULL     DEFAULT NULL COMMENT '평목 컬렉션 코드 체계 v1.0 계열 코드 (예: JEO, WAN) — library_patterns.slug 생성에 사용. NULL이면 코드화 안 된 자유입력 카테고리',
     sort_order TINYINT UNSIGNED NOT NULL DEFAULT 0,
     is_active  TINYINT(1)       NOT NULL DEFAULT 1,
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_pattern_categories_code (code)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='전통 창호 패턴 카테고리';
+
+-- 평목 컬렉션 코드 체계 v1.0 (2026-07-13 확정) — 계열 12종 시드. code(unique)로 매칭되므로 재실행해도 안전(중복 삽입 없음)
+INSERT INTO pattern_categories (name, code, sort_order) VALUES
+('띠살',      'TTI', 1),
+('귀갑살',    'GWI', 2),
+('정자살',    'JEO', 3),
+('범살',      'BEO', 4),
+('완자살',    'WAN', 5),
+('솟을살',    'SOT', 6),
+('아자살',    'AJA', 7),
+('숫대살',    'SUT', 8),
+('빗살',      'BIT', 9),
+('용자살',    'YON', 10),
+('꽃살',      'KOT', 11),
+('자체 창작', 'PYM', 12)
+ON DUPLICATE KEY UPDATE code = VALUES(code);
+
+-- 평목 컬렉션 코드 체계 v1.0 수식어(2자) 목록 — 계열 안에서 세부 구분용 (예: JEO-SE-001).
+-- library_patterns 생성 시 어드민이 이 목록 중에서만 고를 수 있다 (자유 입력 아님).
+CREATE TABLE IF NOT EXISTS pattern_modifiers (
+    id         INT UNSIGNED     NOT NULL AUTO_INCREMENT,
+    name       VARCHAR(40)      NOT NULL,
+    code       CHAR(2)          NOT NULL COMMENT '한글 첫 음절 로마자 2자 (예: SE=세모, YU=육모)',
+    sort_order TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    is_active  TINYINT(1)       NOT NULL DEFAULT 1,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_pattern_modifiers_code (code)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='평목 컬렉션 코드 체계 v1.0 수식어 목록';
+
+INSERT INTO pattern_modifiers (name, code, sort_order) VALUES
+('세모', 'SE', 1),
+('육모', 'YU', 2)
+ON DUPLICATE KEY UPDATE code = VALUES(code);
 
 -- 문의 메일 발송 이력 (rate limit용)
 CREATE TABLE IF NOT EXISTS contact_log (
@@ -189,7 +225,7 @@ CREATE TABLE IF NOT EXISTS page_meta (
 -- (기존 library_categories 테이블을 대체: RENAME TABLE library_categories TO library_patterns; 후 컬럼 추가)
 CREATE TABLE IF NOT EXISTS library_patterns (
     id          INT UNSIGNED      NOT NULL AUTO_INCREMENT,
-    slug        VARCHAR(60)       NOT NULL DEFAULT '' COMMENT '시맨틱 URL slug (컬렉션 상세 페이지, src/lib/slug.php)',
+    slug        VARCHAR(60)       NOT NULL DEFAULT '' COMMENT '시맨틱 URL slug. pattern_category가 코드화된 계열(pattern_categories.code)이면 평목 컬렉션 코드 체계 v1.0 형식으로 생성됨: {계열3자}(-{수식어2자})?-{일련번호3자리} 소문자 (예: jeo-001, wan-gb-002). 미분류거나 코드 없는 카테고리면 랜덤 hex 유지. 생성 시점에 확정, 이후 카테고리/수식어를 바꿔도 재생성 안 함(공유 URL 보존)',
     name_ko     VARCHAR(80)       NOT NULL DEFAULT '' COMMENT '패턴 이름 (예: 정자살)',
     drawing_id  INT UNSIGNED      NULL               COMMENT '연결 도면 (drawings.id FK)',
     pattern_category INT UNSIGNED NULL              COMMENT '컬렉션 "모양" 필터용 분류 — pattern_categories.id 참조',
