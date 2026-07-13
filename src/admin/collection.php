@@ -96,7 +96,7 @@ $libPatternMods = get_pattern_modifiers();
                 </select>
             </div>
             <div class="adm-mfield" id="lpModifierField">
-                <label>수식어 <small style="color: var(--text);font-weight:400;">코드 세부 구분용, 선택 — 저장 후에는 바꿀 수 없습니다</small></label>
+                <label>수식어 <small style="color: var(--text);font-weight:400;">코드 세부 구분용, 선택 — 모양·수식어를 바꾸면 저장 시 코드(공유 URL)가 새로 생성됩니다</small></label>
                 <select id="lpModifier" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg-1);color:var(--text);font-size:14px;">
                     <option value="">— 기본형(수식어 없음) —</option>
                     <?php foreach ($libPatternMods as $m): ?>

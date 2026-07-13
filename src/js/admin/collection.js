@@ -5,6 +5,9 @@ let allDrawings = [];
 let allPatterns = [];
 let statusFilter = 'all';
 let categoryNames = {};
+let _editOriginalCategory = '';
+let _editOriginalModifier = '';
+let _editOriginalSlug     = '';
 
 function token()   { return localStorage.getItem('pmok_auth_token'); }
 function headers() { return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token() }; }
@@ -131,7 +134,6 @@ function openAddModal() {
     document.getElementById('lpDrawingId').value = '';
     document.getElementById('lpCategory').value  = '';
     document.getElementById('lpModifier').value  = '';
-    document.getElementById('lpModifierField').style.display = '';
     document.getElementById('lpOrder').value     = '0';
     document.getElementById('lpImgFile').value   = '';
     document.getElementById('lpImgPreview').src  = '';
@@ -150,7 +152,14 @@ function openEditModal(p) {
     document.getElementById('lpDrawingId').value = p.drawing_id || '';
     document.getElementById('lpCategory').value  = p.pattern_category || '';
     // select가 아직 없는 값이면 빈 값 유지 (로딩 타이밍)
-    document.getElementById('lpModifierField').style.display = 'none';
+
+    // 기존 코드에서 수식어를 역추출해 select에 미리 선택해 둔다 (추가 모달과 동일한 구성)
+    const m = /^[a-z]{3}(-([a-z]{2}))?-\d{3}$/.exec(p.slug || '');
+    _editOriginalModifier = m ? (m[2] || '').toUpperCase() : '';
+    _editOriginalCategory = p.pattern_category ? String(p.pattern_category) : '';
+    _editOriginalSlug     = p.slug || '';
+    document.getElementById('lpModifier').value = _editOriginalModifier;
+
     document.getElementById('lpOrder').value     = p.sort_order;
     document.getElementById('lpImgFile').value   = '';
     if (p.image_path) {
@@ -164,28 +173,36 @@ function openEditModal(p) {
     renderKeywords();
     document.getElementById('libModalOverlay').classList.add('open');
     document.getElementById('lpName').focus();
-
-    const codeEl = document.getElementById('libModalCode');
-    const isCoded = p.slug && /^[a-z]{3}(-[a-z]{2})?-\d{3}$/.test(p.slug);
-    codeEl.textContent = isCoded ? p.slug.toUpperCase() : '코드 없음 (구버전 항목 — 메모가 노출됩니다)';
+    updateCodePreview();
 }
 
-/* ── 코드 미리보기 (모양·수식어 선택에 따라 실시간 갱신, 추가 모드에서만) ── */
+/* ── 코드 미리보기 (모양·수식어 선택에 따라 실시간 갱신, 추가·수정 모달 공통) ──
+   수정 모드에서 모양·수식어를 원래 값 그대로 두면 기존 코드(공유 URL)를 그대로 보여주고,
+   실제로 바꾸면 저장 시 새로 채번될 코드를 미리 계산해 보여준다. */
 let _previewSeq = 0;
 async function updateCodePreview() {
     const codeEl = document.getElementById('libModalCode');
-    if (editingId !== null) return; // 수정 모드에선 openEditModal이 최종 코드를 표시함
-    const catId = document.getElementById('lpCategory').value;
+    const catId    = document.getElementById('lpCategory').value;
+    const modifier = document.getElementById('lpModifier').value;
+
     if (!catId) { codeEl.textContent = '모양을 선택하면 코드가 표시됩니다'; return; }
 
-    const modifier = document.getElementById('lpModifier').value;
+    if (editingId !== null && catId === _editOriginalCategory && modifier === _editOriginalModifier) {
+        codeEl.textContent = /^[a-z]{3}(-[a-z]{2})?-\d{3}$/.test(_editOriginalSlug)
+            ? _editOriginalSlug.toUpperCase()
+            : '코드 없음 — 메모가 노출됩니다';
+        return;
+    }
+
     const seq = ++_previewSeq;
     codeEl.textContent = '계산 중…';
     const params = new URLSearchParams({ preview_slug: '1', pattern_category: catId, code_modifier: modifier });
     const res  = await fetch(`/src/api/admin/collection.php?${params}`, { headers: headers() });
     const data = await res.json();
     if (seq !== _previewSeq) return; // 응답 도착 전에 선택이 또 바뀐 경우 무시
-    codeEl.textContent = data.slug ? data.slug.toUpperCase() : '코드 없는 모양 — 저장 시 임의 코드가 부여됩니다';
+    codeEl.textContent = data.slug
+        ? data.slug.toUpperCase() + (editingId !== null ? ' (저장하면 코드가 바뀝니다)' : '')
+        : '코드 없는 모양 — 저장 시 임의 코드가 부여됩니다';
 }
 
 function closeModal() {
@@ -275,13 +292,12 @@ async function savePattern() {
         pattern_category: parseInt(document.getElementById('lpCategory').value) || 0,
         sort_order:       parseInt(document.getElementById('lpOrder').value) || 0,
         keywords:         keywords,
+        code_modifier:    document.getElementById('lpModifier').value.trim(),
     };
     if (pendingImg) body.image = pendingImg;
     if (editingId !== null) {
         body.id        = editingId;
         body.is_active = 1;
-    } else {
-        body.code_modifier = document.getElementById('lpModifier').value.trim();
     }
 
     btn.disabled = true; btn.textContent = '저장 중…';

@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/src/lib/db.php';
+require_once __DIR__ . '/src/lib/slug.php';
 try {
     $pdo        = db();
     $heroSlides = $pdo->query('SELECT * FROM hero_slides WHERE is_active=1 ORDER BY sort_order, id')->fetchAll();
@@ -44,6 +45,7 @@ try {
         $cc['href'] = ($editorUrl && $cc['drawing_id'])
             ? $editorUrl . '?drawing_id=' . (int)$cc['drawing_id']
             : '/collection/detail?slug=' . urlencode($cc['slug']);
+        $cc['display_name'] = library_pattern_display_name($cc['slug'], $cc['name_ko']);
     }
     unset($cc);
 } catch (Throwable $e) {
@@ -202,8 +204,8 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                             <div class="collection-strip-track" id="collectionStripTrack">
                                 <?php foreach (array_merge($collectionCards, $collectionCards) as $cc): ?>
                                 <a class="collection-strip-card" href="<?= htmlspecialchars($cc['href']) ?>">
-                                    <img src="<?= htmlspecialchars($cc['image_path']) ?>" alt="<?= htmlspecialchars($cc['name_ko']) ?>" loading="lazy">
-                                    <div class="collection-strip-label"><?= htmlspecialchars($cc['name_ko']) ?></div>
+                                    <img src="<?= htmlspecialchars($cc['image_path']) ?>" alt="<?= htmlspecialchars($cc['display_name']) ?>" loading="lazy">
+                                    <div class="collection-strip-label"><?= htmlspecialchars($cc['display_name']) ?></div>
                                 </a>
                                 <?php endforeach; ?>
                             </div>

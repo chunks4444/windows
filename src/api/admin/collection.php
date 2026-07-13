@@ -215,6 +215,42 @@ if ($method === 'PUT') {
         exit;
     }
 
+    $cur = $pdo->prepare('SELECT slug, pattern_category FROM library_patterns WHERE id=?');
+    $cur->execute([$id]);
+    $curRow = $cur->fetch();
+    if (!$curRow) {
+        http_response_code(404);
+        echo json_encode(['error' => '항목을 찾을 수 없습니다.']);
+        exit;
+    }
+
+    // 모양·수식어가 실제로 바뀐 경우에만 코드를 다시 채번한다 — 메모/키워드/이미지만 고치는
+    // 흔한 저장에서는 기존 코드(공유 URL)를 그대로 유지해야 하기 때문에, 값이 그대로면 손대지 않는다.
+    $newSlug = null;
+    if (array_key_exists('code_modifier', $body)) {
+        $oldCategory = (int)$curRow['pattern_category'] ?: null;
+        $effectiveCategory = $hasCategory ? $pattern_category : $oldCategory;
+
+        $oldModifier = '';
+        if (preg_match('/^[a-z]{3}(-([a-z]{2}))?-\d{3}$/', $curRow['slug'], $mm)) {
+            $oldModifier = strtoupper($mm[2] ?? '');
+        }
+        $newModifier = strtoupper(trim((string)$body['code_modifier']));
+
+        $categoryChanged = $hasCategory && $effectiveCategory !== $oldCategory;
+        $modifierChanged = $newModifier !== $oldModifier;
+
+        if ($categoryChanged || $modifierChanged) {
+            try {
+                $newSlug = generateLibrarySlug($pdo, $effectiveCategory, $newModifier);
+            } catch (InvalidArgumentException $e) {
+                http_response_code(422);
+                echo json_encode(['error' => $e->getMessage()]);
+                exit;
+            }
+        }
+    }
+
     $image_path = null;
     if (!empty($body['image'])) {
         $image_path = saveLibraryImage($body['image']);
@@ -237,6 +273,7 @@ if ($method === 'PUT') {
     if ($hasDrawingId)         { $setParts[] = 'drawing_id=?';       $setArgs[] = $drawing_id; }
     if ($hasCategory)         { $setParts[] = 'pattern_category=?'; $setArgs[] = $pattern_category; }
     if ($image_path !== null) { $setParts[] = 'image_path=?';       $setArgs[] = $image_path; }
+    if ($newSlug !== null)    { $setParts[] = 'slug=?';             $setArgs[] = $newSlug; }
     $setArgs[] = $id;
 
     $pdo->prepare('UPDATE library_patterns SET ' . implode(', ', $setParts) . ' WHERE id=?')
@@ -250,7 +287,7 @@ if ($method === 'PUT') {
         }
     }
 
-    echo json_encode(['ok' => true]);
+    echo json_encode(['ok' => true, 'slug' => $newSlug]);
     exit;
 }
 
