@@ -24,6 +24,7 @@ async function init() {
     });
     setStatusFilter('all');
     await Promise.all([loadDrawings(), loadPatterns()]);
+    renderDrawingOptions();
 }
 
 async function loadDrawings() {
@@ -31,9 +32,23 @@ async function loadDrawings() {
     const data = await res.json();
     if (!res.ok) return;
     allDrawings = data.drawings || [];
+}
+
+// 이미 다른 컬렉션 항목에 연결된 도면은 목록에서 제거한다 — keepDrawingId는 지금 수정 중인
+// 항목이 이미 쓰고 있는 도면(자기 자신)이라 계속 선택 가능해야 하므로 예외로 남겨둔다.
+function renderDrawingOptions(keepDrawingId) {
+    const keepId  = keepDrawingId ? Number(keepDrawingId) : null;
+    const usedIds = new Set(
+        allPatterns
+            .filter(p => p.drawing_id && Number(p.drawing_id) !== keepId)
+            .map(p => Number(p.drawing_id))
+    );
+    const available = allDrawings.filter(d => !usedIds.has(Number(d.id)));
     const sel = document.getElementById('lpDrawingId');
+    const cur = sel.value;
     sel.innerHTML = '<option value="">— 연결 안함 —</option>' +
-        allDrawings.map(d => `<option value="${d.id}">[${esc(d.type)}] ${esc(d.title)} #${d.id}</option>`).join('');
+        available.map(d => `<option value="${d.id}">[${esc(d.type)}] ${esc(d.title)} #${d.id}</option>`).join('');
+    sel.value = cur;
 }
 
 async function loadPatterns() {
@@ -130,6 +145,7 @@ document.addEventListener('mouseup', async () => {
 function openAddModal() {
     editingId = null; keywords = []; pendingImg = null;
     document.getElementById('libModalTitle').textContent = '패턴 추가';
+    renderDrawingOptions();
     document.getElementById('lpName').value      = '';
     document.getElementById('lpDrawingId').value = '';
     document.getElementById('lpCategory').value  = '';
@@ -148,6 +164,7 @@ function openAddModal() {
 function openEditModal(p) {
     editingId = p.id; keywords = [...(p.keywords || [])]; pendingImg = null;
     document.getElementById('libModalTitle').textContent = '패턴 수정';
+    renderDrawingOptions(p.drawing_id || null);
     document.getElementById('lpName').value      = p.name_ko;
     document.getElementById('lpDrawingId').value = p.drawing_id || '';
     document.getElementById('lpCategory').value  = p.pattern_category || '';
