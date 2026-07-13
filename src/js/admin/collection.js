@@ -5,9 +5,10 @@ let allDrawings = [];
 let allPatterns = [];
 let statusFilter = 'all';
 let categoryNames = {};
-let _editOriginalCategory = '';
-let _editOriginalModifier = '';
-let _editOriginalSlug     = '';
+let _editOriginalCategory  = '';
+let _editOriginalModifier  = '';
+let _editOriginalSlug      = '';
+let _currentKeepDrawingId  = null; // 지금 열려있는 추가/수정 모달 자신이 쓰던 도면 (피커에서 제외 대상 예외)
 
 function token()   { return localStorage.getItem('pmok_auth_token'); }
 function headers() { return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token() }; }
@@ -24,7 +25,6 @@ async function init() {
     });
     setStatusFilter('all');
     await Promise.all([loadDrawings(), loadPatterns()]);
-    renderDrawingOptions();
 }
 
 async function loadDrawings() {
@@ -34,21 +34,16 @@ async function loadDrawings() {
     allDrawings = data.drawings || [];
 }
 
-// 이미 다른 컬렉션 항목에 연결된 도면은 목록에서 제거한다 — keepDrawingId는 지금 수정 중인
+// 이미 다른 컬렉션 항목에 연결된 도면은 목록에서 제거한다 — _currentKeepDrawingId는 지금 수정 중인
 // 항목이 이미 쓰고 있는 도면(자기 자신)이라 계속 선택 가능해야 하므로 예외로 남겨둔다.
-function renderDrawingOptions(keepDrawingId) {
-    const keepId  = keepDrawingId ? Number(keepDrawingId) : null;
+function getAvailableDrawings() {
+    const keepId  = _currentKeepDrawingId ? Number(_currentKeepDrawingId) : null;
     const usedIds = new Set(
         allPatterns
             .filter(p => p.drawing_id && Number(p.drawing_id) !== keepId)
             .map(p => Number(p.drawing_id))
     );
-    const available = allDrawings.filter(d => !usedIds.has(Number(d.id)));
-    const sel = document.getElementById('lpDrawingId');
-    const cur = sel.value;
-    sel.innerHTML = '<option value="">— 연결 안함 —</option>' +
-        available.map(d => `<option value="${d.id}">[${esc(d.type)}] ${esc(d.title)} #${d.id}</option>`).join('');
-    sel.value = cur;
+    return allDrawings.filter(d => !usedIds.has(Number(d.id)));
 }
 
 async function loadPatterns() {
@@ -145,9 +140,10 @@ document.addEventListener('mouseup', async () => {
 function openAddModal() {
     editingId = null; keywords = []; pendingImg = null;
     document.getElementById('libModalTitle').textContent = '패턴 추가';
-    renderDrawingOptions();
+    _currentKeepDrawingId = null;
     document.getElementById('lpName').value      = '';
     document.getElementById('lpDrawingId').value = '';
+    updateDrawingButtonDisplay();
     document.getElementById('lpCategory').value  = '';
     document.getElementById('lpModifier').value  = '';
     document.getElementById('lpOrder').value     = '0';
@@ -164,9 +160,10 @@ function openAddModal() {
 function openEditModal(p) {
     editingId = p.id; keywords = [...(p.keywords || [])]; pendingImg = null;
     document.getElementById('libModalTitle').textContent = '패턴 수정';
-    renderDrawingOptions(p.drawing_id || null);
+    _currentKeepDrawingId = p.drawing_id || null;
     document.getElementById('lpName').value      = p.name_ko;
     document.getElementById('lpDrawingId').value = p.drawing_id || '';
+    updateDrawingButtonDisplay();
     document.getElementById('lpCategory').value  = p.pattern_category || '';
     // select가 아직 없는 값이면 빈 값 유지 (로딩 타이밍)
 
@@ -227,6 +224,62 @@ function closeModal() {
     editingId = null; keywords = []; pendingImg = null;
 }
 
+/* ── 도면 선택 피커 (썸네일 그리드) ── */
+function updateDrawingButtonDisplay() {
+    const id      = document.getElementById('lpDrawingId').value;
+    const thumbEl = document.getElementById('lpDrawingPickerThumb');
+    const labelEl = document.getElementById('lpDrawingPickerLabel');
+    const d       = id ? allDrawings.find(x => x.id == id) : null;
+
+    thumbEl.innerHTML  = (d && d.thumbnail) ? `<img src="${esc(d.thumbnail)}">` : '<i class="bi bi-image"></i>';
+    labelEl.textContent = d ? `[${d.type}] ${d.title}` : '— 연결 안함 —';
+    labelEl.classList.toggle('lib-drawing-picker-label-empty', !d);
+}
+
+function openDrawingPicker() {
+    document.getElementById('drawingPickerSearch').value = '';
+    renderDrawingPickerGrid('');
+    document.getElementById('drawingPickerOverlay').classList.add('open');
+    document.getElementById('drawingPickerSearch').focus();
+}
+
+function closeDrawingPicker() {
+    document.getElementById('drawingPickerOverlay').classList.remove('open');
+}
+
+function renderDrawingPickerGrid(q) {
+    const available = getAvailableDrawings();
+    const needle    = q.trim().toLowerCase();
+    const filtered  = needle ? available.filter(d => d.title.toLowerCase().includes(needle)) : available;
+
+    document.getElementById('drawingPickerGrid').innerHTML = filtered.map(d => `
+        <div class="lib-drawing-picker-item" onclick="selectDrawing(${d.id})">
+            ${d.thumbnail
+                ? `<img src="${esc(d.thumbnail)}" loading="lazy">`
+                : `<div class="lib-thumb-empty"><i class="bi bi-image"></i></div>`}
+            <div class="lib-drawing-picker-item-label">[${esc(d.type)}] ${esc(d.title)}</div>
+        </div>
+    `).join('') || '<p style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:24px 0;">검색 결과가 없습니다.</p>';
+}
+
+function selectDrawing(id) {
+    document.getElementById('lpDrawingId').value = id || '';
+    updateDrawingButtonDisplay();
+
+    if (!pendingImg) {
+        const preview = document.getElementById('lpImgPreview');
+        const d = id ? allDrawings.find(x => x.id == id) : null;
+        if (d && d.thumbnail) {
+            preview.src = d.thumbnail;
+            preview.classList.add('show');
+        } else if (!id && editingId === null) {
+            preview.src = '';
+            preview.classList.remove('show');
+        }
+    }
+    closeDrawingPicker();
+}
+
 /* ── 키워드 ── */
 function renderKeywords() {
     document.getElementById('kwList').innerHTML = keywords.map((k, i) => `
@@ -281,21 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.readAsDataURL(file);
     });
 
-    document.getElementById('lpDrawingId').addEventListener('change', async e => {
-        if (pendingImg) return; // 직접 업로드한 이미지가 있으면 그게 우선
-        const preview = document.getElementById('lpImgPreview');
-        const id = e.target.value;
-        if (!id) {
-            if (editingId === null) { preview.src = ''; preview.classList.remove('show'); }
-            return;
-        }
-        const res  = await fetch(`/src/api/admin/drawings.php?id=${id}`, { headers: headers() });
-        const data = await res.json();
-        if (data.drawing && data.drawing.thumbnail) {
-            preview.src = data.drawing.thumbnail;
-            preview.classList.add('show');
-        }
-    });
+    document.getElementById('drawingPickerSearch').addEventListener('input', e => renderDrawingPickerGrid(e.target.value));
 });
 
 /* ── 저장 ── */
@@ -370,6 +409,10 @@ function esc(str) {
 
 document.getElementById('libModalOverlay').addEventListener('click', e => {
     if (e.target === e.currentTarget) closeModal();
+});
+
+document.getElementById('drawingPickerOverlay').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeDrawingPicker();
 });
 
 document.addEventListener('DOMContentLoaded', init);

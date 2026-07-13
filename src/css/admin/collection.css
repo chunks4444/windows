@@ -13,3 +13,16 @@
         .lib-drag-handle { cursor:grab; color:var(--text-muted); }
         .lib-drag-handle:active { cursor:grabbing; }
         #libTbody tr.dragging { opacity:.4; }
+
+        .lib-drawing-picker-btn { display:flex; align-items:center; gap:10px; width:100%; box-sizing:border-box; height:44px; padding:0 10px; border:1px solid var(--border); border-radius:8px; background:var(--bg); font-family:inherit; font-size: var(--fs-14); color:var(--text); cursor:pointer; text-align:left; }
+        .lib-drawing-picker-btn:hover { border-color:var(--accent); }
+        .lib-drawing-picker-thumb { width:28px; height:28px; border-radius:4px; overflow:hidden; flex-shrink:0; display:flex; align-items:center; justify-content:center; background:var(--bg-2); color:var(--text-muted); }
+        .lib-drawing-picker-thumb img { width:100%; height:100%; object-fit:cover; }
+        .lib-drawing-picker-label-empty { color:var(--text-muted); }
+        .lib-drawing-picker-none { padding:10px 12px; border:1px dashed var(--border); border-radius:8px; margin-bottom:14px; cursor:pointer; color:var(--text-muted); font-size: var(--fs-14); text-align:center; }
+        .lib-drawing-picker-none:hover { border-color:var(--accent); color:var(--accent); }
+        .lib-drawing-picker-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(110px, 1fr)); gap:10px; }
+        .lib-drawing-picker-item { cursor:pointer; border:1.5px solid transparent; border-radius:8px; padding:4px; text-align:center; }
+        .lib-drawing-picker-item:hover { border-color:var(--accent); background:var(--bg-2); }
+        .lib-drawing-picker-item img, .lib-drawing-picker-item .lib-thumb-empty { width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:6px; background:var(--bg-2); }
+        .lib-drawing-picker-item-label { margin-top:4px; font-size: var(--fs-12); color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }

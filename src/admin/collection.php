@@ -82,9 +82,12 @@ $libPatternMods = get_pattern_modifiers();
 
             <div class="adm-mfield">
                 <label>도면 <small style="color: var(--text);font-weight:400;">(선택)</small></label>
-                <select id="lpDrawingId" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg-1);color:var(--text);font-size:14px;">
-                    <option value="">— 연결 안함 —</option>
-                </select>
+                <input type="hidden" id="lpDrawingId" value="">
+                <button type="button" id="lpDrawingPickerBtn" class="lib-drawing-picker-btn" onclick="openDrawingPicker()">
+                    <span id="lpDrawingPickerThumb" class="lib-drawing-picker-thumb"><i class="bi bi-image"></i></span>
+                    <span id="lpDrawingPickerLabel">— 연결 안함 —</span>
+                    <i class="bi bi-chevron-down" style="margin-left:auto;color:var(--text);"></i>
+                </button>
             </div>
             <div class="adm-mfield">
                 <label>모양 <small style="color: var(--text);font-weight:400;">컬렉션 페이지 "모양" 필터용 — 연결 도면의 분류와 별개</small></label>
@@ -132,6 +135,23 @@ $libPatternMods = get_pattern_modifiers();
         <div class="adm-modal-foot">
             <button class="adm-btn-cancel" onclick="closeModal()">취소</button>
             <button class="adm-btn-save" id="lpSaveBtn" onclick="savePattern()">저장</button>
+        </div>
+    </div>
+</div>
+
+<!-- 도면 선택 피커 -->
+<div class="adm-modal-overlay" id="drawingPickerOverlay">
+    <div class="adm-modal" style="max-width:640px;max-height:80vh;">
+        <div class="adm-modal-head">
+            <h3>도면 선택</h3>
+            <button class="adm-modal-close" onclick="closeDrawingPicker()">&#x2715;</button>
+        </div>
+        <div class="adm-modal-body">
+            <input type="text" id="drawingPickerSearch" placeholder="도면명 검색" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg-1);color:var(--text);font-size:14px;margin-bottom:14px;">
+            <div class="lib-drawing-picker-none" onclick="selectDrawing(null)">
+                <i class="bi bi-slash-circle"></i> — 연결 안함 —
+            </div>
+            <div class="lib-drawing-picker-grid" id="drawingPickerGrid"></div>
         </div>
     </div>
 </div>

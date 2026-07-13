@@ -73,7 +73,7 @@ if (isset($_GET['page']) || isset($_GET['category'])) {
 }
 
 $rows = $pdo->query(
-    'SELECT id, type, title FROM drawings ORDER BY type, title'
+    'SELECT id, type, title, thumbnail FROM drawings ORDER BY type, title'
 )->fetchAll();
 
 echo json_encode(['drawings' => $rows]);
