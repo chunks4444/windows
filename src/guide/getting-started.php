@@ -26,18 +26,23 @@ include __DIR__ . '/_head.php';
 
 <h2>2단계 — 스튜디오 선택</h2>
 <ol class="guide-steps">
-    <li>상단 내비게이션에서 <span class="guide-ui">Studio</span>를 클릭합니다.</li>
+    <li>상단 내비게이션에서 <span class="guide-ui">스튜디오</span>를 클릭합니다.</li>
     <li>드롭다운 메뉴에서 원하는 격자 패턴 엔진을 선택합니다.<br>
         처음이라면 <strong>세살</strong>을 권장합니다.</li>
     <li>스튜디오 화면이 열리면 왼쪽 사이드바에서 파라미터를 조정합니다.</li>
-    <li>오른쪽 캔버스에 실시간으로 도면이 그려집니다.</li>
+    <li>가운데 캔버스에 실시간으로 도면이 그려집니다.</li>
 </ol>
+
+<div class="guide-tip">
+    <i class="bi bi-lightbulb-fill"></i>
+    <span>스튜디오 상단 내비게이션의 프롬프트 입력창에 <em>"완자살 미서기문 3짝, 가로 1800 세로 1200으로 바꿔줘"</em>처럼 원하는 사양을 문장으로 입력하면 AI가 해당 파라미터를 자동으로 반영해줍니다. 다른 엔진이 더 적합하면 자동으로 그 스튜디오로 이동합니다.</span>
+</div>
 
 <h2>3단계 — 첫 도면 저장</h2>
 <ol class="guide-steps">
-    <li>사이드바 상단의 <span class="guide-ui">도면 이름</span> 입력란에 이름을 입력합니다.</li>
-    <li><span class="guide-ui">저장</span> 버튼 또는 <kbd>Ctrl</kbd>+<kbd>S</kbd>를 눌러 저장합니다.</li>
-    <li>저장된 도면은 <span class="guide-ui">Dashboard</span> 페이지에서 언제든 불러올 수 있습니다.</li>
+    <li>캔버스 상단 바의 <span class="guide-ui">도면 이름</span> 입력란에 이름을 입력합니다.</li>
+    <li><span class="guide-ui">저장</span> 버튼을 클릭합니다.</li>
+    <li>저장된 도면은 <span class="guide-ui">도면 관리</span> 페이지에서 언제든 불러올 수 있습니다.</li>
 </ol>
 
 <div class="guide-note">
@@ -46,14 +51,15 @@ include __DIR__ . '/_head.php';
 </div>
 
 <h2>인터페이스 구성</h2>
-<p>스튜디오 화면은 크게 세 영역으로 구성됩니다.</p>
+<p>스튜디오 화면은 크게 네 영역으로 구성됩니다.</p>
 
 <table class="guide-table">
     <thead><tr><th>영역</th><th>위치</th><th>역할</th></tr></thead>
     <tbody>
-        <tr><td><strong>사이드바</strong></td><td>왼쪽</td><td>문 종류, 치수, 격자 살 설정 등 모든 파라미터 입력</td></tr>
-        <tr><td><strong>캔버스</strong></td><td>중앙</td><td>도면 실시간 미리보기, 핀치/드래그로 확대·이동</td></tr>
-        <tr><td><strong>툴바</strong></td><td>상단</td><td>저장, 내보내기(PDF/PNG), 렌더링 버튼</td></tr>
+        <tr><td><strong>왼쪽 사이드바</strong></td><td>왼쪽</td><td>문 종류, 치수, 격자 살 설정 등 설계 파라미터 입력</td></tr>
+        <tr><td><strong>캔버스 상단 바</strong></td><td>캔버스 위</td><td>도면 이름, 새 도면·도면 목록·버전 관리, 저장·공유 버튼</td></tr>
+        <tr><td><strong>캔버스</strong></td><td>중앙</td><td>도면 실시간 미리보기, 휠/드래그로 확대·이동, 선 삭제·추가 편집</td></tr>
+        <tr><td><strong>오른쪽 사이드바</strong></td><td>오른쪽</td><td>마감·색상, 배경 사진·AI 렌더링, PNG/PDF 내보내기, 견적요청</td></tr>
     </tbody>
 </table>
 

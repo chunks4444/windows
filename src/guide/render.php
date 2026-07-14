@@ -47,10 +47,10 @@ include __DIR__ . '/_head.php';
 <div class="guide-ui-diagram">
     <div class="guid-topbar">
         <strong>평목</strong>
-        <span>Studio ▾</span>
-        <span>Collection ▾</span>
-        <span>Guide</span>
-        <span>About</span>
+        <span>스튜디오 ▾</span>
+        <span>컬렉션 ▾</span>
+        <span>가이드</span>
+        <span>평목 소개</span>
         <span style="margin-left:auto;">user@example.com ▾</span>
     </div>
     <div class="guid-body">
@@ -166,8 +166,7 @@ include __DIR__ . '/_head.php';
         <span class="guide-ui">&rsaquo;</span> 탭을 클릭해 패널을 엽니다.
     </li>
     <li>
-        <span class="guide-ui">↑ 사진 추가</span> 버튼을 클릭하거나,
-        이미지 파일을 캔버스 위로 <strong>드래그 &amp; 드롭</strong>합니다.<br>
+        <span class="guide-ui">↑ 사진 추가</span> 버튼을 클릭해 이미지 파일을 선택합니다.<br>
         여러 장을 한꺼번에 업로드할 수 있습니다.
     </li>
     <li>
@@ -251,8 +250,8 @@ include __DIR__ . '/_head.php';
 <div class="guide-note">
     <i class="bi bi-info-circle"></i>
     <div>
-        <p style="margin:0 0 4px;">렌더링 히스토리는 <strong>내 계정에 연결된 로컬 저장소</strong>에 보관됩니다. 같은 계정이라도 다른 기기·브라우저에서는 공유되지 않습니다.</p>
-        <p style="margin:0;">중요한 결과물은 반드시 <span class="guide-ui">다운로드</span>로 파일을 저장해두세요.</p>
+        <p style="margin:0 0 4px;">렌더링 결과물은 서버에 저장되어 같은 계정이면 다른 기기·브라우저에서도 동일하게 보입니다.</p>
+        <p style="margin:0;">단, 계정당 보관 가능한 렌더링은 최대 <strong>300장</strong>입니다. 한도를 초과하면 새 렌더링이 거부되고 안내 메시지가 표시되므로, 오래된 렌더링을 오른쪽 사이드바 히스토리에서 <i class="bi bi-x"></i>로 정리하거나 필요한 결과물은 <span class="guide-ui">다운로드</span>로 백업해두세요.</p>
     </div>
 </div>
 

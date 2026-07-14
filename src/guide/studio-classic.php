@@ -19,7 +19,7 @@ include __DIR__ . '/_head.php';
 <div class="guide-ui-diagram">
     <div class="guid-topbar">
         <strong>평목</strong>
-        <span style="margin-left:8px;opacity:.5;">Studio ▾ · Collection ▾ · Guide · About</span>
+        <span style="margin-left:8px;opacity:.5;">스튜디오 ▾ · 컬렉션 ▾ · 가이드 · 평목 소개</span>
         <span style="margin-left:auto;opacity:.6;">user@example.com ▾</span>
     </div>
     <div class="guid-body">
@@ -31,9 +31,9 @@ include __DIR__ . '/_head.php';
             <div class="guid-left-item">여닫이 / 미서기</div>
             <div class="guid-left-item">1짝 ~ 4짝</div>
             <div class="guid-left-section">문 치수</div>
-            <div class="guid-left-item" style="font-size:10px;">가로폭 600mm</div>
+            <div class="guid-left-item" style="font-size:10px;">문틀 가로 600mm</div>
             <div class="guid-left-slider"></div>
-            <div class="guid-left-item" style="font-size:10px;">세로높이 1707mm</div>
+            <div class="guid-left-item" style="font-size:10px;">문틀 세로 1707mm</div>
             <div class="guid-left-slider"></div>
             <div class="guid-left-section">창살 설정</div>
             <div class="guid-left-item" style="font-size:10px;">가로 칸수 12</div>
@@ -131,10 +131,14 @@ include __DIR__ . '/_head.php';
 <table class="guide-table">
     <thead><tr><th>항목</th><th>범위</th><th>단위</th></tr></thead>
     <tbody>
-        <tr><td>가로폭</td><td>400 ~ 1,500</td><td>mm</td></tr>
-        <tr><td>세로높이</td><td>400 ~ 2,600</td><td>mm</td></tr>
+        <tr><td>문틀 가로</td><td>400 ~ 3,000</td><td>mm</td></tr>
+        <tr><td>문틀 세로</td><td>400 ~ 3,000</td><td>mm</td></tr>
     </tbody>
 </table>
+<div class="guide-note">
+    <i class="bi bi-info-circle"></i>
+    <span>여기서 입력하는 값은 벽 개구부(문틀 외곽) 치수입니다. 실제 문짝 크기는 문틀 두께·틈새(문틀 두께 설정값, 관리자 설정)를 자동으로 뺀 값으로 계산되며, 미서기는 문짝이 겹치는 폭만큼 추가로 보정됩니다. 계산된 실측 치수는 아래 <strong>제작 시방서</strong>에서 확인할 수 있습니다.</span>
+</div>
 
 <h3>창살 설정</h3>
 <table class="guide-table">
@@ -147,6 +151,8 @@ include __DIR__ . '/_head.php';
         <tr><td>가로살 배열 (상/중/하)</td><td>세 구역의 수평 칸수를 독립 지정. 예) 3/5/3</td></tr>
         <tr><td>세로 비율</td><td>상·중·하 구역의 세로 높이 비율</td></tr>
         <tr><td>풍판 사용</td><td>체크 시 상단 풍판 구역 추가. 풍판 높이 별도 설정</td></tr>
+        <tr><td>치수 표기</td><td>체크 시 캔버스에 각 부재의 실측 치수를 함께 표시</td></tr>
+        <tr><td>문틀 표시</td><td>체크 시 캔버스에 문틀(벽 개구부) 윤곽선을 함께 표시</td></tr>
     </tbody>
 </table>
 
@@ -155,7 +161,8 @@ include __DIR__ . '/_head.php';
 <table class="guide-table">
     <thead><tr><th>항목</th><th>설명</th></tr></thead>
     <tbody>
-        <tr><td>외경 가로/세로</td><td>울거미 포함 전체 치수</td></tr>
+        <tr><td>문틀 가로/세로</td><td>벽 개구부 치수 (입력값 그대로)</td></tr>
+        <tr><td>외경 가로/세로</td><td>문틀 두께·틈새를 제외하고 자동 계산된 문짝(울거미 포함) 전체 치수</td></tr>
         <tr><td>내경 가로/세로</td><td>울거미 제외 내부 유효 치수</td></tr>
         <tr><td>가로 칸수 / 세로 칸수</td><td>격자 분할 수</td></tr>
         <tr><td>눈(Eye) 크기</td><td>격자 한 칸의 내부 크기</td></tr>

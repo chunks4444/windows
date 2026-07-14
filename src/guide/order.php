@@ -91,22 +91,28 @@ include __DIR__ . '/_head.php';
     <div>
         <div>※ 배송비·시공비 제외</div>
         <div>※ 도면에 보이는 금액은 예상금액입니다. 사용자 편집 내용을 검토한 후 최종 견적이 확정됩니다.</div>
+        <div>※ 예상가격·원가 상세는 회원 등급에 따라 표시 여부가 다릅니다. 자세한 내용은 <a href="account.php">프로필 & 회사 정보 가이드</a>의 "회원 등급별 가격 정보 열람 권한"을 참고하세요.</div>
     </div>
 </div>
 
 <h2>도면 잠금</h2>
 <p>
-    견적요청이 접수된 도면은 <strong>편집·저장·삭제가 제한</strong>됩니다.
+    견적요청이 접수된 도면은 진행 상태에 따라 <strong>편집·저장·삭제가 제한</strong>됩니다.
     이는 요청 접수 이후 사양이 변경되어 발생할 수 있는 혼선을 방지하기 위한 조치입니다.
 </p>
 <p>
-    도면 목록에서 해당 도면에 <strong><i class="bi bi-lock-fill"></i> 견적요청 중</strong> 배지가 표시됩니다.
-    견적 처리가 완료되면 잠금이 해제됩니다.
+    도면 목록에서 잠긴 도면에는 <strong><i class="bi bi-lock-fill"></i></strong> 배지가 현재 주문 상태 이름(예: <em>제작중</em>)으로 표시됩니다.
+    잠금이 걸리는 상태는 <strong>견적검토 · 승인 · 견적확정 · 입금완료 · 제작중 · 제작완료 · 발송</strong>입니다.
 </p>
+
+<div class="guide-note">
+    <i class="bi bi-info-circle"></i>
+    <span>담당자가 <strong>수정요청</strong>으로 상태를 바꾸면 잠금이 풀려 도면을 다시 편집·저장할 수 있습니다. 배송완료 또는 주문취소 후에도 잠금은 해제됩니다.</span>
+</div>
 
 <div class="guide-warn">
     <i class="bi bi-exclamation-triangle-fill"></i>
-    <span>견적요청 후 사양 변경이 필요한 경우 담당자에게 연락해주세요. 도면을 새로 저장하여 재요청하는 방법도 안내해드립니다.</span>
+    <span>잠긴 상태에서 사양 변경이 필요한 경우 담당자에게 연락해주세요. 담당자가 수정요청 상태로 전환하면 도면을 수정한 뒤 재요청할 수 있습니다.</span>
 </div>
 
 <h2>담당자 응대</h2>
@@ -136,6 +142,11 @@ include __DIR__ . '/_head.php';
         <tr><td>배송완료</td><td>배송이 완료되었습니다.</td></tr>
     </tbody>
 </table>
+
+<div class="guide-note">
+    <i class="bi bi-info-circle"></i>
+    <span><strong>취소</strong>는 이 흐름과 별개인 종결 상태입니다. 고객이 직접 취소하거나 담당자가 취소 처리하면 해당 상태로 바뀌며, 이후 단계로 진행되지 않습니다.</span>
+</div>
 
 <p>주문내역 목록의 각 행을 클릭하면 상세 모달에서 다음 정보를 확인할 수 있습니다.</p>
 <ul>

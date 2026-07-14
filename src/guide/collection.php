@@ -9,12 +9,12 @@ include __DIR__ . '/_head.php';
 <h1>컬렉션 & 내 보드</h1>
 <p class="guide-lead">
     컬렉션은 평목 팀이 엄선한 공개 창호 도면 라이브러리입니다.
-    마음에 드는 패턴을 스튜디오로 바로 불러오거나 내 보드에 저장해 영감으로 활용하세요.
+    마음에 드는 패턴을 스튜디오로 바로 불러오거나, 좋아요·내 보드에 저장해 영감으로 활용하세요.
 </p>
 
 <h2>컬렉션 둘러보기</h2>
 <ol class="guide-steps">
-    <li>상단 내비게이션의 <span class="guide-ui">Collection</span>을 클릭합니다.</li>
+    <li>상단 내비게이션의 <span class="guide-ui">컬렉션</span>을 클릭합니다.</li>
     <li>격자 형태로 공개 도면 패턴이 표시됩니다.</li>
     <li>카드를 클릭하면 도면 상세 페이지로 이동합니다.</li>
     <li>상세 페이지에서 <span class="guide-ui">스튜디오에서 열기</span>를 클릭하면 해당 파라미터로 스튜디오가 열립니다.</li>
@@ -22,15 +22,37 @@ include __DIR__ . '/_head.php';
 
 <div class="guide-tip">
     <i class="bi bi-lightbulb-fill"></i>
-    <span>컬렉션 도면은 로그인 없이도 열람할 수 있지만, 스튜디오에서 열기 및 보드 저장은 로그인이 필요합니다.</span>
+    <span>컬렉션 도면은 로그인 없이도 열람할 수 있지만, 스튜디오에서 열기·좋아요·보드 저장은 로그인이 필요합니다.</span>
 </div>
 
+<h2>패턴 이름 표기</h2>
+<p>
+    최근에 등록된 컬렉션 패턴은 <strong>JEO-SE-001</strong>과 같은 코드 형식으로 이름이 표시됩니다.
+    앞부분은 계열(문양 대분류), 가운데는 세부 수식어, 마지막 숫자는 일련번호를 뜻합니다.
+    코드가 아직 없는 예전 패턴은 기존처럼 한글 이름으로 표시됩니다.
+</p>
+
 <h2>컬렉션 필터</h2>
-<p>상단 필터 탭으로 패턴 유형별로 필터링할 수 있습니다.</p>
+<p>
+    컬렉션 상단에는 엔진별 탭 대신 <strong>모양</strong>·<strong>공간</strong> 드롭다운과 검색창, 좋아요 토글이 있습니다.
+</p>
 <ul>
-    <li><strong>전체</strong> — 모든 컬렉션 표시</li>
-    <li><strong>세살 / 정자살 / 빗살 / 격자 빗살 / 세모 솟을살 / 육모 솟을살</strong> — 엔진별 분류</li>
+    <li><strong>모양</strong> — 세살/정자살/빗살/격자 빗살/세모 솟을살/육모 솟을살 등 패턴 계열로 필터링</li>
+    <li><strong>공간</strong> — 사용 공간(거실·현관 등) 기준으로 필터링</li>
+    <li><strong>패턴 검색</strong> — 이름·코드로 검색</li>
+    <li><strong>좋아요</strong> — 내가 좋아요한 패턴만 표시 (로그인 필요)</li>
 </ul>
+
+<div class="guide-note">
+    <i class="bi bi-info-circle"></i>
+    <span>네 가지 필터는 <strong>동시에 조합되지 않습니다.</strong> 하나를 적용하면 나머지 필터는 자동으로 초기화되고, 방금 적용한 조건 하나만으로 검색됩니다. 예를 들어 검색어를 입력한 뒤 모양을 선택하면 검색어는 지워지고 모양 필터만 적용됩니다.</span>
+</div>
+
+<h2>좋아요</h2>
+<p>
+    마음에 드는 패턴은 카드 또는 상세 페이지의 <i class="bi bi-heart"></i> 아이콘을 클릭해 좋아요를 남길 수 있습니다.
+    상단 필터의 <span class="guide-ui">좋아요</span> 토글을 켜면 내가 좋아요한 패턴만 모아볼 수 있습니다.
+</p>
 
 <h2>스튜디오에서 열기</h2>
 <p>
@@ -54,9 +76,9 @@ include __DIR__ . '/_head.php';
 <h2>내 보드</h2>
 <p>마음에 드는 컬렉션 도면을 내 보드에 저장해 나만의 레퍼런스 라이브러리를 만들 수 있습니다.</p>
 <ol class="guide-steps">
-    <li>컬렉션 카드의 <span class="guide-ui"><i class="bi bi-bookmark"></i></span> 아이콘을 클릭하거나, 상세 페이지의 <span class="guide-ui">보드에 저장</span>을 클릭합니다.</li>
+    <li>컬렉션 <strong>카드</strong>의 <span class="guide-ui"><i class="bi bi-collection"></i></span> 보드 아이콘을 클릭합니다. (상세 페이지에는 이 버튼이 없으므로, 목록 화면에서 저장해야 합니다.)</li>
     <li>저장할 보드를 선택하거나 <span class="guide-ui">+ 새 보드</span>로 보드를 생성합니다.</li>
-    <li>내 보드는 상단 내비게이션 <span class="guide-ui">Collection</span> 드롭다운의 <strong>내 보드</strong> 섹션에서 확인할 수 있습니다.</li>
+    <li>내 보드는 상단 내비게이션 사용자 메뉴의 <strong>내 보드</strong> 섹션과, 도면 관리 페이지의 <strong>Boards</strong> 탭에서 확인할 수 있습니다.</li>
 </ol>
 
 <?php include __DIR__ . '/_foot.php'; ?>
