@@ -216,7 +216,7 @@
         fetch('api/render.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', ..._authHeader },
-            body: JSON.stringify({ image: composite.toDataURL('image/jpeg', 0.95), prompt, rect: { x: dl, y: dt, w: dw, h: dh } }),
+            body: JSON.stringify({ image: composite.toDataURL('image/png'), prompt, rect: { x: dl, y: dt, w: dw, h: dh } }),
             signal: _renderAbort.signal,
         })
         .then(r => { clearTimeout(_renderTimer); return r.json(); })

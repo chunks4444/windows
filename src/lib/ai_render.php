@@ -34,10 +34,13 @@ function ai_get_render_quality(): string {
 
 // AI 렌더링 기본 지시문 템플릿 — {{prompt}} 자리에 사용자가 고른/입력한 프롬프트가 삽입됨
 function ai_default_base_prompt_template(): string {
-    return 'Keep the window frame and lattice bars structurally identical to the input: '
-        . 'same bar count, spacing, and proportions. '
-        . 'Do not add, remove, merge, or reshape any bar or frame edge. '
-        . 'Everything else — surface material, texture, color, lighting, and the surrounding scene — should match: {{prompt}}.';
+    return 'The input image is a fixed architectural blueprint of a traditional Korean lattice window (살). '
+        . 'Treat every line in it as immovable structure: render the exact same frame and lattice geometry, '
+        . 'traced line-for-line, with identical bar count, spacing, positions, and proportions — pixel-accurate, '
+        . 'not approximate. Your only task is to apply surface material, texture, color, lighting, shadows, '
+        . 'reflections, and surrounding scene as follows: {{prompt}}. '
+        . 'Ignore any structural, layout, or pattern descriptions in that style request — the lattice layout '
+        . 'itself is already final and must not be reinterpreted, redrawn, simplified, or corrected.';
 }
 
 function ai_get_base_prompt_template(): string {
