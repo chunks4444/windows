@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../lib/db.php';
+require_once __DIR__ . '/../lib/engine_icons.php';
 try {
 $pdo = db();
 
@@ -127,22 +128,33 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
 
             <?php foreach ($works as $i => $w):
                 $desc = strip_tags($w['description']);
+                $icon = engine_icon_svg($w['engine_key'] ?? '');
             ?>
             <div class="wk-card"
                  data-title="<?= htmlspecialchars($w['title']) ?>"
                  data-desc="<?= htmlspecialchars($desc) ?>"
                  role="button"
                  onclick="location.href='/portfolio/<?= rawurlencode($w['slug']) ?>'">
-                <img src="<?= htmlspecialchars($w['image_url']) ?>"
-                     alt="<?= htmlspecialchars($w['title']) ?>"
-                     loading="lazy">
-                <div class="wk-card-grad"></div>
-                <div class="wk-card-num"><?= sprintf('%02d', $i + 1) ?></div>
-                <div class="wk-card-body">
+
+                <div class="wk-card-visual">
+                    <img src="<?= htmlspecialchars($w['image_url']) ?>"
+                         alt="<?= htmlspecialchars($w['title']) ?>"
+                         loading="lazy">
+                    <?php if ($icon): ?>
+                    <span class="wk-card-icon"><?= $icon ?></span>
+                    <?php endif; ?>
+                </div>
+
+                <div class="wk-card-caption">
                     <div class="wk-card-title"><?= htmlspecialchars($w['title']) ?></div>
                     <?php if ($desc): ?>
-                    <div class="wk-card-desc"><?= htmlspecialchars($desc) ?></div>
+                    <div class="wk-card-desc-text"><?= htmlspecialchars($desc) ?></div>
                     <?php endif; ?>
+                </div>
+
+                <div class="wk-card-foot">
+                    <span class="wk-card-num"><?= sprintf('%02d', $i + 1) ?></span>
+                    <span class="wk-card-plus">+</span>
                 </div>
             </div>
             <?php endforeach; ?>

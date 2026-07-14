@@ -2,6 +2,7 @@ const API = '/src/api/admin/works.php';
 function _h() { return { 'Authorization': 'Bearer ' + localStorage.getItem('pmok_auth_token'), 'Content-Type': 'application/json' }; }
 
 let works = [], dragSrc;
+const ENGINE_LABELS = { classic:'세살', square:'정자살', cross:'빗살', diamond:'격자 빗살', triangle:'세모 솟을살', hexagon:'육모 솟을살' };
 
 async function loadWorks() {
     const res  = await fetch(API, { headers: _h() });
@@ -20,6 +21,7 @@ function render() {
                 : `<div class="work-thumb-empty"><i class="bi bi-image"></i></div>`}</td>
             <td><strong>${esc(w.title)}</strong></td>
             <td style="color:var(--text-3);font-size:12px;">${esc(w.description || '')}</td>
+            <td style="font-size:12px;color:var(--text-3);">${ENGINE_LABELS[w.engine_key] || '—'}</td>
             <td><span class="${w.is_active ? 'adm-active-badge' : 'adm-withdrawn-badge'}">${w.is_active ? '노출' : '숨김'}</span></td>
             <td>
                 <div class="adm-action-cell">
@@ -42,6 +44,7 @@ function openModal(id) {
     document.getElementById('workId').value    = w?.id ?? '';
     document.getElementById('workTitle').value = w?.title ?? '';
     document.getElementById('workDesc').value  = w?.description ?? '';
+    document.getElementById('workEngine').value = w?.engine_key ?? '';
     document.getElementById('workImageUrl').value    = w?.image_url ?? '';
     const prev = document.getElementById('workImgPreview');
     if (w?.image_url) { prev.src = w.image_url; prev.classList.add('show'); }
@@ -92,6 +95,7 @@ async function saveWork() {
         id:          parseInt(document.getElementById('workId').value) || 0,
         title:       document.getElementById('workTitle').value.trim(),
         description: document.getElementById('workDesc').value.trim(),
+        engine_key:  document.getElementById('workEngine').value,
         image_url:   document.getElementById('workImageUrl').value.trim(),
         panel_bg:    document.getElementById('workPanelBg').value,
         title_color: document.getElementById('workTitleColor').value,

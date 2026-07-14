@@ -85,89 +85,123 @@ body { background: #fff; }
 .wk-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 1.1rem;
+    gap: 1px;
+    background: #0a0a0a;
+    border: 1px solid #0a0a0a;
 }
 
-/* ── 카드 ──────────────────────────────────────────────────── */
+/* ── 카드 (index-card / specimen 스타일) ──────────────────── */
 .wk-card {
     position: relative;
-    border-radius: 12px;
-    overflow: hidden;
     cursor: pointer;
-    background: var(--border);
+    background: #fff;
     aspect-ratio: 3 / 4;
-    /* hidden by default when filtered */
+    display: flex;
+    flex-direction: column;
+    padding: 1.1rem 1.1rem .95rem;
+    overflow: hidden;
 }
 .wk-card.wk-hidden { display: none; }
 
-.wk-card img {
+/* 중앙: 사진 + 아이콘 오버레이 */
+.wk-card-visual {
+    position: relative; flex: 1;
+    background: #f2efe8;
+    overflow: hidden;
+}
+.wk-card-visual img {
+    position: absolute; inset: 0;
     width: 100%; height: 100%;
     object-fit: cover; display: block;
     pointer-events: none;
-    transition: transform .45s ease;
+    transition: transform .5s ease, opacity .45s ease;
 }
-.wk-card:hover img { transform: scale(1.06); }
+.wk-card:hover .wk-card-visual img {
+    opacity: .1;
+    transform: scale(1.04);
+}
 
-/* 항상 보이는 하단 그라디언트 */
-.wk-card-grad {
+.wk-card-icon {
     position: absolute; inset: 0;
-    background: linear-gradient(
-        to top,
-        rgba(var(--text-rgb), .85) 0%,
-        rgba(var(--text-rgb), .3)  38%,
-        transparent        65%
-    );
+    display: flex; align-items: center; justify-content: center;
     pointer-events: none;
 }
+.wk-card-icon svg { width: 54%; height: 54%; overflow: visible; }
 
-/* 오버레이 텍스트 */
-.wk-card-body {
-    position: absolute; bottom: 0; left: 0; right: 0;
-    padding: 1.1rem 1rem .9rem;
-    color: var(--bg);
-    transform: translateY(0);
-    transition: transform .3s ease;
+/* 막대(rect) 기반 아이콘 — 각 막대가 중심에서 팽창하며 조립됨 */
+.wk-icon-bar {
+    fill: #0a0a0a;
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    transform: scale(0);
+    opacity: 0;
+    transition: transform .5s cubic-bezier(.22,1,.36,1), opacity .3s ease;
 }
+.wk-card:hover .wk-icon-bar { opacity: 1; transform: scale(1); }
+.wk-card:hover .wk-icon-bar.b1 { transition-delay: 0s; }
+.wk-card:hover .wk-icon-bar.b2 { transition-delay: .07s; }
+.wk-card:hover .wk-icon-bar.b3 { transition-delay: .14s; }
+.wk-card:hover .wk-icon-bar.b4 { transition-delay: .21s; }
+.wk-card:hover .wk-icon-bar.b5 { transition-delay: .28s; }
+
+/* 선(stroke) 기반 아이콘(육모살) — 획이 그려지듯 나타남 */
+.wk-icon-stroke {
+    stroke: #0a0a0a;
+    stroke-width: 46;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 420;
+    stroke-dashoffset: 420;
+    opacity: 0;
+    transition: stroke-dashoffset .55s cubic-bezier(.22,1,.36,1), opacity .15s ease;
+}
+.wk-card:hover .wk-icon-stroke { opacity: 1; stroke-dashoffset: 0; }
+.wk-card:hover .wk-icon-stroke.s1 { transition-delay: 0s; }
+.wk-card:hover .wk-icon-stroke.s2 { transition-delay: .09s; }
+.wk-card:hover .wk-icon-stroke.s3 { transition-delay: .09s; }
+.wk-card:hover .wk-icon-stroke.s4 { transition-delay: .18s; }
+.wk-card:hover .wk-icon-stroke.s5 { transition-delay: .18s; }
+
+/* 하단: 캡션 */
+.wk-card-caption { margin-top: .8rem; }
 .wk-card-title {
-    font-size: var(--fs-16); font-weight: 700;
-    line-height: 1.3; letter-spacing: -.02em;
-    margin-bottom: .3rem;
+    font-size: var(--fs-15); font-weight: 700; color: #0a0a0a;
+    line-height: 1.3; letter-spacing: -.01em;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.wk-card-desc {
-    font-size: var(--fs-13); color: rgba(var(--bg-rgb), .6);
+.wk-card-desc-text {
+    font-size: var(--fs-12); color: rgba(10,10,10,.5);
+    margin-top: .2rem;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    max-height: 0; overflow: hidden; opacity: 0;
-    transition: max-height .3s ease, opacity .3s ease;
-}
-.wk-card:hover .wk-card-desc {
-    max-height: 2.5rem; opacity: 1;
 }
 
-/* 우상단 번호 배지 */
+/* 하단: 번호 + 플러스 버튼 */
+.wk-card-foot {
+    margin-top: .75rem;
+    display: flex; align-items: center; justify-content: space-between;
+}
 .wk-card-num {
-    position: absolute; top: .65rem; right: .65rem;
-    font-size: var(--fs-12); font-weight: 700; letter-spacing: .06em;
-    color: rgba(var(--bg-rgb), .5);
-    pointer-events: none;
+    font-size: var(--fs-12); font-weight: 600; letter-spacing: .04em;
+    color: rgba(10,10,10,.4);
 }
-
-/* 호버 → 테두리 링 */
-.wk-card::after {
-    content: '';
-    position: absolute; inset: 0;
-    border-radius: 12px;
-    box-shadow: inset 0 0 0 0 var(--accent, var(--accent));
-    transition: box-shadow .25s ease;
-    pointer-events: none;
+.wk-card-plus {
+    width: 30px; height: 30px; border-radius: 999px;
+    background: #0a0a0a; color: #fff; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 600; line-height: 1;
+    transition: transform .35s cubic-bezier(.22,1,.36,1), background .25s ease;
 }
-.wk-card:hover::after { box-shadow: inset 0 0 0 2.5px var(--bg); }
+.wk-card:hover .wk-card-plus {
+    transform: rotate(135deg);
+    background: var(--accent, #0a0a0a);
+}
 
 /* 빈 상태 */
 .wk-empty {
     grid-column: 1 / -1;
     text-align: center; padding: 5rem 1rem;
     color: var(--text-muted, var(--text-muted)); font-size: var(--fs-16);
+    background: #fff;
 }
 
 /* ── 반응형 ──────────────────────────────────────────────── */
@@ -175,11 +209,12 @@ body { background: #fff; }
     .wk-grid { grid-template-columns: repeat(3, 1fr); }
 }
 @media (max-width: 768px) {
-    .wk-grid { grid-template-columns: repeat(2, 1fr); gap: .85rem; }
+    .wk-grid { grid-template-columns: repeat(2, 1fr); }
     .wk-grid-section { padding: 1.4rem 1rem 3rem; }
     .wk-hero-inner { padding: 0 1rem; }
     .wk-filter-inner { padding: .75rem 1rem; }
 }
 @media (max-width: 480px) {
-    .wk-grid { grid-template-columns: 1fr 1fr; gap: .65rem; }
+    .wk-grid { grid-template-columns: 1fr 1fr; }
+    .wk-card { padding: .8rem .8rem .7rem; }
 }

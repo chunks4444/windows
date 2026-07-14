@@ -116,6 +116,7 @@ CREATE TABLE IF NOT EXISTS drawings (
 
 -- 전통 창호 패턴 분류 (정자살/완자살 등). drawings.pattern_category(코드 문자열)가 이 테이블의 id를 참조
 -- ALTER TABLE pattern_categories ADD COLUMN code CHAR(3) NULL DEFAULT NULL COMMENT '평목 컬렉션 코드 체계 v1.0 계열 코드 (예: JEO, WAN) — 한글 첫 음절 로마자, library_patterns.slug 생성에 사용. 12계열 외 관리자 자유입력 카테고리는 NULL 허용' AFTER name, ADD UNIQUE KEY uq_pattern_categories_code (code)
+-- ALTER TABLE works ADD COLUMN engine_key VARCHAR(20) NULL DEFAULT NULL COMMENT '이 작품에 쓰인 엔진 (classic/square/cross/diamond/triangle/hexagon), NULL=미지정 — 포트폴리오 카드 호버 아이콘에 사용' AFTER desc_color
 CREATE TABLE IF NOT EXISTS pattern_categories (
     id         INT UNSIGNED     NOT NULL AUTO_INCREMENT,
     name       VARCHAR(40)      NOT NULL,
@@ -468,6 +469,7 @@ CREATE TABLE IF NOT EXISTS works (
     panel_bg    VARCHAR(20)       NOT NULL DEFAULT '#111111' COMMENT '카드 배경색',
     title_color VARCHAR(20)       NOT NULL DEFAULT '#ffffff' COMMENT '카드 제목 색상',
     desc_color  VARCHAR(20)       NOT NULL DEFAULT '#888888' COMMENT '카드 설명 색상',
+    engine_key  VARCHAR(20)       NULL     DEFAULT NULL COMMENT '이 작품에 쓰인 엔진 (classic/square/cross/diamond/triangle/hexagon), NULL=미지정 — 포트폴리오 카드 호버 아이콘에 사용',
     PRIMARY KEY (id),
     UNIQUE KEY uq_works_slug (slug),
     KEY idx_works_sort (sort_order, is_active)

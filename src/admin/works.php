@@ -85,6 +85,7 @@ require_admin_role('s');
                     <th style="width:96px;">이미지</th>
                     <th>제목</th>
                     <th>설명</th>
+                    <th style="width:88px;">엔진</th>
                     <th style="width:72px;">상태</th>
                     <th style="width:160px;"></th>
                 </tr>
@@ -120,6 +121,18 @@ require_admin_role('s');
             <div class="adm-mfield">
                 <label>설명 <span style="font-size:11px;color: var(--text);font-weight:400;">(카드 호버 시 표시)</span></label>
                 <textarea id="workDesc" rows="2" maxlength="300" placeholder="예: 경기도 양평" style="resize:vertical;padding:8px 10px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg);font-family:inherit;font-size:13px;color:var(--text);outline:none;width:100%;"></textarea>
+            </div>
+            <div class="adm-mfield">
+                <label>사용 엔진 <span style="font-size:11px;color: var(--text);font-weight:400;">(포트폴리오 카드 호버 아이콘)</span></label>
+                <select id="workEngine" style="height:38px;padding:0 10px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg);font-family:inherit;font-size:13px;color:var(--text);outline:none;width:100%;">
+                    <option value="">미지정</option>
+                    <option value="classic">세살</option>
+                    <option value="square">정자살</option>
+                    <option value="cross">빗살</option>
+                    <option value="diamond">격자 빗살</option>
+                    <option value="triangle">세모 솟을살</option>
+                    <option value="hexagon">육모 솟을살</option>
+                </select>
             </div>
             <div class="adm-mfield">
                 <label>패널 색상</label>

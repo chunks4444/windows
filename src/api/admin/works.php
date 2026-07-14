@@ -66,15 +66,17 @@ if ($action === 'save') {
     $panel_bg    = preg_match('/^#[0-9a-fA-F]{3,6}$/', $body['panel_bg']    ?? '') ? $body['panel_bg']    : '#111111';
     $title_color = preg_match('/^#[0-9a-fA-F]{3,6}$/', $body['title_color'] ?? '') ? $body['title_color'] : '#ffffff';
     $desc_color  = preg_match('/^#[0-9a-fA-F]{3,6}$/', $body['desc_color']  ?? '') ? $body['desc_color']  : '#888888';
+    $validEngines = ['classic', 'square', 'cross', 'diamond', 'triangle', 'hexagon'];
+    $engine_key   = in_array($body['engine_key'] ?? '', $validEngines, true) ? $body['engine_key'] : null;
 
     if ($id) {
-        $pdo->prepare('UPDATE works SET title=?, description=?, image_url=?, panel_bg=?, title_color=?, desc_color=? WHERE id=?')
-            ->execute([$title, $description, $image_url, $panel_bg, $title_color, $desc_color, $id]);
+        $pdo->prepare('UPDATE works SET title=?, description=?, image_url=?, panel_bg=?, title_color=?, desc_color=?, engine_key=? WHERE id=?')
+            ->execute([$title, $description, $image_url, $panel_bg, $title_color, $desc_color, $engine_key, $id]);
     } else {
         $slug     = make_unique_slug($pdo, 'works', $title);
         $maxOrder = (int)$pdo->query('SELECT COALESCE(MAX(sort_order),0) FROM works')->fetchColumn();
-        $pdo->prepare('INSERT INTO works (title, slug, description, image_url, sort_order, panel_bg, title_color, desc_color) VALUES (?,?,?,?,?,?,?,?)')
-            ->execute([$title, $slug, $description, $image_url, $maxOrder + 1, $panel_bg, $title_color, $desc_color]);
+        $pdo->prepare('INSERT INTO works (title, slug, description, image_url, sort_order, panel_bg, title_color, desc_color, engine_key) VALUES (?,?,?,?,?,?,?,?,?)')
+            ->execute([$title, $slug, $description, $image_url, $maxOrder + 1, $panel_bg, $title_color, $desc_color, $engine_key]);
         $id = (int)$pdo->lastInsertId();
     }
     $stmt = $pdo->prepare('SELECT * FROM works WHERE id=?');
