@@ -118,7 +118,7 @@
     const txtDoorCount = document.getElementById('txtDoorCount');
     const btnSavePNG = document.getElementById('btnSavePNG');
     const btnSavePDF = document.getElementById('btnSavePDF');
-    const aiFileUploader = document.getElementById('aiFileUploader');
+    // aiFileUploader는 engine-common.js가 선언(배경화면 업로드 공용 로직에서 사용)
 
     let geo = {};
     let scaleFactor = 1.0;
