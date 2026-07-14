@@ -270,125 +270,7 @@
     }
 
     let _resizeTimer;
-    // ── 다중 썸네일 관리 ─────────────────────────
-    const rightSidebar       = document.getElementById('rightSidebar');
-    const btnRightSidebarTab = document.getElementById('btnRightSidebarTab');
-    const thumbList          = document.getElementById('thumbList');
-    const btnAddThumb        = document.getElementById('btnAddThumb');
-
-    btnRightSidebarTab.addEventListener('click', () => {
-        if (rightSidebar.classList.contains('collapsed')) showRightSidebar();
-        else hideRightSidebar();
-    });
-
-    const WALLPAPER_ENGINE  = 'cross';
-    const WALLPAPER_API     = '/src/api/wallpapers/';
-    // 이미지 목록: [{id, serverId, src, img, filename}]
-    let thumbImages   = [];
-    let activeThumbId = null;
-
-    const btnClearBg = document.getElementById('btnClearBg');
-
-    function updateClearBgBtn() {
-        if (appBackgroundImage) {
-            btnClearBg.style.display = 'flex';
-        } else {
-            btnClearBg.style.display = 'none';
-        }
-    }
-
-    btnClearBg.addEventListener('click', () => {
-        appBackgroundImage = null;
-        localStorage.removeItem(BG_IMAGE_KEY);
-        thumbList.querySelectorAll('.rp-thumb-item').forEach(el => el.classList.remove('active'));
-        activeThumbId = null;
-        updateClearBgBtn();
-        draw();
-    });
-
-    function setActiveThumb(id) {
-        activeThumbId = id;
-        const found = thumbImages.find(t => t.id === id);
-        appBackgroundImage = found ? found.img : null;
-
-        try {
-            if (found?.serverId) localStorage.setItem(BG_IMAGE_KEY, String(found.serverId));
-            else                 localStorage.removeItem(BG_IMAGE_KEY);
-        } catch(e) {}
-
-        // 활성 표시 갱신
-        thumbList.querySelectorAll('.rp-thumb-item').forEach(el => {
-            el.classList.toggle('active', el.dataset.id === String(id));
-        });
-        updateClearBgBtn();
-        draw();
-    }
-
-    let _wpAuthWarned = false;
-    async function uploadWallpaperToServer(dataUrl, filename, drawingId, versionSavedAt) {
-        try {
-            const res = await fetch(WALLPAPER_API + 'upload.php', {
-                method: 'POST', headers: _wpHeaders(),
-                body: JSON.stringify({ image: dataUrl, filename, engine: WALLPAPER_ENGINE, drawing_id: drawingId || null, version_saved_at: versionSavedAt || null }),
-            });
-            if (res.status === 401) return 'auth';
-            const data = await res.json();
-            if (data.error) { console.warn('배경 업로드 실패:', data.error); return null; }
-            return { id: data.id, url: data.url };
-        } catch { return null; }
-    }
-
-    btnAddThumb.addEventListener('click', () => aiFileUploader.click());
-
-    let _uploadPending = 0;
-    function _setThumbBtnLoading(v) {
-        btnAddThumb.classList.toggle('btn-loading', v);
-        btnAddThumb.disabled = v;
-    }
-
-    aiFileUploader.addEventListener('change', function(e) {
-        const files = Array.from(e.target.files);
-        files.forEach(file => {
-            if (!['image/jpeg', 'image/png'].includes(file.type)) { alert('PNG 또는 JPG 파일만 업로드할 수 있습니다.'); return; }
-            if (file.size > 700 * 1024) { alert('파일 크기는 700KB 이하여야 합니다.'); return; }
-            _uploadPending++;
-            _setThumbBtnLoading(true);
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                compressImage(event.target.result, async function(dataUrl) {
-                    // 로컬 미리보기를 먼저 표시
-                    const id = Date.now() + Math.random();
-                    const imgObj = new Image();
-                    imgObj.src = dataUrl;
-                    imgObj.onload = function() {
-                        thumbImages.push({ id, serverId: null, src: dataUrl, img: imgObj, filename: file.name });
-                        addThumbItem(id, dataUrl, file.name);
-                        showRightSidebar();
-                        setActiveThumb(id);
-                    };
-
-                    // 서버 업로드 후 src를 URL로 교체
-                    const result = await uploadWallpaperToServer(dataUrl, file.name, drawingId, _currentVersionSavedAt());
-                    if (result === 'auth') {
-                        if (!_wpAuthWarned) {
-                            _wpAuthWarned = true;
-                            pmAlert('배경 이미지는 로그인해야 서버에 저장됩니다. 지금은 화면에서만 보이고, 로그인 후 다시 저장하면 함께 저장됩니다.', { type: 'danger' });
-                        }
-                    } else if (result) {
-                        const thumb = thumbImages.find(t => t.id === id);
-                        if (thumb) {
-                            thumb.serverId = result.id;
-                            thumb.src      = result.url;
-                        }
-                        if (activeThumbId === id) localStorage.setItem(BG_IMAGE_KEY, String(result.id));
-                    }
-                    if (--_uploadPending <= 0) { _uploadPending = 0; _setThumbBtnLoading(false); }
-                });
-            };
-            reader.readAsDataURL(file);
-        });
-        aiFileUploader.value = '';
-    });
+    // 다중 썸네일(배경화면) 관리 로직은 src/js/engine-common.js로 공용화됨 (WALLPAPER_ENGINE만 아래서 선언)
 
 
 
@@ -1964,6 +1846,7 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
     const MODIFIED_KEY      = 'pmok_cross_modified';
     const VERSIONS_KEY      = 'pmok_cross_versions';
     const BG_IMAGE_KEY      = 'pmok_cross_bg';
+    const WALLPAPER_ENGINE  = 'cross';
     const CURRENT_TITLE_KEY = 'pmok_cross_current_title';
     const NAME_KEY          = 'pmok_cross_name';
     const MAX_VERSIONS      = 20;
@@ -2135,18 +2018,23 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
     }
 
     // 썸네일 + 배경 이미지 복원 (서버에서 로드)
+    // mySeq로 요청 순번을 매겨, 응답이 도착했을 때 그 사이 다른 도면으로 전환되지 않았는지 확인한다.
+    // (비동기 fetch 도중 사용자가 다른 도면을 열면 restoreThumbs()가 다시 호출되는데, 가드가 없으면
+    //  나중에 도착한 이전 도면의 응답이 지금 보고 있는 도면 화면에 덮어써지는 문제가 있었다.)
+    let _restoreThumbsSeq = 0;
     async function restoreThumbs() {
-        // 구버전 BG_IMAGE_KEY 값(숫자 id가 아닌 경우) 정리
-        const _bgRaw = localStorage.getItem(BG_IMAGE_KEY);
-        if (_bgRaw && !/^\d+$/.test(_bgRaw)) localStorage.removeItem(BG_IMAGE_KEY);
+        const mySeq = ++_restoreThumbsSeq;
 
-        // 기존 썸네일 초기화
-        thumbImages = [];
-        thumbList.innerHTML = '';
-        appBackgroundImage = null;
-        activeThumbId = null;
-        localStorage.removeItem(BG_IMAGE_KEY);
-        updateClearBgBtn();
+        // 구버전 BG_IMAGE_KEY 값(숫자 id가 아닌 경우) 정리 + clearThumbnails()가 지우기 전에 미리 읽어둔다
+        // (예전엔 clearThumbnails() 이후에 다시 읽어서 항상 null이 나오는 바람에 "마지막으로 보던 배경"
+        //  복원 기능이 죽어 있었다)
+        let savedActiveServerId = localStorage.getItem(BG_IMAGE_KEY);
+        if (savedActiveServerId && !/^\d+$/.test(savedActiveServerId)) {
+            localStorage.removeItem(BG_IMAGE_KEY);
+            savedActiveServerId = null;
+        }
+
+        clearThumbnails();
         if (!drawingId) return;
         try {
             const vsa = _currentVersionSavedAt();
@@ -2156,18 +2044,20 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
                 headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _wpToken() },
                 body: JSON.stringify({ drawing_id: drawingId || 0, engine: WALLPAPER_ENGINE, version_saved_at: _currentVersionSavedAt() }),
             });
+            if (mySeq !== _restoreThumbsSeq) return; // 응답 도착 전에 다른 도면으로 전환됨 — 폐기
             if (!res.ok) return;
             const data = await res.json();
+            if (mySeq !== _restoreThumbsSeq) return;
             if (!data.wallpapers?.length) { return; }
-            const activeServerId = localStorage.getItem(BG_IMAGE_KEY);
             const serverIds    = data.wallpapers.map(w => String(w.id));
             const lastServerId = String(data.wallpapers[data.wallpapers.length - 1].id);
-            const targetId = (activeServerId && serverIds.includes(activeServerId))
-                ? activeServerId : lastServerId;
+            const targetId = (savedActiveServerId && serverIds.includes(savedActiveServerId))
+                ? savedActiveServerId : lastServerId;
             data.wallpapers.forEach(({ id: serverId, filename, url: src }) => {
                 const id = Date.now() + Math.random();
                 const imgObj = new Image();
                 imgObj.onload = function() {
+                    if (mySeq !== _restoreThumbsSeq) return; // 그 사이 다른 도면으로 전환됨 — 폐기
                     thumbImages.push({ id, serverId: Number(serverId), src, img: imgObj, filename });
                     addThumbItem(id, src, filename);
                     if (String(serverId) === targetId) setActiveThumb(id);
@@ -2392,9 +2282,7 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
             localStorage.removeItem(NAME_KEY);
             renderVerList();
             // 배경 이미지 복원
-            thumbImages = []; thumbList.innerHTML = '';
-            appBackgroundImage = null; activeThumbId = null;
-            updateClearBgBtn();
+            clearThumbnails();
             if (data.wallpapers?.length) {
                 const last = data.wallpapers[data.wallpapers.length - 1];
                 await Promise.all(data.wallpapers.map(({ filename, url: src }) =>
@@ -2632,9 +2520,7 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
         setElText('dateCreated', fmtDate(now));
         setElText('dateModified', fmtDate(now));
         scaleFactor = 1.0; panX = 0; panY = 0;
-        thumbImages = []; thumbList.innerHTML = '';
-        appBackgroundImage = null; activeThumbId = null;
-        updateClearBgBtn();
+        clearThumbnails();
         renderVerList(); closeDrawingManager();
         draw();
     }

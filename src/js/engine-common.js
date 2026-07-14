@@ -116,6 +116,132 @@
         thumbList.appendChild(item);
     }
 
+    // ── 다중 썸네일(배경화면) 관리 — 6개 엔진 공통 ─────────────────────────
+    // WALLPAPER_ENGINE/BG_IMAGE_KEY/drawingId/appBackgroundImage/draw()는 각 엔진 js 파일이
+    // 선언·정의한다. engine-common.js가 먼저 로드되지만 아래는 전부 나중에(이벤트 발생 시)
+    // 실행되는 함수라 참조 시점엔 이미 정의돼 있어 문제없다 (addThumbItem과 동일한 방식).
+    const WALLPAPER_API = '/src/api/wallpapers/';
+    let thumbImages   = [];
+    let activeThumbId = null;
+
+    const rightSidebar       = document.getElementById('rightSidebar');
+    const btnRightSidebarTab = document.getElementById('btnRightSidebarTab');
+    const thumbList          = document.getElementById('thumbList');
+    const btnAddThumb        = document.getElementById('btnAddThumb');
+    const btnClearBg         = document.getElementById('btnClearBg');
+    const aiFileUploader     = document.getElementById('aiFileUploader');
+
+    btnRightSidebarTab.addEventListener('click', () => {
+        if (rightSidebar.classList.contains('collapsed')) showRightSidebar();
+        else hideRightSidebar();
+    });
+
+    function updateClearBgBtn() {
+        btnClearBg.style.display = appBackgroundImage ? 'flex' : 'none';
+    }
+
+    btnClearBg.addEventListener('click', () => {
+        appBackgroundImage = null;
+        localStorage.removeItem(BG_IMAGE_KEY);
+        thumbList.querySelectorAll('.rp-thumb-item').forEach(el => el.classList.remove('active'));
+        activeThumbId = null;
+        updateClearBgBtn();
+        draw();
+    });
+
+    function setActiveThumb(id) {
+        activeThumbId = id;
+        const found = thumbImages.find(t => t.id === id);
+        appBackgroundImage = found ? found.img : null;
+
+        try {
+            if (found?.serverId) localStorage.setItem(BG_IMAGE_KEY, String(found.serverId));
+            else                 localStorage.removeItem(BG_IMAGE_KEY);
+        } catch(e) {}
+
+        // 활성 표시 갱신
+        thumbList.querySelectorAll('.rp-thumb-item').forEach(el => {
+            el.classList.toggle('active', el.dataset.id === String(id));
+        });
+        updateClearBgBtn();
+        draw();
+    }
+
+    // 썸네일 목록/활성 배경을 한 번에 비운다 (새 도면 시작·다른 도면 로드 시 공용)
+    function clearThumbnails() {
+        thumbImages = [];
+        thumbList.innerHTML = '';
+        appBackgroundImage = null;
+        activeThumbId = null;
+        localStorage.removeItem(BG_IMAGE_KEY);
+        updateClearBgBtn();
+    }
+
+    let _wpAuthWarned = false;
+    async function uploadWallpaperToServer(dataUrl, filename, versionSavedAt) {
+        try {
+            const res = await fetch(WALLPAPER_API + 'upload.php', {
+                method: 'POST', headers: _wpHeaders(),
+                body: JSON.stringify({ image: dataUrl, filename, engine: WALLPAPER_ENGINE, drawing_id: drawingId || null, version_saved_at: versionSavedAt || null }),
+            });
+            if (res.status === 401) return 'auth';
+            const data = await res.json();
+            if (data.error) { console.warn('배경 업로드 실패:', data.error); return null; }
+            return { id: data.id, url: data.url };
+        } catch { return null; }
+    }
+
+    btnAddThumb.addEventListener('click', () => aiFileUploader.click());
+
+    let _uploadPending = 0;
+    function _setThumbBtnLoading(v) {
+        btnAddThumb.classList.toggle('btn-loading', v);
+        btnAddThumb.disabled = v;
+    }
+
+    aiFileUploader.addEventListener('change', function(e) {
+        const files = Array.from(e.target.files);
+        files.forEach(file => {
+            if (!['image/jpeg', 'image/png'].includes(file.type)) { alert('PNG 또는 JPG 파일만 업로드할 수 있습니다.'); return; }
+            _uploadPending++;
+            _setThumbBtnLoading(true);
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                compressImage(event.target.result, async function(dataUrl) {
+                    // 로컬 미리보기를 먼저 표시
+                    const id = Date.now() + Math.random();
+                    const imgObj = new Image();
+                    imgObj.src = dataUrl;
+                    imgObj.onload = function() {
+                        thumbImages.push({ id, serverId: null, src: dataUrl, img: imgObj, filename: file.name });
+                        addThumbItem(id, dataUrl, file.name);
+                        showRightSidebar();
+                        setActiveThumb(id);
+                    };
+
+                    // 서버 업로드 후 src를 URL로 교체
+                    const result = await uploadWallpaperToServer(dataUrl, file.name, _currentVersionSavedAt());
+                    if (result === 'auth') {
+                        if (!_wpAuthWarned) {
+                            _wpAuthWarned = true;
+                            pmAlert('배경 이미지는 로그인해야 서버에 저장됩니다. 지금은 화면에서만 보이고, 로그인 후 다시 저장하면 함께 저장됩니다.', { type: 'danger' });
+                        }
+                    } else if (result) {
+                        const thumb = thumbImages.find(t => t.id === id);
+                        if (thumb) {
+                            thumb.serverId = result.id;
+                            thumb.src      = result.url;
+                        }
+                        if (activeThumbId === id) localStorage.setItem(BG_IMAGE_KEY, String(result.id));
+                    }
+                    if (--_uploadPending <= 0) { _uploadPending = 0; _setThumbBtnLoading(false); }
+                });
+            };
+            reader.readAsDataURL(file);
+        });
+        aiFileUploader.value = '';
+    });
+
     function animatePanelResize() {
         const duration = 270;
         const start = performance.now();
