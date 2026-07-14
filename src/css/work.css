@@ -84,40 +84,31 @@ body { background: #fff; }
 
 .wk-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 1px;
     background: #0a0a0a;
     border: 1px solid #0a0a0a;
 }
 
-/* ── 카드 (index-card / specimen 스타일) ──────────────────── */
+/* ── 카드 (풀블리드 사진 + 호버 오버레이) ──────────────────── */
 .wk-card {
     position: relative;
     cursor: pointer;
-    background: #fff;
-    aspect-ratio: 3 / 4;
-    display: flex;
-    flex-direction: column;
-    padding: 1.1rem 1.1rem .95rem;
+    background: #0a0a0a;
+    aspect-ratio: 4 / 3;
     overflow: hidden;
 }
 .wk-card.wk-hidden { display: none; }
 
-/* 중앙: 사진 + 아이콘 오버레이 */
-.wk-card-visual {
-    position: relative; flex: 1;
-    background: #f2efe8;
-    overflow: hidden;
-}
-.wk-card-visual img {
+.wk-card-photo {
     position: absolute; inset: 0;
     width: 100%; height: 100%;
     object-fit: cover; display: block;
     pointer-events: none;
-    transition: transform .5s ease, opacity .45s ease;
+    transition: transform .5s ease, opacity .4s ease;
 }
-.wk-card:hover .wk-card-visual img {
-    opacity: .1;
+.wk-card:hover .wk-card-photo {
+    opacity: .25;
     transform: scale(1.04);
 }
 
@@ -126,11 +117,11 @@ body { background: #fff; }
     display: flex; align-items: center; justify-content: center;
     pointer-events: none;
 }
-.wk-card-icon svg { width: 54%; height: 54%; overflow: visible; }
+.wk-card-icon svg { width: 30%; height: 30%; overflow: visible; }
 
 /* 막대(rect) 기반 아이콘 — 각 막대가 중심에서 팽창하며 조립됨 */
 .wk-icon-bar {
-    fill: #0a0a0a;
+    fill: #fff;
     transform-box: fill-box;
     transform-origin: 50% 50%;
     transform: scale(0);
@@ -146,7 +137,7 @@ body { background: #fff; }
 
 /* 선(stroke) 기반 아이콘(육모살) — 획이 그려지듯 나타남 */
 .wk-icon-stroke {
-    stroke: #0a0a0a;
+    stroke: #fff;
     stroke-width: 46;
     stroke-linecap: round;
     stroke-linejoin: round;
@@ -162,39 +153,43 @@ body { background: #fff; }
 .wk-card:hover .wk-icon-stroke.s4 { transition-delay: .18s; }
 .wk-card:hover .wk-icon-stroke.s5 { transition-delay: .18s; }
 
-/* 하단: 캡션 */
-.wk-card-caption { margin-top: .8rem; }
+/* 하단 오버레이 — 제목·번호·링크 버튼, 호버 시에만 노출 */
+.wk-card-overlay {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    padding: 1rem 1.1rem;
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity .35s ease, transform .35s ease;
+    pointer-events: none;
+}
+.wk-card:hover .wk-card-overlay { opacity: 1; transform: translateY(0); }
+
+.wk-card-info { min-width: 0; }
 .wk-card-title {
-    font-size: var(--fs-15); font-weight: 700; color: #0a0a0a;
+    font-size: var(--fs-15); font-weight: 700; color: #fff;
     line-height: 1.3; letter-spacing: -.01em;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .wk-card-desc-text {
-    font-size: var(--fs-12); color: rgba(10,10,10,.5);
+    font-size: var(--fs-12); color: rgba(255,255,255,.65);
     margin-top: .2rem;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
-/* 하단: 번호 + 플러스 버튼 */
-.wk-card-foot {
-    margin-top: .75rem;
-    display: flex; align-items: center; justify-content: space-between;
-}
+.wk-card-meta { display: flex; align-items: center; gap: .65rem; flex-shrink: 0; }
 .wk-card-num {
     font-size: var(--fs-12); font-weight: 600; letter-spacing: .04em;
-    color: rgba(10,10,10,.4);
+    color: rgba(255,255,255,.6);
 }
 .wk-card-plus {
     width: 30px; height: 30px; border-radius: 999px;
-    background: #0a0a0a; color: #fff; flex-shrink: 0;
+    background: #fff; color: #0a0a0a; flex-shrink: 0;
     display: flex; align-items: center; justify-content: center;
     font-size: 22px; font-weight: 600; line-height: 1;
-    transition: transform .35s cubic-bezier(.22,1,.36,1), background .25s ease;
+    transition: transform .35s cubic-bezier(.22,1,.36,1);
 }
-.wk-card:hover .wk-card-plus {
-    transform: rotate(135deg);
-    background: var(--accent, #0a0a0a);
-}
+.wk-card:hover .wk-card-plus { transform: rotate(135deg); }
 
 /* 빈 상태 */
 .wk-empty {
@@ -206,7 +201,7 @@ body { background: #fff; }
 
 /* ── 반응형 ──────────────────────────────────────────────── */
 @media (max-width: 1100px) {
-    .wk-grid { grid-template-columns: repeat(3, 1fr); }
+    .wk-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 768px) {
     .wk-grid { grid-template-columns: repeat(2, 1fr); }
@@ -215,6 +210,5 @@ body { background: #fff; }
     .wk-filter-inner { padding: .75rem 1rem; }
 }
 @media (max-width: 480px) {
-    .wk-grid { grid-template-columns: 1fr 1fr; }
-    .wk-card { padding: .8rem .8rem .7rem; }
+    .wk-grid { grid-template-columns: 1fr; }
 }
