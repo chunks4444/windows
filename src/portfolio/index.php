@@ -122,47 +122,49 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
         </div>
     </div>
 
-    <!-- ── 그리드 ── -->
-    <section class="wk-grid-section">
-        <div class="wk-grid" id="wkGrid">
+    <!-- ── 가로 스크롤 캐러셀 (풀스크린) ── -->
+    <section class="wk-carousel-section">
+        <button class="wk-nav-arrow prev" id="wkPrev" aria-label="이전"></button>
+        <button class="wk-nav-arrow next" id="wkNext" aria-label="다음"></button>
 
+        <div class="wk-carousel" id="wkCarousel">
             <?php foreach ($works as $i => $w):
                 $desc = strip_tags($w['description']);
                 $icon = engine_icon_svg($w['engine_key'] ?? '');
             ?>
-            <div class="wk-card"
+            <div class="wk-slide<?= $i === 0 ? ' is-active' : '' ?>"
                  data-title="<?= htmlspecialchars($w['title']) ?>"
                  data-desc="<?= htmlspecialchars($desc) ?>"
-                 role="button"
-                 onclick="location.href='/portfolio/<?= rawurlencode($w['slug']) ?>'">
+                 data-href="/portfolio/<?= rawurlencode($w['slug']) ?>"
+                 role="button">
 
-                <img class="wk-card-photo"
+                <img class="wk-slide-photo"
                      src="<?= htmlspecialchars($w['image_url']) ?>"
                      alt="<?= htmlspecialchars($w['title']) ?>"
                      loading="lazy">
+                <div class="wk-slide-scrim"></div>
                 <?php if ($icon): ?>
-                <span class="wk-card-icon"><?= $icon ?></span>
+                <span class="wk-slide-icon"><?= $icon ?></span>
                 <?php endif; ?>
 
-                <div class="wk-card-overlay">
-                    <div class="wk-card-info">
-                        <div class="wk-card-title"><?= htmlspecialchars($w['title']) ?></div>
-                        <?php if ($desc): ?>
-                        <div class="wk-card-desc-text"><?= htmlspecialchars($desc) ?></div>
-                        <?php endif; ?>
-                    </div>
-                    <div class="wk-card-meta">
-                        <span class="wk-card-num"><?= sprintf('%02d', $i + 1) ?></span>
-                        <span class="wk-card-plus">+</span>
+                <div class="wk-slide-info">
+                    <?php if ($desc): ?>
+                    <div class="wk-slide-eyebrow"><?= htmlspecialchars($desc) ?></div>
+                    <?php endif; ?>
+                    <span class="wk-slide-rule"></span>
+                    <h2 class="wk-slide-title"><?= htmlspecialchars($w['title']) ?></h2>
+                    <span class="wk-slide-rule"></span>
+                    <div class="wk-slide-foot">
+                        <span class="wk-slide-num"><?= sprintf('%02d', $i + 1) ?> / <?= sprintf('%02d', $total) ?></span>
+                        <span class="wk-slide-plus">+</span>
                     </div>
                 </div>
             </div>
             <?php endforeach; ?>
+        </div>
 
-            <div class="wk-empty" id="wkEmpty" style="display:none;">
-                해당 카테고리의 작품이 없습니다.
-            </div>
-
+        <div class="wk-empty" id="wkEmpty" style="display:none;">
+            해당 카테고리의 작품이 없습니다.
         </div>
     </section>
 
@@ -170,9 +172,57 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
 
 <script>
 (function () {
-    const tags  = document.querySelectorAll('.wk-tag');
-    const cards = document.querySelectorAll('.wk-card');
-    const emptyEl = document.getElementById('wkEmpty');
+    const tags     = document.querySelectorAll('.wk-tag');
+    const carousel = document.getElementById('wkCarousel');
+    const slides   = Array.from(document.querySelectorAll('.wk-slide'));
+    const emptyEl  = document.getElementById('wkEmpty');
+    const prevBtn  = document.getElementById('wkPrev');
+    const nextBtn  = document.getElementById('wkNext');
+    const section  = document.querySelector('.wk-carousel-section');
+
+    // 캐러셀 섹션이 남은 뷰포트를 정확히 채우도록 높이를 실측(공지 배너 유무 등 변동 대응)
+    function fitCarouselHeight() {
+        const top = section.getBoundingClientRect().top;
+        section.style.height = Math.max(320, window.innerHeight - top) + 'px';
+    }
+    fitCarouselHeight();
+    window.addEventListener('resize', fitCarouselHeight);
+    new ResizeObserver(fitCarouselHeight).observe(document.body);
+
+    // 활성(중앙) 슬라이드만 정보 노출
+    const io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            entry.target.classList.toggle('is-active', entry.intersectionRatio > 0.6);
+        });
+    }, { root: carousel, threshold: [0, 0.6, 1] });
+    slides.forEach(s => io.observe(s));
+
+    function goToSlide(el) {
+        el.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
+
+    slides.forEach(slide => {
+        slide.addEventListener('click', () => {
+            if (slide.classList.contains('is-active')) {
+                location.href = slide.dataset.href;
+            } else {
+                goToSlide(slide);
+            }
+        });
+    });
+
+    function visibleSlides() { return slides.filter(s => !s.classList.contains('wk-hidden')); }
+
+    prevBtn.addEventListener('click', () => {
+        const vs = visibleSlides();
+        const cur = vs.findIndex(s => s.classList.contains('is-active'));
+        goToSlide(vs[Math.max(0, cur - 1)] || vs[0]);
+    });
+    nextBtn.addEventListener('click', () => {
+        const vs = visibleSlides();
+        const cur = vs.findIndex(s => s.classList.contains('is-active'));
+        goToSlide(vs[Math.min(vs.length - 1, cur + 1)] || vs[0]);
+    });
 
     tags.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -181,11 +231,11 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
 
             const tag = btn.dataset.tag;
             let visible = 0;
-            cards.forEach(card => {
+            slides.forEach(slide => {
                 const match = tag === '전체' ||
-                    card.dataset.title.includes(tag) ||
-                    card.dataset.desc.includes(tag);
-                card.classList.toggle('wk-hidden', !match);
+                    slide.dataset.title.includes(tag) ||
+                    slide.dataset.desc.includes(tag);
+                slide.classList.toggle('wk-hidden', !match);
                 if (match) visible++;
             });
             emptyEl.style.display = visible === 0 ? 'block' : 'none';
@@ -193,6 +243,5 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
     });
 })();
 </script>
-<?php include __DIR__ . '/../components/footer.php'; ?>
 </body>
 </html>

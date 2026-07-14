@@ -1,16 +1,19 @@
-/* ── WORK INDEX — Slidesgo-style grid layout ──────────────── */
+/* ── WORK INDEX — 풀스크린 가로 캐러셀 (Design Canada 스타일) ── */
 
 /* body padding-top:68px → nav.css 에서 처리 */
 body { background: #fff; }
 
-/* ── 페이지 래퍼 ──────────────────────────────────────────── */
-.wk-page { min-height: calc(100vh - 68px); }
+/* ── 페이지 래퍼 — 캐러셀 섹션 높이는 JS가 남은 뷰포트에 맞춰 계산(work.js) ── */
+.wk-page {
+    display: flex; flex-direction: column;
+}
 
-/* ── 페이지 헤더 ──────────────────────────────────────────── */
+/* ── 페이지 헤더 (컴팩트) ─────────────────────────────────── */
 .wk-hero {
+    flex: 0 0 auto;
     background: #fff;
     border-bottom: 1px solid var(--border, var(--border));
-    padding: 2.5rem 0 0;
+    padding: 1.1rem 0 .9rem;
 }
 .wk-hero-inner {
     max-width: 1320px; margin: 0 auto; padding: 0 2rem;
@@ -19,32 +22,33 @@ body { background: #fff; }
     display: inline-block;
     font-size: var(--fs-12); font-weight: 700; letter-spacing: .1em;
     text-transform: uppercase; color: var(--accent, var(--accent));
-    margin-bottom: .5rem;
+    margin-bottom: .25rem;
 }
 .wk-hero h1 {
-    font-size: clamp(var(--fs-22), 3vw, var(--fs-32));
+    display: inline-block;
+    font-size: var(--fs-22);
     font-weight: 700; letter-spacing: -.01em; color: var(--text, var(--text));
-    line-height: 1.3; margin-bottom: .5rem;
+    line-height: 1.3; margin: 0 .6rem 0 0;
 }
 .wk-hero-sub {
-    font-size: var(--fs-14); font-weight: 400; color: var(--text); margin-bottom: 1.75rem;
+    display: inline; font-size: var(--fs-13); font-weight: 400; color: var(--text-muted);
 }
 .wk-count-badge {
     display: inline-flex; align-items: center; gap: .35rem;
     background: var(--accent-tint, var(--accent-tint)); color: var(--accent, var(--accent));
-    font-size: var(--fs-13); font-weight: 400; padding: .25rem .7rem;
+    font-size: var(--fs-12); font-weight: 400; padding: .2rem .6rem;
     border-radius: 999px;
 }
 
 /* ── 필터 바 ──────────────────────────────────────────────── */
 .wk-filter-bar {
+    flex: 0 0 auto;
     background: #fff;
     border-bottom: 1px solid var(--border, var(--border));
-    position: sticky; top: 68px; z-index: 50;
 }
 .wk-filter-inner {
     max-width: 1320px; margin: 0 auto;
-    padding: .75rem 2rem;
+    padding: .6rem 2rem;
     display: flex; align-items: center; gap: .5rem;
     overflow-x: auto; scrollbar-width: none;
 }
@@ -52,9 +56,9 @@ body { background: #fff; }
 
 .wk-tag {
     flex-shrink: 0;
-    height: 36px;
+    height: 32px;
     display: inline-flex; align-items: center;
-    padding: 0 16px; border-radius: 999px;
+    padding: 0 14px; border-radius: 999px;
     font-size: var(--fs-13); font-weight: 400; cursor: pointer;
     border: 1px solid var(--border, var(--border));
     background: var(--bg); color: var(--text);
@@ -66,60 +70,74 @@ body { background: #fff; }
     border-color: var(--text);
 }
 
-/* ── 그리드 영역 ──────────────────────────────────────────── */
-.wk-grid-section {
-    max-width: 1320px; margin: 0 auto;
-    padding: 2rem 2rem 4rem;
-}
-.wk-grid-header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 1.25rem;
-}
-.wk-grid-header h2 {
-    font-size: var(--fs-16); font-weight: 700; color: var(--text, var(--text));
-}
-.wk-visible-count {
-    font-size: var(--fs-14); color: var(--text-muted, var(--text-muted));
-}
-
-.wk-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1px;
-    background: #0a0a0a;
-    border: 1px solid #0a0a0a;
-}
-
-/* ── 카드 (풀블리드 사진 + 호버 오버레이) ──────────────────── */
-.wk-card {
+/* ── 캐러셀 섹션 (남은 화면 전체, 높이는 work.js가 인라인으로 설정) ── */
+.wk-carousel-section {
     position: relative;
-    cursor: pointer;
-    background: #0a0a0a;
-    aspect-ratio: 4 / 3;
-    overflow: hidden;
+    height: 70vh; /* JS 실행 전 대비 fallback */
+    background: #000;
 }
-.wk-card.wk-hidden { display: none; }
 
-.wk-card-photo {
+.wk-carousel {
+    display: flex;
+    height: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    background: #000;
+}
+.wk-carousel::-webkit-scrollbar { display: none; }
+/* 첫/마지막 슬라이드도 중앙 정렬될 수 있도록 여백 스페이서 */
+.wk-carousel::before,
+.wk-carousel::after {
+    content: '';
+    flex: 0 0 33.334vw;
+}
+
+.wk-slide {
+    position: relative;
+    flex: 0 0 33.334vw;
+    height: 100%;
+    scroll-snap-align: center;
+    cursor: pointer;
+    overflow: hidden;
+    border-right: 1px solid rgba(255,255,255,.08);
+}
+.wk-slide.wk-hidden { display: none; }
+
+.wk-slide-photo {
     position: absolute; inset: 0;
     width: 100%; height: 100%;
     object-fit: cover; display: block;
     pointer-events: none;
-    transition: transform .5s ease, opacity .4s ease;
+    filter: grayscale(1) brightness(.42) contrast(1.05);
+    transform: scale(1.0);
+    transition: filter .6s ease, transform .8s ease;
 }
-.wk-card:hover .wk-card-photo {
-    opacity: .25;
-    transform: scale(1.04);
+.wk-slide.is-active .wk-slide-photo {
+    filter: grayscale(1) brightness(.88) contrast(1.05);
 }
 
-.wk-card-icon {
+.wk-slide-scrim {
     position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(to top, rgba(0,0,0,.8) 0%, rgba(0,0,0,.25) 42%, transparent 68%);
+    opacity: 0;
+    transition: opacity .4s ease;
     pointer-events: none;
 }
-.wk-card-icon svg { width: 30%; height: 30%; overflow: visible; }
+.wk-slide.is-active .wk-slide-scrim { opacity: 1; }
 
-/* 막대(rect) 기반 아이콘 — 각 막대가 중심에서 팽창하며 조립됨 */
+/* 우상단 엔진 아이콘 — 활성 슬라이드만 노출 */
+.wk-slide-icon {
+    position: absolute; top: 22px; right: 22px;
+    width: 38px; height: 38px;
+    opacity: 0;
+    transition: opacity .3s ease;
+    pointer-events: none;
+}
+.wk-slide-icon svg { width: 100%; height: 100%; overflow: visible; }
+.wk-slide.is-active .wk-slide-icon { opacity: .92; }
+
 .wk-icon-bar {
     fill: #fff;
     transform-box: fill-box;
@@ -128,14 +146,13 @@ body { background: #fff; }
     opacity: 0;
     transition: transform .5s cubic-bezier(.22,1,.36,1), opacity .3s ease;
 }
-.wk-card:hover .wk-icon-bar { opacity: 1; transform: scale(1); }
-.wk-card:hover .wk-icon-bar.b1 { transition-delay: 0s; }
-.wk-card:hover .wk-icon-bar.b2 { transition-delay: .07s; }
-.wk-card:hover .wk-icon-bar.b3 { transition-delay: .14s; }
-.wk-card:hover .wk-icon-bar.b4 { transition-delay: .21s; }
-.wk-card:hover .wk-icon-bar.b5 { transition-delay: .28s; }
+.wk-slide.is-active .wk-icon-bar { opacity: 1; transform: scale(1); }
+.wk-slide.is-active .wk-icon-bar.b1 { transition-delay: 0s; }
+.wk-slide.is-active .wk-icon-bar.b2 { transition-delay: .07s; }
+.wk-slide.is-active .wk-icon-bar.b3 { transition-delay: .14s; }
+.wk-slide.is-active .wk-icon-bar.b4 { transition-delay: .21s; }
+.wk-slide.is-active .wk-icon-bar.b5 { transition-delay: .28s; }
 
-/* 선(stroke) 기반 아이콘(육모살) — 획이 그려지듯 나타남 */
 .wk-icon-stroke {
     stroke: #fff;
     stroke-width: 46;
@@ -146,69 +163,95 @@ body { background: #fff; }
     opacity: 0;
     transition: stroke-dashoffset .55s cubic-bezier(.22,1,.36,1), opacity .15s ease;
 }
-.wk-card:hover .wk-icon-stroke { opacity: 1; stroke-dashoffset: 0; }
-.wk-card:hover .wk-icon-stroke.s1 { transition-delay: 0s; }
-.wk-card:hover .wk-icon-stroke.s2 { transition-delay: .09s; }
-.wk-card:hover .wk-icon-stroke.s3 { transition-delay: .09s; }
-.wk-card:hover .wk-icon-stroke.s4 { transition-delay: .18s; }
-.wk-card:hover .wk-icon-stroke.s5 { transition-delay: .18s; }
+.wk-slide.is-active .wk-icon-stroke { opacity: 1; stroke-dashoffset: 0; }
+.wk-slide.is-active .wk-icon-stroke.s1 { transition-delay: 0s; }
+.wk-slide.is-active .wk-icon-stroke.s2 { transition-delay: .09s; }
+.wk-slide.is-active .wk-icon-stroke.s3 { transition-delay: .09s; }
+.wk-slide.is-active .wk-icon-stroke.s4 { transition-delay: .18s; }
+.wk-slide.is-active .wk-icon-stroke.s5 { transition-delay: .18s; }
 
-/* 하단 오버레이 — 제목·번호·링크 버튼, 호버 시에만 노출 */
-.wk-card-overlay {
+/* 하단 정보 — 활성 슬라이드만 노출 */
+.wk-slide-info {
     position: absolute; left: 0; right: 0; bottom: 0;
-    padding: 1rem 1.1rem;
-    display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem;
+    padding: 2rem 1.6rem 1.6rem;
     opacity: 0;
-    transform: translateY(8px);
-    transition: opacity .35s ease, transform .35s ease;
+    transform: translateY(14px);
+    transition: opacity .45s ease, transform .45s ease;
     pointer-events: none;
 }
-.wk-card:hover .wk-card-overlay { opacity: 1; transform: translateY(0); }
+.wk-slide.is-active .wk-slide-info { opacity: 1; transform: translateY(0); pointer-events: auto; }
 
-.wk-card-info { min-width: 0; }
-.wk-card-title {
-    font-size: var(--fs-15); font-weight: 700; color: #fff;
-    line-height: 1.3; letter-spacing: -.01em;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+.wk-slide-eyebrow {
+    font-size: var(--fs-12); color: rgba(255,255,255,.7);
+    letter-spacing: .03em; margin-bottom: .5rem;
 }
-.wk-card-desc-text {
-    font-size: var(--fs-12); color: rgba(255,255,255,.65);
-    margin-top: .2rem;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+.wk-slide-rule {
+    display: block; height: 1px; width: 100%;
+    background: rgba(255,255,255,.35);
+    margin: .6rem 0;
 }
-
-.wk-card-meta { display: flex; align-items: center; gap: .65rem; flex-shrink: 0; }
-.wk-card-num {
-    font-size: var(--fs-12); font-weight: 600; letter-spacing: .04em;
-    color: rgba(255,255,255,.6);
+.wk-slide-title {
+    font-size: clamp(1.05rem, 1.3vw, 1.35rem);
+    font-weight: 800; color: #fff;
+    line-height: 1.2; letter-spacing: -.01em;
+    margin: 0;
+    text-wrap: balance;
 }
-.wk-card-plus {
-    width: 30px; height: 30px; border-radius: 999px;
-    background: #fff; color: #0a0a0a; flex-shrink: 0;
+.wk-slide-foot {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+}
+.wk-slide-num {
+    font-size: var(--fs-12); color: rgba(255,255,255,.55);
+    font-variant-numeric: tabular-nums; letter-spacing: .04em;
+    white-space: nowrap;
+}
+.wk-slide-plus {
+    color: #fff; flex-shrink: 0;
     display: flex; align-items: center; justify-content: center;
-    font-size: 22px; font-weight: 600; line-height: 1;
+    font-size: 26px; font-weight: 600; line-height: 1;
     transition: transform .35s cubic-bezier(.22,1,.36,1);
 }
-.wk-card:hover .wk-card-plus { transform: rotate(135deg); }
+.wk-slide:hover .wk-slide-plus { transform: rotate(135deg); }
+
+/* 좌우 내비게이션 화살표 */
+.wk-nav-arrow {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    z-index: 5; width: 44px; height: 44px; border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.35);
+    background: rgba(0,0,0,.35); color: #fff;
+    padding: 0;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: background .2s ease, border-color .2s ease;
+}
+.wk-nav-arrow:hover { background: rgba(0,0,0,.65); border-color: #fff; }
+.wk-nav-arrow.prev { left: 20px; }
+.wk-nav-arrow.next { right: 20px; }
+/* 순수 도형으로 그리는 화살표 — 폰트 글리프 광학 오차 없이 정확히 중앙 정렬 */
+.wk-nav-arrow::before {
+    content: '';
+    width: 9px; height: 9px;
+    border-top: 2px solid #fff; border-right: 2px solid #fff;
+}
+.wk-nav-arrow.prev::before { transform: rotate(-135deg); margin-left: 4px; }
+.wk-nav-arrow.next::before { transform: rotate(45deg); margin-right: 4px; }
 
 /* 빈 상태 */
 .wk-empty {
-    grid-column: 1 / -1;
-    text-align: center; padding: 5rem 1rem;
-    color: var(--text-muted, var(--text-muted)); font-size: var(--fs-16);
-    background: #fff;
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center; color: rgba(255,255,255,.6); font-size: var(--fs-16);
+    background: #000;
 }
 
 /* ── 반응형 ──────────────────────────────────────────────── */
-@media (max-width: 1100px) {
-    .wk-grid { grid-template-columns: repeat(2, 1fr); }
+@media (max-width: 900px) {
+    .wk-slide, .wk-carousel::before, .wk-carousel::after { flex-basis: 66vw; }
 }
-@media (max-width: 768px) {
-    .wk-grid { grid-template-columns: repeat(2, 1fr); }
-    .wk-grid-section { padding: 1.4rem 1rem 3rem; }
+@media (max-width: 600px) {
+    .wk-slide, .wk-carousel::before, .wk-carousel::after { flex-basis: 86vw; }
     .wk-hero-inner { padding: 0 1rem; }
-    .wk-filter-inner { padding: .75rem 1rem; }
-}
-@media (max-width: 480px) {
-    .wk-grid { grid-template-columns: 1fr; }
+    .wk-filter-inner { padding: .6rem 1rem; }
+    .wk-slide-info { padding: 1.4rem 1.1rem 1.1rem; }
+    .wk-nav-arrow { width: 38px; height: 38px; font-size: 20px; }
 }
