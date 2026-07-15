@@ -189,13 +189,28 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
     window.addEventListener('resize', fitCarouselHeight);
     new ResizeObserver(fitCarouselHeight).observe(document.body);
 
-    // 활성(중앙) 슬라이드만 정보 노출
-    const io = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            entry.target.classList.toggle('is-active', entry.intersectionRatio > 0.6);
+    // 활성(중앙) 슬라이드 판정 — 슬라이드 3개가 뷰포트에 항상 꽉 차게 배치되므로
+    // IntersectionObserver의 ratio만으로는 여러 개가 동시에 "가득 보임"으로 잡힌다.
+    // 캐러셀 중심에 가장 가까운 슬라이드 하나를 활성으로 고정하는 방식으로 판정한다.
+    let rafPending = false;
+    function updateActive() {
+        const box = carousel.getBoundingClientRect();
+        const centerX = box.left + box.width / 2;
+        let closest = null, closestDist = Infinity;
+        slides.forEach(s => {
+            if (s.classList.contains('wk-hidden')) return;
+            const r = s.getBoundingClientRect();
+            const dist = Math.abs((r.left + r.width / 2) - centerX);
+            if (dist < closestDist) { closestDist = dist; closest = s; }
         });
-    }, { root: carousel, threshold: [0, 0.6, 1] });
-    slides.forEach(s => io.observe(s));
+        slides.forEach(s => s.classList.toggle('is-active', s === closest));
+    }
+    carousel.addEventListener('scroll', () => {
+        if (rafPending) return;
+        rafPending = true;
+        requestAnimationFrame(() => { updateActive(); rafPending = false; });
+    });
+    updateActive();
 
     function goToSlide(el) {
         el.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
@@ -239,6 +254,8 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
                 if (match) visible++;
             });
             emptyEl.style.display = visible === 0 ? 'block' : 'none';
+            carousel.scrollLeft = 0;
+            requestAnimationFrame(updateActive);
         });
     });
 })();
