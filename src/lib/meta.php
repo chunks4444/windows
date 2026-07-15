@@ -38,7 +38,7 @@ const SITE_URL          = 'https://pyeongmok.com';
 const SITE_DEFAULT_TITLE = '평목 - DESIGN IN REAL TIME';
 const SITE_DEFAULT_DESC  = '평목 공방이 만드는 한옥 살창·창호 디자인 스튜디오. 나만의 문살 패턴을 직접 설계하고 주문하세요.';
 const SITE_DEFAULT_IMAGE = SITE_URL . '/src/assets/logo.png';
-const GA4_MEASUREMENT_ID = 'G-P6LFE8ECVG';
+const GA4_MEASUREMENT_ID = 'G-HQY0K8CQPT';
 
 // $override로 title/description/image를 지정하면 DB의 page_meta보다 우선한다
 // (예: 도면 공유 페이지에서 도면 제목/썸네일로 OG 태그를 바꿔치기할 때 사용)
