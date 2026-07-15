@@ -287,12 +287,35 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
 
     function visibleSlides() { return slides.filter(s => !s.classList.contains('wk-hidden')); }
 
+    // ── 자동 슬라이드 — 사용자가 조작(호버/터치/화살표/모달)하면 멈춘다 ──
+    const AUTOPLAY_MS = 4500;
+    let autoplayTimer = null;
+    function autoAdvance() {
+        const vs = visibleSlides();
+        if (vs.length < 2) return;
+        const cur = vs.findIndex(s => s.classList.contains('is-active'));
+        goToSlide(vs[(cur + 1) % vs.length]);
+    }
+    function startAutoplay() {
+        stopAutoplay();
+        autoplayTimer = setInterval(autoAdvance, AUTOPLAY_MS);
+    }
+    function stopAutoplay() {
+        if (autoplayTimer) { clearInterval(autoplayTimer); autoplayTimer = null; }
+    }
+    startAutoplay();
+    carousel.addEventListener('mouseenter', stopAutoplay);
+    carousel.addEventListener('mouseleave', () => { if (!modal.classList.contains('open')) startAutoplay(); });
+    carousel.addEventListener('touchstart', stopAutoplay, { passive: true });
+
     prevBtn.addEventListener('click', () => {
+        stopAutoplay();
         const vs = visibleSlides();
         const cur = vs.findIndex(s => s.classList.contains('is-active'));
         goToSlide(vs[Math.max(0, cur - 1)] || vs[0]);
     });
     nextBtn.addEventListener('click', () => {
+        stopAutoplay();
         const vs = visibleSlides();
         const cur = vs.findIndex(s => s.classList.contains('is-active'));
         goToSlide(vs[Math.min(vs.length - 1, cur + 1)] || vs[0]);
@@ -316,6 +339,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
             carousel.scrollLeft = 0;
             requestAnimationFrame(updateActive);
             closeFilterPanel();
+            startAutoplay();
         });
     });
 
@@ -340,11 +364,13 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
         modal.classList.add('open');
         modal.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
+        stopAutoplay();
     }
     function closeModal() {
         modal.classList.remove('open');
         modal.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
+        startAutoplay();
     }
     function showModalImg(i) {
         if (!modalImages.length) return;
