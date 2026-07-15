@@ -201,8 +201,11 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
         <button class="wk-modal-arrow next" id="wkModalNext" aria-label="다음 사진"></button>
     </div>
     <div class="wk-modal-foot">
-        <div class="wk-modal-title" id="wkModalTitle"></div>
-        <div class="wk-modal-counter" id="wkModalCounter"></div>
+        <span class="wk-modal-eyebrow">Portfolio</span>
+        <h2 class="wk-modal-title" id="wkModalTitle"></h2>
+        <span class="wk-modal-rule"></span>
+        <p class="wk-modal-desc" id="wkModalDesc"></p>
+        <span class="wk-modal-counter" id="wkModalCounter"></span>
     </div>
     <div class="wk-modal-thumbs" id="wkModalThumbs"></div>
 </div>
@@ -320,6 +323,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
     const modal        = document.getElementById('wkModal');
     const modalImg     = document.getElementById('wkModalImg');
     const modalTitle   = document.getElementById('wkModalTitle');
+    const modalDesc    = document.getElementById('wkModalDesc');
     const modalCounter = document.getElementById('wkModalCounter');
     const modalThumbs  = document.getElementById('wkModalThumbs');
     const modalClose   = document.getElementById('wkModalClose');
@@ -330,6 +334,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
     function openModal(slide) {
         try { modalImages = JSON.parse(slide.dataset.images || '[]'); } catch (e) { modalImages = []; }
         modalTitle.textContent = slide.dataset.title || '';
+        modalDesc.textContent = slide.dataset.desc || '';
         renderThumbs();
         showModalImg(0);
         modal.classList.add('open');

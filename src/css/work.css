@@ -296,12 +296,29 @@ button.pm-dw-link-top.wk-tag i { color: var(--accent-hover); }
 
 .wk-modal-foot {
     flex: 0 0 auto;
-    display: flex; flex-direction: column; align-items: center; gap: .3rem;
-    padding: 0 1rem .5rem;
+    display: flex; flex-direction: column; align-items: center;
+    max-width: 640px; margin: 0 auto;
+    padding: .5rem 1.5rem 1rem;
     text-align: center;
 }
-.wk-modal-title { color: #fff; font-size: var(--fs-16); font-weight: 700; }
-.wk-modal-counter { color: rgba(255,255,255,.5); font-size: var(--fs-12); font-variant-numeric: tabular-nums; }
+.wk-modal-eyebrow {
+    font-size: var(--fs-12); font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; color: #fff; opacity: .6;
+    margin-bottom: .5rem;
+}
+.wk-modal-title {
+    color: #fff; font-weight: 800; letter-spacing: -.01em;
+    font-size: clamp(1.2rem, 2vw, 1.6rem); line-height: 1.2;
+}
+.wk-modal-rule {
+    display: block; height: 1px; width: 64px;
+    background: #fff; margin: .75rem 0;
+}
+.wk-modal-desc {
+    color: rgba(255,255,255,.72); font-size: var(--fs-14); line-height: 1.6;
+    margin-bottom: .6rem;
+}
+.wk-modal-counter { color: #fff; font-size: var(--fs-12); font-variant-numeric: tabular-nums; letter-spacing: .04em; }
 
 .wk-modal-thumbs {
     flex: 0 0 auto;
