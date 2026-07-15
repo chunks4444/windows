@@ -323,7 +323,7 @@ button.pm-dw-link-top.wk-tag i { color: var(--accent-hover); }
    (모달 자체의 clip-path에 잘리지 않도록 형제 요소로 독립시킴) */
 .wk-modal-close-line {
     position: fixed; left: 0; right: 0; top: 50%;
-    height: 2px; background: transparent;
+    height: 0; background: transparent;
     transform: translateY(-50%);
     opacity: 0;
     pointer-events: none;
