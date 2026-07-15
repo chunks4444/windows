@@ -310,9 +310,14 @@ button.pm-dw-link-top.wk-tag i { color: var(--accent-hover); }
     background: rgba(0,0,0,.97);
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     opacity: 0; visibility: hidden;
-    transition: opacity .25s ease;
+    clip-path: inset(50% 0 50% 0);
+    transition: opacity .5s ease, clip-path .5s cubic-bezier(.65,0,.35,1), visibility 0s linear .5s;
 }
-.wk-modal.open { opacity: 1; visibility: visible; }
+.wk-modal.open {
+    opacity: 1; visibility: visible;
+    clip-path: inset(0 0 0 0);
+    transition: opacity .5s ease, clip-path .5s cubic-bezier(.65,0,.35,1);
+}
 
 .wk-modal-close {
     position: fixed; top: 20px; right: 24px; z-index: 2010;
