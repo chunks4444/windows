@@ -34,7 +34,7 @@ function page_meta(): array {
     return $cache;
 }
 
-const SITE_URL          = 'https://studio.pyeongmok.com';
+const SITE_URL          = 'https://pyeongmok.com';
 const SITE_DEFAULT_TITLE = '평목 - DESIGN IN REAL TIME';
 const SITE_DEFAULT_DESC  = '평목 공방이 만드는 한옥 살창·창호 디자인 스튜디오. 나만의 문살 패턴을 직접 설계하고 주문하세요.';
 const SITE_DEFAULT_IMAGE = SITE_URL . '/src/assets/logo.png';

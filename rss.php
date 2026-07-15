@@ -2,7 +2,7 @@
 header('Content-Type: application/rss+xml; charset=UTF-8');
 require_once __DIR__ . '/src/lib/db.php';
 
-const RSS_SITE_URL = 'https://studio.pyeongmok.com';
+const RSS_SITE_URL = 'https://pyeongmok.com';
 
 function rss_escape(string $s): string {
     return htmlspecialchars($s, ENT_QUOTES | ENT_XML1, 'UTF-8');

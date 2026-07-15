@@ -1,5 +1,5 @@
 <?php
-define('SITE_URL',   'https://studio.pyeongmok.com');
+define('SITE_URL',   'https://pyeongmok.com');
 define('SITE_NAME',  '평목');
 
 // ── SMTP 서버 ─────────────────────────────────────────────
@@ -62,7 +62,7 @@ function _smtp_send(string $authUser, string $authPass, string $from, string $to
 
     $read(); // 220 greeting
 
-    $send('EHLO studio.pyeongmok.com');
+    $send('EHLO pyeongmok.com');
     while (true) { $r = $read(); if ($r === false || substr($r, 3, 1) === ' ') break; }
 
     $send('STARTTLS');
@@ -72,7 +72,7 @@ function _smtp_send(string $authUser, string $authPass, string $from, string $to
         fclose($sock); return false;
     }
 
-    $send('EHLO studio.pyeongmok.com');
+    $send('EHLO pyeongmok.com');
     while (true) { $r = $read(); if ($r === false || substr($r, 3, 1) === ' ') break; }
 
     $send('AUTH LOGIN');

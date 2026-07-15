@@ -5,5 +5,5 @@ Disallow: /src/mypage/
 Disallow: /mypage/
 Disallow: /logs/
 
-Sitemap: https://studio.pyeongmok.com/sitemap.xml
-Sitemap: https://studio.pyeongmok.com/rss.xml
+Sitemap: https://pyeongmok.com/sitemap.xml
+Sitemap: https://pyeongmok.com/rss.xml

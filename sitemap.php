@@ -2,7 +2,7 @@
 header('Content-Type: application/xml; charset=UTF-8');
 require_once __DIR__ . '/src/lib/db.php';
 
-const SITEMAP_SITE_URL = 'https://studio.pyeongmok.com';
+const SITEMAP_SITE_URL = 'https://pyeongmok.com';
 
 $urls = [
     ['loc' => '/',                                  'priority' => '1.0'],
