@@ -178,12 +178,12 @@ button.pm-dw-link-top.wk-tag i { color: var(--accent-hover); }
 .wk-slide.is-active .wk-slide-info { opacity: 1; transform: translateY(0); pointer-events: auto; }
 
 .wk-slide-eyebrow {
-    font-size: var(--fs-12); color: rgba(255,255,255,.7);
+    font-size: var(--fs-12); color: #fff;
     letter-spacing: .03em; margin-bottom: .5rem;
 }
 .wk-slide-rule {
     display: block; height: 1px; width: 100%;
-    background: rgba(255,255,255,.35);
+    background: #fff;
     margin: .6rem 0;
 }
 .wk-slide-title {
@@ -197,7 +197,7 @@ button.pm-dw-link-top.wk-tag i { color: var(--accent-hover); }
     display: flex; align-items: center; justify-content: space-between; gap: 1rem;
 }
 .wk-slide-num {
-    font-size: var(--fs-12); color: rgba(255,255,255,.55);
+    font-size: var(--fs-12); color: #fff;
     font-variant-numeric: tabular-nums; letter-spacing: .04em;
     white-space: nowrap;
 }
