@@ -15,12 +15,22 @@ html body { padding-top: 0 !important; background: #0a0a0a; }
     pointer-events: none;
 }
 
-/* 첫 로드 시 헤더/캐러셀 경계선이 위→아래로 그려지는 인트로 라인 (designcanada.com 참고) */
+/* 첫 로드 시: 검은 화면 위에 라인이 위→아래로 다 그려진 뒤 콘텐츠가 드러남 (designcanada.com 참고) */
+.wk-intro-overlay {
+    position: fixed; inset: 0;
+    background: #000;
+    z-index: 800;
+    animation: wk-intro-overlay-fade .5s ease 1.3s forwards;
+}
+@keyframes wk-intro-overlay-fade {
+    to { opacity: 0; visibility: hidden; pointer-events: none; }
+}
+
 .wk-intro-line {
     position: fixed; top: 0; left: 33.334vw;
     width: 1px; height: 0;
-    background: rgba(255,255,255,.35);
-    z-index: 600;
+    background: rgba(255,255,255,.5);
+    z-index: 801;
     pointer-events: none;
     animation: wk-intro-line-draw 1s cubic-bezier(.65,0,.35,1) .3s both;
 }
@@ -42,7 +52,7 @@ html body { padding-top: 0 !important; background: #0a0a0a; }
 .wk-hero-inner {
     display: flex; flex-direction: column; align-items: flex-end; text-align: right;
     clip-path: inset(0 0 0 100%);
-    animation: wk-hero-reveal .7s cubic-bezier(.65,0,.35,1) .15s both;
+    animation: wk-hero-reveal .7s cubic-bezier(.65,0,.35,1) 1.3s both;
 }
 @keyframes wk-hero-reveal {
     from { clip-path: inset(0 0 0 100%); }
