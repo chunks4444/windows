@@ -36,9 +36,9 @@ require_admin_role('s');
 </div>
 
 <div class="db-page" id="worksPage" style="display:none;">
-    <div class="adm-breadcrumb"><a href="/src/admin/">어드민</a><span class="adm-breadcrumb-sep">/</span>Works 관리</div>
+    <div class="adm-breadcrumb"><a href="/src/admin/">어드민</a><span class="adm-breadcrumb-sep">/</span>포트폴리오 관리</div>
     <div class="db-header">
-        <h1 class="db-title"><i class="bi bi-images me-2"></i>Works 관리</h1>
+        <h1 class="db-title"><i class="bi bi-images me-2"></i>포트폴리오 관리</h1>
         <button class="adm-edit-btn" style="height:32px;padding:0 14px;" onclick="openModal()">
             <i class="bi bi-plus-lg"></i> 추가
         </button>

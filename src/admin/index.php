@@ -58,7 +58,7 @@ require_admin_role('s');
         <div class="adm-home-grid">
             <a href="/src/admin/works.php" class="adm-home-card">
                 <div class="adm-home-icon"><i class="bi bi-images"></i></div>
-                <div><div class="adm-home-title">Works 관리</div><div class="adm-home-desc">포트폴리오 작품</div></div>
+                <div><div class="adm-home-title">포트폴리오 관리</div><div class="adm-home-desc">포트폴리오 작품</div></div>
             </a>
             <a href="/src/admin/blog.php" class="adm-home-card">
                 <div class="adm-home-icon"><i class="bi bi-journal-text"></i></div>
