@@ -99,11 +99,11 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
 /* 포트폴리오 페이지 전용 — 상단 공지 띠배너 숨김 (배너가 있을 때 nav.php가 강제로 밀어내는 top값도 함께 되돌림) */
 #pmTopbarNotice { display: none !important; }
 
-/* 상단 네비를 다크 배경과 자연스럽게 어우러지게 함 */
+/* 상단 네비는 배경 없이 사진 위에 그대로 떠 있게 함 */
 .pm-navbar {
     top: 0 !important;
-    background: #000 !important;
-    border-bottom: 1px solid rgba(255,255,255,.08) !important;
+    background: transparent !important;
+    border-bottom: none !important;
 }
 .pm-navbar .nav-link { color: #fff !important; opacity: .82; }
 .pm-navbar .nav-link:hover,
