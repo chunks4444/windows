@@ -59,6 +59,18 @@ if ((int)$pdo->query('SELECT COUNT(*) FROM work_images')->fetchColumn() === 0) {
 $works = $pdo->query('SELECT * FROM works WHERE is_active=1 ORDER BY sort_order, id')->fetchAll();
 $total = count($works);
 
+// 작품별 이미지 목록 (디테일 모달용, 없으면 대표 이미지 하나로 대체)
+$workImages = [];
+if ($works) {
+    $ids = array_column($works, 'id');
+    $in  = implode(',', array_fill(0, count($ids), '?'));
+    $imgStmt = $pdo->prepare("SELECT work_id, image_url FROM work_images WHERE work_id IN ($in) ORDER BY sort_order, id");
+    $imgStmt->execute($ids);
+    foreach ($imgStmt->fetchAll() as $row) {
+        $workImages[$row['work_id']][] = $row['image_url'];
+    }
+}
+
 // 태그 테이블 생성 + 시드
 $pdo->exec("
 CREATE TABLE IF NOT EXISTS work_tags (
@@ -151,11 +163,12 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
             <?php foreach ($works as $i => $w):
                 $desc = strip_tags($w['description']);
                 $icon = engine_icon_svg($w['engine_key'] ?? '');
+                $images = $workImages[$w['id']] ?? ($w['image_url'] ? [$w['image_url']] : []);
             ?>
             <div class="wk-slide<?= $i === 0 ? ' is-active' : '' ?>"
                  data-title="<?= htmlspecialchars($w['title']) ?>"
                  data-desc="<?= htmlspecialchars($desc) ?>"
-                 data-href="/portfolio/<?= rawurlencode($w['slug']) ?>"
+                 data-images="<?= htmlspecialchars(json_encode($images)) ?>"
                  role="button">
 
                 <img class="wk-slide-photo"
@@ -188,6 +201,21 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
         </div>
     </section>
 
+</div>
+
+<!-- ── 디테일 뷰 모달 (네비게이션 없이 이미지·제목만) ── -->
+<div class="wk-modal" id="wkModal" aria-hidden="true">
+    <button class="wk-modal-close" id="wkModalClose" aria-label="닫기">&times;</button>
+    <div class="wk-modal-viewer">
+        <button class="wk-modal-arrow prev" id="wkModalPrev" aria-label="이전 사진"></button>
+        <img class="wk-modal-img" id="wkModalImg" src="" alt="">
+        <button class="wk-modal-arrow next" id="wkModalNext" aria-label="다음 사진"></button>
+    </div>
+    <div class="wk-modal-foot">
+        <div class="wk-modal-title" id="wkModalTitle"></div>
+        <div class="wk-modal-counter" id="wkModalCounter"></div>
+    </div>
+    <div class="wk-modal-thumbs" id="wkModalThumbs"></div>
 </div>
 
 <script>
@@ -251,7 +279,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
     slides.forEach(slide => {
         slide.addEventListener('click', () => {
             if (slide.classList.contains('is-active')) {
-                location.href = slide.dataset.href;
+                openModal(slide);
             } else {
                 goToSlide(slide);
             }
@@ -289,6 +317,68 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
             carousel.scrollLeft = 0;
             requestAnimationFrame(updateActive);
         });
+    });
+
+    // ── 디테일 뷰 모달 (네비게이션 없이 이미지만) ──────────────
+    const modal        = document.getElementById('wkModal');
+    const modalImg     = document.getElementById('wkModalImg');
+    const modalTitle   = document.getElementById('wkModalTitle');
+    const modalCounter = document.getElementById('wkModalCounter');
+    const modalThumbs  = document.getElementById('wkModalThumbs');
+    const modalClose   = document.getElementById('wkModalClose');
+    const modalPrev    = document.getElementById('wkModalPrev');
+    const modalNext    = document.getElementById('wkModalNext');
+    let modalImages = [], modalIdx = 0;
+
+    function openModal(slide) {
+        try { modalImages = JSON.parse(slide.dataset.images || '[]'); } catch (e) { modalImages = []; }
+        modalTitle.textContent = slide.dataset.title || '';
+        renderThumbs();
+        showModalImg(0);
+        modal.classList.add('open');
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+    }
+    function showModalImg(i) {
+        if (!modalImages.length) return;
+        modalIdx = (i + modalImages.length) % modalImages.length;
+        modalImg.src = modalImages[modalIdx];
+        modalCounter.textContent = modalImages.length > 1
+            ? String(modalIdx + 1).padStart(2, '0') + ' / ' + String(modalImages.length).padStart(2, '0')
+            : '';
+        modalThumbs.querySelectorAll('.wk-modal-thumb').forEach((t, idx) => t.classList.toggle('active', idx === modalIdx));
+    }
+    function renderThumbs() {
+        modalThumbs.innerHTML = '';
+        const multi = modalImages.length > 1;
+        modalThumbs.style.display = multi ? 'flex' : 'none';
+        modalPrev.style.display = multi ? 'flex' : 'none';
+        modalNext.style.display = multi ? 'flex' : 'none';
+        if (!multi) return;
+        modalImages.forEach((src, idx) => {
+            const t = document.createElement('div');
+            t.className = 'wk-modal-thumb';
+            const img = document.createElement('img');
+            img.src = src;
+            t.appendChild(img);
+            t.addEventListener('click', () => showModalImg(idx));
+            modalThumbs.appendChild(t);
+        });
+    }
+    modalPrev.addEventListener('click', () => showModalImg(modalIdx - 1));
+    modalNext.addEventListener('click', () => showModalImg(modalIdx + 1));
+    modalClose.addEventListener('click', closeModal);
+    modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+    window.addEventListener('keydown', e => {
+        if (!modal.classList.contains('open')) return;
+        if (e.key === 'Escape')    closeModal();
+        if (e.key === 'ArrowLeft')  showModalImg(modalIdx - 1);
+        if (e.key === 'ArrowRight') showModalImg(modalIdx + 1);
     });
 })();
 </script>
