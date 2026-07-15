@@ -169,16 +169,15 @@ button.pm-dw-link-top.wk-tag i { color: var(--accent-hover); }
 .wk-slide.is-active .wk-icon-stroke.s4 { transition-delay: .18s; }
 .wk-slide.is-active .wk-icon-stroke.s5 { transition-delay: .18s; }
 
-/* 하단 정보 — 활성 슬라이드만 노출 */
+/* 하단 정보 — 활성 슬라이드만 노출, 좌→우로 열리는 슬라이드 리빌 효과 */
 .wk-slide-info {
     position: absolute; left: 0; right: 0; bottom: 0;
     padding: 2rem 1.6rem 1.6rem;
-    opacity: 0;
-    transform: translateY(14px);
-    transition: opacity .45s ease, transform .45s ease;
+    clip-path: inset(0 100% 0 0);
+    transition: clip-path .6s cubic-bezier(.65,0,.35,1);
     pointer-events: none;
 }
-.wk-slide.is-active .wk-slide-info { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.wk-slide.is-active .wk-slide-info { clip-path: inset(0 0 0 0); pointer-events: auto; }
 
 .wk-slide-eyebrow {
     font-size: var(--fs-12); color: #fff;
