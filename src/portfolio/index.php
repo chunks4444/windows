@@ -211,6 +211,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
 
 <!-- ── 디테일 뷰 모달 (네비게이션 없이 이미지·제목만) ── -->
 <div class="wk-modal" id="wkModal" aria-hidden="true">
+    <div class="wk-modal-close-line"></div>
     <button class="wk-modal-close" id="wkModalClose" aria-label="닫기">&times;</button>
     <div class="wk-modal-viewer">
         <button class="wk-modal-arrow prev" id="wkModalPrev" aria-label="이전 사진"></button>
@@ -395,6 +396,8 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
     }
     function closeModal() {
         modal.classList.remove('open');
+        modal.classList.add('closing');
+        setTimeout(() => modal.classList.remove('closing'), 500);
         modal.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
         startAutoplay();

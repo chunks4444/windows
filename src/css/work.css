@@ -319,6 +319,25 @@ button.pm-dw-link-top.wk-tag i { color: var(--accent-hover); }
     transition: opacity .5s ease, clip-path .5s cubic-bezier(.65,0,.35,1);
 }
 
+/* 모달이 닫힐 때 중앙에 잠깐 흰 라인이 맺혔다 사라지는 효과 */
+.wk-modal-close-line {
+    position: absolute; left: 0; right: 0; top: 50%;
+    height: 2px; background: #fff;
+    transform: translateY(-50%);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 5;
+}
+.wk-modal.closing .wk-modal-close-line {
+    animation: wk-modal-close-line .5s ease;
+}
+@keyframes wk-modal-close-line {
+    0%   { opacity: 0; }
+    45%  { opacity: 1; }
+    55%  { opacity: 1; }
+    100% { opacity: 0; }
+}
+
 .wk-modal-close {
     position: fixed; top: 20px; right: 24px; z-index: 2010;
     width: 40px; height: 40px; border-radius: 999px;
