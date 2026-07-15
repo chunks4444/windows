@@ -146,13 +146,11 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    transition: background .15s, transform .1s, box-shadow .15s;
+    transition: background .15s;
     box-shadow: 0 2px 8px rgba(var(--accent-rgb), .25);
 }
 .auth-submit:hover {
     background: var(--accent-hover);
-    box-shadow: 0 4px 14px rgba(var(--accent-rgb), .32);
-    transform: translateY(-1px);
 }
 .auth-submit:active {
     transform: translateY(0);
@@ -175,7 +173,7 @@
     border: none;
     padding: 0;
     font-size: var(--fs-13);
-    font-weight: 700;
+    font-weight: 400;
     color: var(--text);
     cursor: pointer;
     font-family: inherit;
@@ -245,26 +243,7 @@
     color: var(--text);
     text-decoration: none;
 }
-.auth-sns-kakao {
-    background: var(--kakao);
-    border-color: var(--kakao);
-    color: var(--text);
-}
-.auth-sns-kakao:hover {
-    background: var(--kakao-dark);
-    border-color: var(--kakao-dark);
-    color: var(--text);
-}
-.auth-sns-naver {
-    background: var(--naver);
-    border-color: var(--naver);
-    color: var(--bg);
-}
-.auth-sns-naver:hover {
-    background: var(--naver-dark);
-    border-color: var(--naver-dark);
-    color: var(--bg);
-}
+/* 카카오·네이버 브랜드 색상 제거 — 구글과 동일하게 아이콘+텍스트만으로 구분 */
 
 /* ── 구분선 ── */
 .auth-divider {
