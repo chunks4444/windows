@@ -46,7 +46,7 @@ html body { padding-top: 0 !important; background: #0a0a0a; }
 .wk-intro-line-head {
     position: fixed; left: 33.334vw; top: 0;
     width: 8px; height: 8px;
-    background: var(--danger, #DC2626);
+    background: #fff;
     transform: translate(-50%, -50%);
     z-index: 802;
     pointer-events: none;
