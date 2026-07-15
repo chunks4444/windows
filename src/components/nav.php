@@ -111,9 +111,20 @@ $navStudioIcons = [
              alt="평목" class="pm-nav-logo">
         <span class="pm-nav-tagline"> </span>
     </a>
+    <?php if ($isWork): ?>
+    <button class="pm-menu-trigger" id="pmMenuTrigger" type="button" aria-expanded="false" aria-label="메뉴 열기">
+        <span class="pm-menu-trigger-icon"><span></span><span></span><span></span></span>
+        <span class="pm-menu-trigger-label">Menu</span>
+    </button>
+    <button class="pm-filter-trigger" id="pmFilterTrigger" type="button" aria-expanded="false" aria-label="필터 열기">
+        <i class="bi bi-sliders"></i>
+        <span class="pm-filter-trigger-label">Filter</span>
+    </button>
+    <?php else: ?>
     <button class="navbar-toggler border-0" id="pmNavToggler" type="button" aria-expanded="false" aria-label="메뉴 열기">
         <span class="navbar-toggler-icon"></span>
     </button>
+    <?php endif; ?>
     <?php if (!empty($_engine_nav)): ?>
     <div class="pm-nav-prompt-wrap">
         <div>
@@ -129,6 +140,7 @@ $navStudioIcons = [
         </div>
     </div>
     <?php endif; ?>
+    <?php if (!$isWork): ?>
     <div class="collapse navbar-collapse justify-content-end" id="pmNavMenu">
         <ul class="navbar-nav gap-3">
             <li class="nav-item dropdown">
@@ -222,11 +234,12 @@ $navStudioIcons = [
             <?php endif; ?>
         </ul>
     </div>
+    <?php endif; ?>
 </nav>
 
 <!-- ── 오른쪽 슬라이드 드로어 네비게이션 ──────────────── -->
 <div class="pm-nav-drawer-backdrop" id="pmNavDrawerBackdrop"></div>
-<div class="pm-nav-drawer" id="pmNavDrawer" aria-hidden="true">
+<div class="pm-nav-drawer<?= $isWork ? ' pm-nav-drawer--left' : '' ?>" id="pmNavDrawer" aria-hidden="true">
     <div class="pm-dw-head">
         <a href="/" class="navbar-brand d-flex align-items-center">
             <img src="/src/assets/logo.png"
@@ -317,7 +330,7 @@ $navStudioIcons = [
 </div>
 <script>
 (function () {
-    var toggler  = document.getElementById('pmNavToggler');
+    var toggler  = document.getElementById('pmNavToggler') || document.getElementById('pmMenuTrigger');
     var drawer   = document.getElementById('pmNavDrawer');
     var backdrop = document.getElementById('pmNavDrawerBackdrop');
     var closeBtn = document.getElementById('pmNavDrawerClose');

@@ -48,34 +48,23 @@ html body { padding-top: 0 !important; background: #0a0a0a; }
     margin-top: .35rem;
 }
 
-/* ── 필터 바 — 역시 투명 오버레이, top은 work.js가 계산 ── */
-.wk-filter-bar {
-    position: fixed; left: 0; right: 0; z-index: 950;
-    background: transparent;
+/* ── 키워드 필터 사이드 패널 (우측, 메뉴 드로어 .pm-nav-drawer/.pm-dw-* 스타일 재사용) ── */
+.wk-filter-panel-title {
+    display: flex; align-items: center; gap: 10px;
+    font-size: var(--fs-14); font-weight: 700; color: var(--text);
 }
-.wk-filter-inner {
-    max-width: 1320px; margin: 0 auto;
-    padding: .6rem 2rem;
-    display: flex; align-items: center; gap: .5rem;
-    overflow-x: auto; scrollbar-width: none;
-}
-.wk-filter-inner::-webkit-scrollbar { display: none; }
+#wkFilterPanel .pm-dw-close { color: var(--text); }
 
-.wk-tag {
-    flex-shrink: 0;
-    height: 32px;
-    display: inline-flex; align-items: center;
-    padding: 0 14px; border-radius: 999px;
-    font-size: var(--fs-13); font-weight: 400; cursor: pointer;
-    border: 1px solid rgba(255,255,255,.35);
-    background: rgba(0,0,0,.25); color: rgba(255,255,255,.85);
-    transition: all .18s ease; user-select: none;
+/* .pm-dw-link-top 은 원래 <a>용이라 <button> 기본 스타일 리셋이 필요 */
+button.pm-dw-link-top.wk-tag {
+    width: 100%;
+    background: none;
+    border: none;
+    border-bottom: 1px solid rgba(var(--text-rgb), 0.06);
+    cursor: pointer;
+    font-family: 'Noto Sans KR', -apple-system, sans-serif;
 }
-.wk-tag:hover { border-color: #fff; color: #fff; }
-.wk-tag.active {
-    background: #fff; color: #0a0a0a;
-    border-color: #fff;
-}
+button.pm-dw-link-top.wk-tag i { color: var(--accent-hover); }
 
 /* ── 캐러셀 섹션 — 화면 전체(맨 위까지) 풀블리드, 헤더/네비는 위에 오버레이 ── */
 .wk-carousel-section {
@@ -122,7 +111,7 @@ html body { padding-top: 0 !important; background: #0a0a0a; }
     transition: filter .6s ease, transform .8s ease;
 }
 .wk-slide.is-active .wk-slide-photo {
-    filter: grayscale(1) brightness(.88) contrast(1.05);
+    filter: grayscale(1) brightness(1) contrast(1.05);
 }
 
 .wk-slide-scrim {
@@ -338,7 +327,6 @@ html body { padding-top: 0 !important; background: #0a0a0a; }
 @media (max-width: 600px) {
     .wk-slide, .wk-carousel::before, .wk-carousel::after { flex-basis: 86vw; }
     .wk-hero-inner { padding: 0 1rem; }
-    .wk-filter-inner { padding: .6rem 1rem; }
     .wk-slide-info { padding: 1.4rem 1.1rem 1.1rem; }
     .wk-nav-arrow { width: 38px; height: 38px; font-size: 20px; }
     .wk-modal-viewer { padding: 70px 56px 12px; }

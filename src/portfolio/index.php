@@ -122,8 +122,9 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
 .pm-navbar .nav-link.active,
 .pm-navbar .nav-link[aria-expanded="true"] { color: #fff !important; opacity: 1; }
 .pm-navbar .nav-link::before { background: #fff !important; }
-.pm-nav-logo { filter: brightness(0) invert(1) !important; opacity: .95; }
-.pm-navbar .navbar-toggler-icon { filter: invert(1); }
+.pm-navbar .pm-nav-logo { filter: brightness(0) invert(1) !important; opacity: .95; }
+.pm-menu-trigger,
+.pm-filter-trigger { color: #fff !important; }
 </style>
 
 <div class="wk-page">
@@ -139,18 +140,6 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
                 평목 공방에서 완성된 창호 작품들입니다.<br>
                 <span class="wk-count-badge"><?= $total ?>개 작품</span>
             </p>
-        </div>
-    </div>
-
-    <!-- ── 필터 바 (sticky) ── -->
-    <div class="wk-filter-bar">
-        <div class="wk-filter-inner">
-            <?php foreach ($tags as $i => $tag): ?>
-            <button class="wk-tag<?= $i === 0 ? ' active' : '' ?>"
-                    data-tag="<?= htmlspecialchars($tag) ?>">
-                <?= htmlspecialchars($tag) ?>
-            </button>
-            <?php endforeach; ?>
         </div>
     </div>
 
@@ -218,6 +207,26 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
     <div class="wk-modal-thumbs" id="wkModalThumbs"></div>
 </div>
 
+<!-- ── 키워드 필터 사이드 패널 (우측, 메뉴 드로어와 동일 디자인) ── -->
+<div class="pm-nav-drawer-backdrop" id="wkFilterBackdrop"></div>
+<div class="pm-nav-drawer" id="wkFilterPanel" aria-hidden="true">
+    <div class="pm-dw-head">
+        <span class="wk-filter-panel-title"><i class="bi bi-sliders"></i> Filter</span>
+        <button class="pm-dw-close" id="wkFilterPanelClose" aria-label="닫기">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+    <div class="pm-dw-body">
+        <?php foreach ($tags as $i => $tag): ?>
+        <button class="pm-dw-link-top wk-tag<?= $i === 0 ? ' active' : '' ?>"
+                data-tag="<?= htmlspecialchars($tag) ?>">
+            <i class="bi <?= $i === 0 ? 'bi-grid' : 'bi-tag' ?>"></i>
+            <span><?= htmlspecialchars($tag) ?></span>
+        </button>
+        <?php endforeach; ?>
+    </div>
+</div>
+
 <script>
 (function () {
     const tags     = document.querySelectorAll('.wk-tag');
@@ -227,19 +236,6 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
     const prevBtn  = document.getElementById('wkPrev');
     const nextBtn  = document.getElementById('wkNext');
     const hero     = document.querySelector('.wk-hero');
-    const filterBar = document.querySelector('.wk-filter-bar');
-    const nav      = document.querySelector('.pm-navbar');
-
-    // 사진이 화면 맨 위까지 올라가고 네비·필터는 그 위에 투명하게 뜨는 구조라,
-    // 네비 하단 위치(공지 배너 유무로 변동)에 맞춰 필터의 위치를 실측해서 배치한다.
-    // 헤더(제목·설명)는 첫 화면 좌측 여백(캐러셀 시작 스페이서) 안에 세로 중앙으로 고정 배치된다.
-    function layoutOverlay() {
-        const navBottom = nav ? nav.getBoundingClientRect().bottom : 0;
-        filterBar.style.top = navBottom + 'px';
-    }
-    layoutOverlay();
-    window.addEventListener('resize', layoutOverlay);
-    new ResizeObserver(layoutOverlay).observe(document.body);
 
     // 좌측 여백에 있는 헤더는 스크롤해서 실제 사진이 그 자리에 오면 자연스럽게 사라지게 함
     function fadeHero() {
@@ -316,6 +312,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
             emptyEl.style.display = visible === 0 ? 'block' : 'none';
             carousel.scrollLeft = 0;
             requestAnimationFrame(updateActive);
+            closeFilterPanel();
         });
     });
 
@@ -379,6 +376,29 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
         if (e.key === 'Escape')    closeModal();
         if (e.key === 'ArrowLeft')  showModalImg(modalIdx - 1);
         if (e.key === 'ArrowRight') showModalImg(modalIdx + 1);
+    });
+
+    // ── 키워드 필터 사이드 패널 (우측) ──────────────────
+    const filterTrigger  = document.getElementById('pmFilterTrigger');
+    const filterPanel    = document.getElementById('wkFilterPanel');
+    const filterBackdrop = document.getElementById('wkFilterBackdrop');
+    const filterClose    = document.getElementById('wkFilterPanelClose');
+
+    function openFilterPanel() {
+        filterPanel.classList.add('open');
+        filterBackdrop.classList.add('open');
+        filterPanel.setAttribute('aria-hidden', 'false');
+    }
+    function closeFilterPanel() {
+        filterPanel.classList.remove('open');
+        filterBackdrop.classList.remove('open');
+        filterPanel.setAttribute('aria-hidden', 'true');
+    }
+    if (filterTrigger)  filterTrigger.addEventListener('click', openFilterPanel);
+    if (filterClose)    filterClose.addEventListener('click', closeFilterPanel);
+    if (filterBackdrop) filterBackdrop.addEventListener('click', closeFilterPanel);
+    window.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && filterPanel.classList.contains('open')) closeFilterPanel();
     });
 })();
 </script>

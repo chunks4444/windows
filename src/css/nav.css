@@ -134,6 +134,53 @@ a.pm-topbar-notice-text:hover { opacity: 0.85; }
     .pm-navbar { background: rgba(255, 255, 255, 0.97); }
 }
 
+/* ── 포트폴리오 페이지 전용 Menu 트리거 (전체 링크 대신 좌측 패널 오픈) ── */
+.pm-menu-trigger {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: none;
+    border: none;
+    padding: 6px 4px;
+    cursor: pointer;
+    color: var(--text);
+}
+.pm-menu-trigger-icon {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 22px;
+}
+.pm-menu-trigger-icon span {
+    display: block;
+    width: 2px;
+    height: 100%;
+    background: currentColor;
+    border-radius: 1px;
+}
+.pm-menu-trigger-label {
+    font-size: var(--fs-13);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+.pm-filter-trigger {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+    background: none;
+    border: none;
+    padding: 6px 4px;
+    cursor: pointer;
+    color: var(--text);
+    font-size: 18px;
+}
+.pm-filter-trigger-label {
+    font-size: var(--fs-13);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
 /* ── 오른쪽 슬라이드 드로어 ─────────────────────────── */
 .pm-nav-drawer-backdrop {
     position: fixed;
@@ -160,6 +207,14 @@ a.pm-topbar-notice-text:hover { opacity: 0.85; }
     overflow: hidden;
 }
 .pm-nav-drawer.open { transform: translateX(0); }
+
+/* 포트폴리오 페이지 — 좌측에서 슬라이드 */
+.pm-nav-drawer--left {
+    left: 0;
+    right: auto;
+    transform: translateX(-100%);
+}
+.pm-nav-drawer--left.open { transform: translateX(0); }
 
 .pm-dw-head {
     display: flex;
