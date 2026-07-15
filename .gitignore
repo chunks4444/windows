@@ -1,3 +1,10 @@
 logs/*.log
 uploads/
 **/config.local.php
+ops/backup_uploads/config.ps1
+ops/backup_uploads/.pw
+ops/backup_uploads/snapshots/
+ops/backup_uploads/*.log
+ops/backup_db_local/config.ps1
+ops/backup_db_local/.my.cnf
+ops/backup_db_local/*.log

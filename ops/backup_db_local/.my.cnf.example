@@ -1,0 +1,9 @@
+# 이 파일을 .my.cnf 로 복사해서 실제 값 채워넣을 것 (.my.cnf는 git-ignored).
+#   Copy-Item .my.cnf.example .my.cnf
+#
+# src/lib/db.php의 DB_HOST/DB_PORT/DB_USER/DB_PASS와 동일한 값 (windowspyeongmok DB).
+[client]
+host=211.35.72.68
+port=6836
+user=webpyeongmok
+password=실제_비밀번호
