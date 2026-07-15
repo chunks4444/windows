@@ -25,7 +25,15 @@ html body { padding-top: 0 !important; background: #0a0a0a; }
     padding: 0 2.2rem;
     transition: opacity .25s ease;
 }
-.wk-hero-inner { display: flex; flex-direction: column; align-items: flex-end; text-align: right; }
+.wk-hero-inner {
+    display: flex; flex-direction: column; align-items: flex-end; text-align: right;
+    clip-path: inset(0 0 0 100%);
+    animation: wk-hero-reveal .7s cubic-bezier(.65,0,.35,1) .15s both;
+}
+@keyframes wk-hero-reveal {
+    from { clip-path: inset(0 0 0 100%); }
+    to   { clip-path: inset(0 0 0 0); }
+}
 .wk-hero-label {
     display: block;
     font-size: var(--fs-12); font-weight: 700; letter-spacing: .1em;
@@ -33,7 +41,7 @@ html body { padding-top: 0 !important; background: #0a0a0a; }
     margin-bottom: .6rem;
 }
 .wk-hero h1 {
-    font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+    font-size: clamp(1.9rem, 2.9vw, 2.5rem);
     font-weight: 800; letter-spacing: -.01em; color: #fff;
     line-height: 1.15; margin: 0 0 .9rem;
 }
