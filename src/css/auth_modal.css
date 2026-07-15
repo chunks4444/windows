@@ -16,7 +16,7 @@
 }
 .auth-modal-brand {
     flex: 0 0 260px;
-    background: #000;
+    background: var(--danger);
     display: flex;
     align-items: center;
     justify-content: center;
