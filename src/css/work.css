@@ -15,6 +15,20 @@ html body { padding-top: 0 !important; background: #0a0a0a; }
     pointer-events: none;
 }
 
+/* 첫 로드 시 헤더/캐러셀 경계선이 위→아래로 그려지는 인트로 라인 (designcanada.com 참고) */
+.wk-intro-line {
+    position: fixed; top: 0; left: 33.334vw;
+    width: 1px; height: 0;
+    background: rgba(255,255,255,.35);
+    z-index: 600;
+    pointer-events: none;
+    animation: wk-intro-line-draw 1s cubic-bezier(.65,0,.35,1) .3s both;
+}
+@keyframes wk-intro-line-draw {
+    from { height: 0; }
+    to   { height: 100%; }
+}
+
 /* ── 페이지 헤더 — 첫 화면 좌측 여백(캐러셀 시작 스페이서) 안에 세로로 배치,
    스크롤해서 사진이 나오면 자연스럽게 사라짐(work.js가 opacity 계산) ── */
 .wk-hero {
