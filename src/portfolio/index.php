@@ -95,8 +95,28 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
 </head>
 <body>
 <?php include __DIR__ . '/../components/nav.php'; ?>
+<style>
+/* 포트폴리오 페이지 전용 — 상단 공지 띠배너 숨김 (배너가 있을 때 nav.php가 강제로 밀어내는 top값도 함께 되돌림) */
+#pmTopbarNotice { display: none !important; }
+
+/* 상단 네비를 어둡게 눌러 배경과 자연스럽게 어우러지게 함 */
+.pm-navbar {
+    top: 0 !important;
+    background: rgba(10,10,10,.92) !important;
+    border-bottom: 1px solid rgba(255,255,255,.08) !important;
+}
+.pm-navbar .nav-link { color: #fff !important; opacity: .82; }
+.pm-navbar .nav-link:hover,
+.pm-navbar .nav-link.active,
+.pm-navbar .nav-link[aria-expanded="true"] { color: #fff !important; opacity: 1; }
+.pm-navbar .nav-link::before { background: #fff !important; }
+.pm-nav-logo { filter: brightness(0) invert(1) !important; opacity: .95; }
+.pm-navbar .navbar-toggler-icon { filter: invert(1); }
+</style>
 
 <div class="wk-page">
+
+    <div class="wk-top-scrim"></div>
 
     <!-- ── 페이지 헤더 ── -->
     <div class="wk-hero">
@@ -178,16 +198,28 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
     const emptyEl  = document.getElementById('wkEmpty');
     const prevBtn  = document.getElementById('wkPrev');
     const nextBtn  = document.getElementById('wkNext');
-    const section  = document.querySelector('.wk-carousel-section');
+    const hero     = document.querySelector('.wk-hero');
+    const filterBar = document.querySelector('.wk-filter-bar');
+    const nav      = document.querySelector('.pm-navbar');
 
-    // 캐러셀 섹션이 남은 뷰포트를 정확히 채우도록 높이를 실측(공지 배너 유무 등 변동 대응)
-    function fitCarouselHeight() {
-        const top = section.getBoundingClientRect().top;
-        section.style.height = Math.max(320, window.innerHeight - top) + 'px';
+    // 사진이 화면 맨 위까지 올라가고 네비·필터는 그 위에 투명하게 뜨는 구조라,
+    // 네비 하단 위치(공지 배너 유무로 변동)에 맞춰 필터의 위치를 실측해서 배치한다.
+    // 헤더(제목·설명)는 첫 화면 좌측 여백(캐러셀 시작 스페이서) 안에 세로 중앙으로 고정 배치된다.
+    function layoutOverlay() {
+        const navBottom = nav ? nav.getBoundingClientRect().bottom : 0;
+        filterBar.style.top = navBottom + 'px';
     }
-    fitCarouselHeight();
-    window.addEventListener('resize', fitCarouselHeight);
-    new ResizeObserver(fitCarouselHeight).observe(document.body);
+    layoutOverlay();
+    window.addEventListener('resize', layoutOverlay);
+    new ResizeObserver(layoutOverlay).observe(document.body);
+
+    // 좌측 여백에 있는 헤더는 스크롤해서 실제 사진이 그 자리에 오면 자연스럽게 사라지게 함
+    function fadeHero() {
+        const fadeDistance = carousel.clientWidth * 0.28;
+        hero.style.opacity = Math.max(0, 1 - carousel.scrollLeft / fadeDistance);
+        hero.style.pointerEvents = carousel.scrollLeft > 4 ? 'none' : 'auto';
+    }
+    fadeHero();
 
     // 활성(중앙) 슬라이드 판정 — 슬라이드 3개가 뷰포트에 항상 꽉 차게 배치되므로
     // IntersectionObserver의 ratio만으로는 여러 개가 동시에 "가득 보임"으로 잡힌다.
@@ -208,7 +240,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
     carousel.addEventListener('scroll', () => {
         if (rafPending) return;
         rafPending = true;
-        requestAnimationFrame(() => { updateActive(); rafPending = false; });
+        requestAnimationFrame(() => { updateActive(); fadeHero(); rafPending = false; });
     });
     updateActive();
 
