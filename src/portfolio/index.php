@@ -145,6 +145,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
     <div class="wk-top-scrim"></div>
     <div class="wk-intro-overlay"></div>
     <div class="wk-intro-line"></div>
+    <div class="wk-intro-line-head"></div>
 
     <!-- ── 페이지 헤더 ── -->
     <div class="wk-hero">

@@ -28,15 +28,34 @@ html body { padding-top: 0 !important; background: #0a0a0a; }
 
 .wk-intro-line {
     position: fixed; top: 0; left: 33.334vw;
-    width: 1px; height: 0;
+    width: 2px; height: 0;
     background: rgba(255,255,255,.5);
     z-index: 801;
     pointer-events: none;
-    animation: wk-intro-line-draw 1s cubic-bezier(.65,0,.35,1) .3s both;
+    animation: wk-intro-line-draw 1s cubic-bezier(.65,0,.35,1) .3s both,
+               wk-intro-line-fade .4s ease 1.8s forwards;
 }
 @keyframes wk-intro-line-draw {
     from { height: 0; }
     to   { height: 100%; }
+}
+@keyframes wk-intro-line-fade {
+    to { opacity: 0; visibility: hidden; }
+}
+
+.wk-intro-line-head {
+    position: fixed; left: 33.334vw; top: 0;
+    width: 8px; height: 8px;
+    background: #fff;
+    transform: translate(-50%, -50%);
+    z-index: 802;
+    pointer-events: none;
+    animation: wk-intro-line-head-move 1s cubic-bezier(.65,0,.35,1) .3s both,
+               wk-intro-line-fade .4s ease 1.8s forwards;
+}
+@keyframes wk-intro-line-head-move {
+    from { top: 0; }
+    to   { top: 100%; }
 }
 
 /* ── 페이지 헤더 — 첫 화면 좌측 여백(캐러셀 시작 스페이서) 안에 세로로 배치,
