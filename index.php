@@ -53,7 +53,12 @@ try {
 }
 // 블로그 글 3개 (테이블 없으면 빈 배열)
 try {
-    $latestPosts = $pdo ? $pdo->query('SELECT * FROM blog_posts WHERE is_active=1 ORDER BY sort_order, id LIMIT 3')->fetchAll() : [];
+    $latestPosts = $pdo ? $pdo->query(
+        "SELECT p.*, s.name AS series_name
+         FROM blog_posts p
+         LEFT JOIN blog_series s ON s.id = p.series_id
+         WHERE p.is_active=1 ORDER BY p.sort_order, p.id LIMIT 3"
+    )->fetchAll() : [];
 } catch (Throwable $e) {
     $latestPosts = [];
 }
@@ -439,7 +444,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                 <?php if ($blogQuote): ?>
                 <a href="/blog/<?= rawurlencode($blogQuote['slug']) ?>" class="home-quote-banner">
                     <p class="home-quote-text">"<?= htmlspecialchars($blogQuote['tagline']) ?>"</p>
-                    <p class="home-quote-sub"><?= htmlspecialchars($blogQuote['series_name']) ?> 이야기 읽어보기 <i class="bi bi-arrow-right"></i></p>
+                    <p class="home-quote-sub"><?= htmlspecialchars($blogQuote['series_name']) ?> · 1화 이야기 읽어보기 <i class="bi bi-arrow-right"></i></p>
                 </a>
                 <?php endif; ?>
                 <div class="home-blog-grid">
@@ -451,6 +456,9 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                         </div>
                         <?php endif; ?>
                         <div class="home-blog-card-body">
+                            <?php if ($p['series_name']): ?>
+                            <p class="home-blog-card-cat"><?= htmlspecialchars($p['series_name']) ?><?= $p['series_order'] ? ' · ' . (int)$p['series_order'] . '화' : '' ?></p>
+                            <?php endif; ?>
                             <div class="home-blog-card-title"><?= htmlspecialchars($p['title']) ?></div>
                             <?php if ($p['summary']): ?>
                             <div class="home-blog-card-summary"><?= htmlspecialchars($p['summary']) ?></div>

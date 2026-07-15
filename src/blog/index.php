@@ -46,7 +46,7 @@ try {
 
     $stmt = $pdo->prepare("
         SELECT p.id, p.title, p.slug, p.summary, p.thumbnail_url, p.created_at, p.view_count,
-               s.name AS series_name
+               p.series_order, s.name AS series_name
         FROM blog_posts p
         LEFT JOIN blog_series s ON s.id = p.series_id
         WHERE p.is_active = 1
@@ -67,7 +67,7 @@ try {
 
     // 사이드바 — 시리즈별 카드 (시리즈명 + 태그라인 + 최근 글 최대 3개)
     $seriesRows = $pdo->query("
-        SELECT p.id, p.title, p.slug, p.created_at, p.series_id,
+        SELECT p.id, p.title, p.slug, p.created_at, p.series_id, p.series_order,
                s.name AS series_name, s.tagline AS series_tagline, s.sort_order AS series_sort
         FROM blog_posts p
         JOIN blog_series s ON s.id = p.series_id
@@ -144,7 +144,7 @@ try {
                             <img src="<?= htmlspecialchars($fp['thumbnail_url']) ?>" class="bg-feature-img" alt="">
                             <div class="bg-feature-caption">
                                 <?php if ($fp['series_name']): ?>
-                                <span class="bg-feature-badge"><?= htmlspecialchars($fp['series_name']) ?></span>
+                                <span class="bg-feature-badge"><?= htmlspecialchars($fp['series_name']) ?><?= $fp['series_order'] ? ' · ' . (int)$fp['series_order'] . '화' : '' ?></span>
                                 <?php endif; ?>
                                 <h2 class="bg-feature-title">"<?= htmlspecialchars($fp['title']) ?>"</h2>
                             </div>
@@ -167,7 +167,7 @@ try {
                     <a class="bg-ranked-link" href="/blog/<?= rawurlencode($p['slug']) ?>">
                         <div class="bg-ranked-text">
                             <?php if ($p['series_name']): ?>
-                            <p class="bg-ranked-cat"><?= htmlspecialchars($p['series_name']) ?></p>
+                            <p class="bg-ranked-cat"><?= htmlspecialchars($p['series_name']) ?><?= $p['series_order'] ? ' · ' . (int)$p['series_order'] . '화' : '' ?></p>
                             <?php endif; ?>
                             <h3 class="bg-ranked-title"><?= htmlspecialchars($p['title']) ?></h3>
                             <?php if ($p['summary']): ?>
@@ -208,7 +208,7 @@ try {
                 <ul class="bg-side-card-posts">
                     <?php foreach ($sc['posts'] as $sp): ?>
                     <li>
-                        <a href="/blog/<?= rawurlencode($sp['slug']) ?>"><?= htmlspecialchars($sp['title']) ?></a>
+                        <a href="/blog/<?= rawurlencode($sp['slug']) ?>"><?= $sp['series_order'] ? (int)$sp['series_order'] . '화 ' : '' ?><?= htmlspecialchars($sp['title']) ?></a>
                         <span class="bg-side-card-date"><?= date('Y.m.d', strtotime($sp['created_at'])) ?></span>
                     </li>
                     <?php endforeach; ?>

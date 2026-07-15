@@ -184,7 +184,7 @@ $metaKeywords = implode(', ', array_unique(array_filter([
 
         <?php if ($seriesInfo): ?>
         <div class="bd-series-box">
-            <p class="bd-series-box-label">이 시리즈 · <?= htmlspecialchars($seriesInfo['name']) ?></p>
+            <p class="bd-series-box-label">이 시리즈 · <?= htmlspecialchars($seriesInfo['name']) ?><?= $post['series_order'] ? ' · ' . (int)$post['series_order'] . '화' : '' ?></p>
             <?php if ($seriesInfo['tagline']): ?>
             <p class="bd-series-box-tagline">"<?= htmlspecialchars($seriesInfo['tagline']) ?>"</p>
             <?php endif; ?>
@@ -192,9 +192,9 @@ $metaKeywords = implode(', ', array_unique(array_filter([
                 <?php foreach ($seriesEpisodes as $ep): ?>
                 <li class="<?= $ep['id'] === $post['id'] ? 'current' : '' ?>">
                     <?php if ($ep['id'] === $post['id']): ?>
-                    <span><?= $ep['series_order'] ?>. <?= htmlspecialchars($ep['title']) ?></span>
+                    <span><?= $ep['series_order'] ?>화 <?= htmlspecialchars($ep['title']) ?></span>
                     <?php else: ?>
-                    <a href="/blog/<?= rawurlencode($ep['slug']) ?>"><?= $ep['series_order'] ?>. <?= htmlspecialchars($ep['title']) ?></a>
+                    <a href="/blog/<?= rawurlencode($ep['slug']) ?>"><?= $ep['series_order'] ?>화 <?= htmlspecialchars($ep['title']) ?></a>
                     <?php endif; ?>
                 </li>
                 <?php endforeach; ?>
@@ -239,7 +239,7 @@ $metaKeywords = implode(', ', array_unique(array_filter([
         </a>
         <?php elseif ($nextSeries): ?>
         <a class="bd-pager-link bd-pager-next" href="/blog/<?= rawurlencode($nextSeries['slug']) ?>">
-            <span class="bd-pager-label">다음 시리즈 · <?= htmlspecialchars($nextSeries['series_name']) ?> 1편</span>
+            <span class="bd-pager-label">다음 시리즈 · <?= htmlspecialchars($nextSeries['series_name']) ?> · 1화</span>
             <span class="bd-pager-title"><?= htmlspecialchars($nextSeries['title']) ?></span>
         </a>
         <?php endif; ?>
