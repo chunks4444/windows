@@ -323,7 +323,7 @@ button.pm-dw-link-top.wk-tag i { color: var(--accent-hover); }
    (모달 자체의 clip-path에 잘리지 않도록 형제 요소로 독립시킴) */
 .wk-modal-close-line {
     position: fixed; left: 0; right: 0; top: 50%;
-    height: 2px; background: #fff;
+    height: 2px; background: transparent;
     transform: translateY(-50%);
     opacity: 0;
     pointer-events: none;
@@ -335,7 +335,7 @@ button.pm-dw-link-top.wk-tag i { color: var(--accent-hover); }
 }
 @keyframes wk-modal-close-line {
     0%   { opacity: 0; box-shadow: 0 0 0 rgba(255,255,255,0); }
-    50%  { opacity: 1; box-shadow: 0 0 24px 4px rgba(255,255,255,.9); }
+    50%  { opacity: 1; box-shadow: 0 0 40px 12px rgba(255,255,255,.95), 0 0 90px 24px rgba(255,255,255,.5); }
     100% { opacity: 0; box-shadow: 0 0 0 rgba(255,255,255,0); }
 }
 
