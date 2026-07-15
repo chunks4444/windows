@@ -121,8 +121,8 @@ $navStudioIcons = [
         <span class="pm-menu-trigger-label">Menu</span>
     </button>
     <button class="pm-filter-trigger" id="pmFilterTrigger" type="button" aria-expanded="false" aria-label="필터 열기">
-        <i class="bi bi-sliders"></i>
         <span class="pm-filter-trigger-label">Filter</span>
+        <i class="bi bi-sliders"></i>
     </button>
     <?php else: ?>
     <button class="navbar-toggler border-0" id="pmNavToggler" type="button" aria-expanded="false" aria-label="메뉴 열기">

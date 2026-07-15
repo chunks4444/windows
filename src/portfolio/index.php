@@ -125,6 +125,19 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
 .pm-navbar .pm-nav-logo { filter: brightness(0) invert(1) !important; opacity: .95; }
 .pm-menu-trigger,
 .pm-filter-trigger { color: #fff !important; }
+
+/* Menu/Filter 버튼을 좌우 캐러셀 화살표 바로 위로 재배치 */
+.pm-menu-trigger {
+    position: fixed; left: 20px; top: calc(50% - 34px);
+    transform: translateY(-100%);
+    z-index: 1000;
+}
+.pm-filter-trigger {
+    position: fixed; right: 20px; top: calc(50% - 34px);
+    transform: translateY(-100%);
+    z-index: 1000;
+    margin-left: 0;
+}
 </style>
 
 <div class="wk-page">
