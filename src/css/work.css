@@ -225,7 +225,7 @@ button.pm-dw-link-top.wk-tag i { color: var(--accent-hover); }
     position: absolute; left: 0; right: 0; bottom: 0;
     padding: 2rem 1.6rem 1.6rem;
     clip-path: inset(0 100% 0 0);
-    transition: clip-path .6s cubic-bezier(.65,0,.35,1);
+    transition: clip-path 1.1s cubic-bezier(.65,0,.35,1);
     pointer-events: none;
 }
 .wk-slide.is-active .wk-slide-info { clip-path: inset(0 0 0 0); pointer-events: auto; }
