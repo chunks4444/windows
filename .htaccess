@@ -35,6 +35,8 @@ RewriteRule ^portfolio/?$   src/portfolio/index.php  [L]
 RewriteRule ^collection/?$  src/collection/index.php [L]
 RewriteRule ^guide/?$       src/guide/index.php      [L]
 RewriteRule ^company/?$     src/company/index.php    [L]
+RewriteRule ^privacy/?$     src/legal/privacy.php    [L]
+RewriteRule ^terms/?$       src/legal/terms.php      [L]
 
 # 블로그/포트폴리오 글 상세 시맨틱 URL: /blog/{slug}, /portfolio/{slug} → detail.php?slug={slug}
 RewriteCond %{REQUEST_FILENAME} !-f

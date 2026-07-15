@@ -124,6 +124,14 @@ header('Content-Type: text/html; charset=UTF-8');
                 </div>
             </form>
         </div>
+
+        <div class="pf-section">
+            <h2 class="pf-section-title">약관 및 정책</h2>
+            <div class="pf-legal-links">
+                <a href="/privacy/">개인정보처리방침</a>
+                <a href="/terms/">이용약관</a>
+            </div>
+        </div>
     </div>
 </div>
 

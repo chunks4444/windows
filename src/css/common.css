@@ -138,6 +138,13 @@ body:has(.global-footer) {
 
 .global-footer .footer-cta-link:hover { color: var(--danger); }
 
+.global-footer .footer-links-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
 .global-footer .footer-copy {
     font-size: var(--fs-12);
     font-weight: 300;

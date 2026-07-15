@@ -23,6 +23,17 @@
     margin-bottom: 20px;
 }
 
+.pf-legal-links {
+    display: flex;
+    gap: 20px;
+}
+.pf-legal-links a {
+    font-size: var(--fs-14);
+    color: var(--text);
+    text-decoration: none;
+}
+.pf-legal-links a:hover { color: var(--accent); text-decoration: underline; }
+
 .pf-email-row {
     display: flex;
     align-items: center;

@@ -1,0 +1,66 @@
+/* 개인정보처리방침 / 이용약관 — 공통 문서 스타일 */
+.legal-page {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 64px 24px 96px;
+}
+
+.legal-page h1 {
+    font-size: var(--fs-32);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+}
+
+.legal-updated {
+    font-size: var(--fs-13);
+    color: var(--text-muted);
+    margin-bottom: 40px;
+}
+
+.legal-page h2 {
+    font-size: var(--fs-22);
+    font-weight: 700;
+    margin-top: 40px;
+    margin-bottom: 12px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+}
+
+.legal-page h2:first-of-type { border-top: none; padding-top: 0; }
+
+.legal-page p,
+.legal-page li {
+    font-size: var(--fs-14);
+    line-height: 1.8;
+    color: var(--text);
+}
+
+.legal-page ul,
+.legal-page ol {
+    margin: 8px 0 16px;
+    padding-left: 22px;
+}
+
+.legal-page table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 20px;
+    font-size: var(--fs-14);
+}
+
+.legal-page th,
+.legal-page td {
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    text-align: left;
+    vertical-align: top;
+}
+
+.legal-page th {
+    background: rgba(var(--text-rgb), 0.04);
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.legal-page a { color: var(--accent, var(--text)); }
