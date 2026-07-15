@@ -210,7 +210,6 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
 </div>
 
 <!-- ── 디테일 뷰 모달 (네비게이션 없이 이미지·제목만) ── -->
-<div class="wk-modal-close-line" id="wkModalCloseLine"></div>
 <div class="wk-modal" id="wkModal" aria-hidden="true">
     <button class="wk-modal-close" id="wkModalClose" aria-label="닫기">&times;</button>
     <div class="wk-modal-viewer">
@@ -381,7 +380,6 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
     const modalClose   = document.getElementById('wkModalClose');
     const modalPrev    = document.getElementById('wkModalPrev');
     const modalNext    = document.getElementById('wkModalNext');
-    const modalCloseLine = document.getElementById('wkModalCloseLine');
     let modalImages = [], modalIdx = 0;
 
     function openModal(slide) {
@@ -397,8 +395,6 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
     }
     function closeModal() {
         modal.classList.remove('open');
-        modalCloseLine.classList.add('flash');
-        setTimeout(() => modalCloseLine.classList.remove('flash'), 1300);
         modal.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
         startAutoplay();
