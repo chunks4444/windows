@@ -314,7 +314,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
             vs[0].scrollIntoView({ behavior: 'instant', inline: 'center' });
             updateActive();
             requestAnimationFrame(() => fadeOverlay.classList.remove('show'));
-        }, 450);
+        }, 950);
     }
     function autoAdvance() {
         const vs = visibleSlides();

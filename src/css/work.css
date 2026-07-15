@@ -33,7 +33,7 @@ html body { padding-top: 0 !important; background: #0a0a0a; }
     z-index: 850;
     opacity: 0;
     pointer-events: none;
-    transition: opacity .4s ease;
+    transition: opacity .9s ease;
 }
 .wk-fade-overlay.show { opacity: 1; }
 
