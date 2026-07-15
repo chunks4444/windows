@@ -311,31 +311,32 @@ button.pm-dw-link-top.wk-tag i { color: var(--accent-hover); }
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     opacity: 0; visibility: hidden;
     clip-path: inset(50% 0 50% 0);
-    transition: opacity .5s ease, clip-path .5s cubic-bezier(.65,0,.35,1), visibility 0s linear .5s;
+    transition: clip-path .5s cubic-bezier(.65,0,.35,1), opacity .4s ease .9s, visibility 0s linear 1.3s;
 }
 .wk-modal.open {
     opacity: 1; visibility: visible;
     clip-path: inset(0 0 0 0);
-    transition: opacity .5s ease, clip-path .5s cubic-bezier(.65,0,.35,1);
+    transition: opacity .3s ease, clip-path .5s cubic-bezier(.65,0,.35,1);
 }
 
-/* 모달이 닫힐 때 중앙에 잠깐 흰 라인이 맺혔다 사라지는 효과 */
+/* 모달이 닫힐 때: 다 접혀 모인 뒤에야 중앙이 환하게 빛났다 사라짐
+   (모달 자체의 clip-path에 잘리지 않도록 형제 요소로 독립시킴) */
 .wk-modal-close-line {
-    position: absolute; left: 0; right: 0; top: 50%;
+    position: fixed; left: 0; right: 0; top: 50%;
     height: 2px; background: #fff;
     transform: translateY(-50%);
     opacity: 0;
     pointer-events: none;
-    z-index: 5;
+    z-index: 2001;
+    box-shadow: 0 0 0 rgba(255,255,255,0);
 }
-.wk-modal.closing .wk-modal-close-line {
-    animation: wk-modal-close-line .5s ease;
+.wk-modal-close-line.flash {
+    animation: wk-modal-close-line .4s ease .5s;
 }
 @keyframes wk-modal-close-line {
-    0%   { opacity: 0; }
-    45%  { opacity: 1; }
-    55%  { opacity: 1; }
-    100% { opacity: 0; }
+    0%   { opacity: 0; box-shadow: 0 0 0 rgba(255,255,255,0); }
+    50%  { opacity: 1; box-shadow: 0 0 24px 4px rgba(255,255,255,.9); }
+    100% { opacity: 0; box-shadow: 0 0 0 rgba(255,255,255,0); }
 }
 
 .wk-modal-close {
@@ -359,7 +360,10 @@ button.pm-dw-link-top.wk-tag i { color: var(--accent-hover); }
 .wk-modal-img {
     max-width: 100%; max-height: 100%; object-fit: contain;
     box-shadow: 0 20px 60px rgba(0,0,0,.6);
+    opacity: 0;
+    transition: opacity .35s ease;
 }
+.wk-modal-img.loaded { opacity: 1; }
 
 .wk-modal-arrow {
     position: absolute; top: 50%; transform: translateY(-50%);
