@@ -77,6 +77,8 @@ body {
     letter-spacing: -0.2px;
     word-break: keep-all;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
     color: var(--text);
     -webkit-overflow-scrolling: touch;
 }

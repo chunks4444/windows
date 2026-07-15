@@ -111,7 +111,7 @@ button.pm-dw-link-top.wk-tag i { color: var(--accent-hover); }
     transition: filter .6s ease, transform .8s ease;
 }
 .wk-slide.is-active .wk-slide-photo {
-    filter: grayscale(1) brightness(1) contrast(1.05);
+    filter: grayscale(1) brightness(1.25) contrast(1.05);
 }
 
 .wk-slide-scrim {

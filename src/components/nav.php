@@ -113,7 +113,11 @@ $navStudioIcons = [
     </a>
     <?php if ($isWork): ?>
     <button class="pm-menu-trigger" id="pmMenuTrigger" type="button" aria-expanded="false" aria-label="메뉴 열기">
-        <span class="pm-menu-trigger-icon"><span></span><span></span><span></span></span>
+        <svg class="pm-menu-trigger-icon" width="14" height="22" viewBox="0 0 14 22" fill="none" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
+            <line x1="1" y1="1" x2="1" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="7" y1="1" x2="7" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="13" y1="1" x2="13" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
         <span class="pm-menu-trigger-label">Menu</span>
     </button>
     <button class="pm-filter-trigger" id="pmFilterTrigger" type="button" aria-expanded="false" aria-label="필터 열기">
