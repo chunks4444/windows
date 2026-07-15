@@ -26,6 +26,17 @@ html body { padding-top: 0 !important; background: #0a0a0a; }
     to { opacity: 0; visibility: hidden; pointer-events: none; }
 }
 
+/* 캐러셀이 마지막→처음으로 돌아갈 때 빠른 되감기 대신 블랙 페이드로 전환 */
+.wk-fade-overlay {
+    position: fixed; inset: 0;
+    background: #000;
+    z-index: 850;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .4s ease;
+}
+.wk-fade-overlay.show { opacity: 1; }
+
 .wk-intro-line {
     position: fixed; top: 0; left: 33.334vw;
     width: 2px; height: 0;

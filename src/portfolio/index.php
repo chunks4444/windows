@@ -144,6 +144,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
 
     <div class="wk-top-scrim"></div>
     <div class="wk-intro-overlay"></div>
+    <div class="wk-fade-overlay" id="wkFadeOverlay"></div>
     <div class="wk-intro-line"></div>
     <div class="wk-intro-line-head"></div>
 
@@ -305,12 +306,22 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
 
     // ── 자동 슬라이드 — 사용자가 조작(호버/터치/화살표/모달)하면 멈춘다 ──
     const AUTOPLAY_MS = 4500;
+    const fadeOverlay = document.getElementById('wkFadeOverlay');
     let autoplayTimer = null;
+    function wrapToFirst(vs) {
+        fadeOverlay.classList.add('show');
+        setTimeout(() => {
+            vs[0].scrollIntoView({ behavior: 'instant', inline: 'center' });
+            updateActive();
+            requestAnimationFrame(() => fadeOverlay.classList.remove('show'));
+        }, 450);
+    }
     function autoAdvance() {
         const vs = visibleSlides();
         if (vs.length < 2) return;
         const cur = vs.findIndex(s => s.classList.contains('is-active'));
-        goToSlide(vs[(cur + 1) % vs.length]);
+        if (cur === vs.length - 1) { wrapToFirst(vs); return; }
+        goToSlide(vs[cur + 1]);
     }
     function startAutoplay() {
         stopAutoplay();
