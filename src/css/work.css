@@ -173,7 +173,7 @@ button.pm-dw-link-top.wk-tag i { color: var(--accent-hover); }
     transition: filter .6s ease, transform .8s ease;
 }
 .wk-slide.is-active .wk-slide-photo {
-    filter: grayscale(.6) brightness(1) contrast(1.05);
+    filter: grayscale(.7) brightness(1) contrast(1.05);
 }
 .wk-slide.is-active:hover .wk-slide-photo {
     transform: scale(1.05);
