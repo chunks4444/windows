@@ -22,10 +22,10 @@ html body { padding-top: 0 !important; background: #0a0a0a; }
     width: 33.334vw;
     transform: translateY(-50%);
     background: transparent;
-    padding: 0 2.2rem 0 5.5rem;
+    padding: 0 2.2rem;
     transition: opacity .25s ease;
 }
-.wk-hero-inner { display: flex; flex-direction: column; align-items: flex-start; }
+.wk-hero-inner { display: flex; flex-direction: column; align-items: flex-end; text-align: right; }
 .wk-hero-label {
     display: block;
     font-size: var(--fs-12); font-weight: 700; letter-spacing: .1em;
@@ -43,9 +43,9 @@ html body { padding-top: 0 !important; background: #0a0a0a; }
 }
 .wk-count-badge {
     display: inline-flex; align-items: center; gap: .35rem;
-    background: rgba(255,255,255,.15); color: #fff;
-    font-size: var(--fs-12); font-weight: 400; padding: .3rem .7rem;
-    border-radius: 999px;
+    color: rgba(255,255,255,.7);
+    font-size: var(--fs-12); font-weight: 400;
+    margin-top: .35rem;
 }
 
 /* ── 필터 바 — 역시 투명 오버레이, top은 work.js가 계산 ── */
