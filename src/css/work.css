@@ -113,6 +113,9 @@ button.pm-dw-link-top.wk-tag i { color: var(--accent-hover); }
 .wk-slide.is-active .wk-slide-photo {
     filter: grayscale(1) brightness(1) contrast(1.05);
 }
+.wk-slide.is-active:hover .wk-slide-photo {
+    transform: scale(1.05);
+}
 
 .wk-slide-scrim {
     position: absolute; inset: 0;
