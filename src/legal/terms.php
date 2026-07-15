@@ -18,6 +18,14 @@ header('Content-Type: text/html; charset=UTF-8');
     <h1>이용약관</h1>
     <p class="legal-updated">시행일자: 2026년 7월 15일</p>
 
+    <table>
+        <tr><th>상호</th><td>평목(平木)</td></tr>
+        <tr><th>사업자등록번호</th><td>135-32-53949</td></tr>
+        <tr><th>주소</th><td>경기도 양평군 양서면 도곡리 107-2</td></tr>
+        <tr><th>전화</th><td><a href="tel:+827051244568">070-5124-4568</a></td></tr>
+        <tr><th>이메일</th><td><a href="mailto:pyeongmok@gmail.com">pyeongmok@gmail.com</a></td></tr>
+    </table>
+
     <h2>제1조 (목적)</h2>
     <p>
         이 약관은 평목(平木, 이하 "회사")이 운영하는 웹사이트 pyeongmok.com(이하
