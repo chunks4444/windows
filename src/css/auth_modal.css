@@ -1,3 +1,45 @@
+/* ── 로그인 모달: 좌(로고/블랙) + 우(폼/화이트) 2단 레이아웃 ── */
+.auth-modal-dialog {
+    max-width: 760px;
+}
+.auth-modal-content {
+    flex-direction: row;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 16px rgba(var(--text-rgb), 0.06), 0 24px 64px rgba(var(--text-rgb), 0.14);
+    min-height: 460px;
+}
+.auth-modal-close {
+    position: absolute;
+    top: 18px; right: 18px;
+    z-index: 5;
+}
+.auth-modal-brand {
+    flex: 0 0 260px;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.auth-modal-brand-logo {
+    width: 130px;
+    filter: brightness(0) invert(1);
+}
+.auth-modal-form-panel {
+    flex: 1;
+    min-width: 0;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+@media (max-width: 640px) {
+    .auth-modal-content { flex-direction: column; min-height: 0; }
+    .auth-modal-brand { flex: 0 0 96px; }
+    .auth-modal-brand-logo { width: 96px; }
+}
+
 /* ── 탭 행 ── */
 #authTabsRow {
     display: flex;

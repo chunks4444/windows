@@ -4,8 +4,20 @@
 ?>
 <!-- AUTH MODAL -->
 <div class="modal fade" id="authModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" style="max-width:400px;">
-        <div class="modal-content border-0" style="border-radius:16px;box-shadow:0 8px 16px rgba(var(--text-rgb), 0.06), 0 24px 64px rgba(var(--text-rgb), 0.14);overflow:hidden;">
+    <div class="modal-dialog modal-dialog-centered auth-modal-dialog">
+        <div class="modal-content border-0 auth-modal-content">
+
+            <button type="button" class="btn-close auth-modal-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+
+            <!-- 좌측: 로고 패널 -->
+            <div class="auth-modal-brand">
+                <img src="/src/assets/logo.png"
+                     srcset="/src/assets/logo.png 1x, /src/assets/logo@2x.png 2x"
+                     alt="평목" class="auth-modal-brand-logo">
+            </div>
+
+            <!-- 우측: 폼 패널 -->
+            <div class="auth-modal-form-panel">
 
             <!-- 탭 헤더 -->
             <div class="modal-header border-0 pb-0 pt-4 px-4">
@@ -16,7 +28,6 @@
                 <div id="authBackRow" style="display:none;width:100%;">
                     <button type="button" onclick="authSwitchTab('login')">&#8592; 로그인으로</button>
                 </div>
-                <button type="button" class="btn-close ms-2" data-bs-dismiss="modal" style="font-size:11px;"></button>
             </div>
 
             <div class="modal-body px-4 pt-3 pb-4">
@@ -101,6 +112,7 @@
                 </form>
             </div>
 
+            </div>
         </div>
     </div>
 </div>
