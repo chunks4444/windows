@@ -54,7 +54,7 @@
     padding: 4px 0 10px;
     font-size: var(--fs-16);
     font-weight: 700;
-    color: var(--border);
+    color: var(--text-muted);
     border-bottom: 2px solid transparent;
     cursor: pointer;
     letter-spacing: -0.3px;
@@ -109,23 +109,23 @@
     text-transform: uppercase;
 }
 .auth-field input {
-    border: 1.5px solid var(--accent-tint);
-    border-radius: 10px;
+    border: 1.5px solid var(--text);
+    border-radius: 8px;
     padding: 11px 14px;
     font-size: var(--fs-16);
     color: var(--text);
     outline: none;
-    background: var(--bg);
+    background: #fff;
     font-family: inherit;
-    transition: border-color .18s, background .18s, box-shadow .18s;
+    transition: border-color .18s, box-shadow .18s;
 }
 .auth-field input::placeholder {
-    color: var(--border);
+    color: var(--text-muted);
 }
 .auth-field input:focus {
-    border-color: var(--accent);
-    background: var(--bg);
-    box-shadow: 0 0 0 3px rgba(var(--accent-rgb), .10);
+    border-color: var(--text);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(var(--text-rgb), .12);
 }
 
 /* ── 제출 버튼 ── */
