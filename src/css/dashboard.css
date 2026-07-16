@@ -483,6 +483,23 @@ body {
     color: var(--accent);
 }
 
+.db-search-input {
+    height: 36px;
+    padding: 0 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    font-size: var(--fs-14);
+    font-family: inherit;
+    color: var(--text);
+    background: var(--bg);
+    width: 220px;
+    max-width: 100%;
+}
+.db-search-input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
 /* ── 삭제 확인 모달 ──────────────────────────── */
 .db-delete-modal {
     position: fixed;

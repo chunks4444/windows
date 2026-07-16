@@ -40,6 +40,7 @@ header('Content-Type: text/html; charset=UTF-8');
             <button class="db-tab" id="tabRenders" onclick="switchTab('renders')">렌더링</button>
             <button class="db-tab" id="tabOrders" onclick="switchTab('orders')">주문내역</button>
         </div>
+        <input type="text" id="dbDrawingsSearch" class="db-search-input" placeholder="도면 이름으로 검색…" oninput="onDrawingsSearch(this.value)">
     </div>
     <div id="dbContent"></div>
     <div id="dbBoardsContent" style="display:none;"></div>

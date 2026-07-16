@@ -142,11 +142,17 @@ class Drawing {
     }
 
     // 유저의 전체 도면 목록 (타입 무관, 대시보드용) - 썸네일 미포함, 별도 thumbnails()로 lazy 로딩
-    static function list_all(int $userId, int $page = 1, int $limit = 20): array {
+    static function list_all(int $userId, int $page = 1, int $limit = 20, string $q = ''): array {
         $pdo    = db();
         $offset = ($page - 1) * $limit;
         $lockedAtExpr = self::lockedAtExpr('d');
         $orderStatusExpr = self::orderStatusExpr('d');
+        $params = [$userId];
+        $qWhere = '';
+        if ($q !== '') {
+            $qWhere = ' AND d.title LIKE ?';
+            $params[] = '%' . $q . '%';
+        }
         $stmt   = $pdo->prepare(
             "SELECT d.id, d.type, d.title, d.pattern_category, d.is_shared,
                     pc.name AS pattern_category_name,
@@ -154,11 +160,13 @@ class Drawing {
                     (SELECT COUNT(*) FROM drawing_versions WHERE drawing_id = d.id) AS version_count
              FROM drawings d
              LEFT JOIN pattern_categories pc ON pc.id = CAST(d.pattern_category AS UNSIGNED)
-             WHERE d.user_id = ?
+             WHERE d.user_id = ?{$qWhere}
              ORDER BY d.updated_at DESC
              LIMIT ? OFFSET ?"
         );
-        $stmt->execute([$userId, $limit, $offset]);
+        $params[] = $limit;
+        $params[] = $offset;
+        $stmt->execute($params);
         return $stmt->fetchAll();
     }
 

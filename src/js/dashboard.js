@@ -449,6 +449,8 @@ function switchTab(tab) {
     document.getElementById('dbBoardsContent').style.display  = tab === 'boards'   ? '' : 'none';
     document.getElementById('dbRendersContent').style.display = tab === 'renders'  ? '' : 'none';
     document.getElementById('dbOrdersContent').style.display  = tab === 'orders'   ? '' : 'none';
+    const searchInput = document.getElementById('dbDrawingsSearch');
+    if (searchInput) searchInput.style.display = tab === 'drawings' ? '' : 'none';
     if (tab === 'boards')  loadBoards();
     if (tab === 'renders') loadRenders();
     if (tab === 'orders')  loadOrders();
@@ -458,10 +460,26 @@ function _token() { return localStorage.getItem('pmok_auth_token'); }
 function _headers() { return { 'Authorization': 'Bearer ' + _token() }; }
 
 /* ── 도면 페이징 상태 */
-let drawingsPage     = 1;
-let drawingsHasMore  = true;
-let drawingsLoading  = false;
-let drawingsObserver = null;
+let drawingsPage        = 1;
+let drawingsHasMore     = true;
+let drawingsLoading     = false;
+let drawingsObserver    = null;
+let drawingsQuery       = '';
+let drawingsSearchTimer = null;
+
+function drawingsUrl(page) {
+    const params = new URLSearchParams({ page });
+    if (drawingsQuery) params.set('q', drawingsQuery);
+    return `/src/api/drawings/dashboard.php?${params}`;
+}
+
+function onDrawingsSearch(value) {
+    clearTimeout(drawingsSearchTimer);
+    drawingsSearchTimer = setTimeout(() => {
+        drawingsQuery = value.trim();
+        loadDrawingsList();
+    }, 300);
+}
 
 function setDrawingsLoadMore(visible, loading = false) {
     let wrap = document.getElementById('dbLoadMore');
@@ -491,7 +509,7 @@ async function loadMoreDrawings() {
     setDrawingsLoadMore(true, true);
 
     try {
-        const res  = await fetch(`/src/api/drawings/dashboard.php?page=${drawingsPage}`, { headers: _headers() });
+        const res  = await fetch(drawingsUrl(drawingsPage), { headers: _headers() });
         const data = await res.json();
 
         if (!res.ok || data.error) { drawingsLoading = false; setDrawingsLoadMore(drawingsHasMore); return; }
@@ -523,12 +541,16 @@ async function loadDashboard() {
     }
 
     document.getElementById('dbPage').style.display = '';
+    await loadDrawingsList();
+}
+
+async function loadDrawingsList() {
     document.getElementById('dbContent').innerHTML  = '<div class="db-loading">불러오는 중…</div>';
     drawingsPage    = 1;
     drawingsHasMore = true;
 
     try {
-        const res  = await fetch('/src/api/drawings/dashboard.php?page=1', { headers: _headers() });
+        const res  = await fetch(drawingsUrl(1), { headers: _headers() });
         const data = await res.json();
 
         if (!res.ok || data.error) {
@@ -544,7 +566,8 @@ async function loadDashboard() {
         if (countBadge && typeof data.total === 'number') countBadge.textContent = `${data.total}개 도면`;
 
         if (!drawings.length) {
-            document.getElementById('dbContent').innerHTML = '<div class="db-empty">저장된 도면이 없습니다.</div>';
+            document.getElementById('dbContent').innerHTML =
+                `<div class="db-empty">${drawingsQuery ? '검색 결과가 없습니다.' : '저장된 도면이 없습니다.'}</div>`;
             return;
         }
 

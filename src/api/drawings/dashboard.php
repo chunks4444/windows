@@ -14,14 +14,20 @@ if (!$payload) {
 
 $limit    = 20;
 $page     = max(1, (int)($_GET['page'] ?? 1));
-$drawings = Drawing::list_all((int)$payload['sub'], $page, $limit + 1);
+$q        = trim($_GET['q'] ?? '');
+$drawings = Drawing::list_all((int)$payload['sub'], $page, $limit + 1, $q);
 $has_more = count($drawings) > $limit;
 if ($has_more) array_pop($drawings);
 
 $out = ['drawings' => $drawings, 'has_more' => $has_more];
 if ($page === 1) {
-    $stmt = db()->prepare('SELECT COUNT(*) FROM drawings WHERE user_id = ?');
-    $stmt->execute([(int)$payload['sub']]);
+    if ($q !== '') {
+        $stmt = db()->prepare('SELECT COUNT(*) FROM drawings WHERE user_id = ? AND title LIKE ?');
+        $stmt->execute([(int)$payload['sub'], '%' . $q . '%']);
+    } else {
+        $stmt = db()->prepare('SELECT COUNT(*) FROM drawings WHERE user_id = ?');
+        $stmt->execute([(int)$payload['sub']]);
+    }
     $out['total'] = (int)$stmt->fetchColumn();
 }
 
