@@ -698,7 +698,7 @@ CREATE TABLE IF NOT EXISTS blog_series (
 CREATE TABLE IF NOT EXISTS blog_posts (
     id                 INT UNSIGNED      NOT NULL AUTO_INCREMENT,
     title              VARCHAR(150)      NOT NULL DEFAULT '',
-    slug               VARCHAR(200)      NOT NULL DEFAULT '' COMMENT '시맨틱 URL slug (/blog/{slug})',
+    slug               VARCHAR(200)      NULL     DEFAULT NULL COMMENT '시맨틱 URL slug (/blog/{slug}). NULL=아직 공개(보기) 전이라 slug 미생성',
     series_id          INT UNSIGNED      NULL     COMMENT '소속 시리즈 (blog_series.id FK, 독립 글이면 NULL)',
     series_order       SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '시리즈 내 순서',
     related_drawing_id INT UNSIGNED      NULL     COMMENT '연관 대표 도면 ID (drawings.id), 글 상단 썸네일/딥링크용',

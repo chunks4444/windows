@@ -81,13 +81,14 @@ if ($action === 'save') {
             ->execute([$title, $summary, $cta_text, $content, $thumbnail_url,
                 $series_id, $series_order, $related_engine, $related_drawing_id, $question, $id]);
     } else {
-        $slug = make_unique_slug($pdo, 'blog_posts', $title);
+        // 새 글은 항상 비공개(is_active=0)로 시작하고 slug는 NULL — 관리자가 검토 후
+        // "표시"(공개 전환)를 눌러야 그 시점에 slug가 생성된다 (draft 상태에는 URL이 없어야 함)
         // 새 글은 목록 맨 앞(sort_order=0)에 놓는다 — 블로그 인덱스가 최신 글을 앞에 기대하므로
         // 기존 글들을 전부 한 칸씩 뒤로 미룸(MAX+1로 맨 뒤에 붙이면 관리자가 매번 수동으로 끌어올려야 했음)
         $pdo->exec('UPDATE blog_posts SET sort_order = sort_order + 1');
         $pdo->prepare('INSERT INTO blog_posts (title, slug, summary, cta_text, content, thumbnail_url, sort_order,
-                series_id, series_order, related_engine, related_drawing_id, question) VALUES (?,?,?,?,?,?,0,?,?,?,?,?)')
-            ->execute([$title, $slug, $summary, $cta_text, $content, $thumbnail_url,
+                series_id, series_order, related_engine, related_drawing_id, question, is_active) VALUES (?,NULL,?,?,?,?,0,?,?,?,?,?,0)')
+            ->execute([$title, $summary, $cta_text, $content, $thumbnail_url,
                 $series_id, $series_order, $related_engine, $related_drawing_id, $question]);
         $id = (int)$pdo->lastInsertId();
     }
@@ -111,7 +112,20 @@ if ($action === 'delete') {
 }
 
 if ($action === 'toggle') {
-    $pdo->prepare('UPDATE blog_posts SET is_active = 1 - is_active WHERE id=?')->execute([(int)($body['id'] ?? 0)]);
+    $id = (int)($body['id'] ?? 0);
+    $stmt = $pdo->prepare('SELECT title, slug, is_active FROM blog_posts WHERE id=?');
+    $stmt->execute([$id]);
+    $post = $stmt->fetch();
+    if (!$post) { http_response_code(404); echo json_encode(['error' => '글을 찾을 수 없습니다.']); exit; }
+
+    $newActive = $post['is_active'] ? 0 : 1;
+    if ($newActive && !$post['slug']) {
+        // 비공개 → 공개로 전환되는 순간(=검토 완료, "표시" 클릭 시점)에 slug를 확정한다
+        $slug = make_unique_slug($pdo, 'blog_posts', $post['title'], $id);
+        $pdo->prepare('UPDATE blog_posts SET is_active=?, slug=? WHERE id=?')->execute([$newActive, $slug, $id]);
+    } else {
+        $pdo->prepare('UPDATE blog_posts SET is_active=? WHERE id=?')->execute([$newActive, $id]);
+    }
     echo json_encode(['ok' => true]);
     exit;
 }
