@@ -78,9 +78,10 @@ try {
     foreach ($seriesRows as $r) {
         $sid = $r['series_id'];
         if (!isset($seriesCards[$sid])) {
-            $seriesCards[$sid] = ['name' => $r['series_name'], 'tagline' => $r['series_tagline'], 'posts' => []];
+            $seriesCards[$sid] = ['name' => $r['series_name'], 'tagline' => $r['series_tagline'], 'posts' => [], 'total' => 0];
         }
-        if (count($seriesCards[$sid]['posts']) < 3) $seriesCards[$sid]['posts'][] = $r;
+        $seriesCards[$sid]['total']++;
+        if (count($seriesCards[$sid]['posts']) < 5) $seriesCards[$sid]['posts'][] = $r;
     }
 } catch (Throwable $e) {
     $totalCount   = 0;
@@ -201,7 +202,7 @@ try {
         <aside class="bg-sidebar">
             <?php foreach ($seriesCards as $sc): ?>
             <div class="bg-side-card">
-                <h3 class="bg-side-card-title"><?= htmlspecialchars($sc['name']) ?></h3>
+                <h3 class="bg-side-card-title"><?= htmlspecialchars($sc['name']) ?> <span class="bg-side-card-count">전체 <?= (int)$sc['total'] ?>화</span></h3>
                 <?php if ($sc['tagline']): ?>
                 <p class="bg-side-card-tagline">"<?= htmlspecialchars($sc['tagline']) ?>"</p>
                 <?php endif; ?>

@@ -161,6 +161,11 @@ body { background: #fff; }
 .bg-side-card-title {
     font-size: var(--fs-15); font-weight: 700; color: var(--text);
     margin: 0 0 .3rem;
+    display: flex; align-items: baseline; justify-content: space-between; gap: .5rem;
+}
+.bg-side-card-count {
+    font-size: var(--fs-11); font-weight: 500; color: var(--text-muted);
+    white-space: nowrap;
 }
 .bg-side-card-tagline {
     font-size: var(--fs-12); color: var(--text);

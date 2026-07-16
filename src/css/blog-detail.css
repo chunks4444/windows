@@ -89,6 +89,9 @@ body { background: #fff; }
     font-size: var(--fs-12); font-weight: 700; letter-spacing: .04em;
     color: var(--accent); margin: 0 0 .3rem;
 }
+.bd-series-box-total {
+    font-weight: 500; color: var(--text-muted); letter-spacing: 0;
+}
 .bd-series-box-tagline {
     font-size: var(--fs-18); font-weight: 600; color: var(--text);
     margin: 0 0 .8rem;

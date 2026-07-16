@@ -184,7 +184,7 @@ $metaKeywords = implode(', ', array_unique(array_filter([
 
         <?php if ($seriesInfo): ?>
         <div class="bd-series-box">
-            <p class="bd-series-box-label">이 시리즈 · <?= htmlspecialchars($seriesInfo['name']) ?><?= $post['series_order'] ? ' · ' . (int)$post['series_order'] . '화' : '' ?></p>
+            <p class="bd-series-box-label">이 시리즈 · <?= htmlspecialchars($seriesInfo['name']) ?><?= $post['series_order'] ? ' · ' . (int)$post['series_order'] . '화' : '' ?> <span class="bd-series-box-total">(전체 <?= count($seriesEpisodes) ?>화)</span></p>
             <?php if ($seriesInfo['tagline']): ?>
             <p class="bd-series-box-tagline">"<?= htmlspecialchars($seriesInfo['tagline']) ?>"</p>
             <?php endif; ?>
