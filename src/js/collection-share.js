@@ -1,5 +1,14 @@
 let _libShareCtx = null;
 
+// 컬렉션 카드/상세페이지의 "열기" 버튼: 비로그인 상태면 페이지 이동 없이 그 자리에서
+// 로그인 모달만 띄우고, 로그인 성공 시 에디터로 이동한다. (외부에서 도면 링크를 직접
+// 열람하는 "공유 미리보기" 페이지와는 별개 — 그쪽은 그대로 유지)
+function openCollectionEditor(e, url) {
+    e.preventDefault();
+    pmokRequireAuth(() => { location.href = url; });
+    return false;
+}
+
 function openCollectionShareModal(url, title, image) {
     _libShareCtx = { url, title: title || '평목 컬렉션', image };
     const linkInput = document.getElementById('libShareModalLink');

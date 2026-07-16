@@ -95,7 +95,7 @@ $displayName = library_pattern_display_name($pattern['slug'], $pattern['name_ko'
 
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
         <?php if ($editorUrl && $pattern['drawing_id']): ?>
-        <a href="<?= htmlspecialchars($editorUrl) ?>?drawing_id=<?= (int)$pattern['drawing_id'] ?>" class="lib-btn lib-btn-primary"><i class="bi bi-pencil"></i> 스튜디오에서 열기</a>
+        <a href="<?= htmlspecialchars($editorUrl) ?>?drawing_id=<?= (int)$pattern['drawing_id'] ?>" class="lib-btn lib-btn-primary" onclick="return openCollectionEditor(event,'<?= htmlspecialchars($editorUrl, ENT_QUOTES) ?>?drawing_id=<?= (int)$pattern['drawing_id'] ?>')"><i class="bi bi-pencil"></i> 스튜디오에서 열기</a>
         <?php endif; ?>
     </div>
 

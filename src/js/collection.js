@@ -103,7 +103,7 @@ function buildCard(p) {
         : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--text-3);font-size:40px;"><i class="bi bi-image"></i></div>`;
 
     const editorBtn = p.editor_url && p.drawing_id
-        ? `<a href="${esc(p.editor_url)}?drawing_id=${p.drawing_id}" class="lib-btn lib-btn-primary"><i class="bi bi-pencil"></i> 열기</a>`
+        ? `<a href="${esc(p.editor_url)}?drawing_id=${p.drawing_id}" class="lib-btn lib-btn-primary" onclick="return openCollectionEditor(event,'${esc(p.editor_url)}?drawing_id=${p.drawing_id}')"><i class="bi bi-pencil"></i> 열기</a>`
         : '';
 
     const kwHtml = (p.keywords || []).slice(0, 3).map(k => `<span style="font-size:11px;color:var(--text);">${esc(k)}</span>`).join(' · ');
