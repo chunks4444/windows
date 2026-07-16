@@ -48,6 +48,7 @@ require_admin_role('s');
         .pc-dl-type-badge { font-size:10px; font-weight:700; background:var(--bg); color: var(--text); border-radius:4px; padding:2px 6px; }
         .pc-dl-load-more { text-align:center; padding:12px 0; }
         .pc-dl-load-more button { border:1px solid var(--border); background:var(--bg); border-radius:6px; padding:6px 20px; font-size:13px; cursor:pointer; }
+        .pc-dl-search { border:1px solid var(--border); border-radius:6px; padding:6px 10px; font-size:13px; width:260px; margin-bottom:12px; }
     </style>
 </head>
 <body>
@@ -103,6 +104,7 @@ require_admin_role('s');
 
     <!-- 탭 3: 도면 분류 -->
     <div id="tabDrawings" style="display:none;">
+        <input type="text" class="pc-dl-search" id="dlSearch" placeholder="도면명·사용자 이메일로 검색…" oninput="onDlSearch()">
         <div class="pc-dl-filters" id="dlFilters">
             <button class="pc-dl-filter-btn active" data-cat="" onclick="setFilter(this,'')">전체</button>
             <button class="pc-dl-filter-btn" data-cat="0" onclick="setFilter(this,'0')">미분류</button>
@@ -292,7 +294,17 @@ async function addModifier() {
 }
 
 /* ── 도면 분류 탭 ── */
-let _dlPage = 1, _dlFilter = '', _dlHasMore = false;
+let _dlPage = 1, _dlFilter = '', _dlHasMore = false, _dlQuery = '', _dlSearchTimer = null;
+
+function onDlSearch() {
+    clearTimeout(_dlSearchTimer);
+    _dlSearchTimer = setTimeout(() => {
+        _dlQuery = document.getElementById('dlSearch').value.trim();
+        _dlPage  = 1;
+        document.getElementById('dlBody').innerHTML = '';
+        loadDrawings();
+    }, 300);
+}
 
 function initDrawingsTab() {
     const filtersEl = document.getElementById('dlFilters');
@@ -324,6 +336,7 @@ function fmtDate(s) {
 async function loadDrawings() {
     const params = new URLSearchParams({ page: _dlPage });
     if (_dlFilter !== '') params.set('category', _dlFilter);
+    if (_dlQuery  !== '') params.set('q', _dlQuery);
     const res  = await fetch(`/src/api/admin/drawings.php?${params}`, { headers:{ Authorization:'Bearer '+TOKEN() } });
     const data = await res.json();
     const rows = data.drawings || [];

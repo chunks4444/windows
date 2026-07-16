@@ -32,6 +32,7 @@ if (isset($_GET['page']) || isset($_GET['category'])) {
     $page     = max(1, (int)($_GET['page']     ?? 1));
     $filter   = $_GET['category'] ?? '';   // '' = 전체, '0' = 미분류, 숫자 = 해당 카테고리 ID
     $typeF    = $_GET['type']     ?? '';
+    $q        = trim($_GET['q']   ?? '');
     $offset   = ($page - 1) * $limit;
 
     $where  = [];
@@ -46,6 +47,11 @@ if (isset($_GET['page']) || isset($_GET['category'])) {
     if ($typeF !== '') {
         $where[] = 'd.type = ?';
         $params[] = $typeF;
+    }
+    if ($q !== '') {
+        $where[] = '(d.title LIKE ? OR u.email LIKE ?)';
+        $params[] = '%' . $q . '%';
+        $params[] = '%' . $q . '%';
     }
 
     $whereClause = $where ? ('WHERE ' . implode(' AND ', $where)) : '';
