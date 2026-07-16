@@ -43,9 +43,10 @@ if ($category !== '') {
     $params[':category'] = $category;
 } elseif ($q !== '') {
     $like = '%' . $q . '%';
-    $baseWhere .= ' AND (p.name_ko LIKE :q OR p.id IN (SELECT pattern_id FROM library_keywords WHERE keyword LIKE :q2))';
+    $baseWhere .= ' AND (p.name_ko LIKE :q OR p.slug LIKE :q3 OR p.id IN (SELECT pattern_id FROM library_keywords WHERE keyword LIKE :q2))';
     $params[':q']  = $like;
     $params[':q2'] = $like;
+    $params[':q3'] = $like;
 } elseif ($liked) {
     $baseWhere .= ' AND p.id IN (SELECT pattern_id FROM library_likes WHERE user_id = :uid)';
     $params[':uid'] = $uid;
