@@ -8,112 +8,16 @@ include __DIR__ . '/_head.php';
 
 <h1><span class="guide-h1-icon"><?= $guideEngineIcons['classic'] ?></span>세살</h1>
 <p class="guide-lead">
-    전통 한국 창호의 사분턱(四分턱) 구조를 재현한 엔진입니다.
+    전통 한국 창호의 세살(細箭) 구조를 재현한 엔진입니다.
     스튜디오는 <strong>왼쪽 설계 사이드바 · 캔버스 · 오른쪽 배경·내보내기 사이드바</strong>
     세 패널로 구성되어 있으며, 파라미터를 바꾸는 즉시 캔버스에 반영됩니다.
 </p>
 
 <h2>화면 구성</h2>
 
-<!-- UI 다이어그램 -->
-<div class="guide-ui-diagram">
-    <div class="guid-topbar">
-        <strong>평목</strong>
-        <span style="margin-left:8px;opacity:.5;">스튜디오 ▾ · 컬렉션 ▾ · 가이드 · 평목 소개</span>
-        <span style="margin-left:auto;opacity:.6;">user@example.com ▾</span>
-    </div>
-    <div class="guid-body">
-
-        <!-- 왼쪽 사이드바 -->
-        <div class="guid-left">
-            <div style="padding:8px 12px 2px;font-size:10px;font-weight:700;color:var(--accent);">① 설계 파라미터</div>
-            <div class="guid-left-section">문 설정</div>
-            <div class="guid-left-item">여닫이 / 미서기</div>
-            <div class="guid-left-item">1짝 ~ 4짝</div>
-            <div class="guid-left-section">문 치수</div>
-            <div class="guid-left-item" style="font-size:10px;">문틀 가로 600mm</div>
-            <div class="guid-left-slider"></div>
-            <div class="guid-left-item" style="font-size:10px;">문틀 세로 1707mm</div>
-            <div class="guid-left-slider"></div>
-            <div class="guid-left-section">창살 설정</div>
-            <div class="guid-left-item" style="font-size:10px;">가로 칸수 12</div>
-            <div class="guid-left-slider"></div>
-            <div class="guid-left-item" style="font-size:10px;">울거미 두께 60</div>
-            <div class="guid-left-slider"></div>
-            <div class="guid-left-item" style="font-size:10px;">창살 두께 12</div>
-            <div class="guid-left-slider"></div>
-            <div class="guid-left-item" style="font-size:10px;color:var(--text-muted);">상/중/하 배열…</div>
-            <div class="guid-left-item" style="font-size:10px;color:var(--text-muted);">세로 비율, 풍판…</div>
-            <div class="guid-left-section" style="margin-top:6px;">제작 시방서</div>
-            <div class="guid-left-item" style="font-size:10px;color:var(--text-muted);">외경·내경·살 길이…</div>
-        </div>
-
-        <!-- 캔버스 -->
-        <div class="guid-canvas">
-            <div class="guid-canvas-title">
-                <span class="dot"></span>
-                <span style="font-weight:600;font-size:11px;">청담동_한옥_정면창</span>
-                <span style="color:var(--text-muted);font-size:10px;margin-left:6px;">새 도면</span>
-                <span style="color:var(--text-muted);font-size:10px;">도면</span>
-                <span style="color:var(--text-muted);font-size:10px;">v3 ▾</span>
-            </div>
-            <!-- 캔버스 조작 버튼 -->
-            <div class="guid-canvas-controls" style="top:34px;">
-                <div class="guid-cv-btn" title="팬(이동)">✋</div>
-                <div class="guid-cv-btn" title="확대">＋</div>
-                <div class="guid-cv-btn" title="축소">－</div>
-                <div class="guid-cv-btn" title="초기화">↺</div>
-                <div style="height:1px;background:var(--border);margin:2px 0;"></div>
-                <div class="guid-cv-btn hl" title="선 삭제 모드">✂</div>
-                <div class="guid-cv-btn" title="선 추가 모드">✏</div>
-                <div class="guid-cv-btn" title="편집 초기화">⟳</div>
-            </div>
-            <!-- 도면 미리보기 -->
-            <div style="position:relative;width:120px;height:200px;margin-top:28px;border:3px solid #4a3728;border-radius:2px;background:rgba(var(--bg-rgb), .1);">
-                <div style="position:absolute;inset:8px;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(7,1fr);gap:2px;">
-                    <?php for($i=0;$i<28;$i++): ?>
-                    <div style="border:1.5px solid rgba(var(--text-rgb), .5);"></div>
-                    <?php endfor; ?>
-                </div>
-            </div>
-            <div style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-size:9px;color:rgba(var(--bg-rgb), .4);">② 캔버스 — 실시간 미리보기</div>
-        </div>
-
-        <!-- 오른쪽 사이드바 -->
-        <div class="guid-right">
-            <div style="padding:6px 10px 2px;font-size:10px;font-weight:700;color:var(--accent);">③ 마감·배경·저장</div>
-            <div style="display:flex;gap:4px;padding:4px 10px;">
-                <div class="guid-right-btn outline" style="flex:1;">💾 저장</div>
-                <div class="guid-right-btn primary" style="flex:1;">주문</div>
-            </div>
-            <div class="guid-right-section">마감</div>
-            <div class="guid-left-item" style="font-size:10px;padding:3px 10px;">목재: 홍송/소나무/참나무</div>
-            <div class="guid-left-item" style="font-size:10px;padding:3px 10px;">마감: 창호지/유리/아크릴</div>
-            <div style="display:flex;gap:4px;padding:3px 10px 6px;">
-                <div style="width:18px;height:18px;background:#8B6914;border-radius:3px;" title="울거미 색"></div>
-                <div style="width:18px;height:18px;background:#5C3D1E;border-radius:3px;" title="살 색"></div>
-                <div style="width:18px;height:18px;background:#c8102e;border-radius:3px;" title="면 색"></div>
-            </div>
-            <div class="guid-right-section" style="color:var(--accent);">🖼 배경 사진</div>
-            <div class="guid-right-btn outline" style="font-size:10px;">↑ 사진 추가</div>
-            <div class="guid-thumb-list">
-                <div class="guid-thumb-placeholder">＋</div>
-                <div style="width:32px;height:32px;border-radius:4px;background:linear-gradient(135deg,#8B7355,#5C3D1E);outline:2px solid var(--accent);"></div>
-            </div>
-            <div class="guid-prompt">참나무 결, 옻칠 마감…</div>
-            <div class="guid-right-btn ai" style="font-size:11px;">✨ Rendering</div>
-            <div class="guid-right-section">렌더링 히스토리</div>
-            <div class="guid-render-hist">
-                <div class="guid-render-item"></div>
-                <div class="guid-render-item" style="background:linear-gradient(135deg,#b8a98a,#8B7355);"></div>
-            </div>
-            <div class="guid-right-section">내보내기</div>
-            <div style="display:flex;gap:4px;padding:2px 10px;">
-                <div class="guid-right-btn outline" style="flex:1;font-size:10px;">PNG</div>
-                <div class="guid-right-btn outline" style="flex:1;font-size:10px;">PDF</div>
-            </div>
-        </div>
-    </div>
+<!-- UI 스크린샷 -->
+<div class="guide-screenshot">
+    <img src="/src/img/guide/studio-classic.png" alt="세살 스튜디오 화면 구성 — 왼쪽 설계 사이드바, 중앙 캔버스, 오른쪽 예상가격·마감·렌더링 사이드바" loading="lazy">
 </div>
 
 <h2>① 왼쪽 사이드바 — 설계 파라미터</h2>
@@ -183,24 +87,12 @@ include __DIR__ . '/_head.php';
     </tbody>
 </table>
 
-<h3>캔버스 조작 버튼 (우측 상단)</h3>
-<table class="guide-table">
-    <thead><tr><th>아이콘</th><th>기능</th><th>단축키</th></tr></thead>
-    <tbody>
-        <tr><td>✋ 팬(이동)</td><td>캔버스를 드래그로 이동하는 모드</td><td>드래그</td></tr>
-        <tr><td>＋ 확대</td><td>캔버스 확대</td><td>휠 위</td></tr>
-        <tr><td>－ 축소</td><td>캔버스 축소</td><td>휠 아래</td></tr>
-        <tr><td>↺ 화면 초기화</td><td>확대·이동 상태를 기본값으로 리셋</td><td>—</td></tr>
-        <tr><td>✂ 선 삭제</td><td>클릭한 살(선)을 삭제하는 편집 모드. 다시 클릭 시 복구</td><td>—</td></tr>
-        <tr><td>✏ 선 추가</td><td>두 교점을 클릭해 새로운 살(선)을 추가하는 모드</td><td>—</td></tr>
-        <tr><td>⟳ 편집 초기화</td><td>삭제·추가한 모든 편집 내용을 원래대로 초기화</td><td>—</td></tr>
-    </tbody>
-</table>
-
-<div class="guide-tip">
-    <i class="bi bi-lightbulb-fill"></i>
-    <span><strong>선 삭제/추가 모드</strong>를 활용하면 알고리즘이 생성한 격자에서 특정 살만 제거하거나 원하는 위치에 살을 추가해 완전히 자유로운 패턴을 만들 수 있습니다.</span>
-</div>
+<h3>캔버스 툴바 (하단)</h3>
+<p>
+    캔버스 하단에는 확대·축소·이동 같은 화면 조작 버튼과 선 삭제/추가 편집 모드, 문양 배치, 도형 그리기 버튼이 모여 있습니다.
+    6개 엔진에 공통으로 제공되는 기능으로, 전체 목록과 사용 방법은
+    <a href="/guide/canvas-toolbar" style="color:var(--accent);">캔버스 툴바</a> 페이지를 참조하세요.
+</p>
 
 <h2>③ 오른쪽 사이드바 — 마감 · 배경 · 저장</h2>
 

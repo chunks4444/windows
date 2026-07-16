@@ -28,6 +28,7 @@ $guide_nav = [
         'title' => '도면 관리', 'icon' => 'bi-folder2-open',
         'bg' => 'var(--accent-tint)', 'color' => 'var(--accent)',
         'articles' => [
+            ['file' => 'canvas-toolbar.php', 'title' => '캔버스 툴바'],
             ['file' => 'drawing.php', 'title' => '도면 저장 & 불러오기'],
             ['file' => 'export.php',  'title' => 'PDF / PNG 내보내기'],
         ],
