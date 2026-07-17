@@ -241,6 +241,13 @@ button.pm-dw-link-top.wk-tag i { color: var(--accent-hover); }
 }
 .wk-slide.is-active .wk-slide-info { clip-path: inset(0 0 0 0); pointer-events: auto; }
 
+/* 좌우 사이드(비활성) 슬라이드 — 검정 배경 + 흰 글씨로 제목만 노출 */
+.wk-slide:not(.is-active) .wk-slide-scrim { opacity: 1; background: rgba(0,0,0,.75); }
+.wk-slide:not(.is-active) .wk-slide-info { clip-path: inset(0 0 0 0); }
+.wk-slide:not(.is-active) .wk-slide-eyebrow,
+.wk-slide:not(.is-active) .wk-slide-rule,
+.wk-slide:not(.is-active) .wk-slide-foot { display: none; }
+
 .wk-slide-eyebrow {
     font-size: var(--fs-12); color: #fff;
     letter-spacing: .03em; margin-bottom: .5rem;
