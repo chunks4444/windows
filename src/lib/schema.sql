@@ -369,12 +369,12 @@ CREATE TABLE IF NOT EXISTS site_config (
     PRIMARY KEY (key_name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='사이트 설정 (OAuth 키 등)';
 
--- 범용 key/value 사이트 설정 (site_config와 별도). 현재는 Works 갤러리 카드 기본 색상(work_panel_bg 등) 저장용 — src/api/admin/work_settings.php
+-- 범용 key/value 사이트 설정 (site_config와 별도)
 CREATE TABLE IF NOT EXISTS site_settings (
     setting_key   VARCHAR(100) NOT NULL,
     setting_value VARCHAR(500) NOT NULL DEFAULT '',
     PRIMARY KEY (setting_key)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='범용 key/value 사이트 설정. 현재는 work_panel_bg 등 Works 갤러리 카드 기본 색상 저장에만 쓰임';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='범용 key/value 사이트 설정';
 
 -- SNS OAuth 연결 이력
 CREATE TABLE IF NOT EXISTS user_oauth (

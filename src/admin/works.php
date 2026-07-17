@@ -55,26 +55,6 @@ require_admin_role('s');
         <div id="tagList" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
     </div>
 
-    <!-- 상세 페이지 패널 색상 설정 -->
-    <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:24px;">
-        <div style="font-size:13px;font-weight:600;margin-bottom:14px;color:var(--text);">상세 페이지 패널 색상</div>
-        <div style="display:flex;gap:24px;align-items:flex-end;flex-wrap:wrap;">
-            <label style="font-size:12px;color: var(--text);display:flex;flex-direction:column;gap:6px;">
-                배경색
-                <input type="color" id="settingPanelBg" style="width:52px;height:32px;border:none;padding:0;cursor:pointer;border-radius:4px;">
-            </label>
-            <label style="font-size:12px;color: var(--text);display:flex;flex-direction:column;gap:6px;">
-                제목 색상
-                <input type="color" id="settingTitleColor" style="width:52px;height:32px;border:none;padding:0;cursor:pointer;border-radius:4px;">
-            </label>
-            <label style="font-size:12px;color: var(--text);display:flex;flex-direction:column;gap:6px;">
-                설명 색상
-                <input type="color" id="settingDescColor" style="width:52px;height:32px;border:none;padding:0;cursor:pointer;border-radius:4px;">
-            </label>
-            <button class="adm-edit-btn" style="height:32px;padding:0 16px;" onclick="saveColors()">저장</button>
-        </div>
-    </div>
-
     <p style="font-size:12px;color:var(--text);margin:-8px 0 16px;">행을 드래그해 순서를 변경할 수 있습니다.</p>
 
     <div class="adm-table-wrap">
@@ -266,34 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const user = JSON.parse(localStorage.getItem('pmok_auth_user') || 'null');
     if (user?.role === 's') loadTags();
 });
-</script>
-<script>
-// 패널 색상 로드
-async function loadColors() {
-    const res = await fetch('/src/api/admin/work_settings.php');
-    if (!res.ok) return;
-    const d = await res.json();
-    document.getElementById('settingPanelBg').value    = d.work_panel_bg         || '#111111';
-    document.getElementById('settingTitleColor').value = d.work_panel_title_color || '#ffffff';
-    document.getElementById('settingDescColor').value  = d.work_panel_desc_color  || '#888888';
-}
-// 패널 색상 저장
-async function saveColors() {
-    const body = {
-        work_panel_bg:          document.getElementById('settingPanelBg').value,
-        work_panel_title_color: document.getElementById('settingTitleColor').value,
-        work_panel_desc_color:  document.getElementById('settingDescColor').value,
-    };
-    const res = await fetch('/src/api/admin/work_settings.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-    });
-    if (res.ok) alert('저장되었습니다.');
-}
-loadColors();
-</script>
-<script>
+</script><script>
 /* ── 다중 이미지 관리 ── */
 async function loadImages(workId) {
     const res = await fetch('/src/api/admin/works.php', {
