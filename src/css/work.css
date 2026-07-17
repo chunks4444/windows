@@ -12,7 +12,7 @@ html body { padding-top: 0 !important; background: #0a0a0a; }
 .pm-nav-drawer--left,
 #wkFilterPanel {
     --bg: #000;
-    --text: #fff;
+    --text: #dddddd;
     --text-rgb: 255, 255, 255;
     --text-muted: rgba(255,255,255,.6);
     --border: rgba(255,255,255,.15);
