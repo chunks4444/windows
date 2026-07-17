@@ -221,9 +221,9 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
         <button class="wk-modal-arrow next" id="wkModalNext" aria-label="다음 사진"></button>
     </div>
     <div class="wk-modal-foot">
-        <span class="wk-modal-eyebrow">Portfolio</span>
+        <span class="wk-modal-eyebrow" id="wkModalEyebrow">Portfolio</span>
         <h2 class="wk-modal-title" id="wkModalTitle"></h2>
-        <span class="wk-modal-rule"></span>
+        <span class="wk-modal-rule" id="wkModalRule"></span>
         <p class="wk-modal-desc" id="wkModalDesc"></p>
         <span class="wk-modal-counter" id="wkModalCounter"></span>
     </div>
@@ -376,7 +376,9 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
     // ── 디테일 뷰 모달 (네비게이션 없이 이미지만) ──────────────
     const modal        = document.getElementById('wkModal');
     const modalImg     = document.getElementById('wkModalImg');
+    const modalEyebrow = document.getElementById('wkModalEyebrow');
     const modalTitle   = document.getElementById('wkModalTitle');
+    const modalRule    = document.getElementById('wkModalRule');
     const modalDesc    = document.getElementById('wkModalDesc');
     const modalCounter = document.getElementById('wkModalCounter');
     const modalThumbs  = document.getElementById('wkModalThumbs');
@@ -390,8 +392,11 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
         modalTitle.textContent = slide.dataset.title || '';
         modalDesc.textContent = slide.dataset.desc || '';
         modal.style.backgroundColor = slide.dataset.panelBg || '#111111';
+        modalEyebrow.style.color = slide.dataset.titleColor || '#ffffff';
         modalTitle.style.color = slide.dataset.titleColor || '#ffffff';
+        modalRule.style.backgroundColor = slide.dataset.titleColor || '#ffffff';
         modalDesc.style.color = slide.dataset.descColor || '#888888';
+        modalClose.style.color = slide.dataset.titleColor || '#ffffff';
         renderThumbs();
         showModalImg(0);
         modal.classList.add('open');
