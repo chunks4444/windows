@@ -220,7 +220,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
         <img class="wk-modal-img" id="wkModalImg" src="" alt="">
         <button class="wk-modal-arrow next" id="wkModalNext" aria-label="다음 사진"></button>
     </div>
-    <div class="wk-modal-foot" id="wkModalFoot">
+    <div class="wk-modal-foot">
         <span class="wk-modal-eyebrow">Portfolio</span>
         <h2 class="wk-modal-title" id="wkModalTitle"></h2>
         <span class="wk-modal-rule"></span>
@@ -376,7 +376,6 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
     // ── 디테일 뷰 모달 (네비게이션 없이 이미지만) ──────────────
     const modal        = document.getElementById('wkModal');
     const modalImg     = document.getElementById('wkModalImg');
-    const modalFoot    = document.getElementById('wkModalFoot');
     const modalTitle   = document.getElementById('wkModalTitle');
     const modalDesc    = document.getElementById('wkModalDesc');
     const modalCounter = document.getElementById('wkModalCounter');
@@ -390,7 +389,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
         try { modalImages = JSON.parse(slide.dataset.images || '[]'); } catch (e) { modalImages = []; }
         modalTitle.textContent = slide.dataset.title || '';
         modalDesc.textContent = slide.dataset.desc || '';
-        modalFoot.style.backgroundColor = slide.dataset.panelBg || '#111111';
+        modal.style.backgroundColor = slide.dataset.panelBg || '#111111';
         modalTitle.style.color = slide.dataset.titleColor || '#ffffff';
         modalDesc.style.color = slide.dataset.descColor || '#888888';
         renderThumbs();
