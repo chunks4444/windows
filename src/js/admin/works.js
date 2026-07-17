@@ -78,7 +78,10 @@ function previewImage(input) {
             const canvas = document.createElement('canvas');
             canvas.width = w; canvas.height = h;
             canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+            // PNG는 투명 배경을 유지 — JPEG로 내보내면 캔버스가 투명 영역을 검은색으로 채워버림
+            const dataUrl = file.type === 'image/png'
+                ? canvas.toDataURL('image/png')
+                : canvas.toDataURL('image/jpeg', 0.92);
             window._workImageData = dataUrl;
             const prev = document.getElementById('workImgPreview');
             prev.src = dataUrl; prev.classList.add('show');
