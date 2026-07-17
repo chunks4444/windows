@@ -73,5 +73,6 @@ require_admin_role('s');
 </div>
 
 <script src="/src/js/admin/colors.js"></script>
+<script src="/src/js/color-hex-input.js"></script>
 </body>
 </html>

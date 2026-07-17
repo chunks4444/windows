@@ -173,6 +173,7 @@ require_admin_role('s');
 </div>
 
 <script src="/src/js/admin/works.js"></script>
+<script src="/src/js/color-hex-input.js"></script>
 
 <!-- 태그 편집 모달 -->
 <div class="adm-modal-overlay" id="tagModalOverlay">

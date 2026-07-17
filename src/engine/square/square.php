@@ -933,6 +933,7 @@ if ($_pmokIsSharedView && !jwt_from_request()) {
     <script src="/src/js/drawing-sync.js?v=<?= md5_file(__DIR__ . '/../../js/drawing-sync.js') ?>"></script>
     <script src="/src/js/order-status-labels.js?v=<?= md5_file(__DIR__ . '/../../js/order-status-labels.js') ?>"></script>
     <script src="/src/js/engine-common.js?v=<?= md5_file(__DIR__ . '/../../js/engine-common.js') ?>"></script>
+    <script src="/src/js/color-hex-input.js?v=<?= md5_file(__DIR__ . '/../../js/color-hex-input.js') ?>"></script>
     <script src="/src/js/square.js?v=<?= md5_file(__DIR__ . '/../../js/square.js') ?>"></script>
 </body>
 
