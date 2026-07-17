@@ -7,6 +7,19 @@ html body { padding-top: 0 !important; background: #0a0a0a; }
 /* ── 페이지 래퍼 ─────────────────────────────────────────── */
 .wk-page { position: relative; }
 
+/* 포트폴리오 페이지의 사이드 드로어(좌측 메뉴, 우측 필터)는 검정 배경 + 흰 글씨로 —
+   드로어 내부가 전부 CSS 변수(--bg/--text 등) 기반이라 변수만 덮어써서 통일한다. */
+.pm-nav-drawer--left,
+#wkFilterPanel {
+    --bg: #000;
+    --text: #fff;
+    --text-rgb: 255, 255, 255;
+    --text-muted: rgba(255,255,255,.6);
+    --border: rgba(255,255,255,.15);
+    --accent-hover: #fff;
+}
+.pm-nav-drawer--left .pm-nav-logo { filter: invert(1); }
+
 /* 사진 위쪽 가독성을 위한 상단 스크림(그라데이션), 헤더·필터 뒤에 깔림 */
 .wk-top-scrim {
     position: fixed; top: 0; left: 0; right: 0; height: 220px;
