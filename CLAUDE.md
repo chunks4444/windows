@@ -18,8 +18,13 @@ php -l src/lib/svg_sanitize.php
 node --check src/js/engine-common.js
 node --check src/js/classic.js
 
+# DB는 외부에 직접 노출되지 않음 (MySQL bind-address 127.0.0.1) — 로컬 개발 전에 SSH 터널이 떠 있어야 함
+# Windows: ops/db_tunnel/start_tunnel.ps1 (로그인 시 자동 실행되도록 register_task.ps1로 등록 가능)
+# macOS:   ops/db_tunnel/start_tunnel.sh
+# 터널이 127.0.0.1:13306을 열어주면 src/lib/db.php가 자동으로 그 쪽으로 접속함
+
 # 로컬 개발 서버 (포트 8899)
-php -S localhost:8899 -t /Users/kyungchun/web/studio.pyeongmok.com
+php -S localhost:8899 -t .
 
 # PHP 에러 로그 확인
 tail -f logs/php-error.log

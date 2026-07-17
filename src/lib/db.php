@@ -15,9 +15,12 @@ if (@is_readable($_sock)) {
     define('DB_HOST',    null);
     define('DB_PORT',    null);
 } else {
+    // DB는 외부에 직접 노출하지 않고(MySQL bind-address 127.0.0.1), SSH 터널을 통해서만 접근한다.
+    // 터널: ssh -N -p 6822 -i ~/.ssh/pyeongmok_studio -L 13306:127.0.0.1:3306 chunks@211.35.72.68
+    // (ops/db_tunnel/start_tunnel.ps1로 자동 실행되도록 예약 작업 등록됨)
     define('DB_SOCKET',  null);
-    define('DB_HOST',    '211.35.72.68');
-    define('DB_PORT',    6836);
+    define('DB_HOST',    '127.0.0.1');
+    define('DB_PORT',    13306);
 }
 
 unset($_sock);

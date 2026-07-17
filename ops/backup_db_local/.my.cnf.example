@@ -1,9 +1,10 @@
 # 이 파일을 .my.cnf 로 복사해서 실제 값 채워넣을 것 (.my.cnf는 git-ignored).
 #   Copy-Item .my.cnf.example .my.cnf
 #
-# src/lib/db.php의 DB_HOST/DB_PORT/DB_USER/DB_PASS와 동일한 값 (windowspyeongmok DB).
+# DB는 외부에 직접 노출되지 않으므로 backup_db_local.ps1이 띄우는 SSH 터널(127.0.0.1:13306)을
+# 통해 접속한다. host/port는 src/lib/db.php의 로컬 개발용 값과 동일.
 [client]
-host=211.35.72.68
-port=6836
+host=127.0.0.1
+port=13306
 user=webpyeongmok
 password=실제_비밀번호

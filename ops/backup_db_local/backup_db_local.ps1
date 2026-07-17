@@ -1,5 +1,6 @@
-# 평목 DB(windowspyeongmok)를 로컬로 백업한다. DB는 211.35.72.68:6836 으로 외부에서도
-# 직접 접속 가능하므로(src/lib/db.php 참고) SSH 없이 mysqldump로 바로 덤프 받는다.
+# 평목 DB(windowspyeongmok)를 로컬로 백업한다. DB는 외부에 직접 노출되지 않으므로
+# (MySQL bind-address 127.0.0.1, src/lib/db.php 참고) 이 스크립트가 SSH 터널을 직접
+# 띄워서 mysqldump가 127.0.0.1:13306으로 접속하게 한 뒤, 끝나면 터널을 정리한다.
 # uploads/ 파일 백업(ops/backup_uploads)과는 별도로 실행되는 스크립트.
 #
 # 실행 전:
@@ -43,30 +44,60 @@ $Timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
 $SqlFile   = Join-Path $LocalBackupRoot "${DbName}_${Timestamp}.sql"
 $ZipFile   = "$SqlFile.zip"
 
-Write-Log "백업 시작 -> $ZipFile"
-
-$dumpArgs = @(
-    "--defaults-extra-file=$MyCnfPath",
-    "--single-transaction",
-    "--quick",
-    "--routines",
-    "--triggers",
-    "--hex-blob",
-    "--no-tablespaces",
-    $DbName
+# --- SSH 터널 시작 ---
+Write-Log "DB 터널 시작 중..."
+$tunnelArgs = @(
+    "-N", "-o", "ServerAliveInterval=30", "-o", "ExitOnForwardFailure=yes",
+    "-o", "StrictHostKeyChecking=accept-new",
+    "-p", $SshPort, "-i", $SshKeyPath,
+    "-L", "${TunnelLocalPort}:127.0.0.1:3306",
+    "$SshUser@$SshHost"
 )
+$tunnelProc = Start-Process -FilePath $SshExe -ArgumentList $tunnelArgs -WindowStyle Hidden -PassThru
 
-& $MysqldumpExe @dumpArgs | Out-File -FilePath $SqlFile -Encoding utf8
-$exitCode = $LASTEXITCODE
+try {
+    $tunnelUp = $false
+    for ($i = 0; $i -lt 15; $i++) {
+        Start-Sleep -Seconds 1
+        try {
+            $client = New-Object System.Net.Sockets.TcpClient
+            $client.Connect("127.0.0.1", $TunnelLocalPort)
+            $client.Close()
+            $tunnelUp = $true
+            break
+        } catch { }
+    }
+    if (-not $tunnelUp) {
+        Write-Log "실패 - DB 터널이 뜨지 않음"
+        exit 1
+    }
+    Write-Log "DB 터널 연결됨 -> 백업 시작 -> $ZipFile"
 
-if ($exitCode -ne 0 -or -not (Test-Path $SqlFile) -or (Get-Item $SqlFile).Length -eq 0) {
-    Write-Log "실패 (exit $exitCode) - 불완전한 덤프 삭제: $SqlFile"
-    Remove-Item -Force $SqlFile -ErrorAction SilentlyContinue
-    exit 1
+    $dumpArgs = @(
+        "--defaults-extra-file=$MyCnfPath",
+        "--single-transaction",
+        "--quick",
+        "--routines",
+        "--triggers",
+        "--hex-blob",
+        "--no-tablespaces",
+        $DbName
+    )
+
+    & $MysqldumpExe @dumpArgs | Out-File -FilePath $SqlFile -Encoding utf8
+    $exitCode = $LASTEXITCODE
+
+    if ($exitCode -ne 0 -or -not (Test-Path $SqlFile) -or (Get-Item $SqlFile).Length -eq 0) {
+        Write-Log "실패 (exit $exitCode) - 불완전한 덤프 삭제: $SqlFile"
+        Remove-Item -Force $SqlFile -ErrorAction SilentlyContinue
+        exit 1
+    }
+
+    Compress-Archive -Path $SqlFile -DestinationPath $ZipFile -Force
+    Remove-Item -Force $SqlFile
+} finally {
+    Stop-Process -Id $tunnelProc.Id -Force -ErrorAction SilentlyContinue
 }
-
-Compress-Archive -Path $SqlFile -DestinationPath $ZipFile -Force
-Remove-Item -Force $SqlFile
 
 $sizeMB = [math]::Round((Get-Item $ZipFile).Length / 1MB, 2)
 Write-Log "백업 완료: $ZipFile (${sizeMB}MB)"
