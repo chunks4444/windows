@@ -29,24 +29,35 @@ $body   = json_decode(file_get_contents('php://input'), true) ?? [];
 $action = $body['action'] ?? '';
 
 function saveWorkImage(string $dataUrl): ?string {
-    if (!preg_match('/^data:image\/(jpeg|png|webp);base64,/', $dataUrl)) return null;
+    if (!preg_match('/^data:image\/(jpeg|png|webp);base64,/', $dataUrl, $m)) return null;
+    $srcType = $m[1];
     $base64 = substr($dataUrl, strpos($dataUrl, ',') + 1);
     $binary = base64_decode($base64, true);
     if ($binary === false || strlen($binary) > 20 * 1024 * 1024) return null;
     $img = @imagecreatefromstring($binary);
     if (!$img) return null;
+
+    // PNG는 투명 배경을 유지한다 — 무조건 JPG로 저장하면 투명 영역이 검은색으로 뭉개짐
+    $isPng = ($srcType === 'png');
+    if ($isPng) { imagealphablending($img, false); imagesavealpha($img, true); }
+
     $w = imagesx($img); $h = imagesy($img);
     if ($w > 2400 || $h > 2400) {
         $scale = min(2400 / $w, 2400 / $h);
         $nw = (int)($w * $scale); $nh = (int)($h * $scale);
         $resized = imagecreatetruecolor($nw, $nh);
+        if ($isPng) { imagealphablending($resized, false); imagesavealpha($resized, true); }
         imagecopyresampled($resized, $img, 0, 0, 0, 0, $nw, $nh, $w, $h);
         imagedestroy($img); $img = $resized;
     }
     $dir = __DIR__ . '/../../../uploads/works';
     if (!is_dir($dir)) mkdir($dir, 0755, true);
-    $fname = time() . '_' . bin2hex(random_bytes(4)) . '.jpg';
-    imagejpeg($img, $dir . '/' . $fname, 92);
+    $fname = time() . '_' . bin2hex(random_bytes(4)) . ($isPng ? '.png' : '.jpg');
+    if ($isPng) {
+        imagepng($img, $dir . '/' . $fname, 6);
+    } else {
+        imagejpeg($img, $dir . '/' . $fname, 92);
+    }
     imagedestroy($img);
     return '/uploads/works/' . $fname;
 }
