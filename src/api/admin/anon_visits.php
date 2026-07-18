@@ -20,21 +20,23 @@ if (!$me || $me['role'] !== 's') {
     http_response_code(403); echo json_encode(['error' => '슈퍼 권한이 필요합니다.']); exit;
 }
 
-$months  = max(1, min(12, (int)($_GET['months'] ?? 6)));
-$page    = max(1, (int)($_GET['page'] ?? 1));
-$ipQuery = trim($_GET['ip'] ?? '');
-$limit   = 20;
-$offset  = ($page - 1) * $limit;
+$months     = max(1, min(12, (int)($_GET['months'] ?? 6)));
+$page       = max(1, (int)($_GET['page'] ?? 1));
+$ipQuery    = trim($_GET['ip'] ?? '');
+$blockedOnly = !empty($_GET['blocked_only']);
+$limit      = 20;
+$offset     = ($page - 1) * $limit;
 
 $ipCond   = $ipQuery !== '' ? 'AND ip LIKE ?' : '';
 $ipParams = $ipQuery !== '' ? ['%' . $ipQuery . '%'] : [];
+$blockedCond = $blockedOnly ? 'AND ip IN (SELECT ip FROM blocked_ips)' : '';
 
 // 전체 개수 (IP+날짜 그룹 기준)
 $stmt = $pdo->prepare("
     SELECT COUNT(*) FROM (
         SELECT 1
         FROM page_views
-        WHERE user_id IS NULL AND visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH) $ipCond
+        WHERE user_id IS NULL AND visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH) $ipCond $blockedCond
         GROUP BY ip, DATE(visited_at)
     ) t
 ");
@@ -42,14 +44,16 @@ $stmt->execute(array_merge([$months], $ipParams));
 $total = (int) $stmt->fetchColumn();
 
 $stmt = $pdo->prepare("
-    SELECT ip,
-           DATE(visited_at)     AS visit_date,
+    SELECT pv.ip,
+           DATE(pv.visited_at)  AS visit_date,
            COUNT(*)             AS visit_count,
-           SUM(is_mobile)       AS mobile_count,
-           MAX(visited_at)      AS last_visit
-    FROM page_views
-    WHERE user_id IS NULL AND visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH) $ipCond
-    GROUP BY ip, DATE(visited_at)
+           SUM(pv.is_mobile)    AS mobile_count,
+           MAX(pv.visited_at)   AS last_visit,
+           MAX(bi.ip IS NOT NULL) AS blocked
+    FROM page_views pv
+    LEFT JOIN blocked_ips bi ON bi.ip = pv.ip
+    WHERE pv.user_id IS NULL AND pv.visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH) $ipCond $blockedCond
+    GROUP BY pv.ip, DATE(pv.visited_at)
     ORDER BY visit_date DESC, last_visit DESC
     LIMIT $limit OFFSET $offset
 ");

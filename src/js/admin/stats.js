@@ -73,7 +73,8 @@ async function loadTopUsers(page) {
 async function loadAnonVisits(page) {
     if (page < 1) return;
     const ip = document.getElementById('anonIpFilter')?.value.trim() || '';
-    const res = await fetch(`/src/api/admin/anon_visits.php?months=${currentMonths}&page=${page}&ip=${encodeURIComponent(ip)}`, {
+    const blockedOnly = document.getElementById('anonBlockedOnly')?.checked ? '1' : '';
+    const res = await fetch(`/src/api/admin/anon_visits.php?months=${currentMonths}&page=${page}&ip=${encodeURIComponent(ip)}&blocked_only=${blockedOnly}`, {
         headers: { 'Authorization': 'Bearer ' + token() },
     });
     const data = await res.json();
@@ -164,16 +165,34 @@ function renderAnonVisits(visits) {
         const total  = +v.visit_count || 0;
         const desktop = total - mobile;
         const device = !total ? '—' : (mobile && desktop) ? `M:${mobile} P:${desktop}` : (mobile ? `M:${mobile}` : `P:${desktop}`);
+        const blocked = !!(+v.blocked);
+        const ipEsc = esc(v.ip);
         return `
         <tr>
             <td style="color:var(--text-3);font-size:11px;">${v.last_visit ? v.last_visit.slice(0,10) : '—'}</td>
-            <td style="font-size:12px;font-family:monospace;cursor:pointer;text-decoration:underline;" onclick="openIpVisits('${esc(v.ip)}')">${esc(v.ip)}</td>
+            <td style="font-size:12px;font-family:monospace;cursor:pointer;text-decoration:underline;" onclick="openIpVisits('${ipEsc}')">${ipEsc}${blocked ? ' <span style="color:#e05218;font-size:10px;">차단됨</span>' : ''}</td>
             <td class="st-num">${total.toLocaleString()}</td>
             <td style="font-size:11px;white-space:nowrap;">${device}</td>
             <td style="color:var(--text-3);font-size:11px;">${v.last_visit ? v.last_visit.slice(11,19) : '—'}</td>
+            <td>${blocked
+                ? `<button class="st-tab-btn" onclick="toggleBlockIp('${ipEsc}', false)">해제</button>`
+                : `<button class="st-tab-btn" onclick="toggleBlockIp('${ipEsc}', true)">차단</button>`}</td>
         </tr>
     `;
-    }).join('') || '<tr><td colspan="5" style="padding:20px;text-align:center;color:var(--text-3);">데이터 없음</td></tr>';
+    }).join('') || '<tr><td colspan="6" style="padding:20px;text-align:center;color:var(--text-3);">데이터 없음</td></tr>';
+}
+
+async function toggleBlockIp(ip, block) {
+    if (block && !confirm(`${ip} 를 차단할까요? 이 IP는 사이트 전체에 접근할 수 없게 됩니다.`)) return;
+    if (!block && !confirm(`${ip} 차단을 해제할까요?`)) return;
+
+    const res = await fetch('/src/api/admin/blocked_ips.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token() },
+        body: JSON.stringify({ action: block ? 'block' : 'unblock', ip }),
+    });
+    if (!res.ok) { alert('처리 실패'); return; }
+    loadAnonVisits(anonPage);
 }
 
 async function openIpVisits(ip) {

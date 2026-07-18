@@ -720,3 +720,12 @@ CREATE TABLE IF NOT EXISTS blog_posts (
 
 -- 2026-07-19 인기 페이지 집계에서 404(스캐너가 찌른 존재하지 않는 경로) 제외용
 -- ALTER TABLE page_views ADD COLUMN status_code SMALLINT UNSIGNED NOT NULL DEFAULT 200 COMMENT 'HTTP 응답 코드 (404 등 — 인기 페이지 집계에서 제외용)';
+
+-- 2026-07-19 어드민에서 직접 IP를 차단하는 기능 — src/lib/ip_block.php가 매 요청마다 조회해 403 처리
+CREATE TABLE IF NOT EXISTS blocked_ips (
+    ip         VARCHAR(45) NOT NULL,
+    reason     VARCHAR(255) NOT NULL DEFAULT '',
+    blocked_by INT UNSIGNED NULL,
+    blocked_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (ip)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='어드민이 수동으로 차단한 IP 목록';
