@@ -132,6 +132,7 @@ function renderUserVisits(visits) {
             <div style="font-weight:700;margin-bottom:6px;">${g.date}</div>
             ${g.items.map(v => `
                 <div style="display:flex;gap:10px;padding:4px 0;border-bottom:1px solid var(--border);">
+                    <span style="color:var(--text-3);white-space:nowrap;">${esc(v.visited_at.slice(0, 10))}</span>
                     <span style="color:var(--text-3);white-space:nowrap;">${v.visited_at.slice(11, 19)}</span>
                     <span style="font-family:monospace;white-space:nowrap;">${esc(v.ip)}</span>
                     <span style="color:var(--text-3);">${v.is_mobile ? 'Mobile' : 'PC'}</span>
