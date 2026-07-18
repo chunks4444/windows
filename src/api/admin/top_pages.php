@@ -28,7 +28,7 @@ $offset = ($page - 1) * $limit;
 $stmt = $pdo->prepare("
     SELECT COUNT(*) FROM (
         SELECT 1 FROM page_views
-        WHERE visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH)
+        WHERE status_code = 200 AND visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH)
         GROUP BY page
     ) t
 ");
@@ -40,7 +40,7 @@ $stmt = $pdo->prepare("
            COUNT(*)                AS pv,
            COUNT(DISTINCT ip_hash) AS uv
     FROM page_views
-    WHERE visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH)
+    WHERE status_code = 200 AND visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH)
     GROUP BY page
     ORDER BY pv DESC
     LIMIT $limit OFFSET $offset

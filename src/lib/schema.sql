@@ -51,6 +51,7 @@ CREATE TABLE IF NOT EXISTS page_views (
     ip_hash     CHAR(8)      NOT NULL               COMMENT 'IP MD5 앞 8자 (UV 계산용)',
     ip          VARCHAR(45)  NULL                   COMMENT '방문자 IP',
     is_mobile   TINYINT(1)   NOT NULL DEFAULT 0     COMMENT '모바일 여부',
+    status_code SMALLINT UNSIGNED NOT NULL DEFAULT 200 COMMENT 'HTTP 응답 코드 (404 등 — 인기 페이지 집계에서 제외용)',
     PRIMARY KEY (id),
     KEY idx_pv_visited (visited_at),
     KEY idx_pv_date_page (visited_at, page),
@@ -716,3 +717,6 @@ CREATE TABLE IF NOT EXISTS blog_posts (
     UNIQUE KEY uq_blog_posts_slug (slug),
     KEY idx_blog_posts_sort (sort_order, is_active)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='블로그 글 (창호 이야기)';
+
+-- 2026-07-19 인기 페이지 집계에서 404(스캐너가 찌른 존재하지 않는 경로) 제외용
+-- ALTER TABLE page_views ADD COLUMN status_code SMALLINT UNSIGNED NOT NULL DEFAULT 200 COMMENT 'HTTP 응답 코드 (404 등 — 인기 페이지 집계에서 제외용)';
