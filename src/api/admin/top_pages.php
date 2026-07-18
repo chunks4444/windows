@@ -25,35 +25,31 @@ $page   = max(1, (int)($_GET['page'] ?? 1));
 $limit  = 20;
 $offset = ($page - 1) * $limit;
 
-// 전체 개수 (IP+날짜 그룹 기준)
 $stmt = $pdo->prepare("
     SELECT COUNT(*) FROM (
-        SELECT 1
-        FROM page_views
-        WHERE user_id IS NULL AND visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH)
-        GROUP BY ip, DATE(visited_at)
+        SELECT 1 FROM page_views
+        WHERE visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH)
+        GROUP BY page
     ) t
 ");
 $stmt->execute([$months]);
 $total = (int) $stmt->fetchColumn();
 
 $stmt = $pdo->prepare("
-    SELECT ip,
-           DATE(visited_at)     AS visit_date,
-           COUNT(*)             AS visit_count,
-           SUM(is_mobile)       AS mobile_count,
-           MAX(visited_at)      AS last_visit
+    SELECT page,
+           COUNT(*)                AS pv,
+           COUNT(DISTINCT ip_hash) AS uv
     FROM page_views
-    WHERE user_id IS NULL AND visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH)
-    GROUP BY ip, DATE(visited_at)
-    ORDER BY visit_date DESC, last_visit DESC
+    WHERE visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH)
+    GROUP BY page
+    ORDER BY pv DESC
     LIMIT $limit OFFSET $offset
 ");
 $stmt->execute([$months]);
-$visits = $stmt->fetchAll();
+$rows = $stmt->fetchAll();
 
 echo json_encode([
-    'visits'      => $visits,
+    'rows'        => $rows,
     'total'       => $total,
     'page'        => $page,
     'pages_count' => (int) ceil($total / $limit),

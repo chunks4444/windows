@@ -2,6 +2,8 @@ const ROLE_MAP = { s:'슈퍼', m:'관리자', a:'작가', u:'회원' };
 let chart = null;
 let currentMonths = 6;
 let anonPage = 1;
+let topPagesPage = 1;
+let topUsersPage = 1;
 
 function token() { return localStorage.getItem('pmok_auth_token'); }
 
@@ -29,9 +31,43 @@ async function loadStats(months) {
     renderSummary(data.summary);
     document.getElementById('sumShared').textContent = (+data.sharedCount || 0).toLocaleString();
     renderDailyChart(data.daily);
-    renderTopPages(data.topPages);
-    renderTopUsers(data.topUsers);
+    loadTopPages(1);
+    loadTopUsers(1);
     loadAnonVisits(1);
+}
+
+async function loadTopPages(page) {
+    if (page < 1) return;
+    const res = await fetch(`/src/api/admin/top_pages.php?months=${currentMonths}&page=${page}`, {
+        headers: { 'Authorization': 'Bearer ' + token() },
+    });
+    const data = await res.json();
+    if (!res.ok) return;
+
+    topPagesPage = data.page || 1;
+    renderTopPages(data.rows || []);
+
+    const pagesCount = data.pages_count || 1;
+    document.getElementById('pagesPageLabel').textContent = `${topPagesPage} / ${pagesCount} (총 ${(+data.total || 0).toLocaleString()}건)`;
+    document.getElementById('pagesPrevBtn').disabled = topPagesPage <= 1;
+    document.getElementById('pagesNextBtn').disabled = topPagesPage >= pagesCount;
+}
+
+async function loadTopUsers(page) {
+    if (page < 1) return;
+    const res = await fetch(`/src/api/admin/top_users.php?months=${currentMonths}&page=${page}`, {
+        headers: { 'Authorization': 'Bearer ' + token() },
+    });
+    const data = await res.json();
+    if (!res.ok) return;
+
+    topUsersPage = data.page || 1;
+    renderTopUsers(data.users || []);
+
+    const pagesCount = data.pages_count || 1;
+    document.getElementById('usersPageLabel').textContent = `${topUsersPage} / ${pagesCount} (총 ${(+data.total || 0).toLocaleString()}건)`;
+    document.getElementById('usersPrevBtn').disabled = topUsersPage <= 1;
+    document.getElementById('usersNextBtn').disabled = topUsersPage >= pagesCount;
 }
 
 async function loadAnonVisits(page) {
@@ -45,10 +81,10 @@ async function loadAnonVisits(page) {
     anonPage = data.page || 1;
     renderAnonVisits(data.visits || []);
 
-    const pages = data.pages || 1;
-    document.getElementById('anonPageLabel').textContent = `${anonPage} / ${pages} (총 ${(+data.total || 0).toLocaleString()}건)`;
+    const pagesCount = data.pages_count || 1;
+    document.getElementById('anonPageLabel').textContent = `${anonPage} / ${pagesCount} (총 ${(+data.total || 0).toLocaleString()}건)`;
     document.getElementById('anonPrevBtn').disabled = anonPage <= 1;
-    document.getElementById('anonNextBtn').disabled = anonPage >= pages;
+    document.getElementById('anonNextBtn').disabled = anonPage >= pagesCount;
 }
 
 function switchStatsTab(tab) {
@@ -94,7 +130,7 @@ function renderDailyChart(daily) {
 function renderTopPages(pages) {
     document.getElementById('topPagesTbody').innerHTML = pages.map((p, i) => `
         <tr>
-            <td class="st-rank">${i + 1}</td>
+            <td class="st-rank">${(topPagesPage - 1) * 20 + i + 1}</td>
             <td class="st-page">${esc(p.page)}</td>
             <td class="st-num">${(+p.pv).toLocaleString()}</td>
             <td style="color:var(--text-3);">${(+p.uv).toLocaleString()}</td>

@@ -77,7 +77,7 @@ require_admin_role('s');
         <div class="st-panel-head" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
             <div style="display:flex;gap:4px;flex-wrap:wrap;">
                 <button class="st-tab-btn active" data-tab="topPages" onclick="switchStatsTab('topPages')">인기 페이지</button>
-                <button class="st-tab-btn" data-tab="topUsers" onclick="switchStatsTab('topUsers')">회원 접속 TOP 20</button>
+                <button class="st-tab-btn" data-tab="topUsers" onclick="switchStatsTab('topUsers')">회원접속</button>
                 <button class="st-tab-btn" data-tab="anonVisits" onclick="switchStatsTab('anonVisits')">비로그인 방문</button>
                 <button class="st-tab-btn" data-tab="exportLogs" onclick="switchStatsTab('exportLogs')">내보내기 기록 (최근 100건)</button>
             </div>
@@ -89,6 +89,11 @@ require_admin_role('s');
                 <thead><tr><th>#</th><th>페이지</th><th>PV</th><th>UV</th></tr></thead>
                 <tbody id="topPagesTbody"></tbody>
             </table>
+            <div style="display:flex;align-items:center;justify-content:center;gap:12px;padding:14px;">
+                <button class="st-tab-btn" id="pagesPrevBtn" onclick="loadTopPages(topPagesPage - 1)">이전</button>
+                <span id="pagesPageLabel" style="font-size:12px;color:var(--text-3);"></span>
+                <button class="st-tab-btn" id="pagesNextBtn" onclick="loadTopPages(topPagesPage + 1)">다음</button>
+            </div>
         </div>
 
         <div class="st-tab-panel" id="tab-topUsers" style="display:none;">
@@ -96,6 +101,11 @@ require_admin_role('s');
                 <thead><tr><th>날짜</th><th>회원</th><th>몇회</th><th>디바이스</th><th>마지막 접속시간</th><th>IP</th></tr></thead>
                 <tbody id="topUsersTbody"></tbody>
             </table>
+            <div style="display:flex;align-items:center;justify-content:center;gap:12px;padding:14px;">
+                <button class="st-tab-btn" id="usersPrevBtn" onclick="loadTopUsers(topUsersPage - 1)">이전</button>
+                <span id="usersPageLabel" style="font-size:12px;color:var(--text-3);"></span>
+                <button class="st-tab-btn" id="usersNextBtn" onclick="loadTopUsers(topUsersPage + 1)">다음</button>
+            </div>
         </div>
 
         <div class="st-tab-panel" id="tab-anonVisits" style="display:none;">

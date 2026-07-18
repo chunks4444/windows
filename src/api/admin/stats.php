@@ -35,38 +35,6 @@ $stmt = $pdo->prepare("
 $stmt->execute([$months]);
 $daily = $stmt->fetchAll();
 
-// 2. 인기 페이지 TOP 10
-$stmt = $pdo->prepare("
-    SELECT page,
-           COUNT(*)                AS pv,
-           COUNT(DISTINCT ip_hash) AS uv
-    FROM page_views
-    WHERE visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH)
-    GROUP BY page
-    ORDER BY pv DESC
-    LIMIT 10
-");
-$stmt->execute([$months]);
-$topPages = $stmt->fetchAll();
-
-// 3. 회원별 접속 기록 (날짜별) — 같은 회원이 여러 날 접속했으면 날짜마다 별도 행으로 표시
-$stmt = $pdo->prepare("
-    SELECT u.id, u.email, u.role,
-           DATE(pv.visited_at)                           AS visit_date,
-           COUNT(pv.id)                                  AS visit_count,
-           SUM(pv.is_mobile)                             AS mobile_count,
-           MAX(pv.visited_at)                            AS last_visit,
-           SUBSTRING_INDEX(GROUP_CONCAT(pv.ip ORDER BY pv.visited_at DESC SEPARATOR ','), ',', 1) AS last_ip
-    FROM page_views pv
-    JOIN users u ON pv.user_id = u.id
-    WHERE pv.visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH)
-    GROUP BY u.id, DATE(pv.visited_at)
-    ORDER BY visit_date DESC, last_visit DESC
-    LIMIT 20
-");
-$stmt->execute([$months]);
-$topUsers = $stmt->fetchAll();
-
 // 4. 요약
 $stmt = $pdo->prepare("
     SELECT COUNT(*)                AS total_pv,
@@ -84,8 +52,6 @@ $sharedCount = (int) $pdo->query('SELECT COUNT(*) FROM drawings WHERE is_shared 
 
 echo json_encode([
     'daily'       => $daily,
-    'topPages'    => $topPages,
-    'topUsers'    => $topUsers,
     'summary'     => $summary,
     'sharedCount' => $sharedCount,
 ]);
