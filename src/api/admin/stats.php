@@ -49,20 +49,21 @@ $stmt = $pdo->prepare("
 $stmt->execute([$months]);
 $topPages = $stmt->fetchAll();
 
-// 3. 회원별 접속 TOP 20 (최근 방문일 순)
+// 3. 회원별 접속 기록 (날짜별) — 같은 회원이 여러 날 접속했으면 날짜마다 별도 행으로 표시
 $stmt = $pdo->prepare("
     SELECT u.id, u.email, u.role,
+           DATE(pv.visited_at)                           AS visit_date,
            COUNT(pv.id)                                  AS visit_count,
            SUM(pv.is_mobile)                             AS mobile_count,
            MAX(pv.visited_at)                            AS last_visit,
            (SELECT pv2.ip FROM page_views pv2
-            WHERE pv2.user_id = u.id
+            WHERE pv2.user_id = u.id AND DATE(pv2.visited_at) = DATE(pv.visited_at)
             ORDER BY pv2.visited_at DESC LIMIT 1)         AS last_ip
     FROM page_views pv
     JOIN users u ON pv.user_id = u.id
     WHERE pv.visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH)
-    GROUP BY u.id
-    ORDER BY last_visit DESC
+    GROUP BY u.id, DATE(pv.visited_at)
+    ORDER BY visit_date DESC, last_visit DESC
     LIMIT 20
 ");
 $stmt->execute([$months]);
