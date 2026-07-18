@@ -118,6 +118,6 @@ require_admin_role('s');
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-<script src="/src/js/admin/stats.js"></script>
+<script src="/src/js/admin/stats.js?v=<?= md5_file(__DIR__ . '/../js/admin/stats.js') ?>"></script>
 </body>
 </html>
