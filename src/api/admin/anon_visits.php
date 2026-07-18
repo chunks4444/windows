@@ -27,17 +27,17 @@ $blockedOnly = !empty($_GET['blocked_only']);
 $limit      = 20;
 $offset     = ($page - 1) * $limit;
 
-$ipCond   = $ipQuery !== '' ? 'AND ip LIKE ?' : '';
+$ipCond   = $ipQuery !== '' ? 'AND pv.ip LIKE ?' : '';
 $ipParams = $ipQuery !== '' ? ['%' . $ipQuery . '%'] : [];
-$blockedCond = $blockedOnly ? 'AND ip IN (SELECT ip FROM blocked_ips)' : '';
+$blockedCond = $blockedOnly ? 'AND pv.ip IN (SELECT ip FROM blocked_ips)' : '';
 
 // 전체 개수 (IP+날짜 그룹 기준)
 $stmt = $pdo->prepare("
     SELECT COUNT(*) FROM (
         SELECT 1
-        FROM page_views
-        WHERE user_id IS NULL AND visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH) $ipCond $blockedCond
-        GROUP BY ip, DATE(visited_at)
+        FROM page_views pv
+        WHERE pv.user_id IS NULL AND pv.visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH) $ipCond $blockedCond
+        GROUP BY pv.ip, DATE(pv.visited_at)
     ) t
 ");
 $stmt->execute(array_merge([$months], $ipParams));
