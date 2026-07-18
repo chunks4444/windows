@@ -309,12 +309,6 @@ body { background: #fff; }
 }
 .lib-btn-primary:hover { background: var(--danger-hover); }
 
-.lib-btn-secondary {
-    background: rgba(var(--bg-rgb), 0.9);
-    color: var(--text);
-}
-.lib-btn-secondary:hover { background: var(--bg); }
-
 /* ── 카드 하단 정보 ──────────────────────────── */
 .lib-card-body {
     padding: 10px 12px 12px;
@@ -344,18 +338,6 @@ body { background: #fff; }
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-/* ── 섹션 타이틀 ──────────────────────────────── */
-.lib-section-title {
-    font-size: var(--fs-12);
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin: 28px 0 14px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--border);
 }
 
 /* ── 보드 모달 ───────────────────────────────── */

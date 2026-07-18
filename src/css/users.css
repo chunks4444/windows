@@ -176,7 +176,6 @@ tbody td {
 .adm-btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
 .adm-alert { padding: 8px 12px; border-radius: var(--r-sm); font-size: var(--fs-13); margin-bottom: 12px; }
 .adm-alert-error { background: var(--danger-tint); color: var(--danger); }
-.adm-alert-success { background: var(--accent-tint); color: var(--accent); }
 .adm-active-badge    { display:inline-block; padding:2px 8px; border-radius:99px; font-size: var(--fs-12); font-weight:700; background:var(--accent-tint); color:var(--accent); }
 .adm-withdrawn-badge { display:inline-block; padding:2px 8px; border-radius:99px; font-size: var(--fs-12); font-weight:700; background:var(--danger-tint); color:var(--danger); }
 .adm-action-cell     { display:flex; gap:6px; align-items:center; }

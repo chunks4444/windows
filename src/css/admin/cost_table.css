@@ -23,17 +23,6 @@
     padding-bottom: 8px;
     border-bottom: 1px solid var(--border, var(--bg));
 }
-
-.wt-section-title {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    color: var(--text-muted, var(--text-muted));
-    margin: 20px 0 10px;
-    padding-bottom: 6px;
-    border-bottom: 1px solid var(--border, var(--bg));
-}
 .drag-handle { cursor:grab; color:var(--text-muted); }
         .drag-handle:active { cursor:grabbing; }
         tr.dragging { opacity:.4; }

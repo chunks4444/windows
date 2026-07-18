@@ -174,16 +174,11 @@ html, body {
     white-space: nowrap;
 }
 .wd-back:hover { color: var(--accent, var(--accent)); }
-.wd-divider { width: 1px; height: 18px; background: var(--border, var(--border)); flex-shrink: 0; }
 .wd-title {
     margin: 0;
     font-size: var(--fs-14); font-weight: 400;
     color: var(--text, var(--text));
     letter-spacing: -.01em;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.wd-desc {
-    font-size: var(--fs-14); color: var(--text-muted, var(--text-muted));
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .wd-next-link {

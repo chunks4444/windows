@@ -83,10 +83,7 @@ body {
     -webkit-overflow-scrolling: touch;
 }
 
-body:not(.pm-generator) .container,
-body:not(.pm-generator) .container-lg,
-body:not(.pm-generator) .container-xl,
-body:not(.pm-generator) .container-xxl { max-width: 1320px; }
+body:not(.pm-generator) .container { max-width: 1320px; }
 
 /* ── 글로벌 푸터 (엔진/관리자 페이지 제외 전체 화면 공용) ───── */
 /* 화면 하단에 고정 — 콘텐츠가 가려지지 않도록 body에 padding-bottom 보정 */
@@ -166,11 +163,6 @@ body:has(.global-footer) {
     flex-direction: column;
     align-items: flex-end;
     gap: 2px;
-}
-
-.global-footer .footer-link-strong {
-    font-weight: 700;
-    color: rgba(var(--text-rgb), 0.6);
 }
 
 @media (max-width: 768px) {

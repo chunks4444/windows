@@ -70,28 +70,6 @@ body {
     letter-spacing: -0.4px;
 }
 
-.db-new-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    height: 36px;
-    padding: 0 16px;
-    background: var(--accent);
-    color: var(--bg);
-    border: none;
-    border-radius: var(--r-sm);
-    font-size: var(--fs-14);
-    font-weight: 600;
-    font-family: inherit;
-    cursor: pointer;
-    letter-spacing: -0.2px;
-    text-decoration: none;
-    transition: background 0.12s;
-    white-space: nowrap;
-}
-.db-new-btn:hover { background: var(--accent-hover); }
-
-
 .db-card-engine-icon {
     display: flex;
     align-items: center;
@@ -773,19 +751,6 @@ body {
     font-weight: 600;
 }
 
-/* 엔진 기본값 관리 — 그룹 헤더 */
-.setting-group-header {
-    background: var(--surface-2, var(--bg));
-    color: var(--text);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    padding: 6px 10px !important;
-    border-top: 2px solid var(--border, var(--accent-tint));
-}
-.setting-label { color: var(--text); font-size: 12px; }
-
 /* 엔진 설정 어드민 */
 .eng-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(calc(33% - 8px), 1fr)); gap: 12px; margin-top: 12px; }
 .eng-section { background: var(--surface-1, var(--bg)); border: 1px solid var(--border, var(--accent-tint)); border-radius: 6px; padding: 10px 14px; }
@@ -795,5 +760,3 @@ body {
 .field-label { flex: 1; font-size: 11px; color: var(--text); }
 .field-hint { display: block; font-size: 10px; color: var(--text); margin-top: 1px; }
 .field-input { flex: 0 0 90px; }
-.eng-full { grid-column: 1 / -1; }
-.common-badge { display:inline-block; font-size:9px; background:var(--accent-tint); color:var(--accent); border-radius:3px; padding:1px 5px; margin-left:6px; vertical-align:middle; }

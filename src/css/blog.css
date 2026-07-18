@@ -107,11 +107,6 @@ body { background: #fff; }
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     transition: color .15s ease;
 }
-.bg-ranked-num {
-    color: var(--accent);
-    font-variant-numeric: tabular-nums;
-    margin-right: .4rem;
-}
 .bg-ranked-summary {
     font-size: var(--fs-13); color: var(--text);
     margin: 0; line-height: 1.5;
