@@ -76,9 +76,9 @@ require_admin_role('s');
     <div class="st-panel">
         <div class="st-panel-head" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
             <div style="display:flex;gap:4px;flex-wrap:wrap;">
-                <button class="st-tab-btn active" data-tab="topPages" onclick="switchStatsTab('topPages')">인기 페이지 TOP 10</button>
+                <button class="st-tab-btn active" data-tab="topPages" onclick="switchStatsTab('topPages')">인기 페이지</button>
                 <button class="st-tab-btn" data-tab="topUsers" onclick="switchStatsTab('topUsers')">회원 접속 TOP 20</button>
-                <button class="st-tab-btn" data-tab="anonVisits" onclick="switchStatsTab('anonVisits')">비로그인 방문 TOP 20</button>
+                <button class="st-tab-btn" data-tab="anonVisits" onclick="switchStatsTab('anonVisits')">비로그인 방문</button>
                 <button class="st-tab-btn" data-tab="exportLogs" onclick="switchStatsTab('exportLogs')">내보내기 기록 (최근 100건)</button>
             </div>
             <div id="exportSummaryBadges" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
@@ -103,6 +103,11 @@ require_admin_role('s');
                 <thead><tr><th>날짜</th><th>IP</th><th>몇회</th><th>디바이스</th><th>마지막 접속시간</th></tr></thead>
                 <tbody id="anonVisitsTbody"></tbody>
             </table>
+            <div style="display:flex;align-items:center;justify-content:center;gap:12px;padding:14px;">
+                <button class="st-tab-btn" id="anonPrevBtn" onclick="loadAnonVisits(anonPage - 1)">이전</button>
+                <span id="anonPageLabel" style="font-size:12px;color:var(--text-3);"></span>
+                <button class="st-tab-btn" id="anonNextBtn" onclick="loadAnonVisits(anonPage + 1)">다음</button>
+            </div>
         </div>
 
         <div class="st-tab-panel" id="tab-exportLogs" style="display:none;">

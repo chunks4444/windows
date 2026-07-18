@@ -67,22 +67,6 @@ $stmt = $pdo->prepare("
 $stmt->execute([$months]);
 $topUsers = $stmt->fetchAll();
 
-// 3-2. 비로그인 방문 기록 (IP+날짜별) — 로그인 안 한 방문자
-$stmt = $pdo->prepare("
-    SELECT ip,
-           DATE(visited_at)     AS visit_date,
-           COUNT(*)             AS visit_count,
-           SUM(is_mobile)       AS mobile_count,
-           MAX(visited_at)      AS last_visit
-    FROM page_views
-    WHERE user_id IS NULL AND visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH)
-    GROUP BY ip, DATE(visited_at)
-    ORDER BY visit_date DESC, last_visit DESC
-    LIMIT 20
-");
-$stmt->execute([$months]);
-$anonVisits = $stmt->fetchAll();
-
 // 4. 요약
 $stmt = $pdo->prepare("
     SELECT COUNT(*)                AS total_pv,
@@ -102,7 +86,6 @@ echo json_encode([
     'daily'       => $daily,
     'topPages'    => $topPages,
     'topUsers'    => $topUsers,
-    'anonVisits'  => $anonVisits,
     'summary'     => $summary,
     'sharedCount' => $sharedCount,
 ]);

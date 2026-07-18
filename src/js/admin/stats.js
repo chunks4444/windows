@@ -1,6 +1,7 @@
 const ROLE_MAP = { s:'슈퍼', m:'관리자', a:'작가', u:'회원' };
 let chart = null;
 let currentMonths = 6;
+let anonPage = 1;
 
 function token() { return localStorage.getItem('pmok_auth_token'); }
 
@@ -30,7 +31,24 @@ async function loadStats(months) {
     renderDailyChart(data.daily);
     renderTopPages(data.topPages);
     renderTopUsers(data.topUsers);
-    renderAnonVisits(data.anonVisits);
+    loadAnonVisits(1);
+}
+
+async function loadAnonVisits(page) {
+    if (page < 1) return;
+    const res = await fetch(`/src/api/admin/anon_visits.php?months=${currentMonths}&page=${page}`, {
+        headers: { 'Authorization': 'Bearer ' + token() },
+    });
+    const data = await res.json();
+    if (!res.ok) return;
+
+    anonPage = data.page || 1;
+    renderAnonVisits(data.visits || []);
+
+    const pages = data.pages || 1;
+    document.getElementById('anonPageLabel').textContent = `${anonPage} / ${pages} (총 ${(+data.total || 0).toLocaleString()}건)`;
+    document.getElementById('anonPrevBtn').disabled = anonPage <= 1;
+    document.getElementById('anonNextBtn').disabled = anonPage >= pages;
 }
 
 function switchStatsTab(tab) {

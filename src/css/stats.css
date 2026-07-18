@@ -44,6 +44,7 @@
 }
 .st-tab-btn:hover { border-color:var(--accent); color:var(--accent); }
 .st-tab-btn.active { background:var(--accent); border-color:var(--accent); color:var(--bg); }
+.st-tab-btn:disabled { opacity:.4; cursor:default; pointer-events:none; }
 .st-tab-panel { overflow-x:auto; }
 
 table { width:100%; border-collapse:collapse; }
