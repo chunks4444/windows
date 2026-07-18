@@ -34,8 +34,17 @@
 .st-month-btn:hover { border-color:var(--accent); color:var(--accent); }
 .st-month-btn.active { background:var(--accent); border-color:var(--accent); color:var(--bg); }
 
-.st-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
-@media(max-width:768px) { .st-grid-2 { grid-template-columns:1fr; } }
+.st-tab-btn {
+    height:28px; padding:0 12px; background:var(--bg);
+    border:1px solid var(--border); border-radius:var(--r-sm);
+    font-family:inherit; font-size: var(--fs-13); font-weight:600;
+    color:var(--text-muted); cursor:pointer;
+    transition:border-color .15s, color .15s, background .15s;
+    white-space:nowrap;
+}
+.st-tab-btn:hover { border-color:var(--accent); color:var(--accent); }
+.st-tab-btn.active { background:var(--accent); border-color:var(--accent); color:var(--bg); }
+.st-tab-panel { overflow-x:auto; }
 
 table { width:100%; border-collapse:collapse; }
 thead th {

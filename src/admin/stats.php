@@ -73,22 +73,42 @@ require_admin_role('s');
         </div>
     </div>
 
-    <div class="st-grid-2">
-        <!-- 인기 페이지 -->
-        <div class="st-panel">
-            <div class="st-panel-head"><span class="st-panel-title">인기 페이지 TOP 10</span></div>
+    <div class="st-panel">
+        <div class="st-panel-head" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <div style="display:flex;gap:4px;flex-wrap:wrap;">
+                <button class="st-tab-btn active" data-tab="topPages" onclick="switchStatsTab('topPages')">인기 페이지 TOP 10</button>
+                <button class="st-tab-btn" data-tab="topUsers" onclick="switchStatsTab('topUsers')">회원 접속 TOP 20</button>
+                <button class="st-tab-btn" data-tab="anonVisits" onclick="switchStatsTab('anonVisits')">비로그인 방문 TOP 20</button>
+                <button class="st-tab-btn" data-tab="exportLogs" onclick="switchStatsTab('exportLogs')">내보내기 기록 (최근 100건)</button>
+            </div>
+            <div id="exportSummaryBadges" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+        </div>
+
+        <div class="st-tab-panel" id="tab-topPages">
             <table>
                 <thead><tr><th>#</th><th>페이지</th><th>PV</th><th>UV</th></tr></thead>
                 <tbody id="topPagesTbody"></tbody>
             </table>
         </div>
 
-        <!-- 회원별 접속 -->
-        <div class="st-panel">
-            <div class="st-panel-head"><span class="st-panel-title">회원 접속 TOP 20</span></div>
+        <div class="st-tab-panel" id="tab-topUsers" style="display:none;">
             <table>
                 <thead><tr><th>날짜</th><th>회원</th><th>몇회</th><th>디바이스</th><th>마지막 접속시간</th><th>IP</th></tr></thead>
                 <tbody id="topUsersTbody"></tbody>
+            </table>
+        </div>
+
+        <div class="st-tab-panel" id="tab-anonVisits" style="display:none;">
+            <table>
+                <thead><tr><th>날짜</th><th>IP</th><th>몇회</th><th>디바이스</th><th>마지막 접속시간</th></tr></thead>
+                <tbody id="anonVisitsTbody"></tbody>
+            </table>
+        </div>
+
+        <div class="st-tab-panel" id="tab-exportLogs" style="display:none;">
+            <table>
+                <thead><tr><th>일시</th><th>이메일</th><th>엔진</th><th>형식</th><th>도면명</th><th>버전</th></tr></thead>
+                <tbody id="exportLogsTbody"></tbody>
             </table>
         </div>
     </div>
@@ -104,17 +124,6 @@ require_admin_role('s');
         </div>
     </div>
 
-    <!-- 내보내기 기록 -->
-    <div class="st-panel" style="margin-top:24px;">
-        <div class="st-panel-head" style="display:flex;align-items:center;justify-content:space-between;">
-            <span class="st-panel-title">내보내기 기록 (최근 100건)</span>
-            <div id="exportSummaryBadges" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
-        </div>
-        <table>
-            <thead><tr><th>일시</th><th>이메일</th><th>엔진</th><th>형식</th><th>도면명</th><th>버전</th></tr></thead>
-            <tbody id="exportLogsTbody"></tbody>
-        </table>
-    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>

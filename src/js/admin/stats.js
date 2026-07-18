@@ -30,6 +30,12 @@ async function loadStats(months) {
     renderDailyChart(data.daily);
     renderTopPages(data.topPages);
     renderTopUsers(data.topUsers);
+    renderAnonVisits(data.anonVisits);
+}
+
+function switchStatsTab(tab) {
+    document.querySelectorAll('.st-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    document.querySelectorAll('.st-tab-panel').forEach(p => p.style.display = (p.id === 'tab-' + tab) ? '' : 'none');
 }
 
 function renderSummary(s) {
@@ -95,6 +101,40 @@ function renderTopUsers(users) {
         </tr>
     `;
     }).join('') || '<tr><td colspan="6" style="padding:20px;text-align:center;color:var(--text-3);">데이터 없음</td></tr>';
+}
+
+function renderAnonVisits(visits) {
+    document.getElementById('anonVisitsTbody').innerHTML = visits.map(v => {
+        const mobile = +v.mobile_count || 0;
+        const total  = +v.visit_count || 0;
+        const desktop = total - mobile;
+        const device = !total ? '—' : (mobile && desktop) ? `M:${mobile} P:${desktop}` : (mobile ? `M:${mobile}` : `P:${desktop}`);
+        return `
+        <tr>
+            <td style="color:var(--text-3);font-size:11px;">${v.last_visit ? v.last_visit.slice(0,10) : '—'}</td>
+            <td style="font-size:12px;font-family:monospace;cursor:pointer;text-decoration:underline;" onclick="openIpVisits('${esc(v.ip)}')">${esc(v.ip)}</td>
+            <td class="st-num">${total.toLocaleString()}</td>
+            <td style="font-size:11px;white-space:nowrap;">${device}</td>
+            <td style="color:var(--text-3);font-size:11px;">${v.last_visit ? v.last_visit.slice(11,19) : '—'}</td>
+        </tr>
+    `;
+    }).join('') || '<tr><td colspan="5" style="padding:20px;text-align:center;color:var(--text-3);">데이터 없음</td></tr>';
+}
+
+async function openIpVisits(ip) {
+    document.getElementById('userVisitsTitle').textContent = ip + ' (비로그인)';
+    document.getElementById('userVisitsBody').innerHTML = '<p style="color:var(--text-3);">불러오는 중…</p>';
+    document.getElementById('userVisitsOverlay').style.display = 'flex';
+
+    const res = await fetch(`/src/api/admin/ip_visits.php?ip=${encodeURIComponent(ip)}&months=${currentMonths}`, {
+        headers: { 'Authorization': 'Bearer ' + token() },
+    });
+    const data = await res.json();
+    if (!res.ok) {
+        document.getElementById('userVisitsBody').innerHTML = '<p style="color:var(--text-3);">불러오기 실패</p>';
+        return;
+    }
+    renderUserVisits(data.visits || []);
 }
 
 async function openUserVisits(userId, email) {
