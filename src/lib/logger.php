@@ -46,16 +46,16 @@ function pm_record_pageview(string $page, string $ip, string $ua, string $userId
             'INSERT INTO page_views (page, user_id, ip_hash, ip, is_mobile) VALUES (?, ?, ?, ?, ?)'
         )->execute([$page, $uid, $ipHash, $ip, $isMobile]);
 
-        // 1% 확률로 6개월 초과분 자동 삭제
+        // 1% 확률로 1년 초과분 자동 삭제
         if (mt_rand(0, 99) === 0) {
-            $pdo->exec("DELETE FROM page_views WHERE visited_at < DATE_SUB(NOW(), INTERVAL 6 MONTH)");
+            $pdo->exec("DELETE FROM page_views WHERE visited_at < DATE_SUB(NOW(), INTERVAL 1 YEAR)");
         }
     } catch (Throwable $e) {
         // 통계 기록 실패는 무시
     }
 }
 
-function pm_cleanup_old_logs(string $logDir, int $days = 30): void {
+function pm_cleanup_old_logs(string $logDir, int $days = 365): void {
     $cutoff = time() - $days * 86400;
     foreach (glob($logDir . DIRECTORY_SEPARATOR . 'access_*.log') ?: [] as $file) {
         if (@filemtime($file) < $cutoff) @unlink($file);

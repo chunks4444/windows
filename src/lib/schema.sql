@@ -42,7 +42,7 @@
 -- ALTER TABLE users ADD COLUMN view_desc     TINYINT(1) NOT NULL DEFAULT 0 COMMENT '엔진 예상견적 설명(disclaimer) 열람 허용 (role과 별개, 회원별 개별 승인)' AFTER view_shipping;
 -- ALTER TABLE users MODIFY COLUMN view_spec TINYINT(1) NOT NULL DEFAULT 1 COMMENT '엔진 제작 시방서 열람 허용 (role과 별개, 회원별 개별 승인) - 임시로 기본 1 (2026-07-07~)'; -- 기존 회원 전체도 UPDATE users SET view_spec=1로 함께 적용
 
--- 접속 통계 (6개월 rolling)
+-- 접속 통계 (1년 rolling)
 CREATE TABLE IF NOT EXISTS page_views (
     id          INT UNSIGNED NOT NULL AUTO_INCREMENT,
     visited_at  DATETIME     NOT NULL DEFAULT NOW() COMMENT '방문일시',
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS page_views (
     KEY idx_pv_visited (visited_at),
     KEY idx_pv_date_page (visited_at, page),
     CONSTRAINT fk_pv_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='페이지 방문 통계 (6개월 rolling)';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='페이지 방문 통계 (1년 rolling)';
 -- ============================================================
 
 -- 사용자 테이블
