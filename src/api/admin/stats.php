@@ -56,9 +56,7 @@ $stmt = $pdo->prepare("
            COUNT(pv.id)                                  AS visit_count,
            SUM(pv.is_mobile)                             AS mobile_count,
            MAX(pv.visited_at)                            AS last_visit,
-           (SELECT pv2.ip FROM page_views pv2
-            WHERE pv2.user_id = u.id AND DATE(pv2.visited_at) = DATE(pv.visited_at)
-            ORDER BY pv2.visited_at DESC LIMIT 1)         AS last_ip
+           SUBSTRING_INDEX(GROUP_CONCAT(pv.ip ORDER BY pv.visited_at DESC SEPARATOR ','), ',', 1) AS last_ip
     FROM page_views pv
     JOIN users u ON pv.user_id = u.id
     WHERE pv.visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH)
