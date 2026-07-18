@@ -83,7 +83,7 @@ function renderTopUsers(users) {
         const mobile = +u.mobile_count || 0;
         const total  = +u.visit_count || 0;
         const desktop = total - mobile;
-        const device = !total ? '—' : (mobile && desktop) ? `N:${mobile} P:${desktop}` : (mobile ? `N:${mobile}` : `P:${desktop}`);
+        const device = !total ? '—' : (mobile && desktop) ? `M:${mobile} P:${desktop}` : (mobile ? `M:${mobile}` : `P:${desktop}`);
         return `
         <tr>
             <td style="color:var(--text-3);font-size:11px;">${u.last_visit ? u.last_visit.slice(0,10) : '—'}</td>
