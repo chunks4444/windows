@@ -72,7 +72,8 @@ async function loadTopUsers(page) {
 
 async function loadAnonVisits(page) {
     if (page < 1) return;
-    const res = await fetch(`/src/api/admin/anon_visits.php?months=${currentMonths}&page=${page}`, {
+    const ip = document.getElementById('anonIpFilter')?.value.trim() || '';
+    const res = await fetch(`/src/api/admin/anon_visits.php?months=${currentMonths}&page=${page}&ip=${encodeURIComponent(ip)}`, {
         headers: { 'Authorization': 'Bearer ' + token() },
     });
     const data = await res.json();

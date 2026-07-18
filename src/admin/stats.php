@@ -109,6 +109,13 @@ require_admin_role('s');
         </div>
 
         <div class="st-tab-panel" id="tab-anonVisits" style="display:none;">
+            <div style="display:flex;gap:6px;padding:10px 14px 0;">
+                <input type="text" id="anonIpFilter" placeholder="IP 검색 (예: 20. 로 접두사 검색 가능)"
+                    style="flex:1;max-width:280px;height:30px;padding:0 10px;font-size:12px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg);color:var(--text);"
+                    onkeydown="if(event.key==='Enter') loadAnonVisits(1)">
+                <button class="st-tab-btn" onclick="loadAnonVisits(1)">검색</button>
+                <button class="st-tab-btn" onclick="document.getElementById('anonIpFilter').value='';loadAnonVisits(1)">초기화</button>
+            </div>
             <table>
                 <thead><tr><th>날짜</th><th>IP</th><th>몇회</th><th>디바이스</th><th>마지막 접속시간</th></tr></thead>
                 <tbody id="anonVisitsTbody"></tbody>

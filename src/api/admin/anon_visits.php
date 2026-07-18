@@ -20,21 +20,25 @@ if (!$me || $me['role'] !== 's') {
     http_response_code(403); echo json_encode(['error' => '슈퍼 권한이 필요합니다.']); exit;
 }
 
-$months = max(1, min(12, (int)($_GET['months'] ?? 6)));
-$page   = max(1, (int)($_GET['page'] ?? 1));
-$limit  = 20;
-$offset = ($page - 1) * $limit;
+$months  = max(1, min(12, (int)($_GET['months'] ?? 6)));
+$page    = max(1, (int)($_GET['page'] ?? 1));
+$ipQuery = trim($_GET['ip'] ?? '');
+$limit   = 20;
+$offset  = ($page - 1) * $limit;
+
+$ipCond   = $ipQuery !== '' ? 'AND ip LIKE ?' : '';
+$ipParams = $ipQuery !== '' ? ['%' . $ipQuery . '%'] : [];
 
 // 전체 개수 (IP+날짜 그룹 기준)
 $stmt = $pdo->prepare("
     SELECT COUNT(*) FROM (
         SELECT 1
         FROM page_views
-        WHERE user_id IS NULL AND visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH)
+        WHERE user_id IS NULL AND visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH) $ipCond
         GROUP BY ip, DATE(visited_at)
     ) t
 ");
-$stmt->execute([$months]);
+$stmt->execute(array_merge([$months], $ipParams));
 $total = (int) $stmt->fetchColumn();
 
 $stmt = $pdo->prepare("
@@ -44,12 +48,12 @@ $stmt = $pdo->prepare("
            SUM(is_mobile)       AS mobile_count,
            MAX(visited_at)      AS last_visit
     FROM page_views
-    WHERE user_id IS NULL AND visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH)
+    WHERE user_id IS NULL AND visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH) $ipCond
     GROUP BY ip, DATE(visited_at)
     ORDER BY visit_date DESC, last_visit DESC
     LIMIT $limit OFFSET $offset
 ");
-$stmt->execute([$months]);
+$stmt->execute(array_merge([$months], $ipParams));
 $visits = $stmt->fetchAll();
 
 echo json_encode([
