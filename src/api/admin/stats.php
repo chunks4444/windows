@@ -49,7 +49,7 @@ $stmt = $pdo->prepare("
 $stmt->execute([$months]);
 $topPages = $stmt->fetchAll();
 
-// 3. 회원별 접속 횟수 TOP 20
+// 3. 회원별 접속 TOP 20 (최근 방문일 순)
 $stmt = $pdo->prepare("
     SELECT u.id, u.email, u.role,
            COUNT(pv.id)                                  AS visit_count,
@@ -59,7 +59,7 @@ $stmt = $pdo->prepare("
     JOIN users u ON pv.user_id = u.id
     WHERE pv.visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH)
     GROUP BY u.id
-    ORDER BY visit_count DESC
+    ORDER BY last_visit DESC
     LIMIT 20
 ");
 $stmt->execute([$months]);

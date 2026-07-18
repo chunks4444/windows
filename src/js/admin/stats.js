@@ -82,13 +82,62 @@ function renderTopUsers(users) {
     document.getElementById('topUsersTbody').innerHTML = users.map((u, i) => `
         <tr>
             <td class="st-rank">${i + 1}</td>
-            <td style="font-size:12px;">${esc(u.email)}</td>
+            <td style="font-size:12px;cursor:pointer;text-decoration:underline;" onclick="openUserVisits(${u.id},'${esc(u.email)}')">${esc(u.email)}</td>
             <td><span class="role-badge" data-role="${esc(u.role)}">${ROLE_MAP[u.role] || u.role}</span></td>
             <td class="st-num">${(+u.visit_count).toLocaleString()}</td>
             <td style="color:var(--text-3);font-size:11px;">${u.last_visit ? u.last_visit.slice(0,10) : '—'}</td>
             <td style="color:var(--text-3);font-size:11px;font-family:monospace;">${u.ips ? esc(u.ips) : '—'}</td>
         </tr>
     `).join('') || '<tr><td colspan="5" style="padding:20px;text-align:center;color:var(--text-3);">데이터 없음</td></tr>';
+}
+
+async function openUserVisits(userId, email) {
+    document.getElementById('userVisitsTitle').textContent = email;
+    document.getElementById('userVisitsBody').innerHTML = '<p style="color:var(--text-3);">불러오는 중…</p>';
+    document.getElementById('userVisitsOverlay').style.display = 'flex';
+
+    const res = await fetch(`/src/api/admin/user_visits.php?user_id=${userId}&months=${currentMonths}`, {
+        headers: { 'Authorization': 'Bearer ' + token() },
+    });
+    const data = await res.json();
+    if (!res.ok) {
+        document.getElementById('userVisitsBody').innerHTML = '<p style="color:var(--text-3);">불러오기 실패</p>';
+        return;
+    }
+    renderUserVisits(data.visits || []);
+}
+
+function renderUserVisits(visits) {
+    const body = document.getElementById('userVisitsBody');
+    if (!visits.length) {
+        body.innerHTML = '<p style="color:var(--text-3);">방문 기록이 없습니다.</p>';
+        return;
+    }
+    // 날짜별로 묶기 (visits는 이미 최신순으로 정렬돼서 옴)
+    const groups = [];
+    let lastDate = null;
+    for (const v of visits) {
+        const date = v.visited_at.slice(0, 10);
+        if (date !== lastDate) { groups.push({ date, items: [] }); lastDate = date; }
+        groups[groups.length - 1].items.push(v);
+    }
+    body.innerHTML = groups.map(g => `
+        <div style="margin-bottom:14px;">
+            <div style="font-weight:700;margin-bottom:6px;">${g.date}</div>
+            ${g.items.map(v => `
+                <div style="display:flex;gap:10px;padding:4px 0;border-bottom:1px solid var(--border);">
+                    <span style="color:var(--text-3);white-space:nowrap;">${v.visited_at.slice(11, 19)}</span>
+                    <span style="font-family:monospace;white-space:nowrap;">${esc(v.ip)}</span>
+                    <span style="color:var(--text-3);">${v.is_mobile ? '📱' : '🖥'}</span>
+                    <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(v.page)}</span>
+                </div>
+            `).join('')}
+        </div>
+    `).join('');
+}
+
+function closeUserVisits() {
+    document.getElementById('userVisitsOverlay').style.display = 'none';
 }
 
 async function loadExportLogs() {

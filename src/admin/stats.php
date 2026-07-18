@@ -93,6 +93,17 @@ require_admin_role('s');
         </div>
     </div>
 
+    <!-- 회원 방문 상세 모달 -->
+    <div id="userVisitsOverlay" onclick="if(event.target===this) closeUserVisits()" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.45);align-items:center;justify-content:center;">
+        <div style="background:var(--bg);border-radius:12px;max-width:560px;width:92%;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);">
+                <span id="userVisitsTitle" style="font-weight:700;font-size:14px;color:var(--text);"></span>
+                <button onclick="closeUserVisits()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--text);">&times;</button>
+            </div>
+            <div id="userVisitsBody" style="overflow-y:auto;padding:16px 20px;font-size:12px;color:var(--text);"></div>
+        </div>
+    </div>
+
     <!-- 내보내기 기록 -->
     <div class="st-panel" style="margin-top:24px;">
         <div class="st-panel-head" style="display:flex;align-items:center;justify-content:space-between;">
