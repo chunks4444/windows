@@ -29,7 +29,11 @@ $offset     = ($page - 1) * $limit;
 
 $ipCond   = $ipQuery !== '' ? 'AND pv.ip LIKE ?' : '';
 $ipParams = $ipQuery !== '' ? ['%' . $ipQuery . '%'] : [];
-$blockedCond = $blockedOnly ? 'AND pv.ip IN (SELECT ip FROM blocked_ips)' : '';
+// 기본값은 이미 차단된 IP를 목록에서 제외(처리 끝난 항목이라 굳이 계속 노출할 필요 없음),
+// "차단된 IP만" 체크 시에는 반대로 그것만 보여준다.
+$blockedCond = $blockedOnly
+    ? 'AND pv.ip IN (SELECT ip FROM blocked_ips)'
+    : 'AND pv.ip NOT IN (SELECT ip FROM blocked_ips)';
 
 // 전체 개수 (IP+날짜 그룹 기준)
 $stmt = $pdo->prepare("
