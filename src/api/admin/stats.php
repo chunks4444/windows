@@ -53,6 +53,7 @@ $topPages = $stmt->fetchAll();
 $stmt = $pdo->prepare("
     SELECT u.id, u.email, u.role,
            COUNT(pv.id)                                  AS visit_count,
+           SUM(pv.is_mobile)                             AS mobile_count,
            MAX(pv.visited_at)                            AS last_visit,
            GROUP_CONCAT(DISTINCT pv.ip ORDER BY pv.ip SEPARATOR ', ') AS ips
     FROM page_views pv

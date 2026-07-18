@@ -87,7 +87,7 @@ require_admin_role('s');
         <div class="st-panel">
             <div class="st-panel-head"><span class="st-panel-title">회원 접속 TOP 20</span></div>
             <table>
-                <thead><tr><th>#</th><th>이메일</th><th>권한</th><th>방문</th><th>최근</th><th>IP</th></tr></thead>
+                <thead><tr><th>날짜</th><th>회원</th><th>몇회</th><th>디바이스</th><th>마지막 접속시간</th><th>IP</th></tr></thead>
                 <tbody id="topUsersTbody"></tbody>
             </table>
         </div>

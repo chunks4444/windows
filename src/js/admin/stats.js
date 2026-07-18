@@ -79,16 +79,22 @@ function renderTopPages(pages) {
 }
 
 function renderTopUsers(users) {
-    document.getElementById('topUsersTbody').innerHTML = users.map((u, i) => `
+    document.getElementById('topUsersTbody').innerHTML = users.map(u => {
+        const mobile = +u.mobile_count || 0;
+        const total  = +u.visit_count || 0;
+        const desktop = total - mobile;
+        const device = !total ? '—' : (mobile && desktop) ? `📱 ${mobile} · 🖥 ${desktop}` : (mobile ? '📱' : '🖥');
+        return `
         <tr>
-            <td class="st-rank">${i + 1}</td>
-            <td style="font-size:12px;cursor:pointer;text-decoration:underline;" onclick="openUserVisits(${u.id},'${esc(u.email)}')">${esc(u.email)}</td>
-            <td><span class="role-badge" data-role="${esc(u.role)}">${ROLE_MAP[u.role] || u.role}</span></td>
-            <td class="st-num">${(+u.visit_count).toLocaleString()}</td>
             <td style="color:var(--text-3);font-size:11px;">${u.last_visit ? u.last_visit.slice(0,10) : '—'}</td>
+            <td style="font-size:12px;cursor:pointer;text-decoration:underline;" onclick="openUserVisits(${u.id},'${esc(u.email)}')">${esc(u.email)}</td>
+            <td class="st-num">${total.toLocaleString()}</td>
+            <td style="font-size:11px;white-space:nowrap;">${device}</td>
+            <td style="color:var(--text-3);font-size:11px;">${u.last_visit ? u.last_visit.slice(11,19) : '—'}</td>
             <td style="color:var(--text-3);font-size:11px;font-family:monospace;">${u.ips ? esc(u.ips) : '—'}</td>
         </tr>
-    `).join('') || '<tr><td colspan="5" style="padding:20px;text-align:center;color:var(--text-3);">데이터 없음</td></tr>';
+    `;
+    }).join('') || '<tr><td colspan="6" style="padding:20px;text-align:center;color:var(--text-3);">데이터 없음</td></tr>';
 }
 
 async function openUserVisits(userId, email) {
