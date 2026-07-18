@@ -6,6 +6,13 @@ ErrorDocument 404 /404.php
 # 예전 워드프레스 시절 서비스워커가 남아있는 브라우저를 위한 킬스위치 (wp.serviceworker 참고)
 AddType application/javascript .serviceworker
 
+# studio.pyeongmok.com은 정식 서비스 도메인(pyeongmok.com)과 같은 코드를 쓰지만 검색엔진에는
+# 노출되면 안 됨 — 사이트는 그대로 작동하되 이 호스트일 때만 색인을 막는다.
+<IfModule mod_headers.c>
+    SetEnvIf Host "^studio\.pyeongmok\.com$" IS_STUDIO_HOST
+    Header set X-Robots-Tag "noindex, nofollow" env=IS_STUDIO_HOST
+</IfModule>
+
 # /src/work/ → /src/portfolio/ 리다이렉트
 RewriteRule ^src/work/detail\.php$ /src/portfolio/detail.php [R=301,L,QSA]
 RewriteRule ^src/work/?$ /src/portfolio/ [R=301,L]
