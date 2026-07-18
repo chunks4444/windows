@@ -2454,7 +2454,7 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
 
     // ── 도면 목록 관리 ─────────────────────────────
     function escHtml(str) {
-        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
     async function refreshDrawingList() {
