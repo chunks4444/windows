@@ -3,6 +3,9 @@ RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
 ErrorDocument 404 /404.php
 
+# 예전 워드프레스 시절 서비스워커가 남아있는 브라우저를 위한 킬스위치 (wp.serviceworker 참고)
+AddType application/javascript .serviceworker
+
 # /src/work/ → /src/portfolio/ 리다이렉트
 RewriteRule ^src/work/detail\.php$ /src/portfolio/detail.php [R=301,L,QSA]
 RewriteRule ^src/work/?$ /src/portfolio/ [R=301,L]
