@@ -83,7 +83,7 @@ function renderTopUsers(users) {
         const mobile = +u.mobile_count || 0;
         const total  = +u.visit_count || 0;
         const desktop = total - mobile;
-        const device = !total ? '—' : (mobile && desktop) ? `📱 ${mobile} · 🖥 ${desktop}` : (mobile ? '📱' : '🖥');
+        const device = !total ? '—' : (mobile && desktop) ? `Mobile ${mobile} · PC ${desktop}` : (mobile ? 'Mobile' : 'PC');
         return `
         <tr>
             <td style="color:var(--text-3);font-size:11px;">${u.last_visit ? u.last_visit.slice(0,10) : '—'}</td>
@@ -91,7 +91,7 @@ function renderTopUsers(users) {
             <td class="st-num">${total.toLocaleString()}</td>
             <td style="font-size:11px;white-space:nowrap;">${device}</td>
             <td style="color:var(--text-3);font-size:11px;">${u.last_visit ? u.last_visit.slice(11,19) : '—'}</td>
-            <td style="color:var(--text-3);font-size:11px;font-family:monospace;">${u.ips ? esc(u.ips) : '—'}</td>
+            <td style="color:var(--text-3);font-size:11px;font-family:monospace;cursor:pointer;text-decoration:underline;" onclick="openUserVisits(${u.id},'${esc(u.email)}')">${u.last_ip ? esc(u.last_ip) : '—'}</td>
         </tr>
     `;
     }).join('') || '<tr><td colspan="6" style="padding:20px;text-align:center;color:var(--text-3);">데이터 없음</td></tr>';
@@ -134,7 +134,7 @@ function renderUserVisits(visits) {
                 <div style="display:flex;gap:10px;padding:4px 0;border-bottom:1px solid var(--border);">
                     <span style="color:var(--text-3);white-space:nowrap;">${v.visited_at.slice(11, 19)}</span>
                     <span style="font-family:monospace;white-space:nowrap;">${esc(v.ip)}</span>
-                    <span style="color:var(--text-3);">${v.is_mobile ? '📱' : '🖥'}</span>
+                    <span style="color:var(--text-3);">${v.is_mobile ? 'Mobile' : 'PC'}</span>
                     <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(v.page)}</span>
                 </div>
             `).join('')}
