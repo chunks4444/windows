@@ -307,6 +307,19 @@ body {
     position: relative;
 }
 
+.db-thumb::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(var(--text-rgb), 0.38);
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.db-card:hover .db-thumb::after {
+    opacity: 1;
+}
+
 .db-thumb img {
     width: 100%;
     height: 100%;
