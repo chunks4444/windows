@@ -94,6 +94,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
             <div class="hero-carousel-outer">
               <div class="container">
                 <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="4500" data-bs-touch="false">
+                    <p class="hero-top-copy">창호는 고르는 것이 아니라, 그리는 것입니다</p>
                     <div class="carousel-indicators">
                         <?php foreach ($heroSlides as $i => $sl): ?>
                         <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="<?= $i ?>"

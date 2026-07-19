@@ -83,6 +83,24 @@
     display: block;
 }
 
+.hero-top-copy {
+    position: absolute;
+    top: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+    margin: 0;
+    padding: 8px 24px;
+    max-width: 90%;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: clamp(var(--fs-16), 2.2vw, var(--fs-24));
+    font-weight: 700;
+    color: #fff;
+    text-align: center;
+    letter-spacing: -0.01em;
+    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
+}
+
 .hero-slide-caption {
     position: absolute;
     bottom: 0;
@@ -121,6 +139,10 @@
 @media (max-width: 768px) {
     .hero-slide-img {
         height: 260px;
+    }
+    .hero-top-copy {
+        top: 14px;
+        padding: 6px 16px;
     }
 }
 
