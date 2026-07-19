@@ -5,9 +5,7 @@ header('Content-Type: application/json; charset=UTF-8');
 require_once __DIR__ . '/../../../lib/jwt.php';
 require_once __DIR__ . '/../../../lib/engine_settings.php';
 require_once __DIR__ . '/../../../lib/spec_access.php';
-// 비로그인 미리보기(메인 페이지 위젯)를 위해 인증 없이도 geo(순수 치수)는 내려준다.
-// specs/parts/price/costBreakdown은 get_content_permissions()가 비로그인이면 전부 false를 돌려주므로
-// 아래에서 이미 null 처리됨 — 민감한 시방서·원가·가격 정보는 그대로 보호된다.
+if (!jwt_from_request()) { http_response_code(401); echo json_encode(['error' => '인증이 필요합니다.']); exit; }
 $perms = get_content_permissions();
 
 $cols       = max(2,   (int)($_POST['cols']      ?? 12));
