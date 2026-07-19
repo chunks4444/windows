@@ -162,6 +162,7 @@ body {
     margin-top: 48px;
 }
 .ab-tool-card {
+    background: #fff;
     border: 1px solid var(--border);
     border-radius: 4px;
     padding: 36px 32px;
