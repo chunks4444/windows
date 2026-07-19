@@ -127,23 +127,14 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                 ];
                 $renderCards = !empty($studioCards) ? $studioCards : $defaultCards;
                 ?>
-                <div class="row g-4">
+                <div class="engine-icon-row">
                 <?php foreach ($renderCards as $sc):
-                    $key   = $sc['engine_key'];
-                    $hasBg = !empty($sc['image_url']);
+                    $key = $sc['engine_key'];
                 ?>
-                    <div class="col-md-4 text-center">
-                        <div class="service-card service-card--<?= htmlspecialchars($key) ?><?= $hasBg ? ' has-bg-image' : '' ?> h-80 p-4"<?= $hasBg ? ' style="--card-bg-image:url(\'' . htmlspecialchars($sc['image_url']) . '\')"' : '' ?>>
-                            <div class="mb-4" style="height:120px;display:flex;align-items:center;justify-content:center;">
-                                <a href="/src/engine/<?= htmlspecialchars($key) ?>/<?= htmlspecialchars($key) ?>.php" class="pm-symbol-link" aria-label="<?= htmlspecialchars($sc['title']) ?> 패턴 미리보기">
-                                    <?= $svgIcons[$key] ?? '' ?>
-                                    <span class="visually-hidden"><?= htmlspecialchars($sc['title']) ?> 패턴 미리보기</span>
-                                </a>
-                            </div>
-                            <h3 class="service-title text-center mb-3"><?= htmlspecialchars($sc['title']) ?></h3>
-                            <p class="service-sub-text text-center mb-0"><?= $sc['description'] ?></p>
-                        </div>
-                    </div>
+                    <a href="/src/engine/<?= htmlspecialchars($key) ?>/<?= htmlspecialchars($key) ?>.php" class="engine-icon-shortcut" aria-label="<?= htmlspecialchars($sc['title']) ?> 패턴 미리보기">
+                        <span class="engine-icon-circle"><?= $svgIcons[$key] ?? '' ?></span>
+                        <span class="engine-icon-label"><?= htmlspecialchars($sc['title']) ?></span>
+                    </a>
                 <?php endforeach; ?>
                 </div>
             <!-- card -->
