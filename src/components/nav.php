@@ -389,6 +389,9 @@ document.addEventListener('DOMContentLoaded', function () {
         item.addEventListener('mouseenter', function () {
             clearTimeout(hideTimer);
             dropdown.show();
+            // Bootstrap Dropdown.show()가 토글에 focus()를 호출해서 마우스 오버만 해도
+            // 브라우저 기본 포커스 테두리가 보임 — 호버로 열 때는 바로 blur해서 없앤다.
+            toggle.blur();
         });
         item.addEventListener('mouseleave', function () {
             hideTimer = setTimeout(function () { dropdown.hide(); }, 150);
