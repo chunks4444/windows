@@ -256,12 +256,18 @@
     }
 }
 
-/* SPACE CARDS */
+/* SPACE CARDS — 큐레이션 카드만 화면 전체 폭으로 (container 밖으로 벗어남) */
 .space-cards-wrapper {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 12px;
-    padding: 28px 0 32px;
+    padding: 28px 16px 32px;
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
 }
 
 .space-card {

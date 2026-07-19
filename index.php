@@ -89,7 +89,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
         <div class="home-wrapper">
             <h1 class="visually-hidden">평목 - 나만의 한옥 살창·창호를 실시간으로 디자인하는 스튜디오</h1>
             <p class="hero-top-copy">창호는 고르는 것이 아니라, 그리는 것입니다</p>
-            <p class="hero-top-subcopy">살 하나의 간격까지 내 취향대로 조정하세요</p>
+            <p class="hero-top-subcopy">마음에 드는 패턴을 골라 편집해보세요.</p>
             <!-- AI 프롬프트 -->
             <div class="container">
                 <div class="idx-ai-wrap">
@@ -235,18 +235,18 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                         <h2 class="ab-section-title">공간별 창호 디자인을 찾아보세요.</h2>
                         <p class="ab-section-body">중문부터 거실, 카페, 서재까지—<br>원하는 공간을 선택하면 추천 컬렉션을 바로 확인할 수 있습니다.</p>
                     </div>
-                    <!-- Space Cards (DB) -->
-                    <?php if (!empty($spaceCards)): ?>
-                    <div class="space-cards-wrapper">
-                        <?php foreach ($spaceCards as $sc): ?>
-                        <a class="space-card" href="/collection/?q=<?= urlencode($sc['collection_query']) ?>">
-                            <img src="<?= htmlspecialchars($sc['image_url']) ?>" alt="<?= htmlspecialchars($sc['label']) ?>">
-                            <div class="space-card-overlay"><span class="space-card-label"><?= htmlspecialchars($sc['label']) ?></span></div>
-                        </a>
-                        <?php endforeach; ?>
-                    </div>
-                    <?php endif; ?>
                 </div>
+                <!-- Space Cards (DB) — 큐레이션만 화면 전체 폭 -->
+                <?php if (!empty($spaceCards)): ?>
+                <div class="space-cards-wrapper">
+                    <?php foreach ($spaceCards as $sc): ?>
+                    <a class="space-card" href="/collection/?q=<?= urlencode($sc['collection_query']) ?>">
+                        <img src="<?= htmlspecialchars($sc['image_url']) ?>" alt="<?= htmlspecialchars($sc['label']) ?>">
+                        <div class="space-card-overlay"><span class="space-card-label"><?= htmlspecialchars($sc['label']) ?></span></div>
+                    </a>
+                    <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
             </section>
             <!-- card -->
         </div>
