@@ -90,11 +90,11 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
         <?php include __DIR__ . '/src/components/nav.php'; ?>
         <div class="home-wrapper">
             <h1 class="visually-hidden">평목 - 나만의 한옥 살창·창호를 실시간으로 디자인하는 스튜디오</h1>
+            <p class="hero-top-copy">창호는 고르는 것이 아니라, 그리는 것입니다</p>
             <!-- Hero Carousel -->
             <div class="hero-carousel-outer">
               <div class="container">
                 <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="4500" data-bs-touch="false">
-                    <p class="hero-top-copy">창호는 고르는 것이 아니라, 그리는 것입니다</p>
                     <div class="carousel-indicators">
                         <?php foreach ($heroSlides as $i => $sl): ?>
                         <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="<?= $i ?>"
