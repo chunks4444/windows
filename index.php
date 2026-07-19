@@ -89,6 +89,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
         <div class="home-wrapper">
             <h1 class="visually-hidden">평목 - 나만의 한옥 살창·창호를 실시간으로 디자인하는 스튜디오</h1>
             <p class="hero-top-copy">창호는 고르는 것이 아니라, 그리는 것입니다</p>
+            <p class="hero-top-subcopy">살 하나의 간격까지 내 취향대로 조정하세요</p>
             <!-- AI 프롬프트 -->
             <div class="container">
                 <div class="idx-ai-wrap">

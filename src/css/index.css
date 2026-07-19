@@ -62,12 +62,23 @@
 }
 
 .hero-top-copy {
-    margin: 28px 0 20px;
+    margin: 28px 0 8px;
     padding: 0 24px;
     font-family: 'Noto Sans KR', sans-serif;
     font-size: clamp(var(--fs-18), 2.5vw, var(--fs-28));
     font-weight: 700;
     color: var(--text);
+    text-align: center;
+    letter-spacing: -0.01em;
+}
+
+.hero-top-subcopy {
+    margin: 0 0 20px;
+    padding: 0 24px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: var(--fs-16);
+    font-weight: 400;
+    color: var(--text-muted, rgba(var(--text-rgb), 0.6));
     text-align: center;
     letter-spacing: -0.01em;
 }
