@@ -149,20 +149,21 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                         </div>
                         <a href="/collection/" class="home-blog-more">컬렉션 전체 보기 <i class="bi bi-arrow-right"></i></a>
                     </div>
-                    <div class="collection-strip-outer">
-                        <button type="button" class="collection-strip-nav collection-strip-nav-prev" aria-label="이전 패턴 보기"><i class="bi bi-chevron-left"></i></button>
-                        <div class="collection-strip-viewport">
-                            <div class="collection-strip-track" id="collectionStripTrack">
-                                <?php foreach (array_merge($collectionCards, $collectionCards) as $cc): ?>
-                                <a class="collection-strip-card" href="<?= htmlspecialchars($cc['href']) ?>">
-                                    <img src="<?= htmlspecialchars($cc['image_path']) ?>" alt="<?= htmlspecialchars($cc['display_name']) ?>" loading="lazy">
-                                    <div class="collection-strip-label"><?= htmlspecialchars($cc['display_name']) ?></div>
-                                </a>
-                                <?php endforeach; ?>
-                            </div>
+                </div>
+                <!-- Collection만 화면 전체 폭 -->
+                <div class="collection-strip-outer">
+                    <button type="button" class="collection-strip-nav collection-strip-nav-prev" aria-label="이전 패턴 보기"><i class="bi bi-chevron-left"></i></button>
+                    <div class="collection-strip-viewport">
+                        <div class="collection-strip-track" id="collectionStripTrack">
+                            <?php foreach (array_merge($collectionCards, $collectionCards) as $cc): ?>
+                            <a class="collection-strip-card" href="<?= htmlspecialchars($cc['href']) ?>">
+                                <img src="<?= htmlspecialchars($cc['image_path']) ?>" alt="<?= htmlspecialchars($cc['display_name']) ?>" loading="lazy">
+                                <div class="collection-strip-label"><?= htmlspecialchars($cc['display_name']) ?></div>
+                            </a>
+                            <?php endforeach; ?>
                         </div>
-                        <button type="button" class="collection-strip-nav collection-strip-nav-next" aria-label="다음 패턴 보기"><i class="bi bi-chevron-right"></i></button>
                     </div>
+                    <button type="button" class="collection-strip-nav collection-strip-nav-next" aria-label="다음 패턴 보기"><i class="bi bi-chevron-right"></i></button>
                 </div>
             </section>
             <script>
