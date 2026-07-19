@@ -495,10 +495,6 @@
     padding-bottom: 40px;
 }
 
-.values-inner {
-    width: 100%;
-}
-
 /* ENGINE 아이콘 바로가기 (캔바 스타일 원형 아이콘 줄) */
 .engine-icon-row {
     display: flex;

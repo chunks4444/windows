@@ -225,13 +225,12 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
             </script>
             <?php endif; ?>
             <section class="values-section mt-5 ">
-                <div class="values-inner container">
-                    <!-- Curation Header -->
-                    <hr class="curation-divider">
-                    <div class="mt-5 mb-4">
+                <!-- Curation Header -->
+                <hr class="curation-divider">
+                <div class="collection-strip-header mt-5 mb-4">
+                    <div>
                         <p class="ab-section-label">큐레이션</p>
-                        <h2 class="ab-section-title">공간별 창호 디자인을 찾아보세요.</h2>
-                        <p class="ab-section-body">중문부터 거실, 카페, 서재까지—<br>원하는 공간을 선택하면 추천 컬렉션을 바로 확인할 수 있습니다.</p>
+                        <h2 class="ab-section-title ab-section-title--sm">공간별 창호 디자인을 찾아보세요.</h2>
                     </div>
                 </div>
                 <!-- Space Cards (DB) — 큐레이션만 화면 전체 폭 -->
