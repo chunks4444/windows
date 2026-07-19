@@ -29,6 +29,12 @@ body { padding-top: 68px; }
     color: var(--text) !important;
     transition: color .15s;
 }
+/* 호버로 서브메뉴를 열 때 Bootstrap Dropdown.show()가 토글 링크에 포커스를 줘서
+   마우스로 오버만 해도 기본 포커스 테두리가 보이던 것 — 키보드 탭 포커스는 그대로 두고
+   마우스로 인한 포커스만 제거 */
+.pm-navbar .nav-link:focus:not(:focus-visible) {
+    outline: none;
+}
 .pm-nav-caret {
     font-size: .68em;
     margin-left: 2px;
@@ -65,8 +71,8 @@ body { padding-top: 68px; }
     max-height: calc(100vh - 90px);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    border: none;
-    box-shadow: 0 8px 24px rgba(var(--text-rgb), 0.08);
+    border: 1px solid rgba(var(--text-rgb), 0.1);
+    box-shadow: 0 8px 24px rgba(var(--text-rgb), 0.16);
     border-radius: 0;
     padding: 14px 0 6px;
 }
