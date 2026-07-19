@@ -118,6 +118,7 @@
 
 .ab-section-title--sm {
     font-size: var(--fs-16);
+    font-weight: 400;
     margin-bottom: 0;
 }
 
