@@ -180,7 +180,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                 var totalCount = cards.length / 2; // 무한 루프용으로 두 벌 렌더링된 원본 개수
 
                 // 뷰포트 너비를 카드 최소 폭(140px) 기준으로 나눠 보여줄 장수를 정하고, 그만큼 등분해 카드 크기를 계산 (잘린 카드가 보이지 않게 함)
-                var minCardWidth = 150;
+                var minCardWidth = 160;
                 function measure() {
                     var vw = viewport.clientWidth;
                     var fit = Math.floor((vw + gap) / (minCardWidth + gap));
