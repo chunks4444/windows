@@ -104,14 +104,6 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
             </div>
             <!-- -->
             <div class="container">
-                <div class="mt-5 mb-4">
-                    <p class="ab-section-label">Studio</p>
-                    <h2 class="ab-section-title">그려지면, 만들 수 있습니다.<br><span class="small">창호를 직접 설계하고 실시간 예상 견적을 확인하세요.</span></h2>
-                    
-                    <p class="ab-section-body">문틀 크기, 살 간격, 패턴을 조정하면 예상 견적이 즉시 반영됩니다.</p>
-                    <p class="ab-section-body">설계 지식이 없어도 괜찮습니다. 제작 가능한 형태인지는 <strong>알고리즘이 판단합니다.</strong></p>
-                    <p class="ab-section-body">스튜디오는 만들 수 없는 창호를 그리지 않습니다. <strong>평목 공방에서 제작해 드립니다.</strong></p>
-                </div>
                 <?php
                 $svgIcons = [
                     'classic' => '<svg width="120" height="120" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg"><rect class="pm-symbol-bar" x="148" y="204" width="384" height="46" rx="0"/><rect class="pm-symbol-bar" x="148" y="430" width="384" height="46" rx="0"/><rect class="pm-symbol-bar" x="148" y="148" width="46" height="384" rx="0"/><rect class="pm-symbol-bar" x="317" y="148" width="46" height="384" rx="0"/><rect class="pm-symbol-bar" x="486" y="148" width="46" height="384" rx="0"/><rect class="pm-symbol-bar" x="100" y="204" width="48" height="46" rx="0"/><rect class="pm-symbol-bar" x="532" y="204" width="48" height="46" rx="0"/><rect class="pm-symbol-bar" x="100" y="430" width="48" height="46" rx="0"/><rect class="pm-symbol-bar" x="532" y="430" width="48" height="46" rx="0"/></svg>',
