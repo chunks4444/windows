@@ -378,5 +378,23 @@ $navStudioIcons = [
 <?php if (!defined('BOOTSTRAP_JS_LOADED')): define('BOOTSTRAP_JS_LOADED', true); ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
 <script src="/src/js/visitor-log.js" defer></script>
+<script defer>
+// 상단 메뉴는 클릭 대신 마우스 오버로도 서브메뉴가 열리게 (PC 전용 — 모바일은 왼쪽 드로어 사용)
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.pm-navbar .nav-item.dropdown').forEach(function (item) {
+        const toggle = item.querySelector('[data-bs-toggle="dropdown"]');
+        if (!toggle || !window.bootstrap) return;
+        const dropdown = bootstrap.Dropdown.getOrCreateInstance(toggle);
+        let hideTimer = null;
+        item.addEventListener('mouseenter', function () {
+            clearTimeout(hideTimer);
+            dropdown.show();
+        });
+        item.addEventListener('mouseleave', function () {
+            hideTimer = setTimeout(function () { dropdown.hide(); }, 150);
+        });
+    });
+});
+</script>
 <?php endif; ?>
 <?php include __DIR__ . '/auth_modal.php'; ?>
