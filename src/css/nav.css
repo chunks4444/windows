@@ -65,7 +65,7 @@ body { padding-top: 68px; }
     max-height: calc(100vh - 90px);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    border: 1px solid rgba(var(--text-rgb), 0.1);
+    border: none;
     box-shadow: 0 8px 24px rgba(var(--text-rgb), 0.08);
     border-radius: 0;
     padding: 14px 0 6px;
