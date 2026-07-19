@@ -101,6 +101,9 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                     </div>
                     <div id="idxAiResult" class="idx-ai-result" style="display:none;"></div>
                 </div>
+                <div class="idx-engine-preview-wrap">
+                    <canvas id="idxEnginePreview" width="240" height="240" class="idx-engine-preview-canvas"></canvas>
+                </div>
             </div>
             <!-- -->
             <div class="container">
@@ -528,6 +531,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
         inputEl.addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
     })();
     </script>
+    <script src="/src/js/index-engine-preview.js?v=<?= md5_file(__DIR__ . '/src/js/index-engine-preview.js') ?>" defer></script>
     </body>
 
 </html>

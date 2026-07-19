@@ -3,6 +3,19 @@
     max-width: 600px;
     margin: 12px auto 28px;
 }
+
+/* 메인 미니 엔진 미리보기 */
+.idx-engine-preview-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 0 0 32px;
+}
+
+.idx-engine-preview-canvas {
+    width: 180px;
+    height: 180px;
+    transition: opacity 0.2s ease;
+}
 .idx-ai-bar {
     display: flex;
     align-items: center;
