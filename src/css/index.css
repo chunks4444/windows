@@ -121,6 +121,11 @@
     margin-bottom: 0;
 }
 
+.collection-strip-header .home-blog-more {
+    font-size: var(--fs-16);
+    font-weight: 400;
+}
+
 .ab-section-body {
     font-size: var(--fs-16);
     line-height: 1.9;
