@@ -145,7 +145,6 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                         <div>
                             <p class="ab-section-label">Collection</p>
                             <h2 class="ab-section-title">마음에 드는 패턴을 골라 편집해보세요.</h2>
-                            <p class="ab-section-body">컬렉션에서 패턴을 둘러보고,<br>마음에 드는 걸 그대로 에디터로 불러와 나만의 크기·색상으로 편집해 사용할 수 있습니다.</p>
                         </div>
                         <a href="/collection/" class="home-blog-more">컬렉션 전체 보기 <i class="bi bi-arrow-right"></i></a>
                     </div>
