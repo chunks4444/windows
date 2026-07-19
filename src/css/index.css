@@ -1,7 +1,7 @@
 /* AI 프롬프트 바 */
 .idx-ai-wrap {
     max-width: 600px;
-    margin: 48px auto 28px;
+    margin: 12px auto 28px;
 }
 .idx-ai-bar {
     display: flex;
