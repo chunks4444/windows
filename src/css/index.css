@@ -146,7 +146,7 @@
 
 /* COLLECTION STRIP (마퀴 슬라이드) */
 .collection-strip-section {
-    margin-top: 140px;
+    margin-top: 40px;
 }
 
 .collection-strip-outer {
@@ -484,7 +484,7 @@
     justify-content: center;
     flex-wrap: wrap;
     gap: 28px;
-    margin: 8px 0 40px;
+    margin: 8px 0 16px;
 }
 
 .engine-icon-shortcut {
