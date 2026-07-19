@@ -493,8 +493,8 @@
 }
 
 .engine-icon-circle {
-    width: 64px;
-    height: 64px;
+    width: 52px;
+    height: 52px;
     border-radius: 50%;
     background: #fff;
     border: 1px solid var(--border);
@@ -505,8 +505,8 @@
 }
 
 .engine-icon-circle svg {
-    width: 28px;
-    height: 28px;
+    width: 36px;
+    height: 36px;
     transition: transform .3s cubic-bezier(.25, .46, .45, .94);
 }
 
