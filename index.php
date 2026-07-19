@@ -142,10 +142,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
             <section class="collection-strip-section">
                 <div class="container">
                     <div class="mb-4 d-flex align-items-end justify-content-between flex-wrap gap-2">
-                        <div>
-                            <p class="ab-section-label">Collection</p>
-                            <h2 class="ab-section-title">마음에 드는 패턴을 골라 편집해보세요.</h2>
-                        </div>
+                        <h2 class="ab-section-title ab-section-title--sm">마음에 드는 패턴을 골라 편집해보세요.</h2>
                         <a href="/collection/" class="home-blog-more">컬렉션 전체 보기 <i class="bi bi-arrow-right"></i></a>
                     </div>
                 </div>

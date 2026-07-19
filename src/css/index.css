@@ -116,6 +116,11 @@
 }
 .ab-section-title .small { font-size: 1em; } /* Bootstrap .small 기본값(0.875em)이 제목보다 작아 보이던 것 방지 */
 
+.ab-section-title--sm {
+    font-size: var(--fs-18);
+    margin-bottom: 0;
+}
+
 .ab-section-body {
     font-size: var(--fs-16);
     line-height: 1.9;
