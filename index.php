@@ -4,14 +4,12 @@ require_once __DIR__ . '/src/lib/db.php';
 require_once __DIR__ . '/src/lib/slug.php';
 try {
     $pdo        = db();
-    $heroSlides = $pdo->query('SELECT * FROM hero_slides WHERE is_active=1 ORDER BY sort_order, id')->fetchAll();
     $spaceCards = $pdo->query('SELECT label, image_url, collection_query FROM space_cards WHERE is_active=1 ORDER BY sort_order, id')->fetchAll();
     $faqs          = $pdo->query('SELECT * FROM faqs WHERE is_active=1 AND show_on_main=1 ORDER BY sort_order, id')->fetchAll();
     $faqVisible    = $pdo->query("SELECT value FROM site_config WHERE key_name='faq_section_visible'")->fetchColumn();
     $faqVisible    = ($faqVisible === false || $faqVisible !== '0');
 } catch (Throwable $e) {
     $pdo        = null;
-    $heroSlides = [];
     $spaceCards = [];
     $faqs       = [];
     $faqVisible = true;
@@ -91,43 +89,6 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
         <div class="home-wrapper">
             <h1 class="visually-hidden">평목 - 나만의 한옥 살창·창호를 실시간으로 디자인하는 스튜디오</h1>
             <p class="hero-top-copy">창호는 고르는 것이 아니라, 그리는 것입니다</p>
-            <!-- Hero Carousel -->
-            <div class="hero-carousel-outer">
-              <div class="container">
-                <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="4500" data-bs-touch="false">
-                    <div class="carousel-indicators">
-                        <?php foreach ($heroSlides as $i => $sl): ?>
-                        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="<?= $i ?>"
-                            <?= $i === 0 ? 'class="active" aria-current="true"' : '' ?>
-                            aria-label="Slide <?= $i + 1 ?>"></button>
-                        <?php endforeach; ?>
-                    </div>
-                    <div class="carousel-inner">
-                        <?php foreach ($heroSlides as $i => $sl): ?>
-                        <div class="carousel-item <?= $i === 0 ? 'active' : '' ?>">
-                            <img src="<?= htmlspecialchars($sl['image_url']) ?>" class="hero-slide-img" alt="<?= htmlspecialchars($sl['title']) ?>">
-                            <?php if ($sl['title'] || $sl['subtitle']): ?>
-                            <div class="hero-slide-caption">
-                                <?php if ($sl['title']): ?>
-                                <h2 class="hero-slide-title"><?= htmlspecialchars($sl['title']) ?></h2>
-                                <?php endif; ?>
-                                <?php if ($sl['subtitle']): ?>
-                                <p class="hero-slide-sub"><?= htmlspecialchars($sl['subtitle']) ?></p>
-                                <?php endif; ?>
-                            </div>
-                            <?php endif; ?>
-                        </div>
-                        <?php endforeach; ?>
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    </button>
-                </div>
-              </div>
-            </div>
             <!-- AI 프롬프트 -->
             <div class="container">
                 <div class="idx-ai-wrap">
