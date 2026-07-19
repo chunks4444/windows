@@ -90,15 +90,17 @@
     transform: translateX(-50%);
     z-index: 5;
     margin: 0;
-    padding: 8px 24px;
+    padding: 10px 28px;
     max-width: 90%;
+    background: rgba(0, 0, 0, 0.45);
+    border-radius: 999px;
+    backdrop-filter: blur(4px);
     font-family: 'Noto Sans KR', sans-serif;
     font-size: clamp(var(--fs-16), 2.2vw, var(--fs-24));
     font-weight: 700;
     color: #fff;
     text-align: center;
     letter-spacing: -0.01em;
-    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
 }
 
 .hero-slide-caption {
