@@ -6,6 +6,9 @@ let _libShareCtx = null;
 function openCollectionEditor(e, url) {
     e.preventDefault();
     pmokRequireAuth(() => { location.href = url; });
+    // 소셜 로그인은 외부로 나갔다가 항상 '/'로 돌아오며 메모리 콜백이 유실되므로,
+    // 그 경우를 위한 폴백 복귀지를 "이 페이지"가 아니라 "가려던 도면"으로 덮어쓴다.
+    try { sessionStorage.setItem('pmok_return_url', url); } catch (err) {}
     return false;
 }
 
