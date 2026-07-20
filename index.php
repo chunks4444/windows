@@ -256,7 +256,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                     <div>
                         <p class="ab-section-label">사용법</p>
                         <h2 class="ab-section-title">이렇게 사용하세요.</h2>
-                        <p class="ab-section-body">평목 스튜디오는 브라우저에서 바로 사용할 수 있는 <strong>창호 설계 도구</strong>입니다. <br>문틀 크기, 살 간격, 패턴을 조정하며 나만의 창호를 완성해 보세요. 완성한 설계는 전통 창호 기법 그대로, 평목 공방에서 제작됩니다.</p>
+                        <p class="ab-section-body">완성한 설계는 전통 창호 기법 그대로, 평목 공방에서 제작됩니다.</p>
                     </div>
                     <a href="/guide/" class="home-blog-more">가이드 전체 보기 <i class="bi bi-arrow-right"></i></a>
                 </div>
@@ -268,7 +268,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                         </div>
                         <div class="process-card-overlay">
                             <h3 class="process-title">패턴 설계</h3>
-                            <p class="process-desc">상단 스튜디오 메뉴에서 원하는 창호 패턴을 선택하세요.</p>
+                            <p class="process-desc">평목 스튜디오는 브라우저에서 바로 사용할 수 있는 창호 설계 도구입니다. 상단 스튜디오 메뉴에서 원하는 창호 패턴을 선택하고, 문틀 크기·살 간격·패턴을 조정하며 나만의 창호를 완성해 보세요.</p>
                             <ul class="process-hints">
                                 <li><i class="bi bi-check2"></i> 문틀 가로·세로 크기 입력</li>
                                 <li><i class="bi bi-check2"></i> 살 간격·두께 슬라이더 조정</li>
