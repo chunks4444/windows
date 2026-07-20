@@ -108,7 +108,7 @@
 
 .ab-section-title {
     font-family: 'Noto Sans KR', sans-serif;
-    font-size: clamp(var(--fs-22), 3vw, var(--fs-32));
+    font-size: clamp(var(--fs-16), 2.2vw, var(--fs-22));
     font-weight: 700;
     line-height: 1.4;
     letter-spacing: -0.01em;
@@ -819,7 +819,7 @@
 
 .home-contact-title {
     font-family: 'Noto Sans KR', sans-serif;
-    font-size: clamp(var(--fs-22), 3vw, var(--fs-32));
+    font-size: clamp(var(--fs-16), 2.2vw, var(--fs-22));
     font-weight: 700;
     line-height: 1.35;
     letter-spacing: -0.025em;
