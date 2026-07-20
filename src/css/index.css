@@ -116,12 +116,6 @@
 }
 .ab-section-title .small { font-size: 1em; } /* Bootstrap .small 기본값(0.875em)이 제목보다 작아 보이던 것 방지 */
 
-.ab-section-title--sm {
-    font-size: var(--fs-16);
-    font-weight: 400;
-    margin-bottom: 0;
-}
-
 .collection-strip-header .home-blog-more {
     font-size: var(--fs-16);
     font-weight: 400;
