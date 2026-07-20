@@ -315,7 +315,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                         </div>
                         <div class="process-card-overlay">
                             <h3 class="process-title">제작 주문</h3>
-                            <p class="process-desc">완성된 설계를 가지고 평목 공방에 제작을 주문하세요.</p>
+                            <p class="process-desc">완성한 도면으로 주문하세요.</p>
                             <ul class="process-hints">
                                 <li><i class="bi bi-check2"></i> 도면 오른쪽 상단 견적요청 버튼 클릭</li>
                                 <li><i class="bi bi-check2"></i> 저장한 도면 기반으로 상담</li>
