@@ -33,6 +33,8 @@
 -- ALTER TABLE blog_posts ADD COLUMN related_engine VARCHAR(20) NULL DEFAULT NULL COMMENT '연관 엔진 (classic/square/cross/diamond/triangle/hexagon)' AFTER related_drawing_id;
 -- ALTER TABLE blog_posts ADD COLUMN question VARCHAR(200) NOT NULL DEFAULT '' COMMENT '질문형 인덱스용 한 줄 질문' AFTER related_engine;
 -- ALTER TABLE blog_series ADD COLUMN show_on_home TINYINT(1) NOT NULL DEFAULT 1 COMMENT '홈 인용 배너 노출 여부' AFTER tagline;
+-- 2026-07-20 회원가입 약관·개인정보 동의 체크박스 추가에 따른 동의일시 기록 컬럼
+-- ALTER TABLE users ADD COLUMN terms_agreed_at DATETIME NULL COMMENT '이용약관·개인정보처리방침 동의일시 (이메일 회원가입 시 체크박스 동의 기록, 소셜 로그인 가입은 NULL)' AFTER created_at;
 -- ALTER TABLE users ADD COLUMN view_spec  TINYINT(1) NOT NULL DEFAULT 0 COMMENT '엔진 제작 시방서 열람 허용 (role과 별개, 회원별 개별 승인)' AFTER withdrawn_at;
 -- ALTER TABLE users ADD COLUMN view_parts TINYINT(1) NOT NULL DEFAULT 0 COMMENT '엔진 부재목록 열람 허용 (role과 별개, 회원별 개별 승인)' AFTER view_spec;
 -- ALTER TABLE users ADD COLUMN view_cost  TINYINT(1) NOT NULL DEFAULT 0 COMMENT '엔진 예산견적 상세내역 열람 허용 (role과 별개, 회원별 개별 승인)' AFTER view_parts;
@@ -72,6 +74,7 @@ CREATE TABLE IF NOT EXISTS users (
     company         VARCHAR(100) NULL COMMENT '(구) 회사명 필드 — company_name으로 대체됨, 하위호환용으로 남아있음',
     password_hash VARCHAR(255)    NOT NULL COMMENT '비밀번호 해시 (bcrypt)',
     created_at    DATETIME        NOT NULL DEFAULT NOW() COMMENT '가입일시',
+    terms_agreed_at DATETIME      NULL COMMENT '이용약관·개인정보처리방침 동의일시 (이메일 회원가입 시 체크박스 동의 기록, 소셜 로그인 가입은 NULL)',
     last_login_at DATETIME        NULL COMMENT '최종 접속일시',
     last_login_ip VARCHAR(45)     NULL COMMENT '최종 접속 IP',
     withdrawn_at  DATETIME        NULL COMMENT '탈퇴일시 (NULL=정상, NOT NULL=탈퇴)',

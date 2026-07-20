@@ -21,12 +21,16 @@ if (!rate_limit_check('register:' . $ip, 5, 3600)) {
 $body     = json_decode(file_get_contents('php://input'), true);
 $email    = trim($body['email'] ?? '');
 $password = $body['password'] ?? '';
+$agree    = !empty($body['agree']);
 
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     http_response_code(422); echo json_encode(['error' => '유효하지 않은 이메일입니다.']); exit;
 }
 if (strlen($password) < 6) {
     http_response_code(422); echo json_encode(['error' => '비밀번호는 6자 이상이어야 합니다.']); exit;
+}
+if (!$agree) {
+    http_response_code(422); echo json_encode(['error' => '이용약관 및 개인정보처리방침에 동의해주세요.']); exit;
 }
 
 try {
@@ -37,7 +41,7 @@ try {
         http_response_code(409); echo json_encode(['error' => '이미 사용 중인 이메일입니다.']); exit;
     }
     $hash = password_hash($password, PASSWORD_BCRYPT);
-    $stmt = $pdo->prepare('INSERT INTO users (email, password_hash) VALUES (?, ?)');
+    $stmt = $pdo->prepare('INSERT INTO users (email, password_hash, terms_agreed_at) VALUES (?, ?, NOW())');
     $stmt->execute([$email, $hash]);
     $userId = (int) $pdo->lastInsertId();
     $token  = jwt_encode(['sub' => $userId, 'email' => $email, 'role' => 'u', 'iat' => time(), 'exp' => time() + JWT_EXPIRE]);
