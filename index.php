@@ -89,7 +89,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
         <?php include __DIR__ . '/src/components/nav.php'; ?>
         <div class="home-wrapper">
             <h1 class="visually-hidden">평목 - 나만의 한옥 살창·창호를 실시간으로 디자인하는 스튜디오</h1>
-            <p class="hero-top-copy">창호는 고르는 것이 아니라, 그리는 것입니다</p>
+            <p class="hero-top-copy">같은 공간은 없으니까요. 치수와 빛에 맞춰 그립니다.</p>
             <p class="hero-top-subcopy">그린 그대로, 평목 공방이 만듭니다</p>
             <!-- AI 프롬프트 -->
             <div class="container">

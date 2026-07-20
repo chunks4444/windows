@@ -14,7 +14,7 @@
                 <img src="/src/assets/logo.png"
                      srcset="/src/assets/logo.png 1x, /src/assets/logo@2x.png 2x"
                      alt="평목" class="auth-modal-brand-logo">
-                <p class="auth-modal-brand-copy">창호는 고르는 것이 아니라,<br>그리는 것입니다</p>
+                <p class="auth-modal-brand-copy">같은 공간은 없으니까요.<br>치수와 빛에 맞춰 그립니다.</p>
             </div>
 
             <!-- 우측: 폼 패널 -->
