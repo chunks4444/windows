@@ -40,7 +40,8 @@ try {
     foreach ($collectionCards as &$cc) {
         $engineKey  = strtolower($cc['engine'] ?? '');
         $editorUrl  = $collectionEditorMap[$engineKey] ?? null;
-        $cc['href'] = ($editorUrl && $cc['drawing_id'])
+        $cc['is_editor_link'] = (bool)($editorUrl && $cc['drawing_id']);
+        $cc['href'] = $cc['is_editor_link']
             ? $editorUrl . '?drawing_id=' . (int)$cc['drawing_id']
             : '/collection/detail?slug=' . urlencode($cc['slug']);
         $cc['display_name'] = library_pattern_display_name($cc['slug'], $cc['name_ko']);
@@ -153,7 +154,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                     <div class="collection-strip-viewport">
                         <div class="collection-strip-track" id="collectionStripTrack">
                             <?php foreach (array_merge($collectionCards, $collectionCards) as $cc): ?>
-                            <a class="collection-strip-card" href="<?= htmlspecialchars($cc['href']) ?>">
+                            <a class="collection-strip-card" href="<?= htmlspecialchars($cc['href']) ?>"<?= $cc['is_editor_link'] ? " onclick=\"return openCollectionEditor(event,'" . htmlspecialchars($cc['href'], ENT_QUOTES) . "')\"" : '' ?>>
                                 <img src="<?= htmlspecialchars($cc['image_path']) ?>" alt="<?= htmlspecialchars($cc['display_name']) ?>" loading="lazy">
                                 <div class="collection-strip-label"><?= htmlspecialchars($cc['display_name']) ?></div>
                             </a>
@@ -469,6 +470,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
 
         <?php include __DIR__ . '/src/components/footer.php'; ?>
 
+    <script src="/src/js/collection-share.js?v=<?= md5_file(__DIR__ . '/src/js/collection-share.js') ?>"></script>
     <script>
     (function () {
         const ENGINE_URLS = {
