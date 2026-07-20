@@ -41,7 +41,8 @@ body.pm-generator .pm-navbar { background: var(--sidebar-bg) !important; border-
 body.pm-generator .pm-navbar .navbar-brand { display: flex; align-items: center; padding-top: 0; padding-bottom: 0; }
 body.pm-generator .pm-navbar .navbar-collapse { align-items: center; }
 body.pm-generator .pm-navbar .navbar-nav { align-items: center; }
-body.pm-generator .pm-nav-logo { filter: brightness(0) invert(1); height: 30px; }
+body.pm-generator .pm-nav-logo { height: 30px; }
+body.pm-generator .pm-navbar .pm-nav-logo { filter: brightness(0) invert(1); }
 body.pm-generator .pm-navbar .navbar-toggler { border-color: rgba(var(--bg-rgb), 0.3); }
 body.pm-generator .pm-navbar .navbar-toggler-icon {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(243, 244, 245, 0.85)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
