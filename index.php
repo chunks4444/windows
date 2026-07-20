@@ -90,7 +90,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
         <div class="home-wrapper">
             <h1 class="visually-hidden">평목 - 나만의 한옥 살창·창호를 실시간으로 디자인하는 스튜디오</h1>
             <p class="hero-top-copy">같은 공간은 없으니까요. 치수와 빛에 맞춰 그립니다.</p>
-            <p class="hero-top-subcopy">그린 그대로, 평목 공방이 만듭니다</p>
+            <p class="hero-top-subcopy">기법은 전통, 모양은 그린 그대로 — 평목이 만듭니다</p>
             <!-- AI 프롬프트 -->
             <div class="container">
                 <div class="idx-ai-wrap">
@@ -256,6 +256,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                     <div>
                         <p class="ab-section-label">사용법</p>
                         <h2 class="ab-section-title">이렇게 사용하세요.</h2>
+                        <p class="ab-section-body">평목 스튜디오는 브라우저에서 바로 사용할 수 있는 <strong>창호 설계 도구</strong>입니다. <br>문틀 크기, 살 간격, 패턴을 조정하며 나만의 창호를 완성해 보세요. 완성한 설계는 전통 창호 기법 그대로, 평목 공방에서 제작됩니다.</p>
                     </div>
                     <a href="/guide/" class="home-blog-more">가이드 전체 보기 <i class="bi bi-arrow-right"></i></a>
                 </div>

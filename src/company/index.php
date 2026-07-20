@@ -125,7 +125,7 @@ foreach ($studioCards as $sc) $cardsByKey[$sc['engine_key']] = $sc;
     <section class="ab-section" id="studio">
         <p class="ab-section-label">Studio</p>
         <h2 class="ab-section-title">직접 설계해 보세요.</h2>
-        <p class="ab-section-body">평목 스튜디오는 브라우저에서 바로 사용할 수 있는 <strong>창호 설계 도구</strong>입니다. <br>문틀 크기, 살 간격, 패턴을 조정하며 나만의 창호를 완성해 보세요.</p>
+        <p class="ab-section-body">평목 스튜디오는 브라우저에서 바로 사용할 수 있는 <strong>창호 설계 도구</strong>입니다. <br>문틀 크기, 살 간격, 패턴을 조정하며 나만의 창호를 완성해 보세요. 완성한 설계는 전통 창호 기법 그대로, 평목 공방에서 제작됩니다.</p>
         <div class="ab-tools-grid">
             <a href="/src/engine/classic/classic.php" class="ab-tool-card">
                 <svg class="ab-tool-icon" width="48" height="48" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
