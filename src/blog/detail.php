@@ -210,8 +210,13 @@ $metaKeywords = implode(', ', array_unique(array_filter([
         <div class="bd-engine-box">
             <p class="bd-engine-box-title">이 살의 이야기, 직접 만들어보세요</p>
             <p class="bd-engine-box-desc">글에서 다룬 <?= htmlspecialchars($engineLabels[$post['related_engine']]) ?> 패턴을 스튜디오에서 바로 조작해볼 수 있습니다.</p>
+            <?php
+            $bdEngineUrl = '/src/engine/' . $post['related_engine'] . '/' . $post['related_engine'] . '.php'
+                . ($post['related_drawing_id'] ? '?drawing_id=' . (int)$post['related_drawing_id'] : '');
+            ?>
             <a class="bd-engine-box-btn"
-               href="/src/engine/<?= htmlspecialchars($post['related_engine']) ?>/<?= htmlspecialchars($post['related_engine']) ?>.php<?= $post['related_drawing_id'] ? '?drawing_id=' . (int)$post['related_drawing_id'] : '' ?>">
+               href="<?= htmlspecialchars($bdEngineUrl) ?>"
+               <?= $post['related_drawing_id'] ? "onclick=\"return openCollectionEditor(event,'" . htmlspecialchars($bdEngineUrl, ENT_QUOTES) . "')\"" : '' ?>>
                 <?= htmlspecialchars($engineLabels[$post['related_engine']]) ?> 스튜디오 열기 <i class="bi bi-arrow-right"></i>
             </a>
         </div>
@@ -301,6 +306,8 @@ $metaKeywords = implode(', ', array_unique(array_filter([
     });
 })();
 </script>
+
+<script src="/src/js/collection-share.js?v=<?= md5_file(__DIR__ . '/../js/collection-share.js') ?>"></script>
 
 <?php include __DIR__ . '/../components/footer.php'; ?>
 </body>
