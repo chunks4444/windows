@@ -161,23 +161,11 @@
 }
 
 .collection-strip-header {
-    width: 100vw;
     position: relative;
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
-    padding: 0 16px;
 }
 
 .collection-strip-outer {
     position: relative;
-    width: 100vw;
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
-    padding: 0 16px;
 }
 
 .collection-strip-viewport {
@@ -283,18 +271,12 @@
     }
 }
 
-/* SPACE CARDS — 큐레이션 카드만 화면 전체 폭으로 (container 밖으로 벗어남) */
+/* SPACE CARDS — 사이트 폭(container)에 맞춰 정렬 */
 .space-cards-wrapper {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 12px;
-    padding: 28px 16px 32px;
-    width: 100vw;
-    position: relative;
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw;
-    margin-right: -50vw;
+    padding: 28px 0 32px;
 }
 
 .space-card {

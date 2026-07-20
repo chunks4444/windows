@@ -147,7 +147,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                     </div>
                     <a href="/collection/" class="home-blog-more">컬렉션 전체 보기 <i class="bi bi-arrow-right"></i></a>
                 </div>
-                <!-- Collection만 화면 전체 폭 -->
+                <!-- Collection: 사이트 폭(container)에 맞춰 정렬 -->
                 <div class="collection-strip-outer">
                     <button type="button" class="collection-strip-nav collection-strip-nav-prev" aria-label="이전 패턴 보기"><i class="bi bi-chevron-left"></i></button>
                     <div class="collection-strip-viewport">
@@ -233,7 +233,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                         <h2 class="ab-section-title ab-section-title--sm">공간별 창호 디자인을 찾아보세요.</h2>
                     </div>
                 </div>
-                <!-- Space Cards (DB) — 큐레이션만 화면 전체 폭 -->
+                <!-- Space Cards (DB) — 사이트 폭(container)에 맞춰 정렬 -->
                 <?php if (!empty($spaceCards)): ?>
                 <div class="space-cards-wrapper">
                     <?php foreach ($spaceCards as $sc): ?>
