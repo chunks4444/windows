@@ -114,7 +114,7 @@
 .auth-field label {
     font-size: var(--fs-12);
     font-weight: 400;
-    color: var(--text-muted);
+    color: var(--text);
     letter-spacing: 0.06em;
     text-transform: uppercase;
 }
@@ -136,6 +136,19 @@
     border-color: var(--text);
     background: #fff;
     box-shadow: 0 0 0 3px rgba(var(--text-rgb), .12);
+}
+
+/* 이메일·비밀번호 인풋: 메인 AI 프롬프트 입력창(.idx-ai-bar)과 동일한 필 형태 */
+.auth-field input[type="email"],
+.auth-field input[type="password"] {
+    border-radius: 999px;
+    border-color: var(--border);
+    padding: 11px 20px;
+}
+.auth-field input[type="email"]:focus,
+.auth-field input[type="password"]:focus {
+    border-color: var(--border);
+    box-shadow: none;
 }
 
 /* ── 약관 동의 체크박스 ── */
@@ -172,7 +185,7 @@
     background: var(--accent);
     color: var(--bg);
     border: none;
-    border-radius: 10px;
+    border-radius: 999px;
     font-size: var(--fs-16);
     font-weight: 700;
     cursor: pointer;
@@ -267,7 +280,7 @@
     height: 44px;
     border-radius: 10px;
     text-decoration: none;
-    border: 1.5px solid var(--accent-tint);
+    border: 1.5px solid var(--border);
     background: var(--bg);
     color: var(--text);
     transition: background .15s, border-color .15s;
@@ -275,7 +288,7 @@
 }
 .auth-sns-btn:hover {
     background: var(--bg);
-    border-color: var(--border);
+    border-color: var(--text-muted);
     color: var(--text);
     text-decoration: none;
 }
