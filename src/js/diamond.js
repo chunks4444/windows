@@ -372,7 +372,7 @@ async function draw() {
     geo = data.geo;
 
     const s = data.specs;
-    if (s) {
+    if (s && document.getElementById('spFrameOpeningW')) {
         document.getElementById('spFrameOpeningW').innerText = s.frameOpeningW;
         document.getElementById('spFrameOpeningH').innerText = s.frameOpeningH;
         document.getElementById('spOuterW').innerText     = s.outerW;
@@ -420,7 +420,7 @@ async function draw() {
 
     const p = data.parts;
     const diagListEl = document.getElementById('spDiagList');
-    if (p) {
+    if (p && document.getElementById('spFrVLen')) {
         document.getElementById('spFrVLen').textContent = `${geo.frameW}×${p.frT}×${p.frVLen}mm`;
         document.getElementById('spFrVCnt').textContent = p.frVCnt;
         document.getElementById('spFrHLen').textContent = `${geo.frameH}×${p.frT}×${p.frHLen}mm`;
@@ -2625,37 +2625,18 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
     }
 
     //출력
-    function _exportCapture(bgColor) {
-        const exportCanvas = document.createElement('canvas');
-        const exportCtx = exportCanvas.getContext('2d');
-        exportCanvas.width  = logW * 2;
-        exportCanvas.height = logH * 2;
-        if (bgColor) {
-            exportCtx.fillStyle = bgColor;
-            exportCtx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
-        }
-        exportCtx.drawImage(_exportCanvas || canvas, 0, 0, logW * 2, logH * 2);
-        // Konva 슬랫 오버레이 레이어 합성
-        const _kvEl = document.getElementById('konvaStageContainer');
-        if (_kvEl) _kvEl.querySelectorAll('canvas').forEach(kc => {
-            try { exportCtx.drawImage(kc, 0, 0, logW * 2, logH * 2); } catch(_) {}
-        });
-        return exportCanvas;
-    }
-
-    btnSavePNG.addEventListener('click', function() {
+    btnSavePNG.addEventListener('click', async function() {
         updateModified();
-        const exportCanvas = _exportCapture(appBackgroundImage ? '#E5E7EA' : null);
-        const doorTypeText = txtDoorType.options[txtDoorType.selectedIndex].text;
+        const sheet = await buildExportSheet(2400);
         const filename = getExportFilename('png');
         const link = document.createElement('a');
         link.download = filename;
-        link.href = exportCanvas.toDataURL('image/png');
+        link.href = sheet.toDataURL('image/png');
         link.click();
         DrawingSync.logExport(drawingId, WALLPAPER_ENGINE, 'png', document.getElementById('drawingName')?.value.trim() || '', document.getElementById('verLabel')?.textContent.trim() || '');
     });
 
-    btnSavePDF.addEventListener('click', function() {
+    btnSavePDF.addEventListener('click', async function() {
 
         updateModified();
 
@@ -2667,15 +2648,15 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
             format: 'a4'
         });
 
-        const exportCanvas = _exportCapture('#ffffff');
-        const imgData = exportCanvas.toDataURL('image/png');
+        const sheet = await buildExportSheet(3600, 1.5);
+        const imgData = sheet.toDataURL('image/png');
 
         // PDF 사이즈 계산
         const pageWidth = 297;
         const pageHeight = 210;
 
         const imgRatio =
-            exportCanvas.width / exportCanvas.height;
+            sheet.width / sheet.height;
 
         let imgWidth = 260;
         let imgHeight = imgWidth / imgRatio;
@@ -2696,11 +2677,6 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
             imgWidth,
             imgHeight
         );
-
-        const doorTypeText =
-            txtDoorType.options[
-                txtDoorType.selectedIndex
-            ].text;
 
         pdf.save(getExportFilename('pdf'));
         DrawingSync.logExport(drawingId, WALLPAPER_ENGINE, 'pdf', document.getElementById('drawingName')?.value.trim() || '', document.getElementById('verLabel')?.textContent.trim() || '');

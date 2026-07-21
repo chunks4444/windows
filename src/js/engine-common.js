@@ -735,6 +735,92 @@
         return `${safe}.${ext}`;
     }
 
+    function _exportCapture(bgColor) {
+        const exportCanvas = document.createElement('canvas');
+        const exportCtx = exportCanvas.getContext('2d');
+        exportCanvas.width  = logW * 2;
+        exportCanvas.height = logH * 2;
+        if (bgColor) {
+            exportCtx.fillStyle = bgColor;
+            exportCtx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+        }
+        exportCtx.drawImage(_exportCanvas || canvas, 0, 0, logW * 2, logH * 2);
+        // Konva 슬랫 오버레이 레이어 합성
+        const _kvEl = document.getElementById('konvaStageContainer');
+        if (_kvEl) _kvEl.querySelectorAll('canvas').forEach(kc => {
+            try { exportCtx.drawImage(kc, 0, 0, logW * 2, logH * 2); } catch(_) {}
+        });
+        return exportCanvas;
+    }
+
+    let _pmExportLogoPromise = null;
+    function _loadExportLogo() {
+        if (_pmExportLogoPromise) return _pmExportLogoPromise;
+        _pmExportLogoPromise = new Promise((resolve) => {
+            const img = new Image();
+            img.onload  = () => resolve(img);
+            img.onerror = () => resolve(null);
+            img.src = '/src/assets/logo@2x.png';
+        });
+        return _pmExportLogoPromise;
+    }
+
+    // PNG/PDF 내보내기 공용: 도면 캡처 + 로고/도면명/출력일/문틀크기가 담긴 헤더·푸터를 붙인 시트를 targetW(px) 폭으로 생성
+    async function buildExportSheet(targetW, fontScale) {
+        fontScale = fontScale || 1;
+        const rawCanvas = _exportCapture(appBackgroundImage ? '#E5E7EA' : null);
+        const logoImg = await _loadExportLogo();
+
+        const fontSize = Math.round(18 * fontScale);
+        const headerH = Math.round(targetW * 0.05);
+        const pad     = Math.round(targetW * 0.018);
+        const lineH   = Math.round(24 * fontScale);
+        const drawW   = targetW - pad * 2;
+        const drawH   = Math.round(drawW * (rawCanvas.height / rawCanvas.width));
+        const totalH  = headerH + drawH + pad;
+
+        const sheet = document.createElement('canvas');
+        sheet.width  = targetW;
+        sheet.height = totalH;
+        const ctx = sheet.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, targetW, totalH);
+
+        // 헤더: 로고(좌측) — 이 로고의 세로 중심을 기준으로 우측 텍스트도 정렬
+        const logoH = Math.round(headerH * 0.35);
+        const logoY = Math.round((headerH - logoH) / 2);
+        const logoCenterY = logoY + logoH / 2;
+        if (logoImg) {
+            const logoW = Math.round(logoImg.width * (logoH / logoImg.height));
+            ctx.drawImage(logoImg, pad, logoY, logoW, logoH);
+        }
+
+        // 헤더: 도면명 / 출력일 (우측, 로고와 세로 중심 정렬)
+        const drawingName = (document.getElementById('drawingName')?.value || '').trim() || '창호도면';
+        const dateStr = new Date().toISOString().slice(0, 10);
+        const headerLines = [`도면명: ${drawingName}`, `출력일: ${dateStr}`];
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#23262A';
+        ctx.font = `${fontSize}px -apple-system,sans-serif`;
+        const headerTextTop = logoCenterY - (lineH * headerLines.length) / 2;
+        headerLines.forEach((line, i) => {
+            ctx.fillText(line, targetW - pad, headerTextTop + lineH * i + lineH / 2);
+        });
+
+        ctx.strokeStyle = '#E5E7EA';
+        ctx.lineWidth = Math.max(1, Math.round(targetW * 0.0015));
+        ctx.beginPath();
+        ctx.moveTo(pad, headerH);
+        ctx.lineTo(targetW - pad, headerH);
+        ctx.stroke();
+
+        // 본문: 도면 캡처
+        ctx.drawImage(rawCanvas, pad, headerH, drawW, drawH);
+
+        return sheet;
+    }
+
 
 // 커스텀 셀렉트
 (function () {
