@@ -59,7 +59,8 @@ $displayName = library_pattern_display_name($pattern['slug'], $pattern['name_ko'
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($displayName) ?> — 평목 컬렉션</title>
     <meta name="description" content="<?= htmlspecialchars($metaDesc) ?>">
-    <link rel="icon" type="image/png" href="/src/assets/favicon.png">
+    <link rel="icon" type="image/svg+xml" href="/src/assets/favicon.svg">
+    <link rel="alternate icon" href="/src/assets/favicon.png">
     <link rel="apple-touch-icon" href="/src/assets/apple-touch-icon.png">
     <link rel="canonical" href="<?= htmlspecialchars($shareUrl) ?>">
     <meta property="og:title" content="<?= htmlspecialchars($displayName) ?>">

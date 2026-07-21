@@ -137,7 +137,8 @@ $metaKeywords = implode(', ', array_unique(array_filter([
     <meta name="description" content="<?= htmlspecialchars($metaDesc) ?>">
     <meta name="keywords" content="<?= htmlspecialchars($metaKeywords) ?>">
     <?php require_once __DIR__ . '/../lib/meta.php'; ?>
-    <link rel="icon" type="image/png" href="/src/assets/favicon.png">
+    <link rel="icon" type="image/svg+xml" href="/src/assets/favicon.svg">
+    <link rel="alternate icon" href="/src/assets/favicon.png">
     <link rel="apple-touch-icon" href="/src/assets/apple-touch-icon.png">
     <link rel="canonical" href="<?= htmlspecialchars(SITE_URL . '/blog/' . rawurlencode($post['slug'])) ?>">
     <meta property="og:title" content="<?= htmlspecialchars($post['title']) ?>">
