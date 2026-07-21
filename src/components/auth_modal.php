@@ -11,8 +11,7 @@
 
             <!-- 좌측: 로고 패널 -->
             <div class="auth-modal-brand">
-                <img src="/src/assets/logo.png"
-                     srcset="/src/assets/logo.png 1x, /src/assets/logo@2x.png 2x"
+                <img src="/src/assets/logo.svg"
                      alt="평목" class="auth-modal-brand-logo">
                 <p class="auth-modal-brand-copy">같은 공간은 없으니까요.<br>치수와 빛에 맞춰 그립니다.</p>
             </div>

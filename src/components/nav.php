@@ -106,8 +106,7 @@ $navStudioIcons = [
 ?>
 <nav class="pm-navbar navbar navbar-expand-xl fixed-top px-4 py-3">
     <a href="/" class="navbar-brand d-flex align-items-center">
-        <img src="/src/assets/logo.png"
-             srcset="/src/assets/logo.png 1x, /src/assets/logo@2x.png 2x"
+        <img src="/src/assets/logo.svg"
              alt="평목" class="pm-nav-logo">
         <span class="pm-nav-tagline"> </span>
     </a>
@@ -246,8 +245,7 @@ $navStudioIcons = [
 <div class="pm-nav-drawer<?= $isWork ? ' pm-nav-drawer--left' : '' ?>" id="pmNavDrawer" aria-hidden="true">
     <div class="pm-dw-head">
         <a href="/" class="navbar-brand d-flex align-items-center">
-            <img src="/src/assets/logo.png"
-                 srcset="/src/assets/logo.png 1x, /src/assets/logo@2x.png 2x"
+            <img src="/src/assets/logo.svg"
                  alt="평목" class="pm-nav-logo">
         </a>
         <button class="pm-dw-close" id="pmNavDrawerClose" aria-label="닫기">
