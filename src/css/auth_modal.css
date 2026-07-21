@@ -148,7 +148,7 @@
 .auth-field input[type="email"]:focus,
 .auth-field input[type="password"]:focus {
     border-color: var(--text);
-    box-shadow: 0 0 0 3px rgba(var(--text-rgb), .12);
+    box-shadow: none;
 }
 
 /* 크롬 등 브라우저 자동완성 배경 오버라이드 (안 그러면 인풋 배경이 파랗게 덮임) */
