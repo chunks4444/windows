@@ -165,7 +165,7 @@ $messages[] = ['role' => 'user', 'content' => $message];
 // Anthropic API 호출
 $payload = [
     'model'      => 'claude-haiku-4-5-20251001',
-    'max_tokens' => 512,
+    'max_tokens' => 1024,
     'system'     => $systemPrompt,
     'messages'   => $messages,
 ];
@@ -195,10 +195,15 @@ if (!$raw || $code !== 200) {
 $resp    = json_decode($raw, true);
 $content = $resp['content'][0]['text'] ?? '';
 
-// JSON 추출
+// JSON 추출 — 코드블록 제거 후 파싱, 실패하면 응답 안의 가장 바깥 {...} 구간만 다시 시도
+// (모델이 지시를 어기고 JSON 앞뒤에 설명 문장을 덧붙이는 경우에 대한 방어)
 $content = preg_replace('/^```[a-z]*\s*/i', '', trim($content));
 $content = preg_replace('/\s*```$/', '', $content);
 $parsed  = json_decode(trim($content), true);
+
+if (!$parsed && preg_match('/\{.*\}/s', $content, $m)) {
+    $parsed = json_decode($m[0], true);
+}
 
 if (!$parsed || !isset($parsed['params'])) {
     http_response_code(502);
