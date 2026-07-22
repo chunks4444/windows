@@ -56,6 +56,7 @@ function openModal(id) {
     document.getElementById('postTitle').value   = p?.title ?? '';
     document.getElementById('postSummary').value = p?.summary ?? '';
     document.getElementById('postCtaText').value = p?.cta_text ?? '';
+    document.getElementById('postSourceText').value = p?.source_text ?? '';
     quill.root.innerHTML = p?.content ?? '';
     document.getElementById('postThumbUrl').value = p?.thumbnail_url ?? '';
     const prev = document.getElementById('postImgPreview');
@@ -146,6 +147,7 @@ async function savePost() {
         title:               document.getElementById('postTitle').value.trim(),
         summary:             document.getElementById('postSummary').value.trim(),
         cta_text:            document.getElementById('postCtaText').value.trim(),
+        source_text:         document.getElementById('postSourceText').value.trim(),
         content:             quill.root.innerHTML.trim(),
         thumbnail_url:       document.getElementById('postThumbUrl').value.trim(),
         series_id:           parseInt(document.getElementById('postSeriesId').value) || 0,

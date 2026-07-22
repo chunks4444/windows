@@ -207,6 +207,13 @@ $metaKeywords = implode(', ', array_unique(array_filter([
 
         <div class="bd-body"><?= $post['content'] ?></div>
 
+        <div class="bd-source-notice">
+            <?php if (!empty($post['source_text'])): ?>
+            <p class="bd-source-text">출처: <?= htmlspecialchars($post['source_text']) ?></p>
+            <?php endif; ?>
+            <p class="bd-source-license">평목 블로그의 글과 기록은 출처(pyeongmok.com)를 밝히고 자유롭게 인용 및 발췌하실 수 있습니다.</p>
+        </div>
+
         <?php if ($post['related_engine'] && isset($engineLabels[$post['related_engine']])): ?>
         <div class="bd-engine-box">
             <p class="bd-engine-box-title">이 살의 이야기, 직접 만들어보세요</p>
