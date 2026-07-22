@@ -235,6 +235,6 @@ $engineOptions = [
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
-<script src="/src/js/admin/blog.js"></script>
+<script src="/src/js/admin/blog.js?v=<?= md5_file(__DIR__ . '/../js/admin/blog.js') ?>"></script>
 </body>
 </html>
