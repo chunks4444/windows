@@ -150,8 +150,8 @@ $engineOptions = [
                         <input id="postCtaText" type="text" maxlength="200" placeholder="예: 평목 스튜디오의 다양한 패턴 디자인 보러가기">
                     </div>
                     <div class="adm-mfield">
-                        <label>출처 <span style="font-size:11px;color: var(--text);font-weight:400;">(이 글이 참고한 출처, 비워두면 본문에 노출 안 됨)</span></label>
-                        <input id="postSourceText" type="text" maxlength="300" placeholder="예: OOO 홈페이지, OOO(2024), 저자명 등">
+                        <label>출처 <span style="font-size:11px;color: var(--text);font-weight:400;">(이 글이 참고한 출처, 비워두면 본문에 노출 안 됨. 여러 개면 줄바꿈으로 구분 — 리스트로 노출됩니다)</span></label>
+                        <textarea id="postSourceText" class="blog-textarea" rows="3" maxlength="500" placeholder="예: OOO 홈페이지&#10;OOO(2024), 저자명 등"></textarea>
                     </div>
                 </div>
             </div>

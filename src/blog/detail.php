@@ -207,9 +207,19 @@ $metaKeywords = implode(', ', array_unique(array_filter([
 
         <div class="bd-body"><?= $post['content'] ?></div>
 
+        <?php
+        $bdSourceLines = array_values(array_filter(array_map('trim', preg_split('/\r\n|\r|\n/', $post['source_text'] ?? ''))));
+        ?>
         <div class="bd-source-notice">
-            <?php if (!empty($post['source_text'])): ?>
-            <p class="bd-source-text">출처: <?= htmlspecialchars($post['source_text']) ?></p>
+            <?php if (count($bdSourceLines) === 1): ?>
+            <p class="bd-source-text">출처: <?= htmlspecialchars($bdSourceLines[0]) ?></p>
+            <?php elseif (count($bdSourceLines) > 1): ?>
+            <p class="bd-source-text">출처</p>
+            <ul class="bd-source-list">
+                <?php foreach ($bdSourceLines as $bdSourceLine): ?>
+                <li><?= htmlspecialchars($bdSourceLine) ?></li>
+                <?php endforeach; ?>
+            </ul>
             <?php endif; ?>
             <p class="bd-source-license">평목 블로그의 글과 기록은 출처(pyeongmok.com)를 밝히고 자유롭게 인용 및 발췌하실 수 있습니다.</p>
         </div>

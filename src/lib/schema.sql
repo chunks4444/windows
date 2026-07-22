@@ -710,7 +710,7 @@ CREATE TABLE IF NOT EXISTS blog_posts (
     question           VARCHAR(200)      NOT NULL DEFAULT '' COMMENT '질문형 인덱스 목록에 쓰이는 한 줄 질문 (예: "정자살과 완자살, 뭐가 다른가요?")',
     summary            VARCHAR(300)      NOT NULL DEFAULT '' COMMENT '목록/카드에 노출되는 요약',
     cta_text           VARCHAR(200)      NOT NULL DEFAULT '' COMMENT '글 하단 행동유도 문구',
-    source_text        VARCHAR(300)      NULL     DEFAULT NULL COMMENT '이 글이 참고한 출처 (있으면 하단에 노출)',
+    source_text        TEXT              NULL     DEFAULT NULL COMMENT '이 글이 참고한 출처 (줄바꿈으로 여러 개 구분, 있으면 하단에 노출)',
     content            TEXT              NOT NULL COMMENT '본문 (HTML)',
     thumbnail_url      VARCHAR(500)      NOT NULL DEFAULT '',
     sort_order         SMALLINT UNSIGNED NOT NULL DEFAULT 0,
@@ -724,6 +724,8 @@ CREATE TABLE IF NOT EXISTS blog_posts (
 
 -- 2026-07-22 글 출처 표기 (있으면 상세 페이지 하단에 노출)
 -- ALTER TABLE blog_posts ADD COLUMN source_text VARCHAR(300) NULL DEFAULT NULL COMMENT '이 글이 참고한 출처 (있으면 하단에 노출)' AFTER cta_text;
+-- 2026-07-23 출처 여러 개(줄바꿈 구분) 지원을 위해 VARCHAR(300) → TEXT로 확장
+-- ALTER TABLE blog_posts MODIFY COLUMN source_text TEXT NULL DEFAULT NULL COMMENT '이 글이 참고한 출처 (줄바꿈으로 여러 개 구분, 있으면 하단에 노출)';
 
 -- 2026-07-19 인기 페이지 집계에서 404(스캐너가 찌른 존재하지 않는 경로) 제외용
 -- ALTER TABLE page_views ADD COLUMN status_code SMALLINT UNSIGNED NOT NULL DEFAULT 200 COMMENT 'HTTP 응답 코드 (404 등 — 인기 페이지 집계에서 제외용)';
