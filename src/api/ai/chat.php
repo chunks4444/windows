@@ -152,22 +152,44 @@ $systemPrompt = <<<EOT
 2. 숫자 범위를 반드시 지키세요.
 3. 사용자가 현재와 다른 패턴(엔진)을 요청하거나 추천이 현재 엔진과 다르면 engine 필드에 해당 키를 반환하세요. 같으면 engine 생략.
 4. reply는 한국어 2–3문장으로 추천 이유 또는 변경 내용을 설명하세요.
-5. JSON만 반환하세요. 마크다운 코드블록 없이 순수 JSON.
 {$extraStr}
-응답 형식:
-{"engine": "cross", "params": {...}, "reply": "..."}
+반드시 apply_design_change 도구를 호출해서 답하세요. 일반 텍스트로 답하지 마세요.
 EOT;
 
 // 메시지 배열: 히스토리 + 현재 요청
 $messages   = $history;
 $messages[] = ['role' => 'user', 'content' => $message];
 
-// Anthropic API 호출
+// Anthropic API 호출 — tool 강제 호출로 자유 텍스트 응답(JSON 지시 무시) 자체를 원천 차단
 $payload = [
     'model'      => 'claude-haiku-4-5-20251001',
     'max_tokens' => 1024,
     'system'     => $systemPrompt,
     'messages'   => $messages,
+    'tools'      => [[
+        'name'         => 'apply_design_change',
+        'description'  => '창호 설계 파라미터 변경 사항과 사용자에게 보여줄 답변을 반환합니다.',
+        'input_schema' => [
+            'type'       => 'object',
+            'properties' => [
+                'engine' => [
+                    'type'        => 'string',
+                    'description' => '변경할 엔진 키 (현재와 다를 때만 포함)',
+                    'enum'        => ['classic', 'square', 'cross', 'diamond', 'triangle', 'hexagon'],
+                ],
+                'params' => [
+                    'type'        => 'object',
+                    'description' => '변경이 필요한 파라미터만 key-value로 포함 (빈 객체 가능)',
+                ],
+                'reply' => [
+                    'type'        => 'string',
+                    'description' => '한국어 2~3문장으로 추천 이유 또는 변경 내용 설명',
+                ],
+            ],
+            'required' => ['params', 'reply'],
+        ],
+    ]],
+    'tool_choice' => ['type' => 'tool', 'name' => 'apply_design_change'],
 ];
 
 $ch = curl_init('https://api.anthropic.com/v1/messages');
@@ -196,23 +218,21 @@ if (!$raw || $code !== 200) {
 }
 
 $resp       = json_decode($raw, true);
-$content    = $resp['content'][0]['text'] ?? '';
 $stopReason = $resp['stop_reason'] ?? '';
 
-// JSON 추출 — 코드블록 제거 후 파싱, 실패하면 응답 안의 가장 바깥 {...} 구간만 다시 시도
-// (모델이 지시를 어기고 JSON 앞뒤에 설명 문장을 덧붙이는 경우에 대한 방어)
-$content = preg_replace('/^```[a-z]*\s*/i', '', trim($content));
-$content = preg_replace('/\s*```$/', '', $content);
-$parsed  = json_decode(trim($content), true);
-
-if (!$parsed && preg_match('/\{.*\}/s', $content, $m)) {
-    $parsed = json_decode($m[0], true);
+// tool_choice로 강제했으므로 content 배열 중 tool_use 블록의 input이 곧 결과 (문자열 JSON 파싱 불필요)
+$parsed = null;
+foreach (($resp['content'] ?? []) as $block) {
+    if (($block['type'] ?? '') === 'tool_use' && ($block['name'] ?? '') === 'apply_design_change') {
+        $parsed = $block['input'] ?? null;
+        break;
+    }
 }
 
 if (!$parsed || !isset($parsed['params'])) {
-    error_log('[ai/chat] parse failure: stop_reason=' . $stopReason . ' content_len=' . strlen($content) . ' content=' . substr($content, 0, 1000));
+    error_log('[ai/chat] tool_use 누락: stop_reason=' . $stopReason . ' body=' . substr($raw, 0, 1000));
     http_response_code(502);
-    echo json_encode(['error' => 'AI 응답을 파싱할 수 없습니다.', 'raw' => $content]);
+    echo json_encode(['error' => 'AI 응답을 파싱할 수 없습니다.', 'raw' => $raw]);
     exit;
 }
 
