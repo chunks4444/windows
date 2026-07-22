@@ -186,7 +186,7 @@ foreach ($studioCards as $sc) $cardsByKey[$sc['engine_key']] = $sc;
                 </svg>
                 <div>
                     <p class="ab-tool-name"><?= htmlspecialchars($cardsByKey['triangle']['title'] ?? 'Triangle Lattice') ?></p>
-                    <p class="ab-tool-desc"><?= $cardsByKey['triangle']['description'] ?? '세 방향의 살이 60° 각도로 교차하는 삼각형 문살 패턴.<br>역동적이고 세련된 인상을 공간에 더합니다.' ?></p>
+                    <p class="ab-tool-desc"><?= $cardsByKey['triangle']['description'] ?? "수직살과 좌우 빗살, 세 방향의 살대가 한 점에서 만나도록 짠 세모 솟을살을 재현한 엔진입니다. '솟을'은 살이 교차점에서 겹치며 위로 솟아오르는 데서 온 이름으로, 교차점마다 살이 도드라져 짜임에 입체감이 살아 있습니다. 살들이 교차하며 정삼각형이 화면 가득 반복되어, 육모의 둥글고 넉넉한 인상과 달리 팽팽하고 긴장감 있는 느낌을 줍니다. 모든 셀이 정삼각형이 되도록 세로 칸수가 자동으로 계산되며, 세로 칸수를 직접 지정할 수는 없습니다." ?></p>
                 </div>
             </a>
             <a href="/src/engine/hexagon/hexagon.php" class="ab-tool-card">
@@ -199,7 +199,7 @@ foreach ($studioCards as $sc) $cardsByKey[$sc['engine_key']] = $sc;
                 </svg>
                 <div>
                     <p class="ab-tool-name"><?= htmlspecialchars($cardsByKey['hexagon']['title'] ?? 'Hexagon Lattice') ?></p>
-                    <p class="ab-tool-desc"><?= $cardsByKey['hexagon']['description'] ?? '세 방향의 살이 서로 맞물려 육각형 눈을 이루는 어금육모 패턴.<br>자연의 벌집 구조를 닮은 단정하고 견고한 전통미를 담아냅니다.' ?></p>
+                    <p class="ab-tool-desc"><?= $cardsByKey['hexagon']['description'] ?? "세모솟을살과 같은 세 방향 살대를 쓰되, 교차점을 한 점에 모으지 않고 어긋나게 짜 육각형이 열리도록 한 육모 솟을살을 재현한 엔진입니다. '솟을'은 살이 교차점에서 겹치며 위로 솟아오르는 데서 온 이름으로, 짜임에 입체감이 살아 있습니다. 살이 만드는 벌집 모양의 여섯 각은 사각보다 원에 가까워, 같은 짜임인데도 세모의 팽팽함 대신 둥글고 넉넉한 인상을 줍니다." ?></p>
                 </div>
             </a>
         </div>
