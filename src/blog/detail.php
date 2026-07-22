@@ -207,6 +207,8 @@ $metaKeywords = implode(', ', array_unique(array_filter([
 
         <div class="bd-body"><?= $post['content'] ?></div>
 
+        <hr class="bd-divider bd-divider-source">
+
         <?php
         $bdSourceLines = array_values(array_filter(array_map('trim', preg_split('/\r\n|\r|\n/', $post['source_text'] ?? ''))));
         ?>

@@ -174,10 +174,11 @@ body { background: #fff; }
 }
 
 /* ── 출처 / 인용 안내 ───────────────────────────────────── */
+.bd-divider-source {
+    margin-top: 2.5rem;
+}
 .bd-source-notice {
-    margin-top: 2rem;
-    padding-top: 1rem;
-    border-top: 1px solid rgba(var(--text-rgb), 0.12);
+    margin-top: 0;
 }
 .bd-source-text,
 .bd-source-license {
