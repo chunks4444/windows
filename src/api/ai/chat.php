@@ -182,18 +182,22 @@ curl_setopt_array($ch, [
         'anthropic-version: 2023-06-01',
     ],
 ]);
-$raw  = curl_exec($ch);
-$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+$raw       = curl_exec($ch);
+$code      = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+$curlErrno = curl_errno($ch);
+$curlErr   = curl_error($ch);
 curl_close($ch);
 
 if (!$raw || $code !== 200) {
+    error_log('[ai/chat] upstream failure: http=' . $code . ' curl_errno=' . $curlErrno . ' curl_err=' . $curlErr . ' body=' . substr((string)$raw, 0, 500));
     http_response_code(502);
     echo json_encode(['error' => 'AI 응답 오류 (HTTP ' . $code . ')']);
     exit;
 }
 
-$resp    = json_decode($raw, true);
-$content = $resp['content'][0]['text'] ?? '';
+$resp       = json_decode($raw, true);
+$content    = $resp['content'][0]['text'] ?? '';
+$stopReason = $resp['stop_reason'] ?? '';
 
 // JSON 추출 — 코드블록 제거 후 파싱, 실패하면 응답 안의 가장 바깥 {...} 구간만 다시 시도
 // (모델이 지시를 어기고 JSON 앞뒤에 설명 문장을 덧붙이는 경우에 대한 방어)
@@ -206,6 +210,7 @@ if (!$parsed && preg_match('/\{.*\}/s', $content, $m)) {
 }
 
 if (!$parsed || !isset($parsed['params'])) {
+    error_log('[ai/chat] parse failure: stop_reason=' . $stopReason . ' content_len=' . strlen($content) . ' content=' . substr($content, 0, 1000));
     http_response_code(502);
     echo json_encode(['error' => 'AI 응답을 파싱할 수 없습니다.', 'raw' => $content]);
     exit;
