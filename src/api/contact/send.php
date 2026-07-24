@@ -8,11 +8,25 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 require_once __DIR__ . '/../../lib/db.php';
 require_once __DIR__ . '/../../lib/mailer.php';
 
-$body    = json_decode(file_get_contents('php://input'), true);
-$name    = trim($body['name']    ?? '');
-$email   = trim($body['email']   ?? '');
-$subject = trim($body['subject'] ?? '');
-$message = trim($body['message'] ?? '');
+$body     = json_decode(file_get_contents('php://input'), true);
+$name     = trim($body['name']    ?? '');
+$email    = trim($body['email']   ?? '');
+$subject  = trim($body['subject'] ?? '');
+$message  = trim($body['message'] ?? '');
+$website  = trim($body['website'] ?? '');   // 허니팟 — 사람 눈엔 안 보이는 필드, 채워져 있으면 봇
+$openedAt = (float)($body['opened_at'] ?? 0);
+
+// 봇 방어: 허니팟이 채워졌거나, 폼이 뜬 지 2초도 안 돼 제출되면 봇으로 간주하고
+// 실제로는 아무것도 하지 않되 정상 응답처럼 보이게 해서 봇이 적응하지 못하게 함
+if ($website !== '') {
+    echo json_encode(['ok' => true]); exit;
+}
+if ($openedAt > 0) {
+    $elapsedMs = (microtime(true) * 1000) - $openedAt;
+    if ($elapsedMs >= 0 && $elapsedMs < 2000) {
+        echo json_encode(['ok' => true]); exit;
+    }
+}
 
 if (!$name || !$email || !$subject || !$message) {
     http_response_code(422); echo json_encode(['error' => '모든 항목을 입력해주세요.']); exit;

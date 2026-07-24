@@ -14,6 +14,9 @@
                     <small style="color:var(--text-muted);font-size:12px;">pyeongmok@gmail.com</small>
                 </div>
                 <form id="contactForm" onsubmit="ctSubmit(event)">
+                    <!-- 허니팟 — 사람에겐 안 보이고 봇만 채워 넣는 미끼 필드 -->
+                    <input type="text" id="ctWebsite" name="website" autocomplete="off" tabindex="-1"
+                           style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" aria-hidden="true">
                     <div class="ct-row-2">
                         <div class="ct-field">
                             <label>이름</label>
@@ -39,6 +42,10 @@
     </div>
 </div>
 <script>
+let ctOpenedAt = 0;
+document.getElementById('contactModal').addEventListener('shown.bs.modal', function () {
+    ctOpenedAt = Date.now();
+});
 async function ctSubmit(e) {
     e.preventDefault();
     const btn = document.getElementById('ctBtn');
@@ -49,10 +56,12 @@ async function ctSubmit(e) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                name:    document.getElementById('ctName').value,
-                email:   document.getElementById('ctEmail').value,
-                subject: document.getElementById('ctSubject').value,
-                message: document.getElementById('ctMessage').value,
+                name:      document.getElementById('ctName').value,
+                email:     document.getElementById('ctEmail').value,
+                subject:   document.getElementById('ctSubject').value,
+                message:   document.getElementById('ctMessage').value,
+                website:   document.getElementById('ctWebsite').value,
+                opened_at: ctOpenedAt,
             }),
         });
         const data = await res.json();
