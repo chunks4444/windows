@@ -230,7 +230,7 @@ foreach ($studioCards as $sc) $cardsByKey[$sc['engine_key']] = $sc;
                     </div>
                     <div class="ab-contact-row">
                         <dt>이메일</dt>
-                        <dd><a href="mailto:pyeongmok@gmail.com">pyeongmok@gmail.com</a></dd>
+                        <dd><button type="button" class="ab-contact-email-btn" data-bs-toggle="modal" data-bs-target="#contactModal">pyeongmok@gmail.com</button></dd>
                     </div>
                     <div class="ab-contact-row">
                         <dt>Instagram</dt>

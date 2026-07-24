@@ -23,7 +23,7 @@ header('Content-Type: text/html; charset=UTF-8');
         <tr><th>사업자등록번호</th><td>135-32-53949</td></tr>
         <tr><th>주소</th><td>경기도 양평군 양서면 도곡리 107-2</td></tr>
         <tr><th>전화</th><td><a href="tel:+827051244568">070-5124-4568</a></td></tr>
-        <tr><th>이메일</th><td><a href="mailto:pyeongmok@gmail.com">pyeongmok@gmail.com</a></td></tr>
+        <tr><th>이메일</th><td><span id="legalEmail"></span></td></tr>
     </table>
 
     <h2>제1조 (목적)</h2>
@@ -155,5 +155,16 @@ header('Content-Type: text/html; charset=UTF-8');
 </div>
 
 <?php include __DIR__ . '/../components/footer.php'; ?>
+<script>
+(function () {
+    var u = 'pyeongmok', d = 'gmail.com', e = u + '@' + d;
+    var el = document.getElementById('legalEmail');
+    if (!el) return;
+    var a = document.createElement('a');
+    a.href = 'mailto:' + e;
+    a.textContent = e;
+    el.appendChild(a);
+})();
+</script>
 </body>
 </html>
