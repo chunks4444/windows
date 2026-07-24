@@ -153,11 +153,18 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                     <button type="button" class="collection-strip-nav collection-strip-nav-prev" aria-label="이전 패턴 보기"><i class="bi bi-chevron-left"></i></button>
                     <div class="collection-strip-viewport">
                         <div class="collection-strip-track" id="collectionStripTrack">
-                            <?php foreach (array_merge($collectionCards, $collectionCards) as $cc): ?>
-                            <a class="collection-strip-card" href="<?= htmlspecialchars($cc['href']) ?>"<?= $cc['is_editor_link'] ? " onclick=\"return openCollectionEditor(event,'" . htmlspecialchars($cc['href'], ENT_QUOTES) . "')\"" : '' ?>>
-                                <img src="<?= htmlspecialchars($cc['image_path']) ?>" alt="<?= htmlspecialchars($cc['display_name']) ?>" loading="lazy">
-                                <div class="collection-strip-label"><?= htmlspecialchars($cc['display_name']) ?></div>
-                            </a>
+                            <?php
+                            $collectionCols = array_chunk($collectionCards, 2);
+                            foreach (array_merge($collectionCols, $collectionCols) as $col):
+                            ?>
+                            <div class="collection-strip-col">
+                                <?php foreach ($col as $cc): ?>
+                                <a class="collection-strip-card" href="<?= htmlspecialchars($cc['href']) ?>"<?= $cc['is_editor_link'] ? " onclick=\"return openCollectionEditor(event,'" . htmlspecialchars($cc['href'], ENT_QUOTES) . "')\"" : '' ?>>
+                                    <img src="<?= htmlspecialchars($cc['image_path']) ?>" alt="<?= htmlspecialchars($cc['display_name']) ?>" loading="lazy">
+                                    <div class="collection-strip-label"><?= htmlspecialchars($cc['display_name']) ?></div>
+                                </a>
+                                <?php endforeach; ?>
+                            </div>
                             <?php endforeach; ?>
                         </div>
                     </div>
@@ -175,17 +182,17 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                 var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
                 var gap = 16;
                 var pos = 0, half = 0, step = 0, paused = false, autoTimer = null;
-                var cards = track.querySelectorAll('.collection-strip-card');
-                var totalCount = cards.length / 2; // 무한 루프용으로 두 벌 렌더링된 원본 개수
+                var cols = track.querySelectorAll('.collection-strip-col');
+                var totalCount = cols.length / 2; // 무한 루프용으로 두 벌 렌더링된 원본 컬럼 개수
 
-                // 뷰포트 너비를 카드 최소 폭(160px) 기준으로 나눠 보여줄 장수를 정하고, 그만큼 등분해 카드 크기를 계산 (잘린 카드가 보이지 않게 함)
+                // 뷰포트 너비를 컬럼 최소 폭(160px) 기준으로 나눠 보여줄 컬럼 수를 정하고, 그만큼 등분해 컬럼 폭을 계산 (잘린 카드가 보이지 않게 함)
                 var minCardWidth = 250;
                 function measure() {
                     var vw = viewport.clientWidth;
                     var fit = Math.floor((vw + gap) / (minCardWidth + gap));
                     var count = Math.max(1, Math.min(fit, totalCount));
                     var cardWidth = (vw - (count - 1) * gap) / count;
-                    cards.forEach(function (el) { el.style.width = cardWidth + 'px'; });
+                    cols.forEach(function (el) { el.style.width = cardWidth + 'px'; });
                     step = cardWidth + gap;
                     half = step * totalCount;
                     pos = Math.round(pos / step) * step;

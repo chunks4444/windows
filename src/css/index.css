@@ -200,11 +200,18 @@
     background: var(--border);
 }
 
-/* 카드 너비는 JS가 뷰포트 폭에 맞춰 정확히 계산해 인라인으로 지정 (잘린 카드 노출 방지) */
-.collection-strip-card {
-    position: relative;
+/* 컬럼(2장 세로 스택) 너비는 JS가 뷰포트 폭에 맞춰 정확히 계산해 인라인으로 지정 (잘린 카드 노출 방지) */
+.collection-strip-col {
     flex: 0 0 auto;
     width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.collection-strip-card {
+    position: relative;
+    width: 100%;
     border-radius: 12px;
     overflow: hidden;
     display: block;
