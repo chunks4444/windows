@@ -10,7 +10,21 @@
       "Bash(Get-ChildItem -Path \"c:\\\\www\\\\d.pyeongmok\\\\www\" -Recurse -Directory)",
       "Bash(Select-Object -First 20)",
       "Bash(Select-String -Path \"c:\\\\www\\\\d.pyeongmok\\\\www\\\\src\\\\js\\\\Sabunteok.js\" -Pattern \"DOMContentLoaded|window.onload\")",
-      "Bash(Select-Object -First 5)"
+      "Bash(Select-Object -First 5)",
+      "Bash(ssh -i ~/.ssh/pyeongmok_studio -p 6822 chunks@211.35.72.68 \"cd /home/chunks/web/studio.pyeongmok.com && git pull 2>&1 | tail -8 && git log --oneline -1\")",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(command -v python)",
+      "Bash(command -v python3)",
+      "Bash(python -c \"import fitz; print\\('pymupdf ok'\\)\")",
+      "Bash(python -c \"import cairosvg\")",
+      "Bash(cp \"/d/chun_full/0_chun_work/1 평목/2 평목 로고/2024_LOGO.ai\" \"/c/Users/main/AppData/Local/Temp/claude/c--www-d-pyeongmok-www/4c8eec8d-2ee0-4ee0-95e0-43c2852f617a/scratchpad/2024_LOGO.pdf\")",
+      "Bash(scp -i ~/.ssh/pyeongmok_studio -P 6822 \"C:/Users/main/AppData/Local/Temp/claude/c--www-d-pyeongmok-www/4c8eec8d-2ee0-4ee0-95e0-43c2852f617a/scratchpad/update_square_card.php\" chunks@211.35.72.68:/tmp/update_square_card.php)",
+      "Bash(ssh -i ~/.ssh/pyeongmok_studio -p 6822 chunks@211.35.72.68 \"cd /home/chunks/web/studio.pyeongmok.com && php /tmp/update_square_card.php; rm -f /tmp/update_square_card.php\")"
+    ],
+    "additionalDirectories": [
+      "D:\\chun_full\\0_chun_work\\1 평목\\2 평목 로고"
     ]
   }
 }

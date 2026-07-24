@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(php -r ' *)"
+      "Bash(php -r ' *)",
+      "Bash(awk 'NR==391,NR==1300' src/js/classic.js)",
+      "Bash(\"/c/Program Files/PuTTY/plink\" -P 6822 -pwfile \"/c/www/d.pyeongmok/www/ops/backup_uploads/.pw\" -batch chunks@211.35.72.68 \"cd /home/chunks/web/studio.pyeongmok.com && git pull 2>&1 | tail -8 && git log --oneline -1\")",
+      "Bash(curl -s -o /dev/null -w \"studio.pyeongmok.com: %{http_code}\\\\n\" --max-time 8 \"https://studio.pyeongmok.com/\")"
     ]
   }
 }
