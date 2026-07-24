@@ -2,6 +2,7 @@
 header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../lib/db.php';
 require_once __DIR__ . '/../lib/meta.php';
+require_once __DIR__ . '/../lib/jwt.php';
 
 // 제목 개정/슬러그 길이 제한(20자→14자) 축소로 슬러그가 바뀐 글의 구주소 → 신주소 301 리다이렉트 (SEO 보존)
 $legacySlugRedirects = [
@@ -102,9 +103,14 @@ $engineLabels = [
     'hexagon'  => '육모 솟을살(Hexagon Lattice)',
 ];
 
-// 조회수 집계 — 방문자당 24시간에 1회만 카운트 (쿠키 기반 중복 방지)
+// 조회수 집계 — 방문자당 24시간에 1회만 카운트 (쿠키 기반 중복 방지), 관리자 본인 조회는 제외
 $viewCookie = 'blog_view_' . $post['id'];
-if (empty($_COOKIE[$viewCookie])) {
+$isAdminViewer = false;
+try {
+    $viewerPayload = jwt_from_request();
+    $isAdminViewer = $viewerPayload && in_array($viewerPayload['role'] ?? '', ['s', 'm'], true);
+} catch (Throwable $e) {}
+if (!$isAdminViewer && empty($_COOKIE[$viewCookie])) {
     try {
         $pdo->prepare('UPDATE blog_posts SET view_count = view_count + 1 WHERE id=?')->execute([$post['id']]);
     } catch (Throwable $e) {}
