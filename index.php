@@ -225,6 +225,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
             })();
             </script>
             <?php endif; ?>
+            <?php if (false): // 2026-07-23 메인 페이지 복잡도/큐레이션 품질 이슈로 임시 비활성화 ?>
             <section class="values-section mt-5 ">
                 <!-- Curation Header -->
                 <hr class="curation-divider">
@@ -246,6 +247,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                 </div>
                 <?php endif; ?>
             </section>
+            <?php endif; ?>
             <!-- card -->
         </div>
         <!-- home-wrapper -->
