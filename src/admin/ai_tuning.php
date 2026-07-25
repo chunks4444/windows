@@ -115,10 +115,12 @@ require_admin_role('s');
 .at-instr-input { flex: 1; border: 1.5px solid var(--accent-tint); border-radius: 8px; padding: 8px 12px; font-size: 13px; font-family: inherit; color: var(--text); outline: none; transition: border-color .15s; }
 .at-instr-input:focus { border-color: var(--accent); background: var(--teal-light); }
 .at-instr-input::placeholder { color: var(--border); }
-.at-instr-del { border: none; background: none; color: var(--border); font-size: 16px; cursor: pointer; padding: 4px; border-radius: 6px; flex-shrink: 0; line-height: 1; transition: color .12s, background .12s; }
-.at-instr-del:hover { color: var(--danger); background: var(--danger-tint); }
+.at-instr-del { border: 1.5px solid var(--border); background: none; color: var(--text); font-size: 20px; cursor: pointer; padding: 4px 10px; border-radius: 6px; flex-shrink: 0; line-height: 1; transition: color .12s, background .12s, border-color .12s; }
+.at-instr-del:hover { color: var(--danger); background: var(--danger-tint); border-color: var(--danger); }
 .at-add-btn { border: 1.5px dashed var(--border); background: none; border-radius: 8px; padding: 8px 16px; font-size: 13px; color: var(--text); cursor: pointer; width: 100%; transition: border-color .15s, color .15s; }
 .at-add-btn:hover { border-color: var(--accent); color: var(--accent); }
+.at-samples-clear-btn { border: none; background: none; color: var(--text); font-size: 12px; font-weight: 600; cursor: pointer; padding: 4px 8px; border-radius: 6px; white-space: nowrap; flex-shrink: 0; transition: color .12s, background .12s; }
+.at-samples-clear-btn:hover { color: var(--danger); background: var(--danger-tint); }
 </style>
 </head>
 <body>
@@ -252,7 +254,12 @@ require_admin_role('s');
         </div>
 
         <div class="at-mtab-pane at-section-body" data-mpane="samples">
-            <div class="at-section-desc" style="margin-bottom:14px;">홈 화면 프롬프트 입력창 아래 노출되는 샘플 문구 — 클릭하면 입력창에 그대로 채워집니다</div>
+            <div class="at-section-desc" style="margin-bottom:14px;display:flex;align-items:center;gap:10px;">
+                <span>홈 화면 프롬프트 입력창 아래 노출되는 샘플 문구 — 클릭하면 입력창에 그대로 채워집니다</span>
+                <button type="button" class="at-samples-clear-btn ms-auto" onclick="clearSamples()">
+                    <i class="bi bi-trash3"></i> 전체 삭제
+                </button>
+            </div>
             <div id="samplesList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;"></div>
             <button class="at-add-btn" onclick="addSample()">
                 <i class="bi bi-plus-lg"></i> 항목 추가
@@ -356,6 +363,10 @@ function addSample(val = '') {
 }
 function getSamples() {
     return getListItems('samplesList');
+}
+function clearSamples() {
+    if (!confirm('홈 샘플 프롬프트를 모두 삭제하시겠습니까? 저장을 눌러야 실제로 반영됩니다.')) return;
+    document.getElementById('samplesList').innerHTML = '';
 }
 
 function _h(json) {
