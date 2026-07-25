@@ -110,7 +110,7 @@ $engineOptions = [
 
 <!-- 편집 모달 -->
 <div class="adm-modal-overlay" id="blogModalOverlay">
-    <div class="adm-modal" style="max-width:1280px;width:92vw;">
+    <div class="adm-modal" style="max-width:1024px;width:92vw;">
         <div class="adm-modal-head">
             <h3 id="blogModalTitle">글 추가</h3>
             <div style="display:flex;align-items:center;">
