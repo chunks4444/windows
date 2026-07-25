@@ -14,6 +14,26 @@ try {
     $faqs       = [];
     $faqVisible = true;
 }
+// 홈 AI 프롬프트 샘플 문구 (어드민 > AI 튜닝에서 편집, 값 없으면 기본값 사용)
+$homeAiSampleDefaults = [
+    '정자살 여닫이 2짝 900×2000',
+    '완자살 미서기 3짝 1200×2100',
+    '교살 여닫이 1짝 700×1800 흰색',
+    '세모솟을살 미서기 2짝 1500×2200',
+    '마름모살 여닫이 4짝 2000×2100',
+    '육모솟을살 미서기 3짝 1800×2000',
+    '완자살 작은 창 600×900',
+    '정자살 넓은 통창 2400×2200',
+    '교살 미닫이 2짝 어두운 원목톤',
+    '마름모살 현관 중문 1000×2100',
+];
+try {
+    $homeAiSamplesRaw = $pdo ? $pdo->query("SELECT value FROM site_config WHERE key_name='home_ai_sample_prompts'")->fetchColumn() : false;
+    $homeAiSamples    = $homeAiSamplesRaw ? array_values(array_filter((array)json_decode($homeAiSamplesRaw, true))) : [];
+} catch (Throwable $e) {
+    $homeAiSamples = [];
+}
+if (!$homeAiSamples) $homeAiSamples = $homeAiSampleDefaults;
 // 스튜디오 카드 (테이블 없으면 빈 배열)
 try {
     $studioCards = $pdo ? $pdo->query('SELECT * FROM studio_cards WHERE is_active=1 ORDER BY sort_order, id')->fetchAll() : [];
@@ -99,6 +119,11 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                         <input type="text" id="idxAiInput" class="idx-ai-input"
                             placeholder="원하는 창호를 말해보세요  예: 정자살 여닫이 2짝 900×2000">
                         <button id="idxAiSend" class="idx-ai-btn">설계 시작</button>
+                    </div>
+                    <div class="idx-ai-samples" id="idxAiSamples">
+                        <?php foreach ($homeAiSamples as $homeAiSample): ?>
+                        <button type="button" class="idx-ai-sample"><?= htmlspecialchars($homeAiSample) ?></button>
+                        <?php endforeach; ?>
                     </div>
                     <div id="idxAiResult" class="idx-ai-result" style="display:none;"></div>
                 </div>
@@ -496,6 +521,20 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
         const inputEl  = document.getElementById('idxAiInput');
         const sendBtn  = document.getElementById('idxAiSend');
         const resultEl = document.getElementById('idxAiResult');
+
+        // 입력한 프롬프트를 기억해뒀다가 홈에 다시 올 때 그대로 복원
+        const DRAFT_KEY = 'pmok_home_ai_draft';
+        const draft = localStorage.getItem(DRAFT_KEY);
+        if (draft) inputEl.value = draft;
+        inputEl.addEventListener('input', () => localStorage.setItem(DRAFT_KEY, inputEl.value));
+
+        document.querySelectorAll('.idx-ai-sample').forEach(btn => {
+            btn.addEventListener('click', () => {
+                inputEl.value = btn.textContent;
+                localStorage.setItem(DRAFT_KEY, inputEl.value);
+                inputEl.focus();
+            });
+        });
 
         async function send() {
             const msg = inputEl.value.trim();

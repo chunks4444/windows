@@ -39,6 +39,29 @@
 }
 .idx-ai-btn:hover { opacity: .85; }
 .idx-ai-btn:disabled { opacity: .45; cursor: default; }
+.idx-ai-samples {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    margin-top: 10px;
+}
+.idx-ai-sample {
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text-muted);
+    border-radius: 999px;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color .15s, border-color .15s;
+}
+.idx-ai-sample:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
 .idx-ai-result {
     margin-top: 8px;
     font-size: 13px;

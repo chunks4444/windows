@@ -9,7 +9,7 @@ if (!$payload || ($payload['role'] ?? '') !== 's') {
 }
 
 $pdo  = db();
-$KEYS = ['ai_engine_aliases', 'ai_extra_instructions', 'ai_param_desc'];
+$KEYS = ['ai_engine_aliases', 'ai_extra_instructions', 'ai_param_desc', 'home_ai_sample_prompts'];
 
 // ai_engine_titles는 studio_cards로 통합됨 — 잔여 행 정리
 try { $pdo->exec("DELETE FROM site_config WHERE key_name='ai_engine_titles'"); } catch (Throwable $e) {}
@@ -65,6 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         'ai_param_desc'         => $customParamDesc,
         'ai_param_desc_default' => $paramDescDefault,
         'engine_titles'         => $engineTitles,
+        'home_ai_sample_prompts' => cfg_get($pdo, 'home_ai_sample_prompts'),
     ]);
     exit;
 }

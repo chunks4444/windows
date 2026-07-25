@@ -204,6 +204,7 @@ require_admin_role('s');
             <button class="at-mtab active" data-mtab="alias"><i class="bi bi-diagram-3"></i> 엔진 별칭</button>
             <button class="at-mtab" data-mtab="instr"><i class="bi bi-card-text"></i> 추가 지시사항</button>
             <button class="at-mtab" data-mtab="param"><i class="bi bi-code-slash"></i> 파라미터 설명</button>
+            <button class="at-mtab" data-mtab="samples"><i class="bi bi-chat-quote"></i> 홈 샘플 프롬프트</button>
         </div>
 
         <div class="at-mtab-pane active at-section-body" data-mpane="alias">
@@ -248,6 +249,15 @@ require_admin_role('s');
             </div>
             <textarea id="aiParamDesc" class="at-textarea" rows="16" oninput="onParamDescInput()"></textarea>
             <div class="at-hint" style="margin-top:6px;">AI 시스템 프롬프트에 포함되는 파라미터 목록입니다. 새 파라미터 추가 시 수정하세요.</div>
+        </div>
+
+        <div class="at-mtab-pane at-section-body" data-mpane="samples">
+            <div class="at-section-desc" style="margin-bottom:14px;">홈 화면 프롬프트 입력창 아래 노출되는 샘플 문구 — 클릭하면 입력창에 그대로 채워집니다</div>
+            <div id="samplesList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;"></div>
+            <button class="at-add-btn" onclick="addSample()">
+                <i class="bi bi-plus-lg"></i> 항목 추가
+            </button>
+            <div class="at-hint" style="margin-top:10px;">보통 8~12개 정도가 적당합니다.</div>
         </div>
     </div>
 
@@ -313,21 +323,39 @@ document.querySelectorAll('.at-htab').forEach(btn => {
     });
 });
 
-function renum() {
-    document.querySelectorAll('.at-instr-num').forEach((el, i) => el.textContent = (i + 1) + '.');
+function renumList(containerId) {
+    document.querySelectorAll(`#${containerId} .at-instr-num`).forEach((el, i) => el.textContent = (i + 1) + '.');
 }
-function addInstr(val = '') {
+function addListItem(containerId, val, placeholder) {
     const row = document.createElement('div');
     row.className = 'at-instr-row';
     row.innerHTML = `<span class="at-instr-num"></span>
-        <input type="text" class="at-instr-input" value="${val.replace(/"/g,'&quot;')}" placeholder="예: '촘촘하게'는 cols를 +3 증가로 해석하세요">
-        <button class="at-instr-del" onclick="this.closest('.at-instr-row').remove();renum();" title="삭제"><i class="bi bi-x"></i></button>`;
-    document.getElementById('instrList').appendChild(row);
-    renum();
+        <input type="text" class="at-instr-input" value="${val.replace(/"/g,'&quot;')}" placeholder="${placeholder}">
+        <button class="at-instr-del" onclick="this.closest('.at-instr-row').remove();renumList('${containerId}');" title="삭제"><i class="bi bi-x"></i></button>`;
+    document.getElementById(containerId).appendChild(row);
+    renumList(containerId);
+}
+function getListItems(containerId) {
+    return [...document.querySelectorAll(`#${containerId} .at-instr-input`)]
+        .map(el => el.value.trim()).filter(Boolean);
+}
+function addInstr(val = '') {
+    addListItem('instrList', val, "예: '촘촘하게'는 cols를 +3 증가로 해석하세요");
 }
 function getInstrs() {
-    return [...document.querySelectorAll('.at-instr-input')]
-        .map(el => el.value.trim()).filter(Boolean);
+    return getListItems('instrList');
+}
+
+const HOME_AI_SAMPLE_DEFAULTS = [
+    '정자살 여닫이 2짝 900×2000', '완자살 미서기 3짝 1200×2100', '교살 여닫이 1짝 700×1800 흰색',
+    '세모솟을살 미서기 2짝 1500×2200', '마름모살 여닫이 4짝 2000×2100', '육모솟을살 미서기 3짝 1800×2000',
+    '완자살 작은 창 600×900', '정자살 넓은 통창 2400×2200', '교살 미닫이 2짝 어두운 원목톤', '마름모살 현관 중문 1000×2100',
+];
+function addSample(val = '') {
+    addListItem('samplesList', val, '예: 정자살 여닫이 2짝 900×2000');
+}
+function getSamples() {
+    return getListItems('samplesList');
 }
 
 function _h(json) {
@@ -367,6 +395,15 @@ async function load() {
         (Array.isArray(instrs) ? instrs : [instrs]).forEach(t => addInstr(t));
     } catch { if (d.ai_extra_instructions) addInstr(d.ai_extra_instructions); }
     if (document.getElementById('instrList').children.length === 0) addInstr();
+
+    try {
+        const samples = JSON.parse(d.home_ai_sample_prompts || '[]');
+        (Array.isArray(samples) ? samples : []).forEach(t => addSample(t));
+    } catch {}
+    if (document.getElementById('samplesList').children.length === 0) {
+        HOME_AI_SAMPLE_DEFAULTS.forEach(t => addSample(t));
+    }
+
     window._paramDescDefault = d.ai_param_desc_default || '';
     window._paramDescCustom  = d.ai_param_desc || '';
     const textarea = document.getElementById('aiParamDesc');
@@ -388,6 +425,7 @@ async function save() {
             ai_engine_aliases:     JSON.stringify(aliases),
             ai_extra_instructions: JSON.stringify(getInstrs()),
             ai_param_desc:         document.getElementById('aiParamDesc').value,
+            home_ai_sample_prompts: JSON.stringify(getSamples()),
         }),
     });
     if (res.ok) {
