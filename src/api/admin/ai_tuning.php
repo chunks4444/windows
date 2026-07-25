@@ -34,7 +34,7 @@ $paramDescDefault = <<<'EOT'
 - frameH: 울거미 세로폭 (mm, 20–200)
 - slat: 살 두께 (mm, 5–30)
 - doorType: "swing"(여닫이) | "slide"(미서기)
-- doorCount: 1–4 (짝수)
+- doorCount: 1–4. doorType이 swing(여닫이)이면 최대 2까지만 가능 (3~4짝은 slide/미서기 전용)
 - pungpanOn: 풍판 사용 여부 (true/false)
 - pungpan: 풍판 높이 (mm) — pungpanOn=true일 때만 유효
 - wood: 목재 종류 (예: "소나무", "느티나무", "참나무")
