@@ -603,8 +603,10 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                     const url    = ENGINE_URLS[engine] || ENGINE_URLS[DEFAULT_ENGINE];
                     resultEl.innerHTML = (data.reply || '설계 조건을 적용했습니다.') +
                         ' <strong>스튜디오로 이동합니다…</strong>';
-                    // params를 sessionStorage에 저장 후 엔진으로 이동
+                    // params와 원본 프롬프트/응답을 sessionStorage에 저장 후 엔진으로 이동
                     sessionStorage.setItem('pmok_ai_params', JSON.stringify(data.params || {}));
+                    sessionStorage.setItem('pmok_ai_prompt_text', msg);
+                    sessionStorage.setItem('pmok_ai_reply_text', data.reply || '');
                     setTimeout(() => { location.href = url; }, 900);
                 }
             } catch {

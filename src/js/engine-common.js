@@ -1844,17 +1844,17 @@ function drawSvgInserts() {
         // nav 프롬프트 입력창 연결
         const navInput = document.getElementById('navPromptInput');
         const navBtn   = document.getElementById('navPromptSend');
+        const navReply = document.getElementById('navPromptReply');
+        let navReplyTimer = null;
+        function showNavReply(text, isError) {
+            if (!navReply) return;
+            clearTimeout(navReplyTimer);
+            navReply.textContent = text;
+            navReply.className = 'pm-nav-prompt-reply' + (isError ? ' is-error' : '');
+            navReply.style.display = '';
+            navReplyTimer = setTimeout(() => { navReply.style.display = 'none'; }, isError ? 5000 : 8000);
+        }
         if (navInput && navBtn) {
-            const navReply = document.getElementById('navPromptReply');
-            let navReplyTimer = null;
-            function showNavReply(text, isError) {
-                if (!navReply) return;
-                clearTimeout(navReplyTimer);
-                navReply.textContent = text;
-                navReply.className = 'pm-nav-prompt-reply' + (isError ? ' is-error' : '');
-                navReply.style.display = '';
-                navReplyTimer = setTimeout(() => { navReply.style.display = 'none'; }, isError ? 5000 : 8000);
-            }
             function navSend() {
                 const msg = navInput.value.trim();
                 if (!msg) return;
@@ -1877,7 +1877,11 @@ function drawSvgInserts() {
         }
 
         // 메인 페이지에서 넘어온 AI 파라미터 자동 적용
-        const stored = sessionStorage.getItem('pmok_ai_params');
+        const stored      = sessionStorage.getItem('pmok_ai_params');
+        const storedText  = sessionStorage.getItem('pmok_ai_prompt_text');
+        const storedReply = sessionStorage.getItem('pmok_ai_reply_text');
+        sessionStorage.removeItem('pmok_ai_prompt_text');
+        sessionStorage.removeItem('pmok_ai_reply_text');
         if (stored) {
             sessionStorage.removeItem('pmok_ai_params');
             try {
@@ -1887,6 +1891,9 @@ function drawSvgInserts() {
                     opts.applyParams(merged);
                     const replyEl = document.getElementById('aiChatReply');
                     if (replyEl) { replyEl.textContent = 'AI 설계 조건이 적용됐습니다.'; replyEl.className = 'ai-chat-reply ai-chat-ok'; }
+                    // 홈에서 입력했던 프롬프트를 엔진 프롬프트 창에 그대로 보여줌
+                    if (navInput && storedText) navInput.value = storedText;
+                    if (storedReply) showNavReply(storedReply, false);
                 }
             } catch {}
         }
