@@ -62,6 +62,17 @@
     color: var(--accent);
     border-color: var(--accent);
 }
+.idx-ai-sample-launched { opacity: .25; }
+.idx-ai-sample-drop {
+    z-index: 2000;
+    transition: transform .55s cubic-bezier(.55, 0, 1, .45), opacity .4s ease .15s;
+}
+.idx-ai-bar {
+    transition: box-shadow .3s ease;
+}
+.idx-ai-bar:has(.idx-ai-input-landed) {
+    box-shadow: 0 0 0 3px var(--accent-tint);
+}
 .idx-ai-result {
     margin-top: 8px;
     font-size: 13px;

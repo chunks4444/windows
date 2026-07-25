@@ -528,12 +528,44 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
         if (draft) inputEl.value = draft;
         inputEl.addEventListener('input', () => localStorage.setItem(DRAFT_KEY, inputEl.value));
 
-        document.querySelectorAll('.idx-ai-sample').forEach(btn => {
-            btn.addEventListener('click', () => {
+        // 샘플 버튼 클릭 시, 버튼 복제본이 중력을 받아 입력창으로 '떨어지는' 연출
+        function dropSampleIntoInput(btn) {
+            const startRect = btn.getBoundingClientRect();
+            const endRect   = inputEl.getBoundingClientRect();
+
+            const clone = btn.cloneNode(true);
+            clone.classList.add('idx-ai-sample-drop');
+            clone.style.position      = 'fixed';
+            clone.style.left          = startRect.left + 'px';
+            clone.style.top           = startRect.top + 'px';
+            clone.style.width         = startRect.width + 'px';
+            clone.style.margin        = '0';
+            clone.style.pointerEvents = 'none';
+            document.body.appendChild(clone);
+
+            btn.classList.add('idx-ai-sample-launched');
+
+            const dx = endRect.left + 16 - startRect.left;
+            const dy = endRect.top + (endRect.height - startRect.height) / 2 - startRect.top;
+
+            requestAnimationFrame(() => {
+                clone.style.transform = `translate(${dx}px, ${dy}px) scale(.6) rotate(10deg)`;
+                clone.style.opacity   = '0';
+            });
+
+            setTimeout(() => {
+                clone.remove();
+                btn.classList.remove('idx-ai-sample-launched');
                 inputEl.value = btn.textContent;
                 localStorage.setItem(DRAFT_KEY, inputEl.value);
                 inputEl.focus();
-            });
+                inputEl.classList.add('idx-ai-input-landed');
+                setTimeout(() => inputEl.classList.remove('idx-ai-input-landed'), 300);
+            }, 550);
+        }
+
+        document.querySelectorAll('.idx-ai-sample').forEach(btn => {
+            btn.addEventListener('click', () => dropSampleIntoInput(btn));
         });
 
         async function send() {
