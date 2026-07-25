@@ -1,5 +1,6 @@
 /* AI 프롬프트 바 */
 .idx-ai-wrap {
+    position: relative;
     max-width: 600px;
     margin: 12px auto 28px;
 }
@@ -11,6 +12,7 @@
     border: 1.5px solid var(--border);
     border-radius: 999px;
     padding: 10px 10px 10px 20px;
+    transition: box-shadow .3s ease;
 }
 .idx-ai-icon { color: var(--accent); font-size: 18px; flex-shrink: 0; }
 .idx-ai-input {
@@ -24,6 +26,7 @@
     outline: none;
 }
 .idx-ai-input::placeholder { color: var(--text-muted); }
+.idx-ai-input:disabled { opacity: .6; }
 .idx-ai-btn {
     border: none;
     background: var(--accent);
@@ -40,35 +43,57 @@
 .idx-ai-btn:hover { opacity: .85; }
 .idx-ai-btn:disabled { opacity: .45; cursor: default; }
 .idx-ai-samples {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    right: 0;
     display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    justify-content: center;
-    margin-top: 10px;
+    flex-direction: column;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 14px 16px;
+    box-shadow: 0 16px 32px rgba(0, 0, 0, .12);
+    z-index: 40;
+    opacity: 0;
+    transform: translateY(-14px);
+    pointer-events: none;
+    transition: opacity .2s ease, transform .38s cubic-bezier(.34, 1.56, .64, 1);
+}
+.idx-ai-samples.idx-ai-samples-open {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+.idx-ai-samples-list {
+    display: flex;
+    flex-direction: column;
 }
 .idx-ai-sample {
-    border: 1px solid var(--border);
-    background: var(--bg);
-    color: var(--text-muted);
-    border-radius: 999px;
-    padding: 5px 12px;
-    font-size: 12px;
+    display: block;
+    width: 100%;
+    text-align: left;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--text);
+    padding: 9px 12px;
+    font-size: 13px;
     font-family: inherit;
     cursor: pointer;
     white-space: nowrap;
-    transition: color .15s, border-color .15s;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: background-color .15s, color .15s;
 }
 .idx-ai-sample:hover {
     color: var(--accent);
-    border-color: var(--accent);
+    background-color: var(--accent-tint);
 }
 .idx-ai-sample-launched { opacity: .25; }
 .idx-ai-sample-drop {
     z-index: 2000;
     transition: transform .55s cubic-bezier(.55, 0, 1, .45), opacity .4s ease .15s;
-}
-.idx-ai-bar {
-    transition: box-shadow .3s ease;
 }
 .idx-ai-bar:has(.idx-ai-input-landed) {
     box-shadow: 0 0 0 3px var(--accent-tint);

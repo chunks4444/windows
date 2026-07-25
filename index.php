@@ -116,14 +116,16 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                 <div class="idx-ai-wrap">
                     <div class="idx-ai-bar">
                         <i class="bi bi-stars idx-ai-icon"></i>
-                        <input type="text" id="idxAiInput" class="idx-ai-input"
+                        <input type="text" id="idxAiInput" class="idx-ai-input" autocomplete="off"
                             placeholder="원하는 창호를 말해보세요  예: 정자살 여닫이 2짝 900×2000">
                         <button id="idxAiSend" class="idx-ai-btn">설계 시작</button>
                     </div>
                     <div class="idx-ai-samples" id="idxAiSamples">
-                        <?php foreach ($homeAiSamples as $homeAiSample): ?>
-                        <button type="button" class="idx-ai-sample"><?= htmlspecialchars($homeAiSample) ?></button>
-                        <?php endforeach; ?>
+                        <div class="idx-ai-samples-list">
+                            <?php foreach ($homeAiSamples as $homeAiSample): ?>
+                            <button type="button" class="idx-ai-sample"><?= htmlspecialchars($homeAiSample) ?></button>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
                     <div id="idxAiResult" class="idx-ai-result" style="display:none;"></div>
                 </div>
@@ -518,15 +520,22 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
         };
         const DEFAULT_ENGINE = 'classic';
 
-        const inputEl  = document.getElementById('idxAiInput');
-        const sendBtn  = document.getElementById('idxAiSend');
-        const resultEl = document.getElementById('idxAiResult');
+        const inputEl   = document.getElementById('idxAiInput');
+        const sendBtn   = document.getElementById('idxAiSend');
+        const resultEl  = document.getElementById('idxAiResult');
+        const samplesEl = document.getElementById('idxAiSamples');
 
         // 입력한 프롬프트를 기억해뒀다가 홈에 다시 올 때 그대로 복원
         const DRAFT_KEY = 'pmok_home_ai_draft';
         const draft = localStorage.getItem(DRAFT_KEY);
         if (draft) inputEl.value = draft;
         inputEl.addEventListener('input', () => localStorage.setItem(DRAFT_KEY, inputEl.value));
+
+        // 입력창 포커스 시 추천 검색어 목록이 입력창 아래로 떨어지듯 열림
+        inputEl.addEventListener('focus', () => samplesEl.classList.add('idx-ai-samples-open'));
+        inputEl.addEventListener('blur',  () => samplesEl.classList.remove('idx-ai-samples-open'));
+        // 목록 안을 클릭해도 입력창 포커스가 풀리지 않게(=목록이 닫히지 않게) 처리
+        samplesEl.addEventListener('mousedown', e => e.preventDefault());
 
         // 샘플 버튼 클릭 시, 버튼 복제본이 중력을 받아 입력창으로 '떨어지는' 연출
         function dropSampleIntoInput(btn) {
@@ -558,9 +567,10 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                 btn.classList.remove('idx-ai-sample-launched');
                 inputEl.value = btn.textContent;
                 localStorage.setItem(DRAFT_KEY, inputEl.value);
-                inputEl.focus();
+                samplesEl.classList.remove('idx-ai-samples-open');
                 inputEl.classList.add('idx-ai-input-landed');
                 setTimeout(() => inputEl.classList.remove('idx-ai-input-landed'), 300);
+                send(); // 셀렉터처럼 추천 검색어를 고르면 바로 설계 시작
             }, 550);
         }
 
