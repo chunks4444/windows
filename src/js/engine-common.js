@@ -1856,9 +1856,9 @@ function drawSvgInserts() {
         }
         if (navInput && navBtn) {
             function navSend() {
+                if (navBtn.disabled) return;
                 const msg = navInput.value.trim();
                 if (!msg) return;
-                navInput.value = '';
                 navBtn.disabled = true;
                 navInput.placeholder = '생각하는 중…';
                 if (navReply) navReply.style.display = 'none';
