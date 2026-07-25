@@ -103,14 +103,20 @@ $engineLabels = [
     'hexagon'  => '육모 솟을살(Hexagon Lattice)',
 ];
 
-// 조회수 집계 — 방문자당 24시간에 1회만 카운트 (쿠키 기반 중복 방지), 관리자 본인 조회는 제외
+// 조회수 집계 — 방문자당 24시간에 1회만 카운트 (쿠키 기반 중복 방지), 관리자 본인 조회·봇은 제외
 $viewCookie = 'blog_view_' . $post['id'];
 $isAdminViewer = false;
 try {
     $viewerPayload = jwt_from_request();
     $isAdminViewer = $viewerPayload && in_array($viewerPayload['role'] ?? '', ['s', 'm'], true);
 } catch (Throwable $e) {}
-if (!$isAdminViewer && empty($_COOKIE[$viewCookie])) {
+$viewerUa = $_SERVER['HTTP_USER_AGENT'] ?? '';
+$isBotViewer = $viewerUa === '' || preg_match(
+    '/bot|crawl|spider|slurp|facebookexternalhit|preview|whatsapp|telegram|discordbot|' .
+    'yeti|daumoa|petalbot|semrush|ahrefs|mj12bot|dotbot|python-requests|curl|wget|headless/i',
+    $viewerUa
+);
+if (!$isAdminViewer && !$isBotViewer && empty($_COOKIE[$viewCookie])) {
     try {
         $pdo->prepare('UPDATE blog_posts SET view_count = view_count + 1 WHERE id=?')->execute([$post['id']]);
     } catch (Throwable $e) {}
