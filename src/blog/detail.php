@@ -126,7 +126,22 @@ if (!$isAdminViewer && !$isBotViewer && empty($_COOKIE[$viewCookie])) {
     setcookie($viewCookie, '1', time() + 86400, '/');
 }
 
-$metaDesc = $post['summary'] ?: mb_substr(strip_tags($post['content']), 0, 120);
+// summary가 비어 있으면 본문 첫 문단(<p>)을 메타 설명으로 씀 — 문단 경계 없이 전체를 자르면
+// 여러 문단이 뒤섞여 문장이 끊길 수 있어 첫 문단만 뽑는다
+$metaDesc = $post['summary'];
+if (!$metaDesc) {
+    $metaDesc = '';
+    if (preg_match_all('/<p[^>]*>(.*?)<\/p>/is', $post['content'], $bdParaMatches)) {
+        foreach ($bdParaMatches[1] as $bdPara) {
+            // 문단 전체가 <strong>...</strong>로만 감싸진 경우는 소제목이라 건너뜀
+            if (preg_match('/^<strong[^>]*>.*<\/strong>$/is', trim($bdPara))) continue;
+            $bdParaText = trim(html_entity_decode(strip_tags($bdPara), ENT_QUOTES, 'UTF-8'));
+            if ($bdParaText !== '') { $metaDesc = $bdParaText; break; }
+        }
+    }
+    if ($metaDesc === '') $metaDesc = strip_tags($post['content']);
+    $metaDesc = mb_substr($metaDesc, 0, 120);
+}
 // og:image는 절대 URL이어야 카톡·페이스북 공유 카드가 정상 노출됨 (thumbnail_url은 /uploads/... 상대경로로 저장됨)
 $metaImage = $post['thumbnail_url']
     ? (strpos($post['thumbnail_url'], 'http') === 0 ? $post['thumbnail_url'] : SITE_URL . $post['thumbnail_url'])
