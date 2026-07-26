@@ -5,5 +5,36 @@ Disallow: /src/mypage/
 Disallow: /mypage/
 Disallow: /logs/
 
+# 이 도메인이 예전에 워드프레스(Avada 테마 + 우커머스)로 운영되던 시절의 URL 구조.
+# 실제 페이지는 없지만 구글봇이 계속 재크롤링을 시도해 크롤링 예산을 갉아먹고 있어 차단.
+Disallow: /product/
+Disallow: /product-tag/
+Disallow: /product-category/
+Disallow: /shop-sidebar/
+Disallow: /cart/
+Disallow: /checkout/
+Disallow: /portfolio-items/
+Disallow: /category/
+Disallow: /tag/
+Disallow: /author/
+Disallow: /element_category/
+Disallow: /fusion_tb_category/
+Disallow: /slide-page/
+Disallow: /wp-admin/
+Disallow: /wp-content/
+Disallow: /wp-includes/
+Disallow: /wp-json/
+Disallow: /wp-login.php
+Disallow: /wp-config.php
+Disallow: /wordpress/
+Disallow: /wp/
+Disallow: /feed/
+Disallow: /comments/feed/
+Disallow: /*/feed/
+Disallow: /*-sitemap.xml
+Disallow: /sitemap_index.xml
+Disallow: /sitemap.txt
+Disallow: /sitemap.xml.gz
+
 Sitemap: https://pyeongmok.com/sitemap.xml
 Sitemap: https://pyeongmok.com/rss.xml
