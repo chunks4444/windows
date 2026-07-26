@@ -24,8 +24,20 @@ const PMOK_AUTOBLOCK_PATTERNS = [
     'vendor/phpunit', 'telescope', '_ignition', 'actuator', 'wlwmanifest.xml',
 ];
 
+// 구글봇은 이 도메인의 예전 워드프레스 시절 URL(예: /wp-admin)을 재크롤링하다 위 패턴에
+// 그대로 걸리는 경우가 실제로 있었다(사이트 전체가 오차단됨). 구글이 공식 발표한 크롤러
+// 전용 대역(66.249.64.0/19, 다른 용도로 쓰이지 않음)은 자동 차단 대상에서 제외한다 —
+// 404는 정상적으로 그대로 나가고, 차단만 안 한다.
+function _pmok_is_known_crawler_ip(string $ip): bool {
+    $long = ip2long($ip);
+    if ($long === false) return false;
+    // Google: 66.249.64.0/19
+    return ($long & ~0x1FFF) === ip2long('66.249.64.0');
+}
+
 $_pmokBlockIp = _pmok_block_get_ip();
 if ($_pmokBlockIp === '-') return;
+$_pmokIsKnownCrawler = _pmok_is_known_crawler_ip($_pmokBlockIp);
 
 try {
     require_once __DIR__ . '/db.php';
@@ -39,16 +51,18 @@ try {
         exit;
     }
 
-    $uri = strtolower($_SERVER['REQUEST_URI'] ?? '');
-    foreach (PMOK_AUTOBLOCK_PATTERNS as $pattern) {
-        if (strpos($uri, $pattern) !== false) {
-            $pdo->prepare(
-                'INSERT INTO blocked_ips (ip, reason) VALUES (?, ?) ON DUPLICATE KEY UPDATE reason = VALUES(reason)'
-            )->execute([$_pmokBlockIp, '자동 차단: 취약점 탐색 경로(' . $pattern . ')']);
-            http_response_code(403);
-            header('Content-Type: text/plain; charset=UTF-8');
-            echo 'Forbidden';
-            exit;
+    if (!$_pmokIsKnownCrawler) {
+        $uri = strtolower($_SERVER['REQUEST_URI'] ?? '');
+        foreach (PMOK_AUTOBLOCK_PATTERNS as $pattern) {
+            if (strpos($uri, $pattern) !== false) {
+                $pdo->prepare(
+                    'INSERT INTO blocked_ips (ip, reason) VALUES (?, ?) ON DUPLICATE KEY UPDATE reason = VALUES(reason)'
+                )->execute([$_pmokBlockIp, '자동 차단: 취약점 탐색 경로(' . $pattern . ')']);
+                http_response_code(403);
+                header('Content-Type: text/plain; charset=UTF-8');
+                echo 'Forbidden';
+                exit;
+            }
         }
     }
 } catch (Throwable $e) {
