@@ -39,13 +39,14 @@ function pm_record_pageview(string $page, string $ip, string $ua, string $userId
         require_once __DIR__ . '/db.php';
         $pdo        = db();
         $ipHash     = substr(md5($ip), 0, 8);
+        $uaHash     = $ua !== '' ? substr(md5($ua), 0, 8) : null;
         $isMobile   = (int)(bool)preg_match('/iPhone|Android|iPad|Mobile/i', $ua);
         $uid        = ($userId !== '-' && ctype_digit($userId)) ? (int)$userId : null;
         $statusCode = http_response_code() ?: 200;
 
         $pdo->prepare(
-            'INSERT INTO page_views (page, user_id, ip_hash, ip, is_mobile, status_code) VALUES (?, ?, ?, ?, ?, ?)'
-        )->execute([$page, $uid, $ipHash, $ip, $isMobile, $statusCode]);
+            'INSERT INTO page_views (page, user_id, ip_hash, ip, ua_hash, is_mobile, status_code) VALUES (?, ?, ?, ?, ?, ?, ?)'
+        )->execute([$page, $uid, $ipHash, $ip, $uaHash, $isMobile, $statusCode]);
 
         // 1% 확률로 1년 초과분 자동 삭제
         if (mt_rand(0, 99) === 0) {

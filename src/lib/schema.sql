@@ -52,14 +52,20 @@ CREATE TABLE IF NOT EXISTS page_views (
     user_id     INT UNSIGNED NULL                   COMMENT '로그인 유저 ID (비회원 NULL)',
     ip_hash     CHAR(8)      NOT NULL               COMMENT 'IP MD5 앞 8자 (UV 계산용)',
     ip          VARCHAR(45)  NULL                   COMMENT '방문자 IP',
+    ua_hash     CHAR(8)      NULL                   COMMENT 'User-Agent MD5 앞 8자 (동일 IP 내 UA 로테이션 위장 크롤러 탐지용)',
     is_mobile   TINYINT(1)   NOT NULL DEFAULT 0     COMMENT '모바일 여부',
     status_code SMALLINT UNSIGNED NOT NULL DEFAULT 200 COMMENT 'HTTP 응답 코드 (404 등 — 인기 페이지 집계에서 제외용)',
     PRIMARY KEY (id),
     KEY idx_pv_visited (visited_at),
     KEY idx_pv_date_page (visited_at, page),
+    KEY idx_pv_ip_hash_time (ip_hash, visited_at),
     CONSTRAINT fk_pv_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='페이지 방문 통계 (1년 rolling)';
 -- ============================================================
+
+-- 2026-07-26 짧은 시간 내 같은 IP에서 UA가 바뀌는 위장 크롤러(UA 로테이션) 탐지용
+-- ALTER TABLE page_views ADD COLUMN ua_hash CHAR(8) NULL COMMENT 'User-Agent MD5 앞 8자 (동일 IP 내 UA 로테이션 위장 크롤러 탐지용)' AFTER ip;
+-- ALTER TABLE page_views ADD INDEX idx_pv_ip_hash_time (ip_hash, visited_at);
 
 -- 사용자 테이블
 CREATE TABLE IF NOT EXISTS users (

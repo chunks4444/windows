@@ -116,7 +116,32 @@ $isBotViewer = $viewerUa === '' || preg_match(
     'yeti|daumoa|petalbot|semrush|ahrefs|mj12bot|dotbot|python-requests|curl|wget|headless/i',
     $viewerUa
 );
-if (!$isAdminViewer && !$isBotViewer && empty($_COOKIE[$viewCookie])) {
+
+// UA 위장 크롤러 탐지: 같은 IP가 짧은 시간 안에 서로 다른 UA로 여러 번 찍히면
+// (실제 사람은 한 세션 내내 브라우저가 바뀌지 않음) 봇으로 간주해 카운트에서 제외
+$isUaRotationBot = false;
+if (!$isAdminViewer && !$isBotViewer) {
+    try {
+        $viewerIp = '-';
+        foreach (['HTTP_CF_CONNECTING_IP', 'HTTP_X_REAL_IP', 'HTTP_X_FORWARDED_FOR', 'REMOTE_ADDR'] as $k) {
+            if (!empty($_SERVER[$k])) {
+                $cand = trim(explode(',', $_SERVER[$k])[0]);
+                if (filter_var($cand, FILTER_VALIDATE_IP)) { $viewerIp = $cand; break; }
+            }
+        }
+        $viewerIpHash = substr(md5($viewerIp), 0, 8);
+        $viewerUaHash = substr(md5($viewerUa), 0, 8);
+        $otherUas = $pdo->prepare(
+            'SELECT COUNT(DISTINCT ua_hash) FROM page_views
+             WHERE ip_hash = ? AND ua_hash IS NOT NULL AND ua_hash <> ?
+               AND visited_at > DATE_SUB(NOW(), INTERVAL 30 SECOND)'
+        );
+        $otherUas->execute([$viewerIpHash, $viewerUaHash]);
+        $isUaRotationBot = (int)$otherUas->fetchColumn() >= 1;
+    } catch (Throwable $e) {}
+}
+
+if (!$isAdminViewer && !$isBotViewer && !$isUaRotationBot && empty($_COOKIE[$viewCookie])) {
     try {
         $pdo->prepare('UPDATE blog_posts SET view_count = view_count + 1 WHERE id=?')->execute([$post['id']]);
     } catch (Throwable $e) {}
