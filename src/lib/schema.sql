@@ -744,3 +744,13 @@ CREATE TABLE IF NOT EXISTS blocked_ips (
     blocked_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (ip)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='어드민이 수동으로 차단한 IP 목록';
+
+-- 2026-07-26 블로그 전체 조회수 총합 일별 스냅샷 — 어드민에서 추이(홍보/광고 효과 측정용)로 확인
+-- src/blog/index.php가 그날 첫 방문에서 한 번 기록
+CREATE TABLE IF NOT EXISTS blog_view_snapshots (
+    id            INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    snapshot_date DATE         NOT NULL,
+    total_views   INT UNSIGNED NOT NULL DEFAULT 0 COMMENT '스냅샷 시점 blog_posts.view_count 총합 (is_active=1)',
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_bvs_date (snapshot_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='블로그 전체 조회수 총합 일별 스냅샷 (추이 확인용)';

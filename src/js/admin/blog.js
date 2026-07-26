@@ -9,6 +9,40 @@ async function loadPosts() {
     if (!res.ok) { document.getElementById('blogAuthWall').style.display = ''; return; }
     posts = data.posts || [];
     render();
+    const totalViews = posts.reduce((sum, p) => sum + (+p.view_count || 0), 0);
+    const totalEl = document.getElementById('blogTotalViews');
+    if (totalEl) totalEl.textContent = totalViews.toLocaleString();
+}
+
+let blogViewTrendChart = null;
+async function loadBlogViewTrend() {
+    const canvas = document.getElementById('blogViewTrendChart');
+    if (!canvas) return;
+    const res  = await fetch('/src/api/admin/blog_view_trend.php?days=90', { headers: _h() });
+    const data = await res.json();
+    if (!res.ok) return;
+    const rows = data.rows || [];
+    const labels = rows.map(r => r.snapshot_date.slice(5)); // MM-DD
+    const totals = rows.map(r => +r.total_views);
+
+    if (blogViewTrendChart) blogViewTrendChart.destroy();
+    blogViewTrendChart = new Chart(canvas, {
+        type: 'line',
+        data: {
+            labels,
+            datasets: [
+                { label: '누적 조회수', data: totals, borderColor: 'rgba(58,140,130,0.9)', backgroundColor: 'rgba(58,140,130,0.15)', fill: true, pointRadius: 2, tension: 0.25 },
+            ]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { labels: { font: { family: 'Noto Sans KR', size: 11 } } } },
+            scales: {
+                x: { ticks: { font: { size: 10 }, maxTicksLimit: 20 }, grid: { display: false } },
+                y: { ticks: { font: { size: 10 } }, beginAtZero: true },
+            }
+        }
+    });
 }
 
 // "연관 대표 도면" select — 컬렉션에 실제로 등록된 패턴만 고를 수 있게 한다.
@@ -326,4 +360,5 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('blogPage').style.display = '';
     loadPosts();
     loadCollectionPatternsForPicker();
+    loadBlogViewTrend();
 });

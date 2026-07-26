@@ -29,6 +29,7 @@ $engineOptions = [
     <?php meta_tags(); ?>
 <?php css_tag('/src/css/dashboard.css'); ?>
     <?php css_tag('/src/css/users.css'); ?>
+    <?php css_tag('/src/css/stats.css'); ?>
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
     <style>
         .blog-thumb { width:80px; height:60px; object-fit:cover; border-radius:4px; background:var(--bg); }
@@ -88,6 +89,23 @@ $engineOptions = [
     </div>
 
     <p style="font-size:12px;color:var(--text);margin:-8px 0 16px;">행을 드래그해 순서를 변경할 수 있습니다.</p>
+
+    <div class="st-cards" style="grid-template-columns:220px;margin-bottom:16px;">
+        <div class="st-card">
+            <div class="st-card-label">총 조회수</div>
+            <div class="st-card-value" id="blogTotalViews">—</div>
+            <div class="st-card-sub">전체 글 합산 (현재)</div>
+        </div>
+    </div>
+
+    <div class="st-panel" style="margin-bottom:16px;">
+        <div class="st-panel-head">
+            <span class="st-panel-title">블로그 조회수 추이 (일별 총합)</span>
+        </div>
+        <div class="st-panel-body">
+            <div class="st-chart-wrap"><canvas id="blogViewTrendChart"></canvas></div>
+        </div>
+    </div>
 
     <div class="adm-table-wrap">
         <table id="blogTable">
@@ -238,6 +256,7 @@ $engineOptions = [
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 <script src="/src/js/admin/blog.js?v=<?= md5_file(__DIR__ . '/../js/admin/blog.js') ?>"></script>
 </body>
 </html>
