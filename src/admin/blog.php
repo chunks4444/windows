@@ -100,7 +100,7 @@ $engineOptions = [
 
     <div class="st-panel" style="margin-bottom:16px;">
         <div class="st-panel-head">
-            <span class="st-panel-title">블로그 조회수 추이 (일별 총합)</span>
+            <span class="st-panel-title">블로그 일별 조회수</span>
         </div>
         <div class="st-panel-body">
             <div class="st-chart-wrap"><canvas id="blogViewTrendChart"></canvas></div>

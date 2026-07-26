@@ -22,16 +22,21 @@ async function loadBlogViewTrend() {
     const data = await res.json();
     if (!res.ok) return;
     const rows = data.rows || [];
-    const labels = rows.map(r => r.snapshot_date.slice(5)); // MM-DD
-    const totals = rows.map(r => +r.total_views);
+    // 스냅샷은 누적 총합이라, 화면에는 전날 대비 증가분(그날 새로 찍힌 조회수)을 막대로 보여준다
+    const daily = rows.slice(1).map((r, i) => ({
+        date: r.snapshot_date.slice(5), // MM-DD
+        delta: Math.max(0, (+r.total_views) - (+rows[i].total_views)),
+    }));
+    const labels = daily.map(d => d.date);
+    const deltas = daily.map(d => d.delta);
 
     if (blogViewTrendChart) blogViewTrendChart.destroy();
     blogViewTrendChart = new Chart(canvas, {
-        type: 'line',
+        type: 'bar',
         data: {
             labels,
             datasets: [
-                { label: '누적 조회수', data: totals, borderColor: 'rgba(58,140,130,0.9)', backgroundColor: 'rgba(58,140,130,0.15)', fill: true, pointRadius: 2, tension: 0.25 },
+                { label: '일별 조회수', data: deltas, backgroundColor: 'rgba(58,140,130,0.7)', borderRadius: 3 },
             ]
         },
         options: {
@@ -39,7 +44,7 @@ async function loadBlogViewTrend() {
             plugins: { legend: { labels: { font: { family: 'Noto Sans KR', size: 11 } } } },
             scales: {
                 x: { ticks: { font: { size: 10 }, maxTicksLimit: 20 }, grid: { display: false } },
-                y: { ticks: { font: { size: 10 } }, beginAtZero: true },
+                y: { ticks: { font: { size: 10 }, precision: 0 }, beginAtZero: true },
             }
         }
     });
