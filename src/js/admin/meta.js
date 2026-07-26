@@ -57,7 +57,7 @@ function openEditModal(p) {
     editingId = p.id;
     document.getElementById('metaModalTitle').textContent = '메타 수정';
     document.getElementById('metaPath').value      = p.path;
-    document.getElementById('metaPath').readOnly   = true;
+    document.getElementById('metaPath').readOnly   = (p.path === '__default__');
     document.getElementById('metaTitle').value     = p.title;
     document.getElementById('metaDesc').value      = p.description;
     document.getElementById('metaKeywords').value  = p.keywords;
@@ -123,7 +123,8 @@ async function saveMeta() {
             keywords:    document.getElementById('metaKeywords').value.trim(),
             og_image:    document.getElementById('metaOgImage').value.trim(),
         };
-        if (isEdit) body.id = editingId; else body.path = path;
+        body.path = path;
+        if (isEdit) body.id = editingId;
         if (window._metaOgImageData) body.og_image_data = window._metaOgImageData;
 
         const res  = await fetch('/src/api/admin/meta.php', {
