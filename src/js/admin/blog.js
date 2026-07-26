@@ -103,7 +103,7 @@ function fileToResizedDataUrl(file, maxDim) {
                 const canvas = document.createElement('canvas');
                 canvas.width = w; canvas.height = h;
                 canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                resolve(canvas.toDataURL('image/jpeg', 0.92));
+                resolve({ dataUrl: canvas.toDataURL('image/jpeg', 0.92), originalWidth: img.width });
             };
             img.src = e.target.result;
         };
@@ -111,15 +111,20 @@ function fileToResizedDataUrl(file, maxDim) {
     });
 }
 
+// 타이틀 이미지(썸네일)는 구글 검색 큰 썸네일 조건(폭 1200px 권장)에 맞춰 서버(saveBlogImage)가
+// 항상 1200px로 리사이즈한다. 원본이 그보다 작으면 서버에서 확대되어 흐려질 수 있어 여기서 미리 경고한다.
+const BLOG_THUMB_TARGET_W = 1200;
+
 async function previewImage(input) {
     const file = input.files[0];
     if (!file) return;
     try {
-        const dataUrl = await fileToResizedDataUrl(file, 1024);
+        const { dataUrl, originalWidth } = await fileToResizedDataUrl(file, BLOG_THUMB_TARGET_W);
         window._postThumbData = dataUrl;
         const prev = document.getElementById('postImgPreview');
         prev.src = dataUrl; prev.classList.add('show');
         document.getElementById('postThumbUrl').value = '';
+        document.getElementById('postImgWarn').style.display = originalWidth < BLOG_THUMB_TARGET_W ? '' : 'none';
     } catch (err) {
         alert(err);
         input.value = '';
@@ -129,7 +134,7 @@ async function previewImage(input) {
 async function insertContentImage(file) {
     const range = quill.getSelection(true);
     try {
-        const dataUrl = await fileToResizedDataUrl(file, 1600);
+        const { dataUrl } = await fileToResizedDataUrl(file, 1600);
         const res  = await fetch(API, { method: 'POST', headers: _h(), body: JSON.stringify({ action: 'upload_content_image', image_data: dataUrl }) });
         const data = await res.json();
         if (!data.ok) { alert(data.error || '이미지 업로드 실패'); return; }

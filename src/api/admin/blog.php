@@ -41,9 +41,11 @@ function saveBlogImage(string $dataUrl): ?string {
     $img = @imagecreatefromstring($binary);
     if (!$img) return null;
     $w = imagesx($img); $h = imagesy($img);
-    if ($w > 2400 || $h > 2400) {
-        $scale = min(2400 / $w, 2400 / $h);
-        $nw = (int)($w * $scale); $nh = (int)($h * $scale);
+    // 구글 검색결과 큰 이미지 미리보기 조건(폭 1200px 권장)을 항상 만족시키기 위해 폭을 1200으로 고정
+    $targetW = 1200;
+    if ($w !== $targetW) {
+        $scale = $targetW / $w;
+        $nw = $targetW; $nh = (int)round($h * $scale);
         $resized = imagecreatetruecolor($nw, $nh);
         imagecopyresampled($resized, $img, 0, 0, 0, 0, $nw, $nh, $w, $h);
         imagedestroy($img); $img = $resized;

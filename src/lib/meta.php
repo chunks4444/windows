@@ -47,6 +47,8 @@ function meta_tags(?array $override = null): void {
     echo '<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","' . GA4_MEASUREMENT_ID . '");</script>' . "\n    ";
     echo '<meta name="google-site-verification" content="lNxBKwUVRTR6ewMlMqeNWIn_DfCn3ItScYvG-l6Yxr0">' . "\n    ";
     echo '<meta name="naver-site-verification" content="f2ccd9c34534e2089b7e9bae01a92552cb6d4467">' . "\n    ";
+    // 구글에 og:image를 검색결과 큰 썸네일로 써도 된다고 명시 (기본값은 작은 미리보기만 허용됨)
+    echo '<meta name="robots" content="max-image-preview:large">' . "\n    ";
     echo '<link rel="icon" type="image/svg+xml" href="/src/assets/favicon.svg">' . "\n    ";
     echo '<link rel="alternate icon" href="/src/assets/favicon.png">' . "\n    ";
     echo '<link rel="apple-touch-icon" href="/src/assets/apple-touch-icon.png">' . "\n    ";

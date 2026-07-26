@@ -151,6 +151,7 @@ $metaKeywords = implode(', ', array_unique(array_filter([
     <title><?= htmlspecialchars($post['title']) ?> — 평목 공방 블로그</title>
     <meta name="description" content="<?= htmlspecialchars($metaDesc) ?>">
     <meta name="keywords" content="<?= htmlspecialchars($metaKeywords) ?>">
+    <meta name="robots" content="max-image-preview:large">
     <?php require_once __DIR__ . '/../lib/meta.php'; ?>
     <link rel="icon" type="image/svg+xml" href="/src/assets/favicon.svg">
     <link rel="alternate icon" href="/src/assets/favicon.png">
