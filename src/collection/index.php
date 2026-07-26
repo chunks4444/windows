@@ -1,12 +1,104 @@
 <?php
 header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../lib/db.php';
+require_once __DIR__ . '/../lib/slug.php';
 try {
     $spaceOptions = db()->query("SELECT label, query AS collection_query FROM collection_space_filters WHERE is_active=1 ORDER BY sort_order, id")->fetchAll();
     $totalPatterns = (int) db()->query("SELECT COUNT(*) FROM library_patterns WHERE is_active = 1")->fetchColumn();
 } catch (Throwable $e) {
     $spaceOptions = [];
     $totalPatterns = 0;
+}
+
+// 첫 화면 카드를 서버에서 미리 렌더링한다. 이전에는 #libMasonry가 빈 div로 나가고
+// collection.js의 fetch 결과로만 채워져서, 초기 HTML(뷰 소스)에 이미지가 하나도
+// 없었다 — 구글이 이 페이지의 대표 이미지를 못 찾는 원인이었다. collection.js는
+// DOMContentLoaded에서 어차피 같은 데이터를 다시 불러와 이 마크업을 교체하므로
+// 최종 렌더링 결과는 동일하다.
+$engineEditorMap = [
+    'classic'  => '/src/engine/classic/classic.php',
+    'square'   => '/src/engine/square/square.php',
+    'diamond'  => '/src/engine/diamond/diamond.php',
+    'cross'    => '/src/engine/cross/cross.php',
+    'triangle' => '/src/engine/triangle/triangle.php',
+    'hexagon'  => '/src/engine/hexagon/hexagon.php',
+];
+$ssrQuery = trim($_GET['q'] ?? '');
+try {
+    $ssrWhere  = 'p.is_active = 1';
+    $ssrParams = [];
+    if ($ssrQuery !== '') {
+        $like = '%' . $ssrQuery . '%';
+        $ssrWhere .= ' AND (p.name_ko LIKE :q OR p.slug LIKE :q3 OR p.id IN (SELECT pattern_id FROM library_keywords WHERE keyword LIKE :q2))';
+        $ssrParams[':q']  = $like;
+        $ssrParams[':q2'] = $like;
+        $ssrParams[':q3'] = $like;
+    }
+    $stmt = db()->prepare(
+        "SELECT p.id, p.slug, p.name_ko, p.drawing_id, p.image_path, d.type AS engine,
+                GROUP_CONCAT(k.keyword ORDER BY k.id SEPARATOR ',') AS keywords
+         FROM library_patterns p
+         LEFT JOIN drawings d ON d.id = p.drawing_id
+         LEFT JOIN library_keywords k ON k.pattern_id = p.id
+         WHERE $ssrWhere
+         GROUP BY p.id
+         ORDER BY p.sort_order, p.id
+         LIMIT 20"
+    );
+    foreach ($ssrParams as $k => $v) $stmt->bindValue($k, $v);
+    $stmt->execute();
+    $ssrPatterns = $stmt->fetchAll();
+} catch (Throwable $e) {
+    $ssrPatterns = [];
+}
+
+function collection_card_html(array $p, array $navStudioIcons, array $engineEditorMap, bool $eager = false): string {
+    $displayName = library_pattern_display_name($p['slug'], $p['name_ko'] ?? '');
+    $keywords    = $p['keywords'] ? explode(',', $p['keywords']) : [];
+    $engineKey   = strtolower($p['engine'] ?? '');
+    $editorUrl   = $engineEditorMap[$engineKey] ?? null;
+    $loadAttr    = $eager ? '' : ' loading="lazy"';
+
+    $imgHtml = $p['image_path']
+        ? '<img src="' . htmlspecialchars($p['image_path'], ENT_QUOTES) . '" alt="' . htmlspecialchars($displayName, ENT_QUOTES) . '"' . $loadAttr . ' style="width:100%;height:100%;object-fit:cover;">'
+        : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--text-3);font-size:40px;"><i class="bi bi-image"></i></div>';
+
+    $editorBtn = ($editorUrl && $p['drawing_id'])
+        ? '<a href="' . htmlspecialchars($editorUrl, ENT_QUOTES) . '?drawing_id=' . (int)$p['drawing_id'] . '" class="lib-btn lib-btn-primary" onclick="return openCollectionEditor(event,\'' . htmlspecialchars($editorUrl, ENT_QUOTES) . '?drawing_id=' . (int)$p['drawing_id'] . '\')"><i class="bi bi-pencil"></i> 열기</a>'
+        : '';
+
+    $kwHtml = implode(' &middot; ', array_map(fn($k) => '<span style="font-size:11px;color:var(--text);">' . htmlspecialchars($k, ENT_QUOTES) . '</span>', array_slice($keywords, 0, 3)));
+
+    $engineIcon = $navStudioIcons[$engineKey] ?? '';
+    $engineIconHtml = $engineIcon ? '<span class="lib-card-engine-icon">' . $engineIcon . '</span>' : '';
+
+    return '
+        <div class="lib-item" data-id="' . (int)$p['id'] . '">
+            <div class="lib-card-img" style="aspect-ratio:1/1;">
+                ' . $imgHtml . '
+                <div class="lib-overlay">
+                    <div class="lib-overlay-top">
+                        <button class="lib-icon-btn lib-like-btn" onclick="toggleLike(event,' . (int)$p['id'] . ')" title="좋아요">
+                            <i class="bi bi-heart"></i>
+                        </button>
+                        <button class="lib-icon-btn lib-board-btn" onclick="openBoardModal(event,' . (int)$p['id'] . ',\'' . htmlspecialchars($displayName, ENT_QUOTES) . '\')" title="보드에 저장">
+                            <i class="bi bi-collection"></i>
+                        </button>
+                        <button class="lib-icon-btn lib-share-btn" onclick="shareCollectionPattern(event,\'' . htmlspecialchars($p['slug'], ENT_QUOTES) . '\',\'' . htmlspecialchars($displayName, ENT_QUOTES) . '\',\'' . htmlspecialchars($p['image_path'] ?? '', ENT_QUOTES) . '\')" title="공유">
+                            <i class="bi bi-share"></i>
+                        </button>
+                    </div>
+                    <div class="lib-overlay-bottom">
+                        <div class="lib-overlay-title">' . htmlspecialchars($displayName) . '</div>
+                        <div class="lib-overlay-actions">' . $editorBtn . '</div>
+                    </div>
+                </div>
+            </div>
+            <div class="lib-card-body">
+                <div class="lib-card-name">' . $engineIconHtml . htmlspecialchars($displayName) . '</div>
+                <div class="lib-card-sub">' . $kwHtml . '</div>
+            </div>
+        </div>';
 }
 ?>
 <!DOCTYPE html>
@@ -55,17 +147,21 @@ try {
             <button class="lib-filter-like" id="libLikeBtn"><i class="bi bi-heart-fill"></i> 좋아요</button>
         </div>
         <div class="lib-right-group">
-            <span class="lib-result-count" id="libResultCount"></span>
+            <span class="lib-result-count" id="libResultCount"><strong><?= (int)$totalPatterns ?></strong>개 패턴</span>
             <div class="lib-search">
                 <i class="bi bi-search"></i>
-                <input type="text" id="libSearch" placeholder="패턴 검색…" autocomplete="off">
+                <input type="text" id="libSearch" placeholder="패턴 검색…" autocomplete="off" value="<?= htmlspecialchars($ssrQuery, ENT_QUOTES) ?>">
             </div>
         </div>
     </div>
 </div>
 
 <div class="lib-main">
-    <div class="lib-masonry" id="libMasonry"></div>
+    <div class="lib-masonry" id="libMasonry"><?php
+        foreach ($ssrPatterns as $i => $p) {
+            echo collection_card_html($p, $navStudioIcons, $engineEditorMap, $i < 4);
+        }
+    ?></div>
     <div id="libLoadMore" style="display:none;text-align:center;padding:24px 0;">
         <button class="lib-loadmore-btn" onclick="loadNextPage()">
             <span id="libLoadMoreText">더 보기</span>

@@ -116,6 +116,9 @@ $isBotViewer = $viewerUa === '' || preg_match(
     'yeti|daumoa|petalbot|semrush|ahrefs|mj12bot|dotbot|python-requests|curl|wget|headless/i',
     $viewerUa
 );
+// 실기기라면 자동 업데이트로 절대 나올 수 없는 오래된 iOS 버전(9~13, 2019년 이전 배포)을 자칭하는
+// UA — 매번 다른 클라우드 IP를 돌려쓰면서 이 UA만 고정으로 재사용하는 스크래퍼가 걸려서 추가함
+$isBotViewer = $isBotViewer || preg_match('/CPU (iPhone )?OS (9|1[0-3])_/i', $viewerUa);
 
 // UA 위장 크롤러 탐지: 같은 IP가 짧은 시간 안에 서로 다른 UA로 여러 번 찍히면
 // (실제 사람은 한 세션 내내 브라우저가 바뀌지 않음) 봇으로 간주해 카운트에서 제외
@@ -148,7 +151,22 @@ if (!$isAdminViewer && !$isBotViewer && !$isUaRotationBot && empty($_COOKIE[$vie
     setcookie($viewCookie, '1', time() + 86400, '/');
 }
 
-$metaDesc = $post['summary'] ?: mb_substr(strip_tags($post['content']), 0, 120);
+// summary가 비어 있으면 본문 첫 문단(<p>)을 메타 설명으로 씀 — 문단 경계 없이 전체를 자르면
+// 여러 문단이 뒤섞여 문장이 끊길 수 있어 첫 문단만 뽑는다
+$metaDesc = $post['summary'];
+if (!$metaDesc) {
+    $metaDesc = '';
+    if (preg_match_all('/<p[^>]*>(.*?)<\/p>/is', $post['content'], $bdParaMatches)) {
+        foreach ($bdParaMatches[1] as $bdPara) {
+            // 문단 전체가 <strong>...</strong>로만 감싸진 경우는 소제목이라 건너뜀
+            if (preg_match('/^<strong[^>]*>.*<\/strong>$/is', trim($bdPara))) continue;
+            $bdParaText = trim(html_entity_decode(strip_tags($bdPara), ENT_QUOTES, 'UTF-8'));
+            if ($bdParaText !== '') { $metaDesc = $bdParaText; break; }
+        }
+    }
+    if ($metaDesc === '') $metaDesc = strip_tags($post['content']);
+    $metaDesc = mb_substr($metaDesc, 0, 120);
+}
 // og:image는 절대 URL이어야 카톡·페이스북 공유 카드가 정상 노출됨 (thumbnail_url은 /uploads/... 상대경로로 저장됨)
 $metaImage = $post['thumbnail_url']
     ? (strpos($post['thumbnail_url'], 'http') === 0 ? $post['thumbnail_url'] : SITE_URL . $post['thumbnail_url'])
@@ -173,6 +191,7 @@ $metaKeywords = implode(', ', array_unique(array_filter([
     <title><?= htmlspecialchars($post['title']) ?> — 평목 공방 블로그</title>
     <meta name="description" content="<?= htmlspecialchars($metaDesc) ?>">
     <meta name="keywords" content="<?= htmlspecialchars($metaKeywords) ?>">
+    <meta name="robots" content="max-image-preview:large">
     <?php require_once __DIR__ . '/../lib/meta.php'; ?>
     <link rel="icon" type="image/svg+xml" href="/src/assets/favicon.svg">
     <link rel="alternate icon" href="/src/assets/favicon.png">

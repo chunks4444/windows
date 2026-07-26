@@ -130,6 +130,9 @@ $engineOptions = [
                     <div class="adm-mfield">
                         <label>타이틀 이미지 <span style="font-size:11px;color: var(--text);font-weight:400;">(상세페이지 제목 하단 + 목록 썸네일)</span></label>
                         <img id="postImgPreview" class="blog-img-preview" src="" alt="">
+                        <div id="postImgWarn" style="display:none;font-size:12px;color:#c00;margin:4px 0;">
+                            ⚠️ 원본 이미지 폭이 1200px보다 작아 확대되었습니다. 구글 검색에 큰 썸네일로 노출되려면 가로 1200px 이상 원본을 권장합니다.
+                        </div>
                         <label class="blog-upload-label" for="postImgFile">
                             <i class="bi bi-upload"></i> 이미지 업로드
                         </label>

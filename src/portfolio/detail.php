@@ -48,6 +48,7 @@ $desc  = strip_tags($work['description'] ?? '');
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($work['title']) ?> — 평목</title>
     <meta name="description" content="<?= htmlspecialchars($desc) ?>">
+    <meta name="robots" content="max-image-preview:large">
     <?php require_once __DIR__ . '/../lib/meta.php'; ?>
     <link rel="icon" type="image/svg+xml" href="/src/assets/favicon.svg">
     <link rel="alternate icon" href="/src/assets/favicon.png">
