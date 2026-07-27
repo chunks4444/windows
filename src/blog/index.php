@@ -51,16 +51,9 @@ try {
 
     $totalCount = (int) $pdo->query("SELECT COUNT(*) FROM blog_posts WHERE is_active = 1")->fetchColumn();
 
-    // 블로그 전체 조회수 총합 일별 스냅샷 — 오늘 기록이 없으면 한 번 남긴다 (어드민 추이 확인용)
-    try {
-        $todaySnapExists = $pdo->query("SELECT 1 FROM blog_view_snapshots WHERE snapshot_date = CURDATE() LIMIT 1")->fetchColumn();
-        if (!$todaySnapExists) {
-            $pdo->exec("
-                INSERT IGNORE INTO blog_view_snapshots (snapshot_date, total_views)
-                SELECT CURDATE(), COALESCE(SUM(view_count), 0) FROM blog_posts WHERE is_active = 1
-            ");
-        }
-    } catch (Throwable $e) {}
+    // 블로그 전체 조회수 총합 일별 스냅샷은 MySQL EVENT(ev_blog_view_daily_snapshot)가
+    // 매일 자정 정각에 기록한다 (schema.sql 참고) — 방문 트래픽에 따라 스냅샷 시각이
+    // 들쭉날쭉해지는 걸 막기 위해 요청 트리거 방식에서 배치 방식으로 전환함.
 
     $perPage    = 10;
     $totalPages = max(1, (int) ceil($totalCount / $perPage));

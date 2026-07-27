@@ -753,7 +753,6 @@ CREATE TABLE IF NOT EXISTS blocked_ips (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='어드민이 수동으로 차단한 IP 목록';
 
 -- 2026-07-26 블로그 전체 조회수 총합 일별 스냅샷 — 어드민에서 추이(홍보/광고 효과 측정용)로 확인
--- src/blog/index.php가 그날 첫 방문에서 한 번 기록
 CREATE TABLE IF NOT EXISTS blog_view_snapshots (
     id            INT UNSIGNED NOT NULL AUTO_INCREMENT,
     snapshot_date DATE         NOT NULL,
@@ -761,3 +760,12 @@ CREATE TABLE IF NOT EXISTS blog_view_snapshots (
     PRIMARY KEY (id),
     UNIQUE KEY uq_bvs_date (snapshot_date)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='블로그 전체 조회수 총합 일별 스냅샷 (추이 확인용)';
+
+-- 2026-07-28 스냅샷 기록을 요청 트리거 방식(그날 첫 방문 때)에서 MySQL EVENT 배치로 전환.
+-- 트래픽에 따라 스냅샷 시각이 들쭉날쭉해서 일별 차트 날짜 라벨이 밀려 보이는 버그가 있었음
+-- (event_scheduler가 꺼져 있으면 스냅샷이 안 쌓이니 SHOW VARIABLES LIKE 'event_scheduler'로 확인)
+-- CREATE EVENT IF NOT EXISTS ev_blog_view_daily_snapshot
+-- ON SCHEDULE EVERY 1 DAY STARTS (DATE_ADD(CURRENT_DATE, INTERVAL 1 DAY))
+-- DO
+--   INSERT IGNORE INTO blog_view_snapshots (snapshot_date, total_views)
+--   SELECT CURDATE(), COALESCE(SUM(view_count), 0) FROM blog_posts WHERE is_active = 1;
