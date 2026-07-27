@@ -10,7 +10,9 @@ body {
     background: var(--bg);
 }
 
-.container { max-width: 1024px; padding-left: 24px; padding-right: 24px; }
+/* common.css의 body:not(.pm-generator) .container(1320px)가 :not() 때문에 명시도가 더 높고
+   nav.php가 <body> 안에서 뒤늦게 CSS를 삽입해 로드 순서로도 이길 수 없어 !important로 재정의 */
+.container { max-width: 1024px !important; padding-left: 24px; padding-right: 24px; }
 
 /* ── HERO ─────────────────────────────────────── */
 .ab-hero {
