@@ -10,7 +10,7 @@ body {
     background: var(--bg);
 }
 
-.container { padding-left: 24px; padding-right: 24px; }
+.container { max-width: 1024px; padding-left: 24px; padding-right: 24px; }
 
 /* ── HERO ─────────────────────────────────────── */
 .ab-hero {
