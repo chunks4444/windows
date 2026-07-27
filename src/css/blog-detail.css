@@ -4,7 +4,7 @@ body { background: #fff; }
 
 .bd-page {
     min-height: calc(100vh - 68px);
-    max-width: 1024px;
+    max-width: 680px;
     margin: 0 auto;
     padding: 2.5rem 1.5rem 4rem;
 }
@@ -138,15 +138,15 @@ body { background: #fff; }
 
 /* ── 본문 ───────────────────────────────────────────────── */
 .bd-body {
-    max-width: 1024px;
+    max-width: 680px;
     margin: 0;
-    font-size: var(--fs-16);
+    font-size: 17px;
     line-height: 1.7;
     color: var(--text);
     word-break: keep-all;
 }
 .bd-body p {
-    margin: 0;
+    margin: 0 0 2.55em;
 }
 .bd-body h2, .bd-body h3 {
     font-weight: 600; letter-spacing: -.01em; color: var(--text);
