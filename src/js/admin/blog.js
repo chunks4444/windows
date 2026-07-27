@@ -102,6 +102,7 @@ function openModal(id) {
     if (p?.thumbnail_url) { prev.src = p.thumbnail_url; prev.classList.add('show'); }
     else                  { prev.src = ''; prev.classList.remove('show'); }
     document.getElementById('postImgFile').value = '';
+    document.getElementById('postIsFeatured').checked = !!(p?.is_featured);
     document.getElementById('postSeriesId').value          = p?.series_id ?? '';
     document.getElementById('postSeriesOrder').value        = p?.series_order ?? 0;
     document.getElementById('postQuestion').value           = p?.question ?? '';
@@ -194,6 +195,7 @@ async function savePost() {
         source_text:         document.getElementById('postSourceText').value.trim(),
         content:             quill.root.innerHTML.trim(),
         thumbnail_url:       document.getElementById('postThumbUrl').value.trim(),
+        is_featured:         document.getElementById('postIsFeatured').checked ? 1 : 0,
         series_id:           parseInt(document.getElementById('postSeriesId').value) || 0,
         series_order:        parseInt(document.getElementById('postSeriesOrder').value) || 0,
         question:            document.getElementById('postQuestion').value.trim(),

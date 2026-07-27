@@ -721,6 +721,7 @@ CREATE TABLE IF NOT EXISTS blog_posts (
     thumbnail_url      VARCHAR(500)      NOT NULL DEFAULT '',
     sort_order         SMALLINT UNSIGNED NOT NULL DEFAULT 0,
     is_active          TINYINT(1)        NOT NULL DEFAULT 1,
+    is_featured        TINYINT(1)        NOT NULL DEFAULT 0 COMMENT '히어로 캐로셀 노출 여부 (관리자가 직접 선택, 날짜 무관)',
     view_count         INT UNSIGNED      NOT NULL DEFAULT 0 COMMENT '조회수 (방문자 쿠키 기준 24시간 중복 방지)',
     created_at         DATETIME          NOT NULL DEFAULT NOW(),
     PRIMARY KEY (id),
@@ -732,6 +733,8 @@ CREATE TABLE IF NOT EXISTS blog_posts (
 -- ALTER TABLE blog_posts ADD COLUMN source_text VARCHAR(300) NULL DEFAULT NULL COMMENT '이 글이 참고한 출처 (있으면 하단에 노출)' AFTER cta_text;
 -- 2026-07-23 출처 여러 개(줄바꿈 구분) 지원을 위해 VARCHAR(300) → TEXT로 확장
 -- ALTER TABLE blog_posts MODIFY COLUMN source_text TEXT NULL DEFAULT NULL COMMENT '이 글이 참고한 출처 (줄바꿈으로 여러 개 구분, 있으면 하단에 노출)';
+-- 2026-07-27 히어로 캐로셀 노출 글을 관리자가 직접 선택하도록 (기존엔 썸네일 있는 글 자동 선정)
+-- ALTER TABLE blog_posts ADD COLUMN is_featured TINYINT(1) NOT NULL DEFAULT 0 COMMENT '히어로 캐로셀 노출 여부 (관리자가 직접 선택, 날짜 무관)' AFTER is_active;
 
 -- 2026-07-19 인기 페이지 집계에서 404(스캐너가 찌른 존재하지 않는 경로) 제외용
 -- ALTER TABLE page_views ADD COLUMN status_code SMALLINT UNSIGNED NOT NULL DEFAULT 200 COMMENT 'HTTP 응답 코드 (404 등 — 인기 페이지 집계에서 제외용)';

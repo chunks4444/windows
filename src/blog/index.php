@@ -20,6 +20,7 @@ try {
         thumbnail_url VARCHAR(500)      NOT NULL DEFAULT '',
         sort_order    SMALLINT UNSIGNED NOT NULL DEFAULT 0,
         is_active     TINYINT(1)        NOT NULL DEFAULT 1,
+        is_featured   TINYINT(1)        NOT NULL DEFAULT 0,
         view_count    INT UNSIGNED      NOT NULL DEFAULT 0,
         created_at    DATETIME          NOT NULL DEFAULT NOW(),
         PRIMARY KEY (id),
@@ -79,27 +80,30 @@ try {
     $stmt->execute();
     $pagePosts = $stmt->fetchAll();
 
-    // 상단 피처 캐로셀 — 현재 페이지의 글 중 썸네일 있는 것 위주로 최대 5개
-    $featurePosts = [];
-    foreach ($pagePosts as $p) {
-        if ($p['thumbnail_url']) $featurePosts[] = $p;
-        if (count($featurePosts) >= 5) break;
-    }
+    // 상단 피처 캐로셀 — 관리자가 직접 선택한 글만(is_featured), 날짜 무관, sort_order 순
+    $featurePosts = $pdo->query("
+        SELECT p.id, p.title, p.slug, p.thumbnail_url, p.series_order, s.name AS series_name
+        FROM blog_posts p
+        LEFT JOIN blog_series s ON s.id = p.series_id
+        WHERE p.is_active = 1 AND p.is_featured = 1
+        ORDER BY p.sort_order, p.id
+        LIMIT 5
+    ")->fetchAll();
 
-    // 사이드바 — 시리즈별 카드 (시리즈명 + 태그라인 + 최근 글 최대 3개)
+    // 사이드바 — 시리즈별 카드 (시리즈명 + 태그라인 + 최근 글 최대 3개), 시리즈의 최신 발행일 순으로 정렬
     $seriesRows = $pdo->query("
         SELECT p.id, p.title, p.slug, p.created_at, p.series_id, p.series_order,
                s.name AS series_name, s.tagline AS series_tagline, s.sort_order AS series_sort
         FROM blog_posts p
         JOIN blog_series s ON s.id = p.series_id
         WHERE p.is_active = 1
-        ORDER BY s.sort_order, s.id, p.created_at DESC
+        ORDER BY p.created_at DESC
     ")->fetchAll();
     $seriesCards = [];
     foreach ($seriesRows as $r) {
         $sid = $r['series_id'];
         if (!isset($seriesCards[$sid])) {
-            $seriesCards[$sid] = ['name' => $r['series_name'], 'tagline' => $r['series_tagline'], 'posts' => [], 'total' => 0];
+            $seriesCards[$sid] = ['name' => $r['series_name'], 'tagline' => $r['series_tagline'], 'posts' => [], 'total' => 0, 'latest' => $r['created_at']];
         }
         $seriesCards[$sid]['total']++;
         if (count($seriesCards[$sid]['posts']) < 5) $seriesCards[$sid]['posts'][] = $r;
@@ -188,9 +192,9 @@ try {
                 <li class="bg-ranked-item">
                     <a class="bg-ranked-link" href="/blog/<?= rawurlencode($p['slug']) ?>">
                         <div class="bg-ranked-text">
-                            <?php if ($p['series_name']): ?>
-                            <p class="bg-ranked-cat"><?= htmlspecialchars($p['series_name']) ?><?= $p['series_order'] ? ' · ' . (int)$p['series_order'] . '화' : '' ?></p>
-                            <?php endif; ?>
+                            <p class="bg-ranked-cat">
+                                <?php if ($p['series_name']): ?><?= htmlspecialchars($p['series_name']) ?><?= $p['series_order'] ? ' · ' . (int)$p['series_order'] . '화' : '' ?> · <?php endif; ?><?= date('Y.m.d', strtotime($p['created_at'])) ?>
+                            </p>
                             <h3 class="bg-ranked-title"><?= htmlspecialchars($p['title']) ?></h3>
                             <?php if ($p['summary']): ?>
                             <p class="bg-ranked-summary"><?= htmlspecialchars($p['summary']) ?></p>

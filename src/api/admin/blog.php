@@ -66,6 +66,7 @@ if ($action === 'save') {
     $source_text    = trim($body['source_text'] ?? '') ?: null;
     $content        = trim($body['content'] ?? '');
     $thumbnail_url  = trim($body['thumbnail_url'] ?? '');
+    $is_featured    = !empty($body['is_featured']) ? 1 : 0;
     $series_id      = (int)($body['series_id'] ?? 0) ?: null;
     $series_order   = (int)($body['series_order'] ?? 0);
     $related_engine = trim($body['related_engine'] ?? '') ?: null;
@@ -79,9 +80,9 @@ if ($action === 'save') {
     }
 
     if ($id) {
-        $pdo->prepare('UPDATE blog_posts SET title=?, summary=?, cta_text=?, source_text=?, content=?, thumbnail_url=?,
+        $pdo->prepare('UPDATE blog_posts SET title=?, summary=?, cta_text=?, source_text=?, content=?, thumbnail_url=?, is_featured=?,
                 series_id=?, series_order=?, related_engine=?, related_drawing_id=?, question=? WHERE id=?')
-            ->execute([$title, $summary, $cta_text, $source_text, $content, $thumbnail_url,
+            ->execute([$title, $summary, $cta_text, $source_text, $content, $thumbnail_url, $is_featured,
                 $series_id, $series_order, $related_engine, $related_drawing_id, $question, $id]);
     } else {
         // 새 글은 항상 비공개(is_active=0)로 시작하고 slug는 NULL — 관리자가 검토 후
@@ -89,9 +90,9 @@ if ($action === 'save') {
         // 새 글은 목록 맨 앞(sort_order=0)에 놓는다 — 블로그 인덱스가 최신 글을 앞에 기대하므로
         // 기존 글들을 전부 한 칸씩 뒤로 미룸(MAX+1로 맨 뒤에 붙이면 관리자가 매번 수동으로 끌어올려야 했음)
         $pdo->exec('UPDATE blog_posts SET sort_order = sort_order + 1');
-        $pdo->prepare('INSERT INTO blog_posts (title, slug, summary, cta_text, source_text, content, thumbnail_url, sort_order,
-                series_id, series_order, related_engine, related_drawing_id, question, is_active) VALUES (?,NULL,?,?,?,?,?,0,?,?,?,?,?,0)')
-            ->execute([$title, $summary, $cta_text, $source_text, $content, $thumbnail_url,
+        $pdo->prepare('INSERT INTO blog_posts (title, slug, summary, cta_text, source_text, content, thumbnail_url, is_featured, sort_order,
+                series_id, series_order, related_engine, related_drawing_id, question, is_active) VALUES (?,NULL,?,?,?,?,?,?,0,?,?,?,?,?,0)')
+            ->execute([$title, $summary, $cta_text, $source_text, $content, $thumbnail_url, $is_featured,
                 $series_id, $series_order, $related_engine, $related_drawing_id, $question]);
         $id = (int)$pdo->lastInsertId();
     }

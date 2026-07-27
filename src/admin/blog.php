@@ -159,6 +159,12 @@ $engineOptions = [
                             style="height:38px;padding:0 10px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg);font-family:inherit;font-size:13px;color:var(--text);outline:none;width:100%;">
                     </div>
                     <div class="adm-mfield">
+                        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+                            <input id="postIsFeatured" type="checkbox" style="width:auto;">
+                            히어로 캐로셀 노출 <span style="font-size:11px;color: var(--text);font-weight:400;">(블로그 메인·홈 상단 캐로셀에 직접 선택해 노출, 날짜 무관)</span>
+                        </label>
+                    </div>
+                    <div class="adm-mfield">
                         <label>제목</label>
                         <input id="postTitle" type="text" placeholder="예: 한옥 살창, 사계절을 담다" maxlength="150">
                     </div>

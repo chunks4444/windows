@@ -70,13 +70,13 @@ try {
 } catch (Throwable $e) {
     $collectionCards = [];
 }
-// 블로그 글 3개 (테이블 없으면 빈 배열)
+// 블로그 글 3개 — 블로그 메인 히어로와 동일하게, 관리자가 직접 고른 글만(is_featured), 날짜 무관
 try {
     $latestPosts = $pdo ? $pdo->query(
         "SELECT p.*, s.name AS series_name
          FROM blog_posts p
          LEFT JOIN blog_series s ON s.id = p.series_id
-         WHERE p.is_active=1 ORDER BY p.sort_order, p.id LIMIT 3"
+         WHERE p.is_active=1 AND p.is_featured=1 ORDER BY p.sort_order, p.id LIMIT 3"
     )->fetchAll() : [];
 } catch (Throwable $e) {
     $latestPosts = [];
