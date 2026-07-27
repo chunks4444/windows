@@ -142,7 +142,24 @@ if (!$isAdminViewer && !$isBotViewer) {
     } catch (Throwable $e) {}
 }
 
-if (!$isAdminViewer && !$isBotViewer && !$isUaRotationBot && empty($_COOKIE[$viewCookie])) {
+// UA 지문 스크래퍼 탐지: 로테이팅 프록시로 IP만 바꿔가며 같은 UA로 같은 글을 반복 조회하는
+// 패턴(예: 매번 다른 IP지만 전부 "macOS Chrome 142"로 동일) — IP당 1회뿐이라 위 로테이션
+// 탐지로는 못 잡으므로, 같은 글에 같은 UA가 서로 다른 IP 3개 이상에서 찍히면 봇으로 간주
+$isUaFingerprintBot = false;
+if (!$isAdminViewer && !$isBotViewer && !$isUaRotationBot) {
+    try {
+        $currentPage = $_SERVER['REQUEST_URI'] ?? '';
+        $fpStmt = $pdo->prepare(
+            'SELECT COUNT(DISTINCT ip_hash) FROM page_views
+             WHERE page = ? AND ua_hash = ?
+               AND visited_at > DATE_SUB(NOW(), INTERVAL 1 DAY)'
+        );
+        $fpStmt->execute([$currentPage, $viewerUaHash]);
+        $isUaFingerprintBot = (int)$fpStmt->fetchColumn() >= 3;
+    } catch (Throwable $e) {}
+}
+
+if (!$isAdminViewer && !$isBotViewer && !$isUaRotationBot && !$isUaFingerprintBot && empty($_COOKIE[$viewCookie])) {
     try {
         $pdo->prepare('UPDATE blog_posts SET view_count = view_count + 1 WHERE id=?')->execute([$post['id']]);
     } catch (Throwable $e) {}
