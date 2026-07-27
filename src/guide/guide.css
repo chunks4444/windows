@@ -169,7 +169,7 @@ body:has(.guide-wrap) {
 .gs-home {
     display: flex; align-items: center; gap: 8px;
     padding: 4px 20px 18px;
-    font-size: 13px; font-weight: 700;
+    font-size: 17px; font-weight: 700;
     color: var(--text); text-decoration: none;
     border-bottom: 1px solid var(--border);
     margin-bottom: 8px;
@@ -205,7 +205,7 @@ body:has(.guide-wrap) {
 .gs-link {
     display: flex; align-items: center; gap: 8px;
     padding: 7px 20px 7px 28px;
-    font-size: 13px; color: var(--text);
+    font-size: 17px; color: var(--text);
     text-decoration: none;
     transition: background .1s, color .1s;
     border-right: 2px solid transparent;
