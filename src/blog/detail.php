@@ -155,7 +155,7 @@ if (!$isAdminViewer && !$isBotViewer && !$isUaRotationBot) {
                AND visited_at > DATE_SUB(NOW(), INTERVAL 1 DAY)'
         );
         $fpStmt->execute([$currentPage, $viewerUaHash]);
-        $isUaFingerprintBot = (int)$fpStmt->fetchColumn() >= 3;
+        $isUaFingerprintBot = (int)$fpStmt->fetchColumn() >= 10;
     } catch (Throwable $e) {}
 }
 
