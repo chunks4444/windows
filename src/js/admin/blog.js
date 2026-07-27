@@ -22,9 +22,11 @@ async function loadBlogViewTrend() {
     const data = await res.json();
     if (!res.ok) return;
     const rows = data.rows || [];
-    // 스냅샷은 누적 총합이라, 화면에는 전날 대비 증가분(그날 새로 찍힌 조회수)을 막대로 보여준다
+    // 스냅샷은 "그날 첫 방문 때" 찍히는 그 시점의 누적 총합 — 즉 snapshot(N)은 N일이
+    // "시작될 때"의 값이다. 그래서 snapshot(N) - snapshot(N-1)은 N일이 아니라 N-1일
+    // 하루 동안 실제로 늘어난 양이므로, 그 증가분은 앞쪽 스냅샷(N-1)의 날짜로 표시한다.
     const daily = rows.slice(1).map((r, i) => ({
-        date: r.snapshot_date.slice(5), // MM-DD
+        date: rows[i].snapshot_date.slice(5), // MM-DD — 증가분이 실제로 발생한 날짜(전날)
         delta: Math.max(0, (+r.total_views) - (+rows[i].total_views)),
     }));
     const labels = daily.map(d => d.date);
