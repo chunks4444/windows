@@ -12,7 +12,7 @@ body { background: #fff; }
     padding: 2.5rem 0 0;
 }
 .bg-hero-inner {
-    max-width: 1320px; margin: 0 auto; padding: 0 2rem;
+    max-width: 1024px; margin: 0 auto; padding: 0 2rem;
 }
 .bg-hero-label {
     display: inline-block;
@@ -31,13 +31,13 @@ body { background: #fff; }
 
 /* ── 목록 래퍼 ────────────────────────────────────────────── */
 .bg-list-section {
-    max-width: 1320px; margin: 0 auto;
+    max-width: 1024px; margin: 0 auto;
     padding: 2rem 2rem 4rem;
 }
 
 /* ── 티스토리 스타일 레이아웃 (메인 + 사이드바) ────────────── */
 .bg-tistory-layout {
-    max-width: 1320px; margin: 0 auto;
+    max-width: 1024px; margin: 0 auto;
     padding: 2.2rem 2rem 4rem;
     display: grid;
     grid-template-columns: 1fr 340px;
@@ -187,7 +187,7 @@ body { background: #fff; }
 
 /* 빈 상태 */
 .bg-empty {
-    max-width: 1320px; margin: 0 auto;
+    max-width: 1024px; margin: 0 auto;
     text-align: center; padding: 5rem 1rem;
     color: var(--text-muted); font-size: var(--fs-16);
 }
