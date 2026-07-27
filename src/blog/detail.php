@@ -116,10 +116,6 @@ $isBotViewer = $viewerUa === '' || preg_match(
     'yeti|daumoa|petalbot|semrush|ahrefs|mj12bot|dotbot|python-requests|curl|wget|headless/i',
     $viewerUa
 );
-// 실기기라면 자동 업데이트로 절대 나올 수 없는 오래된 iOS 버전(9~13, 2019년 이전 배포)을 자칭하는
-// UA — 매번 다른 클라우드 IP를 돌려쓰면서 이 UA만 고정으로 재사용하는 스크래퍼가 걸려서 추가함
-$isBotViewer = $isBotViewer || preg_match('/CPU (iPhone )?OS (9|1[0-3])_/i', $viewerUa);
-
 // UA 위장 크롤러 탐지: 같은 IP가 짧은 시간 안에 서로 다른 UA로 여러 번 찍히면
 // (실제 사람은 한 세션 내내 브라우저가 바뀌지 않음) 봇으로 간주해 카운트에서 제외
 $isUaRotationBot = false;

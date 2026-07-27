@@ -25,14 +25,21 @@ const PMOK_AUTOBLOCK_PATTERNS = [
 ];
 
 // 구글봇은 이 도메인의 예전 워드프레스 시절 URL(예: /wp-admin)을 재크롤링하다 위 패턴에
-// 그대로 걸리는 경우가 실제로 있었다(사이트 전체가 오차단됨). 구글이 공식 발표한 크롤러
-// 전용 대역(66.249.64.0/19, 다른 용도로 쓰이지 않음)은 자동 차단 대상에서 제외한다 —
+// 그대로 걸리는 경우가 실제로 있었다(사이트 전체가 오차단됨). 예전엔 구글이 공식 발표한
+// 크롤러 대역 중 66.249.64.0/19 하나만 고정 CIDR로 예외 처리했는데, 구글 크롤러는 그 외에도
+// 192.178.4.0~7.x/27, 34.x.x.x/28 등 GCP 대역을 함께 쓴다 — 그 대역에서 들어온 정상
+// 구글봇이 위 패턴에 걸려 차단되면 이후 sitemap.xml 요청까지 같은 IP라서 같이 403 나버림
+// (실제로 구글 서치콘솔 "사이트맵을 가져올 수 없음" 원인이 이거였음). 고정 목록은 구글이
+// 대역을 늘릴 때마다 같이 안 늘리면 또 재발하므로, 빙 검증과 동일하게 역방향 DNS로 확인한다
+// (구글 공식 안내 방식: PTR이 *.googlebot.com 또는 *.google.com으로 끝나는지 확인 후,
+// 그 호스트명을 정방향 재조회해 같은 IP로 돌아오는지 대조해 PTR 위조를 방지).
 // 404는 정상적으로 그대로 나가고, 차단만 안 한다.
-function _pmok_is_known_crawler_ip(string $ip): bool {
-    $long = ip2long($ip);
-    if ($long === false) return false;
-    // Google: 66.249.64.0/19
-    return ($long & ~0x1FFF) === ip2long('66.249.64.0');
+function _pmok_is_verified_googlebot(string $ip): bool {
+    $host = @gethostbyaddr($ip);
+    if (!$host || $host === $ip) return false;
+    $host = rtrim($host, '.');
+    if (!preg_match('/\.(googlebot\.com|google\.com)$/i', $host)) return false;
+    return @gethostbyname($host) === $ip;
 }
 
 // 빙(Bing)은 크롤러 IP 대역이 넓고 자주 바뀌어 고정 CIDR로 못 박을 수 없다 — MS가 공식
@@ -49,7 +56,6 @@ function _pmok_is_verified_bingbot(string $ip): bool {
 
 $_pmokBlockIp = _pmok_block_get_ip();
 if ($_pmokBlockIp === '-') return;
-$_pmokIsKnownCrawler = _pmok_is_known_crawler_ip($_pmokBlockIp);
 
 try {
     require_once __DIR__ . '/db.php';
@@ -63,19 +69,17 @@ try {
         exit;
     }
 
-    if (!$_pmokIsKnownCrawler) {
-        $uri = strtolower($_SERVER['REQUEST_URI'] ?? '');
-        foreach (PMOK_AUTOBLOCK_PATTERNS as $pattern) {
-            if (strpos($uri, $pattern) !== false) {
-                if (_pmok_is_verified_bingbot($_pmokBlockIp)) break;
-                $pdo->prepare(
-                    'INSERT INTO blocked_ips (ip, reason) VALUES (?, ?) ON DUPLICATE KEY UPDATE reason = VALUES(reason)'
-                )->execute([$_pmokBlockIp, '자동 차단: 취약점 탐색 경로(' . $pattern . ')']);
-                http_response_code(403);
-                header('Content-Type: text/plain; charset=UTF-8');
-                echo 'Forbidden';
-                exit;
-            }
+    $uri = strtolower($_SERVER['REQUEST_URI'] ?? '');
+    foreach (PMOK_AUTOBLOCK_PATTERNS as $pattern) {
+        if (strpos($uri, $pattern) !== false) {
+            if (_pmok_is_verified_googlebot($_pmokBlockIp) || _pmok_is_verified_bingbot($_pmokBlockIp)) break;
+            $pdo->prepare(
+                'INSERT INTO blocked_ips (ip, reason) VALUES (?, ?) ON DUPLICATE KEY UPDATE reason = VALUES(reason)'
+            )->execute([$_pmokBlockIp, '자동 차단: 취약점 탐색 경로(' . $pattern . ')']);
+            http_response_code(403);
+            header('Content-Type: text/plain; charset=UTF-8');
+            echo 'Forbidden';
+            exit;
         }
     }
 } catch (Throwable $e) {

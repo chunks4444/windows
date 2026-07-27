@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../../../lib/oauth.php';
 require_once __DIR__ . '/../../../lib/db.php';
 require_once __DIR__ . '/../../../lib/jwt.php';
+require_once __DIR__ . '/../../../lib/mailer.php';
 
 function oauth_fail(string $msg): void {
     header('Location: /?oauth_error=' . urlencode($msg));
@@ -47,6 +48,7 @@ if (!$user) {
         ->execute([$email, password_hash(bin2hex(random_bytes(16)), PASSWORD_BCRYPT)]);
     $userId = (int) $pdo->lastInsertId();
     $role   = 'u';
+    send_mail($email, '가입을 환영합니다!', 'welcome', ['email' => $email], '', 'member', mail_address('sales'));
 } else {
     $userId = (int) $user['id'];
     $role   = $user['role'];
