@@ -698,10 +698,14 @@ CREATE TABLE IF NOT EXISTS blog_series (
     name         VARCHAR(80)       NOT NULL COMMENT '시리즈명',
     tagline      VARCHAR(200)      NOT NULL DEFAULT '' COMMENT '시리즈 한줄 소개',
     show_on_home TINYINT(1)        NOT NULL DEFAULT 1 COMMENT '홈 화면 인용 배너 노출 여부',
+    is_completed TINYINT(1)        NOT NULL DEFAULT 0 COMMENT '연재 완결 여부 (0=연재중, 1=완결)',
     sort_order   SMALLINT UNSIGNED NOT NULL DEFAULT 0,
     PRIMARY KEY (id),
     UNIQUE KEY uq_series_name (name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='블로그 시리즈 (연재 묶음)';
+
+-- 2026-07-27 시리즈 연재중/완결 상태 표시
+-- ALTER TABLE blog_series ADD COLUMN is_completed TINYINT(1) NOT NULL DEFAULT 0 COMMENT '연재 완결 여부 (0=연재중, 1=완결)' AFTER show_on_home;
 
 -- 블로그 글. 시리즈에 속하거나(series_id) 독립 글일 수 있고, related_drawing_id/related_engine으로 특정 엔진·도면과 양방향 링크됨
 -- (엔진 페이지 → 관련 블로그 글, 블로그 글 → "이 엔진으로 만들어보기" 딥링크)

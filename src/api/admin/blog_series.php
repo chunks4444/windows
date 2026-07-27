@@ -15,7 +15,7 @@ $pdo  = db();
 $body = json_decode(file_get_contents('php://input'), true) ?? [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    $rows = $pdo->query("SELECT id, name, tagline, sort_order, show_on_home FROM blog_series ORDER BY sort_order, id")->fetchAll();
+    $rows = $pdo->query("SELECT id, name, tagline, sort_order, show_on_home, is_completed FROM blog_series ORDER BY sort_order, id")->fetchAll();
     echo json_encode(['series' => $rows]);
     exit;
 }
@@ -23,8 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($body['name'] ?? '');
     if (!$name) { http_response_code(422); echo json_encode(['error' => '이름 필수']); exit; }
-    $pdo->prepare("INSERT INTO blog_series (name, tagline, sort_order, show_on_home) VALUES (?,?,?,?)")
-        ->execute([$name, trim($body['tagline'] ?? ''), (int)($body['sort_order'] ?? 0), !empty($body['show_on_home']) ? 1 : 0]);
+    $pdo->prepare("INSERT INTO blog_series (name, tagline, sort_order, show_on_home, is_completed) VALUES (?,?,?,?,?)")
+        ->execute([$name, trim($body['tagline'] ?? ''), (int)($body['sort_order'] ?? 0), !empty($body['show_on_home']) ? 1 : 0, !empty($body['is_completed']) ? 1 : 0]);
     echo json_encode(['ok' => true, 'id' => (int)$pdo->lastInsertId()]);
     exit;
 }
@@ -33,8 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     $id   = (int)($body['id'] ?? 0);
     $name = trim($body['name'] ?? '');
     if (!$id || !$name) { http_response_code(422); echo json_encode(['error' => 'id, 이름 필수']); exit; }
-    $pdo->prepare("UPDATE blog_series SET name=?, tagline=?, sort_order=?, show_on_home=? WHERE id=?")
-        ->execute([$name, trim($body['tagline'] ?? ''), (int)($body['sort_order'] ?? 0), !empty($body['show_on_home']) ? 1 : 0, $id]);
+    $pdo->prepare("UPDATE blog_series SET name=?, tagline=?, sort_order=?, show_on_home=?, is_completed=? WHERE id=?")
+        ->execute([$name, trim($body['tagline'] ?? ''), (int)($body['sort_order'] ?? 0), !empty($body['show_on_home']) ? 1 : 0, !empty($body['is_completed']) ? 1 : 0, $id]);
     echo json_encode(['ok' => true]);
     exit;
 }

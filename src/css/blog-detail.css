@@ -92,6 +92,13 @@ body { background: #fff; }
 .bd-series-box-total {
     font-weight: 500; color: var(--text-muted); letter-spacing: 0;
 }
+.bd-series-box-status {
+    display: inline-block;
+    font-size: var(--fs-11); font-weight: 700; letter-spacing: 0;
+    padding: .1rem .5rem; border-radius: 999px;
+}
+.bd-series-box-status.is-ongoing { background: rgba(var(--accent-rgb), 0.15); color: var(--accent); }
+.bd-series-box-status.is-completed { background: rgba(var(--text-rgb), 0.08); color: var(--text-muted); }
 .bd-series-box-tagline {
     font-size: var(--fs-18); font-weight: 600; color: var(--text);
     margin: 0 0 .8rem;

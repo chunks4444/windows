@@ -60,7 +60,7 @@ try {
         $next->execute([$post['series_id'], $post['series_order']]);
         $next = $next->fetch();
 
-        $si = $pdo->prepare('SELECT id,name,tagline,sort_order FROM blog_series WHERE id=?');
+        $si = $pdo->prepare('SELECT id,name,tagline,sort_order,is_completed FROM blog_series WHERE id=?');
         $si->execute([$post['series_id']]);
         $seriesInfo = $si->fetch();
 
@@ -237,7 +237,7 @@ $metaKeywords = implode(', ', array_unique(array_filter([
 
         <?php if ($seriesInfo): ?>
         <div class="bd-series-box">
-            <p class="bd-series-box-label">이 시리즈 · <?= htmlspecialchars($seriesInfo['name']) ?><?= $post['series_order'] ? ' · ' . (int)$post['series_order'] . '화' : '' ?> <span class="bd-series-box-total">(전체 <?= count($seriesEpisodes) ?>화)</span></p>
+            <p class="bd-series-box-label">이 시리즈 · <?= htmlspecialchars($seriesInfo['name']) ?><?= $post['series_order'] ? ' · ' . (int)$post['series_order'] . '화' : '' ?> <span class="bd-series-box-total">(전체 <?= count($seriesEpisodes) ?>화)</span> <span class="bd-series-box-status <?= $seriesInfo['is_completed'] ? 'is-completed' : 'is-ongoing' ?>"><?= $seriesInfo['is_completed'] ? '완결' : '연재중' ?></span></p>
             <?php if ($seriesInfo['tagline']): ?>
             <p class="bd-series-box-tagline">"<?= htmlspecialchars($seriesInfo['tagline']) ?>"</p>
             <?php endif; ?>

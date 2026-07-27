@@ -30,10 +30,11 @@ try {
     ");
     $pdo->exec("
     CREATE TABLE IF NOT EXISTS blog_series (
-        id         INT UNSIGNED      NOT NULL AUTO_INCREMENT,
-        name       VARCHAR(80)       NOT NULL,
-        tagline    VARCHAR(200)      NOT NULL DEFAULT '',
-        sort_order SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+        id           INT UNSIGNED      NOT NULL AUTO_INCREMENT,
+        name         VARCHAR(80)       NOT NULL,
+        tagline      VARCHAR(200)      NOT NULL DEFAULT '',
+        is_completed TINYINT(1)        NOT NULL DEFAULT 0,
+        sort_order   SMALLINT UNSIGNED NOT NULL DEFAULT 0,
         PRIMARY KEY (id),
         UNIQUE KEY uq_series_name (name)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
@@ -93,7 +94,7 @@ try {
     // 사이드바 — 시리즈별 카드 (시리즈명 + 태그라인 + 최근 글 최대 3개), 시리즈의 최신 발행일 순으로 정렬
     $seriesRows = $pdo->query("
         SELECT p.id, p.title, p.slug, p.created_at, p.series_id, p.series_order,
-               s.name AS series_name, s.tagline AS series_tagline, s.sort_order AS series_sort
+               s.name AS series_name, s.tagline AS series_tagline, s.sort_order AS series_sort, s.is_completed
         FROM blog_posts p
         JOIN blog_series s ON s.id = p.series_id
         WHERE p.is_active = 1
@@ -103,7 +104,7 @@ try {
     foreach ($seriesRows as $r) {
         $sid = $r['series_id'];
         if (!isset($seriesCards[$sid])) {
-            $seriesCards[$sid] = ['name' => $r['series_name'], 'tagline' => $r['series_tagline'], 'posts' => [], 'total' => 0, 'latest' => $r['created_at']];
+            $seriesCards[$sid] = ['name' => $r['series_name'], 'tagline' => $r['series_tagline'], 'posts' => [], 'total' => 0, 'latest' => $r['created_at'], 'is_completed' => $r['is_completed']];
         }
         $seriesCards[$sid]['total']++;
         if (count($seriesCards[$sid]['posts']) < 5) $seriesCards[$sid]['posts'][] = $r;
@@ -227,7 +228,13 @@ try {
         <aside class="bg-sidebar">
             <?php foreach ($seriesCards as $sc): ?>
             <div class="bg-side-card">
-                <h3 class="bg-side-card-title"><?= htmlspecialchars($sc['name']) ?> <span class="bg-side-card-count">전체 <?= (int)$sc['total'] ?>화</span></h3>
+                <h3 class="bg-side-card-title">
+                    <?= htmlspecialchars($sc['name']) ?>
+                    <span class="bg-side-card-meta">
+                        <span class="bg-side-card-count">전체 <?= (int)$sc['total'] ?>화</span>
+                        <span class="bg-side-card-status <?= $sc['is_completed'] ? 'is-completed' : 'is-ongoing' ?>"><?= $sc['is_completed'] ? '완결' : '연재중' ?></span>
+                    </span>
+                </h3>
                 <?php if ($sc['tagline']): ?>
                 <p class="bg-side-card-tagline">"<?= htmlspecialchars($sc['tagline']) ?>"</p>
                 <?php endif; ?>
