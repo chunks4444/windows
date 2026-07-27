@@ -68,7 +68,7 @@ body:has(.guide-wrap) {
 .guide-landing {
     flex: 1;
     background: #fff;
-    max-width: 1320px;
+    max-width: 1024px;
     margin: 0 auto;
     width: 100%;
 }
@@ -78,7 +78,7 @@ body:has(.guide-wrap) {
     padding: 2.5rem 0 0;
 }
 .guide-hero-inner {
-    max-width: 1320px; margin: 0 auto; padding: 0 2rem;
+    max-width: 1024px; margin: 0 auto; padding: 0 2rem;
 }
 .guide-hero-label {
     display: inline-block;
@@ -97,7 +97,7 @@ body:has(.guide-wrap) {
 
 /* ── 카테고리 카드 ────────────────────────────── */
 .guide-categories {
-    max-width: 1320px;
+    max-width: 1024px;
     margin: 0 auto;
     padding: 48px 24px 80px;
     display: grid;
