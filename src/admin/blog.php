@@ -228,7 +228,8 @@ $engineOptions = [
             </div>
         </div>
         <div class="adm-modal-foot">
-            <button class="adm-btn-cancel" onclick="closeModal()">취소</button>
+            <span id="postSaveStatus" class="pc-status" style="margin-right:auto;"></span>
+            <button class="adm-btn-cancel" onclick="closeModal()">닫기</button>
             <button class="adm-btn-save" onclick="savePost()">저장</button>
         </div>
     </div>

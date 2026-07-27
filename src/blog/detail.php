@@ -106,9 +106,11 @@ $engineLabels = [
 // 조회수 집계 — 방문자당 24시간에 1회만 카운트 (쿠키 기반 중복 방지), 관리자 본인 조회·봇은 제외
 $viewCookie = 'blog_view_' . $post['id'];
 $isAdminViewer = false;
+$isSuperViewer = false; // 블로그 관리(어드민)는 role='s' 전용이라 편집 링크는 이 조건으로만 노출
 try {
     $viewerPayload = jwt_from_request();
     $isAdminViewer = $viewerPayload && in_array($viewerPayload['role'] ?? '', ['s', 'm'], true);
+    $isSuperViewer = $viewerPayload && ($viewerPayload['role'] ?? '') === 's';
 } catch (Throwable $e) {}
 $viewerUa = $_SERVER['HTTP_USER_AGENT'] ?? '';
 $isBotViewer = $viewerUa === '' || preg_match(
@@ -232,6 +234,9 @@ $metaKeywords = implode(', ', array_unique(array_filter([
                 </button>
                 <a id="btnShareX" class="bd-share-btn" href="#" target="_blank" rel="noopener" title="X에 공유"><i class="bi bi-twitter-x"></i></a>
                 <a id="btnShareThreads" class="bd-share-btn" href="#" target="_blank" rel="noopener" title="스레드에 공유"><i class="bi bi-threads"></i></a>
+                <?php if ($isSuperViewer): ?>
+                <a class="bd-share-btn" href="/src/admin/blog.php?edit=<?= (int)$post['id'] ?>" title="이 글 편집"><i class="bi bi-pencil-fill"></i></a>
+                <?php endif; ?>
             </div>
         </header>
 

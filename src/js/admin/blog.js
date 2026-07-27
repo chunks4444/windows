@@ -206,8 +206,16 @@ async function savePost() {
     if (window._postThumbData) body.thumbnail_data = window._postThumbData;
     const res  = await fetch(API, { method: 'POST', headers: _h(), body: JSON.stringify(body) });
     const data = await res.json();
-    if (data.ok) { closeModal(); loadPosts(); }
-    else alert(data.error || '저장 실패');
+    const st = document.getElementById('postSaveStatus');
+    if (data.ok) {
+        if (!body.id && data.post?.id) document.getElementById('postId').value = data.post.id;
+        window._postThumbData = null;
+        st.className = 'pc-status ok'; st.textContent = '저장됨';
+        setTimeout(() => { if (st.textContent === '저장됨') st.textContent = ''; }, 2000);
+        await loadPosts();
+    } else {
+        st.className = 'pc-status err'; st.textContent = data.error || '저장 실패';
+    }
 }
 
 async function deletePost(id) {
@@ -330,7 +338,7 @@ function bindDrag() {
     });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const contentImgFile = document.getElementById('postContentImgFile');
 
     quill = new Quill('#postContentEditor', {
@@ -369,7 +377,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const user = JSON.parse(localStorage.getItem('pmok_auth_user') || 'null');
     if (!user || user.role !== 's') { document.getElementById('blogAuthWall').style.display = ''; return; }
     document.getElementById('blogPage').style.display = '';
-    loadPosts();
+    await loadPosts();
     loadCollectionPatternsForPicker();
     loadBlogViewTrend();
+
+    // 블로그 디테일 페이지의 "이 글 편집" 링크(?edit=123)로 들어오면 바로 편집 모달을 연다
+    const editId = parseInt(new URLSearchParams(location.search).get('edit'));
+    if (editId && posts.some(p => p.id === editId)) openModal(editId);
 });
