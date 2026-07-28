@@ -162,7 +162,7 @@ foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
                         </label>
                     </div>
                     <div class="adm-mfield">
-                        <label>제목</label>
+                        <label>제목 <span style="font-size:11px;color: var(--text);font-weight:400;">(- — " ' * : 문자는 검색엔진 연산자와 혼동될 수 있어 사용 불가)</span></label>
                         <input id="postTitle" type="text" placeholder="예: 한옥 살창, 사계절을 담다" maxlength="150">
                     </div>
                     <div class="adm-mfield">

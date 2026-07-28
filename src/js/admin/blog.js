@@ -205,6 +205,7 @@ async function savePost() {
         related_drawing_id:  parseInt(document.getElementById('postRelatedDrawingId').value) || 0,
     };
     if (!body.title || quill.getText().trim().length === 0) { alert('제목과 본문을 입력해주세요.'); return; }
+    if (/[-—"'*:]/.test(body.title)) { alert('제목에는 - — " \' * : 문자를 쓸 수 없습니다.'); return; }
     if (window._postThumbData) body.thumbnail_data = window._postThumbData;
     const res  = await fetch(API, { method: 'POST', headers: _h(), body: JSON.stringify(body) });
     const data = await res.json();

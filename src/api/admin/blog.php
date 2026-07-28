@@ -73,6 +73,13 @@ if ($action === 'save') {
     $related_drawing_id = (int)($body['related_drawing_id'] ?? 0) ?: null;
     $question       = trim($body['question'] ?? '');
 
+    // 검색엔진 연산자로 오인될 수 있는 문자는 제목에 못 들어가게 막는다 (- — " ' * :)
+    if (preg_match('/[-—"\'*:]/u', $title)) {
+        http_response_code(422);
+        echo json_encode(['error' => '제목에는 - — " \' * : 문자를 쓸 수 없습니다.']);
+        exit;
+    }
+
     if (!empty($body['thumbnail_data'])) {
         $saved = saveBlogImage($body['thumbnail_data']);
         if ($saved) $thumbnail_url = $saved;
