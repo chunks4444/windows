@@ -60,7 +60,7 @@ async function loadCollectionPatternsForPicker() {
     const patterns = (data.patterns || []).filter(p => p.drawing_id);
     const sel = document.getElementById('postRelatedDrawingId');
     sel.innerHTML = '<option value="">— 없음 —</option>' +
-        patterns.map(p => `<option value="${p.drawing_id}">${esc(p.name_ko || p.slug)} (도면 #${p.drawing_id})</option>`).join('');
+        patterns.map(p => `<option value="${p.drawing_id}">${esc(p.display_name)} (도면 #${p.drawing_id})</option>`).join('');
 }
 
 function render() {

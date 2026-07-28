@@ -7,6 +7,7 @@ set_exception_handler(function(Throwable $e) {
 });
 require_once __DIR__ . '/../../lib/db.php';
 require_once __DIR__ . '/../../lib/jwt.php';
+require_once __DIR__ . '/../../lib/slug.php';
 
 $payload = jwt_from_request();
 if (!$payload || ($payload['role'] ?? '') !== 's') {
@@ -45,7 +46,8 @@ if ($method === 'GET') {
          ORDER BY p.sort_order, p.id'
     )->fetchAll();
     foreach ($rows as &$r) {
-        $r['keywords'] = $r['keywords'] ? explode(',', $r['keywords']) : [];
+        $r['keywords']     = $r['keywords'] ? explode(',', $r['keywords']) : [];
+        $r['display_name'] = library_pattern_display_name($r['slug'], $r['name_ko']);
     }
     echo json_encode(['patterns' => $rows]);
     exit;
