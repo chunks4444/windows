@@ -39,7 +39,7 @@ $seriesInfo     = null;
 $seriesEpisodes = [];
 try {
     $pdo = db();
-    $relatedDrawingJoin = 'SELECT p.*, lp.name_ko AS related_pattern_name, lp.image_path AS related_pattern_image, lp.slug AS related_pattern_slug
+    $relatedDrawingJoin = 'SELECT p.*, lp.name_ko AS related_pattern_name
         FROM blog_posts p
         LEFT JOIN library_patterns lp ON lp.drawing_id = p.related_drawing_id AND lp.is_active = 1';
     if ($slug !== '') {
@@ -302,9 +302,6 @@ $metaKeywords = implode(', ', array_unique(array_filter([
 
         <?php if ($post['related_engine'] && isset($engineLabels[$post['related_engine']])): ?>
         <div class="bd-engine-box">
-            <?php if (!empty($post['related_pattern_image'])): ?>
-            <img class="bd-engine-box-thumb" src="<?= htmlspecialchars($post['related_pattern_image']) ?>" alt="<?= htmlspecialchars($post['related_pattern_name'] ?: $engineLabels[$post['related_engine']]) ?>" loading="lazy">
-            <?php endif; ?>
             <p class="bd-engine-box-title">이 살의 이야기, 직접 만들어보세요</p>
             <p class="bd-engine-box-desc">글에서 다룬 <?= htmlspecialchars($engineLabels[$post['related_engine']]) ?><?= $post['related_pattern_name'] ? ' · ' . htmlspecialchars($post['related_pattern_name']) : '' ?> 패턴을 스튜디오에서 바로 조작해볼 수 있습니다.</p>
             <?php
