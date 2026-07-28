@@ -39,13 +39,16 @@ $seriesInfo     = null;
 $seriesEpisodes = [];
 try {
     $pdo = db();
+    $relatedDrawingJoin = 'SELECT p.*, lp.name_ko AS related_pattern_name, lp.image_path AS related_pattern_image, lp.slug AS related_pattern_slug
+        FROM blog_posts p
+        LEFT JOIN library_patterns lp ON lp.drawing_id = p.related_drawing_id AND lp.is_active = 1';
     if ($slug !== '') {
-        $stmt = $pdo->prepare('SELECT * FROM blog_posts WHERE slug=? AND is_active=1');
+        $stmt = $pdo->prepare($relatedDrawingJoin . ' WHERE p.slug=? AND p.is_active=1');
         $stmt->execute([$slug]);
         $post = $stmt->fetch();
     } elseif ($id) {
         // 예전 ?id= 링크 호환 — 새 슬러그 주소로 301 리다이렉트 (SEO 중복 콘텐츠 방지)
-        $stmt = $pdo->prepare('SELECT * FROM blog_posts WHERE id=? AND is_active=1');
+        $stmt = $pdo->prepare($relatedDrawingJoin . ' WHERE p.id=? AND p.is_active=1');
         $stmt->execute([$id]);
         $post = $stmt->fetch();
         if ($post) { header('Location: /blog/' . rawurlencode($post['slug']), true, 301); exit; }
@@ -94,14 +97,11 @@ try {
 }
 if (!$post) { header('Location: /blog/'); exit; }
 
-$engineLabels = [
-    'classic'  => '정자살(Classic Lattice)',
-    'square'   => '완자살(Square Lattice)',
-    'cross'    => '교살(Cross Lattice)',
-    'triangle' => '세모 솟을살(Triangle Lattice)',
-    'diamond'  => '마름모살(Diamond Lattice)',
-    'hexagon'  => '육모 솟을살(Hexagon Lattice)',
-];
+require_once __DIR__ . '/../lib/engine_icons.php';
+$engineLabels = [];
+foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
+    $engineLabels[$engineKey] = $engineLabel . '(' . ucfirst($engineKey) . ' Lattice)';
+}
 
 // 조회수 집계 — 방문자당 24시간에 1회만 카운트 (쿠키 기반 중복 방지), 관리자 본인 조회·봇은 제외
 $viewCookie = 'blog_view_' . $post['id'];
@@ -302,8 +302,11 @@ $metaKeywords = implode(', ', array_unique(array_filter([
 
         <?php if ($post['related_engine'] && isset($engineLabels[$post['related_engine']])): ?>
         <div class="bd-engine-box">
+            <?php if (!empty($post['related_pattern_image'])): ?>
+            <img class="bd-engine-box-thumb" src="<?= htmlspecialchars($post['related_pattern_image']) ?>" alt="<?= htmlspecialchars($post['related_pattern_name'] ?: $engineLabels[$post['related_engine']]) ?>" loading="lazy">
+            <?php endif; ?>
             <p class="bd-engine-box-title">이 살의 이야기, 직접 만들어보세요</p>
-            <p class="bd-engine-box-desc">글에서 다룬 <?= htmlspecialchars($engineLabels[$post['related_engine']]) ?> 패턴을 스튜디오에서 바로 조작해볼 수 있습니다.</p>
+            <p class="bd-engine-box-desc">글에서 다룬 <?= htmlspecialchars($engineLabels[$post['related_engine']]) ?><?= $post['related_pattern_name'] ? ' · ' . htmlspecialchars($post['related_pattern_name']) : '' ?> 패턴을 스튜디오에서 바로 조작해볼 수 있습니다.</p>
             <?php
             $bdEngineUrl = '/src/engine/' . $post['related_engine'] . '/' . $post['related_engine'] . '.php'
                 . ($post['related_drawing_id'] ? '?drawing_id=' . (int)$post['related_drawing_id'] : '');

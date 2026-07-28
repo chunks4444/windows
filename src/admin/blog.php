@@ -3,19 +3,16 @@ header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../lib/admin_guard.php';
 require_admin_role('s');
 require_once __DIR__ . '/../lib/db.php';
+require_once __DIR__ . '/../lib/engine_icons.php';
 try {
     $blogSeriesList = db()->query('SELECT id, name FROM blog_series ORDER BY sort_order, id')->fetchAll();
 } catch (Throwable $e) {
     $blogSeriesList = [];
 }
-$engineOptions = [
-    'classic'  => '정자살(Classic)',
-    'square'   => '완자살(Square)',
-    'cross'    => '교살(Cross)',
-    'triangle' => '세모 솟을살(Triangle)',
-    'diamond'  => '마름모살(Diamond)',
-    'hexagon'  => '육모 솟을살(Hexagon)',
-];
+$engineOptions = [];
+foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
+    $engineOptions[$engineKey] = $engineLabel . '(' . ucfirst($engineKey) . ')';
+}
 ?>
 <!DOCTYPE html>
 <html lang="ko">

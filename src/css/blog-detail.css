@@ -124,6 +124,11 @@ body { background: #fff; }
     background: rgba(var(--accent-rgb), 0.06);
     border-radius: var(--r);
 }
+.bd-engine-box-thumb {
+    width: 100%; max-width: 220px;
+    border-radius: calc(var(--r) - 4px);
+    object-fit: cover;
+}
 .bd-engine-box-title {
     font-size: var(--fs-16); font-weight: 700; color: var(--text);
     margin: 0;
