@@ -39,9 +39,10 @@ $seriesInfo     = null;
 $seriesEpisodes = [];
 try {
     $pdo = db();
-    $relatedDrawingJoin = 'SELECT p.*, lp.name_ko AS related_pattern_name
+    $relatedDrawingJoin = 'SELECT p.*, lp.name_ko AS related_pattern_name, d.type AS related_drawing_engine
         FROM blog_posts p
-        LEFT JOIN library_patterns lp ON lp.drawing_id = p.related_drawing_id AND lp.is_active = 1';
+        LEFT JOIN library_patterns lp ON lp.drawing_id = p.related_drawing_id AND lp.is_active = 1
+        LEFT JOIN drawings d ON d.id = p.related_drawing_id';
     if ($slug !== '') {
         $stmt = $pdo->prepare($relatedDrawingJoin . ' WHERE p.slug=? AND p.is_active=1');
         $stmt->execute([$slug]);
@@ -300,18 +301,22 @@ $metaKeywords = implode(', ', array_unique(array_filter([
             <p class="bd-source-license">평목 블로그의 글과 기록은 출처(pyeongmok.com)를 밝히고 자유롭게 인용 및 발췌하실 수 있습니다.</p>
         </div>
 
-        <?php if ($post['related_engine'] && isset($engineLabels[$post['related_engine']])): ?>
+        <?php
+        // 연관 엔진을 관리자가 비워두고 연관 도면만 지정한 경우, 도면 자체의 타입으로 보완
+        $bdEngineKey = $post['related_engine'] ?: $post['related_drawing_engine'];
+        ?>
+        <?php if ($bdEngineKey && isset($engineLabels[$bdEngineKey])): ?>
         <div class="bd-engine-box">
             <p class="bd-engine-box-title">이 살의 이야기, 직접 만들어보세요</p>
-            <p class="bd-engine-box-desc">글에서 다룬 <?= htmlspecialchars($engineLabels[$post['related_engine']]) ?><?= $post['related_pattern_name'] ? ' · ' . htmlspecialchars($post['related_pattern_name']) : '' ?> 패턴을 스튜디오에서 바로 조작해볼 수 있습니다.</p>
+            <p class="bd-engine-box-desc">글에서 다룬 <?= htmlspecialchars($engineLabels[$bdEngineKey]) ?><?= $post['related_pattern_name'] ? ' · ' . htmlspecialchars($post['related_pattern_name']) : '' ?> 패턴을 스튜디오에서 바로 조작해볼 수 있습니다.</p>
             <?php
-            $bdEngineUrl = '/src/engine/' . $post['related_engine'] . '/' . $post['related_engine'] . '.php'
+            $bdEngineUrl = '/src/engine/' . $bdEngineKey . '/' . $bdEngineKey . '.php'
                 . ($post['related_drawing_id'] ? '?drawing_id=' . (int)$post['related_drawing_id'] : '');
             ?>
             <a class="bd-engine-box-btn"
                href="<?= htmlspecialchars($bdEngineUrl) ?>"
                <?= $post['related_drawing_id'] ? "onclick=\"return openCollectionEditor(event,'" . htmlspecialchars($bdEngineUrl, ENT_QUOTES) . "')\"" : '' ?>>
-                <?= htmlspecialchars($engineLabels[$post['related_engine']]) ?> 스튜디오 열기 <i class="bi bi-arrow-right"></i>
+                <?= htmlspecialchars($engineLabels[$bdEngineKey]) ?> 스튜디오 열기 <i class="bi bi-arrow-right"></i>
             </a>
         </div>
         <?php endif; ?>
