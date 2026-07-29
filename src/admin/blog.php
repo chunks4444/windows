@@ -87,17 +87,10 @@ foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
 
     <p style="font-size:12px;color:var(--text);margin:-8px 0 16px;">행을 드래그해 순서를 변경할 수 있습니다.</p>
 
-    <div class="st-cards" style="grid-template-columns:220px;margin-bottom:16px;">
-        <div class="st-card">
-            <div class="st-card-label">총 조회수</div>
-            <div class="st-card-value" id="blogTotalViews">—</div>
-            <div class="st-card-sub">전체 글 합산 (현재)</div>
-        </div>
-    </div>
-
     <div class="st-panel" style="margin-bottom:16px;">
         <div class="st-panel-head">
             <span class="st-panel-title">블로그 일별 조회수</span>
+            <span style="font-size:12px;color:var(--text-muted);">총 조회수 <strong id="blogTotalViews" style="font-size:16px;color:var(--text);">—</strong></span>
         </div>
         <div class="st-panel-body">
             <div class="st-chart-wrap"><canvas id="blogViewTrendChart"></canvas></div>
