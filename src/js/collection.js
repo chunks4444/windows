@@ -203,7 +203,7 @@ async function initGroupFilter() {
     try {
         const res  = await fetch('/src/api/drawings/categories.php');
         const cats = (await res.json()).categories || [];
-        cats.filter(c => c.code !== 'PYM').forEach(c => {
+        cats.filter(c => c.code !== 'PYM' && c.code !== 'ETC').forEach(c => {
             const opt = document.createElement('option');
             opt.value       = c.id;
             opt.textContent = c.name;
