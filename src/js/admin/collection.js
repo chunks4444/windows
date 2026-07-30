@@ -7,6 +7,18 @@ let statusFilter = 'all';
 let groupFilterSource = ''; // '' | kr | new | jp
 let groupFilterValue  = ''; // '' | <pattern_category id> | new | jp-shoji | jp-kumiko
 const GROUP_SELECT_MAP = { kr: 'admKrSelect', new: 'admNewSelect', jp: 'admJpSelect' };
+const JP_NEW_ONLY_MODIFIERS = ['PM', 'JS', 'JK']; // 새살·쇼지·쿠미꼬 — 자체 창작(PYM) 계열에만 허용
+
+// 모양(계열)을 자체 창작(PYM)이 아닌 걸로 바꾸는데 수식어가 새살/쇼지/쿠미꼬로 남아있으면
+// 자동으로 비운다 — GYE-JK-001처럼 계열은 우리살인데 일본살 수식어가 붙는 실수를 막기 위함.
+function enforceModifierCategoryRule() {
+    const catId  = document.getElementById('lpCategory').value;
+    const isPym  = Number(catId) === PYM_CATEGORY_ID;
+    const modSel = document.getElementById('lpModifier');
+    if (!isPym && JP_NEW_ONLY_MODIFIERS.includes(modSel.value)) {
+        modSel.value = '';
+    }
+}
 let categoryNames = {};
 let _editOriginalCategory  = '';
 let _editOriginalModifier  = '';
@@ -350,7 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); addKeyword(); }
     });
 
-    document.getElementById('lpCategory').addEventListener('change', updateCodePreview);
+    document.getElementById('lpCategory').addEventListener('change', () => { enforceModifierCategoryRule(); updateCodePreview(); });
     document.getElementById('lpModifier').addEventListener('change', updateCodePreview);
 
     document.getElementById('lpImgFile').addEventListener('change', e => {

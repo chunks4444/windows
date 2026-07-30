@@ -145,6 +145,12 @@ function generateLibrarySlug(PDO $pdo, ?int $patternCategoryId, string $modifier
         $catCode = $stmt->fetchColumn() ?: null;
     }
 
+    // 새살(PM)·일본살(JS=쇼지/JK=쿠미꼬) 수식어는 컬렉션 페이지 우리살/새살/일본살 필터가
+    // "자체 창작"(PYM) 계열 안의 slug 접두어만으로 구분하므로, 다른 계열에 붙이면 분류가 어긋난다.
+    if (in_array(strtoupper($modifier), ['PM', 'JS', 'JK'], true) && $catCode !== 'PYM') {
+        throw new InvalidArgumentException('새살(PM)·쇼지(JS)·쿠미꼬(JK) 수식어는 "자체 창작" 계열에만 붙일 수 있습니다.');
+    }
+
     if (!$catCode) {
         return bin2hex(random_bytes(6));
     }
