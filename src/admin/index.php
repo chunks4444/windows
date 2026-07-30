@@ -140,10 +140,6 @@ require_admin_role('s');
                 <div class="adm-home-icon"><i class="bi bi-tags"></i></div>
                 <div><div class="adm-home-title">패턴 카테고리</div><div class="adm-home-desc">정자살·완자살 등 전통 패턴 분류명 관리</div></div>
             </a>
-            <a href="/src/admin/collection_filters.php" class="adm-home-card">
-                <div class="adm-home-icon"><i class="bi bi-funnel"></i></div>
-                <div><div class="adm-home-title">컬렉션 필터 키워드</div><div class="adm-home-desc">컬렉션 페이지 "공간" 드롭다운 전용 키워드 (큐레이션과 별개)</div></div>
-            </a>
             <a href="/src/admin/ai_tuning.php" class="adm-home-card">
                 <div class="adm-home-icon"><i class="bi bi-stars"></i></div>
                 <div><div class="adm-home-title">AI 튜닝</div><div class="adm-home-desc">엔진 별칭·지시사항 편집 및 프롬프트 테스트</div></div>

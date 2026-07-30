@@ -167,7 +167,10 @@ CREATE TABLE IF NOT EXISTS pattern_modifiers (
 
 INSERT INTO pattern_modifiers (name, code, sort_order) VALUES
 ('세모', 'SE', 1),
-('육모', 'YU', 2)
+('육모', 'YU', 2),
+('새살', 'PM', 3),
+('쇼지', 'JS', 4),
+('쿠미꼬', 'JK', 5)
 ON DUPLICATE KEY UPDATE code = VALUES(code);
 
 -- 문의 메일 발송 이력 (rate limit용)
@@ -347,29 +350,8 @@ CREATE TABLE IF NOT EXISTS studio_cards (
     UNIQUE KEY engine_key (engine_key)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='메인 페이지 "스튜디오 소개" 6개 엔진 카드 (엔진당 1행, engine_key로 고정 매칭)';
 
--- 컬렉션 페이지 "공간" 드롭다운 필터 키워드 (메인 큐레이션 space_cards와 독립)
-CREATE TABLE IF NOT EXISTS collection_space_filters (
-    id         INT UNSIGNED      NOT NULL AUTO_INCREMENT,
-    label      VARCHAR(50)       NOT NULL DEFAULT '' COMMENT '드롭다운 표시 라벨',
-    query      VARCHAR(100)      NOT NULL DEFAULT '' COMMENT '검색어 (컬렉션 검색창에 대입됨)',
-    sort_order SMALLINT UNSIGNED NOT NULL DEFAULT 0,
-    is_active  TINYINT(1)        NOT NULL DEFAULT 1,
-    created_at DATETIME          NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (id),
-    KEY idx_csf_sort (sort_order, is_active)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='컬렉션 공간 필터 키워드';
-
-INSERT IGNORE INTO collection_space_filters (id, label, query, sort_order) VALUES
-(1,  '중문',   '중문',   0),
-(2,  '거실',   '거실',   1),
-(3,  '카페',   '카페',   2),
-(4,  '침실',   '침실',   3),
-(5,  '서재',   '서재',   4),
-(6,  '현관',   '현관',   5),
-(7,  '다실',   '다실',   6),
-(8,  '한옥',   '한옥',   7),
-(9,  '주방',   '주방',   8),
-(10, '갤러리', '갤러리', 9);
+-- 컬렉션 페이지 "공간" 드롭다운 필터는 우리살/새살/일본살 3분류 체계로 대체되어 폐지됨.
+-- 기존 collection_space_filters 테이블은 운영 DB에 남아있으나(수동 정리 필요 시 별도 DROP) 신규 설치 시 더는 생성하지 않음.
 
 -- 사이트 설정 (OAuth 키 등)
 CREATE TABLE IF NOT EXISTS site_config (

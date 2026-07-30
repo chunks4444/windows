@@ -3,10 +3,8 @@ header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../lib/db.php';
 require_once __DIR__ . '/../lib/slug.php';
 try {
-    $spaceOptions = db()->query("SELECT label, query AS collection_query FROM collection_space_filters WHERE is_active=1 ORDER BY sort_order, id")->fetchAll();
     $totalPatterns = (int) db()->query("SELECT COUNT(*) FROM library_patterns WHERE is_active = 1")->fetchColumn();
 } catch (Throwable $e) {
-    $spaceOptions = [];
     $totalPatterns = 0;
 }
 
@@ -135,14 +133,20 @@ function collection_card_html(array $p, array $navStudioIcons, array $engineEdit
 <div class="lib-toolbar">
     <div class="lib-toolbar-inner">
         <div class="lib-select-row">
-            <select id="libCatSelect" class="lib-select">
-                <option value="">모양 전체</option>
+            <select id="libKrSelect" class="lib-select">
+                <option value="" disabled selected hidden>우리살</option>
+                <option value="">전체</option>
             </select>
-            <select id="libSpaceSelect" class="lib-select">
-                <option value="">공간 전체</option>
-                <?php foreach ($spaceOptions as $sp): ?>
-                <option value="<?= htmlspecialchars($sp['collection_query'], ENT_QUOTES) ?>"><?= htmlspecialchars($sp['label']) ?></option>
-                <?php endforeach; ?>
+            <select id="libNewSelect" class="lib-select">
+                <option value="" disabled selected hidden>새살</option>
+                <option value="">전체</option>
+                <option value="new">새살</option>
+            </select>
+            <select id="libJpSelect" class="lib-select">
+                <option value="" disabled selected hidden>일본살</option>
+                <option value="">전체</option>
+                <option value="jp-shoji">쇼지</option>
+                <option value="jp-kumiko">쿠미꼬</option>
             </select>
             <button class="lib-filter-like" id="libLikeBtn"><i class="bi bi-heart-fill"></i> 좋아요</button>
         </div>

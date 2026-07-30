@@ -86,7 +86,8 @@ require_admin_role('s');
 
     <!-- 탭 2: 수식어 관리 -->
     <div id="tabMods" style="display:none;">
-        <p style="font-size:13px;color: var(--text);margin:-8px 0 16px;">평목 컬렉션 코드 체계 v1.0의 수식어(계열 안에서 세부 구분, 예: JEO-SE-001)입니다. 컬렉션 아이템 생성 시 이 목록 중에서만 고를 수 있습니다.</p>
+        <p style="font-size:13px;color: var(--text);margin:-8px 0 16px;">평목 컬렉션 코드 체계 v1.0의 수식어(계열 안에서 세부 구분, 예: JEO-SE-001)입니다. 컬렉션 아이템 생성 시 이 목록 중에서만 고를 수 있습니다.<br>
+        <code>PM</code>=새살, <code>JS</code>=쇼지, <code>JK</code>=쿠미꼬는 "자체 창작"(PYM) 계열 안에서 컬렉션 페이지의 우리살/새살/일본살 필터를 구분하는 데 쓰입니다 — 이 수식어를 붙여 아이템을 만들면 자동으로 새살/일본살 필터에 노출됩니다.</p>
         <div style="overflow-x:auto;">
             <table class="pc-table" id="modTable">
                 <thead><tr><th>ID</th><th>이름</th><th>코드</th><th>정렬</th><th>활성</th><th></th></tr></thead>

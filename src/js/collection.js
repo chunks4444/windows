@@ -7,11 +7,12 @@ let currentQ       = '';
 const likes        = {};
 let likedActive    = false;
 let activeCategory = '';
+let activeGroup     = '';
 let searchTimer    = null;
 let scrollObserver = null;
 
-/* ── API (검색어/모양/좋아요는 서로 결합하지 않는 개별 필터 — 하나만 적용됨) ── */
-async function fetchPage(q, page, category) {
+/* ── API (검색어/모양(계열)/우리살·새살·일본살/좋아요는 서로 결합하지 않는 개별 필터 — 하나만 적용됨) ── */
+async function fetchPage(q, page, category, group) {
     try {
         const token   = authToken();
         const headers = { 'Content-Type': 'application/json' };
@@ -19,7 +20,7 @@ async function fetchPage(q, page, category) {
         const res  = await fetch('/src/api/collection.php', {
             method: 'POST',
             headers,
-            body: JSON.stringify({ q, page, category: category || '', liked: likedActive }),
+            body: JSON.stringify({ q, page, category: category || '', group: group || '', liked: likedActive }),
         });
         const data = await res.json();
         if (data.error) { console.error('collection API:', data.error); return { patterns: [], has_more: false }; }
@@ -48,7 +49,7 @@ async function loadNextPage() {
     isLoading = true;
     setLoadMore(false, true); // 버튼 로딩 상태
 
-    const data     = await fetchPage(currentQ, currentPage, activeCategory);
+    const data     = await fetchPage(currentQ, currentPage, activeCategory, activeGroup);
     const patterns = data.patterns || [];
 
     if (currentPage === 1 && typeof data.total === 'number') {
@@ -137,16 +138,14 @@ function buildCard(p) {
         </div>`;
 }
 
-/* ── 필터 전환 (좋아요/모양/공간·검색어는 서로 개별 검색 — 하나를 켜면 나머지는 비움) ── */
-function clearOtherFilters({ keepCategory, keepSpace, keepSearch, keepLiked } = {}) {
-    if (!keepCategory) {
+/* ── 필터 전환 (좋아요/우리살·새살·일본살/검색어는 서로 개별 검색 — 하나를 켜면 나머지는 비움) ── */
+const GROUP_SELECT_IDS = ['libKrSelect', 'libNewSelect', 'libJpSelect'];
+
+function clearOtherFilters({ keepGroup, keepSearch, keepLiked } = {}) {
+    if (!keepGroup) {
         activeCategory = '';
-        const el = document.getElementById('libCatSelect');
-        if (el) el.value = '';
-    }
-    if (!keepSpace) {
-        const el = document.getElementById('libSpaceSelect');
-        if (el) el.value = '';
+        activeGroup    = '';
+        GROUP_SELECT_IDS.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
     }
     if (!keepSearch) {
         document.getElementById('libSearch').value = '';
@@ -180,36 +179,56 @@ function bindLikeBtnActivate(btn) {
     resetAndLoad('');
 }
 
-async function initCategoryFilter() {
-    const select = document.getElementById('libCatSelect');
-    if (!select) return;
+/* ── 최상위 분류(우리살/새살/일본살) — 항상 보이는 독립 셀렉트 3개, 하나를 고르면 나머지는 그룹명 placeholder로 되돌아감 ── */
+
+// 다른 페이지에서 ?category=<id> 또는 ?group=kr|new|jp-shoji|jp-kumiko 로 들어왔을 때
+// 해당 셀렉트를 미리 선택된 상태로 열어주기 위한 공용 세터.
+function setGroupState(category, group) {
+    activeCategory = category || '';
+    activeGroup    = group    || '';
+    const krSelect  = document.getElementById('libKrSelect');
+    const newSelect = document.getElementById('libNewSelect');
+    const jpSelect  = document.getElementById('libJpSelect');
+    if (krSelect)  krSelect.value  = activeCategory || '';
+    if (newSelect) newSelect.value = activeGroup === 'new' ? 'new' : '';
+    if (jpSelect)  jpSelect.value  = (activeGroup === 'jp-shoji' || activeGroup === 'jp-kumiko') ? activeGroup : '';
+}
+
+async function initGroupFilter() {
+    const krSelect  = document.getElementById('libKrSelect');
+    const newSelect = document.getElementById('libNewSelect');
+    const jpSelect  = document.getElementById('libJpSelect');
+    if (!krSelect) return;
+
     try {
         const res  = await fetch('/src/api/drawings/categories.php');
         const cats = (await res.json()).categories || [];
-        cats.forEach(c => {
+        cats.filter(c => c.code !== 'PYM').forEach(c => {
             const opt = document.createElement('option');
             opt.value       = c.id;
             opt.textContent = c.name;
-            select.appendChild(opt);
+            krSelect.appendChild(opt);
         });
+        // URL로 넘어온 category가 옵션 로드 전에 세팅됐을 수 있으니 다시 반영
+        if (activeCategory) krSelect.value = activeCategory;
     } catch {}
 
-    select.addEventListener('change', () => {
-        activeCategory = select.value || '';
-        clearOtherFilters({ keepCategory: true });
+    krSelect.addEventListener('change', () => {
+        setGroupState(krSelect.value, '');
+        clearOtherFilters({ keepGroup: true }); // 검색어/좋아요만 초기화 — 그룹 셀렉트 3개는 setGroupState가 이미 정리함
         resetAndLoad('');
     });
-}
 
-/* ── 공간 셀렉트 ──────────────────────────────── */
-function initSpaceFilter() {
-    const select = document.getElementById('libSpaceSelect');
-    if (!select) return;
-    select.addEventListener('change', () => {
-        const q = select.value || '';
-        clearOtherFilters({ keepSpace: true });
-        document.getElementById('libSearch').value = q;
-        resetAndLoad(q);
+    newSelect?.addEventListener('change', () => {
+        setGroupState('', newSelect.value);
+        clearOtherFilters({ keepGroup: true });
+        resetAndLoad('');
+    });
+
+    jpSelect?.addEventListener('change', () => {
+        setGroupState('', jpSelect.value);
+        clearOtherFilters({ keepGroup: true });
+        resetAndLoad('');
     });
 }
 
@@ -388,8 +407,13 @@ function esc(str) {
 /* ── 초기화 ───────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', async () => {
     bindLikeBtn();
-    await initCategoryFilter();
-    initSpaceFilter();
+
+    // 다른 페이지에서 ?group=new|jp-shoji|jp-kumiko 또는 ?category=<id>(우리살 특정 계열)로
+    // 딥링크해 들어오는 경우 해당 셀렉트가 미리 선택된 채로 열리도록 한다.
+    const params = new URLSearchParams(location.search);
+    setGroupState(params.get('category') || '', params.get('group') || '');
+
+    await initGroupFilter();
     document.getElementById('boardModal').addEventListener('click', e => {
         if (e.target === e.currentTarget) closeBoardModal();
     });
@@ -399,12 +423,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     await loadLikes();
 
-    const q = new URLSearchParams(location.search).get('q') || '';
+    const q = activeGroup || activeCategory ? '' : (params.get('q') || '');
 
     if (q) {
         document.getElementById('libSearch').value = q;
-        const spaceSelect = document.getElementById('libSpaceSelect');
-        if (spaceSelect && [...spaceSelect.options].some(o => o.value === q)) spaceSelect.value = q;
     }
     resetAndLoad(q);
 });

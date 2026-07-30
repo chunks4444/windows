@@ -13,6 +13,7 @@ $_input   = json_decode(file_get_contents('php://input'), true) ?? [];
 $q        = trim($_input['q'] ?? $_GET['q'] ?? '');
 $page     = max(1, (int)($_input['page'] ?? 1));
 $category = trim($_input['category'] ?? '');   // 패턴 카테고리 ID ('') = 전체
+$group    = trim($_input['group'] ?? '');      // 우리살/새살/일본살 최상위 분류: '' | kr | new | jp | jp-shoji | jp-kumiko
 $liked    = !empty($_input['liked']);          // 좋아요 필터 (로그인 필요)
 $limit    = 20;
 $offset   = ($page - 1) * $limit;
@@ -32,15 +33,40 @@ $editorMap = [
     'hexagon'  => '/src/engine/hexagon/hexagon.php',
 ];
 
-// WHERE 조건 — 검색어/모양/좋아요는 서로 결합하지 않고 각각 개별 검색으로 동작.
+// WHERE 조건 — 검색어/모양(계열)/우리살·새살·일본살/좋아요는 서로 결합하지 않고 각각 개별 검색으로 동작.
 // (프런트가 필터 하나를 켜면 나머지를 비우지만, 혹시 여러 개가 함께 오더라도
-//  모양 > 검색어(공간 포함) > 좋아요 우선순위로 하나만 적용한다.)
+//  계열(category) > 최상위 분류(group) > 검색어 > 좋아요 우선순위로 하나만 적용한다.)
 $baseWhere = 'p.is_active = 1';
 $params    = [];
 
 if ($category !== '') {
     $baseWhere .= ' AND p.pattern_category = :category';
     $params[':category'] = $category;
+} elseif ($group !== '') {
+    // 우리살(전통 계열)/새살/일본살(쇼지·쿠미꼬) — 새살·일본살은 '자체 창작'(PYM) 계열 안에서
+    // 수식어(PM/JS/JK)가 slug에 접두어로 남는 방식으로 구분한다 (library_patterns에 수식어 컬럼이 없음).
+    $pymId = $pdo->query("SELECT id FROM pattern_categories WHERE code='PYM'")->fetchColumn();
+    if ($group === 'kr') {
+        $baseWhere .= ' AND p.pattern_category != :pymId';
+        $params[':pymId'] = $pymId;
+    } elseif ($group === 'new') {
+        $baseWhere .= ' AND p.pattern_category = :pymId AND p.slug LIKE :slugPm';
+        $params[':pymId']   = $pymId;
+        $params[':slugPm']  = 'pym-pm-%';
+    } elseif ($group === 'jp') {
+        $baseWhere .= ' AND p.pattern_category = :pymId AND (p.slug LIKE :slugJs OR p.slug LIKE :slugJk)';
+        $params[':pymId']  = $pymId;
+        $params[':slugJs'] = 'pym-js-%';
+        $params[':slugJk'] = 'pym-jk-%';
+    } elseif ($group === 'jp-shoji') {
+        $baseWhere .= ' AND p.pattern_category = :pymId AND p.slug LIKE :slugJs';
+        $params[':pymId']  = $pymId;
+        $params[':slugJs'] = 'pym-js-%';
+    } elseif ($group === 'jp-kumiko') {
+        $baseWhere .= ' AND p.pattern_category = :pymId AND p.slug LIKE :slugJk';
+        $params[':pymId']  = $pymId;
+        $params[':slugJk'] = 'pym-jk-%';
+    }
 } elseif ($q !== '') {
     $like = '%' . $q . '%';
     $baseWhere .= ' AND (p.name_ko LIKE :q OR p.slug LIKE :q3 OR p.id IN (SELECT pattern_id FROM library_keywords WHERE keyword LIKE :q2))';
