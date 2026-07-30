@@ -22,6 +22,7 @@ $engineEditorMap = [
     'hexagon'  => '/src/engine/hexagon/hexagon.php',
 ];
 $ssrQuery = trim($_GET['q'] ?? '');
+$ssrHasExplicitFilter = $ssrQuery !== '' || ($_GET['category'] ?? '') !== '' || ($_GET['group'] ?? '') !== '';
 try {
     $ssrWhere  = 'p.is_active = 1';
     $ssrParams = [];
@@ -31,6 +32,10 @@ try {
         $ssrParams[':q']  = $like;
         $ssrParams[':q2'] = $like;
         $ssrParams[':q3'] = $like;
+    } elseif (!$ssrHasExplicitFilter) {
+        // 필터/검색어 없이 그냥 들어온 첫 화면은 collection.js가 기본 group=kr(우리살)로 다시 불러오므로
+        // SSR도 동일하게 자체 창작(PYM) 계열을 제외해 하이드레이션 후 카드 목록이 바뀌지 않게 맞춘다.
+        $ssrWhere .= " AND p.pattern_category != (SELECT id FROM pattern_categories WHERE code='PYM')";
     }
     $stmt = db()->prepare(
         "SELECT p.id, p.slug, p.name_ko, p.drawing_id, p.image_path, d.type AS engine,

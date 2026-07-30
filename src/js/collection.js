@@ -410,8 +410,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 다른 페이지에서 ?group=new|jp-shoji|jp-kumiko 또는 ?category=<id>(우리살 특정 계열)로
     // 딥링크해 들어오는 경우 해당 셀렉트가 미리 선택된 채로 열리도록 한다.
-    const params = new URLSearchParams(location.search);
-    setGroupState(params.get('category') || '', params.get('group') || '');
+    // 아무 필터/검색어도 없이 그냥 들어온 첫 화면은 우리살(전통 계열)만 기본으로 보여준다.
+    const params      = new URLSearchParams(location.search);
+    const urlCategory = params.get('category') || '';
+    const urlGroup    = params.get('group') || '';
+    const urlQ        = params.get('q') || '';
+    const hasExplicitFilter = !!(urlCategory || urlGroup || urlQ);
+    setGroupState(urlCategory, hasExplicitFilter ? urlGroup : 'kr');
 
     await initGroupFilter();
     document.getElementById('boardModal').addEventListener('click', e => {
@@ -423,7 +428,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     await loadLikes();
 
-    const q = activeGroup || activeCategory ? '' : (params.get('q') || '');
+    const q = activeGroup || activeCategory ? '' : urlQ;
 
     if (q) {
         document.getElementById('libSearch').value = q;
