@@ -73,13 +73,13 @@ function setStatusFilter(status) {
 function matchesGroup(p) {
     if (!groupFilterValue) return true;
     const slug = p.slug || '';
-    if (groupFilterSource === 'kr')  return String(p.pattern_category || '') === String(groupFilterValue);
-    if (groupFilterSource === 'new') return Number(p.pattern_category) === PYM_CATEGORY_ID && slug.startsWith('pym-pm-');
-    if (groupFilterSource === 'jp') {
-        if (Number(p.pattern_category) !== PYM_CATEGORY_ID) return false;
-        if (groupFilterValue === 'jp-shoji')  return slug.startsWith('pym-js-');
-        if (groupFilterValue === 'jp-kumiko') return slug.startsWith('pym-jk-');
-    }
+    const cat  = Number(p.pattern_category);
+    if (groupFilterValue === 'kr')        return cat !== PYM_CATEGORY_ID;                 // 우리살 전체 (자체 창작 제외)
+    if (groupFilterValue === 'new')       return cat === PYM_CATEGORY_ID && slug.startsWith('pym-pm-');
+    if (groupFilterValue === 'jp')        return cat === PYM_CATEGORY_ID && (slug.startsWith('pym-js-') || slug.startsWith('pym-jk-'));
+    if (groupFilterValue === 'jp-shoji')  return cat === PYM_CATEGORY_ID && slug.startsWith('pym-js-');
+    if (groupFilterValue === 'jp-kumiko') return cat === PYM_CATEGORY_ID && slug.startsWith('pym-jk-');
+    if (groupFilterSource === 'kr')       return String(p.pattern_category || '') === String(groupFilterValue); // 우리살 특정 계열
     return true;
 }
 

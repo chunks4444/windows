@@ -140,16 +140,16 @@ function collection_card_html(array $p, array $navStudioIcons, array $engineEdit
         <div class="lib-select-row">
             <select id="libKrSelect" class="lib-select">
                 <option value="" disabled selected hidden>우리살</option>
-                <option value="">전체</option>
+                <option value="kr">전체</option>
             </select>
             <select id="libNewSelect" class="lib-select">
                 <option value="" disabled selected hidden>새살</option>
-                <option value="">전체</option>
+                <option value="new">전체</option>
                 <option value="new">새살</option>
             </select>
             <select id="libJpSelect" class="lib-select">
                 <option value="" disabled selected hidden>일본살</option>
-                <option value="">전체</option>
+                <option value="jp">전체</option>
                 <option value="jp-shoji">쇼지</option>
                 <option value="jp-kumiko">쿠미꼬</option>
             </select>

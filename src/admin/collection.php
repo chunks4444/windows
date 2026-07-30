@@ -60,19 +60,19 @@ foreach ($libPatternCats as $c) {
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 12px;">
         <select id="admKrSelect" class="lib-admin-filter-select" onchange="setGroupFilter('kr', this.value)">
             <option value="" disabled selected hidden>우리살</option>
-            <option value="">전체</option>
+            <option value="kr">전체</option>
             <?php foreach ($libPatternCats as $c): if (in_array($c['code'] ?? '', ['PYM', 'ETC'], true)) continue; ?>
             <option value="<?= (int)$c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
             <?php endforeach; ?>
         </select>
         <select id="admNewSelect" class="lib-admin-filter-select" onchange="setGroupFilter('new', this.value)">
             <option value="" disabled selected hidden>새살</option>
-            <option value="">전체</option>
+            <option value="new">전체</option>
             <option value="new">새살</option>
         </select>
         <select id="admJpSelect" class="lib-admin-filter-select" onchange="setGroupFilter('jp', this.value)">
             <option value="" disabled selected hidden>일본살</option>
-            <option value="">전체</option>
+            <option value="jp">전체</option>
             <option value="jp-shoji">쇼지</option>
             <option value="jp-kumiko">쿠미꼬</option>
         </select>

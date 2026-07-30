@@ -189,9 +189,9 @@ function setGroupState(category, group) {
     const krSelect  = document.getElementById('libKrSelect');
     const newSelect = document.getElementById('libNewSelect');
     const jpSelect  = document.getElementById('libJpSelect');
-    if (krSelect)  krSelect.value  = activeCategory || '';
+    if (krSelect)  krSelect.value  = activeCategory ? activeCategory : (activeGroup === 'kr' ? 'kr' : '');
     if (newSelect) newSelect.value = activeGroup === 'new' ? 'new' : '';
-    if (jpSelect)  jpSelect.value  = (activeGroup === 'jp-shoji' || activeGroup === 'jp-kumiko') ? activeGroup : '';
+    if (jpSelect)  jpSelect.value  = ['jp', 'jp-shoji', 'jp-kumiko'].includes(activeGroup) ? activeGroup : '';
 }
 
 async function initGroupFilter() {
@@ -214,7 +214,9 @@ async function initGroupFilter() {
     } catch {}
 
     krSelect.addEventListener('change', () => {
-        setGroupState(krSelect.value, '');
+        // 'kr' = 우리살 전체(자체 창작 제외 전체), 그 외 값은 특정 계열 id
+        if (krSelect.value === 'kr') setGroupState('', 'kr');
+        else setGroupState(krSelect.value, '');
         clearOtherFilters({ keepGroup: true }); // 검색어/좋아요만 초기화 — 그룹 셀렉트 3개는 setGroupState가 이미 정리함
         resetAndLoad('');
     });
