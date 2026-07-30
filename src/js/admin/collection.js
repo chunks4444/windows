@@ -4,6 +4,9 @@ let pendingImg  = null;
 let allDrawings = [];
 let allPatterns = [];
 let statusFilter = 'all';
+let groupFilterSource = ''; // '' | kr | new | jp
+let groupFilterValue  = ''; // '' | <pattern_category id> | new | jp-shoji | jp-kumiko
+const GROUP_SELECT_MAP = { kr: 'admKrSelect', new: 'admNewSelect', jp: 'admJpSelect' };
 let categoryNames = {};
 let _editOriginalCategory  = '';
 let _editOriginalModifier  = '';
@@ -66,10 +69,36 @@ function setStatusFilter(status) {
     applyFilter();
 }
 
+/* ── 우리살/새살/일본살 그룹 필터 (자체 창작=PYM 계열 안에서 slug 접두어로 새살·일본살 구분) ── */
+function matchesGroup(p) {
+    if (!groupFilterValue) return true;
+    const slug = p.slug || '';
+    if (groupFilterSource === 'kr')  return String(p.pattern_category || '') === String(groupFilterValue);
+    if (groupFilterSource === 'new') return Number(p.pattern_category) === PYM_CATEGORY_ID && slug.startsWith('pym-pm-');
+    if (groupFilterSource === 'jp') {
+        if (Number(p.pattern_category) !== PYM_CATEGORY_ID) return false;
+        if (groupFilterValue === 'jp-shoji')  return slug.startsWith('pym-js-');
+        if (groupFilterValue === 'jp-kumiko') return slug.startsWith('pym-jk-');
+    }
+    return true;
+}
+
+function setGroupFilter(source, value) {
+    groupFilterSource = value ? source : '';
+    groupFilterValue  = value;
+    Object.entries(GROUP_SELECT_MAP).forEach(([src, id]) => {
+        if (src === source) return;
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+    applyFilter();
+}
+
 function applyFilter() {
     let list = allPatterns;
-    if (statusFilter === 'active')   list = allPatterns.filter(p => p.is_active == 1);
-    if (statusFilter === 'inactive') list = allPatterns.filter(p => p.is_active != 1);
+    if (statusFilter === 'active')   list = list.filter(p => p.is_active == 1);
+    if (statusFilter === 'inactive') list = list.filter(p => p.is_active != 1);
+    list = list.filter(matchesGroup);
     renderTable(list);
 }
 

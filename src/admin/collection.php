@@ -5,6 +5,10 @@ require_admin_role('s');
 require_once __DIR__ . '/../lib/engine_settings.php';
 $libPatternCats = get_pattern_categories();
 $libPatternMods = get_pattern_modifiers();
+$pymCategoryId  = 0;
+foreach ($libPatternCats as $c) {
+    if (($c['code'] ?? '') === 'PYM') { $pymCategoryId = (int)$c['id']; break; }
+}
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -20,6 +24,15 @@ $libPatternMods = get_pattern_modifiers();
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
     
     <?php css_tag('/src/css/admin/collection.css'); ?>
+    <style>
+        .lib-admin-filter-select {
+            height: 32px; padding: 0 10px;
+            background: var(--bg); border: 1px solid var(--border);
+            border-radius: var(--r-sm);
+            font-family: inherit; font-size: var(--fs-13); font-weight: 600;
+            color: var(--text); cursor: pointer;
+        }
+    </style>
 </head>
 <body>
 <?php include __DIR__ . '/../components/nav.php'; ?>
@@ -42,6 +55,27 @@ $libPatternMods = get_pattern_modifiers();
                 <i class="bi bi-plus-lg"></i> 추가
             </button>
         </div>
+    </div>
+
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 12px;">
+        <select id="admKrSelect" class="lib-admin-filter-select" onchange="setGroupFilter('kr', this.value)">
+            <option value="" disabled selected hidden>우리살</option>
+            <option value="">전체</option>
+            <?php foreach ($libPatternCats as $c): if (in_array($c['code'] ?? '', ['PYM', 'ETC'], true)) continue; ?>
+            <option value="<?= (int)$c['id'] ?>"><?= htmlspecialchars($c['name']) ?></option>
+            <?php endforeach; ?>
+        </select>
+        <select id="admNewSelect" class="lib-admin-filter-select" onchange="setGroupFilter('new', this.value)">
+            <option value="" disabled selected hidden>새살</option>
+            <option value="">전체</option>
+            <option value="new">새살</option>
+        </select>
+        <select id="admJpSelect" class="lib-admin-filter-select" onchange="setGroupFilter('jp', this.value)">
+            <option value="" disabled selected hidden>일본살</option>
+            <option value="">전체</option>
+            <option value="jp-shoji">쇼지</option>
+            <option value="jp-kumiko">쿠미꼬</option>
+        </select>
     </div>
 
     <p style="font-size:12px;color:var(--text);margin:-8px 0 16px;">정렬 순서 열의 그립 아이콘을 드래그해 순서를 변경할 수 있습니다.</p>
@@ -156,6 +190,7 @@ $libPatternMods = get_pattern_modifiers();
     </div>
 </div>
 
+<script>const PYM_CATEGORY_ID = <?= (int)$pymCategoryId ?>;</script>
 <script src="/src/js/admin/collection.js"></script>
 </body>
 </html>
