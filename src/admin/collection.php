@@ -85,10 +85,10 @@ foreach ($libPatternCats as $c) {
             <thead>
                 <tr>
                     <th style="width:32px;"></th>
-                    <th style="width:104px;"></th>
+                    <th style="width:168px;"></th>
                     <th style="width:90px;">코드</th>
                     <th>메모</th>
-                    <th style="width:80px;">모양</th>
+                    <th style="width:120px;">분류</th>
                     <th>키워드</th>
                     <th style="width:80px;">도면 ID</th>
                     <th style="width:56px;">순서</th>

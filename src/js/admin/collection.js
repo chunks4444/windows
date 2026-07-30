@@ -94,6 +94,21 @@ function setGroupFilter(source, value) {
     applyFilter();
 }
 
+// 우리살(전통 계열)/새살/일본살(쇼지·쿠미꼬) 하이라키를 행마다 보여주기 위한 라벨.
+// 필터 판정(matchesGroup)과 동일한 slug 접두어 규칙을 쓴다.
+function groupLabel(p) {
+    if (!p.pattern_category) return '—';
+    const cat  = Number(p.pattern_category);
+    const slug = p.slug || '';
+    if (cat === PYM_CATEGORY_ID) {
+        if (slug.startsWith('pym-pm-')) return '새살';
+        if (slug.startsWith('pym-js-')) return '일본살 · 쇼지';
+        if (slug.startsWith('pym-jk-')) return '일본살 · 쿠미꼬';
+        return categoryNames[p.pattern_category] || '자체 창작'; // 아직 새살/일본살로 태깅 안 된 항목
+    }
+    return `우리살 · ${categoryNames[p.pattern_category] || p.pattern_category}`;
+}
+
 function applyFilter() {
     let list = allPatterns;
     if (statusFilter === 'active')   list = list.filter(p => p.is_active == 1);
@@ -111,7 +126,7 @@ function renderTable(patterns) {
                 : `<div class="lib-thumb-empty"><i class="bi bi-image"></i></div>`}</td>
             <td style="color:var(--text-3);font-size:11px;font-family:monospace;">${/^[a-z]{3}(-[a-z]{2})?-\d{3}$/.test(p.slug||'') ? esc(p.slug.toUpperCase()) : '—'}</td>
             <td style="font-weight:600;">${esc(p.name_ko)}</td>
-            <td style="color:var(--text-3);font-size:12px;">${p.pattern_category ? esc(categoryNames[p.pattern_category] || p.pattern_category) : '—'}</td>
+            <td style="color:var(--text-3);font-size:12px;">${esc(groupLabel(p))}</td>
             <td><div class="kw-list">${(p.keywords||[]).map(k =>
                 `<span class="kw-badge">${esc(k)}</span>`).join('')}</div></td>
             <td style="color:var(--text-3);font-size:12px;">${p.drawing_id || '—'}</td>
