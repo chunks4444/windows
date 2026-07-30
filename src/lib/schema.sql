@@ -139,7 +139,7 @@ CREATE TABLE IF NOT EXISTS pattern_categories (
 
 -- 평목 컬렉션 코드 체계 v1.0 (2026-07-13 확정) — 계열 12종 시드. code(unique)로 매칭되므로 재실행해도 안전(중복 삽입 없음)
 INSERT INTO pattern_categories (name, code, sort_order) VALUES
-('띠살',      'TTI', 1),
+('세살',      'TTI', 1),
 ('귀갑살',    'GWI', 2),
 ('정자살',    'JEO', 3),
 ('범살',      'BEO', 4),
