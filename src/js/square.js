@@ -45,6 +45,7 @@
 
     let lastSegMap   = new Map();
     let lastNodeList = [];
+    let lastNodeXs   = [], lastNodeYs = []; // 균등 격자(정자살) 노드의 실좌표(mm) 배열 — addedLines를 노드 인덱스로 다시 찾을 때 씀 (몬드리안 레이아웃은 해당 없음)
     let lastILeft = 0, lastITop = 0, lastIW = 1, lastIH = 1, lastSlatPx = 1, lastCellSize = 1;
     let lastBaseScale = 1, lastOLeft = 0, lastOTop = 0, lastDoorWpx = 0, lastDoorHpx = 0;
     let showDimensions = true;
@@ -296,12 +297,21 @@ function screenToCtxCoord(clientX, clientY) {
     };
 }
 
+// 몬드리안 레이아웃 노드는 xi/yi 인덱스가 없어(동적 선분이라 균등 격자가 아님) 이
+// 비율 기반 경로를 그대로 쓴다 — 균등 격자(정자살)만 아래 nodeIdxToCtx로 대체.
 function ctxToNorm(cx, cy) {
     return { nx: (cx - lastILeft) / lastIW, ny: (cy - lastITop) / lastIH };
 }
 
 function normToCtx(nx, ny) {
     return { x: lastILeft + nx * lastIW, y: lastITop + ny * lastIH };
+}
+
+// 노드 인덱스(xi,yi) → 현재 캔버스 좌표. lastNodeXs/lastNodeYs는 draw()가 매번 geo
+// 기준으로 다시 채우므로, 문 크기가 바뀌어 격자가 재배치돼도 항상 "그 교점"의
+// 최신 위치를 돌려준다 (몬드리안 레이아웃 노드는 xi/yi가 없어 이 경로를 안 탐).
+function nodeIdxToCtx(xi, yi) {
+    return { x: lastOLeft + lastNodeXs[xi] * lastBaseScale, y: lastOTop + lastNodeYs[yi] * lastBaseScale };
 }
 
 function snapToNode(cx, cy) {
@@ -737,6 +747,9 @@ async function draw() {
                 }
             } else {
                 // 정자살 균등 격자: 세로살 중심 × 가로살 중심 교점
+                // xi/yi 인덱스로 lastNodeXs/lastNodeYs에 보관해둔다 — addedLines를 좌표
+                // 비율(fraction)이 아니라 이 인덱스로 저장해야 문 크기가 바뀌어도 실제
+                // 그 교점의 새 위치를 다시 찾아 선이 격자에 붙어 따라온다.
                 const nodeXs = [fw];
                 for (let i = 1; i < geo.cols; i++) {
                     nodeXs.push(fw + i * (geo.cellW + geo.slatV) - geo.slatV / 2);
@@ -747,11 +760,13 @@ async function draw() {
                     nodeYs.push(ft + j * (geo.cellH + geo.slatH) - geo.slatH / 2);
                 }
                 nodeYs.push(ft + ih);
-                for (const rx of nodeXs) {
-                    for (const ry of nodeYs) {
-                        lastNodeList.push({ cx: toCanvasX(rx), cy: toCanvasY(ry) });
-                    }
-                }
+                lastNodeXs = nodeXs;
+                lastNodeYs = nodeYs;
+                nodeXs.forEach((rx, xi) => {
+                    nodeYs.forEach((ry, yi) => {
+                        lastNodeList.push({ cx: toCanvasX(rx), cy: toCanvasY(ry), xi, yi });
+                    });
+                });
             }
         }
 
@@ -1040,7 +1055,8 @@ async function draw() {
         });
 
         addedLines.forEach(ln => {
-            if (Math.abs(ln.ny2 - ln.ny1) < 0.001) adjHSlatCnt++;
+            const isHorizontal = ln.xi1 !== undefined ? ln.yi1 === ln.yi2 : Math.abs(ln.ny2 - ln.ny1) < 0.001;
+            if (isHorizontal) adjHSlatCnt++;
             else adjVSlatCnt++;
         });
 
@@ -1066,10 +1082,17 @@ async function draw() {
             const toX = rx => offsetX + (px + rx) * baseScale;
             const toY = ry => offsetY + ry * baseScale;
             addedLines.forEach((ln, idx) => {
-                const x1 = toX(geo.frameW + ln.nx1 * geo.innerW);
-                const y1 = toY(geo.frameHTop + ln.ny1 * geo.innerH);
-                const x2 = toX(geo.frameW + ln.nx2 * geo.innerW);
-                const y2 = toY(geo.frameHTop + ln.ny2 * geo.innerH);
+                // xi1 존재 = 노드 인덱스 기반(신규, 균등 격자). 없으면 nx1 비율 기반
+                // (몬드리안 또는 구버전 저장 도면 하위호환).
+                let rx1, ry1, rx2, ry2;
+                if (ln.xi1 !== undefined) {
+                    rx1 = lastNodeXs[ln.xi1]; ry1 = lastNodeYs[ln.yi1];
+                    rx2 = lastNodeXs[ln.xi2]; ry2 = lastNodeYs[ln.yi2];
+                } else {
+                    rx1 = geo.frameW + ln.nx1 * geo.innerW; ry1 = geo.frameHTop + ln.ny1 * geo.innerH;
+                    rx2 = geo.frameW + ln.nx2 * geo.innerW; ry2 = geo.frameHTop + ln.ny2 * geo.innerH;
+                }
+                const x1 = toX(rx1), y1 = toY(ry1), x2 = toX(rx2), y2 = toY(ry2);
                 lastSegMap.set(`added:${d}:${idx}`, { cx: x1, cy: y1, ex: x2, ey: y2, mx: (x1 + x2) / 2, my: (y1 + y2) / 2, normAngle: 0 });
                 if (buildKonvaPattern) {
                     kv.addPatternLine(x1, y1, x2, y2, addedColor, lastSlatPx);
@@ -1199,7 +1222,7 @@ async function draw() {
     // buildKonvaPattern은 지오메트리 캐시 히트 시 false라서(=클릭만 해도 이 프레임은 재빌드 안 됨)
     // useKonvaPattern 기준으로 분기하고, Konva는 패턴 재빌드와 무관한 지속 노드(setEditMarker)로 갱신
     if (lineEditMode === 'add' && addLineStart) {
-        const pt = normToCtx(addLineStart.nx, addLineStart.ny);
+        const pt = addLineStart.xi !== undefined ? nodeIdxToCtx(addLineStart.xi, addLineStart.yi) : normToCtx(addLineStart.nx, addLineStart.ny);
         if (useKonvaPattern) {
             kv.setEditMarker(pt.x, pt.y, lastSlatPx * 1.5, '#3A8C82');
         } else {
@@ -1880,13 +1903,27 @@ async function draw() {
         if (lineEditMode === 'add') {
             const snapped = snapToNode(coord.x, coord.y);
             if (!snapped) return;
-            const norm = ctxToNorm(snapped.cx, snapped.cy);
+            // 균등 격자(정자살) 노드는 xi/yi가 있어 인덱스로 기억 — 문 크기가 바뀌어도 그
+            // 교점의 최신 위치를 다시 찾아 정확히 붙는다. 몬드리안 노드는 xi/yi가 없어
+            // 기존처럼 비율(nx,ny)로 기억한다.
+            const start = snapped.xi !== undefined
+                ? { xi: snapped.xi, yi: snapped.yi }
+                : ctxToNorm(snapped.cx, snapped.cy);
             if (!addLineStart) {
-                addLineStart = norm;
+                addLineStart = start;
                 draw();
             } else {
-                if (Math.abs(norm.nx - addLineStart.nx) < 0.001 && Math.abs(norm.ny - addLineStart.ny) < 0.001) return;
-                addedLines.push({ nx1: addLineStart.nx, ny1: addLineStart.ny, nx2: norm.nx, ny2: norm.ny });
+                const same = start.xi !== undefined
+                    ? (start.xi === addLineStart.xi && start.yi === addLineStart.yi)
+                    : (Math.abs(start.nx - addLineStart.nx) < 0.001 && Math.abs(start.ny - addLineStart.ny) < 0.001);
+                if (same) return;
+                // mondrianLayout 여부는 draw() 한 프레임 안에서 고정이라 두 끝점이 항상 같은
+                // 체계(둘 다 격자 인덱스 또는 둘 다 비율)로 잡힌다.
+                if (start.xi !== undefined) {
+                    addedLines.push({ xi1: addLineStart.xi, yi1: addLineStart.yi, xi2: start.xi, yi2: start.yi });
+                } else {
+                    addedLines.push({ nx1: addLineStart.nx, ny1: addLineStart.ny, nx2: start.nx, ny2: start.ny });
+                }
                 addLineStart = null;
                 draw();
             }
