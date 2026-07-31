@@ -86,19 +86,22 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
             const ratio = s.lastBaseScale / _lastDoorScale;
             const dx = s.lastOLeft, dy = s.lastOTop, ox = _lastDoorX, oy = _lastDoorY;
             konvaShapeLayer.getChildren(n => n !== konvaTransformer).forEach(shape => {
-                // 격자 교점에 스냅되어 그려진 선(nodeRef 보유)은 비율 계산 대신 그 교점의
-                // 최신 실제 위치를 다시 조회해서 정확히 맞춘다 — 일반 도형(자유 위치)만 비율로 이동.
+                // 격자 교점에 스냅된 끝점(nodeRef.points[i]가 있는 점)은 비율 계산 대신 그
+                // 교점의 최신 실제 위치를 다시 조회해서 정확히 맞춘다. 스냅 안 된 끝점(자유
+                // 위치)은 비율로 이동 — 한 선 안에서 끝점별로 독립적으로 처리한다.
                 const ref = typeof shape.getAttr === 'function' ? shape.getAttr('nodeRef') : null;
-                if (ref && nodeToCtx) {
-                    const p1 = nodeToCtx(ref.xi1, ref.yi1);
-                    const p2 = nodeToCtx(ref.xi2, ref.yi2);
-                    shape.points([p1.x, p1.y, p2.x, p2.y]);
-                } else if (shape.getClassName() === 'Line') {
+                if (shape.getClassName() === 'Line') {
                     const pts = shape.points();
                     const newPts = [];
                     for (let i = 0; i < pts.length; i += 2) {
-                        newPts.push(dx + (pts[i]     - ox) * ratio);
-                        newPts.push(dy + (pts[i + 1] - oy) * ratio);
+                        const nodeIdx = ref && ref.points && ref.points[i / 2];
+                        if (nodeIdx && nodeToCtx) {
+                            const p = nodeToCtx(nodeIdx.xi, nodeIdx.yi);
+                            newPts.push(p.x, p.y);
+                        } else {
+                            newPts.push(dx + (pts[i]     - ox) * ratio);
+                            newPts.push(dy + (pts[i + 1] - oy) * ratio);
+                        }
                     }
                     shape.points(newPts);
                 } else {
@@ -282,9 +285,22 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
                     lineCap: 'round', strokeScaleEnabled: false,
                     hitStrokeWidth: 24 / getState().scaleFactor, // 선이 얇아 터치로 선택하기 어려운 것 보완
                 });
-                if (konvaLineStart.xi !== undefined && snapped) {
-                    line.setAttr('nodeRef', { xi1: konvaLineStart.xi, yi1: konvaLineStart.yi, xi2: snapped.xi, yi2: snapped.yi });
+                // 두 끝점을 각각 독립적으로 기억한다 — 한쪽만 격자에 스냅되고 반대쪽은
+                // 자유 위치인 경우에도(예: 칸 가운데 등 교점과 먼 지점) 스냅된 쪽만이라도
+                // 정확히 따라가야 하므로, "둘 다 스냅됐을 때만" 기억하지 않는다.
+                const p1Snapped = konvaLineStart.xi !== undefined;
+                const p2Snapped = !!snapped;
+                if (p1Snapped || p2Snapped) {
+                    line.setAttr('nodeRef', {
+                        points: [
+                            p1Snapped ? { xi: konvaLineStart.xi, yi: konvaLineStart.yi } : null,
+                            p2Snapped ? { xi: snapped.xi, yi: snapped.yi } : null,
+                        ],
+                    });
                 }
+                // 임시 디버그: 스냅 여부를 색으로 표시 — 둘 다 스냅=파랑, 한쪽만=주황, 스냅 안 됨=빨강(기본)
+                if (p1Snapped && p2Snapped) line.stroke('#2a78d6');
+                else if (p1Snapped || p2Snapped) line.stroke('#eda100');
                 if (konvaLinePreview) { konvaLinePreview.destroy(); konvaLinePreview = null; }
                 konvaLineStart = null;
                 addShape(line);
