@@ -1916,7 +1916,7 @@ async function draw() {
         { range: txtFrameH, num: document.getElementById('numFrameH'),  min: 20,   max: 150  },
         { range: txtSlat,   num: document.getElementById('numSlat'),    min: 8,    max: 35   },
         { range: document.getElementById('txtPungpan'), num: document.getElementById('numPungpan'), min: 0, max: 600 },
-        { range: txtRatio, num: document.getElementById('numRatio'), min: 1.0, max: 3.0, step: 0.1 },
+        { range: txtRatio, num: document.getElementById('numRatio'), min: 1.0, max: 5.0, step: 0.1 },
     ];
 
     document.getElementById('txtPatternTop').addEventListener('change', draw);
@@ -1937,7 +1937,7 @@ async function draw() {
             drawThrottled();
         });
         num.addEventListener('input', () => {
-            const v = parseInt(num.value);
+            const v = parseFloat(num.value);
             if (isNaN(v)) return;
             if (v >= min && v <= max) {
                 range.value = v;
@@ -1945,8 +1945,8 @@ async function draw() {
             }
         });
         num.addEventListener('blur', () => {
-            let v = parseInt(num.value);
-            if (isNaN(v)) v = parseInt(range.value);
+            let v = parseFloat(num.value);
+            if (isNaN(v)) v = parseFloat(range.value);
             v = Math.min(max, Math.max(min, v));
             range.value = v;
             num.value   = v;

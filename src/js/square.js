@@ -1947,7 +1947,7 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
             draw();
         });
         num.addEventListener('input', () => {
-            const v = parseInt(num.value);
+            const v = parseFloat(num.value);
             if (isNaN(v)) return;
             if (v >= min && v <= max) {
                 range.value = v;
@@ -1955,8 +1955,8 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
             }
         });
         num.addEventListener('blur', () => {
-            let v = parseInt(num.value);
-            if (isNaN(v)) v = parseInt(range.value);
+            let v = parseFloat(num.value);
+            if (isNaN(v)) v = parseFloat(range.value);
             v = Math.min(max, Math.max(min, v));
             range.value = v;
             num.value   = v;
