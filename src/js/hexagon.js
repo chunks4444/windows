@@ -345,11 +345,47 @@ function screenToCtxCoord(clientX, clientY) {
         y: (clientY - rect.top  - logH / 2 - panY) / scaleFactor,
     };
 }
-function ctxToNorm(cx, cy) {
-    return { nx: (cx - lastILeft) / lastIW, ny: (cy - lastITop) / lastIH };
+// 노드 실좌표(mm) 계산. draw()의 캔버스 좌표 공식과 같은 식이되, iLeft→frameW /
+// iTop→frameHTop / iW→innerW / slatPx→slatT로 바꿔 mm 단위로 계산한다(순수
+// 확대·이동 변환이라 동일 식이 성립) — geo는 매 프레임 최신값을 들고 있으므로,
+// 문 크기가 바뀌어 격자가 재배치돼도 항상 "그 노드"의 최신 mm 위치를 돌려준다.
+// sys: 'hh'(가로/flat-top 육각 꼭짓점) | 'vs'(세로살) | 'dr'(↘사선) | 'ur'(↗사선)
+function nodeRealPos(sys, p) {
+    if (sys === 'hh') {
+        const size    = geo.innerW / (geo.cols * Math.sqrt(3));
+        const width   = size * Math.sqrt(3);
+        const rowStep = size * 1.5;
+        const startY  = geo.frameHTop - geo.slatT / 2;
+        const x = geo.frameW - width + p.cIdx * width;
+        const y = startY - rowStep + p.rIdx * rowStep;
+        const offX = (p.rIdx % 2 === 0) ? width / 2 : 0;
+        const cx = x + offX, cy = y;
+        const a = p.i * Math.PI / 3;
+        return { x: cx + size * Math.cos(a), y: cy + size * Math.sin(a) };
+    }
+    const S3     = Math.sqrt(3);
+    const size   = (geo.innerW - geo.slatT * (geo.cols - 1)) / geo.cols / S3;
+    const step   = size * S3 + geo.slatT;
+    const bStep  = size * 2;
+    const phaseD = -size / 2;
+    const phaseU =  size / 2;
+    const iLeftV = geo.frameW - geo.slatT / 2;
+    if (sys === 'vs') {
+        return { x: iLeftV + p.n * step, y: geo.frameHTop + p.jb * size };
+    }
+    if (sys === 'dr') {
+        const y0 = geo.frameHTop + phaseD + p.k * bStep;
+        return { x: iLeftV + p.mb * (step / 2), y: y0 + p.mb * (size / 2) };
+    }
+    // 'ur'
+    const y0 = geo.frameHTop + phaseU + p.k * bStep;
+    return { x: iLeftV + p.mb * (step / 2), y: y0 - p.mb * (size / 2) };
 }
-function normToCtx(nx, ny) {
-    return { x: lastILeft + nx * lastIW, y: lastITop + ny * lastIH };
+
+// 노드 → 현재 캔버스 좌표 (문짝 0 기준 미리보기 마커용).
+function nodeIdxToCtx(sys, p) {
+    const r = nodeRealPos(sys, p);
+    return { x: lastOLeft + r.x * lastBaseScale, y: lastOTop + r.y * lastBaseScale };
 }
 
 let _geoController = null;
@@ -835,7 +871,7 @@ async function draw() {
                         const lineKey  = makeLineKey(mx, my, normAngle);
                         const segKey = `${d}:h:${rIdx}:${cIdx}:${i}`;
                         lastSegMap.set(segKey, { cx: x1, cy: y1, ex: x2, ey: y2, mx, my, normAngle, lineKey });
-                        lastNodeList.push({ cx: x1, cy: y1 });
+                        lastNodeList.push({ cx: x1, cy: y1, sys: 'hh', p: { rIdx, cIdx, i } });
                         if (deletedSegs.has(segKey)) continue;
                         if (buildKonvaPattern) {
                             kv.addPatternSlatLine(x1, y1, x2, y2, Color_Slat_Fill, segKey, lineKey, slatPx);
@@ -903,7 +939,10 @@ async function draw() {
                     const lineKey = makeLineKey(mx, my, Math.PI / 2);
                     const segKey  = `${d}:v:${n}:${j}`;
                     lastSegMap.set(segKey, { cx: x, cy: y1, ex: x, ey: y2, mx, my, normAngle: Math.PI / 2, lineKey });
-                    lastNodeList.push({ cx: x, cy: y1 }, { cx: x, cy: y2 });
+                    lastNodeList.push(
+                        { cx: x, cy: y1, sys: 'vs', p: { n, jb: j - 0.5 } },
+                        { cx: x, cy: y2, sys: 'vs', p: { n, jb: j + 0.5 } },
+                    );
                     if (deletedSegs.has(segKey)) continue;
                     if (buildKonvaPattern) {
                         kv.addPatternSlatLine(x, y1, x, y2, Color_Slat_Fill, segKey, lineKey, slatPx);
@@ -936,7 +975,10 @@ async function draw() {
                         const lineKey = `${d}:dr:${k}`;
                         const segKey  = `${d}:dr:${k}:${m}`;
                         lastSegMap.set(segKey, { cx: x1, cy: y1, ex: x2, ey: y2, mx, my, normAngle: drNorm, lineKey });
-                        lastNodeList.push({ cx: x1, cy: y1 }, { cx: x2, cy: y2 });
+                        lastNodeList.push(
+                            { cx: x1, cy: y1, sys: 'dr', p: { k, mb: m } },
+                            { cx: x2, cy: y2, sys: 'dr', p: { k, mb: m + 1 } },
+                        );
                         if (deletedSegs.has(segKey)) continue;
                         if (buildKonvaPattern) {
                             kv.addPatternSlatLine(x1, y1, x2, y2, Color_Slat_Fill, segKey, lineKey, slatPx);
@@ -967,7 +1009,10 @@ async function draw() {
                         const lineKey = `${d}:ur:${k}`;
                         const segKey  = `${d}:ur:${k}:${m}`;
                         lastSegMap.set(segKey, { cx: x1, cy: y1, ex: x2, ey: y2, mx, my, normAngle: urNorm, lineKey });
-                        lastNodeList.push({ cx: x1, cy: y1 }, { cx: x2, cy: y2 });
+                        lastNodeList.push(
+                            { cx: x1, cy: y1, sys: 'ur', p: { k, mb: m } },
+                            { cx: x2, cy: y2, sys: 'ur', p: { k, mb: m + 1 } },
+                        );
                         if (deletedSegs.has(segKey)) continue;
                         if (buildKonvaPattern) {
                             kv.addPatternSlatLine(x1, y1, x2, y2, Color_Slat_Fill, segKey, lineKey, slatPx);
@@ -1082,8 +1127,16 @@ async function draw() {
         adjDiag = adjDiag.filter(item => item.cnt > 0);
 
         addedLines.forEach(ln => {
-            const dx = (ln.nx2 - ln.nx1) * geo.innerW;
-            const dy = (ln.ny2 - ln.ny1) * geo.innerH;
+            let dx, dy;
+            if (ln.sys1 !== undefined) {
+                const q1 = nodeRealPos(ln.sys1, ln.p1);
+                const q2 = nodeRealPos(ln.sys2, ln.p2);
+                dx = q2.x - q1.x;
+                dy = q2.y - q1.y;
+            } else {
+                dx = (ln.nx2 - ln.nx1) * geo.innerW;
+                dy = (ln.ny2 - ln.ny1) * geo.innerH;
+            }
             const realLen = Math.round(Math.hypot(dx, dy) + tenonLen);
             const m = adjDiag.find(it => Math.abs(it.len - realLen) <= tenonLen);
             if (m) m.cnt++;
@@ -1115,10 +1168,17 @@ async function draw() {
             const toX = rx => offsetX + (px + rx) * baseScale;
             const toY = ry => offsetY + ry * baseScale;
             addedLines.forEach((ln, idx) => {
-                const x1 = toX(geo.frameW + ln.nx1 * geo.innerW);
-                const y1 = toY(geo.frameHTop + ln.ny1 * geo.innerH);
-                const x2 = toX(geo.frameW + ln.nx2 * geo.innerW);
-                const y2 = toY(geo.frameHTop + ln.ny2 * geo.innerH);
+                // sys1 존재 = 노드 체계 기반(신규). 없으면 nx1 비율 기반(구버전 하위호환).
+                let rx1, ry1, rx2, ry2;
+                if (ln.sys1 !== undefined) {
+                    const q1 = nodeRealPos(ln.sys1, ln.p1);
+                    const q2 = nodeRealPos(ln.sys2, ln.p2);
+                    rx1 = q1.x; ry1 = q1.y; rx2 = q2.x; ry2 = q2.y;
+                } else {
+                    rx1 = geo.frameW + ln.nx1 * geo.innerW; ry1 = geo.frameHTop + ln.ny1 * geo.innerH;
+                    rx2 = geo.frameW + ln.nx2 * geo.innerW; ry2 = geo.frameHTop + ln.ny2 * geo.innerH;
+                }
+                const x1 = toX(rx1), y1 = toY(ry1), x2 = toX(rx2), y2 = toY(ry2);
                 lastSegMap.set(`added:${d}:${idx}`, { mx: (x1 + x2) / 2, my: (y1 + y2) / 2, normAngle: 0 });
                 if (buildKonvaPattern) {
                     kv.addPatternLine(x1, y1, x2, y2, addedColor, lastSlatPx);
@@ -1217,7 +1277,7 @@ async function draw() {
     // buildKonvaPattern은 지오메트리 캐시 히트 시 false라서(=클릭만 해도 이 프레임은 재빌드 안 됨)
     // useKonvaPattern 기준으로 분기하고, Konva는 패턴 재빌드와 무관한 지속 노드(setEditMarker)로 갱신
     if (lineEditMode === 'add' && addLineStart) {
-        const p = normToCtx(addLineStart.nx, addLineStart.ny);
+        const p = nodeIdxToCtx(addLineStart.sys, addLineStart.p);
         if (useKonvaPattern) {
             kv.setEditMarker(p.x, p.y, lastSlatPx * 1.5, '#3A8C82');
         } else {
@@ -1729,14 +1789,13 @@ async function draw() {
         if (lineEditMode === 'add') {
             const snapped = snapToNode(coord.x, coord.y);
             if (!snapped) return; // 교점에서만 동작
-            const norm = ctxToNorm(snapped.cx, snapped.cy);
             if (!addLineStart) {
-                addLineStart = norm;
+                addLineStart = { sys: snapped.sys, p: snapped.p };
                 draw();
             } else {
                 // 같은 점이면 무시
-                if (Math.abs(norm.nx - addLineStart.nx) < 0.001 && Math.abs(norm.ny - addLineStart.ny) < 0.001) return;
-                addedLines.push({ nx1: addLineStart.nx, ny1: addLineStart.ny, nx2: norm.nx, ny2: norm.ny });
+                if (snapped.sys === addLineStart.sys && JSON.stringify(snapped.p) === JSON.stringify(addLineStart.p)) return;
+                addedLines.push({ sys1: addLineStart.sys, p1: addLineStart.p, sys2: snapped.sys, p2: snapped.p });
                 addLineStart = null;
                 draw();
             }
