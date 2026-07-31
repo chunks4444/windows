@@ -1773,12 +1773,16 @@ async function draw() {
                         const d = Math.hypot(s.mx - seg.mx, s.my - seg.my);
                         if (d < lastCellSize * 0.9 && d < bestPDist) { bestPDist = d; partnerKey = k; }
                     }
-                    if (deletedSegs.has(bestKey)) {
-                        deletedSegs.delete(bestKey);
-                        if (partnerKey) deletedSegs.delete(partnerKey);
-                    } else {
-                        deletedSegs.add(bestKey);
-                        if (partnerKey) deletedSegs.add(partnerKey);
+                    // 모든 문짝에 동일하게 적용 (addedLines와 동일한 동작) —
+                    // 문짝별로 따로 삭제하면 문짝 수를 여러 번 바꿀 때 서로 어긋남
+                    const suffixes = [bestKey.slice(bestKey.indexOf(':') + 1)];
+                    if (partnerKey) suffixes.push(partnerKey.slice(partnerKey.indexOf(':') + 1));
+                    const nowDeleted = !deletedSegs.has(bestKey);
+                    for (let d = 0; d < lastDrawnDoorCount; d++) {
+                        suffixes.forEach(suffix => {
+                            const k = `${d}:${suffix}`;
+                            if (nowDeleted) deletedSegs.add(k); else deletedSegs.delete(k);
+                        });
                     }
                 }
             }

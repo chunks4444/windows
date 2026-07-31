@@ -1882,8 +1882,14 @@ async function draw() {
                 const idx = parseInt(bestKey.split(':')[2]);
                 addedLines.splice(idx, 1);
             } else {
-                if (deletedSegs.has(bestKey)) deletedSegs.delete(bestKey);
-                else deletedSegs.add(bestKey);
+                // 모든 문짝에 동일하게 적용 (addedLines와 동일한 동작) —
+                // 문짝별로 따로 삭제하면 문짝 수를 여러 번 바꿀 때 서로 어긋남
+                const suffix = bestKey.slice(bestKey.indexOf(':') + 1);
+                const nowDeleted = !deletedSegs.has(bestKey);
+                for (let d = 0; d < lastDrawnDoorCount; d++) {
+                    const k = `${d}:${suffix}`;
+                    if (nowDeleted) deletedSegs.add(k); else deletedSegs.delete(k);
+                }
             }
             draw();
             return;
