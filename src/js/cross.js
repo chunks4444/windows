@@ -726,18 +726,21 @@ async function draw() {
             }
             lastCornerXs = cornerXs; lastCornerYs = cornerYs;
             lastCenterXs = centerXs; lastCenterYs = centerYs;
-
-            cornerXs.forEach((rx, xi) => {
-                cornerYs.forEach((ry, yi) => {
-                    lastNodeList.push({ cx: toCanvasX(rx), cy: toCanvasY(ry), ntype: 'corner', xi, yi });
-                });
-            });
-            centerXs.forEach((rx, xi) => {
-                centerYs.forEach((ry, yi) => {
-                    lastNodeList.push({ cx: toCanvasX(rx), cy: toCanvasY(ry), ntype: 'center', xi, yi });
-                });
-            });
         }
+
+        // 위에서 계산해둔 노드 실좌표를 "이번 문짝(d)"의 화면 좌표로 찍어 lastNodeList에
+        // 추가한다 — d===renderOrder[0] 제한 없이 매 문짝마다 실행해야, 오른쪽(두 번째
+        // 이후) 문짝을 클릭해도 근처 교점을 찾아 선 추가/삭제가 동작한다.
+        lastCornerXs.forEach((rx, xi) => {
+            lastCornerYs.forEach((ry, yi) => {
+                lastNodeList.push({ cx: toCanvasX(rx), cy: toCanvasY(ry), ntype: 'corner', xi, yi });
+            });
+        });
+        lastCenterXs.forEach((rx, xi) => {
+            lastCenterYs.forEach((ry, yi) => {
+                lastNodeList.push({ cx: toCanvasX(rx), cy: toCanvasY(ry), ntype: 'center', xi, yi });
+            });
+        });
 
         // 내경 영역으로 클리핑 — innerH 기준
         const clipH = geo.innerH;

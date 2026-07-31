@@ -46,6 +46,7 @@
     let lastSegMap   = new Map();
     let lastNodeList = [];
     let lastNodeXs   = [], lastNodeYs = []; // 균등 격자(정자살) 노드의 실좌표(mm) 배열 — addedLines를 노드 인덱스로 다시 찾을 때 씀 (몬드리안 레이아웃은 해당 없음)
+    let lastMondrianNodes = []; // 몬드리안 레이아웃 노드의 실좌표(mm) 목록 — [ [x,y], ... ]
     let lastILeft = 0, lastITop = 0, lastIW = 1, lastIH = 1, lastSlatPx = 1, lastCellSize = 1;
     let lastBaseScale = 1, lastOLeft = 0, lastOTop = 0, lastDoorWpx = 0, lastDoorHpx = 0;
     let showDimensions = true;
@@ -719,20 +720,19 @@ async function draw() {
             lastDoorWpx   = totalWidth * baseScale;
             lastDoorHpx   = totalH     * baseScale;
 
-            // 라인 편집기 노드
+            // 라인 편집기 노드 실좌표(mm) — 문짝마다 동일한 상대 위치라 한 번만 계산해서
+            // lastNodeXs/lastNodeYs(균등 격자) 또는 lastMondrianNodes(몬드리안)에 보관해둔다.
             const fw = geo.frameW, ft = geo.frameHTop, iw = geo.innerW, ih = geo.innerH;
             if (mondrianLayout) {
-                // 몬드리안: 4 모서리 + 각 선 끝점 + 교점
                 const lines = mondrianLayout.lines.map(l => mondrianLinePx(l, iw, ih));
-                [[fw, ft], [fw + iw, ft], [fw, ft + ih], [fw + iw, ft + ih]].forEach(([rx, ry]) =>
-                    lastNodeList.push({ cx: toCanvasX(rx), cy: toCanvasY(ry) }));
+                const pts = [[fw, ft], [fw + iw, ft], [fw, ft + ih], [fw + iw, ft + ih]];
                 for (const ln of lines) {
                     if (ln.axis === 'v') {
-                        lastNodeList.push({ cx: toCanvasX(fw + ln.pos), cy: toCanvasY(ft + ln.from) });
-                        lastNodeList.push({ cx: toCanvasX(fw + ln.pos), cy: toCanvasY(ft + ln.to) });
+                        pts.push([fw + ln.pos, ft + ln.from]);
+                        pts.push([fw + ln.pos, ft + ln.to]);
                     } else {
-                        lastNodeList.push({ cx: toCanvasX(fw + ln.from), cy: toCanvasY(ft + ln.pos) });
-                        lastNodeList.push({ cx: toCanvasX(fw + ln.to),   cy: toCanvasY(ft + ln.pos) });
+                        pts.push([fw + ln.from, ft + ln.pos]);
+                        pts.push([fw + ln.to,   ft + ln.pos]);
                     }
                 }
                 const vLines = lines.filter(l => l.axis === 'v');
@@ -741,15 +741,17 @@ async function draw() {
                     for (const hl of hLines) {
                         if (vl.from <= hl.pos + 0.5 && hl.pos - 0.5 <= vl.to &&
                             hl.from <= vl.pos + 0.5 && vl.pos - 0.5 <= hl.to) {
-                            lastNodeList.push({ cx: toCanvasX(fw + vl.pos), cy: toCanvasY(ft + hl.pos) });
+                            pts.push([fw + vl.pos, ft + hl.pos]);
                         }
                     }
                 }
+                lastMondrianNodes = pts;
+                lastNodeXs = []; lastNodeYs = [];
             } else {
                 // 정자살 균등 격자: 세로살 중심 × 가로살 중심 교점
                 // xi/yi 인덱스로 lastNodeXs/lastNodeYs에 보관해둔다 — addedLines를 좌표
-                // 비율(fraction)이 아니라 이 인덱스로 저장해야 문 크기가 바뀌어도 실제
-                // 그 교점의 새 위치를 다시 찾아 선이 격자에 붙어 따라온다.
+                // 비율이 아니라 이 인덱스로 저장해야 문 크기가 바뀌어도 실제 그 교점의
+                // 새 위치를 다시 찾아 선이 격자에 붙어 따라온다.
                 const nodeXs = [fw];
                 for (let i = 1; i < geo.cols; i++) {
                     nodeXs.push(fw + i * (geo.cellW + geo.slatV) - geo.slatV / 2);
@@ -762,12 +764,23 @@ async function draw() {
                 nodeYs.push(ft + ih);
                 lastNodeXs = nodeXs;
                 lastNodeYs = nodeYs;
-                nodeXs.forEach((rx, xi) => {
-                    nodeYs.forEach((ry, yi) => {
-                        lastNodeList.push({ cx: toCanvasX(rx), cy: toCanvasY(ry), xi, yi });
-                    });
-                });
+                lastMondrianNodes = [];
             }
+        }
+
+        // 위에서 계산해둔 노드 실좌표를 "이번 문짝(d)"의 화면 좌표로 찍어 lastNodeList에
+        // 추가한다 — d===renderOrder[0] 제한 없이 매 문짝마다 실행해야, 오른쪽(두 번째
+        // 이후) 문짝을 클릭해도 근처 교점을 찾아 선 추가/삭제가 동작한다.
+        if (mondrianLayout) {
+            lastMondrianNodes.forEach(([rx, ry]) => {
+                lastNodeList.push({ cx: toCanvasX(rx), cy: toCanvasY(ry) });
+            });
+        } else {
+            lastNodeXs.forEach((rx, xi) => {
+                lastNodeYs.forEach((ry, yi) => {
+                    lastNodeList.push({ cx: toCanvasX(rx), cy: toCanvasY(ry), xi, yi });
+                });
+            });
         }
 
         // ====================================

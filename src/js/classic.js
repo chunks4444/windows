@@ -742,13 +742,16 @@ async function draw() {
 
             lastNodeXs = nodeXs;
             lastNodeYs = nodeYs;
-
-            nodeXs.forEach((rx, xi) => {
-                nodeYs.forEach((ry, yi) => {
-                    lastNodeList.push({ cx: toCanvasX(rx), cy: toCanvasY(ry), xi, yi });
-                });
-            });
         }
+
+        // 위에서 계산해둔 노드 실좌표를 "이번 문짝(d)"의 화면 좌표로 찍어 lastNodeList에
+        // 추가한다 — d===renderOrder[0] 제한 없이 매 문짝마다 실행해야, 오른쪽(두 번째
+        // 이후) 문짝을 클릭해도 근처 교점을 찾아 선 추가/삭제가 동작한다.
+        lastNodeXs.forEach((rx, xi) => {
+            lastNodeYs.forEach((ry, yi) => {
+                lastNodeList.push({ cx: toCanvasX(rx), cy: toCanvasY(ry), xi, yi });
+            });
+        });
 
         // ====================================
         // 세로살
