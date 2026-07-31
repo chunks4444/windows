@@ -46,6 +46,12 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
     let _usePatternLayer   = false;
     let _activeClipGroup   = null;
 
+    // 도형(원/선/사각형/텍스트)의 마지막 동기화 시점 문틀 변환 — 문 크기를 바꾸면
+    // baseScale/offsetX/offsetY가 달라지는데, 도형은 pan/zoom 좌표계에만 붙어있고
+    // 문틀 변환과는 무관하게 저장돼 있어서 문 크기 변경 시 그리드만 리스케일되고
+    // 도형은 그 자리에 그대로 남아 "따로 노는" 현상이 생겼다.
+    let _lastDoorX = null, _lastDoorY = null, _lastDoorScale = null;
+
     // ── 좌표 변환 ─────────────────────────────────────────
     // stage px → logic coords (konvaShapeLayer 기준)
     function stageToLogic(sx, sy) {
@@ -65,8 +71,44 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
         const scale = { x: s.scaleFactor, y: s.scaleFactor };
         patternLayer.position(pos);    patternLayer.scale(scale);
         konvaShapeLayer.position(pos); konvaShapeLayer.scale(scale);
+        syncShapesToDoor(s);
         patternLayer.batchDraw();
         konvaShapeLayer.batchDraw();
+    }
+
+    // 문틀(offsetX/offsetY/baseScale)이 이전 프레임과 달라졌으면(문 크기 변경 등) 모든
+    // 도형을 같은 비율로 이동·리스케일해서 문틀에 붙어 따라오게 한다. 엔진이 아직
+    // lastOLeft/lastOTop/lastBaseScale을 안 주면(구버전) 조용히 건너뛴다.
+    function syncShapesToDoor(s) {
+        if (!s.lastBaseScale) return;
+        if (_lastDoorScale !== null &&
+            (_lastDoorX !== s.lastOLeft || _lastDoorY !== s.lastOTop || _lastDoorScale !== s.lastBaseScale)) {
+            const ratio = s.lastBaseScale / _lastDoorScale;
+            const dx = s.lastOLeft, dy = s.lastOTop, ox = _lastDoorX, oy = _lastDoorY;
+            konvaShapeLayer.getChildren(n => n !== konvaTransformer).forEach(shape => {
+                if (shape.getClassName() === 'Line') {
+                    const pts = shape.points();
+                    const newPts = [];
+                    for (let i = 0; i < pts.length; i += 2) {
+                        newPts.push(dx + (pts[i]     - ox) * ratio);
+                        newPts.push(dy + (pts[i + 1] - oy) * ratio);
+                    }
+                    shape.points(newPts);
+                } else {
+                    shape.x(dx + (shape.x() - ox) * ratio);
+                    shape.y(dy + (shape.y() - oy) * ratio);
+                }
+                if (typeof shape.strokeWidth === 'function' && shape.strokeWidth() != null) {
+                    shape.strokeWidth(shape.strokeWidth() * ratio);
+                }
+                const cls = shape.getClassName();
+                if (cls === 'Circle') shape.radius(shape.radius() * ratio);
+                else if (cls === 'Rect') { shape.width(shape.width() * ratio); shape.height(shape.height() * ratio); }
+                else if (cls === 'Text') shape.fontSize(shape.fontSize() * ratio);
+            });
+            konvaTransformer.forceUpdate();
+        }
+        _lastDoorX = s.lastOLeft; _lastDoorY = s.lastOTop; _lastDoorScale = s.lastBaseScale;
     }
 
     // ── Stage 크기 동기화 ─────────────────────────────────

@@ -66,7 +66,7 @@
     // ── Konva 오버레이 모듈 초기화 ───────────────────────
     const kv = initKonvaOverlay({
         canvas,
-        getState: () => ({ logW, logH, panX, panY, scaleFactor, lastSlatPx, lastCellSize }),
+        getState: () => ({ logW, logH, panX, panY, scaleFactor, lastSlatPx, lastCellSize, lastOLeft, lastOTop, lastBaseScale }),
         getSegMap: () => lastSegMap,
         deletedSegs,
         draw,
