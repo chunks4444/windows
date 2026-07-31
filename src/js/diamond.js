@@ -38,6 +38,9 @@
     let lastNodeList = [];
     let lastILeft = 0, lastITop = 0, lastIW = 1, lastIH = 1, lastSlatPx = 1, lastCellSize = 1;
     let lastBaseScale = 1, lastOLeft = 0, lastOTop = 0, lastDoorWpx = 0, lastDoorHpx = 0;
+    // 교점(corner)·셀 중심(center) 노드의 실좌표(mm) 배열 — addedLines를 노드 인덱스로
+    // 다시 찾을 때 씀 (diamond 패턴은 대각선이 셀 중심에서도 만나서 교점이 두 종류)
+    let lastCornerXs = [], lastCornerYs = [], lastCenterXs = [], lastCenterYs = [];
     let showDimensions = true;
     let _exportCanvas = null;
 
@@ -286,12 +289,13 @@ function screenToCtxCoord(clientX, clientY) {
     };
 }
 
-function ctxToNorm(cx, cy) {
-    return { nx: (cx - lastILeft) / lastIW, ny: (cy - lastITop) / lastIH };
-}
-
-function normToCtx(nx, ny) {
-    return { x: lastILeft + nx * lastIW, y: lastITop + ny * lastIH };
+// 노드(교점/셀중심) → 현재 캔버스 좌표. lastCornerXs/Ys·lastCenterXs/Ys는 draw()가 매번
+// geo 기준으로 다시 채우므로, 문 크기가 바뀌어 격자가 재배치돼도 항상 "그 교점"의
+// 최신 위치를 돌려준다.
+function nodeIdxToCtx(ntype, xi, yi) {
+    const xs = ntype === 'center' ? lastCenterXs : lastCornerXs;
+    const ys = ntype === 'center' ? lastCenterYs : lastCornerYs;
+    return { x: lastOLeft + xs[xi] * lastBaseScale, y: lastOTop + ys[yi] * lastBaseScale };
 }
 
 function snapToNode(cx, cy) {
@@ -704,6 +708,37 @@ async function draw() {
             lastBaseScale = baseScale;
             lastDoorWpx   = totalWidth * baseScale;
             lastDoorHpx   = totalH     * baseScale;
+
+            // 라인 편집기 노드: 격자 교점 + 셀 중심(대각선이 만나는 점)
+            const cornerXs = [];
+            for (let col = 0; col <= geo.cols; col++) {
+                cornerXs.push(geo.frameW + col * (geo.cellW + geo.slatV) - geo.slatV / 2);
+            }
+            const cornerYs = [];
+            for (let row = 0; row <= geo.rowsInt; row++) {
+                cornerYs.push(geo.frameHTop + row * (geo.cellH + geo.slatH) - geo.slatH / 2);
+            }
+            const centerXs = [];
+            for (let col = 0; col < geo.cols; col++) {
+                centerXs.push((cornerXs[col] + cornerXs[col + 1]) / 2);
+            }
+            const centerYs = [];
+            for (let row = 0; row < geo.rowsInt; row++) {
+                centerYs.push((cornerYs[row] + cornerYs[row + 1]) / 2);
+            }
+            lastCornerXs = cornerXs; lastCornerYs = cornerYs;
+            lastCenterXs = centerXs; lastCenterYs = centerYs;
+
+            cornerXs.forEach((rx, xi) => {
+                cornerYs.forEach((ry, yi) => {
+                    lastNodeList.push({ cx: toCanvasX(rx), cy: toCanvasY(ry), ntype: 'corner', xi, yi });
+                });
+            });
+            centerXs.forEach((rx, xi) => {
+                centerYs.forEach((ry, yi) => {
+                    lastNodeList.push({ cx: toCanvasX(rx), cy: toCanvasY(ry), ntype: 'center', xi, yi });
+                });
+            });
         }
 
         // ====================================
@@ -849,15 +884,6 @@ async function draw() {
                 const jy0 = y - geo.slatH / 2;                    // 현재 행 교점 중심 y
                 const jy1 = y + geo.cellH + geo.slatH / 2;        // 다음 행 교점 중심 y
 
-                // 교점 중심 노드 (첫 패널만)
-                if (d === renderOrder[0]) {
-                    lastNodeList.push({ cx: toCanvasX(jx0), cy: toCanvasY(jy0) });
-                    lastNodeList.push({ cx: (toCanvasX(jx0) + toCanvasX(jx1)) / 2, cy: (toCanvasY(jy0) + toCanvasY(jy1)) / 2 }); // 셀 중심도 대각선이 만나는 교점
-                    if (col === geo.cols - 1) lastNodeList.push({ cx: toCanvasX(jx1), cy: toCanvasY(jy0) });
-                    if (row === geo.rowsInt - 1) lastNodeList.push({ cx: toCanvasX(jx0), cy: toCanvasY(jy1) });
-                    if (col === geo.cols - 1 && row === geo.rowsInt - 1) lastNodeList.push({ cx: toCanvasX(jx1), cy: toCanvasY(jy1) });
-                }
-
                 // 좌상 → 우하 (\) — 반씩 분할하여 독립 삭제 가능
                 const bsCx = toCanvasX(jx0), bsCy = toCanvasY(jy0);
                 const bsEx = toCanvasX(jx1), bsEy = toCanvasY(jy1);
@@ -997,8 +1023,18 @@ async function draw() {
         });
 
         addedLines.forEach(ln => {
-            const dx = (ln.nx2 - ln.nx1) * geo.innerW;
-            const dy = (ln.ny2 - ln.ny1) * geo.innerH;
+            let dx, dy;
+            if (ln.xi1 !== undefined) {
+                const xs1 = ln.ntype1 === 'center' ? lastCenterXs : lastCornerXs;
+                const ys1 = ln.ntype1 === 'center' ? lastCenterYs : lastCornerYs;
+                const xs2 = ln.ntype2 === 'center' ? lastCenterXs : lastCornerXs;
+                const ys2 = ln.ntype2 === 'center' ? lastCenterYs : lastCornerYs;
+                dx = xs2[ln.xi2] - xs1[ln.xi1];
+                dy = ys2[ln.yi2] - ys1[ln.yi1];
+            } else {
+                dx = (ln.nx2 - ln.nx1) * geo.innerW;
+                dy = (ln.ny2 - ln.ny1) * geo.innerH;
+            }
             const realLen = Math.round(Math.hypot(dx, dy) + tenonLen);
             const m = adjDiag.find(it => Math.abs(it.len - realLen) <= tenonLen);
             if (m) m.cnt++;
@@ -1036,10 +1072,20 @@ async function draw() {
             const toX = rx => offsetX + (px + rx) * baseScale;
             const toY = ry => offsetY + ry * baseScale;
             addedLines.forEach((ln, idx) => {
-                const x1 = toX(geo.frameW + ln.nx1 * geo.innerW);
-                const y1 = toY(geo.frameHTop + ln.ny1 * geo.innerH);
-                const x2 = toX(geo.frameW + ln.nx2 * geo.innerW);
-                const y2 = toY(geo.frameHTop + ln.ny2 * geo.innerH);
+                // xi1 존재 = 노드(교점/셀중심) 인덱스 기반(신규). 없으면 nx1 비율 기반(구버전 하위호환).
+                let rx1, ry1, rx2, ry2;
+                if (ln.xi1 !== undefined) {
+                    const xs1 = ln.ntype1 === 'center' ? lastCenterXs : lastCornerXs;
+                    const ys1 = ln.ntype1 === 'center' ? lastCenterYs : lastCornerYs;
+                    const xs2 = ln.ntype2 === 'center' ? lastCenterXs : lastCornerXs;
+                    const ys2 = ln.ntype2 === 'center' ? lastCenterYs : lastCornerYs;
+                    rx1 = xs1[ln.xi1]; ry1 = ys1[ln.yi1];
+                    rx2 = xs2[ln.xi2]; ry2 = ys2[ln.yi2];
+                } else {
+                    rx1 = geo.frameW + ln.nx1 * geo.innerW; ry1 = geo.frameHTop + ln.ny1 * geo.innerH;
+                    rx2 = geo.frameW + ln.nx2 * geo.innerW; ry2 = geo.frameHTop + ln.ny2 * geo.innerH;
+                }
+                const x1 = toX(rx1), y1 = toY(ry1), x2 = toX(rx2), y2 = toY(ry2);
                 lastSegMap.set(`added:${d}:${idx}`, { cx: x1, cy: y1, ex: x2, ey: y2, mx: (x1 + x2) / 2, my: (y1 + y2) / 2, normAngle: 0 });
                 if (buildKonvaPattern) {
                     kv.addPatternLine(x1, y1, x2, y2, addedColor, lastSlatPx);
@@ -1137,7 +1183,7 @@ async function draw() {
     // buildKonvaPattern은 지오메트리 캐시 히트 시 false라서(=클릭만 해도 이 프레임은 재빌드 안 됨)
     // useKonvaPattern 기준으로 분기하고, Konva는 패턴 재빌드와 무관한 지속 노드(setEditMarker)로 갱신
     if (lineEditMode === 'add' && addLineStart) {
-        const pt = normToCtx(addLineStart.nx, addLineStart.ny);
+        const pt = nodeIdxToCtx(addLineStart.ntype, addLineStart.xi, addLineStart.yi);
         if (useKonvaPattern) {
             kv.setEditMarker(pt.x, pt.y, lastSlatPx * 1.5, '#3A8C82');
         } else {
@@ -1778,13 +1824,15 @@ async function draw() {
         if (lineEditMode === 'add') {
             const snapped = snapToNode(coord.x, coord.y);
             if (!snapped) return;
-            const norm = ctxToNorm(snapped.cx, snapped.cy);
             if (!addLineStart) {
-                addLineStart = norm;
+                addLineStart = { ntype: snapped.ntype, xi: snapped.xi, yi: snapped.yi };
                 draw();
             } else {
-                if (Math.abs(norm.nx - addLineStart.nx) < 0.001 && Math.abs(norm.ny - addLineStart.ny) < 0.001) return;
-                addedLines.push({ nx1: addLineStart.nx, ny1: addLineStart.ny, nx2: norm.nx, ny2: norm.ny });
+                if (snapped.ntype === addLineStart.ntype && snapped.xi === addLineStart.xi && snapped.yi === addLineStart.yi) return;
+                addedLines.push({
+                    ntype1: addLineStart.ntype, xi1: addLineStart.xi, yi1: addLineStart.yi,
+                    ntype2: snapped.ntype,      xi2: snapped.xi,      yi2: snapped.yi,
+                });
                 addLineStart = null;
                 draw();
             }

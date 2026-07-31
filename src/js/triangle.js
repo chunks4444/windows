@@ -347,11 +347,36 @@ function screenToCtxCoord(clientX, clientY) {
         y: (clientY - rect.top  - logH / 2 - panY) / scaleFactor,
     };
 }
-function ctxToNorm(cx, cy) {
-    return { nx: (cx - lastILeft) / lastIW, ny: (cy - lastITop) / lastIH };
+// 육각 격자 중심 노드(xi=열, yi=행) → 현재 실좌표(mm). draw()의 캔버스 좌표 공식과
+// 같은 식이되, iLeft→frameW / iTop→frameHTop / iW→innerW / slatPx→slatT로 바꿔 mm
+// 단위로 계산한다(순수 확대·이동 변환이라 동일 식이 성립) — geo는 매 프레임 최신값을
+// 들고 있으므로, 문 크기가 바뀌어 격자가 재배치돼도 항상 "그 육각형 중심"의 최신
+// mm 위치를 돌려준다. 문짝별 오프셋(toX/toY)은 호출부(렌더 루프)에서 따로 적용한다.
+function nodeRealPos(xi, yi) {
+    if (!rotateOn) {
+        const size    = geo.innerW / (geo.cols * Math.sqrt(3));
+        const width   = size * Math.sqrt(3);
+        const rowStep = size * 1.5;
+        const startY  = geo.frameHTop - geo.slatT / 2;
+        const x = geo.frameW - width + xi * width;
+        const y = startY - rowStep + yi * rowStep;
+        const offX = (yi % 2 === 0) ? width / 2 : 0;
+        return { x: x + offX, y };
+    }
+    const size    = (geo.innerW + geo.slatT) / (geo.cols * 1.5);
+    const width   = size * Math.sqrt(3);
+    const colStep = size * 1.5;
+    const startX  = geo.frameW - geo.slatT / 2;
+    const x = startX - colStep + xi * colStep;
+    const y = geo.frameHTop - width + yi * width;
+    const offY = (xi % 2 === 0) ? width / 2 : 0;
+    return { x, y: y + offY };
 }
-function normToCtx(nx, ny) {
-    return { x: lastILeft + nx * lastIW, y: lastITop + ny * lastIH };
+
+// 노드 인덱스 → 현재 캔버스 좌표 (문짝 0 기준 미리보기 마커용).
+function nodeIdxToCtx(xi, yi) {
+    const p = nodeRealPos(xi, yi);
+    return { x: lastOLeft + p.x * lastBaseScale, y: lastOTop + p.y * lastBaseScale };
 }
 
 let _geoController = null;
@@ -823,7 +848,7 @@ async function draw() {
                         const normAngle = ((angle % Math.PI) + Math.PI) % Math.PI;
                         const lineKey  = makeLineKey(cx, cy, normAngle);
                         lastSegMap.set(segKey, { cx, cy, ex, ey, mx: (cx + ex) / 2, my: (cy + ey) / 2, normAngle, lineKey });
-                        if (i === 0) lastNodeList.push({ cx, cy });
+                        if (i === 0) lastNodeList.push({ cx, cy, xi: cIdx, yi: rIdx });
                         if (deletedSegs.has(segKey)) continue;
                         if (buildKonvaPattern) {
                             kv.addPatternSlatLine(cx, cy, ex, ey, _slatColor, segKey, lineKey, slatPx);
@@ -891,7 +916,7 @@ async function draw() {
                         const normAngle = ((angle % Math.PI) + Math.PI) % Math.PI;
                         const lineKey  = makeLineKey(cx, cy, normAngle);
                         lastSegMap.set(segKey, { cx, cy, ex, ey, mx: (cx + ex) / 2, my: (cy + ey) / 2, normAngle, lineKey });
-                        if (i === 0) lastNodeList.push({ cx, cy });
+                        if (i === 0) lastNodeList.push({ cx, cy, xi: cIdx, yi: rowIdx });
                         if (deletedSegs.has(segKey)) continue;
                         if (buildKonvaPattern) {
                             kv.addPatternSlatLine(cx, cy, ex, ey, _slatColor, segKey, lineKey, slatPx);
@@ -1012,8 +1037,16 @@ async function draw() {
 
         // 추가 선 → 길이 계산 후 병합
         addedLines.forEach(ln => {
-            const dx = (ln.nx2 - ln.nx1) * geo.innerW;
-            const dy = (ln.ny2 - ln.ny1) * geo.innerH;
+            let dx, dy;
+            if (ln.xi1 !== undefined) {
+                const p1 = nodeRealPos(ln.xi1, ln.yi1);
+                const p2 = nodeRealPos(ln.xi2, ln.yi2);
+                dx = p2.x - p1.x;
+                dy = p2.y - p1.y;
+            } else {
+                dx = (ln.nx2 - ln.nx1) * geo.innerW;
+                dy = (ln.ny2 - ln.ny1) * geo.innerH;
+            }
             const realLen = Math.round(Math.hypot(dx, dy) + tenonLen);
             const m = adjDiag.find(it => Math.abs(it.len - realLen) <= tenonLen);
             if (m) m.cnt++;
@@ -1045,10 +1078,17 @@ async function draw() {
             const toX = rx => offsetX + (px + rx) * baseScale;
             const toY = ry => offsetY + ry * baseScale;
             addedLines.forEach((ln, idx) => {
-                const x1 = toX(geo.frameW + ln.nx1 * geo.innerW);
-                const y1 = toY(geo.frameHTop + ln.ny1 * geo.innerH);
-                const x2 = toX(geo.frameW + ln.nx2 * geo.innerW);
-                const y2 = toY(geo.frameHTop + ln.ny2 * geo.innerH);
+                // xi1 존재 = 육각 격자 노드 인덱스 기반(신규). 없으면 nx1 비율 기반(구버전 하위호환).
+                let rx1, ry1, rx2, ry2;
+                if (ln.xi1 !== undefined) {
+                    const p1 = nodeRealPos(ln.xi1, ln.yi1);
+                    const p2 = nodeRealPos(ln.xi2, ln.yi2);
+                    rx1 = p1.x; ry1 = p1.y; rx2 = p2.x; ry2 = p2.y;
+                } else {
+                    rx1 = geo.frameW + ln.nx1 * geo.innerW; ry1 = geo.frameHTop + ln.ny1 * geo.innerH;
+                    rx2 = geo.frameW + ln.nx2 * geo.innerW; ry2 = geo.frameHTop + ln.ny2 * geo.innerH;
+                }
+                const x1 = toX(rx1), y1 = toY(ry1), x2 = toX(rx2), y2 = toY(ry2);
                 lastSegMap.set(`added:${d}:${idx}`, { mx: (x1 + x2) / 2, my: (y1 + y2) / 2, normAngle: 0 });
                 if (buildKonvaPattern) {
                     kv.addPatternLine(x1, y1, x2, y2, _addStroke, lastSlatPx);
@@ -1147,7 +1187,7 @@ async function draw() {
     // buildKonvaPattern은 지오메트리 캐시 히트 시 false라서(=클릭만 해도 이 프레임은 재빌드 안 됨)
     // useKonvaPattern 기준으로 분기하고, Konva는 패턴 재빌드와 무관한 지속 노드(setEditMarker)로 갱신
     if (lineEditMode === 'add' && addLineStart) {
-        const p = normToCtx(addLineStart.nx, addLineStart.ny);
+        const p = nodeIdxToCtx(addLineStart.xi, addLineStart.yi);
         if (useKonvaPattern) {
             kv.setEditMarker(p.x, p.y, lastSlatPx * 1.5, '#3A8C82');
         } else {
@@ -1681,14 +1721,13 @@ async function draw() {
         if (lineEditMode === 'add') {
             const snapped = snapToNode(coord.x, coord.y);
             if (!snapped) return; // 교점에서만 동작
-            const norm = ctxToNorm(snapped.cx, snapped.cy);
             if (!addLineStart) {
-                addLineStart = norm;
+                addLineStart = { xi: snapped.xi, yi: snapped.yi };
                 draw();
             } else {
                 // 같은 점이면 무시
-                if (Math.abs(norm.nx - addLineStart.nx) < 0.001 && Math.abs(norm.ny - addLineStart.ny) < 0.001) return;
-                addedLines.push({ nx1: addLineStart.nx, ny1: addLineStart.ny, nx2: norm.nx, ny2: norm.ny });
+                if (snapped.xi === addLineStart.xi && snapped.yi === addLineStart.yi) return;
+                addedLines.push({ xi1: addLineStart.xi, yi1: addLineStart.yi, xi2: snapped.xi, yi2: snapped.yi });
                 addLineStart = null;
                 draw();
             }
