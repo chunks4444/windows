@@ -39,6 +39,7 @@
 
     let lastSegMap   = new Map();
     let lastNodeList = [];
+    let lastNodeXs   = [], lastNodeYs = []; // 노드 grid의 실좌표(mm) 배열 — addedLines를 노드 인덱스로 다시 찾을 때 씀
     let lastILeft = 0, lastITop = 0, lastIW = 1, lastIH = 1, lastSlatPx = 1, lastCellSize = 1;
 
     // ── 살 선택 (상태는 konva-overlay 모듈 내부에서 관리) ──
@@ -314,12 +315,11 @@ function screenToCtxCoord(clientX, clientY) {
     };
 }
 
-function ctxToNorm(cx, cy) {
-    return { nx: (cx - lastILeft) / lastIW, ny: (cy - lastITop) / lastIH };
-}
-
-function normToCtx(nx, ny) {
-    return { x: lastILeft + nx * lastIW, y: lastITop + ny * lastIH };
+// 노드 인덱스(xi,yi) → 현재 캔버스 좌표. lastNodeXs/lastNodeYs는 draw()가 매번 geo
+// 기준으로 다시 채우므로, 문 크기가 바뀌어 위/아래 살 묶음 사이 가운데 칸만 늘어나는
+// 식으로 격자가 비균등하게 재배치돼도 항상 "그 교점"의 최신 위치를 돌려준다.
+function nodeIdxToCtx(xi, yi) {
+    return { x: lastOLeft + lastNodeXs[xi] * lastBaseScale, y: lastOTop + lastNodeYs[yi] * lastBaseScale };
 }
 
 function snapToNode(cx, cy) {
@@ -720,6 +720,11 @@ async function draw() {
             lastDoorHpx   = totalH     * baseScale;
 
             // 라인 편집기 노드: 세로살 중심 × 가로살 중심 교점
+            // nodeXs/nodeYs를 xi/yi 인덱스로 lastNodeXs/lastNodeYs에 보관해둔다 — addedLines를
+            // 좌표 비율(fraction)이 아니라 이 인덱스로 저장해야, 문 높이를 바꿔서 상단/하단
+            // 살 묶음 사이 가운데 간격만 늘어나는 비균등 재배치가 일어나도(가운데 칸이
+            // 위아래보다 훨씬 크게 늘어나는 구조라 전체 높이 대비 비율로는 같은 교점을
+            // 못 따라감) 실제 그 교점의 새 위치를 다시 찾아 선이 격자에 붙어 따라온다.
             const nodeXs = [geo.frameW];
             for (let i = 1; i < geo.cols; i++) {
                 nodeXs.push(geo.frameW + i * (geo.cellW + geo.slatV) - geo.slatV / 2);
@@ -730,11 +735,14 @@ async function draw() {
             geo.hBarYs.forEach(by => nodeYs.push(geo.frameHTop + by));
             nodeYs.push(geo.frameHTop + geo.innerH);
 
-            for (const rx of nodeXs) {
-                for (const ry of nodeYs) {
-                    lastNodeList.push({ cx: toCanvasX(rx), cy: toCanvasY(ry) });
-                }
-            }
+            lastNodeXs = nodeXs;
+            lastNodeYs = nodeYs;
+
+            nodeXs.forEach((rx, xi) => {
+                nodeYs.forEach((ry, yi) => {
+                    lastNodeList.push({ cx: toCanvasX(rx), cy: toCanvasY(ry), xi, yi });
+                });
+            });
         }
 
         // ====================================
@@ -952,7 +960,8 @@ async function draw() {
         });
 
         addedLines.forEach(ln => {
-            if (Math.abs(ln.ny2 - ln.ny1) < 0.001) adjHSlatCnt++;
+            const isHorizontal = ln.xi1 !== undefined ? ln.yi1 === ln.yi2 : Math.abs(ln.ny2 - ln.ny1) < 0.001;
+            if (isHorizontal) adjHSlatCnt++;
             else adjVSlatCnt++;
         });
 
@@ -978,10 +987,16 @@ async function draw() {
             const toX = rx => offsetX + (px + rx) * baseScale;
             const toY = ry => offsetY + ry * baseScale;
             addedLines.forEach((ln, idx) => {
-                const x1 = toX(geo.frameW + ln.nx1 * geo.innerW);
-                const y1 = toY(geo.frameHTop + ln.ny1 * geo.innerH);
-                const x2 = toX(geo.frameW + ln.nx2 * geo.innerW);
-                const y2 = toY(geo.frameHTop + ln.ny2 * geo.innerH);
+                // xi1 존재 = 노드 인덱스 기반(신규). 없으면 nx1 비율 기반(구버전 저장 도면 하위호환).
+                let rx1, ry1, rx2, ry2;
+                if (ln.xi1 !== undefined) {
+                    rx1 = lastNodeXs[ln.xi1]; ry1 = lastNodeYs[ln.yi1];
+                    rx2 = lastNodeXs[ln.xi2]; ry2 = lastNodeYs[ln.yi2];
+                } else {
+                    rx1 = geo.frameW + ln.nx1 * geo.innerW; ry1 = geo.frameHTop + ln.ny1 * geo.innerH;
+                    rx2 = geo.frameW + ln.nx2 * geo.innerW; ry2 = geo.frameHTop + ln.ny2 * geo.innerH;
+                }
+                const x1 = toX(rx1), y1 = toY(ry1), x2 = toX(rx2), y2 = toY(ry2);
                 lastSegMap.set(`added:${d}:${idx}`, { cx: x1, cy: y1, ex: x2, ey: y2, mx: (x1 + x2) / 2, my: (y1 + y2) / 2, normAngle: 0 });
                 if (buildKonvaPattern) {
                     kv.addPatternLine(x1, y1, x2, y2, addedColor, lastSlatPx);
@@ -1091,7 +1106,7 @@ async function draw() {
     // buildKonvaPattern은 지오메트리 캐시 히트 시 false라서(=클릭만 해도 이 프레임은 재빌드 안 됨)
     // useKonvaPattern 기준으로 분기하고, Konva는 패턴 재빌드와 무관한 지속 노드(setEditMarker)로 갱신
     if (lineEditMode === 'add' && addLineStart) {
-        const pt = normToCtx(addLineStart.nx, addLineStart.ny);
+        const pt = nodeIdxToCtx(addLineStart.xi, addLineStart.yi);
         if (useKonvaPattern) {
             kv.setEditMarker(pt.x, pt.y, lastSlatPx * 1.5, '#3A8C82');
         } else {
@@ -1867,13 +1882,12 @@ async function draw() {
         if (lineEditMode === 'add') {
             const snapped = snapToNode(coord.x, coord.y);
             if (!snapped) return;
-            const norm = ctxToNorm(snapped.cx, snapped.cy);
             if (!addLineStart) {
-                addLineStart = norm;
+                addLineStart = { xi: snapped.xi, yi: snapped.yi };
                 draw();
             } else {
-                if (Math.abs(norm.nx - addLineStart.nx) < 0.001 && Math.abs(norm.ny - addLineStart.ny) < 0.001) return;
-                addedLines.push({ nx1: addLineStart.nx, ny1: addLineStart.ny, nx2: norm.nx, ny2: norm.ny });
+                if (snapped.xi === addLineStart.xi && snapped.yi === addLineStart.yi) return;
+                addedLines.push({ xi1: addLineStart.xi, yi1: addLineStart.yi, xi2: snapped.xi, yi2: snapped.yi });
                 addLineStart = null;
                 draw();
             }
