@@ -112,6 +112,11 @@
     const kv = initKonvaOverlay({
         canvas,
         getState: () => ({ logW, logH, panX, panY, scaleFactor, lastSlatPx, lastCellSize, lastOLeft, lastOTop, lastBaseScale }),
+        snapNode: (x, y) => {
+            const n = snapToNode(x, y);
+            return n ? { x: n.cx, y: n.cy, xi: n.xi, yi: n.yi } : null;
+        },
+        nodeToCtx: (xi, yi) => nodeIdxToCtx(xi, yi),
         getSegMap: () => lastSegMap,
         deletedSegs,
         draw,

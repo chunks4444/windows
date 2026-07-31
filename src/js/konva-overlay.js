@@ -7,7 +7,7 @@
  * 좌표계: 모든 Konva 노드는 canvas "logic 좌표" (translated+scaled 공간) 사용.
  * drawSlatOverlay() 호출 시마다 konvaShapeLayer 변환을 canvas와 동기화.
  */
-window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, draw }) {
+window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, draw, snapNode, nodeToCtx }) {
 
     // ── DOM ──────────────────────────────────────────────
     const konvaContainer  = document.getElementById('konvaStageContainer');
@@ -86,7 +86,14 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
             const ratio = s.lastBaseScale / _lastDoorScale;
             const dx = s.lastOLeft, dy = s.lastOTop, ox = _lastDoorX, oy = _lastDoorY;
             konvaShapeLayer.getChildren(n => n !== konvaTransformer).forEach(shape => {
-                if (shape.getClassName() === 'Line') {
+                // 격자 교점에 스냅되어 그려진 선(nodeRef 보유)은 비율 계산 대신 그 교점의
+                // 최신 실제 위치를 다시 조회해서 정확히 맞춘다 — 일반 도형(자유 위치)만 비율로 이동.
+                const ref = typeof shape.getAttr === 'function' ? shape.getAttr('nodeRef') : null;
+                if (ref && nodeToCtx) {
+                    const p1 = nodeToCtx(ref.xi1, ref.yi1);
+                    const p2 = nodeToCtx(ref.xi2, ref.yi2);
+                    shape.points([p1.x, p1.y, p2.x, p2.y]);
+                } else if (shape.getClassName() === 'Line') {
                     const pts = shape.points();
                     const newPts = [];
                     for (let i = 0; i < pts.length; i += 2) {
@@ -253,10 +260,15 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
             konvaShapeLayer.batchDraw();
 
         } else if (konvaShapeMode === 'line') {
+            // 격자 교점 근처를 클릭하면 그 교점에 붙여서 기억해둔다 — 그래야 문 크기가
+            // 바뀌어도(교점 위치 자체가 다시 계산되므로) 정확한 위치로 다시 그릴 수 있다.
+            // 교점과 멀면(자유 위치) snapNode가 null을 줘서 기존처럼 자유롭게 그려진다.
+            const snapped = snapNode?.(lpos.x, lpos.y);
+            const pt = snapped || lpos;
             if (!konvaLineStart) {
-                konvaLineStart = lpos;
+                konvaLineStart = { x: pt.x, y: pt.y, xi: snapped?.xi, yi: snapped?.yi };
                 konvaLinePreview = new Konva.Line({
-                    points: [lpos.x, lpos.y, lpos.x, lpos.y],
+                    points: [pt.x, pt.y, pt.x, pt.y],
                     stroke: '#e03030', strokeWidth: 2 / getState().scaleFactor,
                     dash: [6 / getState().scaleFactor, 3 / getState().scaleFactor],
                     listening: false, strokeScaleEnabled: false,
@@ -265,11 +277,14 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
                 konvaShapeLayer.batchDraw();
             } else {
                 const line = new Konva.Line({
-                    points: [konvaLineStart.x, konvaLineStart.y, lpos.x, lpos.y],
+                    points: [konvaLineStart.x, konvaLineStart.y, pt.x, pt.y],
                     stroke: '#e03030', strokeWidth: 2 / getState().scaleFactor,
                     lineCap: 'round', strokeScaleEnabled: false,
                     hitStrokeWidth: 24 / getState().scaleFactor, // 선이 얇아 터치로 선택하기 어려운 것 보완
                 });
+                if (konvaLineStart.xi !== undefined && snapped) {
+                    line.setAttr('nodeRef', { xi1: konvaLineStart.xi, yi1: konvaLineStart.yi, xi2: snapped.xi, yi2: snapped.yi });
+                }
                 if (konvaLinePreview) { konvaLinePreview.destroy(); konvaLinePreview = null; }
                 konvaLineStart = null;
                 addShape(line);
@@ -315,7 +330,9 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
         if (konvaShapeMode !== 'line' || !konvaLineStart || !konvaLinePreview) return;
         const pos  = konvaStage.getPointerPosition();
         const lpos = stageToLogic(pos.x, pos.y);
-        konvaLinePreview.points([konvaLineStart.x, konvaLineStart.y, lpos.x, lpos.y]);
+        const snapped = snapNode?.(lpos.x, lpos.y);
+        const pt = snapped || lpos;
+        konvaLinePreview.points([konvaLineStart.x, konvaLineStart.y, pt.x, pt.y]);
         konvaShapeLayer.batchDraw();
     });
 
