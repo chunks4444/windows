@@ -331,7 +331,10 @@ $metaKeywords = implode(', ', array_unique(array_filter([
                 <span class="bd-pager-title"><?= htmlspecialchars($prev['title']) ?></span>
             </a>
             <?php else: ?><span></span><?php endif; ?>
-            <a href="/blog/" class="bd-pager-list">블로그 목록</a>
+            <a href="/blog/" class="bd-pager-link bd-pager-list">
+                <span class="bd-pager-label">블로그</span>
+                <span class="bd-pager-title">전체 목록 보기</span>
+            </a>
             <?php if ($next): ?>
             <a class="bd-pager-link bd-pager-next" href="/blog/<?= rawurlencode($next['slug']) ?>">
                 <span class="bd-pager-label">다음 편</span>

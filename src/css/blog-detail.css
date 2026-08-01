@@ -192,13 +192,13 @@ body { background: #fff; }
 .bd-source-text,
 .bd-source-license {
     font-size: var(--fs-12);
-    color: var(--text-muted);
+    color: var(--text);
     line-height: 1.6;
     margin: 0 0 .3rem;
 }
 .bd-source-list {
     font-size: var(--fs-12);
-    color: var(--text-muted);
+    color: var(--text);
     line-height: 1.6;
     margin: 0 0 .3rem;
     padding-left: 1.2rem;
@@ -266,20 +266,12 @@ body { background: #fff; }
     align-items: center;
     gap: 1rem;
 }
-.bd-pager-list {
-    font-size: var(--fs-13); font-weight: 600;
-    color: var(--text-muted);
-    text-decoration: none;
-    text-align: center;
-    white-space: nowrap;
-    transition: color .18s;
-}
-.bd-pager-list:hover { color: var(--accent); }
 .bd-pager-link {
     display: flex; flex-direction: column; gap: .3rem;
     text-decoration: none;
     padding: .25rem 0;
 }
+.bd-pager-list { align-items: center; text-align: center; white-space: nowrap; }
 .bd-pager-next { text-align: right; grid-column: 3; }
 .bd-pager-label {
     font-size: var(--fs-12); font-weight: 400; letter-spacing: .06em;
