@@ -260,29 +260,27 @@ body { background: #fff; }
     padding-top: 1.5rem;
     border-top: 1px solid var(--border, var(--border));
 }
-.bd-pager-all {
-    display: inline-flex; align-items: center; gap: .5rem;
-    background: var(--bg); color: var(--accent);
-    border: 1.5px solid var(--accent);
-    font-size: var(--fs-13); font-weight: 700;
-    padding: .55rem 1.2rem;
-    border-radius: 999px;
-    text-decoration: none;
-    transition: background .18s, color .18s;
-}
-.bd-pager-all:hover { background: var(--accent); color: var(--bg); }
 .bd-pager-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
     gap: 1rem;
-    margin-top: 1.5rem;
 }
+.bd-pager-list {
+    font-size: var(--fs-13); font-weight: 600;
+    color: var(--text-muted);
+    text-decoration: none;
+    text-align: center;
+    white-space: nowrap;
+    transition: color .18s;
+}
+.bd-pager-list:hover { color: var(--accent); }
 .bd-pager-link {
     display: flex; flex-direction: column; gap: .3rem;
     text-decoration: none;
     padding: .25rem 0;
 }
-.bd-pager-next { text-align: right; grid-column: 2; }
+.bd-pager-next { text-align: right; grid-column: 3; }
 .bd-pager-label {
     font-size: var(--fs-12); font-weight: 400; letter-spacing: .06em;
     text-transform: uppercase; color: var(--text);

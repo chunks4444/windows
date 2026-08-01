@@ -324,8 +324,6 @@ $metaKeywords = implode(', ', array_unique(array_filter([
     </article>
 
     <nav class="bd-pager">
-        <a href="/blog/" class="bd-pager-all"><i class="bi bi-list-ul"></i> 블로그 목록</a>
-        <?php if ($prev || $next || $nextSeries): ?>
         <div class="bd-pager-grid">
             <?php if ($prev): ?>
             <a class="bd-pager-link bd-pager-prev" href="/blog/<?= rawurlencode($prev['slug']) ?>">
@@ -333,6 +331,7 @@ $metaKeywords = implode(', ', array_unique(array_filter([
                 <span class="bd-pager-title"><?= htmlspecialchars($prev['title']) ?></span>
             </a>
             <?php else: ?><span></span><?php endif; ?>
+            <a href="/blog/" class="bd-pager-list">블로그 목록</a>
             <?php if ($next): ?>
             <a class="bd-pager-link bd-pager-next" href="/blog/<?= rawurlencode($next['slug']) ?>">
                 <span class="bd-pager-label">다음 편</span>
@@ -343,9 +342,8 @@ $metaKeywords = implode(', ', array_unique(array_filter([
                 <span class="bd-pager-label">다음 시리즈 · <?= htmlspecialchars($nextSeries['series_name']) ?> · 1화</span>
                 <span class="bd-pager-title"><?= htmlspecialchars($nextSeries['title']) ?></span>
             </a>
-            <?php endif; ?>
+            <?php else: ?><span></span><?php endif; ?>
         </div>
-        <?php endif; ?>
     </nav>
 </div>
 
