@@ -680,7 +680,7 @@
 .home-blog-card-thumb {
     width: 100%;
     aspect-ratio: 16 / 10;
-    background: var(--bg, var(--bg));
+    background: #F8F9FA;
     overflow: hidden;
 }
 .home-blog-card-thumb img {
