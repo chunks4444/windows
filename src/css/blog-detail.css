@@ -13,7 +13,7 @@ body { background: #fff; }
 .bd-back {
     display: inline-flex; align-items: center; gap: .4rem;
     font-size: var(--fs-13); font-weight: 700; letter-spacing: .04em;
-    color: var(--text-muted);
+    color: var(--text);
     text-decoration: none;
     margin-bottom: 1.25rem;
     transition: color .18s;
@@ -256,12 +256,26 @@ body { background: #fff; }
 
 /* ── 이전/다음 글 ───────────────────────────────────────── */
 .bd-pager {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
     margin-top: 3rem;
     padding-top: 1.5rem;
     border-top: 1px solid var(--border, var(--border));
+}
+.bd-pager-all {
+    display: inline-flex; align-items: center; gap: .5rem;
+    background: var(--bg); color: var(--accent);
+    border: 1.5px solid var(--accent);
+    font-size: var(--fs-13); font-weight: 700;
+    padding: .55rem 1.2rem;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: background .18s, color .18s;
+}
+.bd-pager-all:hover { background: var(--accent); color: var(--bg); }
+.bd-pager-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1.5rem;
 }
 .bd-pager-link {
     display: flex; flex-direction: column; gap: .3rem;

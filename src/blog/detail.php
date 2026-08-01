@@ -232,12 +232,7 @@ $metaKeywords = implode(', ', array_unique(array_filter([
     <article class="bd-article">
 
         <header class="bd-header">
-            <a href="/blog/" class="bd-back">
-                <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
-                    <path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                블로그
-            </a>
+            <a href="/blog/" class="bd-back"><i class="bi bi-arrow-left"></i> 블로그</a>
             <h1 class="bd-title"><?= htmlspecialchars($post['title']) ?></h1>
             <time class="bd-date" datetime="<?= date('Y-m-d', strtotime($post['created_at'])) ?>">
                 <?= date('Y.m.d', strtotime($post['created_at'])) ?>
@@ -328,27 +323,30 @@ $metaKeywords = implode(', ', array_unique(array_filter([
 
     </article>
 
-    <?php if ($prev || $next || $nextSeries): ?>
     <nav class="bd-pager">
-        <?php if ($prev): ?>
-        <a class="bd-pager-link bd-pager-prev" href="/blog/<?= rawurlencode($prev['slug']) ?>">
-            <span class="bd-pager-label">이전 편</span>
-            <span class="bd-pager-title"><?= htmlspecialchars($prev['title']) ?></span>
-        </a>
-        <?php else: ?><span></span><?php endif; ?>
-        <?php if ($next): ?>
-        <a class="bd-pager-link bd-pager-next" href="/blog/<?= rawurlencode($next['slug']) ?>">
-            <span class="bd-pager-label">다음 편</span>
-            <span class="bd-pager-title"><?= htmlspecialchars($next['title']) ?></span>
-        </a>
-        <?php elseif ($nextSeries): ?>
-        <a class="bd-pager-link bd-pager-next" href="/blog/<?= rawurlencode($nextSeries['slug']) ?>">
-            <span class="bd-pager-label">다음 시리즈 · <?= htmlspecialchars($nextSeries['series_name']) ?> · 1화</span>
-            <span class="bd-pager-title"><?= htmlspecialchars($nextSeries['title']) ?></span>
-        </a>
+        <a href="/blog/" class="bd-pager-all"><i class="bi bi-list-ul"></i> 블로그 목록</a>
+        <?php if ($prev || $next || $nextSeries): ?>
+        <div class="bd-pager-grid">
+            <?php if ($prev): ?>
+            <a class="bd-pager-link bd-pager-prev" href="/blog/<?= rawurlencode($prev['slug']) ?>">
+                <span class="bd-pager-label">이전 편</span>
+                <span class="bd-pager-title"><?= htmlspecialchars($prev['title']) ?></span>
+            </a>
+            <?php else: ?><span></span><?php endif; ?>
+            <?php if ($next): ?>
+            <a class="bd-pager-link bd-pager-next" href="/blog/<?= rawurlencode($next['slug']) ?>">
+                <span class="bd-pager-label">다음 편</span>
+                <span class="bd-pager-title"><?= htmlspecialchars($next['title']) ?></span>
+            </a>
+            <?php elseif ($nextSeries): ?>
+            <a class="bd-pager-link bd-pager-next" href="/blog/<?= rawurlencode($nextSeries['slug']) ?>">
+                <span class="bd-pager-label">다음 시리즈 · <?= htmlspecialchars($nextSeries['series_name']) ?> · 1화</span>
+                <span class="bd-pager-title"><?= htmlspecialchars($nextSeries['title']) ?></span>
+            </a>
+            <?php endif; ?>
+        </div>
         <?php endif; ?>
     </nav>
-    <?php endif; ?>
 </div>
 
 <div id="bdToast" class="bd-toast"></div>
