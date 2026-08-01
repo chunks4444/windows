@@ -34,7 +34,8 @@ $body   = json_decode(file_get_contents('php://input'), true) ?? [];
 $action = $body['action'] ?? '';
 
 function saveBlogImage(string $dataUrl): ?string {
-    if (!preg_match('/^data:image\/(jpeg|png|webp);base64,/', $dataUrl)) return null;
+    if (!preg_match('/^data:image\/(jpeg|png|webp);base64,/', $dataUrl, $m)) return null;
+    $format = $m[1];
     $base64 = substr($dataUrl, strpos($dataUrl, ',') + 1);
     $binary = base64_decode($base64, true);
     if ($binary === false || strlen($binary) > 20 * 1024 * 1024) return null;
@@ -47,13 +48,25 @@ function saveBlogImage(string $dataUrl): ?string {
         $scale = $targetW / $w;
         $nw = $targetW; $nh = (int)round($h * $scale);
         $resized = imagecreatetruecolor($nw, $nh);
+        if ($format === 'png') {
+            imagealphablending($resized, false);
+            imagesavealpha($resized, true);
+        }
         imagecopyresampled($resized, $img, 0, 0, 0, 0, $nw, $nh, $w, $h);
         imagedestroy($img); $img = $resized;
     }
     $dir = __DIR__ . '/../../../uploads/blog';
     if (!is_dir($dir)) mkdir($dir, 0755, true);
-    $fname = time() . '_' . bin2hex(random_bytes(4)) . '.jpg';
-    imagejpeg($img, $dir . '/' . $fname, 92);
+    $ext = $format === 'jpeg' ? 'jpg' : $format;
+    $fname = time() . '_' . bin2hex(random_bytes(4)) . '.' . $ext;
+    if ($format === 'png') {
+        imagesavealpha($img, true);
+        imagepng($img, $dir . '/' . $fname, 6);
+    } elseif ($format === 'webp') {
+        imagewebp($img, $dir . '/' . $fname, 90);
+    } else {
+        imagejpeg($img, $dir . '/' . $fname, 92);
+    }
     imagedestroy($img);
     return '/uploads/blog/' . $fname;
 }
