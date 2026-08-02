@@ -102,6 +102,7 @@ try {
         $seriesCards[$sid]['total']++;
         if (count($seriesCards[$sid]['posts']) < 5) $seriesCards[$sid]['posts'][] = $r;
     }
+    $bgSideVisible = 5;
 } catch (Throwable $e) {
     $totalCount   = 0;
     $totalPages   = 1;
@@ -109,6 +110,7 @@ try {
     $pagePosts    = [];
     $featurePosts = [];
     $seriesCards  = [];
+    $bgSideVisible = 5;
 }
 ?>
 <!DOCTYPE html>
@@ -219,8 +221,8 @@ try {
 
         <!-- ── 사이드바: 시리즈 카드 ── -->
         <aside class="bg-sidebar">
-            <?php foreach ($seriesCards as $sc): ?>
-            <div class="bg-side-card">
+            <?php foreach (array_values($seriesCards) as $bgSideIdx => $sc): ?>
+            <div class="bg-side-card<?= $bgSideIdx >= $bgSideVisible ? ' bg-side-card-more' : '' ?>">
                 <h3 class="bg-side-card-title">
                     <?= htmlspecialchars($sc['name']) ?>
                     <span class="bg-side-card-meta">
@@ -243,12 +245,24 @@ try {
             <?php endforeach; ?>
             <?php if (empty($seriesCards)): ?>
             <p class="bg-side-empty">아직 등록된 시리즈가 없습니다.</p>
+            <?php elseif (count($seriesCards) > $bgSideVisible): ?>
+            <button type="button" id="bgSideMoreBtn" class="bg-side-more-btn">
+                더보기 <i class="bi bi-chevron-down"></i>
+            </button>
             <?php endif; ?>
         </aside>
     </div>
     <?php endif; ?>
 
 </div>
+<?php if (count($seriesCards) > $bgSideVisible): ?>
+<script>
+document.getElementById('bgSideMoreBtn').addEventListener('click', function () {
+    document.querySelectorAll('.bg-side-card-more').forEach(function (el) { el.classList.add('is-shown'); });
+    this.remove();
+});
+</script>
+<?php endif; ?>
 <?php include __DIR__ . '/../components/footer.php'; ?>
 </body>
 </html>

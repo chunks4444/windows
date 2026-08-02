@@ -195,6 +195,20 @@ body { background: #fff; }
     font-size: var(--fs-11); color: var(--text-muted);
 }
 .bg-side-empty { font-size: var(--fs-13); color: var(--text-muted); }
+.bg-side-card-more { display: none; }
+.bg-side-card-more.is-shown { display: block; }
+.bg-side-more-btn {
+    display: flex; align-items: center; justify-content: center; gap: .4rem;
+    width: 100%;
+    background: var(--bg); color: var(--text);
+    border: 1px solid var(--border, var(--border));
+    border-radius: var(--r);
+    font-size: var(--fs-13); font-weight: 600;
+    padding: .7rem;
+    cursor: pointer;
+    transition: background .18s, color .18s;
+}
+.bg-side-more-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
 
 /* 빈 상태 */
 .bg-empty {
