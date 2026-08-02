@@ -84,7 +84,8 @@ try {
         LIMIT 5
     ")->fetchAll();
 
-    // 사이드바 — 시리즈별 카드 (시리즈명 + 태그라인 + 최근 글 최대 3개), 시리즈의 최신 발행일 순으로 정렬
+    // 사이드바 — 시리즈별 카드 (시리즈명 + 태그라인 + 최근 글 최대 3개)
+    // 첫 카드만 최신 발행글 기준, 나머지는 어드민이 지정한 시리즈 순서(sort_order)를 따름
     $seriesRows = $pdo->query("
         SELECT p.id, p.title, p.slug, p.created_at, p.series_id, p.series_order,
                s.name AS series_name, s.tagline AS series_tagline, s.sort_order AS series_sort, s.is_completed
@@ -97,10 +98,17 @@ try {
     foreach ($seriesRows as $r) {
         $sid = $r['series_id'];
         if (!isset($seriesCards[$sid])) {
-            $seriesCards[$sid] = ['name' => $r['series_name'], 'tagline' => $r['series_tagline'], 'posts' => [], 'total' => 0, 'latest' => $r['created_at'], 'is_completed' => $r['is_completed']];
+            $seriesCards[$sid] = ['name' => $r['series_name'], 'tagline' => $r['series_tagline'], 'posts' => [], 'total' => 0, 'sort' => (int)$r['series_sort'], 'is_completed' => $r['is_completed']];
         }
         $seriesCards[$sid]['total']++;
         if (count($seriesCards[$sid]['posts']) < 3) $seriesCards[$sid]['posts'][] = $r;
+    }
+    if (count($seriesCards) > 1) {
+        $bgFirstSid  = array_key_first($seriesCards);
+        $bgFirstCard = $seriesCards[$bgFirstSid];
+        unset($seriesCards[$bgFirstSid]);
+        uasort($seriesCards, function ($a, $b) { return $a['sort'] <=> $b['sort']; });
+        $seriesCards = [$bgFirstSid => $bgFirstCard] + $seriesCards;
     }
 } catch (Throwable $e) {
     $totalCount   = 0;
