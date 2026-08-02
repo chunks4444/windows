@@ -12,27 +12,37 @@ header('Pragma: no-cache');
 
 require_once __DIR__ . '/../../lib/meta.php';
 $shareMeta = null;
+$_pmokAdminView = false;
 if (!empty($_GET['drawing_id'])) {
-    $stmt = db()->prepare('SELECT d.title, d.thumbnail, u.email FROM drawings d JOIN users u ON u.id = d.user_id WHERE d.id = ? AND (d.is_shared = 1 OR EXISTS (SELECT 1 FROM library_patterns lp WHERE lp.drawing_id = d.id AND lp.is_active = 1))');
+    $stmt = db()->prepare('SELECT d.user_id, d.is_shared, d.title, d.thumbnail, u.email, EXISTS (SELECT 1 FROM library_patterns lp WHERE lp.drawing_id = d.id AND lp.is_active = 1) AS is_library FROM drawings d JOIN users u ON u.id = d.user_id WHERE d.id = ?');
     $stmt->execute([(int)$_GET['drawing_id']]);
     if ($row = $stmt->fetch()) {
-        $shareMeta = [
-            'title'       => ($row['title'] ?: '평목 도면') . ' - 평목',
-            'description' => '평목에서 설계한 문살 도면을 확인해보세요.',
-            'image'       => (strpos((string)$row['thumbnail'], '/uploads/') === 0) ? SITE_URL . $row['thumbnail'] : SITE_DEFAULT_IMAGE,
-        ];
+        $viewerPayload = jwt_from_request();
+        $isOwner = $viewerPayload && (int)$row['user_id'] === (int)$viewerPayload['sub'];
+        $isAdmin = $viewerPayload && ($viewerPayload['role'] ?? '') === 's';
+        // 관리자가 "전체 도면" 목록(?admin_view=1)에서 남의 비공개 도면을 열람하는 경우 — 정적 읽기전용 미리보기만 허용, 편집·복사 모두 불가
+        $_pmokAdminView = $isAdmin && !$isOwner && !empty($_GET['admin_view']);
+        if ($row['is_shared'] || $row['is_library'] || $_pmokAdminView) {
+            $shareMeta = [
+                'title'       => ($row['title'] ?: '평목 도면') . ' - 평목',
+                'description' => '평목에서 설계한 문살 도면을 확인해보세요.',
+                'image'       => (strpos((string)$row['thumbnail'], '/uploads/') === 0) ? SITE_URL . $row['thumbnail'] : SITE_DEFAULT_IMAGE,
+            ];
+        }
     }
 }
 $_pmokIsSharedView = ($shareMeta !== null);
 
-// 비로그인 공유 뷰어는 geometry.php(로그인 필수, 안티스크래핑 보호) 호출이 필요한 인터랙티브 에디터 대신
-// 읽기 전용 미리보기만 보여준다. 로그인하면 "내 도면함에 복사"로 fork해서 편집 가능.
-if ($_pmokIsSharedView && !jwt_from_request()) {
+// 비로그인 공유 뷰어 또는 관리자 열람은 geometry.php(로그인 필수, 안티스크래핑 보호) 호출이 필요한 인터랙티브 에디터 대신
+// 읽기 전용 미리보기만 보여준다. 공유뷰는 로그인하면 "내 도면함에 복사"로 fork해서 편집 가능하지만, 관리자 열람은 복사도 막는다.
+if ($_pmokIsSharedView && (!jwt_from_request() || $_pmokAdminView)) {
     $shareDrawingId = (int) $_GET['drawing_id'];
     $shareTitle     = $row['title'] ?: '평목 도면';
     $shareThumb     = (strpos((string) $row['thumbnail'], '/uploads/') === 0) ? $row['thumbnail'] : null;
     $shareOwnerSub  = '평목에서 공유한 도면입니다.';
-    if (!empty($row['email']) && strpos($row['email'], '@') !== false) {
+    if ($_pmokAdminView) {
+        $shareOwnerSub = htmlspecialchars((string)($row['email'] ?? ''), ENT_QUOTES) . ' 님의 도면입니다. (관리자 열람 · 편집 불가)';
+    } elseif (!empty($row['email']) && strpos($row['email'], '@') !== false) {
         [$shareLocal, $shareDomain] = explode('@', $row['email'], 2);
         $shareMasked   = mb_substr($shareLocal, 0, min(3, mb_strlen($shareLocal))) . '***@' . $shareDomain;
         $shareOwnerSub = htmlspecialchars($shareMasked, ENT_QUOTES) . ' 님께서 공유하신 도면입니다.';
@@ -70,12 +80,16 @@ if ($_pmokIsSharedView && !jwt_from_request()) {
             <div class="share-preview-img" style="height:300px;display:flex;align-items:center;justify-content:center;background:#f2f2f2;color:#aaa;">미리보기 이미지 없음</div>
         <?php endif; ?>
         <div class="share-preview-title"><?= htmlspecialchars($shareTitle) ?></div>
+        <?php if ($_pmokAdminView): ?>
+        <div class="share-preview-sub"><?= $shareOwnerSub ?></div>
+        <?php else: ?>
         <div class="share-preview-sub"><?= $shareOwnerSub ?> 로그인하면 내 도면함에 복사해서 편집할 수 있어요.</div>
         <button class="share-preview-btn" id="btnCopyShared">로그인하고 내 도면함에 복사</button>
+        <?php endif; ?>
     </div>
     </div>
     <script>
-    document.getElementById('btnCopyShared').addEventListener('click', function () {
+    document.getElementById('btnCopyShared')?.addEventListener('click', function () {
         pmokRequireAuth(async function () {
             try {
                 const token = localStorage.getItem('pmok_auth_token');

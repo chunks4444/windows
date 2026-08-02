@@ -49,6 +49,8 @@ require_admin_role('s');
         .pc-dl-load-more { text-align:center; padding:12px 0; }
         .pc-dl-load-more button { border:1px solid var(--border); background:var(--bg); border-radius:6px; padding:6px 20px; font-size:13px; cursor:pointer; }
         .pc-dl-search { border:1px solid var(--border); border-radius:6px; padding:6px 10px; font-size:13px; width:260px; margin-bottom:12px; }
+        .pc-dl-view-link { font-size:12px; font-weight:600; color:var(--accent); text-decoration:none; }
+        .pc-dl-view-link:hover { text-decoration:underline; }
     </style>
 </head>
 <body>
@@ -112,7 +114,7 @@ require_admin_role('s');
         </div>
         <div style="overflow-x:auto;margin-bottom:8px;">
             <table class="pc-dl-table">
-                <thead><tr><th>도면명</th><th>엔진</th><th>사용자</th><th>수정일</th><th>카테고리</th></tr></thead>
+                <thead><tr><th>도면명</th><th>엔진</th><th>사용자</th><th>수정일</th><th>카테고리</th><th>보기</th></tr></thead>
                 <tbody id="dlBody"></tbody>
             </table>
         </div>
@@ -352,6 +354,7 @@ async function loadDrawings() {
             <td style="font-size:11px;color: var(--text);">${esc(d.user_email||'')}</td>
             <td style="font-size:11px;color: var(--text);">${fmtDate(d.updated_at)}</td>
             <td><select class="pc-dl-cat-select" onchange="saveDlCat(${d.id},this.value)">${catOpts}</select></td>
+            <td><a href="/src/engine/${encodeURIComponent(d.type)}/${encodeURIComponent(d.type)}.php?drawing_id=${d.id}&admin_view=1" target="_blank" rel="noopener" class="pc-dl-view-link">보기</a></td>
         </tr>`;
     }).join(''));
 
