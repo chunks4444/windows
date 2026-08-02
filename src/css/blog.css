@@ -196,9 +196,9 @@ body { background: #fff; }
 }
 .bg-side-empty { font-size: var(--fs-13); color: var(--text-muted); }
 .bg-side-card-more { display: none; }
-.bg-side-card-more.is-shown { display: block; }
 .bg-side-more-btn {
-    display: flex; align-items: center; justify-content: center; gap: .35rem;
+    display: none;
+    align-items: center; justify-content: center; gap: .35rem;
     width: 100%;
     background: none; color: var(--text-muted);
     border: none;
@@ -207,6 +207,7 @@ body { background: #fff; }
     cursor: pointer;
     transition: color .18s;
 }
+.bg-side-more-btn.is-visible { display: flex; }
 .bg-side-more-btn:hover { color: var(--accent); }
 
 /* 빈 상태 */

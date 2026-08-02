@@ -100,9 +100,8 @@ try {
             $seriesCards[$sid] = ['name' => $r['series_name'], 'tagline' => $r['series_tagline'], 'posts' => [], 'total' => 0, 'latest' => $r['created_at'], 'is_completed' => $r['is_completed']];
         }
         $seriesCards[$sid]['total']++;
-        if (count($seriesCards[$sid]['posts']) < 5) $seriesCards[$sid]['posts'][] = $r;
+        if (count($seriesCards[$sid]['posts']) < 3) $seriesCards[$sid]['posts'][] = $r;
     }
-    $bgSideVisible = 5;
 } catch (Throwable $e) {
     $totalCount   = 0;
     $totalPages   = 1;
@@ -110,7 +109,6 @@ try {
     $pagePosts    = [];
     $featurePosts = [];
     $seriesCards  = [];
-    $bgSideVisible = 5;
 }
 ?>
 <!DOCTYPE html>
@@ -221,8 +219,8 @@ try {
 
         <!-- ── 사이드바: 시리즈 카드 ── -->
         <aside class="bg-sidebar">
-            <?php foreach (array_values($seriesCards) as $bgSideIdx => $sc): ?>
-            <div class="bg-side-card<?= $bgSideIdx >= $bgSideVisible ? ' bg-side-card-more' : '' ?>">
+            <?php foreach ($seriesCards as $sc): ?>
+            <div class="bg-side-card">
                 <h3 class="bg-side-card-title">
                     <?= htmlspecialchars($sc['name']) ?>
                     <span class="bg-side-card-meta">
@@ -245,7 +243,7 @@ try {
             <?php endforeach; ?>
             <?php if (empty($seriesCards)): ?>
             <p class="bg-side-empty">아직 등록된 시리즈가 없습니다.</p>
-            <?php elseif (count($seriesCards) > $bgSideVisible): ?>
+            <?php else: ?>
             <button type="button" id="bgSideMoreBtn" class="bg-side-more-btn">
                 더보기 <i class="bi bi-chevron-down"></i>
             </button>
@@ -255,11 +253,28 @@ try {
     <?php endif; ?>
 
 </div>
-<?php if (count($seriesCards) > $bgSideVisible): ?>
+<?php if (!empty($seriesCards)): ?>
 <script>
-document.getElementById('bgSideMoreBtn').addEventListener('click', function () {
-    document.querySelectorAll('.bg-side-card-more').forEach(function (el) { el.classList.add('is-shown'); });
-    this.remove();
+document.addEventListener('DOMContentLoaded', function () {
+    var aside = document.querySelector('.bg-sidebar');
+    var btn = document.getElementById('bgSideMoreBtn');
+    if (!aside || !btn) return;
+    var cards = aside.querySelectorAll('.bg-side-card');
+    if (cards.length < 2) return;
+
+    // 화면(뷰포트) 첫 화면에 다 안 들어가는 카드부터 접는다 — 첫 카드는 항상 노출
+    var firstHidden = -1;
+    for (var i = 1; i < cards.length; i++) {
+        if (cards[i].getBoundingClientRect().bottom > window.innerHeight) { firstHidden = i; break; }
+    }
+    if (firstHidden === -1) return;
+
+    for (var i = firstHidden; i < cards.length; i++) cards[i].classList.add('bg-side-card-more');
+    btn.classList.add('is-visible');
+    btn.addEventListener('click', function () {
+        cards.forEach(function (c) { c.classList.remove('bg-side-card-more'); });
+        btn.remove();
+    });
 });
 </script>
 <?php endif; ?>
