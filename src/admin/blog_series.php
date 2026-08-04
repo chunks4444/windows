@@ -23,7 +23,7 @@ require_admin_role('s');
         .bs-table tr:last-child td { border-bottom:none; }
         .bs-table tr:hover td { background:var(--bg); }
         .bs-name-input, .bs-tagline-input, .bs-sort-input { border:1px solid var(--border); border-radius:6px; padding:8px 12px; font-size:14px; width:100%; box-sizing:border-box; }
-        .bs-sort-input { text-align:center; }
+        .bs-sort-input { text-align:center; padding:8px 4px; min-width:44px; }
         .bs-btn { border:none; border-radius:6px; padding:7px 14px; font-size:13px; font-weight:600; cursor:pointer; }
         .bs-btn-save { background:var(--accent); color:var(--bg); } .bs-btn-save:hover { opacity:.85; }
         .bs-btn-del  { background:var(--bg); color:var(--danger); }    .bs-btn-del:hover  { background:var(--danger-tint); }
@@ -33,7 +33,7 @@ require_admin_role('s');
         .bs-add-row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; padding:18px; border:1px solid var(--border); border-radius:var(--r); background:var(--bg); }
         .bs-add-row .bs-name-input { width:220px; }
         .bs-add-row .bs-tagline-input { width:340px; }
-        .bs-add-row .bs-sort-input { width:64px; }
+        .bs-add-row .bs-sort-input { width:72px; }
         .bs-add-btn { background:var(--accent); color:var(--bg); border:none; border-radius:6px; padding:8px 22px; font-size:14px; font-weight:600; cursor:pointer; }
     </style>
 </head>
@@ -54,7 +54,7 @@ require_admin_role('s');
     <div class="bs-wrap">
         <div class="bs-card" style="overflow-x:auto;">
             <table class="bs-table" id="bsTable">
-                <thead><tr><th>이름</th><th>명제(tagline)</th><th style="width:70px;">순서</th><th style="width:70px;">홈노출</th><th style="width:70px;">완결</th><th></th></tr></thead>
+                <thead><tr><th>이름</th><th>명제(tagline)</th><th style="width:80px;">순서</th><th style="width:70px;">홈노출</th><th style="width:70px;">완결</th><th></th></tr></thead>
                 <tbody id="bsBody"></tbody>
             </table>
         </div>
