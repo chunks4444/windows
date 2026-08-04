@@ -9,9 +9,12 @@ $admSidenavSections = [
     ['title' => '통계', 'items' => [
         ['stats.php',            'bi-bar-chart-line',  '접속 통계'],
     ]],
+    ['title' => '블로그', 'items' => [
+        ['blog.php',             'bi-journal-text',    '블로그 글 관리'],
+        ['blog.php?series=1',    'bi-collection',      '시리즈 관리'],
+    ]],
     ['title' => '콘텐츠 관리', 'items' => [
         ['works.php',            'bi-images',          '포트폴리오 관리'],
-        ['blog.php',             'bi-journal-text',    '블로그 관리'],
         ['svg_motifs.php',       'bi-flower1',         '문양(SVG) 라이브러리'],
         ['faq.php',              'bi-question-circle', 'FAQ 관리'],
         ['notice.php',           'bi-megaphone',       '공지 배너'],

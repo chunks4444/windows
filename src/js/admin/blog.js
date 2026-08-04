@@ -387,4 +387,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 블로그 디테일 페이지의 "이 글 편집" 링크(?edit=123)로 들어오면 바로 편집 모달을 연다
     const editId = parseInt(new URLSearchParams(location.search).get('edit'));
     if (editId && posts.some(p => p.id === editId)) openModal(editId);
+
+    // 사이드바 "시리즈 관리" 메뉴(?series=1)로 들어오면 바로 시리즈 모달을 연다
+    if (new URLSearchParams(location.search).get('series') === '1') openSeriesModal();
 });
