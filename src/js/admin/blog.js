@@ -232,97 +232,6 @@ async function togglePost(id) {
     loadPosts();
 }
 
-/* ── 시리즈 관리 ── */
-const SERIES_API = '/src/api/admin/blog_series.php';
-let seriesList = [];
-
-function openSeriesModal() {
-    document.getElementById('seriesModalOverlay').classList.add('open');
-    loadSeriesList();
-}
-function closeSeriesModal() {
-    document.getElementById('seriesModalOverlay').classList.remove('open');
-    refreshPostSeriesSelect();
-}
-
-async function loadSeriesList() {
-    const res  = await fetch(SERIES_API, { headers: _h() });
-    const data = await res.json();
-    seriesList = data.series || [];
-    renderSeriesTable();
-}
-
-function renderSeriesTable() {
-    document.getElementById('seriesTbody').innerHTML = seriesList.map(s => `
-        <tr id="series-row-${s.id}">
-            <td><input class="pc-name-input" id="series-name-${s.id}" value="${esc(s.name)}"></td>
-            <td><input class="pc-name-input" id="series-tagline-${s.id}" value="${esc(s.tagline)}"></td>
-            <td><input class="pc-sort-input" id="series-order-${s.id}" type="number" value="${s.sort_order}"></td>
-            <td style="text-align:center;"><input type="checkbox" id="series-showhome-${s.id}" ${Number(s.show_on_home) ? 'checked' : ''}></td>
-            <td style="text-align:center;"><input type="checkbox" id="series-completed-${s.id}" ${Number(s.is_completed) ? 'checked' : ''}></td>
-            <td style="white-space:nowrap;">
-                <button class="pc-btn pc-btn-save" onclick="saveSeriesRow(${s.id})">저장</button>
-                <button class="pc-btn pc-btn-del" onclick="deleteSeriesRow(${s.id}, '${esc(s.name)}')">삭제</button>
-            </td>
-        </tr>`).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--text-3);padding:16px;">시리즈가 없습니다.</td></tr>';
-}
-
-async function saveSeriesRow(id) {
-    const name    = document.getElementById(`series-name-${id}`).value.trim();
-    const tagline = document.getElementById(`series-tagline-${id}`).value.trim();
-    const order   = parseInt(document.getElementById(`series-order-${id}`).value) || 0;
-    const showOnHome = document.getElementById(`series-showhome-${id}`).checked;
-    const completed  = document.getElementById(`series-completed-${id}`).checked;
-    const st = document.getElementById('seriesStatus');
-    if (!name) { st.className = 'pc-status err'; st.textContent = '이름 필수'; return; }
-    const data = await (await fetch(SERIES_API, { method: 'PUT', headers: _h(),
-        body: JSON.stringify({ id, name, tagline, sort_order: order, show_on_home: showOnHome, is_completed: completed }) })).json();
-    st.className = data.ok ? 'pc-status ok' : 'pc-status err';
-    st.textContent = data.ok ? '저장됨' : (data.error || '오류');
-    if (data.ok) { await loadSeriesList(); setTimeout(() => st.textContent = '', 2000); }
-}
-
-async function deleteSeriesRow(id, name) {
-    if (!confirm(`"${name}" 시리즈를 삭제하시겠습니까? (연결된 글은 시리즈 없음으로 변경됩니다)`)) return;
-    await fetch(SERIES_API, { method: 'DELETE', headers: _h(), body: JSON.stringify({ id }) });
-    await loadSeriesList();
-}
-
-async function addSeries() {
-    const name    = document.getElementById('addSeriesName').value.trim();
-    const tagline = document.getElementById('addSeriesTagline').value.trim();
-    const order   = parseInt(document.getElementById('addSeriesOrder').value) || 0;
-    const showOnHome = document.getElementById('addSeriesShowOnHome').checked;
-    const completed  = document.getElementById('addSeriesCompleted').checked;
-    const st = document.getElementById('seriesStatus');
-    if (!name) { st.className = 'pc-status err'; st.textContent = '이름을 입력하세요'; return; }
-    const data = await (await fetch(SERIES_API, { method: 'POST', headers: _h(),
-        body: JSON.stringify({ name, tagline, sort_order: order, show_on_home: showOnHome, is_completed: completed }) })).json();
-    if (data.ok) {
-        document.getElementById('addSeriesName').value = '';
-        document.getElementById('addSeriesTagline').value = '';
-        document.getElementById('addSeriesCompleted').checked = false;
-        st.className = 'pc-status ok'; st.textContent = '추가됨';
-        await loadSeriesList();
-        setTimeout(() => st.textContent = '', 2000);
-    } else {
-        st.className = 'pc-status err'; st.textContent = data.error || '오류';
-    }
-}
-
-// 시리즈 관리 모달을 닫을 때 글 편집 모달의 시리즈 select를 최신 목록으로 갱신
-async function refreshPostSeriesSelect() {
-    const sel = document.getElementById('postSeriesId');
-    if (!sel) return;
-    const current = sel.value;
-    const res  = await fetch(SERIES_API, { headers: _h() });
-    const data = await res.json();
-    const list = data.series || [];
-    sel.innerHTML = '<option value="">— 없음 —</option>' +
-        list.map(s => `<option value="${s.id}">${esc(s.name)}</option>`).join('');
-    if (list.some(s => String(s.id) === current)) sel.value = current;
-}
-
 function bindDrag() {
     document.querySelectorAll('#blogBody tr').forEach(tr => {
         tr.addEventListener('dragstart', () => { dragSrc = tr; tr.classList.add('dragging'); });
@@ -374,9 +283,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('blogModalOverlay').addEventListener('click', e => {
         if (e.target === e.currentTarget) closeModal();
     });
-    document.getElementById('seriesModalOverlay').addEventListener('click', e => {
-        if (e.target === e.currentTarget) closeSeriesModal();
-    });
     const user = JSON.parse(localStorage.getItem('pmok_auth_user') || 'null');
     if (!user || user.role !== 's') { document.getElementById('blogAuthWall').style.display = ''; return; }
     document.getElementById('blogPage').style.display = '';
@@ -387,7 +293,4 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 블로그 디테일 페이지의 "이 글 편집" 링크(?edit=123)로 들어오면 바로 편집 모달을 연다
     const editId = parseInt(new URLSearchParams(location.search).get('edit'));
     if (editId && posts.some(p => p.id === editId)) openModal(editId);
-
-    // 사이드바 "시리즈 관리" 메뉴(?series=1)로 들어오면 바로 시리즈 모달을 연다
-    if (new URLSearchParams(location.search).get('series') === '1') openSeriesModal();
 });

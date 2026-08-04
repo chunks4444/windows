@@ -179,7 +179,7 @@ foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
                 </button>
                 <div class="blog-info-body" id="blogSeriesBody">
                     <div class="adm-mfield">
-                        <label>시리즈 <button type="button" class="blog-series-manage-btn" onclick="openSeriesModal()">시리즈 관리</button></label>
+                        <label>시리즈 <a href="/src/admin/blog_series.php" target="_blank" rel="noopener" class="blog-series-manage-btn">시리즈 관리</a></label>
                         <select id="postSeriesId" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg-1);color:var(--text);font-size:14px;">
                             <option value="">— 없음 —</option>
                             <?php foreach ($blogSeriesList as $s): ?>
@@ -222,34 +222,6 @@ foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
             <span id="postSaveStatus" class="pc-status" style="margin-right:auto;"></span>
             <button class="adm-btn-cancel" onclick="closeModal()">닫기</button>
             <button class="adm-btn-save" onclick="savePost()">저장</button>
-        </div>
-    </div>
-</div>
-
-<!-- 시리즈 관리 모달 -->
-<div class="adm-modal-overlay" id="seriesModalOverlay">
-    <div class="adm-modal" style="max-width:560px;">
-        <div class="adm-modal-head">
-            <h3>시리즈 관리</h3>
-            <button class="adm-modal-close" onclick="closeSeriesModal()">&#x2715;</button>
-        </div>
-        <div class="adm-modal-body">
-            <table class="pc-table" id="seriesTable" style="width:100%;">
-                <thead><tr><th>이름</th><th>명제(tagline)</th><th style="width:52px;">순서</th><th style="width:60px;">홈노출</th><th style="width:52px;">완결</th><th></th></tr></thead>
-                <tbody id="seriesTbody"></tbody>
-            </table>
-            <div class="pc-add-row" style="margin-top:14px;">
-                <input id="addSeriesName" placeholder="시리즈 이름" style="width:130px;">
-                <input id="addSeriesTagline" placeholder="핵심 명제 한 줄" style="width:220px;">
-                <input id="addSeriesOrder" type="number" value="0" placeholder="순서" style="width:64px;">
-                <label style="display:inline-flex;align-items:center;gap:4px;font-size:13px;"><input id="addSeriesShowOnHome" type="checkbox" checked> 홈노출</label>
-                <label style="display:inline-flex;align-items:center;gap:4px;font-size:13px;"><input id="addSeriesCompleted" type="checkbox"> 완결</label>
-                <button class="pc-add-btn" onclick="addSeries()">추가</button>
-            </div>
-            <p id="seriesStatus" class="pc-status" style="display:block;margin-top:8px;"></p>
-        </div>
-        <div class="adm-modal-foot">
-            <button class="adm-btn-cancel" onclick="closeSeriesModal()">닫기</button>
         </div>
     </div>
 </div>

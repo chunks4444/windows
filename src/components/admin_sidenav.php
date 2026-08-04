@@ -11,7 +11,7 @@ $admSidenavSections = [
     ]],
     ['title' => '블로그', 'items' => [
         ['blog.php',             'bi-journal-text',    '블로그 글 관리'],
-        ['blog.php?series=1',    'bi-collection',      '시리즈 관리'],
+        ['blog_series.php',      'bi-collection',      '시리즈 관리'],
     ]],
     ['title' => '콘텐츠 관리', 'items' => [
         ['works.php',            'bi-images',          '포트폴리오 관리'],
