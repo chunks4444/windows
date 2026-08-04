@@ -179,6 +179,9 @@ function toggleTableGridPopup() {
 
     tableGridPopup = document.createElement('div');
     tableGridPopup.className = 'ql-table-grid-popup';
+    // 팝업 클릭 시 에디터가 포커스를 잃으면 selection이 사라져
+    // insertTable()이 조용히 실패하므로(quill.getSelection()===null), 포커스 유지
+    tableGridPopup.addEventListener('mousedown', e => e.preventDefault());
     tableGridPopup.appendChild(grid);
     tableGridPopup.appendChild(label);
     document.body.appendChild(tableGridPopup);
