@@ -35,6 +35,8 @@ $admSidenavSections = [
         ['render_settings.php',  'bi-stars',           'AI 렌더링 설정'],
         ['engine_settings.php',  'bi-sliders',         '엔진 기본값 관리'],
         ['pattern_categories.php','bi-tags',           '패턴 카테고리'],
+        ['pattern_modifiers.php', 'bi-tag',            '수식어 관리'],
+        ['pattern_drawings.php',  'bi-diagram-3',      '도면 분류'],
         ['ai_tuning.php',        'bi-stars',           'AI 튜닝'],
         ['ai_stats.php',         'bi-bar-chart-line',  'AI 사용 통계'],
     ]],
