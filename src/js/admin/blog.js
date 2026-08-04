@@ -120,6 +120,8 @@ function openModal(id) {
 
 function closeModal() {
     document.getElementById('blogModalOverlay').classList.remove('open');
+    closeTableGridPopup();
+    hideTableFloatBar();
 }
 
 function toggleModalFullscreen() {
@@ -128,6 +130,115 @@ function toggleModalFullscreen() {
 
 function toggleInfoSection(sectionId) {
     document.getElementById(sectionId || 'blogInfoSection').classList.toggle('collapsed');
+}
+
+// ── 본문 에디터 표(table) 도구 ─────────────────────────────
+const TABLE_GRID_ROWS = 6, TABLE_GRID_COLS = 8;
+let tableGridPopup = null, tableFloatBar = null, tableFloatQuill = null;
+
+function closeTableGridPopup() {
+    if (!tableGridPopup) return;
+    tableGridPopup.remove();
+    tableGridPopup = null;
+    document.removeEventListener('mousedown', onTableGridDocClick, true);
+}
+
+function onTableGridDocClick(e) {
+    const btn = document.querySelector('#blogModalOverlay .ql-table');
+    if (tableGridPopup && !tableGridPopup.contains(e.target) && e.target !== btn) closeTableGridPopup();
+}
+
+function toggleTableGridPopup() {
+    if (tableGridPopup) { closeTableGridPopup(); return; }
+    const btn = document.querySelector('#blogModalOverlay .ql-table');
+    if (!btn) return;
+
+    const label = document.createElement('div');
+    label.className = 'ql-table-grid-label';
+    label.textContent = '표 삽입';
+
+    const grid = document.createElement('div');
+    grid.className = 'ql-table-grid';
+    const cells = [];
+    for (let r = 0; r < TABLE_GRID_ROWS; r++) {
+        for (let c = 0; c < TABLE_GRID_COLS; c++) {
+            const cell = document.createElement('div');
+            cell.className = 'ql-table-grid-cell';
+            cell.addEventListener('mouseenter', () => {
+                cells.forEach(cc => cc.el.classList.toggle('active', cc.r <= r && cc.c <= c));
+                label.textContent = `${r + 1} x ${c + 1} 표 삽입`;
+            });
+            cell.addEventListener('click', () => {
+                quill.getModule('table').insertTable(r + 1, c + 1);
+                closeTableGridPopup();
+            });
+            cells.push({ el: cell, r, c });
+            grid.appendChild(cell);
+        }
+    }
+
+    tableGridPopup = document.createElement('div');
+    tableGridPopup.className = 'ql-table-grid-popup';
+    tableGridPopup.appendChild(grid);
+    tableGridPopup.appendChild(label);
+    document.body.appendChild(tableGridPopup);
+
+    const rect = btn.getBoundingClientRect();
+    tableGridPopup.style.top  = `${rect.bottom + window.scrollY + 4}px`;
+    tableGridPopup.style.left = `${rect.left + window.scrollX}px`;
+    setTimeout(() => document.addEventListener('mousedown', onTableGridDocClick, true), 0);
+}
+
+function hideTableFloatBar() {
+    if (tableFloatBar) tableFloatBar.style.display = 'none';
+}
+
+const TABLE_FLOAT_ACTIONS = [
+    ['위에 행 추가',   t => t.insertRowAbove()],
+    ['아래 행 추가',   t => t.insertRowBelow()],
+    ['왼쪽 열 추가',   t => t.insertColumnLeft()],
+    ['오른쪽 열 추가', t => t.insertColumnRight()],
+    ['행 삭제',        t => t.deleteRow()],
+    ['열 삭제',        t => t.deleteColumn()],
+    ['표 삭제',        t => t.deleteTable()],
+];
+
+function ensureTableFloatBar() {
+    if (tableFloatBar) return tableFloatBar;
+    tableFloatBar = document.createElement('div');
+    tableFloatBar.className = 'ql-table-float-toolbar';
+    TABLE_FLOAT_ACTIONS.forEach(([label, action]) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = label;
+        b.addEventListener('mousedown', e => e.preventDefault());
+        b.addEventListener('click', () => {
+            if (tableFloatQuill) action(tableFloatQuill.getModule('table'));
+        });
+        tableFloatBar.appendChild(b);
+    });
+    document.body.appendChild(tableFloatBar);
+    return tableFloatBar;
+}
+
+function showTableFloatBar(tableEl) {
+    const bar = ensureTableFloatBar();
+    const rect = tableEl.getBoundingClientRect();
+    bar.style.display = 'flex';
+    bar.style.top  = `${rect.top + window.scrollY - bar.offsetHeight - 6}px`;
+    bar.style.left = `${rect.left + window.scrollX}px`;
+}
+
+function initTableTools(quillInstance) {
+    tableFloatQuill = quillInstance;
+    quillInstance.on('selection-change', range => {
+        closeTableGridPopup();
+        if (!range) { hideTableFloatBar(); return; }
+        const [leaf] = quillInstance.getLeaf(range.index);
+        const node = leaf?.domNode;
+        const tableEl = node instanceof Element ? node.closest('table') : node?.parentElement?.closest('table');
+        if (tableEl) showTableFloatBar(tableEl); else hideTableFloatBar();
+    });
 }
 
 function fileToResizedDataUrl(file, maxDim) {
@@ -256,6 +367,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     quill = new Quill('#postContentEditor', {
         theme: 'snow',
         modules: {
+            table: true,
             toolbar: {
                 container: [
                     [{ header: [2, 3, false] }],
@@ -263,16 +375,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                     [{ color: [] }, { background: [] }],
                     [{ list: 'ordered' }, { list: 'bullet' }],
                     [{ align: [] }],
-                    ['blockquote', 'link', 'image'],
+                    ['blockquote', 'link', 'image', 'table'],
                     ['clean'],
                 ],
                 handlers: {
                     image: () => contentImgFile.click(),
+                    table: () => toggleTableGridPopup(),
                 },
             },
         },
         placeholder: '글 내용을 입력하세요. 이미지 버튼으로 본문에 사진을 삽입할 수 있습니다.',
     });
+
+    initTableTools(quill);
 
     contentImgFile.addEventListener('change', () => {
         const file = contentImgFile.files[0];

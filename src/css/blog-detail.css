@@ -179,6 +179,19 @@ body { background: #fff; }
     border-radius: var(--r-sm);
     margin: 1.5rem 0;
 }
+.bd-body table {
+    display: block;
+    overflow-x: auto;
+    border-collapse: collapse;
+    width: 100%;
+    margin: 0 0 1.4rem;
+    font-size: 15px;
+}
+.bd-body table td {
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    vertical-align: top;
+}
 
 /* ── 출처 / 인용 안내 ───────────────────────────────────── */
 .bd-source-notice {
