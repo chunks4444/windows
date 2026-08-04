@@ -40,6 +40,7 @@ foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
         .ql-editor { font-family:'Noto Sans KR','Inter',-apple-system,sans-serif; color: var(--text); }
         .ql-editor strong, .ql-editor b { font-weight: 600; }
         .ql-editor h1, .ql-editor h2, .ql-editor h3, .ql-editor h4 { font-weight: 600; }
+        .ql-editor td { box-sizing: border-box; }
         .ql-toolbar { border-color:var(--border) !important; border-radius:var(--r-sm) var(--r-sm) 0 0; }
         .ql-container { border-color:var(--border) !important; border-radius:0 0 var(--r-sm) var(--r-sm); font-family:inherit; }
         .adm-modal-fullscreen-btn { background:none; border:none; cursor:pointer; color: var(--text); font-size:16px; line-height:1; padding:0; margin-right:14px; }
@@ -67,14 +68,16 @@ foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
         .pc-add-row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
         .pc-add-row input { border:1px solid var(--border); border-radius:6px; padding:6px 10px; font-size:13px; }
         .pc-add-btn { background:var(--accent); color:var(--bg); border:none; border-radius:6px; padding:6px 18px; font-size:13px; font-weight:600; cursor:pointer; }
-        .ql-table-grid-popup { position:absolute; z-index:2000; background:var(--bg-1,var(--bg)); border:1px solid var(--border); border-radius:8px; padding:10px; box-shadow:0 6px 20px rgba(0,0,0,.15); }
+        .ql-table-grid-popup { position:fixed; z-index:2000; background:var(--bg-1,var(--bg)); border:1px solid var(--border); border-radius:8px; padding:10px; box-shadow:0 6px 20px rgba(0,0,0,.15); }
         .ql-table-grid { display:grid; grid-template-columns:repeat(8, 16px); grid-template-rows:repeat(6, 16px); gap:2px; }
         .ql-table-grid-cell { width:16px; height:16px; border:1px solid var(--border); background:var(--bg); cursor:pointer; }
         .ql-table-grid-cell.active { background:var(--accent); border-color:var(--accent); }
         .ql-table-grid-label { margin-top:6px; font-size:12px; color:var(--text); text-align:center; white-space:nowrap; }
-        .ql-table-float-toolbar { position:absolute; z-index:2000; display:none; gap:4px; background:var(--bg-1,var(--bg)); border:1px solid var(--border); border-radius:8px; padding:5px; box-shadow:0 6px 20px rgba(0,0,0,.15); }
+        .ql-table-float-toolbar { position:fixed; z-index:2000; display:none; gap:4px; background:var(--bg-1,var(--bg)); border:1px solid var(--border); border-radius:8px; padding:5px; box-shadow:0 6px 20px rgba(0,0,0,.15); }
         .ql-table-float-toolbar button { border:none; background:var(--bg); color:var(--text); border-radius:5px; padding:5px 9px; font-size:12px; white-space:nowrap; cursor:pointer; }
         .ql-table-float-toolbar button:hover { background:var(--accent); color:var(--bg); }
+        .ql-table-col-handle { position:fixed; z-index:1900; width:6px; cursor:col-resize; background:transparent; }
+        .ql-table-col-handle:hover { background:var(--accent); opacity:.5; }
     </style>
 </head>
 <body>

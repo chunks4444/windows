@@ -122,10 +122,12 @@ function closeModal() {
     document.getElementById('blogModalOverlay').classList.remove('open');
     closeTableGridPopup();
     hideTableFloatBar();
+    removeTableColHandles();
 }
 
 function toggleModalFullscreen() {
     document.getElementById('blogModalOverlay').classList.toggle('fullscreen-active');
+    setTimeout(syncTableUI, 0);
 }
 
 function toggleInfoSection(sectionId) {
@@ -186,9 +188,11 @@ function toggleTableGridPopup() {
     tableGridPopup.appendChild(label);
     document.body.appendChild(tableGridPopup);
 
+    // position:fixed 이므로 뷰포트 기준 좌표를 그대로 사용 (모달 자체가
+    // position:fixed라 페이지 스크롤이 버튼 위치에 영향을 주지 않음)
     const rect = btn.getBoundingClientRect();
-    tableGridPopup.style.top  = `${rect.bottom + window.scrollY + 4}px`;
-    tableGridPopup.style.left = `${rect.left + window.scrollX}px`;
+    tableGridPopup.style.top  = `${rect.bottom + 4}px`;
+    tableGridPopup.style.left = `${rect.left}px`;
     setTimeout(() => document.addEventListener('mousedown', onTableGridDocClick, true), 0);
 }
 
@@ -217,6 +221,7 @@ function ensureTableFloatBar() {
         b.addEventListener('mousedown', e => e.preventDefault());
         b.addEventListener('click', () => {
             if (tableFloatQuill) action(tableFloatQuill.getModule('table'));
+            setTimeout(syncTableUI, 0);
         });
         tableFloatBar.appendChild(b);
     });
@@ -228,19 +233,90 @@ function showTableFloatBar(tableEl) {
     const bar = ensureTableFloatBar();
     const rect = tableEl.getBoundingClientRect();
     bar.style.display = 'flex';
-    bar.style.top  = `${rect.top + window.scrollY - bar.offsetHeight - 6}px`;
-    bar.style.left = `${rect.left + window.scrollX}px`;
+    bar.style.top  = `${rect.top - bar.offsetHeight - 6}px`;
+    bar.style.left = `${rect.left}px`;
+}
+
+// ── 표 컬럼 너비 조정(드래그 리사이즈) ──────────────────
+const TABLE_MIN_COL_WIDTH = 40;
+let tableColHandleEls = [], tableResizeTableEl = null;
+
+function removeTableColHandles() {
+    tableColHandleEls.forEach(el => el.remove());
+    tableColHandleEls = [];
+}
+
+function buildTableColHandles(tableEl) {
+    removeTableColHandles();
+    const firstRow = tableEl.querySelector('tr');
+    if (!firstRow) return;
+    const cells = Array.from(firstRow.children);
+    if (cells.length < 2) return; // 컬럼이 1개면 조정할 경계가 없음
+    const tableRect = tableEl.getBoundingClientRect();
+    for (let i = 0; i < cells.length - 1; i++) {
+        const cellRect = cells[i].getBoundingClientRect();
+        const handle = document.createElement('div');
+        handle.className = 'ql-table-col-handle';
+        handle.style.left   = `${cellRect.right - 3}px`;
+        handle.style.top    = `${tableRect.top}px`;
+        handle.style.height = `${tableRect.height}px`;
+        handle.addEventListener('mousedown', e => startTableColResize(e, tableEl, i));
+        document.body.appendChild(handle);
+        tableColHandleEls.push(handle);
+    }
+}
+
+function startTableColResize(e, tableEl, colIndex) {
+    e.preventDefault();
+    const rows       = Array.from(tableEl.querySelectorAll('tr'));
+    const leftCells  = rows.map(r => r.children[colIndex]).filter(Boolean);
+    const rightCells = rows.map(r => r.children[colIndex + 1]).filter(Boolean);
+    if (!leftCells.length || !rightCells.length) return;
+    const startX          = e.clientX;
+    const startLeftWidth  = leftCells[0].getBoundingClientRect().width;
+    const startRightWidth = rightCells[0].getBoundingClientRect().width;
+
+    function onMove(me) {
+        const dx      = me.clientX - startX;
+        const newLeft  = Math.max(TABLE_MIN_COL_WIDTH, startLeftWidth + dx);
+        const newRight = Math.max(TABLE_MIN_COL_WIDTH, startRightWidth - dx);
+        leftCells.forEach(c  => { c.style.width = `${newLeft}px`; });
+        rightCells.forEach(c => { c.style.width = `${newRight}px`; });
+    }
+    function onUp() {
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+        buildTableColHandles(tableEl);
+    }
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+}
+
+function syncTableUI() {
+    closeTableGridPopup();
+    const range = tableFloatQuill?.getSelection();
+    if (!range) { hideTableFloatBar(); removeTableColHandles(); tableResizeTableEl = null; return; }
+    const [leaf] = tableFloatQuill.getLeaf(range.index);
+    const node = leaf?.domNode;
+    const tableEl = node instanceof Element ? node.closest('table') : node?.parentElement?.closest('table');
+    if (tableEl) {
+        showTableFloatBar(tableEl);
+        buildTableColHandles(tableEl);
+        tableResizeTableEl = tableEl;
+    } else {
+        hideTableFloatBar();
+        removeTableColHandles();
+        tableResizeTableEl = null;
+    }
 }
 
 function initTableTools(quillInstance) {
     tableFloatQuill = quillInstance;
-    quillInstance.on('selection-change', range => {
-        closeTableGridPopup();
-        if (!range) { hideTableFloatBar(); return; }
-        const [leaf] = quillInstance.getLeaf(range.index);
-        const node = leaf?.domNode;
-        const tableEl = node instanceof Element ? node.closest('table') : node?.parentElement?.closest('table');
-        if (tableEl) showTableFloatBar(tableEl); else hideTableFloatBar();
+    quillInstance.on('selection-change', syncTableUI);
+    // 에디터 내부 스크롤 시(모달 자체는 fixed라 페이지 스크롤엔 영향 없음)
+    // 표 위치가 바뀌므로 핸들/툴바 위치를 다시 계산
+    quillInstance.root.addEventListener('scroll', () => {
+        if (tableResizeTableEl) { showTableFloatBar(tableResizeTableEl); buildTableColHandles(tableResizeTableEl); }
     });
 }
 

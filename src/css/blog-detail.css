@@ -191,6 +191,7 @@ body { background: #fff; }
     border: 1px solid var(--border);
     padding: 8px 12px;
     vertical-align: top;
+    box-sizing: border-box;
 }
 
 /* ── 출처 / 인용 안내 ───────────────────────────────────── */
