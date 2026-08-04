@@ -55,6 +55,7 @@ require_admin_role('s');
 </head>
 <body>
 <?php include __DIR__ . '/../components/nav.php'; ?>
+<?php include __DIR__ . '/../components/admin_sidenav.php'; ?>
 
 <div class="db-page" id="pcPage" style="display:none;">
     <div class="adm-breadcrumb"><a href="/src/admin/">어드민</a><span class="adm-breadcrumb-sep">/</span>패턴 카테고리</div>

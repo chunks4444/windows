@@ -60,6 +60,7 @@ require_admin_role('s');
 </head>
 <body>
 <?php include __DIR__ . '/../components/nav.php'; ?>
+<?php include __DIR__ . '/../components/admin_sidenav.php'; ?>
 
 <div id="authWall" style="display:none;padding:60px 24px;text-align:center;color: var(--text);">슈퍼 권한이 필요합니다.</div>
 

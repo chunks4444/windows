@@ -1,0 +1,90 @@
+/* 어드민 좌측 메뉴 트리 — src/components/admin_sidenav.php 전용 */
+.adm-sidenav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 230px;
+    height: 100vh;
+    padding: 84px 0 24px;
+    overflow-y: auto;
+    background: var(--bg);
+    border-right: 1px solid var(--border);
+    z-index: 100;
+}
+
+.adm-sidenav-home {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 12px 14px;
+    padding: 9px 10px;
+    border-radius: var(--r-sm);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    text-decoration: none;
+}
+.adm-sidenav-home:hover,
+.adm-sidenav-home.active { background: var(--accent-tint); color: var(--accent); }
+
+.adm-sidenav-group {
+    margin: 0 8px 2px;
+}
+.adm-sidenav-group summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 8px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    color: var(--text);
+    opacity: .6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.adm-sidenav-group summary::-webkit-details-marker { display: none; }
+.adm-sidenav-group summary::after {
+    content: '\F282'; /* bi-chevron-down */
+    font-family: 'bootstrap-icons';
+    font-size: 10px;
+    transition: transform .15s ease;
+}
+.adm-sidenav-group[open] summary::after { transform: rotate(180deg); }
+
+.adm-sidenav-link {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 14px 7px 18px;
+    border-radius: var(--r-sm);
+    font-size: 13px;
+    color: var(--text);
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.adm-sidenav-link i { flex-shrink: 0; font-size: 13px; opacity: .75; }
+.adm-sidenav-link:hover { background: rgba(var(--text-rgb), .05); color: var(--text); }
+.adm-sidenav-link.active { background: var(--accent-tint); color: var(--accent); font-weight: 700; }
+.adm-sidenav-link.active i { opacity: 1; }
+
+/* 사이드바 옆으로 본문 밀어내기 (대상: 각 어드민 페이지의 본문 래퍼) */
+.adm-sidenav ~ .db-page,
+.adm-sidenav ~ .as-wrap,
+.adm-sidenav ~ .at-wrap,
+.adm-sidenav ~ .st-wrap {
+    margin-left: 266px;
+    margin-right: auto;
+}
+
+@media (max-width: 900px) {
+    .adm-sidenav { display: none; }
+    .adm-sidenav ~ .db-page,
+    .adm-sidenav ~ .as-wrap,
+    .adm-sidenav ~ .at-wrap,
+    .adm-sidenav ~ .st-wrap {
+        margin-left: auto;
+    }
+}

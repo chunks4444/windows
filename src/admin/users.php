@@ -19,6 +19,7 @@ require_admin_role('s');
 </head>
 <body>
 <?php include __DIR__ . '/../components/nav.php'; ?>
+<?php include __DIR__ . '/../components/admin_sidenav.php'; ?>
 
 <!-- 비로그인 -->
 <div class="db-page" id="adminAuthWall" style="display:none;">

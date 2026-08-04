@@ -20,6 +20,7 @@ require_admin_role('s');
 </head>
 <body>
 <?php include __DIR__ . '/../components/nav.php'; ?>
+<?php include __DIR__ . '/../components/admin_sidenav.php'; ?>
 
 <div class="db-page" id="oauthPage" style="display:none;">
     <div class="adm-breadcrumb"><a href="/src/admin/">어드민</a><span class="adm-breadcrumb-sep">/</span>SNS 로그인 설정</div>

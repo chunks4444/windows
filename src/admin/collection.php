@@ -36,6 +36,7 @@ foreach ($libPatternCats as $c) {
 </head>
 <body>
 <?php include __DIR__ . '/../components/nav.php'; ?>
+<?php include __DIR__ . '/../components/admin_sidenav.php'; ?>
 
 <div class="db-page" id="libAuthWall" style="display:none;">
     <div class="db-auth-banner"><p>슈퍼 권한이 필요합니다.</p></div>
