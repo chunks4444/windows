@@ -12,21 +12,6 @@
     z-index: 100;
 }
 
-.adm-sidenav-home {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin: 0 12px 14px;
-    padding: 9px 10px;
-    border-radius: var(--r-sm);
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--text);
-    text-decoration: none;
-}
-.adm-sidenav-home:hover,
-.adm-sidenav-home.active { background: var(--accent-tint); color: var(--accent); }
-
 .adm-sidenav-group {
     margin: 0 8px 2px;
 }

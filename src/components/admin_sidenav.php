@@ -1,11 +1,14 @@
 <?php
 // 어드민 좌측 메뉴 트리 — 각 어드민 페이지 <body> 상단(nav.php 다음)에 include
-// 새 어드민 페이지 추가 시 이 목록에도 같이 추가할 것 (src/admin/index.php 카드 목록과 동일하게 유지)
+// 새 어드민 페이지 추가 시 이 목록에도 같이 추가할 것 (/src/admin/은 stats.php로 리다이렉트되는 진입점)
 require_once __DIR__ . '/../lib/meta.php';
 css_tag('/src/css/admin_sidenav.css');
 
 $admSidenavCurrent = basename($_SERVER['PHP_SELF']);
 $admSidenavSections = [
+    ['title' => '통계', 'items' => [
+        ['stats.php',            'bi-bar-chart-line',  '접속 통계'],
+    ]],
     ['title' => '콘텐츠 관리', 'items' => [
         ['works.php',            'bi-images',          '포트폴리오 관리'],
         ['blog.php',             'bi-journal-text',    '블로그 관리'],
@@ -35,18 +38,12 @@ $admSidenavSections = [
     ['title' => '회원 관리', 'items' => [
         ['users.php',            'bi-shield-lock',     '회원 목록/권한'],
     ]],
-    ['title' => '통계', 'items' => [
-        ['stats.php',            'bi-bar-chart-line',  '접속 통계'],
-    ]],
     ['title' => '배포 점검', 'items' => [
         ['smoke_test.php',       'bi-activity',        '스모크 테스트'],
     ]],
 ];
 ?>
 <aside class="adm-sidenav" id="admSidenav">
-    <a href="/src/admin/" class="adm-sidenav-home<?= $admSidenavCurrent === 'index.php' ? ' active' : '' ?>">
-        <i class="bi bi-speedometer2"></i> 관리자 홈
-    </a>
     <?php foreach ($admSidenavSections as $admSec):
         $admSecActive = false;
         foreach ($admSec['items'] as $admIt) {
