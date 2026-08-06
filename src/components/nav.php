@@ -38,6 +38,7 @@ $isWork       = (strpos($_SERVER['PHP_SELF'], '/portfolio/') !== false);
 $isBlog       = (strpos($_SERVER['PHP_SELF'], '/blog/') !== false);
 $isGuide      = (strpos($_SERVER['PHP_SELF'], '/guide/') !== false);
 $isCompany    = (strpos($_SERVER['PHP_SELF'], '/company/') !== false);
+$isAdminPage  = (strpos($_SERVER['PHP_SELF'], '/src/admin/') !== false);
 
 // Studio 드롭다운: 메인페이지 카드와 동일한 제목/순서를 쓰도록 DB에서 가져온다
 try {
@@ -322,10 +323,35 @@ $navStudioIcons = [
                 <div id="drawerBoardList"></div>
             </div>
             <a class="pm-dw-link" href="#" onclick="authLogout();return false;"><i class="bi bi-box-arrow-right"></i><span>로그아웃</span></a>
-            <?php if ($navIsAdmin): ?>
+            <?php if ($navIsAdmin && !$isAdminPage): ?>
             <a class="pm-dw-link" href="/src/admin/" id="drawerAdminLink"><i class="bi bi-speedometer2"></i><span>어드민</span></a>
             <?php endif; ?>
         </div>
+        <?php endif; ?>
+
+        <?php if ($navIsAdmin && $isAdminPage):
+            $navAdminSections = require __DIR__ . '/../lib/admin_sidenav_data.php';
+            $navAdminCurrent  = basename($_SERVER['PHP_SELF']);
+        ?>
+        <div class="pm-dw-divider"></div>
+        <a class="pm-dw-link-top" href="/src/admin/"><i class="bi bi-speedometer2 pm-dw-acc-icon"></i>어드민 홈</a>
+        <?php foreach ($navAdminSections as $navAdmSec):
+            $navAdmSecActive = false;
+            foreach ($navAdmSec['items'] as $navAdmIt) {
+                if ($navAdmIt[0] === $navAdminCurrent) { $navAdmSecActive = true; break; }
+            }
+        ?>
+        <div class="pm-dw-acc<?= $navAdmSecActive ? ' open' : '' ?>">
+            <button class="pm-dw-acc-hd"><span><i class="bi bi-folder2 pm-dw-acc-icon"></i><?= htmlspecialchars($navAdmSec['title']) ?></span><i class="bi bi-chevron-down"></i></button>
+            <div class="pm-dw-acc-bd">
+                <?php foreach ($navAdmSec['items'] as $navAdmIt): ?>
+                <a class="pm-dw-link<?= $navAdmIt[0] === $navAdminCurrent ? ' active' : '' ?>" href="/src/admin/<?= $navAdmIt[0] ?>">
+                    <i class="bi <?= $navAdmIt[1] ?>"></i><span><?= htmlspecialchars($navAdmIt[2]) ?></span>
+                </a>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endforeach; ?>
         <?php endif; ?>
 
     </div>
