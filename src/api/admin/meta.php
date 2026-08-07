@@ -3,6 +3,7 @@ header('Content-Type: application/json; charset=UTF-8');
 require_once __DIR__ . '/../../lib/db.php';
 require_once __DIR__ . '/../../lib/jwt.php';
 require_once __DIR__ . '/../../lib/meta.php';
+require_once __DIR__ . '/../../lib/image_resize.php';
 
 $payload = jwt_from_request();
 if (!$payload || ($payload['role'] ?? '') !== 's') {
@@ -28,15 +29,8 @@ function saveMetaOgImage(string $dataUrl): ?string {
     if ($binary === false || strlen($binary) > 15 * 1024 * 1024) return null;
     $img = @imagecreatefromstring($binary);
     if (!$img) return null;
-    $w = imagesx($img); $h = imagesy($img);
-    if ($w > 1200 || $h > 630) {
-        $scale = min(1200 / $w, 630 / $h);
-        $nw = (int)($w * $scale); $nh = (int)($h * $scale);
-        $resized = imagecreatetruecolor($nw, $nh);
-        imagecopyresampled($resized, $img, 0, 0, 0, 0, $nw, $nh, $w, $h);
-        imagedestroy($img);
-        $img = $resized;
-    }
+    // 구글 검색결과 큰 이미지 미리보기 조건(가로·세로 각각 최소 1200px)을 항상 만족시키기 위해 업스케일
+    $img = resize_image_min_size($img, 1200);
     $dir = __DIR__ . '/../../../uploads/meta';
     if (!is_dir($dir)) mkdir($dir, 0755, true);
     $fname = time() . '_' . bin2hex(random_bytes(4)) . '.jpg';

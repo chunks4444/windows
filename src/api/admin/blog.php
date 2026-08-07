@@ -8,6 +8,7 @@ set_exception_handler(function(Throwable $e) {
 require_once __DIR__ . '/../../lib/db.php';
 require_once __DIR__ . '/../../lib/jwt.php';
 require_once __DIR__ . '/../../lib/slug.php';
+require_once __DIR__ . '/../../lib/image_resize.php';
 
 $payload = jwt_from_request();
 if (!$payload || ($payload['role'] ?? '') !== 's') {
@@ -41,20 +42,8 @@ function saveBlogImage(string $dataUrl): ?string {
     if ($binary === false || strlen($binary) > 20 * 1024 * 1024) return null;
     $img = @imagecreatefromstring($binary);
     if (!$img) return null;
-    $w = imagesx($img); $h = imagesy($img);
-    // 구글 검색결과 큰 이미지 미리보기 조건(폭 1200px 권장)을 항상 만족시키기 위해 폭을 1200으로 고정
-    $targetW = 1200;
-    if ($w !== $targetW) {
-        $scale = $targetW / $w;
-        $nw = $targetW; $nh = (int)round($h * $scale);
-        $resized = imagecreatetruecolor($nw, $nh);
-        if ($format === 'png') {
-            imagealphablending($resized, false);
-            imagesavealpha($resized, true);
-        }
-        imagecopyresampled($resized, $img, 0, 0, 0, 0, $nw, $nh, $w, $h);
-        imagedestroy($img); $img = $resized;
-    }
+    // 구글 검색결과 큰 이미지 미리보기 조건(가로·세로 각각 최소 1200px)을 항상 만족시키기 위해 업스케일
+    $img = resize_image_min_size($img, 1200);
     $dir = __DIR__ . '/../../../uploads/blog';
     if (!is_dir($dir)) mkdir($dir, 0755, true);
     $ext = $format === 'jpeg' ? 'jpg' : $format;
