@@ -286,47 +286,6 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
         </div>
         <!-- home-wrapper -->
 
-        <style>
-        .hc{
-          --hc-paper:#FFFFFF; --hc-cream:#F6F3EA; --hc-cream2:#FAF8F3;
-          --hc-ink:#1A1A1E; --hc-soft:#6E6E74; --hc-line:#E7E3DA; --hc-red:#D23127;
-                }
-        .hc,.hc *{box-sizing:border-box}
-        .hc{font-family:"Pretendard Variable",Pretendard,-apple-system,system-ui,sans-serif;
-            color:var(--hc-ink);line-height:1.78;word-break:keep-all}
-        .hc a{color:inherit}
-                .hc-band{padding-block:clamp(52px,8vw,92px)}
-        .hc-band--cream{background:var(--hc-cream2)}
-        .hc-label{margin:0 0 14px;font-size:13px;font-weight:800;letter-spacing:.1em;color:var(--hc-red)}
-        .hc h2{margin:0;font-size:clamp(23px,2.9vw,33px);font-weight:800;letter-spacing:-.03em;line-height:1.32}
-        .hc h3{margin:0;font-size:18px;font-weight:700;letter-spacing:-.02em;line-height:1.4}
-        .hc-sub{margin:18px 0 0;max-width:34em;font-size:clamp(16px,1.6vw,19px);color:var(--hc-soft)}
-
-        /* 빛과 살 — 두 단 산문 */
-        .hc-prose{display:grid;gap:clamp(20px,3vw,44px);
-                  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));margin-top:34px;max-width:56em}
-        .hc-prose p{margin:0 0 16px;font-size:16.5px;color:var(--hc-soft)}
-        .hc-prose p:last-child{margin-bottom:0}
-        .hc-prose b{color:var(--hc-ink);font-weight:700}
-
-        /* 살의 쓰임 */
-        .hc-lines{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));margin-top:38px}
-        .hc-line{background:var(--hc-paper);border:1px solid var(--hc-line);border-radius:16px;padding:26px 24px 28px}
-        .hc-line p{margin:9px 0 0;font-size:15px;color:var(--hc-soft)}
-
-        /* 공방 */
-        .hc-facts{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(225px,1fr));margin-top:38px}
-        .hc-fact{border-top:2px solid var(--hc-ink);padding-top:15px}
-        .hc-fact strong{display:block;font-size:16px;font-weight:800;letter-spacing:-.02em}
-        .hc-fact p{margin:7px 0 0;font-size:15px;color:var(--hc-soft)}
-        .hc-more{display:inline-block;margin-top:26px;font-size:15px;font-weight:700;
-                 text-decoration:none;border-bottom:1.5px solid var(--hc-line)}
-        .hc-more:hover{border-bottom-color:var(--hc-red)}
-
-        .hc :where(a,button):focus-visible{outline:2px solid var(--hc-red);outline-offset:3px}
-        @media (prefers-reduced-motion:reduce){.hc *{transition:none!important}}
-        </style>
-
         <div class="hc">
         <section class="hc-band">
           <div class="container">
