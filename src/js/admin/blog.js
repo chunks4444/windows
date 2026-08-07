@@ -343,20 +343,22 @@ function fileToResizedDataUrl(file, maxDim) {
     });
 }
 
-// 타이틀 이미지(썸네일)는 구글 검색 큰 썸네일 조건(폭 1200px 권장)에 맞춰 서버(saveBlogImage)가
-// 항상 1200px로 리사이즈한다. 원본이 그보다 작으면 서버에서 확대되어 흐려질 수 있어 여기서 미리 경고한다.
-const BLOG_THUMB_TARGET_W = 1200;
+// 타이틀 이미지(썸네일)는 구글 검색 큰 썸네일 조건(가로·세로 각각 최소 1200px)을 서버
+// (resize_image_min_size)가 보장한다. 원본이 그보다 작으면 서버에서 확대되어 흐려질 수 있어
+// 여기서 미리 경고한다. 다운스케일 상한은 그보다 넉넉하게 잡아 서버가 다시 확대할 일이 없게 한다.
+const BLOG_THUMB_MIN_RECOMMENDED = 1200;
+const BLOG_THUMB_DOWNSCALE_MAX = 2000;
 
 async function previewImage(input) {
     const file = input.files[0];
     if (!file) return;
     try {
-        const { dataUrl, originalWidth } = await fileToResizedDataUrl(file, BLOG_THUMB_TARGET_W);
+        const { dataUrl, originalWidth } = await fileToResizedDataUrl(file, BLOG_THUMB_DOWNSCALE_MAX);
         window._postThumbData = dataUrl;
         const prev = document.getElementById('postImgPreview');
         prev.src = dataUrl; prev.classList.add('show');
         document.getElementById('postThumbUrl').value = '';
-        document.getElementById('postImgWarn').style.display = originalWidth < BLOG_THUMB_TARGET_W ? '' : 'none';
+        document.getElementById('postImgWarn').style.display = originalWidth < BLOG_THUMB_MIN_RECOMMENDED ? '' : 'none';
     } catch (err) {
         alert(err);
         input.value = '';

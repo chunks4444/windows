@@ -74,7 +74,7 @@ require_admin_role('s');
                 <input type="text" id="metaKeywords" maxlength="500" placeholder="쉼표로 구분">
             </div>
             <div class="adm-mfield" style="margin-bottom:0;">
-                <label>OG Image <small style="color: var(--text);font-weight:400;">공유 시 보일 썸네일, 권장 1200×630</small></label>
+                <label>OG Image <small style="color: var(--text);font-weight:400;">공유 시 보일 썸네일, 가로·세로 각각 최소 1200px 권장 (작으면 자동 확대됩니다)</small></label>
                 <img id="metaOgImgPreview" class="meta-img-preview" src="" alt="">
                 <label class="meta-upload-label" for="metaOgImgFile">
                     <i class="bi bi-upload"></i> 이미지 업로드

@@ -373,7 +373,9 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.onload = ev => {
             const img = new Image();
             img.onload = () => {
-                const MAX = 1024;
+                // 서버(resize_image_min_size)가 og:image로 쓰기 위해 가로·세로 각각 최소 1200px을
+                // 보장하므로, 여기서 그보다 작게 미리 줄이면 서버에서 다시 확대해 화질만 나빠진다.
+                const MAX = 2000;
                 let w = img.width, h = img.height;
                 if (w > MAX || h > MAX) { const s = Math.min(MAX/w, MAX/h); w = Math.round(w*s); h = Math.round(h*s); }
                 const canvas = document.createElement('canvas');
