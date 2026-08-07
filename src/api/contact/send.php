@@ -8,13 +8,13 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 require_once __DIR__ . '/../../lib/db.php';
 require_once __DIR__ . '/../../lib/mailer.php';
 
-$body     = json_decode(file_get_contents('php://input'), true);
-$name     = trim($body['name']    ?? '');
-$email    = trim($body['email']   ?? '');
-$subject  = trim($body['subject'] ?? '');
-$message  = trim($body['message'] ?? '');
-$website  = trim($body['website'] ?? '');   // 허니팟 — 사람 눈엔 안 보이는 필드, 채워져 있으면 봇
-$openedAt = (float)($body['opened_at'] ?? 0);
+// multipart/form-data로 받는다 (파일 첨부 지원을 위해 JSON 대신 $_POST/$_FILES 사용)
+$name     = trim($_POST['name']    ?? '');
+$email    = trim($_POST['email']   ?? '');
+$subject  = trim($_POST['subject'] ?? '');
+$message  = trim($_POST['message'] ?? '');
+$website  = trim($_POST['website'] ?? '');   // 허니팟 — 사람 눈엔 안 보이는 필드, 채워져 있으면 봇
+$openedAt = (float)($_POST['opened_at'] ?? 0);
 
 // 봇 방어: 허니팟이 채워졌거나, 폼이 뜬 지 2초도 안 돼 제출되면 봇으로 간주하고
 // 실제로는 아무것도 하지 않되 정상 응답처럼 보이게 해서 봇이 적응하지 못하게 함
@@ -38,6 +38,28 @@ if (mb_strlen($message) > 2000) {
     http_response_code(422); echo json_encode(['error' => '내용은 2000자 이내로 입력해주세요.']); exit;
 }
 
+// 첨부파일 (선택) — 10MB 이하, 허용 확장자만
+$attachments = [];
+if (!empty($_FILES['file']) && $_FILES['file']['error'] !== UPLOAD_ERR_NO_FILE) {
+    $file = $_FILES['file'];
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+        http_response_code(422); echo json_encode(['error' => '파일 업로드에 실패했습니다.']); exit;
+    }
+    if ($file['size'] > 10 * 1024 * 1024) {
+        http_response_code(422); echo json_encode(['error' => '첨부파일은 10MB 이하만 가능합니다.']); exit;
+    }
+    $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+    $allowedExt = ['jpg','jpeg','png','gif','webp','pdf','zip','dwg','dxf','doc','docx','xls','xlsx','hwp'];
+    if (!in_array($ext, $allowedExt, true)) {
+        http_response_code(422); echo json_encode(['error' => '지원하지 않는 파일 형식입니다.']); exit;
+    }
+    $attachments[] = [
+        'name'     => basename($file['name']),
+        'tmp_name' => $file['tmp_name'],
+        'type'     => $file['type'] ?: 'application/octet-stream',
+    ];
+}
+
 // IP 기반 간단 rate limit (1시간에 5회)
 $pdo    = db();
 $ip     = (function () {
@@ -54,13 +76,16 @@ if ((int)$cnt->fetchColumn() >= 5) {
     http_response_code(429); echo json_encode(['error' => '잠시 후 다시 시도해주세요.']); exit;
 }
 
+$attachmentName = $attachments ? $attachments[0]['name'] : '';
 $sent = send_mail(
     mail_address('sales'),
     '[문의] ' . $subject,
     'contact',
-    compact('name', 'email', 'subject', 'message'),
+    compact('name', 'email', 'subject', 'message', 'attachmentName'),
     'Reply-To: ' . $email,
-    'sales'
+    'sales',
+    '',
+    $attachments
 );
 
 if (!$sent) {

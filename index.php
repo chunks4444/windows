@@ -100,7 +100,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <?php require_once __DIR__ . '/src/lib/meta.php'; meta_tags(); organization_jsonld(); ?>
+        <?php require_once __DIR__ . '/src/lib/meta.php'; meta_tags(); organization_jsonld(); faq_jsonld($faqs); ?>
         <?php define('BOOTSTRAP_LOADED', true); ?>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="/src/css/index.css?v=<?= md5_file(__DIR__ . '/src/css/index.css') ?>">
@@ -110,7 +110,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
         <div class="home-wrapper">
             <h1 class="visually-hidden">평목 - 나만의 한옥 살창·창호를 실시간으로 디자인하는 스튜디오</h1>
             <p class="hero-top-copy">같은 공간은 없으니까요. 치수와 빛에 맞춰 그립니다.</p>
-            <p class="hero-top-subcopy">기법은 전통, 모양은 그린 그대로 — 평목이 만듭니다</p>
+            <p class="hero-top-subcopy">한옥 창호, 기법은 전통 — 모양은 그린 그대로 평목이 만듭니다</p>
             <!-- AI 프롬프트 -->
             <div class="container">
                 <div class="idx-ai-wrap">
@@ -285,14 +285,111 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
             <!-- card -->
         </div>
         <!-- home-wrapper -->
+
+        <style>
+        .hc{
+          --hc-paper:#FFFFFF; --hc-cream:#F6F3EA; --hc-cream2:#FAF8F3;
+          --hc-ink:#1A1A1E; --hc-soft:#6E6E74; --hc-line:#E7E3DA; --hc-red:#D23127;
+                }
+        .hc,.hc *{box-sizing:border-box}
+        .hc{font-family:"Pretendard Variable",Pretendard,-apple-system,system-ui,sans-serif;
+            color:var(--hc-ink);line-height:1.78;word-break:keep-all}
+        .hc a{color:inherit}
+                .hc-band{padding-block:clamp(52px,8vw,92px)}
+        .hc-band--cream{background:var(--hc-cream2)}
+        .hc-label{margin:0 0 14px;font-size:13px;font-weight:800;letter-spacing:.1em;color:var(--hc-red)}
+        .hc h2{margin:0;font-size:clamp(23px,2.9vw,33px);font-weight:800;letter-spacing:-.03em;line-height:1.32}
+        .hc h3{margin:0;font-size:18px;font-weight:700;letter-spacing:-.02em;line-height:1.4}
+        .hc-sub{margin:18px 0 0;max-width:34em;font-size:clamp(16px,1.6vw,19px);color:var(--hc-soft)}
+
+        /* 빛과 살 — 두 단 산문 */
+        .hc-prose{display:grid;gap:clamp(20px,3vw,44px);
+                  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));margin-top:34px;max-width:56em}
+        .hc-prose p{margin:0 0 16px;font-size:16.5px;color:var(--hc-soft)}
+        .hc-prose p:last-child{margin-bottom:0}
+        .hc-prose b{color:var(--hc-ink);font-weight:700}
+
+        /* 살의 쓰임 */
+        .hc-lines{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));margin-top:38px}
+        .hc-line{background:var(--hc-paper);border:1px solid var(--hc-line);border-radius:16px;padding:26px 24px 28px}
+        .hc-line p{margin:9px 0 0;font-size:15px;color:var(--hc-soft)}
+
+        /* 공방 */
+        .hc-facts{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(225px,1fr));margin-top:38px}
+        .hc-fact{border-top:2px solid var(--hc-ink);padding-top:15px}
+        .hc-fact strong{display:block;font-size:16px;font-weight:800;letter-spacing:-.02em}
+        .hc-fact p{margin:7px 0 0;font-size:15px;color:var(--hc-soft)}
+        .hc-more{display:inline-block;margin-top:26px;font-size:15px;font-weight:700;
+                 text-decoration:none;border-bottom:1.5px solid var(--hc-line)}
+        .hc-more:hover{border-bottom-color:var(--hc-red)}
+
+        .hc :where(a,button):focus-visible{outline:2px solid var(--hc-red);outline-offset:3px}
+        @media (prefers-reduced-motion:reduce){.hc *{transition:none!important}}
+        </style>
+
+        <div class="hc">
+        <section class="hc-band">
+          <div class="container">
+            <p class="hc-label">빛과 살</p>
+            <h2>한옥 창호는 빛을 막지 않고<br>나누어 들입니다</h2>
+            <div class="hc-prose">
+              <div>
+                <p>유리창은 빛을 통째로 들이고, 벽은 통째로 막습니다.
+                   살은 그 사이에 있습니다. 막으면서 들이고, 들이면서 거릅니다.</p>
+                <p>살 간격이 촘촘하면 빛이 잘게 부서져 방 안이 고르게 밝아집니다.
+                   성기면 덩어리로 들어와 바닥에 또렷한 그림자를 남깁니다.
+                   <b>같은 문양이라도 창이 앉는 방향과 시간에 따라 다르게 보입니다.</b></p>
+              </div>
+              <div>
+                <p>그래서 옛 목수는 방마다 살을 달리 짰습니다.
+                   안방과 대청이 같을 수 없고, 남향과 북향이 같을 수 없습니다.</p>
+                <p>스튜디오에서 살 간격을 옮기는 일은 무늬를 고르는 일처럼 보이지만,
+                   실은 그 방에 들어올 빛을 정하는 일입니다.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="hc-band">
+          <div class="container">
+            <p class="hc-label">살의 쓰임</p>
+            <h2>한식 창호와 목창호,<br>같은 살짜임으로 만듭니다</h2>
+            <p class="hc-sub">한옥에 들어가는 창호든 현대 공간에 들어가는 목창호든,
+               짜는 문법은 하나입니다. 스케일만 다릅니다.</p>
+            <div class="hc-lines">
+              <div class="hc-line">
+                <h3>한식 창호</h3>
+                <p>세살·정자살·완자살·교살·솟을살. 여닫이와 미서기, 들어열개까지.
+                   살이 제 크기로 서는 자리입니다.</p>
+              </div>
+              <div class="hc-line">
+                <h3>목창호</h3>
+                <p>한옥이 아닌 공간에 들어가는 창과 문. 살은 그대로 두고
+                   틀만 그 공간의 치수를 따릅니다.</p>
+              </div>
+              <div class="hc-line">
+                <h3>파티션</h3>
+                <p>벽을 세우지 않고 자리를 나눌 때. 살의 밀도가 시선이 어디까지
+                   갈지를 정합니다.</p>
+              </div>
+              <div class="hc-line">
+                <h3>가구·기물</h3>
+                <p>같은 살을 손에 잡히는 크기로. 장의 문짝과 조명에서는
+                   살이 훨씬 가늘어집니다.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+        </div>
+
         <!-- Process -->
         <section class="process-section">
             <div class="container">
                 <div class="mb-4 d-flex align-items-end justify-content-between flex-wrap gap-2">
                     <div>
                         <p class="ab-section-label">사용법</p>
-                        <h2 class="ab-section-title">이렇게 사용하세요.</h2>
-                        <p class="ab-section-body">완성한 설계는 전통 창호 기법 그대로, 평목 공방에서 제작됩니다.</p>
+                        <h2 class="ab-section-title">그린 것과 나온 것이 다르지 않게</h2>
+                        <p class="ab-section-body">설계와 제작 사이, 말로 옮겨 적는 단계가 없습니다. 완성한 도면 그대로 평목 공방에서 제작됩니다.</p>
                     </div>
                     <a href="/guide/" class="home-blog-more">가이드 전체 보기 <i class="bi bi-arrow-right"></i></a>
                 </div>
@@ -492,7 +589,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                     <p class="home-contact-body">설계·제작·설치 상담부터<br>협업 및 프로젝트 제안까지 모두 환영합니다.<br><br>편하게 연락해 주세요.<br>빠르게 답변드리겠습니다.</p>
                     <div class="home-contact-actions">
                         <button type="button" class="home-contact-btn home-contact-btn--primary" data-bs-toggle="modal" data-bs-target="#contactModal">
-                            <i class="bi bi-envelope-fill"></i> 이메일로 문의하기
+                            <i class="bi bi-envelope-fill"></i> 견적요청
                         </button>
                         <a href="tel:+827051244568" class="home-contact-btn home-contact-btn--ghost">
                             <i class="bi bi-telephone-fill"></i> 070-5124-4568

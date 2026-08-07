@@ -86,12 +86,54 @@ function kakao_js_key(): ?string {
 // 조직 정보 구조화 데이터(JSON-LD) — 홈페이지 등 대표 페이지에서 1회 출력
 function organization_jsonld(): void {
     echo '<script type="application/ld+json">' . json_encode([
-        '@context'    => 'https://schema.org',
-        '@type'       => 'Organization',
-        'name'        => '평목',
-        'url'         => SITE_URL,
-        'logo'        => SITE_DEFAULT_IMAGE,
-        'description' => SITE_DEFAULT_DESC,
+        '@context'      => 'https://schema.org',
+        '@type'         => 'LocalBusiness',
+        '@id'           => SITE_URL . '/#business',
+        'name'          => '평목',
+        'alternateName' => '평목 공방',
+        'url'           => SITE_URL . '/',
+        'logo'          => SITE_URL . '/src/assets/logo.svg',
+        'image'         => SITE_URL . '/uploads/meta/1785194303_75e05623.jpg',
+        'telephone'     => '+82-70-5124-4568',
+        'email'         => 'pyeongmok@gmail.com',
+        'description'   => '한옥 창호와 한식 창호를 설계하고 제작하는 공방. 브라우저에서 살 간격까지 직접 설계하면 그 도면 그대로 제작합니다.',
+        'address'       => [
+            '@type'           => 'PostalAddress',
+            'addressRegion'   => '경기도',
+            'addressLocality' => '양평군',
+            'addressCountry'  => 'KR',
+        ],
+        'openingHoursSpecification' => [
+            '@type'     => 'OpeningHoursSpecification',
+            'dayOfWeek' => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+            'opens'     => '10:00',
+            'closes'    => '18:00',
+        ],
+        'areaServed' => ['@type' => 'Country', 'name' => '대한민국'],
+        'makesOffer' => [
+            ['@type' => 'Offer', 'itemOffered' => ['@type' => 'Product', 'name' => '한식 창호']],
+            ['@type' => 'Offer', 'itemOffered' => ['@type' => 'Product', 'name' => '목창호']],
+            ['@type' => 'Offer', 'itemOffered' => ['@type' => 'Product', 'name' => '파티션']],
+        ],
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . '</script>' . "\n    ";
+}
+
+// FAQ 구조화 데이터(JSON-LD) — 화면에 노출되는 FAQ 목록과 동일한 배열을 그대로 넘겨 스키마-노출 불일치를 방지
+function faq_jsonld(array $faqs): void {
+    if (!$faqs) return;
+    echo '<script type="application/ld+json">' . json_encode([
+        '@context'   => 'https://schema.org',
+        '@type'      => 'FAQPage',
+        'mainEntity' => array_map(static function (array $faq): array {
+            return [
+                '@type'          => 'Question',
+                'name'           => $faq['question'],
+                'acceptedAnswer' => [
+                    '@type' => 'Answer',
+                    'text'  => trim(html_entity_decode(strip_tags($faq['answer']), ENT_QUOTES | ENT_HTML5)),
+                ],
+            ];
+        }, $faqs),
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . '</script>' . "\n    ";
 }
 

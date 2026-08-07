@@ -37,6 +37,12 @@
               <td style="width:72px;padding:14px 0;font-size:12px;color:var(--text-muted);font-weight:600;vertical-align:top;">내용</td>
               <td style="padding:14px 0 0 16px;font-size:14px;color:var(--text);line-height:1.8;white-space:pre-wrap;"><?= htmlspecialchars($message) ?></td>
             </tr>
+            <?php if (!empty($attachmentName)): ?>
+            <tr>
+              <td style="width:72px;padding:10px 0 0;border-top:1px solid var(--bg);font-size:12px;color:var(--text-muted);font-weight:600;vertical-align:top;">첨부파일</td>
+              <td style="padding:10px 0 0 16px;border-top:1px solid var(--bg);font-size:14px;color:var(--text);"><?= htmlspecialchars($attachmentName) ?></td>
+            </tr>
+            <?php endif; ?>
           </table>
         </td>
       </tr>

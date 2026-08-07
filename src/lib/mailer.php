@@ -34,7 +34,8 @@ function mail_address(string $type = 'sales'): string {
 }
 
 // ── SMTP 발송 ────────────────────────────────────────────
-function send_mail(string $to, string $subject, string $template, array $vars = [], string $extra_headers = '', string $fromType = 'sales', string $bcc = ''): bool {
+// $attachments: [['name'=>string, 'tmp_name'=>string, 'type'=>string], ...] ($_FILES 형식 그대로 넘기면 됨)
+function send_mail(string $to, string $subject, string $template, array $vars = [], string $extra_headers = '', string $fromType = 'sales', string $bcc = '', array $attachments = []): bool {
     $tpl = __DIR__ . '/../components/mailform/' . $template . '.php';
     if (!file_exists($tpl)) return false;
 
@@ -46,13 +47,46 @@ function send_mail(string $to, string $subject, string $template, array $vars = 
     $cfg  = mail_config();
     $from = $fromType === 'member' ? $cfg['mail_member'] : $cfg['mail_sales'];
 
-    // 앱 비밀번호 미설정 시 fallback
-    if (!$cfg['mail_smtp_pass']) return _mail_fallback($to, $subject, $html, $from, $extra_headers, $bcc);
+    [$mimeHeaders, $body] = _build_mime_part($html, $attachments);
 
-    return _smtp_send($cfg['mail_smtp_user'], $cfg['mail_smtp_pass'], $from, $to, $subject, $html, $extra_headers, $bcc);
+    // 앱 비밀번호 미설정 시 fallback
+    if (!$cfg['mail_smtp_pass']) return _mail_fallback($to, $subject, $mimeHeaders, $body, $from, $extra_headers, $bcc);
+
+    return _smtp_send($cfg['mail_smtp_user'], $cfg['mail_smtp_pass'], $from, $to, $subject, $mimeHeaders, $body, $extra_headers, $bcc);
 }
 
-function _smtp_send(string $authUser, string $authPass, string $from, string $to, string $subject, string $html, string $extra_headers = '', string $bcc = ''): bool {
+// 첨부파일이 없으면 기존과 동일한 단일 text/html 파트, 있으면 multipart/mixed로 감싼다
+function _build_mime_part(string $html, array $attachments): array {
+    if (!$attachments) {
+        return [
+            "Content-Type: text/html; charset=UTF-8\r\nContent-Transfer-Encoding: base64",
+            chunk_split(base64_encode($html)),
+        ];
+    }
+    $boundary = 'pmok_' . bin2hex(random_bytes(12));
+    $body  = "--{$boundary}\r\n"
+           . "Content-Type: text/html; charset=UTF-8\r\n"
+           . "Content-Transfer-Encoding: base64\r\n\r\n"
+           . chunk_split(base64_encode($html)) . "\r\n";
+
+    foreach ($attachments as $att) {
+        $content = isset($att['tmp_name']) ? @file_get_contents($att['tmp_name']) : ($att['content'] ?? '');
+        if (!$content) continue;
+        $filename = $att['name'] ?? 'attachment';
+        $mime     = $att['type'] ?: 'application/octet-stream';
+        $encName  = '=?UTF-8?B?' . base64_encode($filename) . '?=';
+        $body .= "--{$boundary}\r\n"
+               . "Content-Type: {$mime}; name=\"{$encName}\"\r\n"
+               . "Content-Transfer-Encoding: base64\r\n"
+               . "Content-Disposition: attachment; filename=\"{$encName}\"\r\n\r\n"
+               . chunk_split(base64_encode($content)) . "\r\n";
+    }
+    $body .= "--{$boundary}--\r\n";
+
+    return ["Content-Type: multipart/mixed; boundary=\"{$boundary}\"", $body];
+}
+
+function _smtp_send(string $authUser, string $authPass, string $from, string $to, string $subject, string $mimeHeaders, string $body, string $extra_headers = '', string $bcc = ''): bool {
     $sock = @stream_socket_client('tcp://' . SMTP_HOST . ':' . SMTP_PORT, $errno, $errstr, 10);
     if (!$sock) return false;
     stream_set_timeout($sock, 10);
@@ -99,10 +133,9 @@ function _smtp_send(string $authUser, string $authPass, string $from, string $to
           . "To: {$to}\r\n"
           . "Subject: {$subj}\r\n"
           . "MIME-Version: 1.0\r\n"
-          . "Content-Type: text/html; charset=UTF-8\r\n"
-          . "Content-Transfer-Encoding: base64\r\n";
+          . $mimeHeaders . "\r\n";
     if ($extra_headers) $msg .= $extra_headers . "\r\n";
-    $msg .= "\r\n" . chunk_split(base64_encode($html));
+    $msg .= "\r\n" . $body;
 
     $send($msg . "\r\n.");
     $resp = $read();
@@ -112,16 +145,15 @@ function _smtp_send(string $authUser, string $authPass, string $from, string $to
     return substr(trim($resp), 0, 3) === '250';
 }
 
-function _mail_fallback(string $to, string $subject, string $html, string $from, string $extra_headers = '', string $bcc = ''): bool {
+function _mail_fallback(string $to, string $subject, string $mimeHeaders, string $body, string $from, string $extra_headers = '', string $bcc = ''): bool {
     $subj_enc = '=?UTF-8?B?' . base64_encode('[' . SITE_NAME . '] ' . $subject) . '?=';
     $parts    = [
         'From: ' . SITE_NAME . ' <' . $from . '>',
         'MIME-Version: 1.0',
-        'Content-Type: text/html; charset=UTF-8',
-        'Content-Transfer-Encoding: base64',
+        $mimeHeaders,
     ];
     if ($extra_headers !== '') $parts[] = $extra_headers;
-    $ok = mail($to, $subj_enc, base64_encode($html), implode("\r\n", $parts));
-    if ($bcc && $bcc !== $to) mail($bcc, $subj_enc, base64_encode($html), implode("\r\n", $parts));
+    $ok = mail($to, $subj_enc, $body, implode("\r\n", $parts));
+    if ($bcc && $bcc !== $to) mail($bcc, $subj_enc, $body, implode("\r\n", $parts));
     return $ok;
 }

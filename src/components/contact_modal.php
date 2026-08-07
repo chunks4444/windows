@@ -35,6 +35,10 @@
                         <label>내용</label>
                         <textarea id="ctMessage" rows="6" placeholder="문의 내용을 입력해주세요." required maxlength="2000"></textarea>
                     </div>
+                    <div class="ct-field">
+                        <label>첨부파일 (선택, 최대 10MB)</label>
+                        <input type="file" id="ctFile" accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.zip,.dwg,.dxf,.doc,.docx,.xls,.xlsx,.hwp">
+                    </div>
                     <button type="submit" class="ct-submit" id="ctBtn">보내기</button>
                 </form>
             </div>
@@ -52,17 +56,27 @@ async function ctSubmit(e) {
     btn.disabled = true;
     document.getElementById('ctError').style.display = 'none';
     try {
+        const fd = new FormData();
+        fd.append('name', document.getElementById('ctName').value);
+        fd.append('email', document.getElementById('ctEmail').value);
+        fd.append('subject', document.getElementById('ctSubject').value);
+        fd.append('message', document.getElementById('ctMessage').value);
+        fd.append('website', document.getElementById('ctWebsite').value);
+        fd.append('opened_at', ctOpenedAt);
+        const fileEl = document.getElementById('ctFile');
+        if (fileEl.files[0]) {
+            if (fileEl.files[0].size > 10 * 1024 * 1024) {
+                const el = document.getElementById('ctError');
+                el.textContent = '첨부파일은 10MB 이하만 가능합니다.';
+                el.style.display = '';
+                return;
+            }
+            fd.append('file', fileEl.files[0]);
+        }
+
         const res  = await fetch('/src/api/contact/send.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                name:      document.getElementById('ctName').value,
-                email:     document.getElementById('ctEmail').value,
-                subject:   document.getElementById('ctSubject').value,
-                message:   document.getElementById('ctMessage').value,
-                website:   document.getElementById('ctWebsite').value,
-                opened_at: ctOpenedAt,
-            }),
+            body: fd,
         });
         const data = await res.json();
         if (!res.ok) {
