@@ -1001,8 +1001,9 @@
 
 /* 살의 쓰임 */
 .hc-lines { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(235px, 1fr)); margin-top: 38px; }
-.hc-line { background: var(--hc-paper); border: 1px solid var(--hc-line); border-radius: 16px; padding: 26px 24px 28px; }
-.hc-line p { margin: 9px 0 0; font-size: 15px; color: var(--hc-soft); }
+.hc-line { background: var(--text); border: 1px solid var(--text); border-radius: 16px; padding: 26px 24px 28px; color: #FFFFFF; }
+.hc-line h3 { color: #FFFFFF; }
+.hc-line p { margin: 9px 0 0; font-size: 15px; color: rgba(255, 255, 255, 0.72); }
 
 .hc :where(a, button):focus-visible { outline: 2px solid var(--hc-red); outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) {
