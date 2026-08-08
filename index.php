@@ -429,9 +429,12 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
         ?>
         <section class="faq-section">
             <div class="container">
-                <div class="mb-4">
-                    <p class="ab-section-label">FAQ</p>
-                    <h2 class="ab-section-title">자주 묻는 질문</h2>
+                <div class="mb-4 d-flex align-items-end justify-content-between flex-wrap gap-2">
+                    <div>
+                        <p class="ab-section-label">FAQ</p>
+                        <h2 class="ab-section-title">자주 묻는 질문</h2>
+                    </div>
+                    <a href="/guide/faq" class="home-blog-more">전체 보기 <i class="bi bi-arrow-right"></i></a>
                 </div>
                 <div class="faq-columns">
                     <div class="accordion faq-accordion" id="faqAccordionLeft">
