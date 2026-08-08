@@ -734,6 +734,17 @@ CREATE TABLE IF NOT EXISTS blocked_ips (
     PRIMARY KEY (ip)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='어드민이 수동으로 차단한 IP 목록';
 
+-- 2026-08-08 IP 화이트리스트 — ip_block.php의 수동/자동 차단보다 항상 먼저 확인됨.
+-- 관리자 본인이 취약점 경로(.env 등)를 직접 점검하다 자동 차단에 스스로 걸려 사이트 전체가
+-- 403 나는 사고가 있었음 — 관리자 본인 IP 같은 걸 등록해서 그런 자기차단을 막는 용도.
+CREATE TABLE IF NOT EXISTS allowed_ips (
+    ip       VARCHAR(45)  NOT NULL,
+    note     VARCHAR(255) NOT NULL DEFAULT '',
+    added_by INT UNSIGNED NULL,
+    added_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (ip)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='IP 화이트리스트 (차단 로직 예외)';
+
 -- 2026-07-26 블로그 전체 조회수 총합 일별 스냅샷 — 어드민에서 추이(홍보/광고 효과 측정용)로 확인
 CREATE TABLE IF NOT EXISTS blog_view_snapshots (
     id            INT UNSIGNED NOT NULL AUTO_INCREMENT,

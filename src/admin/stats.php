@@ -81,6 +81,7 @@ require_admin_role('s');
                 <button class="st-tab-btn" data-tab="topUsers" onclick="switchStatsTab('topUsers')">회원접속</button>
                 <button class="st-tab-btn" data-tab="anonVisits" onclick="switchStatsTab('anonVisits')">비로그인 방문</button>
                 <button class="st-tab-btn" data-tab="exportLogs" onclick="switchStatsTab('exportLogs')">내보내기 기록 (최근 100건)</button>
+                <button class="st-tab-btn" data-tab="allowlist" onclick="switchStatsTab('allowlist')">화이트리스트</button>
             </div>
             <div id="exportSummaryBadges" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
         </div>
@@ -135,6 +136,25 @@ require_admin_role('s');
             <table>
                 <thead><tr><th>일시</th><th>이메일</th><th>엔진</th><th>형식</th><th>도면명</th><th>버전</th></tr></thead>
                 <tbody id="exportLogsTbody"></tbody>
+            </table>
+        </div>
+
+        <div class="st-tab-panel" id="tab-allowlist" style="display:none;">
+            <p style="font-size:12px;color:var(--text-3);padding:10px 14px 0;margin:0;">
+                여기 등록된 IP는 수동/자동 차단을 전부 무시하고 항상 접근 허용됩니다.
+                관리자 본인 IP처럼, 취약점 경로를 점검하다 자동 차단에 스스로 걸리면 안 되는 IP를 등록하세요.
+            </p>
+            <div style="display:flex;align-items:center;gap:6px;padding:10px 14px;flex-wrap:wrap;">
+                <input type="text" id="allowIpInput" placeholder="IP 주소 (예: 1.2.3.4)"
+                    style="width:160px;height:30px;padding:0 10px;font-size:12px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg);color:var(--text);">
+                <input type="text" id="allowNoteInput" placeholder="메모 (예: 관리자 자택)"
+                    style="flex:1;max-width:280px;height:30px;padding:0 10px;font-size:12px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg);color:var(--text);"
+                    onkeydown="if(event.key==='Enter') addAllowedIp()">
+                <button class="st-tab-btn" onclick="addAllowedIp()">추가</button>
+            </div>
+            <table>
+                <thead><tr><th>IP</th><th>메모</th><th>등록일시</th><th>해제</th></tr></thead>
+                <tbody id="allowlistTbody"></tbody>
             </table>
         </div>
     </div>

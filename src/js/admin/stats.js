@@ -11,7 +11,7 @@ async function init() {
     const user = authGetUser();
     if (!user || user.role !== 's') { location.href = '/'; return; }
     document.getElementById('statsPage').style.display = '';
-    await Promise.all([loadStats(6), loadExportLogs()]);
+    await Promise.all([loadStats(6), loadExportLogs(), loadAllowlist()]);
 }
 
 async function loadStats(months) {
@@ -193,6 +193,53 @@ async function toggleBlockIp(ip, block) {
     });
     if (!res.ok) { alert('처리 실패'); return; }
     loadAnonVisits(anonPage);
+}
+
+async function loadAllowlist() {
+    const res = await fetch('/src/api/admin/allowed_ips.php', {
+        headers: { 'Authorization': 'Bearer ' + token() },
+    });
+    const data = await res.json();
+    if (!res.ok) return;
+    renderAllowlist(data.allowed || []);
+}
+
+function renderAllowlist(rows) {
+    document.getElementById('allowlistTbody').innerHTML = rows.map(r => `
+        <tr>
+            <td style="font-size:12px;font-family:monospace;">${esc(r.ip)}</td>
+            <td style="font-size:12px;">${esc(r.note) || '—'}</td>
+            <td style="color:var(--text-3);font-size:11px;">${r.added_at ? r.added_at.slice(0,16).replace('T',' ') : '—'}</td>
+            <td><button class="st-tab-btn" onclick="removeAllowedIp('${esc(r.ip)}')">해제</button></td>
+        </tr>
+    `).join('') || '<tr><td colspan="4" style="padding:20px;text-align:center;color:var(--text-3);">등록된 IP 없음</td></tr>';
+}
+
+async function addAllowedIp() {
+    const ip   = document.getElementById('allowIpInput').value.trim();
+    const note = document.getElementById('allowNoteInput').value.trim();
+    if (!ip) { alert('IP를 입력하세요.'); return; }
+
+    const res = await fetch('/src/api/admin/allowed_ips.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token() },
+        body: JSON.stringify({ action: 'add', ip, note }),
+    });
+    if (!res.ok) { alert('처리 실패'); return; }
+    document.getElementById('allowIpInput').value = '';
+    document.getElementById('allowNoteInput').value = '';
+    loadAllowlist();
+}
+
+async function removeAllowedIp(ip) {
+    if (!confirm(`${ip} 를 화이트리스트에서 해제할까요?`)) return;
+    const res = await fetch('/src/api/admin/allowed_ips.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token() },
+        body: JSON.stringify({ action: 'remove', ip }),
+    });
+    if (!res.ok) { alert('처리 실패'); return; }
+    loadAllowlist();
 }
 
 async function openIpVisits(ip) {

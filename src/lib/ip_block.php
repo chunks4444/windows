@@ -60,6 +60,13 @@ if ($_pmokBlockIp === '-') return;
 try {
     require_once __DIR__ . '/db.php';
     $pdo  = db();
+
+    // 화이트리스트는 수동/자동 차단보다 항상 먼저 확인 — 관리자 본인이 취약점 경로를
+    // 점검하다 자동 차단에 스스로 걸려 사이트 전체가 403 나는 사고를 막기 위함 (2026-08-08)
+    $wl = $pdo->prepare('SELECT 1 FROM allowed_ips WHERE ip = ? LIMIT 1');
+    $wl->execute([$_pmokBlockIp]);
+    if ($wl->fetchColumn()) return;
+
     $stmt = $pdo->prepare('SELECT 1 FROM blocked_ips WHERE ip = ? LIMIT 1');
     $stmt->execute([$_pmokBlockIp]);
     if ($stmt->fetchColumn()) {
