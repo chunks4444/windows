@@ -2,6 +2,14 @@
 // 회원가입 / 로그인 모달 컴포넌트
 // nav.php 에서 include 됨
 ?>
+<!-- 관리자 대리 로그인 중 표시 배너 — localStorage에 원래 관리자 세션이 보관되어 있을 때만
+     (즉 대리 로그인을 시작한 그 관리자 브라우저에서만) 보인다. 대상 회원 본인 화면·계정 데이터에는
+     아무 흔적도 남지 않는다(last_login 갱신 안 함, 회원 쪽 localStorage/쿠키 무관). -->
+<div id="pmImpersonateBar" style="display:none;position:fixed;top:0;left:0;right:0;z-index:2000;height:40px;background:var(--danger);color:#fff;align-items:center;justify-content:center;gap:14px;font-size:13px;font-weight:600;">
+    <span><i class="bi bi-incognito"></i> 관리자 대리 로그인 중 — <span id="pmImpersonateEmail"></span></span>
+    <button onclick="endImpersonation()" style="background:#fff;color:var(--danger);border:none;border-radius:5px;padding:4px 12px;font-size:12px;font-weight:700;cursor:pointer;">관리자로 복귀</button>
+</div>
+
 <!-- AUTH MODAL -->
 <div class="modal fade" id="authModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered auth-modal-dialog">
@@ -371,6 +379,47 @@ function authUpdateNav() {
     }
 }
 
+const IMPERSONATE_ADMIN_KEY = 'pmok_impersonate_admin';
+
+// 대상 회원 계정으로 대리 로그인 시작 — users.js의 impersonateUser()에서 호출.
+// 원래 관리자 세션(token+user)을 별도 키로 보관해뒀다가 복귀 시 그대로 되돌린다.
+function startImpersonation(newToken, newUser) {
+    const adminToken = authGetToken();
+    const adminUser  = authGetUser();
+    if (adminToken && adminUser) {
+        localStorage.setItem(IMPERSONATE_ADMIN_KEY, JSON.stringify({ token: adminToken, user: adminUser }));
+    }
+    authSaveSession(newToken, newUser);
+}
+
+function checkImpersonationBar() {
+    const bar = document.getElementById('pmImpersonateBar');
+    if (!bar) return;
+    const raw = localStorage.getItem(IMPERSONATE_ADMIN_KEY);
+    if (!raw) { bar.style.display = 'none'; document.body.style.paddingTop = ''; return; }
+    const user = authGetUser();
+    document.getElementById('pmImpersonateEmail').textContent = user?.email || '';
+    bar.style.display = 'flex';
+    document.body.style.paddingTop = '40px';
+}
+
+async function endImpersonation() {
+    const raw = localStorage.getItem(IMPERSONATE_ADMIN_KEY);
+    if (!raw) return;
+    let admin;
+    try { admin = JSON.parse(raw); } catch { admin = null; }
+    if (!admin?.token || !admin?.user) { localStorage.removeItem(IMPERSONATE_ADMIN_KEY); location.href = '/'; return; }
+    try {
+        await fetch('/src/api/admin/impersonate_end.php', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + admin.token },
+        });
+    } catch {}
+    authSaveSession(admin.token, admin.user);
+    localStorage.removeItem(IMPERSONATE_ADMIN_KEY);
+    location.href = '/src/admin/users.php';
+}
+
 async function loadNavBoards() {
     const boardSection = document.getElementById('navBoardSection');
     const boardList    = document.getElementById('navBoardList');
@@ -478,6 +527,7 @@ async function authReset(e) {
 
 document.addEventListener('DOMContentLoaded', function () {
     authUpdateNav();
+    checkImpersonationBar();
 
     const params = new URLSearchParams(location.search);
 

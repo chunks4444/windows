@@ -745,6 +745,19 @@ CREATE TABLE IF NOT EXISTS allowed_ips (
     PRIMARY KEY (ip)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='IP 화이트리스트 (차단 로직 예외)';
 
+-- 2026-08-08 관리자 회원계정 대리 로그인(강제 로그인) 이력 — 지원 목적으로 회원 계정에
+-- 직접 로그인해 확인할 때 사용. 감사 추적용으로 누가 누구 계정에 언제 들어갔는지 기록.
+CREATE TABLE IF NOT EXISTS admin_impersonation_log (
+    id              INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    admin_id        INT UNSIGNED NOT NULL,
+    target_user_id  INT UNSIGNED NOT NULL,
+    ip              VARCHAR(45)  NOT NULL DEFAULT '',
+    created_at      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY idx_admin (admin_id),
+    KEY idx_target (target_user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='관리자의 회원계정 대리 로그인 이력';
+
 -- 2026-07-26 블로그 전체 조회수 총합 일별 스냅샷 — 어드민에서 추이(홍보/광고 효과 측정용)로 확인
 CREATE TABLE IF NOT EXISTS blog_view_snapshots (
     id            INT UNSIGNED NOT NULL AUTO_INCREMENT,
