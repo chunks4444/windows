@@ -35,7 +35,7 @@ AddType application/javascript .serviceworker
 # /src/work/ → /src/portfolio/ 리다이렉트
 RewriteRule ^src/work/detail\.php$ /src/portfolio/detail.php [R=301,L,QSA]
 RewriteRule ^src/work/?$ /src/portfolio/ [R=301,L]
-SetEnv PMOK_JWT_SECRET "새로운-강력한-시크릿"
+SetEnv PMOK_JWT_SECRET "13d2ad2d02f6a34f96f6a73392f9876b1035b1318a8e3d25a926cc29b5cc4636"
 
 # ============================================================
 # 깔끔한 URL: /src/{blog,portfolio,collection,guide,company,mypage}와 .php 확장자를 주소창에서 숨김.
