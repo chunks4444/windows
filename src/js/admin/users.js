@@ -14,6 +14,7 @@ async function init() {
 }
 
 const PERM_LABELS = {
+    view_spec:     '제작 시방서',
     view_parts:    '부재목록',
     view_cost:     '예산견적 상세',
     view_price:    '예상가격',
@@ -51,7 +52,7 @@ function renderTable(users) {
             <td class="adm-email">${esc(u.email)}</td>
             <td class="adm-role-cell">
                 <span class="role-badge" data-role="${esc(u.role)}">${ROLE_MAP[u.role] || u.role}</span>
-                <span class="perm-hover-badge" title="${esc(permTooltip(u))}"><i class="bi bi-shield-lock"></i> ${permCount(u)}/6</span>
+                <span class="perm-hover-badge" title="${esc(permTooltip(u))}"><i class="bi bi-shield-lock"></i> ${permCount(u)}/7</span>
             </td>
             <td>${u.name  ? esc(u.name)  : '<span class="adm-null">—</span>'}</td>
             <td>${u.phone ? esc(u.phone) : '<span class="adm-null">—</span>'}</td>
@@ -121,6 +122,7 @@ function openModal(id, u) {
     document.getElementById('admMName').value      = u.name   || '';
     document.getElementById('admMPhone').value     = u.phone  || '';
     document.getElementById('admMWithdrawn').value = u.withdrawn_at ? '1' : '0';
+    document.getElementById('admMViewSpec').checked     = Number(u.view_spec)     === 1;
     document.getElementById('admMViewParts').checked    = Number(u.view_parts)    === 1;
     document.getElementById('admMViewCost').checked     = Number(u.view_cost)     === 1;
     document.getElementById('admMViewPrice').checked    = Number(u.view_price)    === 1;
@@ -178,6 +180,7 @@ async function saveUser() {
                 name:      document.getElementById('admMName').value.trim(),
                 phone:     document.getElementById('admMPhone').value.trim(),
                 withdrawn: document.getElementById('admMWithdrawn').value === '1',
+                view_spec:     document.getElementById('admMViewSpec').checked,
                 view_parts:    document.getElementById('admMViewParts').checked,
                 view_cost:     document.getElementById('admMViewCost').checked,
                 view_price:    document.getElementById('admMViewPrice').checked,

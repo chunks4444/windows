@@ -53,6 +53,7 @@ require_admin_role('s');
             </div>
             <select id="admPermFilter" onchange="loadUsers(1)" style="height:34px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg);color:var(--text);padding:0 8px;font-size:13px;">
                 <option value="">전체 열람 권한</option>
+                <option value="view_spec">제작 시방서 허용된 회원</option>
                 <option value="view_parts">부재목록 허용된 회원</option>
                 <option value="view_cost">예산견적 상세 허용된 회원</option>
                 <option value="view_price">예상가격 허용된 회원</option>
@@ -183,6 +184,7 @@ require_admin_role('s');
             <div class="adm-mfield" style="margin-bottom:0;">
                 <label>엔진 열람 권한 <small style="font-weight:400;color: var(--text);text-transform:none;letter-spacing:normal;">(role과 별개로 개별 승인)</small></label>
                 <div style="display:flex;flex-direction:column;gap:6px;">
+                    <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:400;color:var(--text);text-transform:none;letter-spacing:normal;"><input type="checkbox" id="admMViewSpec" style="width:auto;height:auto;"> 제작 시방서 열람 허용</label>
                     <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:400;color:var(--text);text-transform:none;letter-spacing:normal;"><input type="checkbox" id="admMViewParts" style="width:auto;height:auto;"> 부재목록 열람 허용</label>
                     <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:400;color:var(--text);text-transform:none;letter-spacing:normal;"><input type="checkbox" id="admMViewCost" style="width:auto;height:auto;"> 예산견적 상세 열람 허용</label>
                     <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:400;color:var(--text);text-transform:none;letter-spacing:normal;"><input type="checkbox" id="admMViewPrice" style="width:auto;height:auto;"> 예상가격 열람 허용</label>
