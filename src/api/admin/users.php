@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || (($_SERVER['REQUEST_METHOD'] === 'PO
     $offset = ($page - 1) * $limit;
     $q      = trim($_body['q'] ?? $_GET['q'] ?? '');
     $perm   = trim($_body['perm'] ?? $_GET['perm'] ?? '');
-    $permCols = ['view_spec', 'view_parts', 'view_cost', 'view_price', 'view_leadtime', 'view_shipping', 'view_desc'];
+    $permCols = ['view_parts', 'view_cost', 'view_price', 'view_leadtime', 'view_shipping', 'view_desc'];
 
     $cols = 'id, email, role, name, phone, company, created_at, last_login_at, last_login_ip, withdrawn_at,
         view_spec, view_parts, view_cost, view_price, view_leadtime, view_shipping, view_desc,
