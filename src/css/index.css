@@ -967,15 +967,13 @@
 /* ── 컬렉션 아래 "빛과 살" / "살의 쓰임" 섹션 ── */
 .hc {
     --hc-paper: #FFFFFF;
-    --hc-ink: #1A1A1E;
-    --hc-soft: #6E6E74;
     --hc-line: #E7E3DA;
     --hc-red: #D23127;
 }
 .hc, .hc * { box-sizing: border-box; }
 .hc {
     font-family: "Pretendard Variable", Pretendard, -apple-system, system-ui, sans-serif;
-    color: var(--hc-ink);
+    color: var(--text);
     line-height: 1.78;
     word-break: keep-all;
 }
@@ -983,9 +981,9 @@
 .hc-band { padding-block: clamp(52px, 8vw, 92px); }
 .hc-label { margin: 0 0 14px; font-size: 13px; font-weight: 800; letter-spacing: .1em; color: var(--hc-red); }
 .hc h2 { margin: 0; font-size: clamp(23px, 2.9vw, 33px); font-weight: 800; letter-spacing: -.03em; line-height: 1.32; }
-.hc h2.hc-title-compact { font-size: clamp(var(--fs-16), 2.2vw, var(--fs-22)); font-weight: 700; letter-spacing: -.01em; line-height: 1.4; color: var(--hc-soft); }
+.hc h2.hc-title-compact { font-size: clamp(var(--fs-16), 2.2vw, var(--fs-22)); font-weight: 700; letter-spacing: -.01em; line-height: 1.4; color: var(--text); }
 .hc h3 { margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -.02em; line-height: 1.4; }
-.hc-sub { margin: 18px 0 0; max-width: 34em; font-size: clamp(16px, 1.6vw, 19px); color: var(--hc-soft); }
+.hc-sub { margin: 18px 0 0; max-width: 34em; font-size: clamp(16px, 1.6vw, 19px); color: var(--text); }
 
 /* 빛과 살 — 두 단 산문 */
 .hc-prose {
@@ -995,9 +993,9 @@
     margin-top: 34px;
     max-width: 56em;
 }
-.hc-prose p { margin: 0 0 16px; font-size: 16.5px; color: var(--hc-soft); }
+.hc-prose p { margin: 0 0 16px; font-size: clamp(16px, 1.6vw, 19px); color: var(--text); }
 .hc-prose p:last-child { margin-bottom: 0; }
-.hc-prose b { color: var(--hc-ink); font-weight: 700; }
+.hc-prose b { color: var(--text); font-weight: 700; }
 
 /* 살의 쓰임 */
 .hc-lines { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(235px, 1fr)); margin-top: 38px; }
