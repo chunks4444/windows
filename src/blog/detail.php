@@ -40,7 +40,7 @@ $seriesEpisodes = [];
 try {
     $pdo = db();
     $relatedDrawingJoin = 'SELECT p.*, lp.name_ko AS related_pattern_name, lp.slug AS related_pattern_slug,
-            pc.name AS related_category_name, d.type AS related_drawing_engine
+            pc.id AS related_category_id, pc.name AS related_category_name, d.type AS related_drawing_engine
         FROM blog_posts p
         LEFT JOIN library_patterns lp ON lp.drawing_id = p.related_drawing_id AND lp.is_active = 1
         LEFT JOIN pattern_categories pc ON pc.id = lp.pattern_category
@@ -318,10 +318,10 @@ $metaKeywords = implode(', ', array_unique(array_filter([
         </div>
         <?php endif; ?>
 
-        <?php if ($post['related_category_name'] && $post['related_pattern_slug']): ?>
+        <?php if ($post['related_category_name'] && $post['related_category_id']): ?>
         <div class="bd-cta">
             <p class="bd-cta-title">이 살은 <?= htmlspecialchars($post['related_category_name']) ?> 계열입니다 — 실제 제작 사례를 컬렉션에서 확인해보세요.</p>
-            <a href="/collection/detail?slug=<?= rawurlencode($post['related_pattern_slug']) ?>" class="bd-cta-btn"><?= htmlspecialchars($post['related_category_name']) ?> 컬렉션 보기 <i class="bi bi-arrow-right"></i></a>
+            <a href="/collection/?category=<?= (int)$post['related_category_id'] ?>" class="bd-cta-btn"><?= htmlspecialchars($post['related_category_name']) ?> 컬렉션 보기 <i class="bi bi-arrow-right"></i></a>
         </div>
         <?php else: ?>
         <div class="bd-cta">
