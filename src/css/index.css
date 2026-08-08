@@ -983,7 +983,7 @@
 .hc h2 { margin: 0; font-size: clamp(23px, 2.9vw, 33px); font-weight: 800; letter-spacing: -.03em; line-height: 1.32; }
 .hc h2.hc-title-compact { font-size: clamp(var(--fs-16), 2.2vw, var(--fs-22)); font-weight: 700; letter-spacing: -.01em; line-height: 1.4; color: var(--text); }
 .hc h3 { margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -.02em; line-height: 1.4; }
-.hc-sub { margin: 18px 0 0; max-width: 34em; font-size: clamp(16px, 1.6vw, 19px); color: var(--text); }
+.hc-sub { margin: 18px 0 0; max-width: 34em; font-size: var(--fs-16); color: var(--text); }
 
 /* 빛과 살 — 두 단 산문 */
 .hc-prose {
@@ -993,7 +993,7 @@
     margin-top: 34px;
     max-width: 56em;
 }
-.hc-prose p { margin: 0 0 16px; font-size: clamp(16px, 1.6vw, 19px); color: var(--text); }
+.hc-prose p { margin: 0 0 16px; font-size: var(--fs-16); color: var(--text); }
 .hc-prose p:last-child { margin-bottom: 0; }
 .hc-prose b { color: var(--text); font-weight: 700; }
 
