@@ -290,7 +290,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
         <section class="hc-band">
           <div class="container">
             <p class="hc-label">빛과 살</p>
-            <h2>한옥 창호는 빛을 막지 않고<br>나누어 들입니다</h2>
+            <h2 class="hc-title-compact">한옥 창호는 빛을 막지 않고<br>나누어 들입니다</h2>
             <div class="hc-prose">
               <div>
                 <p>유리창은 빛을 통째로 들이고, 벽은 통째로 막습니다.
