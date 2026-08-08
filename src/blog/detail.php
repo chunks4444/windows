@@ -39,9 +39,11 @@ $seriesInfo     = null;
 $seriesEpisodes = [];
 try {
     $pdo = db();
-    $relatedDrawingJoin = 'SELECT p.*, lp.name_ko AS related_pattern_name, d.type AS related_drawing_engine
+    $relatedDrawingJoin = 'SELECT p.*, lp.name_ko AS related_pattern_name, lp.slug AS related_pattern_slug,
+            pc.name AS related_category_name, d.type AS related_drawing_engine
         FROM blog_posts p
         LEFT JOIN library_patterns lp ON lp.drawing_id = p.related_drawing_id AND lp.is_active = 1
+        LEFT JOIN pattern_categories pc ON pc.id = lp.pattern_category
         LEFT JOIN drawings d ON d.id = p.related_drawing_id';
     if ($slug !== '') {
         $stmt = $pdo->prepare($relatedDrawingJoin . ' WHERE p.slug=? AND p.is_active=1');
@@ -303,7 +305,7 @@ $metaKeywords = implode(', ', array_unique(array_filter([
         <?php if ($bdEngineKey && isset($engineLabels[$bdEngineKey])): ?>
         <div class="bd-engine-box">
             <p class="bd-engine-box-title">이 살의 이야기, 직접 만들어보세요</p>
-            <p class="bd-engine-box-desc">글에서 다룬 <?= htmlspecialchars($engineLabels[$bdEngineKey]) ?><?= $post['related_pattern_name'] ? ' · ' . htmlspecialchars($post['related_pattern_name']) : '' ?> 패턴을 스튜디오에서 바로 조작해볼 수 있습니다.</p>
+            <p class="bd-engine-box-desc">글에서 다룬 <?= htmlspecialchars($engineLabels[$bdEngineKey]) ?> 패턴을 스튜디오에서 바로 조작해볼 수 있습니다.</p>
             <?php
             $bdEngineUrl = '/src/engine/' . $bdEngineKey . '/' . $bdEngineKey . '.php'
                 . ($post['related_drawing_id'] ? '?drawing_id=' . (int)$post['related_drawing_id'] : '');
@@ -316,10 +318,17 @@ $metaKeywords = implode(', ', array_unique(array_filter([
         </div>
         <?php endif; ?>
 
+        <?php if ($post['related_category_name'] && $post['related_pattern_slug']): ?>
+        <div class="bd-cta">
+            <p class="bd-cta-title">이 살은 <?= htmlspecialchars($post['related_category_name']) ?> 계열입니다 — 실제 제작 사례를 컬렉션에서 확인해보세요.</p>
+            <a href="/collection/detail?slug=<?= rawurlencode($post['related_pattern_slug']) ?>" class="bd-cta-btn"><?= htmlspecialchars($post['related_category_name']) ?> 컬렉션 보기 <i class="bi bi-arrow-right"></i></a>
+        </div>
+        <?php else: ?>
         <div class="bd-cta">
             <p class="bd-cta-title"><?= htmlspecialchars($post['cta_text'] ?: '평목 스튜디오의 다양한 패턴 디자인 보러가기') ?></p>
             <a href="/collection/" class="bd-cta-btn">컬렉션 보러가기 <i class="bi bi-arrow-right"></i></a>
         </div>
+        <?php endif; ?>
 
     </article>
 
