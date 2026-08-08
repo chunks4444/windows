@@ -72,7 +72,7 @@ $check('가이드 CSS 자산 로드 (/src/guide/guide.css)', function () use ($b
 // ── 3. sitemap / robots ──
 $check('sitemap.xml', function () use ($base) {
     $r = http_call('GET', $base . '/sitemap.xml');
-    return [$r['code'] === 200 && str_starts_with((string)$r['body'], '<?xml'), "HTTP {$r['code']}"];
+    return [$r['code'] === 200 && strpos((string)$r['body'], '<?xml') === 0, "HTTP {$r['code']}"];
 });
 $check('robots.txt', function () use ($base) {
     $r = http_call('GET', $base . '/robots.txt');
