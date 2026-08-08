@@ -305,7 +305,7 @@ $metaKeywords = implode(', ', array_unique(array_filter([
         <?php if ($bdEngineKey && isset($engineLabels[$bdEngineKey])): ?>
         <div class="bd-engine-box">
             <p class="bd-engine-box-title">이 살의 이야기, 직접 만들어보세요</p>
-            <p class="bd-engine-box-desc">글에서 다룬 <?= htmlspecialchars($engineLabels[$bdEngineKey]) ?> 패턴을 스튜디오에서 바로 조작해볼 수 있습니다.</p>
+            <p class="bd-engine-box-desc">글에서 다룬 <?= htmlspecialchars($post['related_category_name'] ?: $engineLabels[$bdEngineKey]) ?> 패턴을 스튜디오에서 바로 조작해볼 수 있습니다.</p>
             <?php
             $bdEngineUrl = '/src/engine/' . $bdEngineKey . '/' . $bdEngineKey . '.php'
                 . ($post['related_drawing_id'] ? '?drawing_id=' . (int)$post['related_drawing_id'] : '');
