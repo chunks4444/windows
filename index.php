@@ -312,7 +312,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
         <section class="hc-band">
           <div class="container">
             <p class="hc-label">살의 쓰임</p>
-            <h2>한식 창호와 목창호,<br>같은 살짜임으로 만듭니다</h2>
+            <h2 class="hc-title-compact">한식 창호와 목창호,<br>같은 살짜임으로 만듭니다</h2>
             <p class="hc-sub">한옥에 들어가는 창호든 현대 공간에 들어가는 목창호든,
                짜는 문법은 하나입니다. 스케일만 다릅니다.</p>
             <div class="hc-lines">
@@ -464,40 +464,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
         </section>
         <?php endif; ?>
 
-        <!-- FAQ -->
-        <?php if ($faqVisible): ?>
-        <section class="faq-section">
-            <div class="container">
-                <div class="mb-4">
-                    <p class="ab-section-label">FAQ</p>
-                    <h2 class="ab-section-title">자주 묻는 질문</h2>
-                </div>
-                <?php if (!empty($faqs)): ?>
-                <div class="accordion faq-accordion" id="faqAccordion">
-                    <?php foreach ($faqs as $i => $faq): ?>
-                    <div class="accordion-item faq-item">
-                        <h3 class="accordion-header">
-                            <button class="accordion-button faq-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq<?= $faq['id'] ?>">
-                                <?= htmlspecialchars($faq['question']) ?>
-                            </button>
-                        </h3>
-                        <div id="faq<?= $faq['id'] ?>" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body faq-body">
-                                <?= $faq['answer'] ?>
-                            </div>
-                        </div>
-                    </div>
-                    <?php endforeach; ?>
-                </div>
-                <?php endif; ?>
-            </div>
-        </section>
-        <?php endif; ?>
-
-        <!-- CONTACT CTA -->
-        <section class="home-contact-section">
-            <div class="container">
-                <div class="home-contact-inner">
+        <?php $homeContactInner = '
                     <p class="home-contact-label">Contact</p>
                     <h2 class="home-contact-title">작은 문의도 괜찮습니다.</h2>
                     <p class="home-contact-body">설계·제작·설치 상담부터<br>협업 및 프로젝트 제안까지 모두 환영합니다.<br><br>편하게 연락해 주세요.<br>빠르게 답변드리겠습니다.</p>
@@ -510,9 +477,55 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                         </a>
                     </div>
                     <p class="home-contact-hint">평일 오전 10시 – 오후 6시 운영 · 주말·공휴일 이메일 접수 가능</p>
+        '; ?>
+
+        <?php if ($faqVisible): ?>
+        <!-- FAQ + CONTACT (나란히 배치) -->
+        <section class="faq-contact-section">
+            <div class="container">
+                <div class="faq-contact-grid">
+                    <div class="faq-contact-col">
+                        <div class="mb-4">
+                            <p class="ab-section-label">FAQ</p>
+                            <h2 class="ab-section-title">자주 묻는 질문</h2>
+                        </div>
+                        <?php if (!empty($faqs)): ?>
+                        <div class="accordion faq-accordion" id="faqAccordion">
+                            <?php foreach ($faqs as $i => $faq): ?>
+                            <div class="accordion-item faq-item">
+                                <h3 class="accordion-header">
+                                    <button class="accordion-button faq-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq<?= $faq['id'] ?>">
+                                        <?= htmlspecialchars($faq['question']) ?>
+                                    </button>
+                                </h3>
+                                <div id="faq<?= $faq['id'] ?>" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                    <div class="accordion-body faq-body">
+                                        <?= $faq['answer'] ?>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                    <div class="faq-contact-col faq-contact-col--contact">
+                        <div class="home-contact-inner">
+                            <?= $homeContactInner ?>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
+        <?php else: ?>
+        <!-- CONTACT CTA -->
+        <section class="home-contact-section">
+            <div class="container">
+                <div class="home-contact-inner">
+                    <?= $homeContactInner ?>
+                </div>
+            </div>
+        </section>
+        <?php endif; ?>
 
         <?php include __DIR__ . '/src/components/contact_modal.php'; ?>
 

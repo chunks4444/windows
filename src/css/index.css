@@ -882,10 +882,34 @@
     }
 }
 
-/* FAQ SECTION */
-.faq-section {
-    padding: 24px 0 48px;
+/* FAQ + CONTACT SECTION (나란히 배치) */
+.faq-contact-section {
+    padding: 64px 0 88px;
     border-top: 1px solid var(--border);
+}
+
+.faq-contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: start;
+}
+
+.faq-contact-col--contact {
+    background: #f9f9f9;
+    border-radius: 20px;
+    padding: 64px 40px;
+}
+
+@media (max-width: 768px) {
+    .faq-contact-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+    .faq-contact-col--contact {
+        padding: 48px 24px;
+        border-radius: 14px;
+    }
 }
 
 .faq-accordion {
@@ -971,6 +995,7 @@
 .hc-band { padding-block: clamp(52px, 8vw, 92px); }
 .hc-label { margin: 0 0 14px; font-size: 13px; font-weight: 800; letter-spacing: .1em; color: var(--hc-red); }
 .hc h2 { margin: 0; font-size: clamp(23px, 2.9vw, 33px); font-weight: 800; letter-spacing: -.03em; line-height: 1.32; }
+.hc h2.hc-title-compact { font-size: clamp(var(--fs-16), 2.2vw, var(--fs-22)); font-weight: 700; letter-spacing: -.01em; line-height: 1.4; }
 .hc h3 { margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -.02em; line-height: 1.4; }
 .hc-sub { margin: 18px 0 0; max-width: 34em; font-size: clamp(16px, 1.6vw, 19px); color: var(--hc-soft); }
 
