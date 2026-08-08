@@ -316,10 +316,20 @@ function authUpdateNav() {
     // 로그인/어드민 메뉴 존재 여부 자체는 서버사이드(nav.php)에서 JWT로 이미 결정되어 렌더링됨.
     // 여기서는 이미 그려진 요소의 텍스트/보드 목록만 채우고, 페이지 이동 없이 로그인/로그아웃되는
     // 드문 경우(pmokRequireAuth 콜백)를 위해 존재하는 요소에 한해 표시 상태만 동기화한다.
-    const user = authGetUser();
+    let user = authGetUser();
     const loginBtn  = document.getElementById('navLoginBtn');
     const userMenu  = document.getElementById('navUserMenu');
     const userEmail = document.getElementById('navUserEmail');
+
+    // localStorage엔 로그인 정보가 남아있지만 서버는 로그아웃으로 렌더링한 경우
+    // (쿠키 만료, JWT 시크릿 교체 등) — stale 데이터이므로 정리한다. 안 그러면
+    // 로그인 버튼만 숨겨지고 대체할 사용자 메뉴는 DOM에 없어 메뉴 자체가 사라진다.
+    if (user && loginBtn && !userMenu) {
+        localStorage.removeItem(AUTH_TOKEN_KEY);
+        localStorage.removeItem(AUTH_USER_KEY);
+        user = null;
+    }
+
     if (user) {
         if (loginBtn) loginBtn.style.display = 'none';
         if (userMenu) {
