@@ -421,6 +421,56 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
             </div>
         </section>
 
+        <!-- FAQ (사용법 바로 아래, 리스트는 좌우 2열) -->
+        <?php if ($faqVisible && !empty($faqs)):
+            $faqHalf  = (int)ceil(count($faqs) / 2);
+            $faqLeft  = array_slice($faqs, 0, $faqHalf);
+            $faqRight = array_slice($faqs, $faqHalf);
+        ?>
+        <section class="faq-section">
+            <div class="container">
+                <div class="mb-4">
+                    <p class="ab-section-label">FAQ</p>
+                    <h2 class="ab-section-title">자주 묻는 질문</h2>
+                </div>
+                <div class="faq-columns">
+                    <div class="accordion faq-accordion" id="faqAccordionLeft">
+                        <?php foreach ($faqLeft as $faq): ?>
+                        <div class="accordion-item faq-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button faq-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq<?= $faq['id'] ?>">
+                                    <?= htmlspecialchars($faq['question']) ?>
+                                </button>
+                            </h3>
+                            <div id="faq<?= $faq['id'] ?>" class="accordion-collapse collapse" data-bs-parent="#faqAccordionLeft">
+                                <div class="accordion-body faq-body">
+                                    <?= $faq['answer'] ?>
+                                </div>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <div class="accordion faq-accordion" id="faqAccordionRight">
+                        <?php foreach ($faqRight as $faq): ?>
+                        <div class="accordion-item faq-item">
+                            <h3 class="accordion-header">
+                                <button class="accordion-button faq-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq<?= $faq['id'] ?>">
+                                    <?= htmlspecialchars($faq['question']) ?>
+                                </button>
+                            </h3>
+                            <div id="faq<?= $faq['id'] ?>" class="accordion-collapse collapse" data-bs-parent="#faqAccordionRight">
+                                <div class="accordion-body faq-body">
+                                    <?= $faq['answer'] ?>
+                                </div>
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <?php endif; ?>
+
         <!-- Blog -->
         <?php if ($latestPosts): ?>
         <section class="home-blog-section">
@@ -464,7 +514,10 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
         </section>
         <?php endif; ?>
 
-        <?php $homeContactInner = '
+        <!-- CONTACT CTA -->
+        <section class="home-contact-section">
+            <div class="container">
+                <div class="home-contact-inner">
                     <p class="home-contact-label">Contact</p>
                     <h2 class="home-contact-title">작은 문의도 괜찮습니다.</h2>
                     <p class="home-contact-body">설계·제작·설치 상담부터<br>협업 및 프로젝트 제안까지 모두 환영합니다.<br><br>편하게 연락해 주세요.<br>빠르게 답변드리겠습니다.</p>
@@ -477,55 +530,9 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                         </a>
                     </div>
                     <p class="home-contact-hint">평일 오전 10시 – 오후 6시 운영 · 주말·공휴일 이메일 접수 가능</p>
-        '; ?>
-
-        <?php if ($faqVisible): ?>
-        <!-- FAQ + CONTACT (나란히 배치) -->
-        <section class="faq-contact-section">
-            <div class="container">
-                <div class="faq-contact-grid">
-                    <div class="faq-contact-col">
-                        <div class="mb-4">
-                            <p class="ab-section-label">FAQ</p>
-                            <h2 class="ab-section-title">자주 묻는 질문</h2>
-                        </div>
-                        <?php if (!empty($faqs)): ?>
-                        <div class="accordion faq-accordion" id="faqAccordion">
-                            <?php foreach ($faqs as $i => $faq): ?>
-                            <div class="accordion-item faq-item">
-                                <h3 class="accordion-header">
-                                    <button class="accordion-button faq-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq<?= $faq['id'] ?>">
-                                        <?= htmlspecialchars($faq['question']) ?>
-                                    </button>
-                                </h3>
-                                <div id="faq<?= $faq['id'] ?>" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                    <div class="accordion-body faq-body">
-                                        <?= $faq['answer'] ?>
-                                    </div>
-                                </div>
-                            </div>
-                            <?php endforeach; ?>
-                        </div>
-                        <?php endif; ?>
-                    </div>
-                    <div class="faq-contact-col faq-contact-col--contact">
-                        <div class="home-contact-inner">
-                            <?= $homeContactInner ?>
-                        </div>
-                    </div>
                 </div>
             </div>
         </section>
-        <?php else: ?>
-        <!-- CONTACT CTA -->
-        <section class="home-contact-section">
-            <div class="container">
-                <div class="home-contact-inner">
-                    <?= $homeContactInner ?>
-                </div>
-            </div>
-        </section>
-        <?php endif; ?>
 
         <?php include __DIR__ . '/src/components/contact_modal.php'; ?>
 

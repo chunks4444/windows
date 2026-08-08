@@ -882,33 +882,21 @@
     }
 }
 
-/* FAQ + CONTACT SECTION (나란히 배치) */
-.faq-contact-section {
-    padding: 64px 0 88px;
+/* FAQ SECTION */
+.faq-section {
+    padding: 24px 0 48px;
     border-top: 1px solid var(--border);
 }
 
-.faq-contact-grid {
+.faq-columns {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 48px;
-    align-items: start;
-}
-
-.faq-contact-col--contact {
-    background: #f9f9f9;
-    border-radius: 20px;
-    padding: 64px 40px;
+    gap: 0 40px;
 }
 
 @media (max-width: 768px) {
-    .faq-contact-grid {
+    .faq-columns {
         grid-template-columns: 1fr;
-        gap: 32px;
-    }
-    .faq-contact-col--contact {
-        padding: 48px 24px;
-        border-radius: 14px;
     }
 }
 
