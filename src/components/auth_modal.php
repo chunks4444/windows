@@ -5,9 +5,9 @@
 <!-- 관리자 대리 로그인 중 표시 배너 — localStorage에 원래 관리자 세션이 보관되어 있을 때만
      (즉 대리 로그인을 시작한 그 관리자 브라우저에서만) 보인다. 대상 회원 본인 화면·계정 데이터에는
      아무 흔적도 남지 않는다(last_login 갱신 안 함, 회원 쪽 localStorage/쿠키 무관). -->
-<div id="pmImpersonateBar" style="display:none;position:fixed;top:0;left:0;right:0;z-index:2000;height:40px;background:var(--danger);color:#fff;align-items:center;justify-content:center;gap:14px;font-size:13px;font-weight:600;">
-    <span><i class="bi bi-incognito"></i> 관리자 대리 로그인 중 — <span id="pmImpersonateEmail"></span></span>
-    <button onclick="endImpersonation()" style="background:#fff;color:var(--danger);border:none;border-radius:5px;padding:4px 12px;font-size:12px;font-weight:700;cursor:pointer;">관리자로 복귀</button>
+<div id="pmImpersonateBar" style="display:none;position:fixed;top:0;left:0;right:0;z-index:2000;height:26px;background:var(--danger);color:#fff;align-items:center;justify-content:center;gap:10px;font-size:11px;font-weight:600;">
+    <span><i class="bi bi-incognito"></i> 대리 로그인 중 — <span id="pmImpersonateEmail"></span></span>
+    <button onclick="endImpersonation()" style="background:#fff;color:var(--danger);border:none;border-radius:4px;padding:1px 8px;font-size:10px;font-weight:700;cursor:pointer;">관리자로 복귀</button>
 </div>
 
 <!-- AUTH MODAL -->
@@ -395,12 +395,22 @@ function startImpersonation(newToken, newUser) {
 function checkImpersonationBar() {
     const bar = document.getElementById('pmImpersonateBar');
     if (!bar) return;
+    const barHeight = 26;
+    const navbar = document.querySelector('.pm-navbar');
     const raw = localStorage.getItem(IMPERSONATE_ADMIN_KEY);
-    if (!raw) { bar.style.display = 'none'; document.body.style.paddingTop = ''; return; }
+    if (!raw) {
+        bar.style.display = 'none';
+        document.body.style.paddingTop = '';
+        if (navbar) navbar.style.top = '';
+        return;
+    }
     const user = authGetUser();
     document.getElementById('pmImpersonateEmail').textContent = user?.email || '';
     bar.style.display = 'flex';
-    document.body.style.paddingTop = '40px';
+    // 배너가 상단바(.pm-navbar, fixed-top)를 그냥 덮어버리지 않도록 그만큼 밀어내림
+    if (navbar) navbar.style.top = barHeight + 'px';
+    const baseTop = parseInt(getComputedStyle(document.body).paddingTop, 10) || 68;
+    document.body.style.paddingTop = (baseTop + barHeight) + 'px';
 }
 
 async function endImpersonation() {
