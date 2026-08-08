@@ -306,7 +306,7 @@ if ($_pmokIsSharedView && (!jwt_from_request() || $_pmokAdminView)) {
 
                 <!-- ── 제작 시방서 ────────────────── -->
                 <?php if ($perms['spec']): ?>
-                <div class="sb-section sb-collapsed">
+                <div class="sb-section">
                     <div class="sb-section-title">제작 시방서</div>
                     <div class="spec-grid">
                         <div class="spec-card">
