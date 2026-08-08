@@ -313,7 +313,7 @@ $metaKeywords = implode(', ', array_unique(array_filter([
             <a class="bd-engine-box-btn"
                href="<?= htmlspecialchars($bdEngineUrl) ?>"
                <?= $post['related_drawing_id'] ? "onclick=\"return openCollectionEditor(event,'" . htmlspecialchars($bdEngineUrl, ENT_QUOTES) . "')\"" : '' ?>>
-                <?= htmlspecialchars($engineLabels[$bdEngineKey]) ?> 스튜디오 열기 <i class="bi bi-arrow-right"></i>
+                스튜디오에서 열기 <i class="bi bi-arrow-right"></i>
             </a>
         </div>
         <?php endif; ?>
