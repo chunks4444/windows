@@ -520,6 +520,26 @@
 }
 .process-guide-link:hover { text-decoration: underline; }
 
+.process-cta-group { margin-top: auto; display: flex; flex-direction: column; gap: .5rem; }
+.process-cta-group .process-guide-link { margin-top: 0; }
+.process-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .35rem;
+    padding: 9px 14px;
+    border-radius: 8px;
+    background: var(--text);
+    color: var(--bg);
+    font-size: var(--fs-13);
+    font-weight: 700;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background .2s, transform .15s;
+}
+.process-cta-btn:hover { background: var(--accent-hover); color: var(--bg); transform: translateY(-1px); }
+
 @media (max-width: 1024px) {
     .process-container { grid-template-columns: repeat(2, 1fr); }
 }

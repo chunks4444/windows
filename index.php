@@ -414,7 +414,12 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                                 <li><i class="bi bi-check2"></i> 저장한 도면 기반으로 상담</li>
                                 <li><i class="bi bi-check2"></i> 공방 검토 후 최종 견적 회신</li>
                             </ul>
-                            <a href="/guide/order" class="process-guide-link">주문 안내 보기 <i class="bi bi-arrow-right"></i></a>
+                            <div class="process-cta-group">
+                                <button type="button" class="process-cta-btn" data-bs-toggle="modal" data-bs-target="#contactModal">
+                                    <i class="bi bi-envelope-fill"></i> 견적요청
+                                </button>
+                                <a href="/guide/order" class="process-guide-link">주문 안내 보기 <i class="bi bi-arrow-right"></i></a>
+                            </div>
                         </div>
                     </div>
                 </div>
