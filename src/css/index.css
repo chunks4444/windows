@@ -123,7 +123,7 @@
 .hero-top-copy {
     margin: 28px 0 8px;
     padding: 0 24px;
-    font-family: 'Noto Sans KR', sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     font-size: clamp(var(--fs-18), 2.5vw, var(--fs-28));
     font-weight: 700;
     color: var(--text);
@@ -134,7 +134,7 @@
 .hero-top-subcopy {
     margin: 0 0 20px;
     padding: 0 24px;
-    font-family: 'Noto Sans KR', sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     font-size: var(--fs-16);
     font-weight: 400;
     color: var(--text);
@@ -166,7 +166,7 @@
 }
 
 .ab-section-title {
-    font-family: 'Noto Sans KR', sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     font-size: clamp(var(--fs-16), 2.2vw, var(--fs-22));
     font-weight: 700;
     line-height: 1.4;
@@ -727,7 +727,7 @@
     padding: 20px 24px 16px;
 }
 #contactModal .modal-title {
-    font-family: 'Noto Sans KR', sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     font-size: var(--fs-16); font-weight: 700;
 }
 #contactModal .modal-body { padding: 24px; }
@@ -799,7 +799,7 @@
 }
 
 .home-contact-title {
-    font-family: 'Noto Sans KR', sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     font-size: clamp(var(--fs-16), 2.2vw, var(--fs-22));
     font-weight: 700;
     line-height: 1.35;
@@ -972,7 +972,7 @@
 }
 .hc, .hc * { box-sizing: border-box; }
 .hc {
-    font-family: 'Noto Sans KR', 'Inter', -apple-system, sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     color: var(--text);
     line-height: 1.78;
     word-break: keep-all;

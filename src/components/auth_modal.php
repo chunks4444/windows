@@ -136,7 +136,7 @@
         <div class="modal-content border-0" style="border-radius:16px;box-shadow:0 8px 16px rgba(var(--text-rgb), 0.06),0 24px 64px rgba(var(--text-rgb), 0.14);overflow:hidden;text-align:center;">
             <div class="modal-body px-5 py-5">
                 <div style="font-size:40px;margin-bottom:20px;">🎉</div>
-                <h4 style="font-family:'Noto Sans KR',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-bottom:10px;">평목에 오신 것을 환영합니다!</h4>
+                <h4 style="font-family:'Pretendard','Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-bottom:10px;">평목에 오신 것을 환영합니다!</h4>
                 <p id="welcomeEmail" style="font-size:13px;color:var(--text-muted);margin-bottom:6px;"></p>
                 <p style="font-size:13px;color:var(--accent-hover);line-height:1.8;margin-bottom:32px;">이제 창호를 직접 설계하고,<br>AI로 공간에 적용된 모습까지 확인해 보세요.</p>
                 <button class="auth-submit" onclick="welcomeGo()" style="max-width:240px;margin:0 auto;">스튜디오 시작하기</button>

@@ -45,7 +45,7 @@ require_admin_role('s');
 .at-engine-input:focus { border-color: var(--accent); background: var(--teal-light); }
 .at-engine-input::placeholder { color: var(--border); }
 
-.at-textarea { width: 100%; border: 1.5px solid var(--accent-tint); border-radius: 8px; padding: 12px 14px; font-size: 13px; font-family: 'Noto Sans KR', monospace; color: var(--text); resize: vertical; outline: none; transition: border-color .15s; line-height: 1.6; }
+.at-textarea { width: 100%; border: 1.5px solid var(--accent-tint); border-radius: 8px; padding: 12px 14px; font-size: 13px; font-family: 'Pretendard', monospace; color: var(--text); resize: vertical; outline: none; transition: border-color .15s; line-height: 1.6; }
 .at-textarea:focus { border-color: var(--accent); background: var(--teal-light); }
 .at-textarea::placeholder { color: var(--border); }
 .at-hint { font-size: 11px; color: var(--text); margin-top: 6px; }

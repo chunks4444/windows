@@ -2,7 +2,7 @@
 
 html, body {
     background: #fff;
-    font-family: 'Noto Sans KR', 'Inter', -apple-system, sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     -webkit-font-smoothing: antialiased;
     color: var(--text, var(--text));
     height: 100%;

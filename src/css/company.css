@@ -6,7 +6,7 @@
 }
 
 body {
-    font-family: 'Noto Sans KR', 'Inter', -apple-system, sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     background: var(--bg);
 }
 
@@ -50,7 +50,7 @@ body {
     margin-bottom: 20px;
 }
 .ab-hero-title {
-    font-family: 'Noto Sans KR', sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     font-size: clamp(var(--fs-32), 5vw, 4rem);
     font-weight: 700;
     line-height: 1.25;
@@ -83,7 +83,7 @@ body {
     margin-bottom: 16px;
 }
 .ab-section-title {
-    font-family: 'Noto Sans KR', sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     font-size: clamp(var(--fs-22), 3vw, var(--fs-32));
     font-weight: 700;
     line-height: 1.4;
@@ -143,7 +143,7 @@ body {
     letter-spacing: -0.02em;
 }
 .ab-phil-name {
-    font-family: 'Noto Sans KR', sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     font-size: var(--fs-16);
     font-weight: 700;
     margin-bottom: 12px;
@@ -183,7 +183,7 @@ body {
 .ab-tool-icon { flex-shrink: 0; opacity: 0.7; }
 .ab-tool-card:hover .ab-tool-icon { opacity: 1; }
 .ab-tool-name {
-    font-family: 'Noto Sans KR', sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     font-size: var(--fs-16);
     font-weight: 700;
     margin-bottom: 8px;
@@ -240,7 +240,7 @@ body {
 }
 
 .hero-slide-title {
-    font-family: 'Noto Sans KR', sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     font-size: clamp(var(--fs-18), 2.8vw, var(--fs-32));
     font-weight: 700;
     color: var(--bg);
@@ -340,7 +340,7 @@ body {
     padding: 20px 24px 16px;
 }
 #contactModal .modal-title {
-    font-family: 'Noto Sans KR', sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     font-size: var(--fs-16); font-weight: 700;
 }
 #contactModal .modal-body { padding: 24px; }

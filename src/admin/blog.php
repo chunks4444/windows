@@ -37,7 +37,7 @@ foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
         .blog-upload-label:hover { border-color:var(--accent); color:var(--accent); }
         .blog-textarea { resize:vertical; padding:8px 10px; border:1px solid var(--border); border-radius:var(--r-sm); background:var(--bg); font-family:inherit; font-size:13px; color:var(--text); outline:none; width:100%; }
         #postContentEditor { height:320px; background:var(--bg); font-size:13px; }
-        .ql-editor { font-family:'Noto Sans KR','Inter',-apple-system,sans-serif; color: var(--text); }
+        .ql-editor { font-family:'Pretendard','Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif; color: var(--text); }
         .ql-editor strong, .ql-editor b { font-weight: 600; }
         .ql-editor h1, .ql-editor h2, .ql-editor h3, .ql-editor h4 { font-weight: 600; }
         .ql-editor td { box-sizing: border-box; }
