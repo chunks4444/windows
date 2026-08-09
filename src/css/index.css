@@ -520,13 +520,13 @@
 }
 .process-guide-link:hover { text-decoration: underline; }
 
-.process-cta-group { margin-top: auto; display: flex; flex-direction: column; align-items: flex-start; gap: .5rem; }
+.process-cta-group { margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: .5rem; }
 .process-cta-group .process-guide-link { margin-top: 0; }
 .process-cta-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    align-self: flex-start;
+    align-self: center;
     gap: .35rem;
     padding: 8px 16px;
     border-radius: 999px;
