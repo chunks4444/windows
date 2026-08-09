@@ -521,7 +521,7 @@
 .process-guide-link:hover { text-decoration: underline; }
 
 .process-cta-group { margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: .5rem; }
-.process-cta-group .process-guide-link { margin-top: 0; }
+.process-cta-group .process-guide-link { margin-top: 0; align-self: flex-start; }
 .process-cta-btn {
     display: inline-flex;
     align-items: center;
