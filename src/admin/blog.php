@@ -29,6 +29,9 @@ foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
     <?php css_tag('/src/css/stats.css'); ?>
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
     <style>
+        .blog-star-btn { border:none; background:none; cursor:pointer; padding:2px; font-size:16px; line-height:1; color:var(--text-3, var(--text)); }
+        .blog-star-btn .bi-star-fill { color:var(--accent); }
+        .blog-star-btn:hover { opacity:.7; }
         .blog-thumb { width:80px; height:60px; object-fit:cover; border-radius:4px; background:var(--bg); }
         .blog-thumb-empty { width:80px; height:60px; border-radius:4px; background:var(--bg); display:flex; align-items:center; justify-content:center; color: var(--text); font-size:18px; }
         .blog-img-preview { width:100%; max-height:220px; object-fit:cover; border-radius:8px; background:var(--bg); display:none; margin-bottom:8px; }
@@ -114,6 +117,7 @@ foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
             <thead>
                 <tr>
                     <th style="width:32px;"></th>
+                    <th style="width:32px;" title="히어로 캐로셀 노출"><i class="bi bi-star"></i></th>
                     <th style="width:96px;">썸네일</th>
                     <th>제목</th>
                     <th style="width:110px;">시리즈</th>
@@ -159,12 +163,6 @@ foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
                         <input type="file" id="postImgFile" accept="image/*" style="display:none;" onchange="previewImage(this)">
                         <input id="postThumbUrl" type="text" placeholder="또는 https://... URL 직접 입력"
                             style="height:38px;padding:0 10px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg);font-family:inherit;font-size:13px;color:var(--text);outline:none;width:100%;">
-                    </div>
-                    <div class="adm-mfield">
-                        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
-                            <input id="postIsFeatured" type="checkbox" style="width:auto;">
-                            히어로 캐로셀 노출 <span style="font-size:11px;color: var(--text);font-weight:400;">(블로그 메인·홈 상단 캐로셀에 직접 선택해 노출, 날짜 무관)</span>
-                        </label>
                     </div>
                     <div class="adm-mfield">
                         <label>제목 <span style="font-size:11px;color: var(--text);font-weight:400;">(- — " ' * : 문자는 검색엔진 연산자와 혼동될 수 있어 사용 불가)</span></label>

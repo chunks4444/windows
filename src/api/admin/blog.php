@@ -89,9 +89,10 @@ if ($action === 'save') {
     }
 
     if ($id) {
-        $pdo->prepare('UPDATE blog_posts SET title=?, summary=?, cta_text=?, source_text=?, content=?, thumbnail_url=?, is_featured=?,
+        // is_featured는 목록의 별표 토글(action=toggle_featured) 전용 — 일반 저장에서는 건드리지 않는다
+        $pdo->prepare('UPDATE blog_posts SET title=?, summary=?, cta_text=?, source_text=?, content=?, thumbnail_url=?,
                 series_id=?, series_order=?, related_engine=?, related_drawing_id=?, question=? WHERE id=?')
-            ->execute([$title, $summary, $cta_text, $source_text, $content, $thumbnail_url, $is_featured,
+            ->execute([$title, $summary, $cta_text, $source_text, $content, $thumbnail_url,
                 $series_id, $series_order, $related_engine, $related_drawing_id, $question, $id]);
     } else {
         // 새 글은 항상 비공개(is_active=0)로 시작하고 slug는 NULL — 관리자가 검토 후
@@ -140,6 +141,19 @@ if ($action === 'toggle') {
         $pdo->prepare('UPDATE blog_posts SET is_active=? WHERE id=?')->execute([$newActive, $id]);
     }
     echo json_encode(['ok' => true]);
+    exit;
+}
+
+if ($action === 'toggle_featured') {
+    $id = (int)($body['id'] ?? 0);
+    $stmt = $pdo->prepare('SELECT is_featured FROM blog_posts WHERE id=?');
+    $stmt->execute([$id]);
+    $post = $stmt->fetch();
+    if (!$post) { http_response_code(404); echo json_encode(['error' => '글을 찾을 수 없습니다.']); exit; }
+
+    $newFeatured = $post['is_featured'] ? 0 : 1;
+    $pdo->prepare('UPDATE blog_posts SET is_featured=? WHERE id=?')->execute([$newFeatured, $id]);
+    echo json_encode(['ok' => true, 'is_featured' => $newFeatured]);
     exit;
 }
 
