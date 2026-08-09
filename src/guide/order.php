@@ -31,7 +31,7 @@ include __DIR__ . '/_head.php';
 
 <div class="guide-note">
     <i class="bi bi-info-circle"></i>
-    <span>이름과 연락처가 등록되어 있지 않으면 견적요청 버튼이 동작하지 않습니다. <a href="account.php">프로필 설정 가이드</a>를 참고하세요.</span>
+    <span>이름과 연락처가 등록되어 있지 않으면 견적요청 버튼이 동작하지 않습니다. <a href="/guide/account">프로필 설정 가이드</a>를 참고하세요.</span>
 </div>
 
 <h2>주문 흐름</h2>
@@ -91,7 +91,7 @@ include __DIR__ . '/_head.php';
     <div>
         <div>※ 배송비·시공비 제외</div>
         <div>※ 도면에 보이는 금액은 예상금액입니다. 사용자 편집 내용을 검토한 후 최종 견적이 확정됩니다.</div>
-        <div>※ 예상가격·원가 상세는 회원 등급에 따라 표시 여부가 다릅니다. 자세한 내용은 <a href="account.php">프로필 & 회사 정보 가이드</a>의 "회원 등급별 가격 정보 열람 권한"을 참고하세요.</div>
+        <div>※ 예상가격·원가 상세는 회원 등급에 따라 표시 여부가 다릅니다. 자세한 내용은 <a href="/guide/account">프로필 & 회사 정보 가이드</a>의 "회원 등급별 가격 정보 열람 권한"을 참고하세요.</div>
     </div>
 </div>
 
