@@ -972,7 +972,7 @@
 }
 .hc, .hc * { box-sizing: border-box; }
 .hc {
-    font-family: "Pretendard Variable", Pretendard, -apple-system, system-ui, sans-serif;
+    font-family: 'Noto Sans KR', 'Inter', -apple-system, sans-serif;
     color: var(--text);
     line-height: 1.78;
     word-break: keep-all;
