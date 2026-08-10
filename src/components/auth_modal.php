@@ -2,6 +2,14 @@
 // 회원가입 / 로그인 모달 컴포넌트
 // nav.php 에서 include 됨
 ?>
+<!-- 관리자 대리 로그인 중 표시 배너 — localStorage에 원래 관리자 세션이 보관되어 있을 때만
+     (즉 대리 로그인을 시작한 그 관리자 브라우저에서만) 보인다. 대상 회원 본인 화면·계정 데이터에는
+     아무 흔적도 남지 않는다(last_login 갱신 안 함, 회원 쪽 localStorage/쿠키 무관). -->
+<div id="pmImpersonateBar" style="display:none;position:fixed;top:0;left:0;right:0;z-index:2000;height:26px;background:var(--danger);color:#fff;align-items:center;justify-content:center;gap:10px;font-size:11px;font-weight:600;">
+    <span><i class="bi bi-incognito"></i> 대리 로그인 중 — <span id="pmImpersonateEmail"></span></span>
+    <button onclick="endImpersonation()" style="background:#fff;color:var(--danger);border:none;border-radius:4px;padding:1px 8px;font-size:10px;font-weight:700;cursor:pointer;">관리자로 복귀</button>
+</div>
+
 <!-- AUTH MODAL -->
 <div class="modal fade" id="authModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered auth-modal-dialog">
@@ -128,7 +136,7 @@
         <div class="modal-content border-0" style="border-radius:16px;box-shadow:0 8px 16px rgba(var(--text-rgb), 0.06),0 24px 64px rgba(var(--text-rgb), 0.14);overflow:hidden;text-align:center;">
             <div class="modal-body px-5 py-5">
                 <div style="font-size:40px;margin-bottom:20px;">🎉</div>
-                <h4 style="font-family:'Noto Sans KR',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-bottom:10px;">평목에 오신 것을 환영합니다!</h4>
+                <h4 style="font-family:'Pretendard','Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-bottom:10px;">평목에 오신 것을 환영합니다!</h4>
                 <p id="welcomeEmail" style="font-size:13px;color:var(--text-muted);margin-bottom:6px;"></p>
                 <p style="font-size:13px;color:var(--accent-hover);line-height:1.8;margin-bottom:32px;">이제 창호를 직접 설계하고,<br>AI로 공간에 적용된 모습까지 확인해 보세요.</p>
                 <button class="auth-submit" onclick="welcomeGo()" style="max-width:240px;margin:0 auto;">스튜디오 시작하기</button>
@@ -316,10 +324,20 @@ function authUpdateNav() {
     // 로그인/어드민 메뉴 존재 여부 자체는 서버사이드(nav.php)에서 JWT로 이미 결정되어 렌더링됨.
     // 여기서는 이미 그려진 요소의 텍스트/보드 목록만 채우고, 페이지 이동 없이 로그인/로그아웃되는
     // 드문 경우(pmokRequireAuth 콜백)를 위해 존재하는 요소에 한해 표시 상태만 동기화한다.
-    const user = authGetUser();
+    let user = authGetUser();
     const loginBtn  = document.getElementById('navLoginBtn');
     const userMenu  = document.getElementById('navUserMenu');
     const userEmail = document.getElementById('navUserEmail');
+
+    // localStorage엔 로그인 정보가 남아있지만 서버는 로그아웃으로 렌더링한 경우
+    // (쿠키 만료, JWT 시크릿 교체 등) — stale 데이터이므로 정리한다. 안 그러면
+    // 로그인 버튼만 숨겨지고 대체할 사용자 메뉴는 DOM에 없어 메뉴 자체가 사라진다.
+    if (user && loginBtn && !userMenu) {
+        localStorage.removeItem(AUTH_TOKEN_KEY);
+        localStorage.removeItem(AUTH_USER_KEY);
+        user = null;
+    }
+
     if (user) {
         if (loginBtn) loginBtn.style.display = 'none';
         if (userMenu) {
@@ -359,6 +377,57 @@ function authUpdateNav() {
         if (drawerLoginBtn) drawerLoginBtn.style.display = '';
         if (drawerUserMenu) drawerUserMenu.style.display = 'none';
     }
+}
+
+const IMPERSONATE_ADMIN_KEY = 'pmok_impersonate_admin';
+
+// 대상 회원 계정으로 대리 로그인 시작 — users.js의 impersonateUser()에서 호출.
+// 원래 관리자 세션(token+user)을 별도 키로 보관해뒀다가 복귀 시 그대로 되돌린다.
+function startImpersonation(newToken, newUser) {
+    const adminToken = authGetToken();
+    const adminUser  = authGetUser();
+    if (adminToken && adminUser) {
+        localStorage.setItem(IMPERSONATE_ADMIN_KEY, JSON.stringify({ token: adminToken, user: adminUser }));
+    }
+    authSaveSession(newToken, newUser);
+}
+
+function checkImpersonationBar() {
+    const bar = document.getElementById('pmImpersonateBar');
+    if (!bar) return;
+    const barHeight = 26;
+    const navbar = document.querySelector('.pm-navbar');
+    const raw = localStorage.getItem(IMPERSONATE_ADMIN_KEY);
+    if (!raw) {
+        bar.style.display = 'none';
+        document.body.style.paddingTop = '';
+        if (navbar) navbar.style.top = '';
+        return;
+    }
+    const user = authGetUser();
+    document.getElementById('pmImpersonateEmail').textContent = user?.email || '';
+    bar.style.display = 'flex';
+    // 배너가 상단바(.pm-navbar, fixed-top)를 그냥 덮어버리지 않도록 그만큼 밀어내림
+    if (navbar) navbar.style.top = barHeight + 'px';
+    const baseTop = parseInt(getComputedStyle(document.body).paddingTop, 10) || 68;
+    document.body.style.paddingTop = (baseTop + barHeight) + 'px';
+}
+
+async function endImpersonation() {
+    const raw = localStorage.getItem(IMPERSONATE_ADMIN_KEY);
+    if (!raw) return;
+    let admin;
+    try { admin = JSON.parse(raw); } catch { admin = null; }
+    if (!admin?.token || !admin?.user) { localStorage.removeItem(IMPERSONATE_ADMIN_KEY); location.href = '/'; return; }
+    try {
+        await fetch('/src/api/admin/impersonate_end.php', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + admin.token },
+        });
+    } catch {}
+    authSaveSession(admin.token, admin.user);
+    localStorage.removeItem(IMPERSONATE_ADMIN_KEY);
+    location.href = '/src/admin/users.php';
 }
 
 async function loadNavBoards() {
@@ -468,6 +537,7 @@ async function authReset(e) {
 
 document.addEventListener('DOMContentLoaded', function () {
     authUpdateNav();
+    checkImpersonationBar();
 
     const params = new URLSearchParams(location.search);
 

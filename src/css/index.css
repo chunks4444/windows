@@ -123,7 +123,7 @@
 .hero-top-copy {
     margin: 28px 0 8px;
     padding: 0 24px;
-    font-family: 'Noto Sans KR', sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     font-size: clamp(var(--fs-18), 2.5vw, var(--fs-28));
     font-weight: 700;
     color: var(--text);
@@ -134,7 +134,7 @@
 .hero-top-subcopy {
     margin: 0 0 20px;
     padding: 0 24px;
-    font-family: 'Noto Sans KR', sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     font-size: var(--fs-16);
     font-weight: 400;
     color: var(--text);
@@ -166,7 +166,7 @@
 }
 
 .ab-section-title {
-    font-family: 'Noto Sans KR', sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     font-size: clamp(var(--fs-16), 2.2vw, var(--fs-22));
     font-weight: 700;
     line-height: 1.4;
@@ -520,6 +520,27 @@
 }
 .process-guide-link:hover { text-decoration: underline; }
 
+.process-cta-group { margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: .5rem; }
+.process-cta-group .process-guide-link { margin-top: 0; align-self: flex-start; }
+.process-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    gap: .35rem;
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: var(--text);
+    color: var(--bg);
+    font-size: var(--fs-13);
+    font-weight: 700;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background .2s, transform .15s;
+}
+.process-cta-btn:hover { background: var(--accent-hover); color: var(--bg); transform: translateY(-1px); }
+
 @media (max-width: 1024px) {
     .process-container { grid-template-columns: repeat(2, 1fr); }
 }
@@ -727,7 +748,7 @@
     padding: 20px 24px 16px;
 }
 #contactModal .modal-title {
-    font-family: 'Noto Sans KR', sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     font-size: var(--fs-16); font-weight: 700;
 }
 #contactModal .modal-body { padding: 24px; }
@@ -799,7 +820,7 @@
 }
 
 .home-contact-title {
-    font-family: 'Noto Sans KR', sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     font-size: clamp(var(--fs-16), 2.2vw, var(--fs-22));
     font-weight: 700;
     line-height: 1.35;
@@ -972,7 +993,7 @@
 }
 .hc, .hc * { box-sizing: border-box; }
 .hc {
-    font-family: "Pretendard Variable", Pretendard, -apple-system, system-ui, sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     color: var(--text);
     line-height: 1.78;
     word-break: keep-all;

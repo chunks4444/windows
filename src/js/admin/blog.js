@@ -43,7 +43,7 @@ async function loadBlogViewTrend() {
         },
         options: {
             responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { labels: { font: { family: 'Noto Sans KR', size: 11 } } } },
+            plugins: { legend: { labels: { font: { family: 'Pretendard', size: 11 } } } },
             scales: {
                 x: { ticks: { font: { size: 10 }, maxTicksLimit: 20 }, grid: { display: false } },
                 y: { ticks: { font: { size: 10 }, precision: 0 }, beginAtZero: true },
@@ -67,6 +67,11 @@ function render() {
     document.getElementById('blogBody').innerHTML = posts.map(p => `
         <tr data-id="${p.id}" draggable="true">
             <td style="text-align:center;"><span class="drag-handle"><i class="bi bi-grip-vertical"></i></span></td>
+            <td style="text-align:center;">
+                <button class="blog-star-btn" title="히어로 캐로셀 노출" onclick="toggleFeatured(${p.id})">
+                    <i class="bi ${p.is_featured ? 'bi-star-fill' : 'bi-star'}"></i>
+                </button>
+            </td>
             <td>${p.thumbnail_url
                 ? `<img class="blog-thumb" src="${esc(p.thumbnail_url)}" alt="">`
                 : `<div class="blog-thumb-empty"><i class="bi bi-image"></i></div>`}</td>
@@ -104,7 +109,6 @@ function openModal(id) {
     if (p?.thumbnail_url) { prev.src = p.thumbnail_url; prev.classList.add('show'); }
     else                  { prev.src = ''; prev.classList.remove('show'); }
     document.getElementById('postImgFile').value = '';
-    document.getElementById('postIsFeatured').checked = !!(p?.is_featured);
     document.getElementById('postSeriesId').value          = p?.series_id ?? '';
     document.getElementById('postSeriesOrder').value        = p?.series_order ?? 0;
     document.getElementById('postQuestion').value           = p?.question ?? '';
@@ -389,7 +393,6 @@ async function savePost() {
         source_text:         document.getElementById('postSourceText').value.trim(),
         content:             quill.root.innerHTML.trim(),
         thumbnail_url:       document.getElementById('postThumbUrl').value.trim(),
-        is_featured:         document.getElementById('postIsFeatured').checked ? 1 : 0,
         series_id:           parseInt(document.getElementById('postSeriesId').value) || 0,
         series_order:        parseInt(document.getElementById('postSeriesOrder').value) || 0,
         question:            document.getElementById('postQuestion').value.trim(),
@@ -421,6 +424,11 @@ async function deletePost(id) {
 
 async function togglePost(id) {
     await fetch(API, { method: 'POST', headers: _h(), body: JSON.stringify({ action: 'toggle', id }) });
+    loadPosts();
+}
+
+async function toggleFeatured(id) {
+    await fetch(API, { method: 'POST', headers: _h(), body: JSON.stringify({ action: 'toggle_featured', id }) });
     loadPosts();
 }
 

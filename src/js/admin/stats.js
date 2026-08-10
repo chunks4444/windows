@@ -120,7 +120,7 @@ function renderDailyChart(daily) {
         },
         options: {
             responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { labels: { font: { family: 'Noto Sans KR', size: 11 } } } },
+            plugins: { legend: { labels: { font: { family: 'Pretendard', size: 11 } } } },
             scales: {
                 x: { ticks: { font: { size: 10 }, maxTicksLimit: 20 }, grid: { display: false } },
                 y: { ticks: { font: { size: 10 } }, beginAtZero: true },

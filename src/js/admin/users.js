@@ -72,6 +72,10 @@ function renderTable(users) {
             </td>
             <td><div class="adm-action-cell">
                 <button class="adm-edit-btn" onclick='openModal(${u.id}, ${JSON.stringify(u)})'>수정</button>
+                ${u.role !== 's' && !u.withdrawn_at
+                    ? `<button class="adm-edit-btn" title="이 회원 계정으로 로그인" onclick="impersonateUser(${u.id}, '${esc(u.email)}')"><i class="bi bi-box-arrow-in-right"></i></button>`
+                    : ''
+                }
                 ${u.withdrawn_at
                     ? `<button class="adm-restore-btn"  onclick="toggleWithdraw(${u.id}, false, '${esc(u.email)}')">복구</button>`
                     : `<button class="adm-withdraw-btn" onclick="toggleWithdraw(${u.id}, true,  '${esc(u.email)}')">탈퇴</button>`
@@ -132,6 +136,19 @@ function openModal(id, u) {
 function closeModal() {
     document.getElementById('admModalOverlay').classList.remove('open');
     editingId = null;
+}
+
+async function impersonateUser(id, email) {
+    if (!confirm(`${email} 회원 계정으로 로그인할까요?\n(관리자 화면에는 "관리자로 복귀" 배너가 뜨고, 해당 회원 쪽에는 아무 흔적도 남지 않습니다.)`)) return;
+    const res  = await fetch('/src/api/admin/impersonate.php', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token() },
+        body: JSON.stringify({ user_id: id }),
+    });
+    const data = await res.json();
+    if (!res.ok) { alert(data.error || '오류가 발생했습니다.'); return; }
+    startImpersonation(data.token, data.user);
+    location.href = '/mypage/dashboard';
 }
 
 async function toggleWithdraw(id, withdraw, email) {

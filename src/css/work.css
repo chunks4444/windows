@@ -137,7 +137,7 @@ button.pm-dw-link-top.wk-tag {
     border: none;
     border-bottom: 1px solid rgba(var(--text-rgb), 0.06);
     cursor: pointer;
-    font-family: 'Noto Sans KR', -apple-system, sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
 }
 button.pm-dw-link-top.wk-tag i { color: var(--accent-hover); }
 

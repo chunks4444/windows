@@ -4,7 +4,7 @@ body { padding-top: 68px; }
 /* ── NAV (공통) ───────────────────────────────────── */
 .pm-navbar {
     background: #fff;
-    font-family: 'Noto Sans KR', -apple-system, sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     border-bottom: 1px solid rgba(var(--text-rgb), 0.08);
 }
 .pm-navbar .navbar-brand { text-decoration: none; color: inherit; }
@@ -203,7 +203,7 @@ body { padding-top: 68px; }
     background: none;
     border: none;
     cursor: pointer;
-    font-family: 'Noto Sans KR', -apple-system, sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     font-size: 14px;
     font-weight: 600;
     color: var(--text);
@@ -229,7 +229,7 @@ body { padding-top: 68px; }
     padding: 13px 20px;
     text-decoration: none;
     color: var(--text);
-    font-family: 'Noto Sans KR', -apple-system, sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     font-size: 14px;
     font-weight: 600;
     border-bottom: 1px solid rgba(var(--text-rgb), 0.06);
@@ -245,7 +245,7 @@ body { padding-top: 68px; }
     padding: 9px 28px;
     text-decoration: none;
     color: var(--text);
-    font-family: 'Noto Sans KR', -apple-system, sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     font-size: 13.5px;
     font-weight: 500;
 }
