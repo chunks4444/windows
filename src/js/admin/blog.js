@@ -1,7 +1,7 @@
 const API = '/src/api/admin/blog.php';
 function _h() { return { 'Authorization': 'Bearer ' + localStorage.getItem('pmok_auth_token'), 'Content-Type': 'application/json' }; }
 
-let posts = [], dragSrc, quill;
+let posts = [], dragSrc, quill, currentUser;
 
 async function loadPosts() {
     const res  = await fetch(API, { headers: _h() });
@@ -109,6 +109,7 @@ function openModal(id) {
     if (p?.thumbnail_url) { prev.src = p.thumbnail_url; prev.classList.add('show'); }
     else                  { prev.src = ''; prev.classList.remove('show'); }
     document.getElementById('postImgFile').value = '';
+    document.getElementById('postAuthorId').value           = p?.author_id ?? currentUser?.id ?? '';
     document.getElementById('postSeriesId').value          = p?.series_id ?? '';
     document.getElementById('postSeriesOrder').value        = p?.series_order ?? 0;
     document.getElementById('postQuestion').value           = p?.question ?? '';
@@ -393,6 +394,7 @@ async function savePost() {
         source_text:         document.getElementById('postSourceText').value.trim(),
         content:             quill.root.innerHTML.trim(),
         thumbnail_url:       document.getElementById('postThumbUrl').value.trim(),
+        author_id:           parseInt(document.getElementById('postAuthorId').value) || 0,
         series_id:           parseInt(document.getElementById('postSeriesId').value) || 0,
         series_order:        parseInt(document.getElementById('postSeriesOrder').value) || 0,
         question:            document.getElementById('postQuestion').value.trim(),
@@ -488,6 +490,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (e.target === e.currentTarget) closeModal();
     });
     const user = JSON.parse(localStorage.getItem('pmok_auth_user') || 'null');
+    currentUser = user;
     if (!user || user.role !== 's') { document.getElementById('blogAuthWall').style.display = ''; return; }
     document.getElementById('blogPage').style.display = '';
     await loadPosts();

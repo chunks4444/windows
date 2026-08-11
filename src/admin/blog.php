@@ -9,6 +9,11 @@ try {
 } catch (Throwable $e) {
     $blogSeriesList = [];
 }
+try {
+    $blogAuthorList = db()->query("SELECT id, name, email FROM users WHERE role IN ('s','a') ORDER BY name, email")->fetchAll();
+} catch (Throwable $e) {
+    $blogAuthorList = [];
+}
 $engineOptions = [];
 foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
     $engineOptions[$engineKey] = $engineLabel . '(' . ucfirst($engineKey) . ')';
@@ -187,6 +192,14 @@ foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
                     <i class="bi bi-chevron-down"></i> 시리즈 / 엔진 연동 / 질문
                 </button>
                 <div class="blog-info-body" id="blogSeriesBody">
+                    <div class="adm-mfield">
+                        <label>글쓴이</label>
+                        <select id="postAuthorId" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg-1);color:var(--text);font-size:14px;">
+                            <?php foreach ($blogAuthorList as $a): ?>
+                            <option value="<?= (int)$a['id'] ?>"><?= htmlspecialchars($a['name'] ?: $a['email']) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
                     <div class="adm-mfield">
                         <label>시리즈 <a href="/src/admin/blog_series.php" target="_blank" rel="noopener" class="blog-series-manage-btn">시리즈 관리</a></label>
                         <select id="postSeriesId" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg-1);color:var(--text);font-size:14px;">

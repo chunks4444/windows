@@ -693,6 +693,7 @@ CREATE TABLE IF NOT EXISTS blog_series (
 -- (엔진 페이지 → 관련 블로그 글, 블로그 글 → "이 엔진으로 만들어보기" 딥링크)
 CREATE TABLE IF NOT EXISTS blog_posts (
     id                 INT UNSIGNED      NOT NULL AUTO_INCREMENT,
+    author_id          INT UNSIGNED      NULL     COMMENT '작성자 (users.id FK, NULL=미지정 - 과거 글)',
     title              VARCHAR(150)      NOT NULL DEFAULT '',
     slug               VARCHAR(200)      NULL     DEFAULT NULL COMMENT '시맨틱 URL slug (/blog/{slug}). NULL=아직 공개(보기) 전이라 slug 미생성',
     series_id          INT UNSIGNED      NULL     COMMENT '소속 시리즈 (blog_series.id FK, 독립 글이면 NULL)',
@@ -717,6 +718,8 @@ CREATE TABLE IF NOT EXISTS blog_posts (
 
 -- 2026-07-22 글 출처 표기 (있으면 상세 페이지 하단에 노출)
 -- ALTER TABLE blog_posts ADD COLUMN source_text VARCHAR(300) NULL DEFAULT NULL COMMENT '이 글이 참고한 출처 (있으면 하단에 노출)' AFTER cta_text;
+-- 2026-08-11 글쓴이 구분 (users.id FK, 실제 FK 제약은 없음 — 다른 blog_posts 참조 컬럼과 동일한 방식)
+-- ALTER TABLE blog_posts ADD COLUMN author_id INT UNSIGNED NULL DEFAULT NULL COMMENT '작성자 (users.id FK, NULL=미지정 - 과거 글)' AFTER id;
 -- 2026-07-23 출처 여러 개(줄바꿈 구분) 지원을 위해 VARCHAR(300) → TEXT로 확장
 -- ALTER TABLE blog_posts MODIFY COLUMN source_text TEXT NULL DEFAULT NULL COMMENT '이 글이 참고한 출처 (줄바꿈으로 여러 개 구분, 있으면 하단에 노출)';
 -- 2026-07-27 히어로 캐로셀 노출 글을 관리자가 직접 선택하도록 (기존엔 썸네일 있는 글 자동 선정)

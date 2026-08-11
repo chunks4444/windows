@@ -74,6 +74,8 @@ if ($action === 'save') {
     $related_engine = trim($body['related_engine'] ?? '') ?: null;
     $related_drawing_id = (int)($body['related_drawing_id'] ?? 0) ?: null;
     $question       = trim($body['question'] ?? '');
+    // 새 글은 지정 안 하면 현재 로그인한 관리자를 글쓴이로 기본 저장, 수정 시엔 select에서 고른 값 그대로 반영
+    $author_id      = (int)($body['author_id'] ?? 0) ?: (int)$payload['sub'];
 
     // 검색엔진 연산자로 오인될 수 있는 문자는 제목에 못 들어가게 막는다 (- — " ' * :)
     if (preg_match('/[-—"\'*:]/u', $title)) {
@@ -91,9 +93,9 @@ if ($action === 'save') {
     if ($id) {
         // is_featured는 목록의 별표 토글(action=toggle_featured) 전용 — 일반 저장에서는 건드리지 않는다
         $pdo->prepare('UPDATE blog_posts SET title=?, summary=?, cta_text=?, source_text=?, content=?, thumbnail_url=?,
-                series_id=?, series_order=?, related_engine=?, related_drawing_id=?, question=? WHERE id=?')
+                series_id=?, series_order=?, related_engine=?, related_drawing_id=?, question=?, author_id=? WHERE id=?')
             ->execute([$title, $summary, $cta_text, $source_text, $content, $thumbnail_url,
-                $series_id, $series_order, $related_engine, $related_drawing_id, $question, $id]);
+                $series_id, $series_order, $related_engine, $related_drawing_id, $question, $author_id, $id]);
     } else {
         // 새 글은 항상 비공개(is_active=0)로 시작하고 slug는 NULL — 관리자가 검토 후
         // "표시"(공개 전환)를 눌러야 그 시점에 slug가 생성된다 (draft 상태에는 URL이 없어야 함)
@@ -101,9 +103,9 @@ if ($action === 'save') {
         // 기존 글들을 전부 한 칸씩 뒤로 미룸(MAX+1로 맨 뒤에 붙이면 관리자가 매번 수동으로 끌어올려야 했음)
         $pdo->exec('UPDATE blog_posts SET sort_order = sort_order + 1');
         $pdo->prepare('INSERT INTO blog_posts (title, slug, summary, cta_text, source_text, content, thumbnail_url, is_featured, sort_order,
-                series_id, series_order, related_engine, related_drawing_id, question, is_active) VALUES (?,NULL,?,?,?,?,?,?,0,?,?,?,?,?,0)')
+                series_id, series_order, related_engine, related_drawing_id, question, author_id, is_active) VALUES (?,NULL,?,?,?,?,?,?,0,?,?,?,?,?,?,0)')
             ->execute([$title, $summary, $cta_text, $source_text, $content, $thumbnail_url, $is_featured,
-                $series_id, $series_order, $related_engine, $related_drawing_id, $question]);
+                $series_id, $series_order, $related_engine, $related_drawing_id, $question, $author_id]);
         $id = (int)$pdo->lastInsertId();
     }
     $stmt = $pdo->prepare('SELECT * FROM blog_posts WHERE id=?');

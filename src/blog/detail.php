@@ -40,11 +40,13 @@ $seriesEpisodes = [];
 try {
     $pdo = db();
     $relatedDrawingJoin = 'SELECT p.*, lp.name_ko AS related_pattern_name, lp.slug AS related_pattern_slug,
-            pc.id AS related_category_id, pc.name AS related_category_name, d.type AS related_drawing_engine
+            pc.id AS related_category_id, pc.name AS related_category_name, d.type AS related_drawing_engine,
+            u.name AS author_name
         FROM blog_posts p
         LEFT JOIN library_patterns lp ON lp.drawing_id = p.related_drawing_id AND lp.is_active = 1
         LEFT JOIN pattern_categories pc ON pc.id = lp.pattern_category
-        LEFT JOIN drawings d ON d.id = p.related_drawing_id';
+        LEFT JOIN drawings d ON d.id = p.related_drawing_id
+        LEFT JOIN users u ON u.id = p.author_id';
     if ($slug !== '') {
         $stmt = $pdo->prepare($relatedDrawingJoin . ' WHERE p.slug=? AND p.is_active=1');
         $stmt->execute([$slug]);
@@ -237,7 +239,7 @@ $metaKeywords = implode(', ', array_unique(array_filter([
             <a href="/blog/" class="bd-back"><i class="bi bi-arrow-left"></i> 블로그</a>
             <h1 class="bd-title"><?= htmlspecialchars($post['title']) ?></h1>
             <time class="bd-date" datetime="<?= date('Y-m-d', strtotime($post['created_at'])) ?>">
-                <?= date('Y.m.d', strtotime($post['created_at'])) ?>
+                <?= date('Y.m.d', strtotime($post['created_at'])) ?><?= $post['author_name'] ? ' · ' . htmlspecialchars($post['author_name']) : '' ?>
             </time>
             <div class="bd-share-row">
                 <button id="btnShare" type="button" class="bd-share-btn" title="공유하기"><i class="bi bi-share"></i></button>
