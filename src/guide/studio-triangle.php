@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../lib/studio_card_content.php';
 $guide_current = 'studio-triangle.php';
 $guide_title   = '세모 솟을살';
 $guide_prev    = ['href' => 'studio-diamond.php', 'title' => '격자 빗살'];
@@ -7,12 +8,10 @@ include __DIR__ . '/_head.php';
 ?>
 
 <h1><span class="guide-h1-icon"><?= $guideEngineIcons['triangle'] ?></span>세모 솟을살</h1>
-<p class="guide-lead">
-    수직살과 좌우 빗살, 세 방향의 살대가 한 점에서 만나도록 짠 세모 솟을살을 재현한 엔진입니다.
+<p class="guide-lead"><?= studio_card_description('triangle', "수직살과 좌우 빗살, 세 방향의 살대가 한 점에서 만나도록 짠 세모 솟을살을 재현한 엔진입니다.
     '솟을'은 살이 교차점에서 겹치며 위로 솟아오르는 데서 온 이름으로, 교차점마다 살이 도드라져 짜임에 입체감이 살아 있습니다.
     살들이 교차하며 정삼각형이 화면 가득 반복되어, 육모의 둥글고 넉넉한 인상과 달리 팽팽하고 긴장감 있는 느낌을 줍니다.
-    모든 셀이 정삼각형이 되도록 세로 칸수가 자동으로 계산되며, 세로 칸수를 직접 지정할 수는 없습니다.
-</p>
+    모든 셀이 정삼각형이 되도록 세로 칸수가 자동으로 계산되며, 세로 칸수를 직접 지정할 수는 없습니다.") ?></p>
 
 <h2>살 구성</h2>
 <table class="guide-table">

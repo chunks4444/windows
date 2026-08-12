@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../lib/studio_card_content.php';
 $guide_current = 'studio-diamond.php';
 $guide_title   = '격자 빗살';
 $guide_prev    = ['href' => 'studio-cross.php', 'title' => '빗살'];
@@ -7,11 +8,9 @@ include __DIR__ . '/_head.php';
 ?>
 
 <h1><span class="guide-h1-icon"><?= $guideEngineIcons['diamond'] ?></span>격자 빗살</h1>
-<p class="guide-lead">
-    가로세로 격자 위에 45도 빗살을 겹쳐 짠 격자빗살을 재현한 엔진입니다.
+<p class="guide-lead"><?= studio_card_description('diamond', "가로세로 격자 위에 45도 빗살을 겹쳐 짠 격자빗살을 재현한 엔진입니다.
     정(井)자 짜임과 대각선 빗살 짜임이 한 면에서 만나 격자 한 칸이 다시 네 개의 작은 삼각으로 나뉩니다.
-    빗살 엔진과 마찬가지로 셀은 항상 정사각형으로 고정되며, 그 위에 가로살·세로살과 사선살이 모두 그려집니다.
-</p>
+    빗살 엔진과 마찬가지로 셀은 항상 정사각형으로 고정되며, 그 위에 가로살·세로살과 사선살이 모두 그려집니다.") ?></p>
 
 <h2>살 구성</h2>
 <table class="guide-table">

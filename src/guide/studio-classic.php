@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../lib/studio_card_content.php';
 $guide_current = 'studio-classic.php';
 $guide_title   = '세살';
 $guide_prev    = ['href' => 'getting-started.php', 'title' => '시작하기'];
@@ -7,13 +8,11 @@ include __DIR__ . '/_head.php';
 ?>
 
 <h1><span class="guide-h1-icon"><?= $guideEngineIcons['classic'] ?></span>세살</h1>
-<p class="guide-lead">
-    울거미 안에 세로살을 꽉 채우고, 가로살은 위·아래와 중간에 3~4가닥만 두른 창인 세살(細箭)을 재현한 엔진입니다.
+<p class="guide-lead"><?= studio_card_description('classic', "울거미 안에 세로살을 꽉 채우고, 가로살은 위·아래와 중간에 3~4가닥만 두른 창인 세살(細箭)을 재현한 엔진입니다.
     '세(細)'는 살이 가늘다는 뜻에서 온 이름으로, 촘촘한 세로살이 만드는 가늘고 곧은 결이 이 창의 얼굴입니다.
     띠살창이라고도 부르며, 조선시대 살창 가운데 가장 널리 쓰인 형식입니다.
     스튜디오는 <strong>왼쪽 설계 사이드바 · 캔버스 · 오른쪽 배경·내보내기 사이드바</strong>
-    세 패널로 구성되어 있으며, 파라미터를 바꾸는 즉시 캔버스에 반영됩니다.
-</p>
+    세 패널로 구성되어 있으며, 파라미터를 바꾸는 즉시 캔버스에 반영됩니다.") ?></p>
 
 <h2>화면 구성</h2>
 

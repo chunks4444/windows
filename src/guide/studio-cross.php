@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../lib/studio_card_content.php';
 $guide_current = 'studio-cross.php';
 $guide_title   = '빗살';
 $guide_prev    = ['href' => 'studio-square.php', 'title' => '정자살'];
@@ -7,12 +8,10 @@ include __DIR__ . '/_head.php';
 ?>
 
 <h1><span class="guide-h1-icon"><?= $guideEngineIcons['cross'] ?></span>빗살</h1>
-<p class="guide-lead">
-    울거미 안에 살대를 45도 기울여 대각선으로 짠 빗살을 재현한 엔진입니다.
+<p class="guide-lead"><?= studio_card_description('cross', "울거미 안에 살대를 45도 기울여 대각선으로 짠 빗살을 재현한 엔진입니다.
     '빗'은 살을 비스듬히 기울여 짠 데서 온 이름으로, 엇갈린 살이 만드는 마름모꼴 격자가 이 창의 얼굴입니다.
     가로 칸수만 지정하면 셀이 항상 정사각형이 되도록 세로 칸수가 자동으로 계산되며,
-    각도를 조절하는 설정 항목은 따로 없습니다.
-</p>
+    각도를 조절하는 설정 항목은 따로 없습니다.") ?></p>
 
 <h2>특징</h2>
 <ul>

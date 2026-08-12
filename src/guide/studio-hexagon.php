@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../lib/studio_card_content.php';
 $guide_current = 'studio-hexagon.php';
 $guide_title   = '육모 솟을살';
 $guide_prev    = ['href' => 'studio-triangle.php', 'title' => '세모 솟을살'];
@@ -7,12 +8,10 @@ include __DIR__ . '/_head.php';
 ?>
 
 <h1><span class="guide-h1-icon"><?= $guideEngineIcons['hexagon'] ?></span>육모 솟을살</h1>
-<p class="guide-lead">
-    세모솟을살과 같은 세 방향 살대를 쓰되, 교차점을 한 점에 모으지 않고 어긋나게 짜 육각형이 열리도록 한 육모 솟을살을 재현한 엔진입니다.
+<p class="guide-lead"><?= studio_card_description('hexagon', "세모솟을살과 같은 세 방향 살대를 쓰되, 교차점을 한 점에 모으지 않고 어긋나게 짜 육각형이 열리도록 한 육모 솟을살을 재현한 엔진입니다.
     어금육모라고도 부릅니다.
     '솟을'은 살이 교차점에서 겹치며 위로 솟아오르는 데서 온 이름으로, 짜임에 입체감이 살아 있습니다.
-    살이 만드는 벌집 모양의 여섯 각은 사각보다 원에 가까워, 같은 짜임인데도 세모의 팽팽함 대신 둥글고 넉넉한 인상을 줍니다.
-</p>
+    살이 만드는 벌집 모양의 여섯 각은 사각보다 원에 가까워, 같은 짜임인데도 세모의 팽팽함 대신 둥글고 넉넉한 인상을 줍니다.") ?></p>
 
 <h2>세모 솟을살과의 차이</h2>
 <table class="guide-table">
