@@ -17,7 +17,7 @@ include __DIR__ . '/_head.php';
 <table class="guide-table">
     <thead><tr><th></th><th>세모 솟을살</th><th>육모 솟을살</th></tr></thead>
     <tbody>
-        <tr><td>그려지는 살 방향 수</td><td>3가지 (0°, 60°, 120°)</td><td>2가지 (60°, 120°)</td></tr>
+        <tr><td>살 방향</td><td>세 방향(수직살 + 좌우 빗살)이 한 점에서 만남</td><td>세 방향은 같고, 수직살을 교차점 사이에 끊어 대어 육각이 열림</td></tr>
         <tr><td>셀 형태</td><td>정삼각형</td><td>육각형</td></tr>
         <tr><td>가로 칸수 단위</td><td>짝수만</td><td>홀수만</td></tr>
         <tr><td>격자 계산 수식</td><td>동일한 정삼각형 테셀레이션</td><td>동일한 정삼각형 테셀레이션 (선 생략만 다름)</td></tr>
