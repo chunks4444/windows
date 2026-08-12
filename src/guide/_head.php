@@ -2,8 +2,6 @@
 // $guide_current : 현재 파일명 (예: 'intro.php')
 // $guide_title   : 페이지 제목
 // $guide_cat     : 카테고리명
-require_once __DIR__ . '/../lib/guide_content.php';
-$guideTitlesMap = guide_titles_map();
 
 $guide_nav = [
     [
@@ -179,7 +177,7 @@ foreach ($guide_nav as $sec) {
                     <?php if (isset($art['engine'])): ?>
                     <span class="gs-link-icon"><?= $guideEngineIcons[$art['engine']] ?? '' ?></span>
                     <?php endif; ?>
-                    <?= htmlspecialchars($guideTitlesMap[basename($art['file'], '.php')] ?? $art['title']) ?>
+                    <?= htmlspecialchars($art['title']) ?>
                 </a>
                 <?php endforeach; ?>
             </div>

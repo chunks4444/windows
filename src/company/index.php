@@ -1,7 +1,6 @@
 <?php
 header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../lib/db.php';
-require_once __DIR__ . '/../lib/company_content.php';
 try {
     $studioCards = db()->query('SELECT * FROM studio_cards WHERE is_active=1 ORDER BY sort_order, id')->fetchAll();
 } catch (Exception $e) {
@@ -36,11 +35,11 @@ foreach ($studioCards as $sc) $cardsByKey[$sc['engine_key']] = $sc;
     <div class="ab-hero-overlay"></div>
     <div class="ab-hero-content">
         <div class="container">
-            <p class="ab-hero-label"><?= company_content('hero_label', 'About 평목') ?></p>
-            <h1 class="ab-hero-title"><?= company_content('hero_title', '나무로 만드는<br>빛과 바람의 길,<em>평목</em>') ?></h1>
-            <p class="ab-hero-desc"><?= company_content('hero_desc', '평목(平木)은 전통창호의 아름다움을 현대 공간에 담아내는 창호디자인 스튜디오입니다. <br>
+            <p class="ab-hero-label">About 평목</p>
+            <h1 class="ab-hero-title">나무로 만드는<br>빛과 바람의 길,<em>평목</em></h1>
+            <p class="ab-hero-desc">평목(平木)은 전통창호의 아름다움을 현대 공간에 담아내는 창호디자인 스튜디오입니다. <br>
             수백 년을 이어온 문살 기법을 디지털 도구로 재해석하여, 누구나 자신만의 창호를 <br>
-            직접 설계하고 제작까지 연결할 수 있는 환경을 만들어갑니다.') ?></p>
+            직접 설계하고 제작까지 연결할 수 있는 환경을 만들어갑니다.</p>
         </div>
     </div>
 </section>
@@ -51,29 +50,29 @@ foreach ($studioCards as $sc) $cardsByKey[$sc['engine_key']] = $sc;
         <p class="ab-section-label">Philosophy</p>
         <div class="ab-phil-cols">
             <div class="ab-phil-left">
-                <h2 class="ab-section-title"><?= company_content('phil_heading', '평목(平木)<br><span style="font-size:0.6em;font-weight:400;color:var(--text-muted);letter-spacing:0.05em;">workgroup pyeongmok</span>') ?></h2>
+                <h2 class="ab-section-title">평목(平木)<br><span style="font-size:0.6em;font-weight:400;color:var(--text-muted);letter-spacing:0.05em;">workgroup pyeongmok</span></h2>
                 <div class="ab-phil-text">
-                    <?= company_content('phil_text', "<p>곡식을 '되'나 '말' 단위로 깎아낼 때 쓰는<br>도구를 '평미레'라고 하는데<br>여기에 해당하는 한자어가 '평목(平木)'입니다.</p>
+                    <p>곡식을 '되'나 '말' 단위로 깎아낼 때 쓰는<br>도구를 '평미레'라고 하는데<br>여기에 해당하는 한자어가 '평목(平木)'입니다.</p>
                     <p>평목은 넘쳐도 아니 되고,<br>모자라도 아니 되는,<br>균형을 잡아 주는 일을 합니다.</p>
-                    <p>견고한 나무를 다듬는 평목의 목수들은<br>시간에 마모되지 않고 시간 속에서<br>품격이 더해지는 창호와 가구를 만들고자 합니다.</p>") ?>
+                    <p>견고한 나무를 다듬는 평목의 목수들은<br>시간에 마모되지 않고 시간 속에서<br>품격이 더해지는 창호와 가구를 만들고자 합니다.</p>
                 </div>
             </div>
             <div class="ab-phil-right">
                 <div class="ab-phil-grid">
                     <div class="ab-phil-item">
                         <p class="ab-phil-num">01</p>
-                        <h3 class="ab-phil-name"><?= company_content('phil_item1_title', '오랜 시간 축적된 지혜와 다듬어진 원리를 공간에 담습니다.') ?></h3>
-                        <p class="ab-phil-desc"><?= company_content('phil_item1_desc', '어금육모, 솟을살, 아자살 등 수백 년을 이어온 전통 문살 기법을 현대적 감각으로 해석합니다. <br><strong>형태는 단순해지고, 정신은 깊어집니다.</strong>') ?></p>
+                        <h3 class="ab-phil-name">오랜 시간 축적된 지혜와 다듬어진 원리를 공간에 담습니다.</h3>
+                        <p class="ab-phil-desc">어금육모, 솟을살, 아자살 등 수백 년을 이어온 전통 문살 기법을 현대적 감각으로 해석합니다. <br><strong>형태는 단순해지고, 정신은 깊어집니다.</strong></p>
                     </div>
                     <div class="ab-phil-item">
                         <p class="ab-phil-num">02</p>
-                        <h3 class="ab-phil-name"><?= company_content('phil_item2_title', '실시간 설계') ?></h3>
-                        <p class="ab-phil-desc"><?= company_content('phil_item2_desc', '치수와 비율을 조정하는 순간 도면이 실시간으로 완성됩니다. <br>설계와 제작 사이의 거리를 최소화하여 아이디어가 바로 현실이 됩니다.') ?></p>
+                        <h3 class="ab-phil-name">실시간 설계</h3>
+                        <p class="ab-phil-desc">치수와 비율을 조정하는 순간 도면이 실시간으로 완성됩니다. <br>설계와 제작 사이의 거리를 최소화하여 아이디어가 바로 현실이 됩니다.</p>
                     </div>
                     <div class="ab-phil-item">
                         <p class="ab-phil-num">03</p>
-                        <h3 class="ab-phil-name"><?= company_content('phil_item3_title', '맞춤 제작') ?></h3>
-                        <p class="ab-phil-desc"><?= company_content('phil_item3_desc', '모든 창호는 공간과 사람에 맞게 설계됩니다. <br>완성된 도면은 실제 제작으로 이어지며, 세상에 하나뿐인 창호가 탄생합니다.') ?></p>
+                        <h3 class="ab-phil-name">맞춤 제작</h3>
+                        <p class="ab-phil-desc">모든 창호는 공간과 사람에 맞게 설계됩니다. <br>완성된 도면은 실제 제작으로 이어지며, 세상에 하나뿐인 창호가 탄생합니다.</p>
                     </div>
                 </div>
             </div>
@@ -124,9 +123,9 @@ foreach ($studioCards as $sc) $cardsByKey[$sc['engine_key']] = $sc;
 <!-- STUDIO -->
 <div class="container">
     <section class="ab-section" id="studio">
-        <p class="ab-section-label"><?= company_content('studio_label', 'Studio') ?></p>
-        <h2 class="ab-section-title"><?= company_content('studio_title', '직접 설계해 보세요.') ?></h2>
-        <p class="ab-section-body"><?= company_content('studio_body', '평목 스튜디오는 브라우저에서 바로 사용할 수 있는 <strong>창호 설계 도구</strong>입니다. <br>문틀 크기, 살 간격, 패턴을 조정하며 나만의 창호를 완성해 보세요. 완성한 설계는 전통 창호 기법 그대로, 평목 공방에서 제작됩니다.') ?></p>
+        <p class="ab-section-label">Studio</p>
+        <h2 class="ab-section-title">직접 설계해 보세요.</h2>
+        <p class="ab-section-body">평목 스튜디오는 브라우저에서 바로 사용할 수 있는 <strong>창호 설계 도구</strong>입니다. <br>문틀 크기, 살 간격, 패턴을 조정하며 나만의 창호를 완성해 보세요. 완성한 설계는 전통 창호 기법 그대로, 평목 공방에서 제작됩니다.</p>
         <div class="ab-tools-grid">
             <a href="/src/engine/classic/classic.php" class="ab-tool-card">
                 <svg class="ab-tool-icon" width="48" height="48" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
@@ -210,9 +209,9 @@ foreach ($studioCards as $sc) $cardsByKey[$sc['engine_key']] = $sc;
 <!-- INFO — full-width box -->
 <div class="ab-contact-box" id="contact">
     <div class="container">
-        <p class="ab-section-label"><?= company_content('contact_label', 'Contact') ?></p>
-        <h2 class="ab-section-title"><?= company_content('contact_title', '함께 만들어가요.') ?></h2>
-        <p class="ab-section-body"><?= company_content('contact_body', '작은 문의도 괜찮습니다.<br>설계·제작·설치 상담부터 협업 및 프로젝트 제안까지 모두 환영합니다.<br>편하게 연락해 주세요. 빠르게 답변드리겠습니다.') ?></p>
+        <p class="ab-section-label">Contact</p>
+        <h2 class="ab-section-title">함께 만들어가요.</h2>
+        <p class="ab-section-body">작은 문의도 괜찮습니다.<br>설계·제작·설치 상담부터 협업 및 프로젝트 제안까지 모두 환영합니다.<br>편하게 연락해 주세요. 빠르게 답변드리겠습니다.</p>
         <button class="ab-contact-btn" data-bs-toggle="modal" data-bs-target="#contactModal">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
             이메일 문의하기

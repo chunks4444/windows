@@ -350,26 +350,6 @@ CREATE TABLE IF NOT EXISTS studio_cards (
     UNIQUE KEY engine_key (engine_key)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='메인 페이지 "스튜디오 소개" 6개 엔진 카드 (엔진당 1행, engine_key로 고정 매칭)';
 
--- 가이드 아티클(/guide/{slug}) 제목·본문. 관리자가 src/admin/guide.php에서 편집.
--- 카테고리/메뉴 구조(아이콘·순서)는 src/guide/_head.php의 $guide_nav 코드에 그대로 남아있고, slug당 1행으로 제목/본문만 관리.
-CREATE TABLE IF NOT EXISTS guide_articles (
-    id         INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    slug       VARCHAR(64)  NOT NULL COMMENT '가이드 URL slug, 예: order (src/guide/order.php에 대응)',
-    title      VARCHAR(200) NOT NULL,
-    body_html  LONGTEXT     NOT NULL,
-    updated_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (id),
-    UNIQUE KEY slug (slug)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='가이드 아티클 제목/본문 (관리자 편집용, src/admin/guide.php)';
-
--- 회사소개 페이지(src/company/index.php)의 짧은 마케팅 문구들. key당 1행, 값이 없으면 PHP 코드의 기존 하드코딩 문구가 폴백으로 쓰임.
-CREATE TABLE IF NOT EXISTS company_page_content (
-    content_key   VARCHAR(64) NOT NULL,
-    content_value TEXT        NOT NULL,
-    updated_at    TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (content_key)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='회사소개 페이지 편집 가능 텍스트 (관리자 편집용, src/admin/company.php)';
-
 -- 컬렉션 페이지 "공간" 드롭다운 필터는 우리살/새살/일본살 3분류 체계로 대체되어 폐지됨.
 -- 기존 collection_space_filters 테이블은 운영 DB에 남아있으나(수동 정리 필요 시 별도 DROP) 신규 설치 시 더는 생성하지 않음.
 
