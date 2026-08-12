@@ -62,11 +62,6 @@ include __DIR__ . '/_head.php';
 <h2>마감 · 색상</h2>
 <p>목재·마감·부자재, 울거미·살 컬러는 세살과 동일합니다. <strong>면 컬러 칠하기 기능은 현재 비활성화</strong>되어 있습니다.</p>
 
-<div class="guide-note">
-    <i class="bi bi-info-circle"></i>
-    <span>육모살(六毛살)은 한국 전통 목공에서 육각형 창살 패턴을 뜻하며, 고급 창호 제작에 자주 사용됩니다.</span>
-</div>
-
 <h2>활용 예시</h2>
 <ul>
     <li>전통 한옥 육모살 창호</li>
