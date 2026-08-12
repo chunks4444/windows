@@ -1,6 +1,8 @@
 <?php
+require_once __DIR__ . '/../lib/guide_content.php';
 $guide_current = 'faq.php';
-$guide_title   = '자주 묻는 질문 (FAQ)';
+$guide_article = guide_article('faq');
+$guide_title   = $guide_article['title'] ?? '자주 묻는 질문 (FAQ)';
 $guide_prev    = ['href' => 'delivery.php', 'title' => '배송 안내'];
 $guide_next    = null;
 include __DIR__ . '/_head.php';
@@ -10,10 +12,7 @@ $faqs = db()->query('SELECT * FROM faqs WHERE is_active=1 ORDER BY sort_order, i
 ?>
 
 <h1>자주 묻는 질문</h1>
-<p class="guide-lead">
-    평목 스튜디오 사용 중 자주 나오는 질문들을 모았습니다.
-    원하는 답변을 찾지 못하셨다면 <a href="/company/#contact">공방 문의</a>를 이용해 주세요.
-</p>
+<?= $guide_article['body_html'] ?? '' ?>
 
 <?php if (empty($faqs)): ?>
 <p>등록된 FAQ가 없습니다.</p>

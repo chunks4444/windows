@@ -12,6 +12,8 @@ return [
     ['title' => '콘텐츠 관리', 'items' => [
         ['works.php',            'bi-images',          '포트폴리오 관리'],
         ['svg_motifs.php',       'bi-flower1',         '문양(SVG) 라이브러리'],
+        ['guide.php',            'bi-book-half',       '가이드 관리'],
+        ['company.php',          'bi-building',        '회사소개 관리'],
         ['faq.php',              'bi-question-circle', 'FAQ 관리'],
         ['notice.php',           'bi-megaphone',       '공지 배너'],
         ['collection.php',       'bi-image',           '컬렉션 관리'],
