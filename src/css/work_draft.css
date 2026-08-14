@@ -73,7 +73,7 @@
     pointer-events: none;
     transition: fill .2s ease;
 }
-.wkg-card:hover .wkg-card-star { fill: #f97316; }
+.wkg-card:hover .wkg-card-star { fill: #dc2626; }
 
 /* 빈 상태 */
 .wk-empty {
