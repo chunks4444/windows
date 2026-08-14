@@ -1,5 +1,52 @@
 <?php
 /**
+ * 업로드된 SVG를 페이지에 그대로(inline) 심을 때 쓰는 최소 살균.
+ * <img src="...svg">로 불러오는 SVG(svg_strip_background 대상)는 브라우저가 별도 문서로 렌더링해
+ * 스크립트가 안 도는데, 이건 마크업을 그대로 DOM에 박아 넣는 용도라 <script>/on* 핸들러/
+ * javascript: 링크가 실행될 수 있어 반드시 걷어내야 한다.
+ */
+function svg_sanitize_inline(string $svg): string {
+    $dom = new DOMDocument();
+    libxml_use_internal_errors(true);
+    if (!$dom->loadXML($svg, LIBXML_NONET | LIBXML_NOENT)) return '';
+    libxml_clear_errors();
+
+    $root = $dom->documentElement;
+    if (!$root || strtolower($root->localName) !== 'svg') return '';
+
+    _svg_sanitize_walk($dom, $root);
+
+    $out = $dom->saveXML($root);
+    return $out !== false ? $out : '';
+}
+
+function _svg_sanitize_walk(DOMDocument $dom, DOMElement $node): void {
+    $tag = strtolower($node->localName);
+    if (in_array($tag, ['script', 'foreignobject', 'iframe', 'style'], true)) {
+        $node->parentNode->removeChild($node);
+        return;
+    }
+
+    if ($node->hasAttributes()) {
+        $toRemove = [];
+        foreach ($node->attributes as $attr) {
+            $name = strtolower($attr->nodeName);
+            $val  = trim($attr->nodeValue);
+            if (strpos($name, 'on') === 0) { $toRemove[] = $attr->nodeName; continue; }
+            if (in_array($name, ['href', 'xlink:href'], true) && preg_match('/^\s*javascript:/i', $val)) {
+                $toRemove[] = $attr->nodeName;
+            }
+        }
+        foreach ($toRemove as $name) $node->removeAttribute($name);
+    }
+
+    // childNodes는 removeChild로 바뀌므로 스냅샷을 떠서 순회
+    foreach (iterator_to_array($node->childNodes) as $child) {
+        if ($child instanceof DOMElement) _svg_sanitize_walk($dom, $child);
+    }
+}
+
+/**
  * SVG에서 배경 역할을 하는 <rect>를 제거해 투명 배경으로 만든다.
  * 제거 대상: SVG 루트 직계 자식(또는 첫 <g> 직계 자식) <rect> 중
  *   - fill이 none/transparent가 아닌 단색이고

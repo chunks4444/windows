@@ -64,15 +64,24 @@
 }
 .wkg-card-icon svg { width: 100%; height: 100%; overflow: visible; }
 
-.wkg-card-star {
+/* 관리자가 업로드한 커스텀 아이콘 SVG — 원본이 어떤 fill을 썼든 !important로 강제 덮어써서
+   호버 시 색이 항상 바뀌도록 함(업로드 파일마다 마크업이 달라 fill 상속만으론 보장이 안 됨) */
+.wkg-card-svg-icon {
     position: absolute; top: 50%; left: 50%;
     transform: translate(-50%, -50%);
     width: 70%; height: 70%;
-    fill: rgba(0,0,0,.9);
     pointer-events: none;
+}
+.wkg-card-svg-icon svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.wkg-card-svg-icon svg,
+.wkg-card-svg-icon svg * {
+    fill: rgba(0,0,0,.9) !important;
     transition: fill .2s ease;
 }
-.wkg-card:hover .wkg-card-star { fill: #dc2626; }
+.wkg-card:hover .wkg-card-svg-icon svg,
+.wkg-card:hover .wkg-card-svg-icon svg * {
+    fill: #dc2626 !important;
+}
 
 /* 빈 상태 */
 .wk-empty {

@@ -53,8 +53,49 @@ function openModal(id) {
     document.getElementById('workPanelBg').value    = w?.panel_bg    || '#111111';
     document.getElementById('workTitleColor').value = w?.title_color || '#ffffff';
     document.getElementById('workDescColor').value  = w?.desc_color  || '#888888';
+    document.getElementById('workIconSvg').value = w?.icon_svg ?? '';
+    document.getElementById('workSvgFile').value = '';
+    renderSvgPreview(w?.icon_svg ?? '');
     window._workImageData = null;
     document.getElementById('worksModalOverlay').classList.add('open');
+}
+
+function renderSvgPreview(svg) {
+    const box = document.getElementById('workSvgPreview');
+    const clearBtn = document.getElementById('workSvgClearBtn');
+    if (svg) {
+        box.innerHTML = svg;
+        box.style.display = 'flex';
+        clearBtn.style.display = '';
+    } else {
+        box.innerHTML = '';
+        box.style.display = 'none';
+        clearBtn.style.display = 'none';
+    }
+}
+
+function previewSvg(input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (!file.name.toLowerCase().endsWith('.svg') && file.type !== 'image/svg+xml') {
+        alert('SVG 파일만 업로드할 수 있습니다.'); input.value = ''; return;
+    }
+    if (file.size > 200 * 1024) {
+        alert('SVG 파일은 200KB 이하만 가능합니다.'); input.value = ''; return;
+    }
+    const reader = new FileReader();
+    reader.onload = e => {
+        const text = e.target.result;
+        document.getElementById('workIconSvg').value = text;
+        renderSvgPreview(text);
+    };
+    reader.readAsText(file);
+}
+
+function clearSvg() {
+    document.getElementById('workIconSvg').value = '';
+    document.getElementById('workSvgFile').value = '';
+    renderSvgPreview('');
 }
 
 function closeModal() {
@@ -103,6 +144,7 @@ async function saveWork() {
         panel_bg:    document.getElementById('workPanelBg').value,
         title_color: document.getElementById('workTitleColor').value,
         desc_color:  document.getElementById('workDescColor').value,
+        icon_svg:    document.getElementById('workIconSvg').value,
     };
     if (window._workImageData) body.image_data = window._workImageData;
     const res  = await fetch(API, { method: 'POST', headers: _h(), body: JSON.stringify(body) });

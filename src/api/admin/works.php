@@ -8,6 +8,7 @@ set_exception_handler(function(Throwable $e) {
 require_once __DIR__ . '/../../lib/db.php';
 require_once __DIR__ . '/../../lib/jwt.php';
 require_once __DIR__ . '/../../lib/slug.php';
+require_once __DIR__ . '/../../lib/svg_sanitize.php';
 
 $payload = jwt_from_request();
 if (!$payload || ($payload['role'] ?? '') !== 's') {
@@ -80,14 +81,24 @@ if ($action === 'save') {
     $validEngines = ['classic', 'square', 'cross', 'diamond', 'triangle', 'hexagon'];
     $engine_key   = in_array($body['engine_key'] ?? '', $validEngines, true) ? $body['engine_key'] : null;
 
+    // 카드에 사진 대신 표시할 커스텀 아이콘 SVG — 그대로 페이지에 심어지므로(inline) 반드시 살균
+    $icon_svg_raw = trim($body['icon_svg'] ?? '');
+    $icon_svg     = null;
+    if ($icon_svg_raw !== '') {
+        $clean = svg_sanitize_inline($icon_svg_raw);
+        if ($clean === '') { echo json_encode(['error' => 'SVG 파일을 읽을 수 없습니다.']); exit; }
+        if (strlen($clean) > 200000) { echo json_encode(['error' => 'SVG 파일이 너무 큽니다.']); exit; }
+        $icon_svg = $clean;
+    }
+
     if ($id) {
-        $pdo->prepare('UPDATE works SET title=?, description=?, image_url=?, panel_bg=?, title_color=?, desc_color=?, engine_key=? WHERE id=?')
-            ->execute([$title, $description, $image_url, $panel_bg, $title_color, $desc_color, $engine_key, $id]);
+        $pdo->prepare('UPDATE works SET title=?, description=?, image_url=?, panel_bg=?, title_color=?, desc_color=?, engine_key=?, icon_svg=? WHERE id=?')
+            ->execute([$title, $description, $image_url, $panel_bg, $title_color, $desc_color, $engine_key, $icon_svg, $id]);
     } else {
         $slug     = make_unique_slug($pdo, 'works', $title);
         $maxOrder = (int)$pdo->query('SELECT COALESCE(MAX(sort_order),0) FROM works')->fetchColumn();
-        $pdo->prepare('INSERT INTO works (title, slug, description, image_url, sort_order, panel_bg, title_color, desc_color, engine_key) VALUES (?,?,?,?,?,?,?,?,?)')
-            ->execute([$title, $slug, $description, $image_url, $maxOrder + 1, $panel_bg, $title_color, $desc_color, $engine_key]);
+        $pdo->prepare('INSERT INTO works (title, slug, description, image_url, sort_order, panel_bg, title_color, desc_color, engine_key, icon_svg) VALUES (?,?,?,?,?,?,?,?,?,?)')
+            ->execute([$title, $slug, $description, $image_url, $maxOrder + 1, $panel_bg, $title_color, $desc_color, $engine_key, $icon_svg]);
         $id = (int)$pdo->lastInsertId();
     }
     $stmt = $pdo->prepare('SELECT * FROM works WHERE id=?');

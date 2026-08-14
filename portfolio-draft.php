@@ -138,7 +138,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
     <!-- ── 화이트 정사각형 카드 그리드 (3열, 카드 사이 2px 블랙) ── -->
     <div class="wkg-grid-wrap container">
         <div class="wkg-grid" id="wkCarousel">
-            <?php foreach ($works as $i => $w):
+            <?php foreach ($works as $w):
                 $desc = strip_tags($w['description']);
                 $icon = engine_icon_svg($w['engine_key'] ?? '');
                 $images = $workImages[$w['id']] ?? ($w['image_url'] ? [$w['image_url']] : []);
@@ -152,10 +152,8 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
                  data-desc-color="<?= htmlspecialchars($w['desc_color'] ?: '#888888') ?>"
                  role="button">
 
-                <?php if ($i === 0): ?>
-                <svg class="wkg-card-star" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/>
-                </svg>
+                <?php if (!empty($w['icon_svg'])): ?>
+                <span class="wkg-card-svg-icon"><?= $w['icon_svg'] ?></span>
                 <?php else: ?>
                 <img class="wkg-card-img"
                      src="<?= htmlspecialchars($w['image_url']) ?>"

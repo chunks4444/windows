@@ -462,10 +462,13 @@ CREATE TABLE IF NOT EXISTS works (
     title_color VARCHAR(20)       NOT NULL DEFAULT '#ffffff' COMMENT '카드 제목 색상',
     desc_color  VARCHAR(20)       NOT NULL DEFAULT '#888888' COMMENT '카드 설명 색상',
     engine_key  VARCHAR(20)       NULL     DEFAULT NULL COMMENT '이 작품에 쓰인 엔진 (classic/square/cross/diamond/triangle/hexagon), NULL=미지정 — 포트폴리오 카드 호버 아이콘에 사용',
+    icon_svg    MEDIUMTEXT        NULL     DEFAULT NULL COMMENT '업로드한 커스텀 아이콘 SVG (살균된 마크업 원문, NULL=없음 — 있으면 카드에 사진 대신 표시, CSS로 색 컨트롤 가능)',
     PRIMARY KEY (id),
     UNIQUE KEY uq_works_slug (slug),
     KEY idx_works_sort (sort_order, is_active)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='완성 작품 갤러리';
+-- 2026-08-14 카드 커스텀 아이콘 SVG 업로드 (포트폴리오 디자인 실험용)
+-- ALTER TABLE works ADD COLUMN icon_svg MEDIUMTEXT NULL DEFAULT NULL COMMENT '업로드한 커스텀 아이콘 SVG (살균된 마크업 원문, NULL=없음 — 있으면 카드에 사진 대신 표시, CSS로 색 컨트롤 가능)' AFTER engine_key;
 
 -- 작품 상세 이미지 (works.id 참조, FK 제약은 없음 — 애플리케이션 레벨로만 연결)
 CREATE TABLE IF NOT EXISTS work_images (

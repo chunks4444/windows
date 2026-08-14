@@ -96,6 +96,16 @@ require_admin_role('s');
                     style="height:38px;padding:0 10px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg);font-family:inherit;font-size:13px;color:var(--text);outline:none;width:100%;">
             </div>
             <div class="adm-mfield">
+                <label>커스텀 아이콘 SVG <span style="font-size:11px;color: var(--text);font-weight:400;">(선택 — 올리면 카드에 사진 대신 표시, CSS로 색 조정 가능)</span></label>
+                <div id="workSvgPreview" style="width:70px;height:70px;display:none;align-items:center;justify-content:center;background:var(--bg);border-radius:8px;margin-bottom:8px;"></div>
+                <label class="work-upload-label" for="workSvgFile">
+                    <i class="bi bi-upload"></i> SVG 업로드
+                </label>
+                <input type="file" id="workSvgFile" accept="image/svg+xml,.svg" style="display:none;" onchange="previewSvg(this)">
+                <button type="button" class="adm-btn-cancel" id="workSvgClearBtn" style="display:none;height:28px;padding:0 10px;font-size:12px;margin-top:6px;" onclick="clearSvg()">아이콘 지우기</button>
+                <input type="hidden" id="workIconSvg">
+            </div>
+            <div class="adm-mfield">
                 <label>제목</label>
                 <input id="workTitle" type="text" placeholder="예: 한옥 중문 정자살" maxlength="100">
             </div>
