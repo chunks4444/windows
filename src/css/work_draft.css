@@ -69,7 +69,7 @@
     position: absolute; top: 50%; left: 50%;
     transform: translate(-50%, -50%);
     width: 70%; height: 70%;
-    fill: #111;
+    fill: rgba(0,0,0,.9);
     pointer-events: none;
 }
 
