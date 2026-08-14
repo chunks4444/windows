@@ -159,12 +159,6 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
                 <?php if ($icon): ?>
                 <span class="wkg-card-icon"><?= $icon ?></span>
                 <?php endif; ?>
-                <div class="wkg-card-info">
-                    <?php if ($desc): ?>
-                    <div class="wkg-card-eyebrow"><?= htmlspecialchars($desc) ?></div>
-                    <?php endif; ?>
-                    <h3 class="wkg-card-title"><?= htmlspecialchars($w['title']) ?></h3>
-                </div>
             </div>
             <?php endforeach; ?>
         </div>
