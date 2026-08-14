@@ -152,6 +152,11 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
                  data-desc-color="<?= htmlspecialchars($w['desc_color'] ?: '#888888') ?>"
                  role="button">
 
+                <?php if ($i === 0): ?>
+                <svg class="wkg-card-star" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/>
+                </svg>
+                <?php else: ?>
                 <img class="wkg-card-img"
                      src="<?= htmlspecialchars($w['image_url']) ?>"
                      alt="<?= htmlspecialchars($w['title']) ?>"
@@ -159,10 +164,6 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
                 <?php if ($icon): ?>
                 <span class="wkg-card-icon"><?= $icon ?></span>
                 <?php endif; ?>
-                <?php if ($i === 0): ?>
-                <svg class="wkg-card-star" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z"/>
-                </svg>
                 <?php endif; ?>
             </div>
             <?php endforeach; ?>
