@@ -192,7 +192,7 @@ button.pm-dw-link-top.wk-tag i { color: var(--accent-hover); }
     color: rgba(255,255,255,.72); font-size: var(--fs-14); line-height: 1.6;
     margin-bottom: .6rem;
 }
-.wk-modal-counter { color: #fff; font-size: var(--fs-12); font-variant-numeric: tabular-nums; letter-spacing: .04em; }
+.wk-modal-counter { color: rgba(255,255,255,.72); font-size: var(--fs-12); font-variant-numeric: tabular-nums; letter-spacing: .04em; }
 
 .wk-modal-thumbs {
     flex: 0 0 auto;
