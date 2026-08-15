@@ -1,5 +1,18 @@
 /* ── WORK INDEX (DRAFT) — 화이트 배경 정사각형 카드 그리드, 3열, 카드 사이 2px 블랙 ── */
 
+/* 상단 공지 띠배너 숨김 (배너가 있을 때 nav.php가 강제로 밀어내는 top값도 함께 되돌림) */
+#pmTopbarNotice { display: none !important; }
+
+.wkg-draft-badge {
+    position: fixed; top: 8px; left: 50%;
+    transform: translateX(-50%);
+    z-index: 3000;
+    background: #c00; color: #fff;
+    font-size: 11px; font-weight: 700; letter-spacing: .05em;
+    padding: 3px 10px; border-radius: 4px;
+    pointer-events: none;
+}
+
 .wkg-page { background: #fff; min-height: 100vh; }
 
 /* ── 페이지 헤더 ── */

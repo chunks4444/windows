@@ -112,11 +112,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
 </head>
 <body>
 <?php include __DIR__ . '/src/components/nav.php'; ?>
-<div style="position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:3000;background:#c00;color:#fff;font-size:11px;font-weight:700;letter-spacing:.05em;padding:3px 10px;border-radius:4px;pointer-events:none;">DRAFT</div>
-<style>
-/* 포트폴리오 페이지 전용 — 상단 공지 띠배너 숨김 (배너가 있을 때 nav.php가 강제로 밀어내는 top값도 함께 되돌림) */
-#pmTopbarNotice { display: none !important; }
-</style>
+<div class="wkg-draft-badge">DRAFT</div>
 
 <div class="wkg-page">
 
@@ -137,7 +133,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
 
     <!-- ── 화이트 정사각형 카드 그리드 (3열, 카드 사이 2px 블랙) ── -->
     <div class="wkg-grid-wrap container">
-        <div class="wkg-grid" id="wkCarousel">
+        <div class="wkg-grid">
             <?php foreach ($works as $w):
                 $desc = strip_tags($w['description']);
                 $icon = engine_icon_svg($w['engine_key'] ?? '');
