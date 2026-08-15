@@ -26,6 +26,7 @@ require_admin_role('s');
         .work-img-preview.show { display:block; }
         .work-upload-label { display:block; padding:10px; border:1.5px dashed var(--border); border-radius:8px; text-align:center; cursor:pointer; color: var(--text); font-size:13px; margin-bottom:6px; }
         .work-upload-label:hover { border-color:var(--accent); color:var(--accent); }
+        .pc-status { font-size:12px; } .pc-status.ok { color:var(--accent); } .pc-status.err { color:var(--danger); }
     </style>
 </head>
 <body>
@@ -157,7 +158,8 @@ require_admin_role('s');
             </div>
         </div>
         <div class="adm-modal-foot">
-            <button class="adm-btn-cancel" onclick="closeModal()">취소</button>
+            <span id="workSaveStatus" class="pc-status" style="margin-right:auto;"></span>
+            <button class="adm-btn-cancel" onclick="closeModal()">닫기</button>
             <button class="adm-btn-save" onclick="saveWork()">저장</button>
         </div>
     </div>

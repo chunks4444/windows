@@ -42,6 +42,7 @@ function openModal(id) {
     const w = id ? works.find(x => x.id == id) : null;
     document.getElementById('worksModalTitle').textContent = w ? '작품 수정' : '작품 추가';
     document.getElementById('workId').value    = w?.id ?? '';
+    document.getElementById('workSaveStatus').textContent = '';
     document.getElementById('workTitle').value = w?.title ?? '';
     document.getElementById('workDesc').value  = w?.description ?? '';
     document.getElementById('workEngine').value = w?.engine_key ?? '';
@@ -152,8 +153,27 @@ async function saveWork() {
     if (window._workImageData) body.image_data = window._workImageData;
     const res  = await fetch(API, { method: 'POST', headers: _h(), body: JSON.stringify(body) });
     const data = await res.json();
-    if (data.ok) { closeModal(); loadWorks(); }
-    else alert(data.error || '저장 실패');
+    const status = document.getElementById('workSaveStatus');
+    if (data.ok) {
+        const wasNew = !document.getElementById('workId').value;
+        document.getElementById('workId').value = data.work.id;
+        window._workImageData = null;
+        if (wasNew) {
+            document.getElementById('worksModalTitle').textContent = '작품 수정';
+            const section = document.getElementById('multiImgSection');
+            if (section) {
+                section.style.display = 'block';
+                if (window.loadImages) loadImages(data.work.id);
+            }
+        }
+        status.className = 'pc-status ok';
+        status.textContent = '저장됨';
+        setTimeout(() => { if (status.textContent === '저장됨') status.textContent = ''; }, 2000);
+        loadWorks();
+    } else {
+        status.className = 'pc-status err';
+        status.textContent = data.error || '저장 실패';
+    }
 }
 
 async function deleteWork(id) {
