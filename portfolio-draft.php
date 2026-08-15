@@ -170,6 +170,10 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
         <div class="wk-empty" id="wkEmpty" style="display:none;">
             해당 카테고리의 작품이 없습니다.
         </div>
+
+        <div class="wkg-load-more-wrap">
+            <button type="button" class="wkg-load-more-btn" id="wkgLoadMoreBtn" style="display:none;">더 보기</button>
+        </div>
     </div>
 
 </div>
@@ -214,9 +218,31 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
 
 <script>
 (function () {
-    const tags    = document.querySelectorAll('.wk-tag');
-    const cards   = Array.from(document.querySelectorAll('.wkg-card'));
-    const emptyEl = document.getElementById('wkEmpty');
+    const tags        = document.querySelectorAll('.wk-tag');
+    const cards       = Array.from(document.querySelectorAll('.wkg-card'));
+    const emptyEl     = document.getElementById('wkEmpty');
+    const loadMoreBtn = document.getElementById('wkgLoadMoreBtn');
+    const PAGE_SIZE = 3;
+
+    let currentTag    = '전체';
+    let visibleCount  = PAGE_SIZE;
+
+    function matchesTag(card, tag) {
+        return tag === '전체' ||
+            card.dataset.title.includes(tag) ||
+            card.dataset.desc.includes(tag);
+    }
+
+    // 태그 필터 + "더 보기" 페이지네이션을 한 곳에서 같이 계산 —
+    // 태그가 바뀌면 페이지네이션도 3개부터 다시 시작한다.
+    function updateVisibility() {
+        const matched = cards.filter(card => matchesTag(card, currentTag));
+        matched.forEach((card, idx) => card.classList.toggle('wkg-hidden', idx >= visibleCount));
+        cards.filter(card => !matchesTag(card, currentTag)).forEach(card => card.classList.add('wkg-hidden'));
+
+        emptyEl.style.display = matched.length === 0 ? 'block' : 'none';
+        loadMoreBtn.style.display = matched.length > visibleCount ? '' : 'none';
+    }
 
     cards.forEach(card => {
         card.addEventListener('click', () => openModal(card));
@@ -226,20 +252,19 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
         btn.addEventListener('click', () => {
             tags.forEach(t => t.classList.remove('active'));
             btn.classList.add('active');
-
-            const tag = btn.dataset.tag;
-            let visible = 0;
-            cards.forEach(card => {
-                const match = tag === '전체' ||
-                    card.dataset.title.includes(tag) ||
-                    card.dataset.desc.includes(tag);
-                card.classList.toggle('wkg-hidden', !match);
-                if (match) visible++;
-            });
-            emptyEl.style.display = visible === 0 ? 'block' : 'none';
+            currentTag   = btn.dataset.tag;
+            visibleCount = PAGE_SIZE;
+            updateVisibility();
             closeFilterPanel();
         });
     });
+
+    loadMoreBtn.addEventListener('click', () => {
+        visibleCount += PAGE_SIZE;
+        updateVisibility();
+    });
+
+    updateVisibility();
 
     // ── 디테일 뷰 모달 (네비게이션 없이 이미지만) ──────────────
     const modal        = document.getElementById('wkModal');

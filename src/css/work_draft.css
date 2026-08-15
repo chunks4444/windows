@@ -31,13 +31,17 @@
 }
 .wkg-count-badge { margin-left: .4rem; color: var(--text-muted); }
 
-/* ── 카드 그리드 — 사이트 폭(1320px 컨테이너)에 3열, 카드 사이 2px 블랙 ── */
+/* ── 카드 그리드 — 사이트 폭(1320px 컨테이너)에 3열, 카드 사이 2px 블랙 ──
+   예전엔 grid gap을 검정 배경으로 채워 선을 만들었는데, 그러면 컨테이너 전체에
+   검정 배경이 깔림. 대신 gap 없이 카드끼리 붙이고 카드마다 1px 테두리를 둬서
+   맞닿은 두 카드의 테두리가 합쳐져 똑같은 2px 선처럼 보이게 함(배경 없이) —
+   태그 필터·더보기로 카드가 숨겨져도(hidden) 실제로 화면에 남은 카드끼리만
+   자연스럽게 이어지므로 nth-child 방식보다 안전함. */
 .wkg-grid-wrap { padding: 0 24px 72px; }
 .wkg-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 2px;
-    background: #000;
+    gap: 0;
 }
 .wkg-card {
     position: relative;
@@ -45,6 +49,7 @@
     aspect-ratio: 1 / 1;
     overflow: hidden;
     cursor: pointer;
+    border: 1px solid #000;
 }
 .wkg-card.wkg-hidden { display: none; }
 
@@ -88,6 +93,17 @@
     padding: 60px 20px;
     text-align: center; color: var(--text-muted); font-size: var(--fs-16);
 }
+
+.wkg-load-more-wrap { display: flex; justify-content: center; padding-top: 32px; }
+.wkg-load-more-btn {
+    padding: 11px 28px;
+    border: 1px solid #000; border-radius: 999px;
+    background: #fff; color: #111;
+    font-size: var(--fs-14); font-weight: 700;
+    cursor: pointer;
+    transition: background .2s, color .2s;
+}
+.wkg-load-more-btn:hover { background: #111; color: #fff; }
 
 /* ── 키워드 필터 사이드 패널 (우측, 메뉴 드로어 .pm-nav-drawer/.pm-dw-* 스타일 재사용) ── */
 .wk-filter-panel-title {
