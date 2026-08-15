@@ -222,6 +222,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
     const cards       = Array.from(document.querySelectorAll('.wkg-card'));
     const emptyEl     = document.getElementById('wkEmpty');
     const loadMoreBtn = document.getElementById('wkgLoadMoreBtn');
+    const gridEl      = document.querySelector('.wkg-grid');
     const PAGE_SIZE = 3;
 
     let currentTag    = '전체';
@@ -233,8 +234,19 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
             card.dataset.desc.includes(tag);
     }
 
-    // 태그 필터 + "더 보기" 페이지네이션을 한 곳에서 같이 계산 —
-    // 태그가 바뀌면 페이지네이션도 3개부터 다시 시작한다.
+    // 처음 화면엔 스크롤 없이 꽉 차는 만큼(화면 높이에 맞춰 몇 줄이 들어가는지) 보여주고,
+    // 그 다음부터 "더 보기"를 누를 때마다 PAGE_SIZE(3개)씩 늘어난다.
+    function computeInitialCount() {
+        if (!cards.length || !gridEl) return PAGE_SIZE;
+        const colCount = getComputedStyle(gridEl).gridTemplateColumns.split(' ').filter(Boolean).length || 1;
+        const cardRect = cards[0].getBoundingClientRect();
+        const cardHeight = cardRect.height || 300;
+        const availableHeight = window.innerHeight - cardRect.top;
+        const rows = Math.max(1, Math.ceil(availableHeight / cardHeight));
+        return rows * colCount;
+    }
+
+    // 태그 필터 + "더 보기" 페이지네이션을 한 곳에서 같이 계산
     function updateVisibility() {
         const matched = cards.filter(card => matchesTag(card, currentTag));
         matched.forEach((card, idx) => card.classList.toggle('wkg-hidden', idx >= visibleCount));
@@ -253,7 +265,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
             tags.forEach(t => t.classList.remove('active'));
             btn.classList.add('active');
             currentTag   = btn.dataset.tag;
-            visibleCount = PAGE_SIZE;
+            visibleCount = computeInitialCount();
             updateVisibility();
             closeFilterPanel();
         });
@@ -264,6 +276,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
         updateVisibility();
     });
 
+    visibleCount = computeInitialCount();
     updateVisibility();
 
     // ── 디테일 뷰 모달 (네비게이션 없이 이미지만) ──────────────
