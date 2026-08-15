@@ -130,7 +130,7 @@ button.pm-dw-link-top.wk-tag i { color: var(--accent-hover); }
     font-size: 22px; line-height: 1;
     display: flex; align-items: center; justify-content: center;
     cursor: pointer;
-    transition: background .2s ease, border-color .2s ease;
+    transition: background .2s ease, border-color .2s ease, color .3s ease;
 }
 .wk-modal-close:hover { background: rgba(255,255,255,.15); border-color: #fff; }
 
@@ -179,20 +179,24 @@ button.pm-dw-link-top.wk-tag i { color: var(--accent-hover); }
     font-size: var(--fs-12); font-weight: 700; letter-spacing: .1em;
     text-transform: uppercase; color: #fff; opacity: .6;
     margin-bottom: .5rem;
+    transition: color .3s ease;
 }
 .wk-modal-title {
     color: #fff; font-weight: 800; letter-spacing: -.01em;
     font-size: clamp(1.2rem, 2vw, 1.6rem); line-height: 1.2;
+    transition: color .3s ease;
 }
 .wk-modal-rule {
     display: block; height: 1px; width: 64px;
     background: #fff; margin: .75rem 0;
+    transition: background-color .3s ease;
 }
 .wk-modal-desc {
     color: rgba(255,255,255,.72); font-size: var(--fs-14); line-height: 1.6;
     margin-bottom: .6rem;
+    transition: color .3s ease;
 }
-.wk-modal-counter { color: rgba(255,255,255,.72); font-size: var(--fs-12); font-variant-numeric: tabular-nums; letter-spacing: .04em; }
+.wk-modal-counter { color: rgba(255,255,255,.72); font-size: var(--fs-12); font-variant-numeric: tabular-nums; letter-spacing: .04em; transition: color .3s ease; }
 
 .wk-modal-thumbs {
     flex: 0 0 auto;

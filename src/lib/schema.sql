@@ -477,11 +477,14 @@ CREATE TABLE IF NOT EXISTS work_images (
     image_url  VARCHAR(500)      NOT NULL DEFAULT '',
     sort_order SMALLINT UNSIGNED NOT NULL DEFAULT 0,
     panel_bg   VARCHAR(20)       NULL     DEFAULT NULL COMMENT '이 서브 이미지로 넘어갈 때 적용할 모달 배경색, NULL=작품 대표 panel_bg 사용',
+    font_color VARCHAR(20)       NULL     DEFAULT NULL COMMENT '이 서브 이미지로 넘어갈 때 적용할 제목/설명 글자색(공통), NULL=작품 대표 title_color/desc_color 사용',
     PRIMARY KEY (id),
     KEY idx_work_images_work (work_id, sort_order)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='작품 상세 페이지에 나열되는 추가 이미지 (works.image_url은 대표 이미지 1장, 이 테이블은 상세 갤러리)';
 -- 2026-08-15 서브 이미지별 모달 배경색 (디테일뷰에서 썸네일 넘길 때 배경도 같이 전환)
 -- ALTER TABLE work_images ADD COLUMN panel_bg VARCHAR(20) NULL DEFAULT NULL COMMENT '이 서브 이미지로 넘어갈 때 적용할 모달 배경색, NULL=작품 대표 panel_bg 사용' AFTER sort_order;
+-- 2026-08-15 서브 이미지별 글자색(제목/설명 공통 하나로)
+-- ALTER TABLE work_images ADD COLUMN font_color VARCHAR(20) NULL DEFAULT NULL COMMENT '이 서브 이미지로 넘어갈 때 적용할 제목/설명 글자색(공통), NULL=작품 대표 title_color/desc_color 사용' AFTER panel_bg;
 
 -- 작품 태그 목록. src/api/admin/work_tags.php가 자체적으로 CREATE TABLE IF NOT EXISTS를 실행해 부트스트랩하므로
 -- 여기 없어도 동작하지만, DB 전체 구조 문서화를 위해 함께 기록

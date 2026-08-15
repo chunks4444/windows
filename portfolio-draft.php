@@ -69,10 +69,10 @@ $workImages = [];
 if ($works) {
     $ids = array_column($works, 'id');
     $in  = implode(',', array_fill(0, count($ids), '?'));
-    $imgStmt = $pdo->prepare("SELECT work_id, image_url, panel_bg FROM work_images WHERE work_id IN ($in) ORDER BY sort_order, id");
+    $imgStmt = $pdo->prepare("SELECT work_id, image_url, panel_bg, font_color FROM work_images WHERE work_id IN ($in) ORDER BY sort_order, id");
     $imgStmt->execute($ids);
     foreach ($imgStmt->fetchAll() as $row) {
-        $workImages[$row['work_id']][] = ['url' => $row['image_url'], 'panel_bg' => $row['panel_bg'] ?: null];
+        $workImages[$row['work_id']][] = ['url' => $row['image_url'], 'panel_bg' => $row['panel_bg'] ?: null, 'font_color' => $row['font_color'] ?: null];
     }
 }
 
@@ -141,7 +141,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
             <?php foreach ($works as $w):
                 $desc = strip_tags($w['description']);
                 $icon = engine_icon_svg($w['engine_key'] ?? '');
-                $images = $workImages[$w['id']] ?? ($w['image_url'] ? [['url' => $w['image_url'], 'panel_bg' => null]] : []);
+                $images = $workImages[$w['id']] ?? ($w['image_url'] ? [['url' => $w['image_url'], 'panel_bg' => null, 'font_color' => null]] : []);
             ?>
             <div class="wkg-card"
                  data-title="<?= htmlspecialchars($w['title']) ?>"
@@ -253,20 +253,17 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
     const modalClose   = document.getElementById('wkModalClose');
     const modalPrev    = document.getElementById('wkModalPrev');
     const modalNext    = document.getElementById('wkModalNext');
-    let modalImages = [], modalIdx = 0, modalDefaultBg = '#111111';
+    let modalImages = [], modalIdx = 0;
+    let modalDefaultBg = '#111111', modalDefaultTitleColor = '#ffffff', modalDefaultDescColor = '#888888';
 
     function openModal(slide) {
         try { modalImages = JSON.parse(slide.dataset.images || '[]'); } catch (e) { modalImages = []; }
-        modalDefaultBg = slide.dataset.panelBg || '#111111';
+        modalDefaultBg         = slide.dataset.panelBg   || '#111111';
+        modalDefaultTitleColor = slide.dataset.titleColor || '#ffffff';
+        modalDefaultDescColor  = slide.dataset.descColor  || '#888888';
         modalTitle.textContent = slide.dataset.title || '';
         modalDesc.textContent = slide.dataset.desc || '';
         modal.style.backgroundColor = modalDefaultBg;
-        modalEyebrow.style.color = slide.dataset.titleColor || '#ffffff';
-        modalTitle.style.color = slide.dataset.titleColor || '#ffffff';
-        modalRule.style.backgroundColor = slide.dataset.titleColor || '#ffffff';
-        modalDesc.style.color = slide.dataset.descColor || '#888888';
-        modalCounter.style.color = slide.dataset.descColor || '#888888';
-        modalClose.style.color = slide.dataset.titleColor || '#ffffff';
         renderThumbs();
         showModalImg(0);
         modal.classList.add('open');
@@ -286,6 +283,14 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
         modalImg.classList.remove('loaded');
         modalImg.src = item.url || item; // item이 문자열인 예전 데이터도 호환
         modal.style.backgroundColor = (item.panel_bg || modalDefaultBg);
+        const titleColor = item.font_color || modalDefaultTitleColor;
+        const descColor  = item.font_color || modalDefaultDescColor;
+        modalEyebrow.style.color = titleColor;
+        modalTitle.style.color = titleColor;
+        modalRule.style.backgroundColor = titleColor;
+        modalClose.style.color = titleColor;
+        modalDesc.style.color = descColor;
+        modalCounter.style.color = descColor;
         modalCounter.textContent = modalImages.length > 1
             ? String(modalIdx + 1).padStart(2, '0') + ' / ' + String(modalImages.length).padStart(2, '0')
             : '';
