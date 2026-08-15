@@ -396,6 +396,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
         modalTitle.style.color = slide.dataset.titleColor || '#ffffff';
         modalRule.style.backgroundColor = slide.dataset.titleColor || '#ffffff';
         modalDesc.style.color = slide.dataset.descColor || '#888888';
+        modalCounter.style.color = slide.dataset.descColor || '#888888';
         modalClose.style.color = slide.dataset.titleColor || '#ffffff';
         renderThumbs();
         showModalImg(0);
