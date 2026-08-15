@@ -223,7 +223,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
     const emptyEl     = document.getElementById('wkEmpty');
     const loadMoreBtn = document.getElementById('wkgLoadMoreBtn');
     const gridEl      = document.querySelector('.wkg-grid');
-    const PAGE_SIZE = 3;
+    const PAGE_SIZE = 9;
 
     let currentTag    = '전체';
     let visibleCount  = PAGE_SIZE;
@@ -235,7 +235,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
     }
 
     // 처음 화면엔 스크롤 없이 꽉 차는 만큼(화면 높이에 맞춰 몇 줄이 들어가는지) 보여주고,
-    // 그 다음부터 "더 보기"를 누를 때마다 PAGE_SIZE(3개)씩 늘어난다.
+    // 그 다음부터 "더 보기"를 누를 때마다 PAGE_SIZE(9개)씩 늘어난다.
     function computeInitialCount() {
         if (!cards.length || !gridEl) return PAGE_SIZE;
         const colCount = getComputedStyle(gridEl).gridTemplateColumns.split(' ').filter(Boolean).length || 1;
