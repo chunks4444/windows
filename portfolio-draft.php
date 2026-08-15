@@ -69,10 +69,10 @@ $workImages = [];
 if ($works) {
     $ids = array_column($works, 'id');
     $in  = implode(',', array_fill(0, count($ids), '?'));
-    $imgStmt = $pdo->prepare("SELECT work_id, image_url FROM work_images WHERE work_id IN ($in) ORDER BY sort_order, id");
+    $imgStmt = $pdo->prepare("SELECT work_id, image_url, panel_bg FROM work_images WHERE work_id IN ($in) ORDER BY sort_order, id");
     $imgStmt->execute($ids);
     foreach ($imgStmt->fetchAll() as $row) {
-        $workImages[$row['work_id']][] = $row['image_url'];
+        $workImages[$row['work_id']][] = ['url' => $row['image_url'], 'panel_bg' => $row['panel_bg'] ?: null];
     }
 }
 
@@ -141,7 +141,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
             <?php foreach ($works as $w):
                 $desc = strip_tags($w['description']);
                 $icon = engine_icon_svg($w['engine_key'] ?? '');
-                $images = $workImages[$w['id']] ?? ($w['image_url'] ? [$w['image_url']] : []);
+                $images = $workImages[$w['id']] ?? ($w['image_url'] ? [['url' => $w['image_url'], 'panel_bg' => null]] : []);
             ?>
             <div class="wkg-card"
                  data-title="<?= htmlspecialchars($w['title']) ?>"
@@ -253,13 +253,14 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
     const modalClose   = document.getElementById('wkModalClose');
     const modalPrev    = document.getElementById('wkModalPrev');
     const modalNext    = document.getElementById('wkModalNext');
-    let modalImages = [], modalIdx = 0;
+    let modalImages = [], modalIdx = 0, modalDefaultBg = '#111111';
 
     function openModal(slide) {
         try { modalImages = JSON.parse(slide.dataset.images || '[]'); } catch (e) { modalImages = []; }
+        modalDefaultBg = slide.dataset.panelBg || '#111111';
         modalTitle.textContent = slide.dataset.title || '';
         modalDesc.textContent = slide.dataset.desc || '';
-        modal.style.backgroundColor = slide.dataset.panelBg || '#111111';
+        modal.style.backgroundColor = modalDefaultBg;
         modalEyebrow.style.color = slide.dataset.titleColor || '#ffffff';
         modalTitle.style.color = slide.dataset.titleColor || '#ffffff';
         modalRule.style.backgroundColor = slide.dataset.titleColor || '#ffffff';
@@ -281,8 +282,10 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
     function showModalImg(i) {
         if (!modalImages.length) return;
         modalIdx = (i + modalImages.length) % modalImages.length;
+        const item = modalImages[modalIdx];
         modalImg.classList.remove('loaded');
-        modalImg.src = modalImages[modalIdx];
+        modalImg.src = item.url || item; // item이 문자열인 예전 데이터도 호환
+        modal.style.backgroundColor = (item.panel_bg || modalDefaultBg);
         modalCounter.textContent = modalImages.length > 1
             ? String(modalIdx + 1).padStart(2, '0') + ' / ' + String(modalImages.length).padStart(2, '0')
             : '';
@@ -295,11 +298,11 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
         modalPrev.style.display = multi ? 'flex' : 'none';
         modalNext.style.display = multi ? 'flex' : 'none';
         if (!multi) return;
-        modalImages.forEach((src, idx) => {
+        modalImages.forEach((item, idx) => {
             const t = document.createElement('div');
             t.className = 'wk-modal-thumb';
             const img = document.createElement('img');
-            img.src = src;
+            img.src = item.url || item;
             t.appendChild(img);
             t.addEventListener('click', () => showModalImg(idx));
             modalThumbs.appendChild(t);

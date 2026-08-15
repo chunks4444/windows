@@ -128,9 +128,21 @@ if ($action === 'reorder') {
 
 /* ── work_images 관리 ── */
 if ($action === 'get_images') {
-    $stmt = $pdo->prepare('SELECT id, image_url, sort_order FROM work_images WHERE work_id=? ORDER BY sort_order, id');
+    $stmt = $pdo->prepare('SELECT id, image_url, sort_order, panel_bg FROM work_images WHERE work_id=? ORDER BY sort_order, id');
     $stmt->execute([(int)($body['work_id'] ?? 0)]);
     echo json_encode(['images' => $stmt->fetchAll()]);
+    exit;
+}
+
+if ($action === 'update_image_color') {
+    $id = (int)($body['id'] ?? 0);
+    $panel_bg = trim($body['panel_bg'] ?? '');
+    if (!$id) { echo json_encode(['error' => '필수값 누락']); exit; }
+    if ($panel_bg !== '' && !preg_match('/^#[0-9a-fA-F]{3,6}$/', $panel_bg)) {
+        echo json_encode(['error' => '색상 형식이 올바르지 않습니다.']); exit;
+    }
+    $pdo->prepare('UPDATE work_images SET panel_bg=? WHERE id=?')->execute([$panel_bg !== '' ? $panel_bg : null, $id]);
+    echo json_encode(['ok' => true]);
     exit;
 }
 

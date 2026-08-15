@@ -276,15 +276,29 @@ function renderImages(images, workId) {
         list.innerHTML = '<div style="font-size:12px;color: var(--text);">등록된 이미지 없음</div>';
         return;
     }
+    const parentWork = works.find(x => x.id == workId);
+    const defaultBg  = parentWork?.panel_bg || '#111111';
     images.forEach(img => {
         const row = document.createElement('div');
         row.style.cssText = 'display:flex;align-items:center;gap:8px;';
         row.innerHTML = `
             <img src="${img.image_url}" style="width:56px;height:40px;object-fit:cover;border-radius:4px;flex-shrink:0;background:var(--bg);">
             <span style="flex:1;min-width:0;font-size:11px;color: var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${img.image_url}</span>
+            <label style="font-size:10px;color: var(--text);display:flex;align-items:center;gap:2px;flex-shrink:0;" title="이 이미지 배경색 (비우면 작품 대표 배경색 사용)">
+                <input type="color" value="${img.panel_bg || defaultBg}" style="width:26px;height:22px;border:none;padding:0;cursor:pointer;border-radius:4px;" onchange="updateImageColor(${img.id},this.value)">
+            </label>
             <button onclick="deleteImage(${img.id},${workId})" style="border:none;background:none;color: var(--text);cursor:pointer;font-size:16px;padding:0 4px;flex-shrink:0;">&#x2715;</button>
         `;
         list.appendChild(row);
+    });
+    if (window.pmokEnhanceColorInputs) window.pmokEnhanceColorInputs();
+}
+
+async function updateImageColor(imgId, panelBg) {
+    await fetch('/src/api/admin/works.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'update_image_color', id: imgId, panel_bg: panelBg })
     });
 }
 

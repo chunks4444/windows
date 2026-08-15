@@ -53,6 +53,9 @@ function openModal(id) {
     document.getElementById('workPanelBg').value    = w?.panel_bg    || '#111111';
     document.getElementById('workTitleColor').value = w?.title_color || '#ffffff';
     document.getElementById('workDescColor').value  = w?.desc_color  || '#888888';
+    // 위에서 .value를 직접 채우면 input 이벤트가 안 떠서 옆의 헥사코드 입력칸이
+    // 예전 값에 머물러 있게 됨 — 매번 동기화
+    if (window.pmokEnhanceColorInputs) window.pmokEnhanceColorInputs();
     document.getElementById('workIconSvg').value = w?.icon_svg ?? '';
     document.getElementById('workSvgFile').value = '';
     renderSvgPreview(w?.icon_svg ?? '');

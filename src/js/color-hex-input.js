@@ -15,8 +15,21 @@
         return v.toLowerCase();
     }
 
+    // openModal() 등에서 colorInput.value = '...'로 직접(프로그램적으로) 값을 넣으면
+    // input 이벤트가 안 뜨기 때문에 옆의 헥사 텍스트 필드가 예전 값에 머물러 있게 된다 —
+    // 그 상태에서 헥사코드를 고치려 하면 엉뚱한 값에서 시작하는 것처럼 보여 "잘 안 되는" 것처럼 느껴짐.
+    // 그래서 매번 모달을 열 때 등 값을 다시 채운 뒤엔 반드시 pmokEnhanceColorInputs()를
+    // 다시 호출해 동기화해야 한다(이미 강화된 입력은 재생성 없이 값만 맞춘다).
+    function syncHexInput(colorInput) {
+        const hexInput = colorInput._pmokHexInput;
+        if (hexInput) hexInput.value = colorInput.value;
+    }
+
     function enhance(colorInput) {
-        if (colorInput.dataset.hexEnhanced) return;
+        if (colorInput.dataset.hexEnhanced) {
+            syncHexInput(colorInput);
+            return;
+        }
         colorInput.dataset.hexEnhanced = '1';
 
         const legacyId = colorInput.id ? colorInput.id.replace(/Input$/, '') + 'Code' : null;
@@ -36,6 +49,7 @@
             + 'margin-left:4px;background:var(--bg, #fff);color:var(--text, #222);';
 
         colorInput.insertAdjacentElement('afterend', hexInput);
+        colorInput._pmokHexInput = hexInput;
 
         colorInput.addEventListener('input', () => { hexInput.value = colorInput.value; });
 
@@ -49,7 +63,9 @@
             colorInput.dispatchEvent(new Event('change', { bubbles: true }));
         }
         hexInput.addEventListener('change', commit);
-        hexInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); commit(); } });
+        hexInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter') { e.preventDefault(); commit(); }
+        });
     }
 
     function enhanceAll() {
