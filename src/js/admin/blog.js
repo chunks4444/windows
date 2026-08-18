@@ -64,10 +64,14 @@ async function loadCollectionPatternsForPicker() {
 }
 
 function render() {
-    document.getElementById('blogBody').innerHTML = posts.map(p => `
+    const filterVal = document.getElementById('blogSeriesFilter')?.value ?? '';
+    const filtered = filterVal === '' ? posts
+        : filterVal === '0' ? posts.filter(p => !p.series_id)
+        : posts.filter(p => String(p.series_id) === filterVal);
+    document.getElementById('blogBody').innerHTML = filtered.map(p => `
         <tr data-id="${p.id}">
             <td style="text-align:center;">
-                <input type="number" step="0.01" class="blog-order-input" value="${p.sort_order}"
+                <input type="number" step="0.1" class="blog-order-input" value="${p.sort_order}"
                        onchange="saveOrder(${p.id}, this.value)">
             </td>
             <td style="text-align:center;">

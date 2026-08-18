@@ -101,9 +101,18 @@ foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
     <div class="adm-breadcrumb"><a href="/src/admin/">어드민</a><span class="adm-breadcrumb-sep">/</span>블로그 관리</div>
     <div class="db-header">
         <h1 class="db-title"><i class="bi bi-journal-text me-2"></i>블로그 관리</h1>
-        <button class="adm-edit-btn" style="height:32px;padding:0 14px;" onclick="openModal()">
-            <i class="bi bi-plus-lg"></i> 추가
-        </button>
+        <div style="display:flex;align-items:center;gap:8px;">
+            <select id="blogSeriesFilter" onchange="render()" style="height:32px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg);color:var(--text);padding:0 8px;font-size:13px;">
+                <option value="">전체 시리즈</option>
+                <option value="0">독립 글(시리즈 없음)</option>
+                <?php foreach ($blogSeriesList as $s): ?>
+                <option value="<?= (int)$s['id'] ?>"><?= htmlspecialchars($s['name']) ?></option>
+                <?php endforeach; ?>
+            </select>
+            <button class="adm-edit-btn" style="height:32px;padding:0 14px;" onclick="openModal()">
+                <i class="bi bi-plus-lg"></i> 추가
+            </button>
+        </div>
     </div>
 
     <p style="font-size:12px;color:var(--text);margin:-8px 0 16px;">순서 칸에 숫자를 직접 입력해 정렬을 바꿀 수 있습니다. 소수점도 가능해서(예: 1.5) 두 글 사이에 끼워 넣을 때 편합니다.</p>
