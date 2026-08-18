@@ -99,12 +99,13 @@ if ($action === 'save') {
     } else {
         // 새 글은 항상 비공개(is_active=0)로 시작하고 slug는 NULL — 관리자가 검토 후
         // "표시"(공개 전환)를 눌러야 그 시점에 slug가 생성된다 (draft 상태에는 URL이 없어야 함)
-        // 새 글은 목록 맨 앞(sort_order=0)에 놓는다 — 블로그 인덱스가 최신 글을 앞에 기대하므로
-        // 기존 글들을 전부 한 칸씩 뒤로 미룸(MAX+1로 맨 뒤에 붙이면 관리자가 매번 수동으로 끌어올려야 했음)
-        $pdo->exec('UPDATE blog_posts SET sort_order = sort_order + 1');
+        // 새 글은 목록 맨 앞에 놓는다 — 블로그 인덱스가 최신 글을 앞에 기대하므로. sort_order가
+        // 소수점을 허용하는 직접입력 방식이라, 기존 글들을 밀지 않고 현재 최솟값보다 1 작은 값을 준다.
+        $minOrder = (float)$pdo->query('SELECT COALESCE(MIN(sort_order), 0) FROM blog_posts')->fetchColumn();
+        $newOrder = $minOrder - 1;
         $pdo->prepare('INSERT INTO blog_posts (title, slug, summary, cta_text, source_text, content, thumbnail_url, is_featured, sort_order,
-                series_id, series_order, related_engine, related_drawing_id, question, author_id, is_active) VALUES (?,NULL,?,?,?,?,?,?,0,?,?,?,?,?,?,0)')
-            ->execute([$title, $summary, $cta_text, $source_text, $content, $thumbnail_url, $is_featured,
+                series_id, series_order, related_engine, related_drawing_id, question, author_id, is_active) VALUES (?,NULL,?,?,?,?,?,?,?,?,?,?,?,?,?,0)')
+            ->execute([$title, $summary, $cta_text, $source_text, $content, $thumbnail_url, $is_featured, $newOrder,
                 $series_id, $series_order, $related_engine, $related_drawing_id, $question, $author_id]);
         $id = (int)$pdo->lastInsertId();
     }
@@ -159,9 +160,11 @@ if ($action === 'toggle_featured') {
     exit;
 }
 
-if ($action === 'reorder') {
-    $stmt = $pdo->prepare('UPDATE blog_posts SET sort_order=? WHERE id=?');
-    foreach (($body['ids'] ?? []) as $i => $id) $stmt->execute([$i, (int)$id]);
+// 드래그 대신 목록에서 직접 입력하는 정렬 순서(소수점 허용 — 두 글 사이에 끼워 넣을 때 사용)
+if ($action === 'set_order') {
+    $id = (int)($body['id'] ?? 0);
+    if (!$id || !is_numeric($body['sort_order'] ?? null)) { echo json_encode(['error' => '값이 올바르지 않습니다.']); exit; }
+    $pdo->prepare('UPDATE blog_posts SET sort_order=? WHERE id=?')->execute([(float)$body['sort_order'], $id]);
     echo json_encode(['ok' => true]);
     exit;
 }

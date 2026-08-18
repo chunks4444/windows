@@ -34,6 +34,7 @@ foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
     <?php css_tag('/src/css/stats.css'); ?>
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
     <style>
+        .blog-order-input { width:56px; padding:4px 6px; border:1px solid var(--border); border-radius:5px; font-size:12px; text-align:center; background:var(--bg); color:var(--text); }
         .blog-star-btn { border:none; background:none; cursor:pointer; padding:2px; font-size:16px; line-height:1; color:var(--text-3, var(--text)); }
         .blog-star-btn .bi-star-fill { color:var(--accent); }
         .blog-star-btn:hover { opacity:.7; }
@@ -105,7 +106,7 @@ foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
         </button>
     </div>
 
-    <p style="font-size:12px;color:var(--text);margin:-8px 0 16px;">행을 드래그해 순서를 변경할 수 있습니다.</p>
+    <p style="font-size:12px;color:var(--text);margin:-8px 0 16px;">순서 칸에 숫자를 직접 입력해 정렬을 바꿀 수 있습니다. 소수점도 가능해서(예: 1.5) 두 글 사이에 끼워 넣을 때 편합니다.</p>
 
     <div class="st-panel" style="margin-bottom:16px;">
         <div class="st-panel-head">
@@ -121,7 +122,7 @@ foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
         <table id="blogTable">
             <thead>
                 <tr>
-                    <th style="width:32px;"></th>
+                    <th style="width:56px;">순서</th>
                     <th style="width:32px;" title="히어로 캐로셀 노출"><i class="bi bi-star"></i></th>
                     <th style="width:96px;">썸네일</th>
                     <th>제목</th>

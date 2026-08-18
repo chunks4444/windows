@@ -1,7 +1,7 @@
 const API = '/src/api/admin/blog.php';
 function _h() { return { 'Authorization': 'Bearer ' + localStorage.getItem('pmok_auth_token'), 'Content-Type': 'application/json' }; }
 
-let posts = [], dragSrc, quill, currentUser;
+let posts = [], quill, currentUser;
 
 async function loadPosts() {
     const res  = await fetch(API, { headers: _h() });
@@ -65,8 +65,11 @@ async function loadCollectionPatternsForPicker() {
 
 function render() {
     document.getElementById('blogBody').innerHTML = posts.map(p => `
-        <tr data-id="${p.id}" draggable="true">
-            <td style="text-align:center;"><span class="drag-handle"><i class="bi bi-grip-vertical"></i></span></td>
+        <tr data-id="${p.id}">
+            <td style="text-align:center;">
+                <input type="number" step="0.01" class="blog-order-input" value="${p.sort_order}"
+                       onchange="saveOrder(${p.id}, this.value)">
+            </td>
             <td style="text-align:center;">
                 <button class="blog-star-btn" title="히어로 캐로셀 노출" onclick="toggleFeatured(${p.id})">
                     <i class="bi ${p.is_featured ? 'bi-star-fill' : 'bi-star'}"></i>
@@ -88,7 +91,16 @@ function render() {
                 </div>
             </td>
         </tr>`).join('');
-    bindDrag();
+}
+
+async function saveOrder(id, value) {
+    const sortOrder = parseFloat(value);
+    if (isNaN(sortOrder)) return;
+    await fetch(API, { method: 'POST', headers: _h(), body: JSON.stringify({ action: 'set_order', id, sort_order: sortOrder }) });
+    const p = posts.find(x => x.id === id);
+    if (p) p.sort_order = sortOrder;
+    posts.sort((a, b) => a.sort_order - b.sort_order);
+    render();
 }
 
 function esc(s) {
@@ -432,24 +444,6 @@ async function togglePost(id) {
 async function toggleFeatured(id) {
     await fetch(API, { method: 'POST', headers: _h(), body: JSON.stringify({ action: 'toggle_featured', id }) });
     loadPosts();
-}
-
-function bindDrag() {
-    document.querySelectorAll('#blogBody tr').forEach(tr => {
-        tr.addEventListener('dragstart', () => { dragSrc = tr; tr.classList.add('dragging'); });
-        tr.addEventListener('dragend',   () => tr.classList.remove('dragging'));
-        tr.addEventListener('dragover',  e => { e.preventDefault(); tr.classList.add('drag-over'); });
-        tr.addEventListener('dragleave', () => tr.classList.remove('drag-over'));
-        tr.addEventListener('drop', async e => {
-            e.preventDefault();
-            tr.classList.remove('drag-over');
-            if (dragSrc === tr) return;
-            tr.parentNode.insertBefore(dragSrc, tr.nextSibling);
-            const ids = [...tr.parentNode.querySelectorAll('tr')].map(r => +r.dataset.id);
-            await fetch(API, { method: 'POST', headers: _h(), body: JSON.stringify({ action: 'reorder', ids }) });
-            await loadPosts();
-        });
-    });
 }
 
 document.addEventListener('DOMContentLoaded', async () => {

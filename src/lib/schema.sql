@@ -715,7 +715,7 @@ CREATE TABLE IF NOT EXISTS blog_posts (
     source_text        TEXT              NULL     DEFAULT NULL COMMENT '이 글이 참고한 출처 (줄바꿈으로 여러 개 구분, 있으면 하단에 노출)',
     content            TEXT              NOT NULL COMMENT '본문 (HTML)',
     thumbnail_url      VARCHAR(500)      NOT NULL DEFAULT '',
-    sort_order         SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    sort_order         DECIMAL(12,3)     NOT NULL DEFAULT 0 COMMENT '정렬 순서 (관리자가 직접 입력, 소수점 허용 — 두 글 사이에 끼워 넣을 때 소수점 값 사용, 예: 1과 2 사이는 1.5)',
     is_active          TINYINT(1)        NOT NULL DEFAULT 1,
     is_featured        TINYINT(1)        NOT NULL DEFAULT 0 COMMENT '히어로 캐로셀 노출 여부 (관리자가 직접 선택, 날짜 무관)',
     view_count         INT UNSIGNED      NOT NULL DEFAULT 0 COMMENT '조회수 (방문자 쿠키 기준 24시간 중복 방지)',
@@ -724,6 +724,8 @@ CREATE TABLE IF NOT EXISTS blog_posts (
     UNIQUE KEY uq_blog_posts_slug (slug),
     KEY idx_blog_posts_sort (sort_order, is_active)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='블로그 글 (창호 이야기)';
+-- 2026-08-15 정렬 순서를 드래그 대신 직접 숫자 입력으로 변경, 소수점 허용(끼워넣기 편의)
+-- ALTER TABLE blog_posts MODIFY COLUMN sort_order DECIMAL(12,3) NOT NULL DEFAULT 0 COMMENT '정렬 순서 (관리자가 직접 입력, 소수점 허용 — 두 글 사이에 끼워 넣을 때 소수점 값 사용, 예: 1과 2 사이는 1.5)';
 
 -- 2026-07-22 글 출처 표기 (있으면 상세 페이지 하단에 노출)
 -- ALTER TABLE blog_posts ADD COLUMN source_text VARCHAR(300) NULL DEFAULT NULL COMMENT '이 글이 참고한 출처 (있으면 하단에 노출)' AFTER cta_text;
