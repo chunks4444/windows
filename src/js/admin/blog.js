@@ -494,7 +494,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!user || user.role !== 's') { document.getElementById('blogAuthWall').style.display = ''; return; }
     document.getElementById('blogPage').style.display = '';
     await loadPosts();
-    loadCollectionPatternsForPicker();
+    // "연관 대표 도면" select 옵션이 채워지기 전에 openModal()이 값을 넣으려 하면
+    // 일치하는 <option>이 없어 조용히 선택 실패(초기화된 것처럼 보임) — 반드시 await 필요
+    await loadCollectionPatternsForPicker();
     loadBlogViewTrend();
 
     // 블로그 디테일 페이지의 "이 글 편집" 링크(?edit=123)로 들어오면 바로 편집 모달을 연다
