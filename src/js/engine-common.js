@@ -846,6 +846,7 @@
         function buildOptions() {
             dropdown.innerHTML = '';
             Array.from(sel.options).forEach(opt => {
+                if (opt.hidden) return;
                 const item = document.createElement('div');
                 item.className = 'cs-option' + (opt.value === proto.get.call(sel) ? ' active' : '');
                 item.textContent = opt.text;
