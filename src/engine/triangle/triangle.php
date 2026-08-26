@@ -33,9 +33,9 @@ if (!empty($_GET['drawing_id'])) {
 }
 $_pmokIsSharedView = ($shareMeta !== null);
 
-// 비로그인 공유 뷰어 또는 관리자 열람은 geometry.php(로그인 필수, 안티스크래핑 보호) 호출이 필요한 인터랙티브 에디터 대신
-// 읽기 전용 미리보기만 보여준다. 공유뷰는 로그인하면 "내 도면함에 복사"로 fork해서 편집 가능하지만, 관리자 열람은 복사도 막는다.
-if ($_pmokIsSharedView && (!jwt_from_request() || $_pmokAdminView)) {
+// 관리자가 "전체 도면" 목록에서 남의 비공개 도면을 열람하는 경우만 읽기 전용 미리보기로 제한한다.
+// 일반 공유뷰/컬렉션은 geometry.php가 비로그인도 허용하므로, 비로그인 방문자도 인터랙티브 에디터를 그대로 쓸 수 있다(저장·출력 시에만 로그인 요구).
+if ($_pmokIsSharedView && $_pmokAdminView) {
     $shareDrawingId = (int) $_GET['drawing_id'];
     $shareTitle     = $row['title'] ?: '평목 도면';
     $shareThumb     = (strpos((string) $row['thumbnail'], '/uploads/') === 0) ? $row['thumbnail'] : null;
@@ -166,6 +166,7 @@ if ($_pmokIsSharedView && (!jwt_from_request() || $_pmokAdminView)) {
                                 <option value="2" <?= $cfg['doorCount'] === '2' ? 'selected' : '' ?>>2짝</option>
                                 <option value="3" <?= $cfg['doorCount'] === '3' ? 'selected' : '' ?>>3짝</option>
                                 <option value="4" <?= $cfg['doorCount'] === '4' ? 'selected' : '' ?>>4짝</option>
+                                <option value="6" <?= $cfg['doorCount'] === '6' ? 'selected' : '' ?>>6짝</option>
                             </select>
                         </div>
                     </div>

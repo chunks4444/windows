@@ -5,7 +5,7 @@ header('Content-Type: application/json; charset=UTF-8');
 require_once __DIR__ . '/../../../lib/jwt.php';
 require_once __DIR__ . '/../../../lib/engine_settings.php';
 require_once __DIR__ . '/../../../lib/spec_access.php';
-if (!jwt_from_request()) { http_response_code(401); echo json_encode(['error' => '인증이 필요합니다.']); exit; }
+// 도면 계산은 비로그인도 허용(설계는 자유, 저장·출력 시에만 로그인 요구). get_content_permissions()는 비로그인이면 모두 false 반환.
 $perms = get_content_permissions();
 
 $cols      = max(2,   (int)($_POST['cols']      ?? 4));
@@ -15,7 +15,9 @@ $frameW    = max(20,  (int)($_POST['frameW']    ?? 60));
 $frameH    = max(20,  (int)($_POST['frameH']    ?? 60));
 $slatT     = max(8,   (int)($_POST['slatT']     ?? 12));
 $doorType  = in_array($_POST['doorType'] ?? '', ['swing','slide']) ? $_POST['doorType'] : 'swing';
-$doorCount = max(1, min(4, (int)($_POST['doorCount'] ?? 1)));
+$doorCount = max(1, min(6, (int)($_POST['doorCount'] ?? 1)));
+if ($doorType === 'swing' && $doorCount > 2) $doorCount = 2;
+if ($doorCount === 5) $doorCount = 4; // 5짝은 지원하지 않음(짝 구성 미정)
 
 // 문틀(벽 개구부) 치수 → 문틀두께·갭을 양쪽에서 빼고 짝수에 따라 문 폭/높이(outerW/outerH) 역산
 $frameOpeningW = max(400, (int)($_POST['frameOpeningW'] ?? 600));
@@ -71,7 +73,8 @@ if ($doorType === 'slide') {
     if      ($doorCount === 1) $totalDoorWidth = $outerW;
     elseif  ($doorCount === 2) $totalDoorWidth = ($outerW * 2) - $overlap;
     elseif  ($doorCount === 3) $totalDoorWidth = ($outerW * 3) - ($overlap * 2);
-    else                       $totalDoorWidth = ($outerW * 4) - ($overlap * 2);
+    elseif  ($doorCount === 4) $totalDoorWidth = ($outerW * 4) - ($overlap * 2);
+    else                       $totalDoorWidth = ($outerW * 6) - ($overlap * 4);
 } else {
     $totalDoorWidth = $outerW * $doorCount;
 }

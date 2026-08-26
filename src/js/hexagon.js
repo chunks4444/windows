@@ -577,7 +577,8 @@ async function draw() {
         if      (doorCount === 1) totalWidth = geo.outerW;
         else if (doorCount === 2) totalWidth = geo.outerW * 2 - overlap;
         else if (doorCount === 3) totalWidth = geo.outerW * 3 - overlap * 2;
-        else                      totalWidth = geo.outerW * 4 - overlap * 2;
+        else if (doorCount === 4) totalWidth = geo.outerW * 4 - overlap * 2;
+        else                      totalWidth = geo.outerW * 6 - overlap * 4;
     } else {
         totalWidth = (geo.outerW * doorCount) + (gap * (doorCount - 1));
     }
@@ -682,6 +683,7 @@ async function draw() {
             if      (doorCount === 2) pOffX = d === 0 ? 0 : geo.outerW - geo.frameW;
             else if (doorCount === 3) pOffX = d === 0 ? 0 : d === 1 ? geo.outerW - geo.frameW : (geo.outerW * 2) - (geo.frameW * 2);
             else if (doorCount === 4) pOffX = d === 0 ? 0 : d === 1 ? geo.outerW - geo.frameW : d === 2 ? (geo.outerW * 2) - geo.frameW : (geo.outerW * 3) - (geo.frameW * 2);
+            else if (doorCount === 6) pOffX = d === 0 ? 0 : d === 1 ? geo.outerW - geo.frameW : d === 2 ? (geo.outerW * 2) - (geo.frameW * 2) : d === 3 ? (geo.outerW * 3) - (geo.frameW * 2) : d === 4 ? (geo.outerW * 4) - (geo.frameW * 3) : (geo.outerW * 5) - (geo.frameW * 4);
         }
         const tX = rx => offsetX + (pOffX + rx) * baseScale;
         const tY = ry => offsetY + ry * baseScale;
@@ -764,6 +766,38 @@ async function draw() {
                     panelOffsetX =
                         (geo.outerW * 3) -
                         (overlap * 2);
+                }
+            }
+
+            else if (doorCount === 6) {
+
+                if (d === 0) {
+                    panelOffsetX = 0;
+                }
+
+                if (d === 1) {
+                    panelOffsetX =
+                        geo.outerW - overlap;
+                }
+
+                if (d === 2) {
+                    panelOffsetX =
+                        (geo.outerW * 2) - (overlap * 2);
+                }
+
+                if (d === 3) {
+                    panelOffsetX =
+                        (geo.outerW * 3) - (overlap * 2);
+                }
+
+                if (d === 4) {
+                    panelOffsetX =
+                        (geo.outerW * 4) - (overlap * 3);
+                }
+
+                if (d === 5) {
+                    panelOffsetX =
+                        (geo.outerW * 5) - (overlap * 4);
                 }
             }
         }
@@ -1205,6 +1239,7 @@ async function draw() {
             else if (doorCount === 2) panelOffsetX = d === 0 ? 0 : geo.outerW - overlap;
             else if (doorCount === 3) panelOffsetX = d === 0 ? 0 : d === 1 ? geo.outerW - overlap : (geo.outerW * 2) - (overlap * 2);
             else if (doorCount === 4) panelOffsetX = d === 0 ? 0 : d === 1 ? geo.outerW - overlap : d === 2 ? (geo.outerW * 2) - overlap : (geo.outerW * 3) - (overlap * 2);
+            else if (doorCount === 6) panelOffsetX = d === 0 ? 0 : d === 1 ? geo.outerW - overlap : d === 2 ? (geo.outerW * 2) - (overlap * 2) : d === 3 ? (geo.outerW * 3) - (overlap * 2) : d === 4 ? (geo.outerW * 4) - (overlap * 3) : (geo.outerW * 5) - (overlap * 4);
         }
 
         const toCanvasX = (realX) => offsetX + (panelOffsetX + realX) * baseScale;
@@ -1247,6 +1282,7 @@ async function draw() {
                 else if (doorCount === 2) ppOffsetX = d === 0 ? 0 : geo.outerW - overlap;
                 else if (doorCount === 3) ppOffsetX = d === 0 ? 0 : d === 1 ? geo.outerW - overlap : (geo.outerW * 2) - (overlap * 2);
                 else if (doorCount === 4) ppOffsetX = d === 0 ? 0 : d === 1 ? geo.outerW - overlap : d === 2 ? (geo.outerW * 2) - overlap : (geo.outerW * 3) - (overlap * 2);
+                else if (doorCount === 6) ppOffsetX = d === 0 ? 0 : d === 1 ? geo.outerW - overlap : d === 2 ? (geo.outerW * 2) - (overlap * 2) : d === 3 ? (geo.outerW * 3) - (overlap * 2) : d === 4 ? (geo.outerW * 4) - (overlap * 3) : (geo.outerW * 5) - (overlap * 4);
             }
 
             const toCX = (rx) => offsetX + (ppOffsetX + rx) * baseScale;
@@ -2830,6 +2866,7 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
 
     //출력
     btnSavePNG.addEventListener('click', async function() {
+        if (!localStorage.getItem('pmok_auth_token')) { pmokRequireAuth(() => btnSavePNG.click()); return; }
         updateModified();
         const sheet = await buildExportSheet(2400);
         const filename = getExportFilename('png');
@@ -2841,6 +2878,7 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
     });
 
     btnSavePDF.addEventListener('click', async function() {
+        if (!localStorage.getItem('pmok_auth_token')) { pmokRequireAuth(() => btnSavePDF.click()); return; }
 
         updateModified();
 
