@@ -115,6 +115,8 @@
 
     const txtSlat  = document.getElementById('txtSlat');
     const txtRatio    = document.getElementById('txtRatio');
+    const txtRows = document.getElementById('txtRows');
+    const chkRowsManual = document.getElementById('chkRowsManual');
 
     const txtDoorType = document.getElementById('txtDoorType');
     const txtDoorCount = document.getElementById('txtDoorCount');
@@ -340,6 +342,8 @@ async function fetchGeometry() {
         frameH:    txtFrameH.value,
         slatT:     txtSlat.value,
         vRatio:    txtRatio.value,
+        rowsManual: chkRowsManual.checked ? '1' : '0',
+        rows:       txtRows.value,
         doorType:  txtDoorType.value,
         doorCount: txtDoorCount.value,
         wood:      document.getElementById('txtWood')?.value ?? '',
@@ -422,8 +426,9 @@ async function draw() {
     }
 
     // 세로 자동 맞춤: 마지막 격자 행이 하부 울거미에 닿도록 outerH 조정
+    // (가로살 개수 직접 지정 모드에서는 세로 칸수가 항상 정확히 맞아떨어지므로 불필요)
     const chkShrinkH = document.getElementById('chkShrinkH');
-    if (chkShrinkH?.checked) {
+    if (chkShrinkH?.checked && !chkRowsManual.checked) {
         const pungpanOn = document.getElementById('chkPungpan').checked;
         const pungpanInput = parseInt(document.getElementById('txtPungpan').value) || 0;
         const effectivePungpan = pungpanOn ? pungpanInput : 0;
@@ -2029,7 +2034,17 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
         { range: txtSlat,   num: document.getElementById('numSlat'),    min: 8,    max: 35   },
         { range: document.getElementById('txtPungpan'), num: document.getElementById('numPungpan'), min: 0, max: 600 },
         { range: txtRatio, num: document.getElementById('numRatio'), min: 1.0, max: 3.0, step: 0.1 },
+        { range: txtRows,  num: document.getElementById('numRows'),  min: 1,   max: 60  },
     ];
+
+    function updateRowsManualUI() {
+        const manual = chkRowsManual.checked;
+        document.getElementById('rowsCtrl').style.display   = manual ? 'block' : 'none';
+        document.getElementById('ratioCtrl').style.display  = manual ? 'none'  : 'block';
+        document.getElementById('shrinkHRow').style.display = manual ? 'none'  : 'flex';
+    }
+    chkRowsManual.addEventListener('change', () => { updateRowsManualUI(); draw(); });
+    updateRowsManualUI();
 
     txtRatio.addEventListener('input', () => {
 
@@ -2316,6 +2331,8 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
             frameH:    parseInt(txtFrameH.value),
             slat:      parseInt(txtSlat.value),
             vRatio:    parseFloat(txtRatio.value),
+            rowsManual: chkRowsManual.checked,
+            rows:       parseInt(txtRows.value),
             doorType:  txtDoorType.value,
             doorCount: parseInt(txtDoorCount.value),
             pungpanOn: document.getElementById('chkPungpan').checked,
@@ -2354,6 +2371,9 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
         setSlider('txtFrameH', 'numFrameH', p.frameH);
         setSlider('txtSlat',   'numSlat',   p.slat);
         setSlider('txtRatio',  'numRatio',  p.vRatio ?? 1.0);
+        chkRowsManual.checked = p.rowsManual || false;
+        setSlider('txtRows',   'numRows',   p.rows ?? 6);
+        updateRowsManualUI();
         txtDoorType.value  = p.doorType;
         txtDoorCount.value = p.doorCount;
         document.getElementById('chkPungpan').checked = p.pungpanOn;

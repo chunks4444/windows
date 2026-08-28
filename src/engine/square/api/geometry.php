@@ -15,6 +15,8 @@ $frameW    = max(20,  (int)($_POST['frameW']    ?? 60));
 $frameH    = max(20,  (int)($_POST['frameH']    ?? 60));
 $slatT     = max(8,   (int)($_POST['slatT']     ?? 12));
 $vRatio    = max(1.0, min(3.0, (float)($_POST['vRatio'] ?? 1.0)));
+$rowsManual = (($_POST['rowsManual'] ?? '0') === '1');
+$rowsCount  = max(1, (int)($_POST['rows'] ?? 6));
 $doorType  = in_array($_POST['doorType'] ?? '', ['swing','slide']) ? $_POST['doorType'] : 'swing';
 $doorCount = max(1, min(6, (int)($_POST['doorCount'] ?? 1)));
 if ($doorType === 'swing' && $doorCount > 2) $doorCount = 2;
@@ -46,7 +48,13 @@ $cellH = $cellW * $vRatio;
 $stepH = $cellH + $slatT;
 
 $availH = $outerH - 2 * $frameH - $effectivePungpanInput;
-$rows   = $stepH > 0 ? max(1, (int)(($availH + $slatT) / $stepH)) : 1;
+
+if ($rowsManual) {
+    $rows  = $rowsCount;
+    $cellH = ($availH - $slatT * ($rows - 1)) / $rows;
+} else {
+    $rows = $stepH > 0 ? max(1, (int)(($availH + $slatT) / $stepH)) : 1;
+}
 
 $innerH = $rows * $cellH + ($rows - 1) * $slatT;
 

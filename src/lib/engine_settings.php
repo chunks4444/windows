@@ -30,7 +30,7 @@ function engine_setting_defaults(string $engine): array {
         case 'classic':
             return $common + ['cols' => '12', 'ratio' => '1.2', 'patternTop' => '3', 'patternMid' => '5', 'patternBot' => '3', 'min_days' => '3', 'min_work_hours' => '4'];
         case 'square':
-            return $common + ['cols' => '6', 'ratio' => '1.0', 'shrinkH' => '0', 'min_days' => '3', 'min_work_hours' => '4'];
+            return $common + ['cols' => '6', 'ratio' => '1.0', 'shrinkH' => '0', 'rowsManual' => '0', 'rows' => '6', 'min_days' => '3', 'min_work_hours' => '4'];
         case 'cross':
             return $common + ['cols' => '4', 'shrinkH' => '0', 'min_days' => '4', 'min_work_hours' => '6'];
         case 'diamond':

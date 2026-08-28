@@ -228,7 +228,24 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
 
                     <hr class="sb-divider">
 
-                    <div id="ratioCtrl">
+                    <div class="toggle-row">
+                        <span class="toggle-label">가로살 개수 직접 지정</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="chkRowsManual" <?= $cfg['rowsManual'] === '1' ? 'checked' : '' ?>>
+                            <span class="toggle-track"></span>
+                        </label>
+                    </div>
+                    <div class="ctrl" id="rowsCtrl" style="display:<?= $cfg['rowsManual'] === '1' ? 'block' : 'none' ?>;">
+                        <div class="ctrl-header"><span class="ctrl-label">세로 칸수</span></div>
+                        <div class="slider-row">
+                            <input type="range" id="txtRows" min="1" max="60" step="1" value="<?= htmlspecialchars($cfg['rows']) ?>">
+                            <input type="number" class="slider-num" id="numRows" min="1" max="60" step="1" value="<?= htmlspecialchars($cfg['rows']) ?>">
+                        </div>
+                    </div>
+
+                    <hr class="sb-divider">
+
+                    <div id="ratioCtrl" style="display:<?= $cfg['rowsManual'] === '1' ? 'none' : 'block' ?>;">
                     <div class="ctrl">
                         <div class="ctrl-header"><span class="ctrl-label">세로 비율</span></div>
                         <div class="slider-row">
@@ -249,7 +266,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                     </div>
 
                     <hr class="sb-divider">
-                    <div class="toggle-row">
+                    <div class="toggle-row" id="shrinkHRow" style="display:<?= $cfg['rowsManual'] === '1' ? 'none' : 'flex' ?>;">
                         <span class="toggle-label">세로 자동 맞춤</span>
                         <label class="toggle-switch">
                             <input type="checkbox" id="chkShrinkH" <?= $cfg['shrinkH'] === '1' ? 'checked' : '' ?>>
