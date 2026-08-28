@@ -176,8 +176,8 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                     <div class="ctrl">
                         <div class="ctrl-header"><span class="ctrl-label">문틀 가로</span></div>
                         <div class="slider-row">
-                            <input type="range" id="txtW" min="400" max="3000" step="1" value="<?= htmlspecialchars($cfg['W']) ?>">
-                            <input type="number" class="slider-num" id="numW" min="400" max="3000" step="1" value="<?= htmlspecialchars($cfg['W']) ?>">
+                            <input type="range" id="txtW" min="400" max="10000" step="1" value="<?= htmlspecialchars($cfg['W']) ?>">
+                            <input type="number" class="slider-num" id="numW" min="400" max="10000" step="1" value="<?= htmlspecialchars($cfg['W']) ?>">
                         </div>
                     </div>
                     <div class="ctrl">

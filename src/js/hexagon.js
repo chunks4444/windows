@@ -1970,7 +1970,7 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
     const toOdd = v => v % 2 === 0 ? v - 1 : v;
 
     const syncPairs = [
-        { range: txtW,      num: document.getElementById('numW'),       min: 400,  max: 3000 },
+        { range: txtW,      num: document.getElementById('numW'),       min: 400, max: 10000 },
         { range: txtH,      num: document.getElementById('numH'),       min: 400,  max: 3000 },
         { range: txtCols,   num: document.getElementById('numCols'),    min: 1,    max: 29,  snapFn: toOdd },
         { range: txtFrame,  num: document.getElementById('numFrame'),   min: 20,   max: 150  },
