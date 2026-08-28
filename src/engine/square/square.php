@@ -194,10 +194,25 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
 
                     <hr class="sb-divider">
                     <div class="ctrl">
-                        <div class="ctrl-header"><span class="ctrl-label">가로 칸수</span></div>
+                        <div class="ctrl-header"><span class="ctrl-label">세로 칸수</span></div>
                         <div class="slider-row">
                             <input type="range" id="txtCols" min="2" max="30" step="1" value="<?= htmlspecialchars($cfg['cols']) ?>">
                             <input type="number" class="slider-num" id="numCols" min="2" max="30" step="1" value="<?= htmlspecialchars($cfg['cols']) ?>">
+                        </div>
+                    </div>
+
+                    <div class="toggle-row">
+                        <span class="toggle-label">가로살 개수 직접 지정</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="chkRowsManual" <?= $cfg['rowsManual'] === '1' ? 'checked' : '' ?>>
+                            <span class="toggle-track"></span>
+                        </label>
+                    </div>
+                    <div class="ctrl" id="rowsCtrl" style="display:<?= $cfg['rowsManual'] === '1' ? 'block' : 'none' ?>;">
+                        <div class="ctrl-header"><span class="ctrl-label">가로살 개수</span></div>
+                        <div class="slider-row">
+                            <input type="range" id="txtRows" min="1" max="60" step="1" value="<?= htmlspecialchars($cfg['rows']) ?>">
+                            <input type="number" class="slider-num" id="numRows" min="1" max="60" step="1" value="<?= htmlspecialchars($cfg['rows']) ?>">
                         </div>
                     </div>
                     <hr class="sb-divider">
@@ -223,23 +238,6 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                         <div class="slider-row">
                             <input type="range" id="txtSlat" min="8" max="35" step="1" value="<?= htmlspecialchars($cfg['slat']) ?>">
                             <input type="number" class="slider-num" id="numSlat" min="8" max="35" step="1" value="<?= htmlspecialchars($cfg['slat']) ?>">
-                        </div>
-                    </div>
-
-                    <hr class="sb-divider">
-
-                    <div class="toggle-row">
-                        <span class="toggle-label">가로살 개수 직접 지정</span>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="chkRowsManual" <?= $cfg['rowsManual'] === '1' ? 'checked' : '' ?>>
-                            <span class="toggle-track"></span>
-                        </label>
-                    </div>
-                    <div class="ctrl" id="rowsCtrl" style="display:<?= $cfg['rowsManual'] === '1' ? 'block' : 'none' ?>;">
-                        <div class="ctrl-header"><span class="ctrl-label">세로 칸수</span></div>
-                        <div class="slider-row">
-                            <input type="range" id="txtRows" min="1" max="60" step="1" value="<?= htmlspecialchars($cfg['rows']) ?>">
-                            <input type="number" class="slider-num" id="numRows" min="1" max="60" step="1" value="<?= htmlspecialchars($cfg['rows']) ?>">
                         </div>
                     </div>
 
