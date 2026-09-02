@@ -239,7 +239,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
         const colCount = getComputedStyle(gridEl).gridTemplateColumns.split(' ').filter(Boolean).length || 1;
         cards.forEach(c => c.classList.remove('wkg-edge-right', 'wkg-edge-bottom'));
         shown.forEach((card, idx) => {
-            if (idx % colCount === colCount - 1 || idx === shown.length - 1) card.classList.add('wkg-edge-right');
+            if (idx % colCount === colCount - 1) card.classList.add('wkg-edge-right');
         });
         const lastRowStart = (Math.ceil(shown.length / colCount) - 1) * colCount;
         shown.slice(Math.max(0, lastRowStart)).forEach(card => card.classList.add('wkg-edge-bottom'));
