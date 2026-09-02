@@ -230,8 +230,19 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
     // 태그 필터 + "더 보기" 페이지네이션을 한 곳에서 같이 계산
     function updateVisibility() {
         const matched = cards.filter(card => matchesTag(card, currentTag));
-        matched.forEach((card, idx) => card.classList.toggle('wkg-hidden', idx >= visibleCount));
+        const shown   = matched.slice(0, visibleCount);
+        matched.forEach(card => card.classList.toggle('wkg-hidden', !shown.includes(card)));
         cards.filter(card => !matchesTag(card, currentTag)).forEach(card => card.classList.add('wkg-hidden'));
+
+        // 카드 테두리는 오른쪽·아래쪽에만 그리므로(위/왼쪽은 원래부터 없음),
+        // 실제로 보이는 카드 기준 마지막 열·마지막 행만 그 테두리를 빼서 바깥 외곽선이 안 생기게 함.
+        const colCount = getComputedStyle(gridEl).gridTemplateColumns.split(' ').filter(Boolean).length || 1;
+        cards.forEach(c => c.classList.remove('wkg-edge-right', 'wkg-edge-bottom'));
+        shown.forEach((card, idx) => {
+            if (idx % colCount === colCount - 1 || idx === shown.length - 1) card.classList.add('wkg-edge-right');
+        });
+        const lastRowStart = (Math.ceil(shown.length / colCount) - 1) * colCount;
+        shown.slice(Math.max(0, lastRowStart)).forEach(card => card.classList.add('wkg-edge-bottom'));
 
         emptyEl.style.display = matched.length === 0 ? 'block' : 'none';
         loadMoreBtn.style.display = matched.length > visibleCount ? '' : 'none';

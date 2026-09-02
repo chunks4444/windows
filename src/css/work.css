@@ -1,4 +1,4 @@
-/* ── WORK INDEX — 화이트 배경 정사각형 카드 그리드, 3열, 카드 사이 2px 블랙 ── */
+/* ── WORK INDEX — 화이트 배경 정사각형 카드 그리드, 3열, 카드 사이 1px 블랙(바깥 외곽선 없음) ── */
 
 .wkg-page { background: #fff; min-height: 100vh; }
 
@@ -31,12 +31,12 @@
 }
 .wkg-count-badge { margin-left: .4rem; color: var(--text-muted); }
 
-/* ── 카드 그리드 — 사이트 폭(1320px 컨테이너)에 3열, 카드 사이 2px 블랙 ──
-   예전엔 grid gap을 검정 배경으로 채워 선을 만들었는데, 그러면 컨테이너 전체에
-   검정 배경이 깔림. 대신 gap 없이 카드끼리 붙이고 카드마다 1px 테두리를 둬서
-   맞닿은 두 카드의 테두리가 합쳐져 똑같은 2px 선처럼 보이게 함(배경 없이) —
-   태그 필터·더보기로 카드가 숨겨져도(hidden) 실제로 화면에 남은 카드끼리만
-   자연스럽게 이어지므로 nth-child 방식보다 안전함. */
+/* ── 카드 그리드 — 사이트 폭(1320px 컨테이너)에 3열, 카드 사이만 1px 블랙 (바깥 외곽선은 없음) ──
+   카드마다 border-right/border-bottom만 그려서 위·왼쪽엔 애초에 테두리가 없고,
+   화면에 실제로 보이는 카드 기준 마지막 열엔 wkg-edge-right, 마지막 행엔
+   wkg-edge-bottom 클래스를 JS(updateVisibility)에서 토글해 그 테두리도 지운다 —
+   태그 필터·더보기로 카드가 숨겨져도 보이는 카드 집합 기준으로 다시 계산되므로
+   고정된 nth-child 방식보다 안전함. */
 .wkg-grid-wrap { padding: 0 24px 72px; }
 .wkg-grid {
     display: grid;
@@ -49,8 +49,13 @@
     aspect-ratio: 1 / 1;
     overflow: hidden;
     cursor: pointer;
+    border-right: 1px solid #000;
+    border-bottom: 1px solid #000;
 }
 .wkg-card.wkg-hidden { display: none; }
+/* 실제로 보이는 카드 중 마지막 열·마지막 행만 해당 테두리를 빼서 그리드 바깥엔 테두리가 안 생기게 함(JS에서 토글) */
+.wkg-card.wkg-edge-right { border-right: none; }
+.wkg-card.wkg-edge-bottom { border-bottom: none; }
 
 .wkg-card-img {
     position: absolute; inset: 0;
