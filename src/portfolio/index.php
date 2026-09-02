@@ -64,10 +64,10 @@ $workImages = [];
 if ($works) {
     $ids = array_column($works, 'id');
     $in  = implode(',', array_fill(0, count($ids), '?'));
-    $imgStmt = $pdo->prepare("SELECT work_id, image_url FROM work_images WHERE work_id IN ($in) ORDER BY sort_order, id");
+    $imgStmt = $pdo->prepare("SELECT work_id, image_url, panel_bg, font_color FROM work_images WHERE work_id IN ($in) ORDER BY sort_order, id");
     $imgStmt->execute($ids);
     foreach ($imgStmt->fetchAll() as $row) {
-        $workImages[$row['work_id']][] = $row['image_url'];
+        $workImages[$row['work_id']][] = ['url' => $row['image_url'], 'panel_bg' => $row['panel_bg'] ?: null, 'font_color' => $row['font_color'] ?: null];
     }
 }
 
@@ -107,71 +107,33 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
 </head>
 <body>
 <?php include __DIR__ . '/../components/nav.php'; ?>
-<style>
-/* 포트폴리오 페이지 전용 — 상단 공지 띠배너 숨김 (배너가 있을 때 nav.php가 강제로 밀어내는 top값도 함께 되돌림) */
-#pmTopbarNotice { display: none !important; }
 
-/* 상단 네비는 배경 없이 사진 위에 그대로 떠 있게 함 */
-.pm-navbar {
-    top: 0 !important;
-    background: transparent !important;
-    border-bottom: none !important;
-}
-.pm-navbar .nav-link { color: #fff !important; opacity: .82; }
-.pm-navbar .nav-link:hover,
-.pm-navbar .nav-link.active,
-.pm-navbar .nav-link[aria-expanded="true"] { color: #fff !important; opacity: 1; }
-.pm-navbar .nav-link::before { background: #fff !important; }
-.pm-navbar .pm-nav-logo { filter: brightness(0) invert(1) !important; opacity: .95; }
-.pm-menu-trigger,
-.pm-filter-trigger { color: #fff !important; }
-
-/* Menu/Filter 버튼을 좌우 캐러셀 화살표 바로 위로 재배치 */
-.pm-menu-trigger {
-    position: fixed; left: 20px; top: calc(50% - 34px);
-    transform: translateY(-100%);
-    z-index: 1000;
-}
-.pm-filter-trigger {
-    position: fixed; right: 20px; top: calc(50% - 34px);
-    transform: translateY(-100%);
-    z-index: 1000;
-    margin-left: 0;
-}
-</style>
-
-<div class="wk-page">
-
-    <div class="wk-top-scrim"></div>
-    <div class="wk-intro-overlay"></div>
-    <div class="wk-fade-overlay" id="wkFadeOverlay"></div>
-    <div class="wk-intro-line"></div>
-    <div class="wk-intro-line-head"></div>
+<div class="wkg-page">
 
     <!-- ── 페이지 헤더 ── -->
-    <div class="wk-hero">
-        <div class="wk-hero-inner">
-            <p class="wk-hero-label">Portfolio</p>
-            <h1>포트폴리오</h1>
-            <p class="wk-hero-sub">
-                평목 공방에서 완성된 작품들입니다.<br>
-                <span class="wk-count-badge"><?= $total ?>개 작품</span>
-            </p>
+    <div class="wkg-header container">
+        <div class="wkg-header-row">
+            <div>
+                <p class="wkg-label">Portfolio</p>
+                <h1>포트폴리오</h1>
+                <p class="wkg-sub">
+                    평목 공방에서 완성된 작품들입니다.
+                    <span class="wkg-count-badge"><?= $total ?>개 작품</span>
+                </p>
+            </div>
+            <button type="button" class="wkg-filter-btn" id="wkgFilterBtn"><i class="bi bi-sliders"></i> 필터</button>
         </div>
     </div>
 
-    <!-- ── 가로 스크롤 캐러셀 (풀스크린) ── -->
-    <section class="wk-carousel-section">
-        <button class="wk-nav-arrow prev" id="wkPrev" aria-label="이전"></button>
-        <button class="wk-nav-arrow next" id="wkNext" aria-label="다음"></button>
-
-        <div class="wk-carousel" id="wkCarousel">
-            <?php foreach ($works as $i => $w):
+    <!-- ── 화이트 정사각형 카드 그리드 (3열, 카드 사이 2px 블랙) ── -->
+    <div class="wkg-grid-wrap container">
+        <div class="wkg-grid">
+            <?php foreach ($works as $w):
                 $desc = strip_tags($w['description']);
                 $icon = engine_icon_svg($w['engine_key'] ?? '');
-                $images = $workImages[$w['id']] ?? ($w['image_url'] ? [$w['image_url']] : []);
+                $images = $workImages[$w['id']] ?? ($w['image_url'] ? [['url' => $w['image_url'], 'panel_bg' => null, 'font_color' => null]] : []);
             ?>
-            <div class="wk-slide<?= $i === 0 ? ' is-active' : '' ?>"
+            <div class="wkg-card"
                  data-title="<?= htmlspecialchars($w['title']) ?>"
                  data-desc="<?= htmlspecialchars($desc) ?>"
                  data-images="<?= htmlspecialchars(json_encode($images)) ?>"
@@ -180,27 +142,17 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
                  data-desc-color="<?= htmlspecialchars($w['desc_color'] ?: '#888888') ?>"
                  role="button">
 
-                <img class="wk-slide-photo"
+                <?php if (!empty($w['icon_svg'])): ?>
+                <span class="wkg-card-svg-icon"><?= $w['icon_svg'] ?></span>
+                <?php else: ?>
+                <img class="wkg-card-img"
                      src="<?= htmlspecialchars($w['image_url']) ?>"
                      alt="<?= htmlspecialchars($w['title']) ?>"
                      loading="lazy">
-                <div class="wk-slide-scrim"></div>
                 <?php if ($icon): ?>
-                <span class="wk-slide-icon"><?= $icon ?></span>
+                <span class="wkg-card-icon"><?= $icon ?></span>
                 <?php endif; ?>
-
-                <div class="wk-slide-info">
-                    <?php if ($desc): ?>
-                    <div class="wk-slide-eyebrow"><?= htmlspecialchars($desc) ?></div>
-                    <?php endif; ?>
-                    <span class="wk-slide-rule"></span>
-                    <h2 class="wk-slide-title"><?= htmlspecialchars($w['title']) ?></h2>
-                    <span class="wk-slide-rule"></span>
-                    <div class="wk-slide-foot">
-                        <span class="wk-slide-num"><?= sprintf('%02d', $i + 1) ?> / <?= sprintf('%02d', $total) ?></span>
-                        <span class="wk-slide-plus">+</span>
-                    </div>
-                </div>
+                <?php endif; ?>
             </div>
             <?php endforeach; ?>
         </div>
@@ -208,7 +160,11 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
         <div class="wk-empty" id="wkEmpty" style="display:none;">
             해당 카테고리의 작품이 없습니다.
         </div>
-    </section>
+
+        <div class="wkg-load-more-wrap">
+            <button type="button" class="wkg-load-more-btn" id="wkgLoadMoreBtn" style="display:none;">더 보기</button>
+        </div>
+    </div>
 
 </div>
 
@@ -252,126 +208,66 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
 
 <script>
 (function () {
-    const tags     = document.querySelectorAll('.wk-tag');
-    const carousel = document.getElementById('wkCarousel');
-    const slides   = Array.from(document.querySelectorAll('.wk-slide'));
-    const emptyEl  = document.getElementById('wkEmpty');
-    const prevBtn  = document.getElementById('wkPrev');
-    const nextBtn  = document.getElementById('wkNext');
-    const hero     = document.querySelector('.wk-hero');
+    const tags        = document.querySelectorAll('.wk-tag');
+    const cards       = Array.from(document.querySelectorAll('.wkg-card'));
+    const emptyEl     = document.getElementById('wkEmpty');
+    const loadMoreBtn = document.getElementById('wkgLoadMoreBtn');
+    const gridEl      = document.querySelector('.wkg-grid');
+    const PAGE_SIZE = 9;
 
-    // 좌측 여백에 있는 헤더는 스크롤해서 실제 사진이 그 자리에 오면 자연스럽게 사라지게 함
-    function fadeHero() {
-        const fadeDistance = carousel.clientWidth * 0.28;
-        hero.style.opacity = Math.max(0, 1 - carousel.scrollLeft / fadeDistance);
-        hero.style.pointerEvents = carousel.scrollLeft > 4 ? 'none' : 'auto';
-    }
-    fadeHero();
+    let currentTag    = '전체';
+    let visibleCount  = PAGE_SIZE;
 
-    // 활성(중앙) 슬라이드 판정 — 슬라이드 3개가 뷰포트에 항상 꽉 차게 배치되므로
-    // IntersectionObserver의 ratio만으로는 여러 개가 동시에 "가득 보임"으로 잡힌다.
-    // 캐러셀 중심에 가장 가까운 슬라이드 하나를 활성으로 고정하는 방식으로 판정한다.
-    let rafPending = false;
-    function updateActive() {
-        const box = carousel.getBoundingClientRect();
-        const centerX = box.left + box.width / 2;
-        let closest = null, closestDist = Infinity;
-        slides.forEach(s => {
-            if (s.classList.contains('wk-hidden')) return;
-            const r = s.getBoundingClientRect();
-            const dist = Math.abs((r.left + r.width / 2) - centerX);
-            if (dist < closestDist) { closestDist = dist; closest = s; }
-        });
-        slides.forEach(s => s.classList.toggle('is-active', s === closest));
-    }
-    carousel.addEventListener('scroll', () => {
-        if (rafPending) return;
-        rafPending = true;
-        requestAnimationFrame(() => { updateActive(); fadeHero(); rafPending = false; });
-    });
-    updateActive();
-
-    function goToSlide(el) {
-        el.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    function matchesTag(card, tag) {
+        return tag === '전체' ||
+            card.dataset.title.includes(tag) ||
+            card.dataset.desc.includes(tag);
     }
 
-    slides.forEach(slide => {
-        slide.addEventListener('click', () => {
-            if (slide.classList.contains('is-active')) {
-                openModal(slide);
-            } else {
-                goToSlide(slide);
-            }
-        });
-    });
+    // 처음 화면엔 스크롤 없이 꽉 차는 만큼(화면 높이에 맞춰 몇 줄이 들어가는지) 보여주고,
+    // 그 다음부터 "더 보기"를 누를 때마다 PAGE_SIZE(9개)씩 늘어난다.
+    function computeInitialCount() {
+        if (!cards.length || !gridEl) return PAGE_SIZE;
+        const colCount = getComputedStyle(gridEl).gridTemplateColumns.split(' ').filter(Boolean).length || 1;
+        const cardRect = cards[0].getBoundingClientRect();
+        const cardHeight = cardRect.height || 300;
+        const availableHeight = window.innerHeight - cardRect.top;
+        const rows = Math.max(1, Math.ceil(availableHeight / cardHeight));
+        return rows * colCount;
+    }
 
-    function visibleSlides() { return slides.filter(s => !s.classList.contains('wk-hidden')); }
+    // 태그 필터 + "더 보기" 페이지네이션을 한 곳에서 같이 계산
+    function updateVisibility() {
+        const matched = cards.filter(card => matchesTag(card, currentTag));
+        matched.forEach((card, idx) => card.classList.toggle('wkg-hidden', idx >= visibleCount));
+        cards.filter(card => !matchesTag(card, currentTag)).forEach(card => card.classList.add('wkg-hidden'));
 
-    // ── 자동 슬라이드 — 사용자가 조작(호버/터치/화살표/모달)하면 멈춘다 ──
-    const AUTOPLAY_MS = 4500;
-    const fadeOverlay = document.getElementById('wkFadeOverlay');
-    let autoplayTimer = null;
-    function wrapToFirst(vs) {
-        fadeOverlay.classList.add('show');
-        setTimeout(() => {
-            vs[0].scrollIntoView({ behavior: 'instant', inline: 'center' });
-            updateActive();
-            requestAnimationFrame(() => fadeOverlay.classList.remove('show'));
-        }, 950);
+        emptyEl.style.display = matched.length === 0 ? 'block' : 'none';
+        loadMoreBtn.style.display = matched.length > visibleCount ? '' : 'none';
     }
-    function autoAdvance() {
-        const vs = visibleSlides();
-        if (vs.length < 2) return;
-        const cur = vs.findIndex(s => s.classList.contains('is-active'));
-        if (cur === vs.length - 1) { wrapToFirst(vs); return; }
-        goToSlide(vs[cur + 1]);
-    }
-    function startAutoplay() {
-        stopAutoplay();
-        autoplayTimer = setInterval(autoAdvance, AUTOPLAY_MS);
-    }
-    function stopAutoplay() {
-        if (autoplayTimer) { clearInterval(autoplayTimer); autoplayTimer = null; }
-    }
-    startAutoplay();
-    carousel.addEventListener('mouseenter', stopAutoplay);
-    carousel.addEventListener('mouseleave', () => { if (!modal.classList.contains('open')) startAutoplay(); });
-    carousel.addEventListener('touchstart', stopAutoplay, { passive: true });
 
-    prevBtn.addEventListener('click', () => {
-        stopAutoplay();
-        const vs = visibleSlides();
-        const cur = vs.findIndex(s => s.classList.contains('is-active'));
-        goToSlide(vs[Math.max(0, cur - 1)] || vs[0]);
-    });
-    nextBtn.addEventListener('click', () => {
-        stopAutoplay();
-        const vs = visibleSlides();
-        const cur = vs.findIndex(s => s.classList.contains('is-active'));
-        goToSlide(vs[Math.min(vs.length - 1, cur + 1)] || vs[0]);
+    cards.forEach(card => {
+        card.addEventListener('click', () => openModal(card));
     });
 
     tags.forEach(btn => {
         btn.addEventListener('click', () => {
             tags.forEach(t => t.classList.remove('active'));
             btn.classList.add('active');
-
-            const tag = btn.dataset.tag;
-            let visible = 0;
-            slides.forEach(slide => {
-                const match = tag === '전체' ||
-                    slide.dataset.title.includes(tag) ||
-                    slide.dataset.desc.includes(tag);
-                slide.classList.toggle('wk-hidden', !match);
-                if (match) visible++;
-            });
-            emptyEl.style.display = visible === 0 ? 'block' : 'none';
-            carousel.scrollLeft = 0;
-            requestAnimationFrame(updateActive);
+            currentTag   = btn.dataset.tag;
+            visibleCount = computeInitialCount();
+            updateVisibility();
             closeFilterPanel();
-            startAutoplay();
         });
     });
+
+    loadMoreBtn.addEventListener('click', () => {
+        visibleCount += PAGE_SIZE;
+        updateVisibility();
+    });
+
+    visibleCount = computeInitialCount();
+    updateVisibility();
 
     // ── 디테일 뷰 모달 (네비게이션 없이 이미지만) ──────────────
     const modal        = document.getElementById('wkModal');
@@ -386,37 +282,43 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
     const modalPrev    = document.getElementById('wkModalPrev');
     const modalNext    = document.getElementById('wkModalNext');
     let modalImages = [], modalIdx = 0;
+    let modalDefaultBg = '#111111', modalDefaultTitleColor = '#ffffff', modalDefaultDescColor = '#888888';
 
     function openModal(slide) {
         try { modalImages = JSON.parse(slide.dataset.images || '[]'); } catch (e) { modalImages = []; }
+        modalDefaultBg         = slide.dataset.panelBg   || '#111111';
+        modalDefaultTitleColor = slide.dataset.titleColor || '#ffffff';
+        modalDefaultDescColor  = slide.dataset.descColor  || '#888888';
         modalTitle.textContent = slide.dataset.title || '';
         modalDesc.textContent = slide.dataset.desc || '';
-        modal.style.backgroundColor = slide.dataset.panelBg || '#111111';
-        modalEyebrow.style.color = slide.dataset.titleColor || '#ffffff';
-        modalTitle.style.color = slide.dataset.titleColor || '#ffffff';
-        modalRule.style.backgroundColor = slide.dataset.titleColor || '#ffffff';
-        modalDesc.style.color = slide.dataset.descColor || '#888888';
-        modalCounter.style.color = slide.dataset.descColor || '#888888';
-        modalClose.style.color = slide.dataset.titleColor || '#ffffff';
+        modal.style.backgroundColor = modalDefaultBg;
         renderThumbs();
         showModalImg(0);
         modal.classList.add('open');
         modal.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
-        stopAutoplay();
     }
     function closeModal() {
         modal.classList.remove('open');
         modal.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
-        startAutoplay();
     }
     modalImg.addEventListener('load', () => modalImg.classList.add('loaded'));
     function showModalImg(i) {
         if (!modalImages.length) return;
         modalIdx = (i + modalImages.length) % modalImages.length;
+        const item = modalImages[modalIdx];
         modalImg.classList.remove('loaded');
-        modalImg.src = modalImages[modalIdx];
+        modalImg.src = item.url || item; // item이 문자열인 예전 데이터도 호환
+        modal.style.backgroundColor = (item.panel_bg || modalDefaultBg);
+        const titleColor = item.font_color || modalDefaultTitleColor;
+        const descColor  = item.font_color || modalDefaultDescColor;
+        modalEyebrow.style.color = titleColor;
+        modalTitle.style.color = titleColor;
+        modalRule.style.backgroundColor = titleColor;
+        modalClose.style.color = titleColor;
+        modalDesc.style.color = descColor;
+        modalCounter.style.color = descColor;
         modalCounter.textContent = modalImages.length > 1
             ? String(modalIdx + 1).padStart(2, '0') + ' / ' + String(modalImages.length).padStart(2, '0')
             : '';
@@ -429,11 +331,11 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
         modalPrev.style.display = multi ? 'flex' : 'none';
         modalNext.style.display = multi ? 'flex' : 'none';
         if (!multi) return;
-        modalImages.forEach((src, idx) => {
+        modalImages.forEach((item, idx) => {
             const t = document.createElement('div');
             t.className = 'wk-modal-thumb';
             const img = document.createElement('img');
-            img.src = src;
+            img.src = item.url || item;
             t.appendChild(img);
             t.addEventListener('click', () => showModalImg(idx));
             modalThumbs.appendChild(t);
@@ -451,7 +353,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
     });
 
     // ── 키워드 필터 사이드 패널 (우측) ──────────────────
-    const filterTrigger  = document.getElementById('pmFilterTrigger');
+    const filterTrigger  = document.getElementById('wkgFilterBtn');
     const filterPanel    = document.getElementById('wkFilterPanel');
     const filterBackdrop = document.getElementById('wkFilterBackdrop');
     const filterClose    = document.getElementById('wkFilterPanelClose');
