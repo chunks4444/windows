@@ -5,10 +5,22 @@
 
 const RENDER_LIMIT_PER_USER = 300;
 
+// 로그인은 필수지만 계정 하나가 스크립트로 gpt-image-1 API를 짧은 시간에 반복 호출하면
+// 300장 누적 캡에 닿기 전까지 요금이 계속 나감 — 시간당 호출 빈도도 별도로 제한한다.
+const RENDER_RATE_LIMIT     = 20; // 시간당 최대 렌더링 요청 수
+const RENDER_RATE_WINDOW_MIN = 60;
+
 function render_count_for_user(int $userId): int {
     require_once __DIR__ . '/db.php';
     $stmt = db()->prepare('SELECT COUNT(*) FROM renders WHERE user_id = ?');
     $stmt->execute([$userId]);
+    return (int)$stmt->fetchColumn();
+}
+
+function render_count_recent_for_user(int $userId, int $minutes): int {
+    require_once __DIR__ . '/db.php';
+    $stmt = db()->prepare('SELECT COUNT(*) FROM renders WHERE user_id = ? AND created_at > DATE_SUB(NOW(), INTERVAL ? MINUTE)');
+    $stmt->execute([$userId, $minutes]);
     return (int)$stmt->fetchColumn();
 }
 

@@ -9,6 +9,15 @@ RewriteRule (^|/)\.git(/|$) - [F,L]
 RewriteRule ^logs(/|$) - [F,L]
 RewriteRule ^CLAUDE\.md$ - [F,L]
 
+# 예전 워드프레스(Avada+우커머스) 시절 URL이 아직 검색에 남아있음(예: /product/느티나무-도마/).
+# robots.txt로 이 경로들을 막아뒀던 게 오히려 문제였음 — 구글이 재크롤링을 못 하니 410/404를
+# 볼 수 없고, 옛 스니펫이 그대로 고정됨(robots.txt Disallow는 색인 삭제가 아니라 동결).
+# 그래서 robots.txt 쪽 차단은 없애고, 대신 여기서 진짜 410(Gone)을 내려줘서 크롤이 되는 즉시
+# 인덱스에서 빠지게 한다. 404보다 410이 재확인 없이 더 빨리 반영됨 (2026-09-02).
+# wp-admin/wp-login 같은 취약점 탐색성 경로는 여기 포함하지 않음 — 그쪽은
+# src/lib/ip_block.php의 PMOK_AUTOBLOCK_PATTERNS가 이미 첫 요청부터 자동 차단(403) 중.
+RewriteRule ^(product|product-tag|product-category|shop-sidebar|cart|checkout|portfolio-items|category|tag|author|element_category|fusion_tb_category|slide-page)(/|$) - [G,L]
+
 ErrorDocument 404 /404.php
 
 # 홈페이지 index.php 직접 접근 → / 로 301. 리다이렉트가 없으면 /index.php가 200으로 그대로 열려

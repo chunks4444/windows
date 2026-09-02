@@ -15,6 +15,11 @@ if (render_count_for_user($userId) >= RENDER_LIMIT_PER_USER) {
     echo json_encode(['error' => '저장된 렌더링이 ' . RENDER_LIMIT_PER_USER . '장을 초과했습니다. 마이페이지 > 렌더링 탭에서 오래된 항목을 삭제한 후 다시 시도해주세요.']);
     exit;
 }
+if (render_count_recent_for_user($userId, RENDER_RATE_WINDOW_MIN) >= RENDER_RATE_LIMIT) {
+    http_response_code(429);
+    echo json_encode(['error' => '짧은 시간에 렌더링을 너무 많이 요청했습니다. 잠시 후 다시 시도해주세요.']);
+    exit;
+}
 
 $body   = json_decode(file_get_contents('php://input'), true);
 $image  = $body['image']  ?? '';

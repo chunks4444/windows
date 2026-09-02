@@ -1,0 +1,11 @@
+# 업로드 디렉토리는 사용자가 올린 파일(SVG/이미지/도면 등)만 담는 곳 — 어떤 확장자로 저장되든
+# 이 안에서 PHP가 실행되면 안 됨(업로드 검증을 우회해 웹셸을 심는 전형적인 침입 경로).
+# 각 업로드 API가 확장자를 강제하고 있긴 하지만(svg_insert.php→.svg 고정, wallpapers/upload.php→
+# GD 재인코딩 후 .jpg 고정 등), 여기서도 한 번 더 막아 이중으로 방어한다 (2026-09-02 보안 점검).
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+
+<FilesMatch "\.(php|phar|phtml|php3|php4|php5|php7|pht)$">
+    Require all denied
+</FilesMatch>

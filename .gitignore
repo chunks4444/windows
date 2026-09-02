@@ -1,5 +1,6 @@
 logs/*.log
-uploads/
+uploads/*
+!uploads/.htaccess
 **/config.local.php
 ops/backup_uploads/config.ps1
 ops/backup_uploads/.pw

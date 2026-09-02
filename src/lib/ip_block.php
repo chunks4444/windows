@@ -19,7 +19,7 @@ function _pmok_block_get_ip(): string {
 // "/wp-content/uploads/..."(예전 워드프레스 시절 이미지 링크)는 구글/빙 크롤러가 재크롤링하며
 // 정상적으로 404를 만나는 경우라 여기 포함하지 않는다 — 실제 취약점 탐색 경로만 골랐다.
 const PMOK_AUTOBLOCK_PATTERNS = [
-    'wp-admin', 'wp-login', 'wp-json', 'wp-includes', 'wp-content/plugins',
+    'wp-admin', 'wp-login', 'wp-json', 'wp-includes', 'wp-content/plugins', 'wp-config',
     '.env', '.git/', 'phpmyadmin', 'xmlrpc.php', 'cgi-bin',
     'vendor/phpunit', 'telescope', '_ignition', 'actuator', 'wlwmanifest.xml',
 ];
