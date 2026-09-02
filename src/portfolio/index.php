@@ -121,7 +121,18 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
                     <span class="wkg-count-badge"><?= $total ?>개 작품</span>
                 </p>
             </div>
-            <button type="button" class="wkg-filter-btn" id="wkgFilterBtn"><i class="bi bi-sliders"></i> 필터</button>
+            <div class="wkg-filter-wrap">
+                <button type="button" class="wkg-filter-btn" id="wkgFilterBtn" aria-haspopup="true" aria-expanded="false"><i class="bi bi-sliders"></i> 필터</button>
+                <div class="wkg-filter-dropdown" id="wkFilterDropdown" role="listbox" aria-hidden="true">
+                    <?php foreach ($tags as $i => $tag): ?>
+                    <button class="wkg-filter-option wk-tag<?= $i === 0 ? ' active' : '' ?>"
+                            data-tag="<?= htmlspecialchars($tag) ?>"
+                            role="option" aria-selected="<?= $i === 0 ? 'true' : 'false' ?>">
+                        <?= htmlspecialchars($tag) ?>
+                    </button>
+                    <?php endforeach; ?>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -184,26 +195,6 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
         <span class="wk-modal-counter" id="wkModalCounter"></span>
     </div>
     <div class="wk-modal-thumbs" id="wkModalThumbs"></div>
-</div>
-
-<!-- ── 키워드 필터 사이드 패널 (우측, 메뉴 드로어와 동일 디자인) ── -->
-<div class="pm-nav-drawer-backdrop" id="wkFilterBackdrop"></div>
-<div class="pm-nav-drawer" id="wkFilterPanel" aria-hidden="true">
-    <div class="pm-dw-head">
-        <span class="wk-filter-panel-title"><i class="bi bi-sliders"></i> Filter</span>
-        <button class="pm-dw-close" id="wkFilterPanelClose" aria-label="닫기">
-            <i class="bi bi-x-lg"></i>
-        </button>
-    </div>
-    <div class="pm-dw-body">
-        <?php foreach ($tags as $i => $tag): ?>
-        <button class="pm-dw-link-top wk-tag<?= $i === 0 ? ' active' : '' ?>"
-                data-tag="<?= htmlspecialchars($tag) ?>">
-            <i class="bi <?= $i === 0 ? 'bi-grid' : 'bi-tag' ?>"></i>
-            <span><?= htmlspecialchars($tag) ?></span>
-        </button>
-        <?php endforeach; ?>
-    </div>
 </div>
 
 <script>
@@ -352,25 +343,27 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
         if (e.key === 'ArrowRight') showModalImg(modalIdx + 1);
     });
 
-    // ── 키워드 필터 사이드 패널 (우측) ──────────────────
-    const filterTrigger  = document.getElementById('wkgFilterBtn');
-    const filterPanel    = document.getElementById('wkFilterPanel');
-    const filterBackdrop = document.getElementById('wkFilterBackdrop');
-    const filterClose    = document.getElementById('wkFilterPanelClose');
+    // ── 키워드 필터 드롭다운 ──────────────────
+    const filterTrigger = document.getElementById('wkgFilterBtn');
+    const filterPanel   = document.getElementById('wkFilterDropdown');
 
     function openFilterPanel() {
         filterPanel.classList.add('open');
-        filterBackdrop.classList.add('open');
         filterPanel.setAttribute('aria-hidden', 'false');
+        filterTrigger.setAttribute('aria-expanded', 'true');
     }
     function closeFilterPanel() {
         filterPanel.classList.remove('open');
-        filterBackdrop.classList.remove('open');
         filterPanel.setAttribute('aria-hidden', 'true');
+        filterTrigger.setAttribute('aria-expanded', 'false');
     }
-    if (filterTrigger)  filterTrigger.addEventListener('click', openFilterPanel);
-    if (filterClose)    filterClose.addEventListener('click', closeFilterPanel);
-    if (filterBackdrop) filterBackdrop.addEventListener('click', closeFilterPanel);
+    if (filterTrigger) filterTrigger.addEventListener('click', e => {
+        e.stopPropagation();
+        filterPanel.classList.contains('open') ? closeFilterPanel() : openFilterPanel();
+    });
+    document.addEventListener('click', e => {
+        if (filterPanel.classList.contains('open') && !filterPanel.contains(e.target)) closeFilterPanel();
+    });
     window.addEventListener('keydown', e => {
         if (e.key === 'Escape' && filterPanel.classList.contains('open')) closeFilterPanel();
     });
