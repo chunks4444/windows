@@ -117,16 +117,22 @@ $pmMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
 // 로그인 사용자 ID (JWT — 헤더·쿠키·세션 순으로 시도)
 $pmUserId = '-';
+$pmIsImpersonating = false;
 try {
     require_once __DIR__ . '/jwt.php';
     $pmPayload = jwt_from_request();
     if ($pmPayload && isset($pmPayload['sub'])) $pmUserId = (string) $pmPayload['sub'];
+    if ($pmPayload && isset($pmPayload['imp'])) $pmIsImpersonating = true;
 } catch (Throwable $e) {}
 
 $pmLine = sprintf(
-    "[%s] [S] IP:%-16s Country:%-4s OS:%-14s Browser:%-22s Lang:%-10s HTTPS:%s Ref:%-30s User:%-5s Page:%s\n",
-    $pmTime, $pmIp, $pmCountry, $pmOs, $pmBrowser, $pmLang, $pmHttps, $pmRef, $pmUserId, $pmPage
+    "[%s] [S] IP:%-16s Country:%-4s OS:%-14s Browser:%-22s Lang:%-10s HTTPS:%s Ref:%-30s User:%-5s Page:%s%s\n",
+    $pmTime, $pmIp, $pmCountry, $pmOs, $pmBrowser, $pmLang, $pmHttps, $pmRef, $pmUserId, $pmPage,
+    $pmIsImpersonating ? ' [IMPERSONATED]' : ''
 );
 
 pm_write_log($pmLine);
-pm_record_pageview($pmPage, $pmIp, $pmUa, $pmUserId);
+// 관리자가 대리 로그인 중인 세션은 회원 본인의 접속 통계(page_views)에 반영하지 않는다.
+if (!$pmIsImpersonating) {
+    pm_record_pageview($pmPage, $pmIp, $pmUa, $pmUserId);
+}

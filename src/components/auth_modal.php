@@ -4,7 +4,8 @@
 ?>
 <!-- 관리자 대리 로그인 중 표시 배너 — localStorage에 원래 관리자 세션이 보관되어 있을 때만
      (즉 대리 로그인을 시작한 그 관리자 브라우저에서만) 보인다. 대상 회원 본인 화면·계정 데이터에는
-     아무 흔적도 남지 않는다(last_login 갱신 안 함, 회원 쪽 localStorage/쿠키 무관). -->
+     아무 흔적도 남지 않는다(last_login_at 갱신 안 함, page_views 접속통계 기록 제외 — impersonate.php의
+     JWT 'imp' 클레임을 logger.php가 감지해서 건너뜀, 회원 쪽 localStorage/쿠키 무관). -->
 <div id="pmImpersonateBar" style="display:none;position:fixed;top:0;left:0;right:0;z-index:2000;height:26px;background:var(--danger);color:#fff;align-items:center;justify-content:center;gap:10px;font-size:11px;font-weight:600;">
     <span><i class="bi bi-incognito"></i> 대리 로그인 중 — <span id="pmImpersonateEmail"></span></span>
     <button onclick="endImpersonation()" style="background:#fff;color:var(--danger);border:none;border-radius:4px;padding:1px 8px;font-size:10px;font-weight:700;cursor:pointer;">관리자로 복귀</button>

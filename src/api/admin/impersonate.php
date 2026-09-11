@@ -53,6 +53,7 @@ $token = jwt_encode([
     'sub'   => $target['id'],
     'email' => $target['email'],
     'role'  => $target['role'],
+    'imp'   => $admin['id'], // 대리 로그인 표식 — 접속 통계(page_views) 기록에서 제외시키는 용도
     'iat'   => time(),
     'exp'   => time() + JWT_EXPIRE,
 ]);
