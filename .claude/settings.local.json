@@ -21,7 +21,16 @@
       "Bash(python -c \"import cairosvg\")",
       "Bash(cp \"/d/chun_full/0_chun_work/1 평목/2 평목 로고/2024_LOGO.ai\" \"/c/Users/main/AppData/Local/Temp/claude/c--www-d-pyeongmok-www/4c8eec8d-2ee0-4ee0-95e0-43c2852f617a/scratchpad/2024_LOGO.pdf\")",
       "Bash(scp -i ~/.ssh/pyeongmok_studio -P 6822 \"C:/Users/main/AppData/Local/Temp/claude/c--www-d-pyeongmok-www/4c8eec8d-2ee0-4ee0-95e0-43c2852f617a/scratchpad/update_square_card.php\" chunks@211.35.72.68:/tmp/update_square_card.php)",
-      "Bash(ssh -i ~/.ssh/pyeongmok_studio -p 6822 chunks@211.35.72.68 \"cd /home/chunks/web/studio.pyeongmok.com && php /tmp/update_square_card.php; rm -f /tmp/update_square_card.php\")"
+      "Bash(ssh -i ~/.ssh/pyeongmok_studio -p 6822 chunks@211.35.72.68 \"cd /home/chunks/web/studio.pyeongmok.com && php /tmp/update_square_card.php; rm -f /tmp/update_square_card.php\")",
+      "Bash(node --check src/js/classic.js)",
+      "Bash(git -C /Users/kyungchun/web/windows.pyeongmok.com commit -m ' *)",
+      "Bash(git -C /Users/kyungchun/web/windows.pyeongmok.com push origin main)",
+      "Bash(php -l /Users/kyungchun/web/windows.pyeongmok.com/src/admin/index.php)",
+      "Bash(php -l /Users/kyungchun/web/windows.pyeongmok.com/src/admin/works.php)",
+      "Bash(git commit *)",
+      "Bash(php -l /Users/kyungchun/web/windows.pyeongmok.com/index.php)",
+      "Bash(ssh *)",
+      "Bash(php *)"
     ],
     "additionalDirectories": [
       "D:\\chun_full\\0_chun_work\\1 평목\\2 평목 로고"
