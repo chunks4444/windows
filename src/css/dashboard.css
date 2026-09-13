@@ -340,6 +340,7 @@ body {
 .db-card-body {
     padding: 12px 14px 14px;
     background: #F7F4ED;
+    border-top: 1px solid var(--border);
 }
 
 .db-card-title {
