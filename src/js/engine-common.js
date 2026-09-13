@@ -814,26 +814,35 @@
             return panelOffsetX;
         });
 
-        // 직선(x0,y0)-(x1,y1)을 사각형 [xmin,xmax]x[ymin,ymax]로 잘라낸다(Liang-Barsky).
+        // 볼록 폴리곤을 사각형 [xmin,xmax]x[ymin,ymax]로 잘라낸다 (Sutherland–Hodgman, 4변 순차 클립).
         // 정자살/세살처럼 칸 폭 공식이 마지막 칸을 안쪽 경계 밖으로 살짝 넘기는 경우,
-        // 그리고 빗살/격자빗살처럼 대각선이 클리핑 영역(캔버스 clip)을 넘어가는 경우 모두
+        // 그리고 빗살/세모살/육모살처럼 살이 45°·60° 등으로 비스듬한 경우 모두
         // 캔버스에서는 프레임이 덮어 안 보이지만 DXF에는 그대로 나가므로 여기서 잘라낸다.
-        function clipSegToRect(x0, y0, x1, y1, xmin, xmax, ymin, ymax) {
-            let t0 = 0, t1 = 1;
-            const dx = x1 - x0, dy = y1 - y0;
-            const clipTest = (p, q) => {
-                if (Math.abs(p) < 1e-9) return q >= 0;
-                const r = q / p;
-                if (p < 0) { if (r > t1) return false; if (r > t0) t0 = r; }
-                else       { if (r < t0) return false; if (r < t1) t1 = r; }
-                return true;
+        // 중심선만 클리핑하고 나중에 수직 방향으로 두께(halfW)를 입히면, 빗각인 살은 두께를 입히는
+        // 방향이 잘린 경계면과 어긋나 있어 모서리가 halfW*sin(각도)만큼 울거미 안쪽으로 다시 튀어나가는
+        // 문제가 있었다 — 그래서 두께를 입힌 사각형 자체를 폴리곤으로 클리핑한다.
+        function clipPolyToRect(poly, xmin, xmax, ymin, ymax) {
+            const lerp = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+            const clipEdge = (pts, inside, t) => {
+                const out = [];
+                for (let i = 0; i < pts.length; i++) {
+                    const cur = pts[i], prev = pts[(i - 1 + pts.length) % pts.length];
+                    const curIn = inside(cur), prevIn = inside(prev);
+                    if (curIn) {
+                        if (!prevIn) out.push(lerp(prev, cur, t(prev, cur)));
+                        out.push(cur);
+                    } else if (prevIn) {
+                        out.push(lerp(prev, cur, t(prev, cur)));
+                    }
+                }
+                return out;
             };
-            if (!clipTest(-dx, x0 - xmin)) return null;
-            if (!clipTest(dx, xmax - x0)) return null;
-            if (!clipTest(-dy, y0 - ymin)) return null;
-            if (!clipTest(dy, ymax - y0)) return null;
-            if (t1 < t0) return null;
-            return { x0: x0 + t0 * dx, y0: y0 + t0 * dy, x1: x0 + t1 * dx, y1: y0 + t1 * dy };
+            let pts = poly;
+            pts = clipEdge(pts, p => p[0] >= xmin, (a, b) => (xmin - a[0]) / (b[0] - a[0]));
+            pts = clipEdge(pts, p => p[0] <= xmax, (a, b) => (xmax - a[0]) / (b[0] - a[0]));
+            pts = clipEdge(pts, p => p[1] >= ymin, (a, b) => (ymin - a[1]) / (b[1] - a[1]));
+            pts = clipEdge(pts, p => p[1] <= ymax, (a, b) => (ymax - a[1]) / (b[1] - a[1]));
+            return pts;
         }
 
         const lineGroups = new Map();
@@ -873,24 +882,20 @@
                 // 이 조각이 속한 문의 안쪽(울거미 내부) 경계로 잘라낸다 — 중점 기준으로 문을 찾는다.
                 const midX = (run.lo.x + run.hi.x) / 2;
                 const off = doorOffsets.find(o => midX >= o - EPS && midX <= o + geo.outerW + EPS) ?? 0;
-                const clipped = clipSegToRect(
-                    run.lo.x, run.lo.y, run.hi.x, run.hi.y,
+                const px = -uy * halfW, py = ux * halfW;
+                const quad = [
+                    [run.lo.x + px, run.lo.y + py],
+                    [run.hi.x + px, run.hi.y + py],
+                    [run.hi.x - px, run.hi.y - py],
+                    [run.lo.x - px, run.lo.y - py],
+                ];
+                const points = clipPolyToRect(
+                    quad,
                     off + geo.frameW, off + geo.frameW + geo.innerW,
                     geo.frameHTop, geo.frameHTop + geo.innerH
                 );
-                if (!clipped) return; // 안쪽 경계와 아예 안 겹치면(비정상 상태) 내보내지 않는다
-                const lo = { x: clipped.x0, y: clipped.y0 }, hi = { x: clipped.x1, y: clipped.y1 };
-                const px = -uy * halfW, py = ux * halfW;
-                entities.push({
-                    type: 'LWPOLYLINE',
-                    closed: true,
-                    points: [
-                        [lo.x + px, lo.y + py],
-                        [hi.x + px, hi.y + py],
-                        [hi.x - px, hi.y - py],
-                        [lo.x - px, lo.y - py],
-                    ],
-                });
+                if (points.length < 3) return; // 안쪽 경계와 아예 안 겹치면(비정상 상태) 내보내지 않는다
+                entities.push({ type: 'LWPOLYLINE', closed: true, points });
             };
             let run = ranges[0];
             for (let i = 1; i < ranges.length; i++) {
