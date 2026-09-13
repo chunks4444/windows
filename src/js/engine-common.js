@@ -736,7 +736,8 @@
     }
 
     // entities: { type:'LINE', x1,y1,x2,y2 } | { type:'LWPOLYLINE', points:[[x,y],...], closed }
-    // 좌표는 실측 mm, DXF 관례대로 Y축은 위가 + 방향이라 캔버스 좌표(아래가 +)의 Y부호를 뒤집어 넣는다.
+    // 좌표는 실측 mm. 원점(0,0)은 도면 좌측 하단 — collectPatternDxfEntities()에서 이미
+    // 그렇게 뒤집어 넣으므로 여기서는 그대로 출력한다.
     //
     // R12(AC1009) 포맷으로 고정 — R14(AC1014)의 LWPOLYLINE은 핸들(그룹5)·서브클래스 마커(그룹100)가
     // 없으면 AutoCAD가 파일을 거부하는 경우가 있어 실제로 안 열리는 사고가 있었음(HEADER만 추가해선 미해결).
@@ -754,13 +755,13 @@
             if (e.type === 'LINE') {
                 out.push(
                     '0', 'LINE', '8', '0',
-                    '10', String(e.x1), '20', String(-e.y1), '30', '0',
-                    '11', String(e.x2), '21', String(-e.y2), '31', '0'
+                    '10', String(e.x1), '20', String(e.y1), '30', '0',
+                    '11', String(e.x2), '21', String(e.y2), '31', '0'
                 );
             } else if (e.type === 'LWPOLYLINE') {
                 out.push('0', 'POLYLINE', '8', '0', '66', '1', '70', e.closed ? '1' : '0', '30', '0');
                 for (const [x, y] of e.points) {
-                    out.push('0', 'VERTEX', '8', '0', '10', String(x), '20', String(-y), '30', '0');
+                    out.push('0', 'VERTEX', '8', '0', '10', String(x), '20', String(y), '30', '0');
                 }
                 out.push('0', 'SEQEND');
             }
@@ -782,17 +783,31 @@
     // 6개 엔진 공통: draw() 직후 상태(lastSegMap/geo/도어 설정)에서 살 교차선 + 울거미 외곽선을
     // 실측 mm 단위 DXF 엔티티로 뽑아낸다. 촉(tenon) 돌출부와 풍판은 아직 미포함 —
     // 형상 참고/CAD 반입용 1차 버전이며, 살 교차부(반턱)는 홈 형상 없이 단순 겹친 상태로 나간다.
+    // 각 살은 중심선이 아니라 geo.slatT(=slatV=slatH, 6엔진 공통 단일 값) 폭의 사각형 폴리라인으로 내보낸다.
     function collectPatternDxfEntities({ lastSegMap, deletedSegs, lastOLeft, lastOTop, lastBaseScale, geo, txtDoorType, txtDoorCount }) {
         const entities = [];
+        const halfW = geo.slatT / 2;
 
         for (const [segKey, seg] of lastSegMap) {
             if (deletedSegs.has(segKey)) continue;
+            const x1 = (seg.cx - lastOLeft) / lastBaseScale;
+            const y1 = (seg.cy - lastOTop) / lastBaseScale;
+            const x2 = (seg.ex - lastOLeft) / lastBaseScale;
+            const y2 = (seg.ey - lastOTop) / lastBaseScale;
+            const dx = x2 - x1, dy = y2 - y1;
+            const len = Math.hypot(dx, dy);
+            if (len < 1e-6) continue;
+            const ux = dx / len, uy = dy / len;
+            const px = -uy * halfW, py = ux * halfW;
             entities.push({
-                type: 'LINE',
-                x1: (seg.cx - lastOLeft) / lastBaseScale,
-                y1: (seg.cy - lastOTop) / lastBaseScale,
-                x2: (seg.ex - lastOLeft) / lastBaseScale,
-                y2: (seg.ey - lastOTop) / lastBaseScale,
+                type: 'LWPOLYLINE',
+                closed: true,
+                points: [
+                    [x1 + px, y1 + py],
+                    [x2 + px, y2 + py],
+                    [x2 - px, y2 - py],
+                    [x1 - px, y1 - py],
+                ],
             });
         }
 
@@ -827,6 +842,19 @@
                     closed: true,
                     points: [[x0, y0], [x0 + rw, y0], [x0 + rw, y0 + rh], [x0, y0 + rh]],
                 });
+            }
+        }
+
+        // 지금까지 모든 좌표는 캔버스 관례(위쪽이 0, 아래로 갈수록 +)로 쌓았다.
+        // DXF는 원점을 좌측 하단에 두므로 마지막에 한 번에 Y를 outerH 기준으로 뒤집는다
+        // (0=하단, outerH=상단) — 개별 좌표마다 따로 뒤집으면 부호 실수가 나기 쉬움.
+        const flipY = y => geo.outerH - y;
+        for (const e of entities) {
+            if (e.type === 'LINE') {
+                e.y1 = flipY(e.y1);
+                e.y2 = flipY(e.y2);
+            } else if (e.type === 'LWPOLYLINE') {
+                e.points = e.points.map(([x, y]) => [x, flipY(y)]);
             }
         }
 
