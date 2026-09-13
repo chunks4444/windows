@@ -738,7 +738,14 @@
     // entities: { type:'LINE', x1,y1,x2,y2 } | { type:'LWPOLYLINE', points:[[x,y],...], closed }
     // 좌표는 실측 mm, DXF 관례대로 Y축은 위가 + 방향이라 캔버스 좌표(아래가 +)의 Y부호를 뒤집어 넣는다.
     function buildDxfContent(entities) {
-        const out = ['0', 'SECTION', '2', 'ENTITIES'];
+        // HEADER($ACADVER) 없이 바로 ENTITIES로 시작하면 AutoCAD가 버전을 판단 못 해 파일을 열지 못한다.
+        // LWPOLYLINE은 R14(AC1014)부터 지원되는 엔티티라 그 이상 버전을 명시해야 함.
+        const out = [
+            '0', 'SECTION', '2', 'HEADER',
+            '9', '$ACADVER', '1', 'AC1014',
+            '0', 'ENDSEC',
+            '0', 'SECTION', '2', 'ENTITIES',
+        ];
         for (const e of entities) {
             if (e.type === 'LINE') {
                 out.push(
