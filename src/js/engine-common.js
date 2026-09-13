@@ -844,8 +844,14 @@
             const y2 = (seg.ey - lastOTop) / lastBaseScale;
             if (Math.hypot(x2 - x1, y2 - y1) < 1e-6) continue;
             // lineKey가 없는(예: 자유 추가선) 조각은 다른 조각과 절대 합치지 않도록 segKey를 그룹키로 쓴다.
-            const groupKey = seg.lineKey != null ? seg.lineKey : `solo:${segKey}`;
-            if (!lineGroups.has(groupKey)) lineGroups.set(groupKey, { normAngle: seg.normAngle, segs: [] });
+            // 자유 추가선은 seg.normAngle이 항상 0으로 저장돼 있어(실제 각도와 무관 — 캔버스에서는
+            // ctx.stroke()가 알아서 선 방향에 수직으로 두께를 입혀서 문제가 없었지만, 여기서는 그
+            // 값을 그대로 믿으면 대각선인데 가로선 취급해 두께를 엉뚱한(수직) 방향으로 입히게 된다)
+            // 실제 좌표로 각도를 다시 계산한다.
+            const isSolo = seg.lineKey == null;
+            const groupKey = isSolo ? `solo:${segKey}` : seg.lineKey;
+            const normAngle = isSolo ? (((Math.atan2(y2 - y1, x2 - x1) % Math.PI) + Math.PI) % Math.PI) : seg.normAngle;
+            if (!lineGroups.has(groupKey)) lineGroups.set(groupKey, { normAngle, segs: [] });
             lineGroups.get(groupKey).segs.push([x1, y1, x2, y2]);
         }
 
