@@ -16,7 +16,7 @@
 }
 .auth-modal-brand {
     flex: 0 0 260px;
-    background: #fff;
+    background: var(--bg);
     border-right: 1px solid rgba(var(--text-rgb), 0.15);
     display: flex;
     flex-direction: column;
@@ -33,12 +33,12 @@
     margin: 18px 0 0;
     font-size: var(--fs-13);
     line-height: 1.6;
-    color: rgba(var(--text-rgb), 0.55);
+    color: rgba(var(--text-rgb), 0.8);
 }
 .auth-modal-form-panel {
     flex: 1;
     min-width: 0;
-    background: #fff;
+    background: var(--bg);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -64,7 +64,7 @@
     padding: 4px 0 10px;
     font-size: var(--fs-16);
     font-weight: 700;
-    color: var(--text-muted);
+    color: rgba(var(--text-rgb), 0.7);
     border-bottom: 2px solid transparent;
     cursor: pointer;
     letter-spacing: -0.3px;
@@ -75,7 +75,7 @@
     border-bottom-color: var(--accent);
 }
 .auth-tab:hover:not(.active) {
-    color: var(--text-muted);
+    color: var(--text);
 }
 
 /* ── 뒤로가기 행 ── */
@@ -98,7 +98,7 @@
     gap: 4px;
     font-weight: 500;
     letter-spacing: -0.1px;
-    opacity: .8;
+    opacity: 1;
     transition: opacity .15s;
     font-family: inherit;
 }
@@ -113,7 +113,7 @@
 }
 .auth-field label {
     font-size: var(--fs-12);
-    font-weight: 400;
+    font-weight: 700;
     color: var(--text);
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -125,16 +125,16 @@
     font-size: var(--fs-16);
     color: var(--text);
     outline: none;
-    background: transparent;
+    background: #F7F4ED;
     font-family: inherit;
     transition: border-color .18s, box-shadow .18s;
 }
 .auth-field input::placeholder {
-    color: var(--text-muted);
+    color: rgba(var(--text-rgb), 0.55);
 }
 .auth-field input:focus {
     border-color: var(--text);
-    background: transparent;
+    background: #F7F4ED;
     box-shadow: 0 0 0 3px rgba(var(--text-rgb), .12);
 }
 
@@ -156,8 +156,8 @@
 .auth-field input:-webkit-autofill:hover,
 .auth-field input:-webkit-autofill:focus {
     -webkit-text-fill-color: var(--text);
-    -webkit-box-shadow: 0 0 0 1000px #fff inset;
-    box-shadow: 0 0 0 1000px #fff inset;
+    -webkit-box-shadow: 0 0 0 1000px #F7F4ED inset;
+    box-shadow: 0 0 0 1000px #F7F4ED inset;
     transition: background-color 5000s ease-in-out 0s;
 }
 
@@ -180,7 +180,7 @@
 .auth-consent span {
     font-size: var(--fs-13);
     line-height: 1.5;
-    color: var(--text-muted);
+    color: rgba(var(--text-rgb), 0.85);
 }
 .auth-consent a {
     color: var(--text);
@@ -270,7 +270,7 @@
 /* ── forgot 안내 텍스트 ── */
 .auth-hint {
     font-size: var(--fs-14);
-    color: var(--text-muted);
+    color: rgba(var(--text-rgb), 0.8);
     line-height: 1.75;
     margin: 0 0 20px;
 }
@@ -291,13 +291,13 @@
     border-radius: 10px;
     text-decoration: none;
     border: 1.5px solid var(--border);
-    background: var(--bg);
+    background: #F7F4ED;
     color: var(--text);
     transition: background .15s, border-color .15s;
     font-family: inherit;
 }
 .auth-sns-btn:hover {
-    background: var(--bg);
+    background: #EFEADD;
     border-color: var(--text-muted);
     color: var(--text);
     text-decoration: none;
@@ -321,7 +321,7 @@
     cursor: not-allowed;
 }
 .auth-sns-locked .auth-sns-btn:hover {
-    background: var(--bg);
+    background: #F7F4ED;
     border-color: var(--accent-tint);
 }
 
@@ -331,7 +331,7 @@
     align-items: center;
     gap: 10px;
     margin: 16px 0 14px;
-    color: var(--border);
+    color: rgba(var(--text-rgb), 0.55);
     font-size: var(--fs-12);
     font-weight: 600;
     letter-spacing: 0.05em;
@@ -347,7 +347,7 @@
 /* ── reset 안내 텍스트 ── */
 .auth-reset-hint {
     font-size: var(--fs-14);
-    color: var(--text-muted);
+    color: rgba(var(--text-rgb), 0.8);
     margin: 0 0 18px;
     line-height: 1.6;
 }
