@@ -339,6 +339,7 @@ body {
 /* ── 카드 정보 ───────────────────────────────── */
 .db-card-body {
     padding: 12px 14px 14px;
+    background: #F7F4ED;
 }
 
 .db-card-title {
