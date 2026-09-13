@@ -792,6 +792,27 @@
         const halfW = geo.slatT / 2;
         const EPS = 0.05; // mm — 인접 조각의 끝점 오차 허용치
 
+        const doorType     = txtDoorType.value;
+        const doorCount     = parseInt(txtDoorCount.value);
+        const gap           = window.__pmokEngineLayout?.gap ?? 2;
+        const overlap       = geo.frameW;
+        const renderOrder   = [...Array(doorCount).keys()];
+
+        // 문(door)별 좌측 오프셋 — 가로살 우측 끝을 해당 문의 우측 울거미 안쪽 경계에서 트림하는 데 쓴다.
+        const doorOffsets = renderOrder.map(d => {
+            let panelOffsetX = 0;
+            if (doorType === 'swing') {
+                panelOffsetX = d * (geo.outerW + gap);
+            } else if (doorType === 'slide') {
+                if      (doorCount === 1) panelOffsetX = 0;
+                else if (doorCount === 2) panelOffsetX = d === 0 ? 0 : geo.outerW - overlap;
+                else if (doorCount === 3) panelOffsetX = d === 0 ? 0 : d === 1 ? geo.outerW - overlap : (geo.outerW * 2) - (overlap * 2);
+                else if (doorCount === 4) panelOffsetX = d === 0 ? 0 : d === 1 ? geo.outerW - overlap : d === 2 ? (geo.outerW * 2) - overlap : (geo.outerW * 3) - (overlap * 2);
+                else if (doorCount === 6) panelOffsetX = d === 0 ? 0 : d === 1 ? geo.outerW - overlap : d === 2 ? (geo.outerW * 2) - (overlap * 2) : d === 3 ? (geo.outerW * 3) - (overlap * 2) : d === 4 ? (geo.outerW * 4) - (overlap * 3) : (geo.outerW * 5) - (overlap * 4);
+            }
+            return panelOffsetX;
+        });
+
         const lineGroups = new Map();
         for (const [segKey, seg] of lastSegMap) {
             if (deletedSegs.has(segKey)) continue;
@@ -820,6 +841,13 @@
             ranges.sort((a, b) => a.tLo - b.tLo);
 
             const flushRun = (run) => {
+                // 가로살(normAngle≈0)은 칸 폭 공식(cellW+slatT)상 마지막 칸이 slatT만큼 안쪽 경계를
+                // 넘어 우측 울거미 속으로 파고드는 조각이 나온다 — 그 문의 울거미 안쪽 경계에서 트림.
+                if (Math.abs(normAngle) < 0.01) {
+                    const off = doorOffsets.find(o => run.lo.x >= o - EPS && run.lo.x <= o + geo.outerW + EPS) ?? 0;
+                    const rightBound = off + geo.frameW + geo.innerW;
+                    if (run.hi.x > rightBound) run = { ...run, hi: { x: rightBound, y: run.hi.y } };
+                }
                 const px = -uy * halfW, py = ux * halfW;
                 entities.push({
                     type: 'LWPOLYLINE',
@@ -841,23 +869,8 @@
             flushRun(run);
         }
 
-        const doorType     = txtDoorType.value;
-        const doorCount     = parseInt(txtDoorCount.value);
-        const gap           = window.__pmokEngineLayout?.gap ?? 2;
-        const overlap       = geo.frameW;
-        const renderOrder   = [...Array(doorCount).keys()];
-
         for (const d of renderOrder) {
-            let panelOffsetX = 0;
-            if (doorType === 'swing') {
-                panelOffsetX = d * (geo.outerW + gap);
-            } else if (doorType === 'slide') {
-                if      (doorCount === 1) panelOffsetX = 0;
-                else if (doorCount === 2) panelOffsetX = d === 0 ? 0 : geo.outerW - overlap;
-                else if (doorCount === 3) panelOffsetX = d === 0 ? 0 : d === 1 ? geo.outerW - overlap : (geo.outerW * 2) - (overlap * 2);
-                else if (doorCount === 4) panelOffsetX = d === 0 ? 0 : d === 1 ? geo.outerW - overlap : d === 2 ? (geo.outerW * 2) - overlap : (geo.outerW * 3) - (overlap * 2);
-                else if (doorCount === 6) panelOffsetX = d === 0 ? 0 : d === 1 ? geo.outerW - overlap : d === 2 ? (geo.outerW * 2) - (overlap * 2) : d === 3 ? (geo.outerW * 3) - (overlap * 2) : d === 4 ? (geo.outerW * 4) - (overlap * 3) : (geo.outerW * 5) - (overlap * 4);
-            }
+            const panelOffsetX = doorOffsets[d];
 
             const frameRects = [
                 [0, 0, geo.frameW, geo.outerH],
