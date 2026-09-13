@@ -67,7 +67,7 @@ body:has(.guide-wrap) {
 /* ── 가이드 랜딩 ─────────────────────────────── */
 .guide-landing {
     flex: 1;
-    background: #fff;
+    background: var(--bg);
     max-width: 1024px;
     margin: 0 auto;
     width: 100%;
@@ -106,7 +106,7 @@ body:has(.guide-wrap) {
 }
 
 .guide-cat-card {
-    background: #fff;
+    background: var(--accent-tint);
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 24px;
@@ -154,7 +154,7 @@ body:has(.guide-wrap) {
 .guide-sidebar {
     width: 256px;
     flex-shrink: 0;
-    background: #fff;
+    background: var(--bg);
     border-right: 1px solid var(--border);
     position: sticky;
     top: 68px;
@@ -227,7 +227,7 @@ body:has(.guide-wrap) {
 /* ── 본문 영역 ───────────────────────────────── */
 .guide-main {
     flex: 1;
-    background: #fff;
+    background: var(--bg);
     padding: 48px 60px 100px;
     min-width: 0;
 }
@@ -236,12 +236,12 @@ body:has(.guide-wrap) {
 /* 브레드크럼 */
 .guide-breadcrumb {
     display: flex; align-items: center; gap: 6px;
-    font-size: 12px; font-weight: 700; color: var(--text-muted);
+    font-size: 12px; font-weight: 700; color: var(--text);
     margin-bottom: 28px;
 }
-.guide-breadcrumb a { color: var(--text-muted); text-decoration: none; }
+.guide-breadcrumb a { color: var(--text); text-decoration: none; }
 .guide-breadcrumb a:hover { color: var(--accent); }
-.guide-breadcrumb .sep { font-size: 10px; font-weight: 400; color: var(--text-muted); }
+.guide-breadcrumb .sep { font-size: 10px; font-weight: 400; color: var(--text); }
 
 /* 제목 */
 .guide-article h1 {

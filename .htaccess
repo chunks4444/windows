@@ -122,6 +122,13 @@ RewriteRule ^sitemap\.xml$ /sitemap.php [L]
 # 블로그 RSS 피드
 RewriteRule ^rss\.xml$ /rss.php [L]
 
+# 로컬 개발환경 전용: uploads/ 하위 파일은 .gitignore 대상이라 로컬 저장소엔 없고 운영서버에만 있음.
+# 로컬 호스트(w.pyeongmok.com/windows.pyeongmok.com/localhost)에서 로컬에 없는 업로드 파일을 요청하면
+# 운영서버(pyeongmok.com) 이미지로 302 리다이렉트한다. 운영 도메인은 이 조건에 안 걸려 그대로 로컬 파일을 서빙.
+RewriteCond %{HTTP_HOST} ^(w\.pyeongmok\.com|windows\.pyeongmok\.com|localhost)$ [NC]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^uploads/(.*)$ https://pyeongmok.com/uploads/$1 [R=302,L]
+
 # 도면 썸네일 확장자 없는 주소 지원: /uploads/drawing_thumbs/{name} → {name}.png
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^uploads/drawing_thumbs/([A-Za-z0-9_]+)$ uploads/drawing_thumbs/$1.png [L]

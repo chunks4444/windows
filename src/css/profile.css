@@ -186,7 +186,7 @@
 }
 
 .pf-btn-save:hover:not(:disabled) {
-    background: var(--accent-hover);
+    background: var(--accent-active);
 }
 
 .pf-btn-save:disabled {

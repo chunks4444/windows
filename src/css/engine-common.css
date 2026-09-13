@@ -1,4 +1,8 @@
 body {
+    /* 엔진 스튜디오는 사이트 전체 배경색(--bg)/보조텍스트(--text-2) 변경과 무관하게 원래 톤을 유지 */
+    --bg:     #F3F4F5;
+    --bg-rgb:  243, 244, 245;
+    --text-2: #8A9199;
     background: var(--bg);
     height: 100vh;
     height: 100dvh;
@@ -278,7 +282,7 @@ body.pm-generator .pm-navbar .dropdown-menu { background: var(--sidebar-bg) !imp
 
 .hbtn:hover { background: rgba(255, 255, 255, 0.12); border-color: rgba(var(--bg-rgb), 0.25); color: var(--bg); }
 .hbtn-primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
-.hbtn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: var(--bg); }
+.hbtn-primary:hover { background: var(--accent-active); border-color: var(--accent-active); color: var(--bg); }
 #btnOrder { background: var(--danger); border-color: var(--danger); }
 #btnOrder:hover { background: var(--danger-hover); border-color: var(--danger-hover); }
 .hbtn svg { flex-shrink: 0; }
@@ -731,7 +735,7 @@ canvas:active { cursor: grabbing; }
     letter-spacing: -0.1px;
     transition: background 0.12s;
 }
-.render-result-apply:hover { background: var(--accent-hover); }
+.render-result-apply:hover { background: var(--accent-active); }
 .render-result-close {
     width: 30px;
     height: 30px;
@@ -845,7 +849,7 @@ canvas:active { cursor: grabbing; }
 .pm-btn-cancel  { background: var(--sidebar-bg); border-color: rgba(var(--bg-rgb), 0.15); color: rgba(var(--bg-rgb), 0.9); }
 .pm-btn-cancel:hover  { background: var(--text-1); color: var(--bg); }
 .pm-btn-ok      { background: var(--accent); border-color: var(--accent); color: var(--bg); }
-.pm-btn-ok:hover      { background: var(--accent-hover); border-color: var(--accent-hover); }
+.pm-btn-ok:hover      { background: var(--accent-active); border-color: var(--accent-active); }
 
 /* ── 견적요청 모달 ──────────────────────────────── */
 .order-modal {

@@ -81,6 +81,7 @@ body {
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     color: var(--text);
+    background: var(--bg);
     -webkit-overflow-scrolling: touch;
 }
 
@@ -146,13 +147,13 @@ body:has(.global-footer) {
 .global-footer .footer-copy {
     font-size: var(--fs-12);
     font-weight: 300;
-    color: rgba(var(--text-rgb), 0.6);
+    color: rgba(var(--text-rgb), 0.85);
     margin: 0;
 }
 
 .global-footer .footer-link {
     font-size: var(--fs-12);
-    color: rgba(var(--text-rgb), 0.4);
+    color: rgba(var(--text-rgb), 0.7);
     text-decoration: none;
     transition: color 0.2s;
 }

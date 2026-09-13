@@ -1,6 +1,6 @@
 /* ── WORK INDEX — 화이트 배경 정사각형 카드 그리드, 3열, 카드 사이 1px 블랙(바깥 외곽선 없음) ── */
 
-.wkg-page { background: #fff; min-height: 100vh; }
+.wkg-page { background: var(--bg); min-height: 100vh; }
 
 /* ── 페이지 헤더 ── */
 .wkg-header { padding: 56px 24px 28px; }
@@ -9,7 +9,7 @@
     display: inline-flex; align-items: center; gap: 8px;
     padding: 9px 16px;
     border: 1px solid var(--border); border-radius: 999px;
-    background: #fff; color: var(--text);
+    background: var(--bg); color: var(--text);
     font-size: var(--fs-13); font-weight: 600;
     cursor: pointer;
     transition: border-color .2s, color .2s;
@@ -18,16 +18,16 @@
 .wkg-label {
     display: block;
     font-size: var(--fs-12); font-weight: 700; letter-spacing: .1em;
-    text-transform: uppercase; color: var(--text-muted);
+    text-transform: uppercase; color: var(--accent);
     margin-bottom: .6rem;
 }
 .wkg-header h1 {
     font-size: clamp(1.9rem, 2.9vw, 2.5rem);
-    font-weight: 800; letter-spacing: -.01em; color: #111;
+    font-weight: 800; letter-spacing: -.01em; color: var(--text);
     line-height: 1.15; margin: 0 0 .7rem;
 }
 .wkg-sub {
-    font-size: var(--fs-14); color: var(--text-muted); line-height: 1.5;
+    font-size: var(--fs-14); color: var(--text); line-height: 1.5;
 }
 .wkg-count-badge { margin-left: .4rem; color: var(--text-muted); }
 
@@ -45,7 +45,7 @@
 }
 .wkg-card {
     position: relative;
-    background: #fff;
+    background: var(--accent-tint);
     aspect-ratio: 1 / 1;
     overflow: hidden;
     cursor: pointer;
@@ -101,20 +101,20 @@
 .wkg-load-more-wrap { display: flex; justify-content: center; padding-top: 32px; }
 .wkg-load-more-btn {
     padding: 11px 28px;
-    border: 1px solid #000; border-radius: 999px;
-    background: #fff; color: #111;
+    border: 1px solid var(--accent); border-radius: 999px;
+    background: var(--accent-tint); color: var(--text);
     font-size: var(--fs-14); font-weight: 700;
     cursor: pointer;
     transition: background .2s, color .2s;
 }
-.wkg-load-more-btn:hover { background: #111; color: #fff; }
+.wkg-load-more-btn:hover { background: var(--accent); color: var(--bg); }
 
 /* ── 키워드 필터 드롭다운 (필터 버튼 바로 아래) ── */
 .wkg-filter-wrap { position: relative; }
 .wkg-filter-dropdown {
     position: absolute; top: calc(100% + 8px); right: 0;
     min-width: 160px; max-height: 60vh; overflow-y: auto;
-    background: #fff; border: 1px solid var(--border); border-radius: 12px;
+    background: #F7F4ED; border: 1px solid var(--border); border-radius: 12px;
     box-shadow: 0 12px 32px rgba(var(--text-rgb), 0.16);
     padding: 6px;
     opacity: 0; visibility: hidden; transform: translateY(-6px);

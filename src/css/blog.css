@@ -1,13 +1,13 @@
 /* ── BLOG INDEX — 시리즈 허브 레이아웃 ────────────────────── */
 
-body { background: #fff; }
+body { background: var(--bg); }
 
 /* ── 페이지 래퍼 ──────────────────────────────────────────── */
 .bg-page { min-height: calc(100vh - 68px); }
 
 /* ── 페이지 헤더 ──────────────────────────────────────────── */
 .bg-hero {
-    background: #fff;
+    background: var(--bg);
     border-bottom: 1px solid var(--border, var(--border));
     padding: 2.5rem 0 0;
 }

@@ -103,6 +103,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
     <?php require_once __DIR__ . '/../lib/meta.php'; meta_tags(); ?>
     <?php define('BOOTSTRAP_LOADED', true); ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <?php css_tag('/src/css/work.css'); ?>
 </head>
 <body>
@@ -122,7 +123,10 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
                 </p>
             </div>
             <div class="wkg-filter-wrap">
-                <button type="button" class="wkg-filter-btn" id="wkgFilterBtn" aria-haspopup="true" aria-expanded="false"><i class="bi bi-sliders"></i> 필터</button>
+                <button type="button" class="wkg-filter-btn" id="wkgFilterBtn" aria-haspopup="true" aria-expanded="false">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="2" y1="4" x2="14" y2="4"/><line x1="2" y1="8" x2="14" y2="8"/><line x1="2" y1="12" x2="14" y2="12"/><circle cx="6" cy="4" r="1.6" fill="currentColor" stroke="none"/><circle cx="11" cy="8" r="1.6" fill="currentColor" stroke="none"/><circle cx="7" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg>
+                    필터
+                </button>
                 <div class="wkg-filter-dropdown" id="wkFilterDropdown" role="listbox" aria-hidden="true">
                     <?php foreach ($tags as $i => $tag): ?>
                     <button class="wkg-filter-option wk-tag<?= $i === 0 ? ' active' : '' ?>"

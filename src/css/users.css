@@ -172,7 +172,7 @@ tbody td {
     font-family: inherit; font-size: var(--fs-14); font-weight: 600;
     color: var(--bg); cursor: pointer; transition: background 0.12s;
 }
-.adm-btn-save:hover:not(:disabled) { background: var(--accent-hover); }
+.adm-btn-save:hover:not(:disabled) { background: var(--accent-active); }
 .adm-btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
 .adm-alert { padding: 8px 12px; border-radius: var(--r-sm); font-size: var(--fs-13); margin-bottom: 12px; }
 .adm-alert-error { background: var(--danger-tint); color: var(--danger); }

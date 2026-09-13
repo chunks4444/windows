@@ -24,7 +24,8 @@ node --check src/js/classic.js
 # 터널이 127.0.0.1:13306을 열어주면 src/lib/db.php가 자동으로 그 쪽으로 접속함
 
 # 로컬 개발 서버 (포트 8899)
-php -S localhost:8899 -t .
+# dev_router.php: uploads/ 하위 파일은 .gitignore 대상이라 로컬엔 없음 — 없는 이미지는 운영서버(pyeongmok.com)로 302 리다이렉트
+php -S localhost:8899 -t . dev_router.php
 
 # PHP 에러 로그 확인
 tail -f logs/php-error.log

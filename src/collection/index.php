@@ -153,12 +153,12 @@ function collection_card_html(array $p, array $navStudioIcons, array $engineEdit
                 <option value="jp-shoji">쇼지</option>
                 <option value="jp-kumiko">쿠미꼬</option>
             </select>
-            <button class="lib-filter-like" id="libLikeBtn"><i class="bi bi-heart-fill"></i> 좋아요</button>
+            <button class="lib-filter-like" id="libLikeBtn"><svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M8 14.2s-5.6-3.4-5.6-7.4c0-1.9 1.5-3.4 3.4-3.4 1.1 0 2.1.5 2.7 1.4.6-.9 1.6-1.4 2.7-1.4 1.9 0 3.4 1.5 3.4 3.4 0 4-5.6 7.4-5.6 7.4z"/></svg> 좋아요</button>
         </div>
         <div class="lib-right-group">
             <span class="lib-result-count" id="libResultCount"><strong><?= (int)$totalPatterns ?></strong>개 패턴</span>
             <div class="lib-search">
-                <i class="bi bi-search"></i>
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7" cy="7" r="5"/><line x1="10.8" y1="10.8" x2="14" y2="14" stroke-linecap="round"/></svg>
                 <input type="text" id="libSearch" placeholder="패턴 검색…" autocomplete="off" value="<?= htmlspecialchars($ssrQuery, ENT_QUOTES) ?>">
             </div>
         </div>

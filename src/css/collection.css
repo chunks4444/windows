@@ -4,11 +4,11 @@
     --r-sm:    8px;
 }
 
-body { background: #fff; }
+body { background: var(--bg); }
 
 /* ── 페이지 히어로 ───────────────────────────── */
 .lib-hero {
-    background: #fff;
+    background: var(--bg);
     border-bottom: 1px solid var(--border);
     padding: 2.5rem 0 0;
 }
@@ -43,7 +43,7 @@ body { background: #fff; }
     position: sticky;
     top: 68px;
     z-index: 100;
-    background: rgba(255, 255, 255, 0.75);
+    background: rgba(var(--bg-rgb), 0.75);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border);
@@ -90,7 +90,7 @@ body { background: #fff; }
     width: 100%;
 }
 
-.lib-search i { color: var(--text-muted); font-size: var(--fs-16); }
+.lib-search svg { color: var(--text-muted); flex-shrink: 0; }
 
 .lib-filter-like {
     display: inline-flex;
@@ -109,7 +109,7 @@ body { background: #fff; }
     transition: all 0.12s;
     white-space: nowrap;
 }
-.lib-filter-like i { font-size: var(--fs-12); color: var(--danger); }
+.lib-filter-like svg { color: var(--danger); flex-shrink: 0; }
 .lib-filter-like:hover {
     background: var(--text);
     border-color: var(--text);
@@ -121,8 +121,8 @@ body { background: #fff; }
     color: var(--bg);
     font-weight: 400;
 }
-.lib-filter-like.active i,
-.lib-filter-like:hover i { color: var(--bg); }
+.lib-filter-like.active svg,
+.lib-filter-like:hover svg { color: var(--bg); }
 
 /* ── 모양 / 공간 셀렉트 박스 ──────────────────── */
 .lib-select-row {
@@ -179,7 +179,7 @@ body { background: #fff; }
     border-radius: var(--r);
     overflow: hidden;
     cursor: pointer;
-    background: #fff;
+    background: var(--accent-tint);
     border: 1px solid var(--border);
     box-shadow: 0 1px 3px rgba(var(--text-rgb), 0.04);
     transition: box-shadow 0.2s, transform 0.2s;
@@ -205,7 +205,7 @@ body { background: #fff; }
 .lib-card-img {
     width: 100%;
     overflow: hidden;
-    background: var(--bg);
+    background: var(--accent-tint);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -304,15 +304,15 @@ body { background: #fff; }
 }
 
 .lib-btn-primary {
-    background: var(--danger);
+    background: var(--accent);
     color: var(--bg);
 }
-.lib-btn-primary:hover { background: var(--danger-hover); }
+.lib-btn-primary:hover { background: var(--accent-active); }
 
 /* ── 카드 하단 정보 ──────────────────────────── */
 .lib-card-body {
     padding: 10px 12px 12px;
-    background: #fff;
+    background: var(--accent-tint);
 }
 
 .lib-card-name {
@@ -334,6 +334,8 @@ body { background: #fff; }
 
 .lib-card-sub {
     font-size: var(--fs-12);
+    line-height: 1.4;
+    min-height: 1.4em;
     color: var(--text);
     white-space: nowrap;
     overflow: hidden;
@@ -475,7 +477,7 @@ body { background: #fff; }
     white-space: nowrap;
     transition: background 0.12s;
 }
-.bm-create-btn:hover { background: var(--accent-hover); }
+.bm-create-btn:hover { background: var(--accent-active); }
 
 /* ── 공유 아이콘 (검정 배경으로 강조) ─────────── */
 .lib-share-btn { background: rgba(0,0,0,0.85); color: #fff; }

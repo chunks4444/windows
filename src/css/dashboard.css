@@ -1,11 +1,11 @@
 body {
-    background: #fff;
+    background: var(--bg);
     min-height: 100vh;
 }
 
 /* ── 페이지 히어로 ───────────────────────────── */
 .lib-hero {
-    background: #fff;
+    background: var(--bg);
     border-bottom: 1px solid var(--border);
     padding: 2.5rem 0 0;
 }
@@ -179,8 +179,8 @@ body {
 @media (max-width: 480px)  { .db-grid { grid-template-columns: 1fr; } }
 
 .db-card {
-    background: #fff;
-    border-radius: var(--r);
+    background: var(--accent-tint);
+    border-radius: 14px;
     border: 1px solid var(--border);
     overflow: hidden;
     cursor: pointer;
@@ -394,8 +394,8 @@ body {
     text-align: center;
     color: var(--text);
     font-size: var(--fs-14);
-    background: #fff;
-    border-radius: var(--r);
+    background: var(--accent-tint);
+    border-radius: 14px;
     border: 1px dashed var(--border);
 }
 
@@ -410,9 +410,9 @@ body {
 
 /* ── 로그인 유도 배너 ────────────────────────── */
 .db-auth-banner {
-    background: #fff;
+    background: var(--accent-tint);
     border: 1px solid var(--border);
-    border-radius: var(--r);
+    border-radius: 14px;
     padding: 48px 32px;
     text-align: center;
     margin-top: 40px;
@@ -441,7 +441,7 @@ body {
     cursor: pointer;
     transition: background 0.12s;
 }
-.db-auth-btn:hover { background: var(--accent-hover); }
+.db-auth-btn:hover { background: var(--accent-active); }
 
 /* ── 탭 ──────────────────────────────────────── */
 .db-tabs {
@@ -511,7 +511,7 @@ body {
 
 .db-delete-modal-box {
     position: relative;
-    background: #fff;
+    background: #F7F4ED;
     border-radius: 16px;
     padding: 32px 28px 24px;
     width: min(90vw, 360px);
@@ -654,7 +654,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #fff;
+    background: var(--accent-tint);
 }
 
 /* ── 보드 모달 패턴 아이템 ───────────────────── */
@@ -664,7 +664,7 @@ body {
     border-radius: 8px;
     overflow: hidden;
     border: 1px solid var(--border);
-    background: #fff;
+    background: var(--accent-tint);
 }
 
 .db-board-item img {
