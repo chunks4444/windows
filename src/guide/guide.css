@@ -5,7 +5,7 @@
     overflow: hidden;
     margin: 24px 0;
     box-shadow: 0 2px 12px rgba(var(--text-rgb), .06);
-    background: #F7F4ED;
+    background: var(--bg);
 }
 .guide-screenshot img {
     display: block;
@@ -40,7 +40,7 @@
 }
 .guide-flow-step {
     flex: 1; min-width: 100px;
-    background: #F7F4ED;
+    background: rgba(var(--text-rgb), .06);
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 12px 10px;
@@ -317,14 +317,14 @@ body:has(.guide-wrap) {
     margin: 20px 0; font-size: 13px; line-height: 1.7;
 }
 .guide-tip  { background: var(--accent-tint);  color: var(--accent); border-left: 3px solid var(--accent); }
-.guide-note { background: #F7F4ED;      color: var(--text); border-left: 3px solid var(--border); }
+.guide-note { background: rgba(var(--text-rgb), .07); color: var(--text); border-left: 3px solid var(--border); }
 .guide-warn { background: var(--warning-tint); color: var(--warning-text); border-left: 3px solid var(--danger); }
 .guide-tip i, .guide-note i, .guide-warn i { flex-shrink: 0; font-size: 15px; margin-top: 1px; }
 
 /* UI 레이블 칩 */
 .guide-ui {
     display: inline-block;
-    background: #fff; border: 1px solid var(--border);
+    background: rgba(var(--text-rgb), .14); border: 1px solid var(--border);
     border-radius: 4px; padding: 1px 7px;
     font-size: 12px; font-weight: 600;
     color: var(--text); vertical-align: middle;
@@ -336,7 +336,7 @@ body:has(.guide-wrap) {
     margin: 16px 0 24px; font-size: 13px;
 }
 .guide-table th {
-    background: #F7F4ED; text-align: left;
+    background: var(--bg); text-align: left;
     padding: 9px 14px; font-weight: 600;
     color: var(--text); border-bottom: 2px solid var(--border);
 }
