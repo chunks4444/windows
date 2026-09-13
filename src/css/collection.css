@@ -313,6 +313,7 @@ body { background: var(--bg); }
 .lib-card-body {
     padding: 10px 12px 12px;
     background: #F7F4ED;
+    border-top: 1px solid var(--border);
 }
 
 .lib-card-name {
