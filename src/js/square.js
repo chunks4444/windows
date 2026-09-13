@@ -122,6 +122,7 @@
     const txtDoorCount = document.getElementById('txtDoorCount');
     const btnSavePNG = document.getElementById('btnSavePNG');
     const btnSavePDF = document.getElementById('btnSavePDF');
+    const btnSaveDXF = document.getElementById('btnSaveDXF');
     // aiFileUploader는 engine-common.js가 선언(배경화면 업로드 공용 로직에서 사용)
 
     let geo = {};
@@ -2985,5 +2986,13 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
         pdf.save(getExportFilename('pdf'));
         DrawingSync.logExport(drawingId, WALLPAPER_ENGINE, 'pdf', document.getElementById('drawingName')?.value.trim() || '', document.getElementById('verLabel')?.textContent.trim() || '');
     });
+
+    btnSaveDXF.addEventListener('click', function() {
+        if (!localStorage.getItem('pmok_auth_token')) { pmokRequireAuth(() => btnSaveDXF.click()); return; }
+        const entities = collectPatternDxfEntities({ lastSegMap, deletedSegs, lastOLeft, lastOTop, lastBaseScale, geo, txtDoorType, txtDoorCount });
+        downloadDxf(getExportFilename('dxf'), buildDxfContent(entities));
+        DrawingSync.logExport(drawingId, WALLPAPER_ENGINE, 'dxf', document.getElementById('drawingName')?.value.trim() || '', document.getElementById('verLabel')?.textContent.trim() || '');
+    });
+
     // AI 채팅
     window.pmokInitAiChat?.({ engine: WALLPAPER_ENGINE, getParams, applyParams });

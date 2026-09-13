@@ -735,6 +735,90 @@
         return `${safe}.${ext}`;
     }
 
+    // entities: { type:'LINE', x1,y1,x2,y2 } | { type:'LWPOLYLINE', points:[[x,y],...], closed }
+    // 좌표는 실측 mm, DXF 관례대로 Y축은 위가 + 방향이라 캔버스 좌표(아래가 +)의 Y부호를 뒤집어 넣는다.
+    function buildDxfContent(entities) {
+        const out = ['0', 'SECTION', '2', 'ENTITIES'];
+        for (const e of entities) {
+            if (e.type === 'LINE') {
+                out.push(
+                    '0', 'LINE', '8', '0',
+                    '10', String(e.x1), '20', String(-e.y1), '30', '0',
+                    '11', String(e.x2), '21', String(-e.y2), '31', '0'
+                );
+            } else if (e.type === 'LWPOLYLINE') {
+                out.push('0', 'LWPOLYLINE', '8', '0', '90', String(e.points.length), '70', e.closed ? '1' : '0');
+                for (const [x, y] of e.points) out.push('10', String(x), '20', String(-y));
+            }
+        }
+        out.push('0', 'ENDSEC', '0', 'EOF');
+        return out.join('\n');
+    }
+
+    function downloadDxf(filename, content) {
+        const blob = new Blob([content], { type: 'application/dxf' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = url;
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    // 6개 엔진 공통: draw() 직후 상태(lastSegMap/geo/도어 설정)에서 살 교차선 + 울거미 외곽선을
+    // 실측 mm 단위 DXF 엔티티로 뽑아낸다. 촉(tenon) 돌출부와 풍판은 아직 미포함 —
+    // 형상 참고/CAD 반입용 1차 버전이며, 살 교차부(반턱)는 홈 형상 없이 단순 겹친 상태로 나간다.
+    function collectPatternDxfEntities({ lastSegMap, deletedSegs, lastOLeft, lastOTop, lastBaseScale, geo, txtDoorType, txtDoorCount }) {
+        const entities = [];
+
+        for (const [segKey, seg] of lastSegMap) {
+            if (deletedSegs.has(segKey)) continue;
+            entities.push({
+                type: 'LINE',
+                x1: (seg.cx - lastOLeft) / lastBaseScale,
+                y1: (seg.cy - lastOTop) / lastBaseScale,
+                x2: (seg.ex - lastOLeft) / lastBaseScale,
+                y2: (seg.ey - lastOTop) / lastBaseScale,
+            });
+        }
+
+        const doorType     = txtDoorType.value;
+        const doorCount     = parseInt(txtDoorCount.value);
+        const gap           = window.__pmokEngineLayout?.gap ?? 2;
+        const overlap       = geo.frameW;
+        const renderOrder   = [...Array(doorCount).keys()];
+
+        for (const d of renderOrder) {
+            let panelOffsetX = 0;
+            if (doorType === 'swing') {
+                panelOffsetX = d * (geo.outerW + gap);
+            } else if (doorType === 'slide') {
+                if      (doorCount === 1) panelOffsetX = 0;
+                else if (doorCount === 2) panelOffsetX = d === 0 ? 0 : geo.outerW - overlap;
+                else if (doorCount === 3) panelOffsetX = d === 0 ? 0 : d === 1 ? geo.outerW - overlap : (geo.outerW * 2) - (overlap * 2);
+                else if (doorCount === 4) panelOffsetX = d === 0 ? 0 : d === 1 ? geo.outerW - overlap : d === 2 ? (geo.outerW * 2) - overlap : (geo.outerW * 3) - (overlap * 2);
+                else if (doorCount === 6) panelOffsetX = d === 0 ? 0 : d === 1 ? geo.outerW - overlap : d === 2 ? (geo.outerW * 2) - (overlap * 2) : d === 3 ? (geo.outerW * 3) - (overlap * 2) : d === 4 ? (geo.outerW * 4) - (overlap * 3) : (geo.outerW * 5) - (overlap * 4);
+            }
+
+            const frameRects = [
+                [0, 0, geo.frameW, geo.outerH],
+                [geo.frameW, 0, geo.innerW, geo.frameHTop],
+                [geo.frameW, geo.frameHTop + geo.innerH, geo.innerW, geo.frameHBottom],
+                [geo.outerW - geo.frameW, 0, geo.frameW, geo.outerH],
+            ];
+            for (const [rx, ry, rw, rh] of frameRects) {
+                const x0 = panelOffsetX + rx, y0 = ry;
+                entities.push({
+                    type: 'LWPOLYLINE',
+                    closed: true,
+                    points: [[x0, y0], [x0 + rw, y0], [x0 + rw, y0 + rh], [x0, y0 + rh]],
+                });
+            }
+        }
+
+        return entities;
+    }
+
     function _exportCapture(bgColor) {
         const exportCanvas = document.createElement('canvas');
         const exportCtx = exportCanvas.getContext('2d');
