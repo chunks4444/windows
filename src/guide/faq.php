@@ -78,7 +78,8 @@ $faqs = db()->query('SELECT * FROM faqs WHERE is_active=1 ORDER BY sort_order, i
     font-size: 14px;
     line-height: 1.75;
     color: var(--text);
-    border-top: 1px solid var(--bg);
+    background: #F7F4ED;
+    border-top: 1px solid var(--border);
 }
 .faq-guide-body p { margin-bottom: 8px; }
 .faq-guide-body p:last-child { margin-bottom: 0; }
