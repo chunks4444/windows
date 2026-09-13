@@ -798,7 +798,7 @@
         const overlap       = geo.frameW;
         const renderOrder   = [...Array(doorCount).keys()];
 
-        // 문(door)별 좌측 오프셋 — 가로살 우측 끝을 해당 문의 우측 울거미 안쪽 경계에서 트림하는 데 쓴다.
+        // 문(door)별 좌측 오프셋 — 살이 해당 문의 울거미 안쪽 경계를 넘으면 트림하는 데 쓴다.
         const doorOffsets = renderOrder.map(d => {
             let panelOffsetX = 0;
             if (doorType === 'swing') {
@@ -812,6 +812,28 @@
             }
             return panelOffsetX;
         });
+
+        // 직선(x0,y0)-(x1,y1)을 사각형 [xmin,xmax]x[ymin,ymax]로 잘라낸다(Liang-Barsky).
+        // 정자살/세살처럼 칸 폭 공식이 마지막 칸을 안쪽 경계 밖으로 살짝 넘기는 경우,
+        // 그리고 빗살/격자빗살처럼 대각선이 클리핑 영역(캔버스 clip)을 넘어가는 경우 모두
+        // 캔버스에서는 프레임이 덮어 안 보이지만 DXF에는 그대로 나가므로 여기서 잘라낸다.
+        function clipSegToRect(x0, y0, x1, y1, xmin, xmax, ymin, ymax) {
+            let t0 = 0, t1 = 1;
+            const dx = x1 - x0, dy = y1 - y0;
+            const clipTest = (p, q) => {
+                if (Math.abs(p) < 1e-9) return q >= 0;
+                const r = q / p;
+                if (p < 0) { if (r > t1) return false; if (r > t0) t0 = r; }
+                else       { if (r < t0) return false; if (r < t1) t1 = r; }
+                return true;
+            };
+            if (!clipTest(-dx, x0 - xmin)) return null;
+            if (!clipTest(dx, xmax - x0)) return null;
+            if (!clipTest(-dy, y0 - ymin)) return null;
+            if (!clipTest(dy, ymax - y0)) return null;
+            if (t1 < t0) return null;
+            return { x0: x0 + t0 * dx, y0: y0 + t0 * dy, x1: x0 + t1 * dx, y1: y0 + t1 * dy };
+        }
 
         const lineGroups = new Map();
         for (const [segKey, seg] of lastSegMap) {
@@ -841,22 +863,25 @@
             ranges.sort((a, b) => a.tLo - b.tLo);
 
             const flushRun = (run) => {
-                // 가로살(normAngle≈0)은 칸 폭 공식(cellW+slatT)상 마지막 칸이 slatT만큼 안쪽 경계를
-                // 넘어 우측 울거미 속으로 파고드는 조각이 나온다 — 그 문의 울거미 안쪽 경계에서 트림.
-                if (Math.abs(normAngle) < 0.01) {
-                    const off = doorOffsets.find(o => run.lo.x >= o - EPS && run.lo.x <= o + geo.outerW + EPS) ?? 0;
-                    const rightBound = off + geo.frameW + geo.innerW;
-                    if (run.hi.x > rightBound) run = { ...run, hi: { x: rightBound, y: run.hi.y } };
-                }
+                // 이 조각이 속한 문의 안쪽(울거미 내부) 경계로 잘라낸다 — 중점 기준으로 문을 찾는다.
+                const midX = (run.lo.x + run.hi.x) / 2;
+                const off = doorOffsets.find(o => midX >= o - EPS && midX <= o + geo.outerW + EPS) ?? 0;
+                const clipped = clipSegToRect(
+                    run.lo.x, run.lo.y, run.hi.x, run.hi.y,
+                    off + geo.frameW, off + geo.frameW + geo.innerW,
+                    geo.frameHTop, geo.frameHTop + geo.innerH
+                );
+                if (!clipped) return; // 안쪽 경계와 아예 안 겹치면(비정상 상태) 내보내지 않는다
+                const lo = { x: clipped.x0, y: clipped.y0 }, hi = { x: clipped.x1, y: clipped.y1 };
                 const px = -uy * halfW, py = ux * halfW;
                 entities.push({
                     type: 'LWPOLYLINE',
                     closed: true,
                     points: [
-                        [run.lo.x + px, run.lo.y + py],
-                        [run.hi.x + px, run.hi.y + py],
-                        [run.hi.x - px, run.hi.y - py],
-                        [run.lo.x - px, run.lo.y - py],
+                        [lo.x + px, lo.y + py],
+                        [hi.x + px, hi.y + py],
+                        [hi.x - px, hi.y - py],
+                        [lo.x - px, lo.y - py],
                     ],
                 });
             };
