@@ -781,7 +781,8 @@
     }
 
     // 6개 엔진 공통: draw() 직후 상태(lastSegMap/geo/도어 설정)에서 살 교차선 + 울거미 외곽선을
-    // 실측 mm 단위 DXF 엔티티로 뽑아낸다. 촉(tenon) 돌출부와 풍판은 아직 미포함 —
+    // 실측 mm 단위 DXF 엔티티로 뽑아낸다. 촉(tenon) 돌출부와 풍판 판재(내부 채움판)는 아직 미포함 —
+    // 풍판의 좌우/하단 울거미(구조 부재)는 내보내지만 판재 자체는 형상 참고용이라 생략한다.
     // 형상 참고/CAD 반입용 1차 버전이며, 살 교차부(반턱)는 홈 형상 없이 단순 겹친 상태로 나간다.
     // 각 살은 중심선이 아니라 geo.slatT(=slatV=slatH, 6엔진 공통 단일 값) 폭의 사각형 폴리라인으로 내보낸다.
     // lastSegMap은 칸 교차마다 살을 조각(segment)으로 쪼개 저장하므로, 같은 직선(lineKey) 위에
@@ -909,6 +910,11 @@
                 [geo.frameW, geo.frameHTop + geo.innerH, geo.innerW, geo.frameHBottom],
                 [geo.outerW - geo.frameW, 0, geo.frameW, geo.outerH],
             ];
+            // 풍판 사용 시 맨 아래를 막는 하단 울거미 — 좌우 울거미는 위 rect들이 outerH 전체를
+            // 덮어 이미 풍판 구간까지 내려가 있지만, 풍판 바닥을 가로지르는 가로 부재가 빠져 있었다.
+            if (geo.effectivePungpanH > 0) {
+                frameRects.push([geo.frameW, geo.actualPatternH + geo.actualPungpanH - geo.frameH, geo.innerW, geo.frameH]);
+            }
             for (const [rx, ry, rw, rh] of frameRects) {
                 const x0 = panelOffsetX + rx, y0 = ry;
                 entities.push({
