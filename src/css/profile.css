@@ -84,7 +84,7 @@
     padding: 0 12px;
     border: 1px solid var(--border);
     border-radius: var(--r-sm);
-    background: var(--bg);
+    background: #fff;
     font-family: inherit;
     font-size: var(--fs-14);
     color: var(--text);
@@ -97,7 +97,7 @@
 .pf-input--sm   { max-width: 200px; }
 .pf-input:focus {
     border-color: var(--accent);
-    background: var(--bg);
+    background: #fff;
 }
 
 .pf-input::placeholder {
