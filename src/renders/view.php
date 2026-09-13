@@ -51,7 +51,7 @@ if (!$render) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         html, body { min-height: 100%; }
-        body { display: flex; flex-direction: column; margin: 0; background: var(--bg, #D6D1C5); }
+        body { display: flex; flex-direction: column; margin: 0; background: var(--bg, #E1DDD4); }
         .rv-page { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; padding: 32px 20px; }
         .rv-wrap { max-width: 640px; width: 100%; text-align: center; }
         .rv-img { max-width: 100%; max-height: 62vh; border-radius: 12px; border: 1px solid var(--border, #D4D8DB); box-shadow: 0 1px 3px rgba(0,0,0,0.04); margin-bottom: 20px; object-fit: contain; background: #fff; }
