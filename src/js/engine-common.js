@@ -784,31 +784,55 @@
     // 실측 mm 단위 DXF 엔티티로 뽑아낸다. 촉(tenon) 돌출부와 풍판은 아직 미포함 —
     // 형상 참고/CAD 반입용 1차 버전이며, 살 교차부(반턱)는 홈 형상 없이 단순 겹친 상태로 나간다.
     // 각 살은 중심선이 아니라 geo.slatT(=slatV=slatH, 6엔진 공통 단일 값) 폭의 사각형 폴리라인으로 내보낸다.
+    // lastSegMap은 칸 교차마다 살을 조각(segment)으로 쪼개 저장하므로, 같은 직선(lineKey) 위에
+    // 이어진 조각들은 먼저 하나로 합친 뒤 사각형을 만든다 — 안 그러면 칸칸이 끊어진 선으로 나간다.
+    // 세그먼트가 지워져 비어 있는 구간(deletedSegs)에서는 그대로 끊어서 별개 조각으로 낸다.
     function collectPatternDxfEntities({ lastSegMap, deletedSegs, lastOLeft, lastOTop, lastBaseScale, geo, txtDoorType, txtDoorCount }) {
         const entities = [];
         const halfW = geo.slatT / 2;
+        const EPS = 0.05; // mm — 인접 조각의 끝점 오차 허용치
 
+        const lineGroups = new Map();
         for (const [segKey, seg] of lastSegMap) {
             if (deletedSegs.has(segKey)) continue;
             const x1 = (seg.cx - lastOLeft) / lastBaseScale;
             const y1 = (seg.cy - lastOTop) / lastBaseScale;
             const x2 = (seg.ex - lastOLeft) / lastBaseScale;
             const y2 = (seg.ey - lastOTop) / lastBaseScale;
-            const dx = x2 - x1, dy = y2 - y1;
-            const len = Math.hypot(dx, dy);
-            if (len < 1e-6) continue;
-            const ux = dx / len, uy = dy / len;
-            const px = -uy * halfW, py = ux * halfW;
-            entities.push({
-                type: 'LWPOLYLINE',
-                closed: true,
-                points: [
-                    [x1 + px, y1 + py],
-                    [x2 + px, y2 + py],
-                    [x2 - px, y2 - py],
-                    [x1 - px, y1 - py],
-                ],
-            });
+            if (Math.hypot(x2 - x1, y2 - y1) < 1e-6) continue;
+            // lineKey가 없는(예: 자유 추가선) 조각은 다른 조각과 절대 합치지 않도록 segKey를 그룹키로 쓴다.
+            const groupKey = seg.lineKey != null ? seg.lineKey : `solo:${segKey}`;
+            if (!lineGroups.has(groupKey)) lineGroups.set(groupKey, { normAngle: seg.normAngle, pts: [] });
+            lineGroups.get(groupKey).pts.push([x1, y1], [x2, y2]);
+        }
+
+        for (const { normAngle, pts } of lineGroups.values()) {
+            const ux = Math.cos(normAngle), uy = Math.sin(normAngle);
+            // 각 조각을 (직선 위 진행거리 t, 실제 좌표) 쌍으로 투영해 정렬 — 저장 방향이 조각마다
+            // 뒤바뀌어 있어도(예: 대각선 엔진) t 기준으로 정렬하면 순서가 맞는다.
+            const proj = pts.map(([x, y]) => ({ t: x * ux + y * uy, x, y }));
+            proj.sort((a, b) => a.t - b.t);
+
+            let runStart = proj[0], runEnd = proj[0];
+            const flushRun = () => {
+                const px = -uy * halfW, py = ux * halfW;
+                entities.push({
+                    type: 'LWPOLYLINE',
+                    closed: true,
+                    points: [
+                        [runStart.x + px, runStart.y + py],
+                        [runEnd.x + px, runEnd.y + py],
+                        [runEnd.x - px, runEnd.y - py],
+                        [runStart.x - px, runStart.y - py],
+                    ],
+                });
+            };
+            for (let i = 1; i < proj.length; i++) {
+                const p = proj[i];
+                if (p.t - runEnd.t > EPS) { flushRun(); runStart = p; }
+                if (p.t > runEnd.t) runEnd = p;
+            }
+            flushRun();
         }
 
         const doorType     = txtDoorType.value;
