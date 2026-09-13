@@ -802,37 +802,43 @@
             if (Math.hypot(x2 - x1, y2 - y1) < 1e-6) continue;
             // lineKey가 없는(예: 자유 추가선) 조각은 다른 조각과 절대 합치지 않도록 segKey를 그룹키로 쓴다.
             const groupKey = seg.lineKey != null ? seg.lineKey : `solo:${segKey}`;
-            if (!lineGroups.has(groupKey)) lineGroups.set(groupKey, { normAngle: seg.normAngle, pts: [] });
-            lineGroups.get(groupKey).pts.push([x1, y1], [x2, y2]);
+            if (!lineGroups.has(groupKey)) lineGroups.set(groupKey, { normAngle: seg.normAngle, segs: [] });
+            lineGroups.get(groupKey).segs.push([x1, y1, x2, y2]);
         }
 
-        for (const { normAngle, pts } of lineGroups.values()) {
+        for (const { normAngle, segs } of lineGroups.values()) {
             const ux = Math.cos(normAngle), uy = Math.sin(normAngle);
-            // 각 조각을 (직선 위 진행거리 t, 실제 좌표) 쌍으로 투영해 정렬 — 저장 방향이 조각마다
-            // 뒤바뀌어 있어도(예: 대각선 엔진) t 기준으로 정렬하면 순서가 맞는다.
-            const proj = pts.map(([x, y]) => ({ t: x * ux + y * uy, x, y }));
-            proj.sort((a, b) => a.t - b.t);
+            // 조각(시작~끝) 단위로 직선 위 구간 [tLo,tHi]를 만들어 구간 병합(interval merge)한다.
+            // 점을 낱개로 흩어 정렬하면 조각 하나의 시작→끝 구간과 조각 사이 이음매를 구분할 수
+            // 없어(둘 다 그냥 "다음 점으로 이동") 매 조각 경계마다 잘못 끊기는 버그가 있었다.
+            const ranges = segs.map(([x1, y1, x2, y2]) => {
+                const t1 = x1 * ux + y1 * uy, t2 = x2 * ux + y2 * uy;
+                return t1 <= t2
+                    ? { tLo: t1, tHi: t2, lo: { x: x1, y: y1 }, hi: { x: x2, y: y2 } }
+                    : { tLo: t2, tHi: t1, lo: { x: x2, y: y2 }, hi: { x: x1, y: y1 } };
+            });
+            ranges.sort((a, b) => a.tLo - b.tLo);
 
-            let runStart = proj[0], runEnd = proj[0];
-            const flushRun = () => {
+            const flushRun = (run) => {
                 const px = -uy * halfW, py = ux * halfW;
                 entities.push({
                     type: 'LWPOLYLINE',
                     closed: true,
                     points: [
-                        [runStart.x + px, runStart.y + py],
-                        [runEnd.x + px, runEnd.y + py],
-                        [runEnd.x - px, runEnd.y - py],
-                        [runStart.x - px, runStart.y - py],
+                        [run.lo.x + px, run.lo.y + py],
+                        [run.hi.x + px, run.hi.y + py],
+                        [run.hi.x - px, run.hi.y - py],
+                        [run.lo.x - px, run.lo.y - py],
                     ],
                 });
             };
-            for (let i = 1; i < proj.length; i++) {
-                const p = proj[i];
-                if (p.t - runEnd.t > EPS) { flushRun(); runStart = p; }
-                if (p.t > runEnd.t) runEnd = p;
+            let run = ranges[0];
+            for (let i = 1; i < ranges.length; i++) {
+                const r = ranges[i];
+                if (r.tLo - run.tHi > EPS) { flushRun(run); run = r; }
+                else if (r.tHi > run.tHi) { run = { tLo: run.tLo, tHi: r.tHi, lo: run.lo, hi: r.hi }; }
             }
-            flushRun();
+            flushRun(run);
         }
 
         const doorType     = txtDoorType.value;
