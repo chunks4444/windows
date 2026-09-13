@@ -737,12 +737,16 @@
 
     // entities: { type:'LINE', x1,y1,x2,y2 } | { type:'LWPOLYLINE', points:[[x,y],...], closed }
     // 좌표는 실측 mm, DXF 관례대로 Y축은 위가 + 방향이라 캔버스 좌표(아래가 +)의 Y부호를 뒤집어 넣는다.
+    //
+    // R12(AC1009) 포맷으로 고정 — R14(AC1014)의 LWPOLYLINE은 핸들(그룹5)·서브클래스 마커(그룹100)가
+    // 없으면 AutoCAD가 파일을 거부하는 경우가 있어 실제로 안 열리는 사고가 있었음(HEADER만 추가해선 미해결).
+    // R12는 그런 부가 정보 없이도 모든 CAD/뷰어가 읽는 최소공배수 포맷이라 폐쇄폴리라인은
+    // POLYLINE/VERTEX/SEQEND 조합(R12부터 지원)으로 내보낸다. $INSUNITS로 단위(mm)도 명시.
     function buildDxfContent(entities) {
-        // HEADER($ACADVER) 없이 바로 ENTITIES로 시작하면 AutoCAD가 버전을 판단 못 해 파일을 열지 못한다.
-        // LWPOLYLINE은 R14(AC1014)부터 지원되는 엔티티라 그 이상 버전을 명시해야 함.
         const out = [
             '0', 'SECTION', '2', 'HEADER',
-            '9', '$ACADVER', '1', 'AC1014',
+            '9', '$ACADVER', '1', 'AC1009',
+            '9', '$INSUNITS', '70', '4', // 4 = Millimeters
             '0', 'ENDSEC',
             '0', 'SECTION', '2', 'ENTITIES',
         ];
@@ -754,8 +758,11 @@
                     '11', String(e.x2), '21', String(-e.y2), '31', '0'
                 );
             } else if (e.type === 'LWPOLYLINE') {
-                out.push('0', 'LWPOLYLINE', '8', '0', '90', String(e.points.length), '70', e.closed ? '1' : '0');
-                for (const [x, y] of e.points) out.push('10', String(x), '20', String(-y));
+                out.push('0', 'POLYLINE', '8', '0', '66', '1', '70', e.closed ? '1' : '0', '30', '0');
+                for (const [x, y] of e.points) {
+                    out.push('0', 'VERTEX', '8', '0', '10', String(x), '20', String(-y), '30', '0');
+                }
+                out.push('0', 'SEQEND');
             }
         }
         out.push('0', 'ENDSEC', '0', 'EOF');
@@ -1992,4 +1999,18 @@ function drawSvgInserts() {
     }
 
     window.pmokInitAiChat = initAiChat;
+})();
+
+// 내보내기 셀렉트(<details class="export-select">): 항목 클릭 시 자동 닫기 + 바깥 클릭 시 닫기.
+// 6개 엔진 공통이라 여기 한 곳에서 위임 처리 — 개별 export 버튼 클릭 로직(PNG/PDF/DXF 저장)은 각 엔진 JS에 그대로 둠.
+(function () {
+    document.addEventListener('click', function (e) {
+        const openDetails = document.querySelector('.export-select[open]');
+        if (!openDetails) return;
+        if (e.target.closest('.export-select-item')) {
+            openDetails.removeAttribute('open');
+        } else if (!openDetails.contains(e.target)) {
+            openDetails.removeAttribute('open');
+        }
+    });
 })();

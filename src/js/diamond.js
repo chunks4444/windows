@@ -2780,7 +2780,8 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
         DrawingSync.logExport(drawingId, WALLPAPER_ENGINE, 'pdf', document.getElementById('drawingName')?.value.trim() || '', document.getElementById('verLabel')?.textContent.trim() || '');
     });
 
-    btnSaveDXF.addEventListener('click', function() {
+    // 슈퍼 유저에게만 렌더링되는 버튼이라 일반 회원 화면에는 DOM에 아예 없음 — null 가드 필수
+    if (btnSaveDXF) btnSaveDXF.addEventListener('click', function() {
         if (!localStorage.getItem('pmok_auth_token')) { pmokRequireAuth(() => btnSaveDXF.click()); return; }
         const entities = collectPatternDxfEntities({ lastSegMap, deletedSegs, lastOLeft, lastOTop, lastBaseScale, geo, txtDoorType, txtDoorCount });
         downloadDxf(getExportFilename('dxf'), buildDxfContent(entities));

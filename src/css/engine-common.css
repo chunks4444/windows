@@ -289,6 +289,39 @@ body.pm-generator .pm-navbar .dropdown-menu { background: var(--sidebar-bg) !imp
 .hbtn.save-ok  { background: var(--accent); border-color: var(--accent); color: var(--bg); transition: background .15s, color .15s; }
 .hbtn.save-err { background: var(--danger);  border-color: var(--danger);  color: var(--bg); transition: background .15s, color .15s; }
 
+/* 내보내기 셀렉트(PNG/PDF/DXF): <details>/<summary> 네이티브 토글 사용, 별도 JS 불필요 */
+.export-select { position: relative; }
+.export-select summary { list-style: none; cursor: pointer; }
+.export-select summary::-webkit-details-marker { display: none; }
+.export-select-chevron { margin-left: auto; transition: transform .15s; }
+.export-select[open] .export-select-chevron { transform: rotate(180deg); }
+.export-select-menu {
+    position: absolute;
+    left: 0; right: 0; top: calc(100% + 6px);
+    background: var(--sidebar-bg);
+    border: 1px solid rgba(var(--bg-rgb), 0.15);
+    border-radius: var(--r-sm);
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    z-index: 20;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .25);
+}
+.export-select-item {
+    background: none;
+    border: none;
+    text-align: left;
+    padding: 7px 10px;
+    border-radius: calc(var(--r-sm) - 2px);
+    font-size: var(--fs-11);
+    font-weight: 500;
+    color: rgba(var(--bg-rgb), 0.9);
+    cursor: pointer;
+    font-family: inherit;
+}
+.export-select-item:hover { background: rgba(255, 255, 255, 0.12); color: var(--bg); }
+
 .hbtn-dark { position: relative; overflow: visible; }
 
 .hbtn-dark::after {

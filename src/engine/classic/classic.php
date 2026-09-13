@@ -874,29 +874,20 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                 </div>
                 <div class="sb-section">
                     <div class="sb-section-title" style="cursor:default;">내보내기</div>
-                    <div style="display:flex;gap:6px;">
-                        <button class="hbtn" id="btnSavePNG" style="flex:1;justify-content:center;">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 3v13M7 11l5 5 5-5" />
-                                <path d="M5 20h14" />
-                            </svg>
-                            PNG
-                        </button>
-                        <button class="hbtn" id="btnSavePDF" style="flex:1;justify-content:center;">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 3v13M7 11l5 5 5-5" />
-                                <path d="M5 20h14" />
-                            </svg>
-                            PDF
-                        </button>
-                        <button class="hbtn" id="btnSaveDXF" style="display:none;flex:1;justify-content:center;">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 3v13M7 11l5 5 5-5" />
-                                <path d="M5 20h14" />
-                            </svg>
-                            DXF
-                        </button>
-                    </div>
+                    <details class="export-select">
+                        <summary class="hbtn" style="width:100%;justify-content:center;">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13M7 11l5 5 5-5"/><path d="M5 20h14"/></svg>
+                            내보내기
+                            <svg class="export-select-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                        </summary>
+                        <div class="export-select-menu">
+                            <button class="export-select-item" id="btnSavePNG" type="button">PNG</button>
+                            <button class="export-select-item" id="btnSavePDF" type="button">PDF</button>
+                            <?php if ($navIsAdmin): ?>
+                            <button class="export-select-item" id="btnSaveDXF" type="button">DXF</button>
+                            <?php endif; ?>
+                        </div>
+                    </details>
                 </div>
             </div>
         </div>
