@@ -887,16 +887,25 @@
                 const clipStart = sStart > EPS;
                 const clipEnd   = (totalLen - sEnd) > EPS;
 
-                // 빗살/세모솟을살/육모솟을살처럼 45°·60°로 비스듬한 살이 울거미와 만나는 끝은
+                // 빗살/세모솟을살/육모솟을살/격자빗살처럼 45°·60°로 비스듬한 살이 울거미와 만나는 끝은
                 // 실제 결구처럼 촉을 뾰족하게 좁혀 한 점에서 모이게 한다. 가로/세로살(ux 또는 uy가
                 // 0인 정자살/세살)은 각도가 경계와 이미 수직이라 뾰족하게 할 이유가 없어 사각 마구리 그대로 둔다.
+                // 촉 길이를 짧게 고정해두면(예: 살 두께만큼만) 사각 마구리 구간과 촉 구간이 만나는
+                // 지점에서 폭이 갑자기 좁아지는 꺾임이 생긴다 — 그래서 짧게 자르지 않고, 잘린 반대쪽
+                // 끝(반대쪽도 잘렸다면 중간 지점)까지 끊김 없이 쭉 좁아지도록 촉 구간을 최대한 길게 잡는다.
                 const isDiagonal = Math.abs(ux) > 1e-6 && Math.abs(uy) > 1e-6;
-                const taperLen = isDiagonal ? geo.slatT : 0;
-                let sA = clipStart ? Math.min(sStart + taperLen, sEnd) : sStart;
-                let sB = clipEnd   ? Math.max(sEnd   - taperLen, sStart) : sEnd;
-                if (sA > sB) { sA = sB = (sStart + sEnd) / 2; }
-                const doTaperStart = clipStart && taperLen > 0;
-                const doTaperEnd   = clipEnd   && taperLen > 0;
+                let sA, sB;
+                if (isDiagonal && clipStart && clipEnd) {
+                    sA = sB = (sStart + sEnd) / 2;
+                } else if (isDiagonal && clipStart) {
+                    sA = sB = sEnd;
+                } else if (isDiagonal && clipEnd) {
+                    sA = sB = sStart;
+                } else {
+                    sA = sStart; sB = sEnd;
+                }
+                const doTaperStart = clipStart && isDiagonal;
+                const doTaperEnd   = clipEnd   && isDiagonal;
 
                 const ptAtS = s => [run.lo.x + dxAll * (s / totalLen), run.lo.y + dyAll * (s / totalLen)];
                 const px = -uy * halfW, py = ux * halfW;
