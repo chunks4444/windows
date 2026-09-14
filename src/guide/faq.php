@@ -54,6 +54,7 @@ $faqs = db()->query('SELECT * FROM faqs WHERE is_active=1 ORDER BY sort_order, i
     border-radius: 8px !important;
     margin-bottom: 8px;
     overflow: hidden;
+    background: var(--bg);
 }
 .faq-guide-btn {
     font-size: 15px;
