@@ -329,8 +329,8 @@ body { background: var(--bg); }
     text-overflow: ellipsis;
 }
 
-.lib-card-engine-icon { display: inline-flex; align-items: center; flex-shrink: 0; color: var(--text-muted); }
-.lib-card-engine-icon svg { width: 17px; height: 17px; }
+.lib-card-engine-icon { display: inline-flex; align-items: center; flex-shrink: 0; color: var(--text); }
+.lib-card-engine-icon svg { width: 20px; height: 20px; }
 
 .lib-card-sub {
     font-size: var(--fs-12);
