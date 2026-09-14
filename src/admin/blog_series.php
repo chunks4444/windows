@@ -16,7 +16,7 @@ require_admin_role('s');
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
     <style>
         .bs-wrap { max-width:900px; }
-        .bs-card { border:1px solid var(--border); border-radius:var(--r); background:#fff; overflow:hidden; }
+        .bs-card { border:1px solid var(--border); border-radius:var(--r); background:var(--bg); overflow:hidden; }
         .bs-table { width:100%; border-collapse:collapse; font-size:14px; }
         .bs-table th { background:var(--bg); padding:12px; text-align:left; font-weight:600; color:var(--text); border-bottom:2px solid var(--border); }
         .bs-table td { padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:middle; }
