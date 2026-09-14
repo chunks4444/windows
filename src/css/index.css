@@ -501,7 +501,7 @@
 }
 
 .process-hints li i {
-    color: var(--accent-hover);
+    color: var(--accent);
     font-size: var(--fs-13);
     flex-shrink: 0;
 }
