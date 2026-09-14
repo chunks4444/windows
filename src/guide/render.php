@@ -1,7 +1,7 @@
 <?php
 $guide_current = 'render.php';
 $guide_title   = 'AI 렌더링 사용법';
-$guide_prev    = ['href' => 'export.php', 'title' => 'PDF / PNG 내보내기'];
+$guide_prev    = ['href' => 'export.php', 'title' => 'PDF / PNG / DXF 내보내기'];
 $guide_next    = ['href' => 'collection.php', 'title' => '컬렉션 & 내 보드'];
 include __DIR__ . '/_head.php';
 ?>

@@ -23,7 +23,7 @@ include __DIR__ . '/_head.php';
         <tr><td><strong>6가지 스튜디오</strong></td><td>세살, 정자살, 빗살, 격자 빗살, 세모 솟을살, 육모 솟을살 격자 패턴 엔진</td></tr>
         <tr><td><strong>실시간 렌더링</strong></td><td>파라미터 변경 즉시 캔버스에 반영</td></tr>
         <tr><td><strong>도면 저장</strong></td><td>클라우드 DB에 도면 & 버전 저장, 어디서든 이어서 작업</td></tr>
-        <tr><td><strong>PDF / PNG 내보내기</strong></td><td>인쇄·납품용 고해상도 파일 출력</td></tr>
+        <tr><td><strong>PDF / PNG / DXF 내보내기</strong></td><td>인쇄·납품·CAD 작업용 파일 출력</td></tr>
         <tr><td><strong>AI 렌더링</strong></td><td>배경 사진 위에 도면을 합성해 AI로 공간 시각화</td></tr>
         <tr><td><strong>컬렉션</strong></td><td>공개 라이브러리 패턴 열람 & 내 보드 저장</td></tr>
         <tr><td><strong>AI 챗봇 설계</strong></td><td>상단 프롬프트 입력창에 원하는 사양을 문장으로 입력하면 파라미터 자동 반영</td></tr>

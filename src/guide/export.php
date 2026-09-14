@@ -1,12 +1,12 @@
 <?php
 $guide_current = 'export.php';
-$guide_title   = 'PDF / PNG 내보내기';
+$guide_title   = 'PDF / PNG / DXF 내보내기';
 $guide_prev    = ['href' => 'drawing.php', 'title' => '도면 저장 & 불러오기'];
 $guide_next    = ['href' => 'render.php', 'title' => 'AI 렌더링 사용법'];
 include __DIR__ . '/_head.php';
 ?>
 
-<h1>PDF / PNG 내보내기</h1>
+<h1>PDF / PNG / DXF 내보내기</h1>
 <p class="guide-lead">
     완성된 도면을 PDF 또는 PNG 파일로 내보내 납품·인쇄·협업에 활용할 수 있습니다.
     캔버스에 보이는 그대로 고해상도로 출력됩니다.

@@ -2,7 +2,7 @@
 $guide_current = 'drawing.php';
 $guide_title   = '도면 저장 & 불러오기';
 $guide_prev    = ['href' => 'canvas-toolbar.php', 'title' => '캔버스 툴바'];
-$guide_next    = ['href' => 'export.php', 'title' => 'PDF / PNG 내보내기'];
+$guide_next    = ['href' => 'export.php', 'title' => 'PDF / PNG / DXF 내보내기'];
 include __DIR__ . '/_head.php';
 ?>
 
