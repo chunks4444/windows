@@ -330,7 +330,7 @@ body { background: var(--bg); }
 }
 
 .lib-card-engine-icon { display: inline-flex; align-items: center; flex-shrink: 0; color: var(--text-muted); }
-.lib-card-engine-icon svg { width: 13px; height: 13px; }
+.lib-card-engine-icon svg { width: 17px; height: 17px; }
 
 .lib-card-sub {
     font-size: var(--fs-12);
