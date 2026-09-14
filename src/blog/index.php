@@ -98,10 +98,15 @@ try {
     foreach ($seriesRows as $r) {
         $sid = $r['series_id'];
         if (!isset($seriesCards[$sid])) {
-            $seriesCards[$sid] = ['name' => $r['series_name'], 'tagline' => $r['series_tagline'], 'posts' => [], 'total' => 0, 'sort' => (int)$r['series_sort'], 'is_completed' => $r['is_completed']];
+            $seriesCards[$sid] = ['name' => $r['series_name'], 'tagline' => $r['series_tagline'], 'posts' => [], 'total' => 0, 'sort' => (int)$r['series_sort'], 'is_completed' => $r['is_completed'], 'first_slug' => null, 'first_order' => null];
         }
         $seriesCards[$sid]['total']++;
         if (count($seriesCards[$sid]['posts']) < 3) $seriesCards[$sid]['posts'][] = $r;
+        // 타이틀 클릭 시 이동할 1화(series_order 최솟값) 추적
+        if ($seriesCards[$sid]['first_order'] === null || (int)$r['series_order'] < $seriesCards[$sid]['first_order']) {
+            $seriesCards[$sid]['first_order'] = (int)$r['series_order'];
+            $seriesCards[$sid]['first_slug']  = $r['slug'];
+        }
     }
     if (count($seriesCards) > 1) {
         $bgFirstSid  = array_key_first($seriesCards);
@@ -230,7 +235,11 @@ try {
             <?php foreach ($seriesCards as $sc): ?>
             <div class="bg-side-card">
                 <h3 class="bg-side-card-title">
+                    <?php if ($sc['first_slug']): ?>
+                    <a class="bg-side-card-title-link" href="/blog/<?= rawurlencode($sc['first_slug']) ?>"><?= htmlspecialchars($sc['name']) ?></a>
+                    <?php else: ?>
                     <?= htmlspecialchars($sc['name']) ?>
+                    <?php endif; ?>
                     <span class="bg-side-card-meta">
                         <span class="bg-side-card-count">전체 <?= (int)$sc['total'] ?>화</span>
                         <span class="bg-side-card-status <?= $sc['is_completed'] ? 'is-completed' : 'is-ongoing' ?>"><?= $sc['is_completed'] ? '완결' : '연재중' ?></span>
