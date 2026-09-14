@@ -180,7 +180,6 @@ body { background: var(--bg); }
     overflow: hidden;
     cursor: pointer;
     background: #F7F4ED;
-    border: 1px solid var(--border);
     box-shadow: 0 1px 3px rgba(var(--text-rgb), 0.04);
     transition: box-shadow 0.2s, transform 0.2s;
 }
