@@ -46,7 +46,7 @@ body {
     font-weight: 600;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--bg);
+    color: #fff;
     margin-bottom: 20px;
 }
 .ab-hero-title {
@@ -55,15 +55,15 @@ body {
     font-weight: 700;
     line-height: 1.25;
     letter-spacing: -0.02em;
-    color: var(--bg);
+    color: #fff;
     margin-bottom: 28px;
 }
-.ab-hero-title em { font-style: normal; color: var(--bg); }
+.ab-hero-title em { font-style: normal; color: #fff; }
 .ab-hero-desc {
     font-size: var(--fs-16);
     font-weight: 400;
     line-height: 1.9;
-    color: var(--bg);
+    color: #fff;
     max-width: 560px;
     word-break: keep-all;
 }
