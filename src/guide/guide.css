@@ -316,9 +316,9 @@ body:has(.guide-wrap) {
     padding: 14px 16px; border-radius: 8px;
     margin: 20px 0; font-size: 13px; line-height: 1.7;
 }
-.guide-tip  { background: var(--accent-tint);  color: var(--accent); border-left: 3px solid var(--accent); }
+.guide-tip  { background: rgba(var(--text-rgb), .07); color: var(--accent); border-left: 3px solid var(--accent); }
 .guide-note { background: rgba(var(--text-rgb), .07); color: var(--text); border-left: 3px solid var(--border); }
-.guide-warn { background: var(--warning-tint); color: var(--warning-text); border-left: 3px solid var(--danger); }
+.guide-warn { background: rgba(var(--text-rgb), .07); color: var(--warning-text); border-left: 3px solid var(--danger); }
 .guide-tip i, .guide-note i, .guide-warn i { flex-shrink: 0; font-size: 15px; margin-top: 1px; }
 
 /* UI 레이블 칩 */
