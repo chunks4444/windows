@@ -30,6 +30,12 @@ $guide_nav = [
         'articles' => [
             ['file' => 'canvas-toolbar.php', 'title' => '캔버스 툴바'],
             ['file' => 'drawing.php', 'title' => '도면 저장 & 불러오기'],
+        ],
+    ],
+    [
+        'title' => '도면 내보내기', 'icon' => 'bi-download',
+        'bg' => 'var(--accent-tint)', 'color' => 'var(--accent)',
+        'articles' => [
             ['file' => 'export.php',  'title' => 'PDF / PNG / DXF 내보내기'],
         ],
     ],
