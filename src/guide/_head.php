@@ -29,6 +29,7 @@ $guide_nav = [
         'bg' => 'var(--accent-tint)', 'color' => 'var(--accent)',
         'articles' => [
             ['file' => 'canvas-toolbar.php', 'title' => '캔버스 툴바'],
+            ['file' => 'svg-insert.php', 'title' => '문양 삽입 & SVG 업로드'],
             ['file' => 'drawing.php', 'title' => '도면 저장 & 불러오기'],
         ],
     ],

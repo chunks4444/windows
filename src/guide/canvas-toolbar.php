@@ -2,7 +2,7 @@
 $guide_current = 'canvas-toolbar.php';
 $guide_title   = '캔버스 툴바';
 $guide_prev    = ['href' => 'studio-hexagon.php', 'title' => '육모 솟을살'];
-$guide_next    = ['href' => 'drawing.php', 'title' => '도면 저장 & 불러오기'];
+$guide_next    = ['href' => 'svg-insert.php', 'title' => '문양 삽입 & SVG 업로드'];
 include __DIR__ . '/_head.php';
 ?>
 
