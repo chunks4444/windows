@@ -392,9 +392,10 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                         </div>
                         <div class="process-card-overlay">
                             <h3 class="process-title">렌더링 & 내보내기</h3>
-                            <p class="process-desc">완성된 도면을 PNG·PDF로 내보내거나 AI 렌더링으로 실제 공간에 배치해 검토하세요.</p>
+                            <p class="process-desc">완성된 도면을 PNG·PDF·DXF로 내보내거나 AI 렌더링으로 실제 공간에 배치해 검토하세요.</p>
                             <ul class="process-hints">
                                 <li><i class="bi bi-check2"></i> PNG·PDF 고해상도 내보내기</li>
+                                <li><i class="bi bi-check2"></i> DXF로 CAD 작업·정밀 치수 확인</li>
                                 <li><i class="bi bi-check2"></i> AI 렌더링으로 공간 시각화</li>
                                 <li><i class="bi bi-check2"></i> 배경 이미지와 도면 합성 확인</li>
                             </ul>
