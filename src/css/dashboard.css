@@ -181,15 +181,13 @@ body {
 .db-card {
     background: var(--accent-tint);
     border-radius: 14px;
-    border: 1px solid var(--border);
     overflow: hidden;
     cursor: pointer;
-    transition: box-shadow 0.15s, border-color 0.15s, transform 0.15s;
+    transition: box-shadow 0.15s, transform 0.15s;
     position: relative;
 }
 
 .db-card:hover {
-    border-color: var(--accent);
     box-shadow: 0 8px 24px rgba(var(--accent-rgb), 0.12);
     transform: translateY(-2px);
 }
