@@ -62,7 +62,7 @@ include __DIR__ . '/_head.php';
 
 <div class="guide-tip">
     <i class="bi bi-lightbulb-fill"></i>
-    <span>세모 솟을살에서 한 방향 살을 생략하면 <strong>육모 솟을살</strong> 패턴이 됩니다. 두 엔진은 격자 수식 자체는 동일하고 그려지는 선의 방향만 다릅니다. <a href="/guide/studio-hexagon" style="color:var(--accent);">육모 솟을살</a> 페이지에서 비교해 보세요.</span>
+    <span>세모 솟을살에서 한 방향 살을 생략하면 <strong>육모 솟을살</strong> 패턴이 됩니다. 두 엔진은 격자 수식 자체는 동일하고 그려지는 선의 방향만 다릅니다. <a href="/guide/studio-hexagon">육모 솟을살</a> 페이지에서 비교해 보세요.</span>
 </div>
 
 <h2>활용 예시</h2>

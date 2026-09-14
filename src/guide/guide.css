@@ -289,6 +289,8 @@ body:has(.guide-wrap) {
     line-height: 1.7; margin-bottom: 4px;
 }
 .guide-article strong { color: var(--text); font-weight: 600; }
+.guide-article a { color: var(--text); font-weight: 700; text-decoration: underline; }
+.guide-article a:hover { color: var(--accent); }
 
 /* 단계 목록 */
 .guide-steps { list-style: none; padding: 0; counter-reset: step; }

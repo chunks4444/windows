@@ -92,7 +92,7 @@ include __DIR__ . '/_head.php';
 <p>
     캔버스 하단에는 확대·축소·이동 같은 화면 조작 버튼과 선 삭제/추가 편집 모드, 문양 배치, 도형 그리기 버튼이 모여 있습니다.
     6개 엔진에 공통으로 제공되는 기능으로, 전체 목록과 사용 방법은
-    <a href="/guide/canvas-toolbar" style="color:var(--accent);">캔버스 툴바</a> 페이지를 참조하세요.
+    <a href="/guide/canvas-toolbar">캔버스 툴바</a> 페이지를 참조하세요.
 </p>
 
 <h2>③ 오른쪽 사이드바 — 마감 · 배경 · 저장</h2>
@@ -121,7 +121,7 @@ include __DIR__ . '/_head.php';
 <h3>배경 사진 & AI 렌더링</h3>
 <p>
     현장 사진을 업로드해 도면과 합성한 뒤 AI로 렌더링합니다.
-    자세한 내용은 <a href="/guide/render" style="color:var(--accent);">AI 렌더링 사용법</a> 페이지를 참조하세요.
+    자세한 내용은 <a href="/guide/render">AI 렌더링 사용법</a> 페이지를 참조하세요.
 </p>
 
 <h3>내보내기</h3>

@@ -59,7 +59,7 @@ include __DIR__ . '/_head.php';
 
 <div class="guide-tip">
     <i class="bi bi-lightbulb-fill"></i>
-    <span>빗살과 정자살을 겹쳐 활용하면 더 복잡한 격자 빗살 패턴 효과를 낼 수 있습니다. 자세한 내용은 <a href="/guide/studio-diamond" style="color:var(--accent);">격자 빗살</a> 페이지를 참조하세요.</span>
+    <span>빗살과 정자살을 겹쳐 활용하면 더 복잡한 격자 빗살 패턴 효과를 낼 수 있습니다. 자세한 내용은 <a href="/guide/studio-diamond">격자 빗살</a> 페이지를 참조하세요.</span>
 </div>
 
 <h2>활용 예시</h2>
