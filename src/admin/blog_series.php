@@ -19,10 +19,10 @@ require_admin_role('s');
         .bs-card { border:1px solid var(--border); border-radius:var(--r); background:var(--bg); overflow:hidden; }
         .bs-table { width:100%; border-collapse:collapse; font-size:14px; }
         .bs-table th { background:var(--bg); padding:12px; text-align:left; font-weight:600; color:var(--text); border-bottom:2px solid var(--border); }
-        .bs-table td { padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:middle; }
+        .bs-table td { padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:middle; color:var(--text); }
         .bs-table tr:last-child td { border-bottom:none; }
         .bs-table tr:hover td { background:var(--bg); }
-        .bs-name-input, .bs-tagline-input, .bs-sort-input { border:1px solid var(--border); border-radius:6px; padding:8px 12px; font-size:14px; width:100%; box-sizing:border-box; }
+        .bs-name-input, .bs-tagline-input, .bs-sort-input { border:1px solid var(--border); border-radius:6px; padding:8px 12px; font-size:14px; width:100%; box-sizing:border-box; background:color-mix(in srgb, var(--bg) 55%, #fff); color:var(--text); }
         .bs-sort-input { text-align:center; padding:8px 4px; min-width:44px; }
         .bs-btn { border:none; border-radius:6px; padding:7px 14px; font-size:13px; font-weight:600; cursor:pointer; }
         .bs-btn-save { background:var(--accent); color:var(--bg); } .bs-btn-save:hover { opacity:.85; }
