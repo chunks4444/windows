@@ -873,7 +873,6 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                     <div id="svgInsertControls" style="display:none;"></div>
                 </div>
                 <div class="sb-section">
-                    <div class="sb-section-title" style="cursor:default;">내보내기</div>
                     <details class="export-select">
                         <summary class="hbtn" style="width:100%;justify-content:center;">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13M7 11l5 5 5-5"/><path d="M5 20h14"/></svg>
