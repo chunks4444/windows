@@ -1,6 +1,5 @@
 .pf-card {
-    background: #F7F4ED;
-    border: 1px solid var(--border);
+    background: var(--bg);
     border-radius: var(--r);
     overflow: hidden;
     max-width: 100%;
@@ -84,7 +83,7 @@
     padding: 0 12px;
     border: 1px solid var(--border);
     border-radius: var(--r-sm);
-    background: #fff;
+    background: color-mix(in srgb, var(--bg) 55%, #fff);
     font-family: inherit;
     font-size: var(--fs-14);
     color: var(--text);
@@ -97,7 +96,7 @@
 .pf-input--sm   { max-width: 200px; }
 .pf-input:focus {
     border-color: var(--accent);
-    background: #fff;
+    background: color-mix(in srgb, var(--bg) 55%, #fff);
 }
 
 .pf-input::placeholder {
@@ -148,7 +147,7 @@
 .pf-btn-zip {
     height: 40px;
     padding: 0 16px;
-    background: #fff;
+    background: color-mix(in srgb, var(--bg) 55%, #fff);
     color: var(--text);
     border: 1px solid var(--border);
     border-radius: var(--r-sm);
