@@ -179,7 +179,7 @@ body {
 @media (max-width: 480px)  { .db-grid { grid-template-columns: 1fr; } }
 
 .db-card {
-    background: var(--accent-tint);
+    background: var(--bg);
     border-radius: 14px;
     overflow: hidden;
     cursor: pointer;
@@ -337,7 +337,7 @@ body {
 /* ── 카드 정보 ───────────────────────────────── */
 .db-card-body {
     padding: 12px 14px 14px;
-    background: #F7F4ED;
+    background: var(--bg);
     border-top: 1px solid var(--border);
 }
 
