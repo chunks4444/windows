@@ -208,12 +208,14 @@
     text-align: center;
 }
 .wk-modal-eyebrow {
+    font-family: 'Space Grotesk', 'Pretendard', 'Noto Sans KR', sans-serif;
     font-size: var(--fs-12); font-weight: 700; letter-spacing: .1em;
     text-transform: uppercase; color: #fff; opacity: .6;
     margin-bottom: .5rem;
     transition: color .3s ease;
 }
 .wk-modal-title {
+    font-family: 'Space Grotesk', 'Pretendard', 'Noto Sans KR', sans-serif;
     color: #fff; font-weight: 800; letter-spacing: -.01em;
     font-size: clamp(1.2rem, 2vw, 1.6rem); line-height: 1.2;
     transition: color .3s ease;
