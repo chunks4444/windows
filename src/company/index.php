@@ -61,18 +61,18 @@ foreach ($studioCards as $sc) $cardsByKey[$sc['engine_key']] = $sc;
                 <div class="ab-phil-grid">
                     <div class="ab-phil-item">
                         <p class="ab-phil-num">01</p>
-                        <h3 class="ab-phil-name">오랜 시간 축적된 지혜와 다듬어진 원리를 공간에 담습니다.</h3>
-                        <p class="ab-phil-desc">어금육모, 솟을살, 아자살 등 수백 년을 이어온 전통 문살 기법을 현대적 감각으로 해석합니다. <br><strong>형태는 단순해지고, 정신은 깊어집니다.</strong></p>
+                        <h3 class="ab-phil-name">짜임은 옛것 그대로 씁니다.</h3>
+                        <p class="ab-phil-desc">세살, 정자살, 빗살, 솟을살. 조선시대 창에 쓰인 짜임을 그대로 엔진에 옮겼습니다. <br>살 간격과 비율만 지금 공간에 맞춥니다.</p>
                     </div>
                     <div class="ab-phil-item">
                         <p class="ab-phil-num">02</p>
                         <h3 class="ab-phil-name">실시간 설계</h3>
-                        <p class="ab-phil-desc">치수와 비율을 조정하는 순간 도면이 실시간으로 완성됩니다. <br>설계와 제작 사이의 거리를 최소화하여 아이디어가 바로 현실이 됩니다.</p>
+                        <p class="ab-phil-desc">치수와 살 간격을 움직이면 도면이 따라옵니다. <br>그 도면이 그대로 제작 도면이 됩니다.</p>
                     </div>
                     <div class="ab-phil-item">
                         <p class="ab-phil-num">03</p>
                         <h3 class="ab-phil-name">맞춤 제작</h3>
-                        <p class="ab-phil-desc">모든 창호는 공간과 사람에 맞게 설계됩니다. <br>완성된 도면은 실제 제작으로 이어지며, 세상에 하나뿐인 창호가 탄생합니다.</p>
+                        <p class="ab-phil-desc">도면은 양평 공방으로 갑니다. <br>같은 공간이 없으니 같은 창도 나오지 않습니다. 치수와 빛에 맞춰 한 짝씩 짭니다.</p>
                     </div>
                 </div>
             </div>
