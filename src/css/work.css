@@ -1,5 +1,7 @@
 /* ── WORK INDEX — 화이트 배경 정사각형 카드 그리드, 3열, 카드 사이 1px 블랙(바깥 외곽선 없음) ── */
 
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
 .wkg-page { background: var(--bg); min-height: 100vh; }
 
 /* ── 페이지 헤더 ── */
@@ -22,6 +24,7 @@
     margin-bottom: .6rem;
 }
 .wkg-header h1 {
+    font-family: 'Space Grotesk', 'Pretendard', 'Noto Sans KR', sans-serif;
     font-size: clamp(1.9rem, 2.9vw, 2.5rem);
     font-weight: 800; letter-spacing: -.01em; color: var(--text);
     line-height: 1.15; margin: 0 0 .7rem;

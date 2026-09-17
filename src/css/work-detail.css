@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body {
@@ -176,6 +178,7 @@ html, body {
 .wd-back:hover { color: var(--accent, var(--accent)); }
 .wd-title {
     margin: 0;
+    font-family: 'Space Grotesk', 'Pretendard', 'Noto Sans KR', sans-serif;
     font-size: var(--fs-14); font-weight: 400;
     color: var(--text, var(--text));
     letter-spacing: -.01em;
