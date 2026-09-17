@@ -1,7 +1,7 @@
 <?php
 $guide_current = 'canvas-toolbar.php';
 $guide_title   = '캔버스 툴바';
-$guide_prev    = ['href' => 'studio-hexagon.php', 'title' => '육모 솟을살'];
+$guide_prev    = ['href' => 'studio-hexagon.php', 'title' => '육모솟을살'];
 $guide_next    = ['href' => 'svg-insert.php', 'title' => '문양 삽입 & SVG 업로드'];
 include __DIR__ . '/_head.php';
 ?>
@@ -9,7 +9,7 @@ include __DIR__ . '/_head.php';
 <h1>캔버스 툴바</h1>
 <p class="guide-lead">
     캔버스 하단에는 화면 조작·선 편집·문양 배치·도형 그리기 버튼이 모여 있는 <strong>툴바</strong>가 있습니다.
-    6개 엔진(세살·정자살·빗살·격자 빗살·세모 솟을살·육모 솟을살) 모두 동일하게 제공되는 공통 기능입니다.
+    6개 엔진(세살·정자살·빗살·격자빗살·세모솟을살·육모솟을살) 모두 동일하게 제공되는 공통 기능입니다.
 </p>
 
 <h2>보기 조작</h2>

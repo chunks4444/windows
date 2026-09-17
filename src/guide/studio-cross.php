@@ -3,7 +3,7 @@ require_once __DIR__ . '/../lib/studio_card_content.php';
 $guide_current = 'studio-cross.php';
 $guide_title   = '빗살';
 $guide_prev    = ['href' => 'studio-square.php', 'title' => '정자살'];
-$guide_next    = ['href' => 'studio-diamond.php', 'title' => '격자 빗살'];
+$guide_next    = ['href' => 'studio-diamond.php', 'title' => '격자빗살'];
 include __DIR__ . '/_head.php';
 ?>
 
@@ -59,7 +59,7 @@ include __DIR__ . '/_head.php';
 
 <div class="guide-tip">
     <i class="bi bi-lightbulb-fill"></i>
-    <span>빗살과 정자살을 겹쳐 활용하면 더 복잡한 격자 빗살 패턴 효과를 낼 수 있습니다. 자세한 내용은 <a href="/guide/studio-diamond">격자 빗살</a> 페이지를 참조하세요.</span>
+    <span>빗살과 정자살을 겹쳐 활용하면 더 복잡한 격자빗살 패턴 효과를 낼 수 있습니다. 자세한 내용은 <a href="/guide/studio-diamond">격자빗살</a> 페이지를 참조하세요.</span>
 </div>
 
 <h2>활용 예시</h2>

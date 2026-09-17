@@ -19,9 +19,9 @@ $guide_nav = [
             ['file' => 'studio-classic.php',  'title' => '세살',      'engine' => 'classic'],
             ['file' => 'studio-square.php',   'title' => '정자살',    'engine' => 'square'],
             ['file' => 'studio-cross.php',    'title' => '빗살',      'engine' => 'cross'],
-            ['file' => 'studio-diamond.php',  'title' => '격자 빗살', 'engine' => 'diamond'],
-            ['file' => 'studio-triangle.php', 'title' => '세모 솟을살', 'engine' => 'triangle'],
-            ['file' => 'studio-hexagon.php',  'title' => '육모 솟을살', 'engine' => 'hexagon'],
+            ['file' => 'studio-diamond.php',  'title' => '격자빗살', 'engine' => 'diamond'],
+            ['file' => 'studio-triangle.php', 'title' => '세모솟을살', 'engine' => 'triangle'],
+            ['file' => 'studio-hexagon.php',  'title' => '육모솟을살', 'engine' => 'hexagon'],
         ],
     ],
     [

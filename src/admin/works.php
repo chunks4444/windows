@@ -121,9 +121,9 @@ require_admin_role('s');
                     <option value="classic">세살</option>
                     <option value="square">정자살</option>
                     <option value="cross">빗살</option>
-                    <option value="diamond">격자 빗살</option>
-                    <option value="triangle">세모 솟을살</option>
-                    <option value="hexagon">육모 솟을살</option>
+                    <option value="diamond">격자빗살</option>
+                    <option value="triangle">세모솟을살</option>
+                    <option value="hexagon">육모솟을살</option>
                 </select>
             </div>
             <div class="adm-mfield">

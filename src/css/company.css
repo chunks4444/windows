@@ -196,6 +196,67 @@ body {
     word-break: keep-all;
 }
 
+/* ── STUDIO COMMON FEATURES ────────────────────── */
+.ab-common-features {
+    margin-top: 56px;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+}
+.ab-common-features-title {
+    font-family: 'Space Grotesk', 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    font-size: var(--fs-16);
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+.ab-common-features-list {
+    list-style: none;
+    margin: 0 0 20px;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 32px;
+}
+.ab-common-features-list li {
+    position: relative;
+    padding-left: 16px;
+    font-size: var(--fs-14);
+    line-height: 1.7;
+    color: var(--text);
+    word-break: keep-all;
+}
+.ab-common-features-list li::before {
+    content: '·';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: 700;
+}
+.ab-common-features-highlight {
+    font-size: var(--fs-16);
+    font-weight: 700;
+    color: var(--accent);
+    margin: 0;
+}
+
+/* ── STUDIO NEXT STEP ──────────────────────────── */
+.ab-studio-next {
+    margin-top: 48px;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+}
+.ab-studio-next-desc {
+    font-size: var(--fs-16);
+    line-height: 1.9;
+    color: var(--text);
+    word-break: keep-all;
+    margin: 0 0 24px;
+}
+.ab-studio-next-btns {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
 /* ── INFO ─────────────────────────────────────── */
 /* ── FULL-WIDTH BOXES ────────────────────────── */
 .ab-contact-box,
@@ -329,6 +390,16 @@ body {
     transition: background .15s;
 }
 .ab-contact-btn:hover { background: var(--accent-active); }
+.ab-contact-btn--outline {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+.ab-contact-btn--outline:hover {
+    background: var(--accent-tint);
+    border-color: var(--accent);
+    color: var(--accent);
+}
 
 /* ── CONTACT MODAL ───────────────────────────── */
 #contactModal .modal-content {
@@ -406,6 +477,9 @@ body {
     .ab-phil-cols { grid-template-columns: 1fr; gap: 40px; }
     .ab-phil-grid { grid-template-columns: 1fr; }
     .ab-tools-grid { grid-template-columns: 1fr; }
+    .ab-common-features-list { grid-template-columns: 1fr; }
+    .ab-studio-next-btns { flex-direction: column; align-items: stretch; }
+    .ab-studio-next-btns .ab-contact-btn { justify-content: center; }
     .ab-contact-cols { grid-template-columns: 1fr; }
     .ab-contact-map { height: 220px; }
     .ct-row-2 { grid-template-columns: 1fr; }

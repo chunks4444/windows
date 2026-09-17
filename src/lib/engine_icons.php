@@ -10,9 +10,9 @@ const ENGINE_LABELS = [
     'classic'  => '세살',
     'square'   => '정자살',
     'cross'    => '빗살',
-    'diamond'  => '격자 빗살',
-    'triangle' => '세모 솟을살',
-    'hexagon'  => '육모 솟을살',
+    'diamond'  => '격자빗살',
+    'triangle' => '세모솟을살',
+    'hexagon'  => '육모솟을살',
 ];
 
 function engine_icon_svg(string $key): string {

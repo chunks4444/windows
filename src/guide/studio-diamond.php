@@ -1,13 +1,13 @@
 <?php
 require_once __DIR__ . '/../lib/studio_card_content.php';
 $guide_current = 'studio-diamond.php';
-$guide_title   = '격자 빗살';
+$guide_title   = '격자빗살';
 $guide_prev    = ['href' => 'studio-cross.php', 'title' => '빗살'];
-$guide_next    = ['href' => 'studio-triangle.php', 'title' => '세모 솟을살'];
+$guide_next    = ['href' => 'studio-triangle.php', 'title' => '세모솟을살'];
 include __DIR__ . '/_head.php';
 ?>
 
-<h1><span class="guide-h1-icon"><?= $guideEngineIcons['diamond'] ?></span>격자 빗살</h1>
+<h1><span class="guide-h1-icon"><?= $guideEngineIcons['diamond'] ?></span>격자빗살</h1>
 <p class="guide-lead"><?= studio_card_description('diamond', "가로세로 격자 위에 45도 빗살을 겹쳐 짠 격자빗살을 재현한 엔진입니다.
     정(井)자 짜임과 대각선 빗살 짜임이 한 면에서 만나 격자 한 칸이 다시 네 개의 작은 삼각으로 나뉩니다.
     빗살 엔진과 마찬가지로 셀은 항상 정사각형으로 고정되며, 그 위에 가로살·세로살과 사선살이 모두 그려집니다.") ?></p>
@@ -37,7 +37,7 @@ include __DIR__ . '/_head.php';
 
 <div class="guide-note">
     <i class="bi bi-info-circle"></i>
-    <span>정자살의 "세로 비율"이나 세살의 "상/중/하 배열" 같은 구획 설정은 격자 빗살에는 없습니다. 사선 밀도는 별도 항목이 아니라 가로 칸수·창살 두께에 종속됩니다.</span>
+    <span>정자살의 "세로 비율"이나 세살의 "상/중/하 배열" 같은 구획 설정은 격자빗살에는 없습니다. 사선 밀도는 별도 항목이 아니라 가로 칸수·창살 두께에 종속됩니다.</span>
 </div>
 
 <h2>제작 시방서</h2>

@@ -53,7 +53,7 @@ include __DIR__ . '/_head.php';
 
 <div class="guide-tip">
     <i class="bi bi-lightbulb-fill"></i>
-    <span>문양 삽입은 6개 엔진(세살·정자살·빗살·격자 빗살·세모 솟을살·육모 솟을살) 모두 동일하게 제공되는 공통 기능입니다.</span>
+    <span>문양 삽입은 6개 엔진(세살·정자살·빗살·격자빗살·세모솟을살·육모솟을살) 모두 동일하게 제공되는 공통 기능입니다.</span>
 </div>
 
 <?php include __DIR__ . '/_foot.php'; ?>

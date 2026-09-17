@@ -7,9 +7,9 @@ $engineLabels = [
     'classic'  => '세살',
     'square'   => '정자살',
     'cross'    => '빗살',
-    'triangle' => '세모 솟을살',
-    'diamond'  => '격자 빗살',
-    'hexagon'  => '육모 솟을살',
+    'triangle' => '세모솟을살',
+    'diamond'  => '격자빗살',
+    'hexagon'  => '육모솟을살',
 ];
 
 // URL엔 실제 저장 경로(/uploads/renders/{userId}/…) 대신, 파일명에 이미 박혀있는

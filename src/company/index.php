@@ -50,7 +50,7 @@ foreach ($studioCards as $sc) $cardsByKey[$sc['engine_key']] = $sc;
         <p class="ab-section-label">Philosophy</p>
         <div class="ab-phil-cols">
             <div class="ab-phil-left">
-                <h2 class="ab-section-title">평목(平木)<br><span style="font-size:0.6em;font-weight:400;color:var(--text);letter-spacing:0.05em;">workgroup pyeongmok</span></h2>
+                <h2 class="ab-section-title">평목(平木)</h2>
                 <div class="ab-phil-text">
                     <p>곡식을 '되'나 '말' 단위로 깎아낼 때 쓰는<br>도구를 '평미레'라고 하는데<br>여기에 해당하는 한자어가 '평목(平木)'입니다.</p>
                     <p>평목은 넘쳐도 아니 되고,<br>모자라도 아니 되는,<br>균형을 잡아 주는 일을 합니다.</p>
@@ -186,7 +186,7 @@ foreach ($studioCards as $sc) $cardsByKey[$sc['engine_key']] = $sc;
                 </svg>
                 <div>
                     <p class="ab-tool-name"><?= htmlspecialchars($cardsByKey['triangle']['title'] ?? 'Triangle Lattice') ?></p>
-                    <p class="ab-tool-desc"><?= $cardsByKey['triangle']['description'] ?? "수직살과 좌우 빗살, 세 방향의 살대가 한 점에서 만나도록 짠 세모 솟을살을 재현한 엔진입니다. '솟을'은 살이 교차점에서 겹치며 위로 솟아오르는 데서 온 이름으로, 교차점마다 살이 도드라져 짜임에 입체감이 살아 있습니다. 살들이 교차하며 정삼각형이 화면 가득 반복되어, 육모의 둥글고 넉넉한 인상과 달리 팽팽하고 긴장감 있는 느낌을 줍니다. 모든 셀이 정삼각형이 되도록 세로 칸수가 자동으로 계산되며, 세로 칸수를 직접 지정할 수는 없습니다." ?></p>
+                    <p class="ab-tool-desc"><?= $cardsByKey['triangle']['description'] ?? "수직살과 좌우 빗살, 세 방향의 살대가 한 점에서 만나도록 짠 세모솟을살을 재현한 엔진입니다. '솟을'은 살이 교차점에서 겹치며 위로 솟아오르는 데서 온 이름으로, 교차점마다 살이 도드라져 짜임에 입체감이 살아 있습니다. 살들이 교차하며 정삼각형이 화면 가득 반복되어, 육모의 둥글고 넉넉한 인상과 달리 팽팽하고 긴장감 있는 느낌을 줍니다. 모든 셀이 정삼각형이 되도록 세로 칸수가 자동으로 계산되며, 세로 칸수를 직접 지정할 수는 없습니다." ?></p>
                 </div>
             </a>
             <a href="/src/engine/hexagon/hexagon.php" class="ab-tool-card">
@@ -199,9 +199,31 @@ foreach ($studioCards as $sc) $cardsByKey[$sc['engine_key']] = $sc;
                 </svg>
                 <div>
                     <p class="ab-tool-name"><?= htmlspecialchars($cardsByKey['hexagon']['title'] ?? 'Hexagon Lattice') ?></p>
-                    <p class="ab-tool-desc"><?= $cardsByKey['hexagon']['description'] ?? "세모솟을살과 같은 세 방향 살대를 쓰되, 교차점을 한 점에 모으지 않고 어긋나게 짜 육각형이 열리도록 한 육모 솟을살을 재현한 엔진입니다. 어금육모라고도 부릅니다. '솟을'은 살이 교차점에서 겹치며 위로 솟아오르는 데서 온 이름으로, 짜임에 입체감이 살아 있습니다. 살이 만드는 벌집 모양의 여섯 각은 사각보다 원에 가까워, 같은 짜임인데도 세모의 팽팽함 대신 둥글고 넉넉한 인상을 줍니다." ?></p>
+                    <p class="ab-tool-desc"><?= $cardsByKey['hexagon']['description'] ?? "세모솟을살과 같은 세 방향 살대를 쓰되, 교차점을 한 점에 모으지 않고 어긋나게 짜 육각형이 열리도록 한 육모솟을살을 재현한 엔진입니다. 어금육모라고도 부릅니다. '솟을'은 살이 교차점에서 겹치며 위로 솟아오르는 데서 온 이름으로, 짜임에 입체감이 살아 있습니다. 살이 만드는 벌집 모양의 여섯 각은 사각보다 원에 가까워, 같은 짜임인데도 세모의 팽팽함 대신 둥글고 넉넉한 인상을 줍니다." ?></p>
                 </div>
             </a>
+        </div>
+
+        <div class="ab-common-features">
+            <h3 class="ab-common-features-title">여섯 엔진에 공통으로 들어 있는 것</h3>
+            <ul class="ab-common-features-list">
+                <li>여닫이·미서기, 짝수 지정</li>
+                <li>문틀 치수, 좌우·상하 울거미 두께, 살 두께</li>
+                <li>풍판, 치수 표기, 문틀 표시</li>
+                <li>홍송·소나무 수종과 마감 여섯 가지</li>
+                <li>살·울거미·문틀 색 지정, 도형과 문양 얹기</li>
+                <li>AI 렌더링 — 배경을 올리거나 조명 스무 가지 중에 고르기</li>
+                <li>PDF·PNG 내보내기, 도면 저장과 공유</li>
+            </ul>
+            <p class="ab-common-features-highlight">그리고 그 자리에서 예상 견적</p>
+        </div>
+
+        <div class="ab-studio-next">
+            <p class="ab-studio-next-desc">그린 도면은 저장해 두고 언제든 다시 고칠 수 있습니다.<br>제작을 원하시면 도면 그대로 견적을 내드립니다.</p>
+            <div class="ab-studio-next-btns">
+                <a href="/collection/" class="ab-contact-btn">컬렉션에서 시작하기</a>
+                <a href="/guide/order" class="ab-contact-btn ab-contact-btn--outline">주문·가격 안내</a>
+            </div>
         </div>
     </section>
 </div>
@@ -211,7 +233,7 @@ foreach ($studioCards as $sc) $cardsByKey[$sc['engine_key']] = $sc;
     <div class="container">
         <p class="ab-section-label">Contact</p>
         <h2 class="ab-section-title">함께 만들어가요.</h2>
-        <p class="ab-section-body">작은 문의도 괜찮습니다.<br>설계·제작·설치 상담부터 협업 및 프로젝트 제안까지 모두 환영합니다.<br>편하게 연락해 주세요. 빠르게 답변드리겠습니다.</p>
+        <p class="ab-section-body">작은 문의도 괜찮습니다.<br>설계·제작·설치 상담부터 협업 및 프로젝트 제안까지 모두 환영합니다.<br>편하게 연락해 주세요. 하루 안에 답을 드립니다.</p>
         <button class="ab-contact-btn" data-bs-toggle="modal" data-bs-target="#contactModal">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
             이메일 문의하기
