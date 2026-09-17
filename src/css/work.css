@@ -226,11 +226,12 @@
     transition: background-color .3s ease;
 }
 .wk-modal-desc {
+    font-family: 'Space Grotesk', 'Pretendard', 'Noto Sans KR', sans-serif;
     color: rgba(255,255,255,.72); font-size: var(--fs-14); line-height: 1.6;
     margin-bottom: .6rem;
     transition: color .3s ease;
 }
-.wk-modal-counter { color: rgba(255,255,255,.72); font-size: var(--fs-12); font-variant-numeric: tabular-nums; letter-spacing: .04em; transition: color .3s ease; }
+.wk-modal-counter { font-family: 'Space Grotesk', 'Pretendard', 'Noto Sans KR', sans-serif; color: rgba(255,255,255,.72); font-size: var(--fs-12); font-variant-numeric: tabular-nums; letter-spacing: .04em; transition: color .3s ease; }
 
 .wk-modal-thumbs {
     flex: 0 0 auto;
