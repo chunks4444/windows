@@ -199,8 +199,10 @@ body {
 /* ── STUDIO COMMON FEATURES ────────────────────── */
 .ab-common-features {
     margin-top: 56px;
-    padding-top: 40px;
-    border-top: 1px solid var(--border);
+    padding: 36px 32px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
 }
 .ab-common-features-title {
     font-family: 'Space Grotesk', 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
