@@ -242,7 +242,6 @@ body {
 .ab-studio-next {
     margin-top: 48px;
     padding-top: 40px;
-    border-top: 1px solid var(--border);
 }
 .ab-studio-next-desc {
     font-size: var(--fs-16);
@@ -387,6 +386,7 @@ body {
     background: var(--accent); color: var(--bg); border: none;
     border-radius: 4px; font-family: inherit;
     font-size: var(--fs-14); font-weight: 600; cursor: pointer;
+    text-decoration: none;
     transition: background .15s;
 }
 .ab-contact-btn:hover { background: var(--accent-active); }
