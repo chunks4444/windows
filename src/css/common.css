@@ -1,5 +1,6 @@
 @import url('https://cdn.jsdelivr.net/npm/pretendard/dist/web/static/pretendard.css');
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 /* ── 영문 전용 폰트 (Switzer) ───────────────────────
    한글은 그대로 Pretendard를 쓰고, 라틴 문자 범위만 Switzer로 대체.
@@ -130,6 +131,11 @@ body {
     color: var(--text);
     background: var(--bg);
     -webkit-overflow-scrolling: touch;
+}
+/* 제목(헤딩) 태그는 전부 Space Grotesk 우선 — 한글 글리프가 없어 한글은 자동으로 Pretendard로 폴백,
+   영문만 Space Grotesk가 적용됨. 본문(body 상속)은 건드리지 않음. */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
 }
 
 body:not(.pm-generator) .container { max-width: 1320px; }
