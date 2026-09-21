@@ -44,7 +44,7 @@
 .wkg-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 0;
+    gap: 15px;
 }
 .wkg-card {
     position: relative;
@@ -52,13 +52,8 @@
     aspect-ratio: 1 / 1;
     overflow: hidden;
     cursor: pointer;
-    border-right: 1px solid #000;
-    border-bottom: 1px solid #000;
 }
 .wkg-card.wkg-hidden { display: none; }
-/* 실제로 보이는 카드 중 마지막 열·마지막 행만 해당 테두리를 빼서 그리드 바깥엔 테두리가 안 생기게 함(JS에서 토글) */
-.wkg-card.wkg-edge-right { border-right: none; }
-.wkg-card.wkg-edge-bottom { border-bottom: none; }
 
 .wkg-card-img {
     position: absolute; inset: 0;
@@ -103,14 +98,14 @@
 
 .wkg-load-more-wrap { display: flex; justify-content: center; padding-top: 32px; }
 .wkg-load-more-btn {
-    padding: 11px 28px;
-    border: 1px solid var(--accent); border-radius: 999px;
-    background: var(--accent-tint); color: var(--text);
-    font-size: var(--fs-14); font-weight: 700;
+    padding: 9px 16px;
+    border: 1px solid var(--border); border-radius: 999px;
+    background: var(--bg); color: var(--text);
+    font-size: var(--fs-13); font-weight: 600;
     cursor: pointer;
-    transition: background .2s, color .2s;
+    transition: border-color .2s, color .2s;
 }
-.wkg-load-more-btn:hover { background: var(--accent); color: var(--bg); }
+.wkg-load-more-btn:hover { border-color: var(--text); }
 
 /* ── 키워드 필터 드롭다운 (필터 버튼 바로 아래) ── */
 .wkg-filter-wrap { position: relative; }
