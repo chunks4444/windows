@@ -279,4 +279,9 @@ return [
     'auth_err_retry_later'    => '잠시 후 다시 시도해주세요.',
     'auth_err_withdrawn'      => '탈퇴한 계정입니다.',
     'auth_err_current_pw'     => '현재 비밀번호가 올바르지 않습니다.',
+
+    // 공용 푸터 (src/components/footer.php)
+    'footer_copy'              => '평목(平木). All rights reserved.',
+    'footer_cta_sub'           => '설계 문의, 제작 상담, 협업 제안 모두 환영합니다.',
+    'footer_cta_link'          => '함께 만들어가요.',
 ];

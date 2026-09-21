@@ -279,4 +279,9 @@ return [
     'auth_err_retry_later'    => 'Please try again shortly.',
     'auth_err_withdrawn'      => 'This account has been closed.',
     'auth_err_current_pw'     => 'Your current password is incorrect.',
+
+    // Global footer (src/components/footer.php)
+    'footer_copy'              => 'Pyeongmok. All rights reserved.',
+    'footer_cta_sub'           => 'Design inquiries, production consultations and collaboration proposals are all welcome.',
+    'footer_cta_link'          => "Let's build it together.",
 ];
