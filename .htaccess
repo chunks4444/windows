@@ -1,6 +1,12 @@
 RewriteEngine On
 RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
+# 다국어(영문) 지원: /en/ 접두사가 붙은 요청은 접두사만 떼고 이어서 아래의 기존 라우팅 규칙을
+# 그대로 탄다. 언어 판별은 PHP에서 $_SERVER['REQUEST_URI'](재작성 뒤에도 원본 그대로 남음)의
+# /en/ 접두사로 직접 하므로(src/lib/i18n.php current_lang()), 별도 env 플래그는 필요 없다.
+RewriteRule ^en/?$ index.php [L]
+RewriteRule ^en/(.*)$ $1
+
 # 민감 파일/디렉토리 웹 접근 차단 — git pull로 직접 배포하는 구조라 .git 폴더가 웹루트에
 # 그대로 있는데 이걸 막는 규칙이 없어서 히스토리 전체(과거 커밋된 시크릿 포함)가 공개돼 있었음
 # (2026-08-08 최초 발견, 같은 날 실수로 되돌려져 재노출됨(d19ffb7) — 2026-08-10 재적용).
