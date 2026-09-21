@@ -218,4 +218,11 @@ return [
     'guide_card_order_desc'    => '견적요청 방법과 주문 흐름, 도면 잠금 정책을 안내합니다.',
     'guide_card_delivery_desc' => '배송 방법·배송비 안내 및 반품·교환 정책을 확인하세요.',
     'guide_card_faq_desc'      => '자주 묻는 질문: 치수 입력, 견적 요청, 목재·마감 선택 등을 안내합니다.',
+    // index.php AI 입력창 JS 문구
+    'home_ai_thinking'      => '생각 중…',
+    'home_ai_analyzing'     => 'AI가 설계 조건을 분석하는 중입니다…',
+    'home_ai_error_prefix'  => '오류: ',
+    'home_ai_applied'       => '설계 조건을 적용했습니다.',
+    'home_ai_moving'        => '스튜디오로 이동합니다…',
+    'home_ai_network_error' => '네트워크 오류가 발생했습니다.',
 ];

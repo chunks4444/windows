@@ -218,4 +218,11 @@ return [
     'guide_card_order_desc'    => 'How to request a quote, the ordering flow, and the drawing lock policy.',
     'guide_card_delivery_desc' => 'Shipping methods, delivery fees, and the return and exchange policy.',
     'guide_card_faq_desc'      => 'Common questions about entering dimensions, requesting quotes, choosing wood and finishes, and more.',
+    // index.php AI prompt box JS strings
+    'home_ai_thinking'      => 'Thinking…',
+    'home_ai_analyzing'     => 'The AI is analyzing your design conditions…',
+    'home_ai_error_prefix'  => 'Error: ',
+    'home_ai_applied'       => 'Your design conditions have been applied.',
+    'home_ai_moving'        => 'Taking you to the studio…',
+    'home_ai_network_error' => 'A network error occurred.',
 ];

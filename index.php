@@ -550,6 +550,16 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
             hexagon:  '/src/engine/hexagon/hexagon.php',
         };
         const DEFAULT_ENGINE = 'classic';
+        // JS에서 쓰는 문구도 PHP 사전에서 주입 (en 모드에서 버튼·상태 메시지가 한글로 남지 않도록)
+        const T = <?= json_encode([
+            'send'           => t('home_ai_send'),
+            'thinking'       => t('home_ai_thinking'),
+            'analyzing'      => t('home_ai_analyzing'),
+            'errorPrefix'    => t('home_ai_error_prefix'),
+            'applied'        => t('home_ai_applied'),
+            'movingToStudio' => t('home_ai_moving'),
+            'networkError'   => t('home_ai_network_error'),
+        ], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
 
         const inputEl   = document.getElementById('idxAiInput');
         const sendBtn   = document.getElementById('idxAiSend');
@@ -613,9 +623,9 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
             const msg = inputEl.value.trim();
             if (!msg) return;
             sendBtn.disabled = true;
-            sendBtn.textContent = '생각 중…';
+            sendBtn.textContent = T.thinking;
             resultEl.style.display = '';
-            resultEl.textContent   = 'AI가 설계 조건을 분석하는 중입니다…';
+            resultEl.textContent   = T.analyzing;
 
             try {
                 let sessionKey = sessionStorage.getItem('pmok_ai_session');
@@ -628,12 +638,12 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                 });
                 const data = await res.json();
                 if (data.error) {
-                    resultEl.textContent = '오류: ' + data.error;
+                    resultEl.textContent = T.errorPrefix + data.error;
                 } else {
                     const engine = data.engine || DEFAULT_ENGINE;
                     const url    = ENGINE_URLS[engine] || ENGINE_URLS[DEFAULT_ENGINE];
-                    resultEl.innerHTML = (data.reply || '설계 조건을 적용했습니다.') +
-                        ' <strong>스튜디오로 이동합니다…</strong>';
+                    resultEl.innerHTML = (data.reply || T.applied) +
+                        ' <strong>' + T.movingToStudio + '</strong>';
                     // params와 원본 프롬프트/응답을 sessionStorage에 저장 후 엔진으로 이동
                     sessionStorage.setItem('pmok_ai_params', JSON.stringify(data.params || {}));
                     sessionStorage.setItem('pmok_ai_prompt_text', msg);
@@ -641,10 +651,10 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                     setTimeout(() => { location.href = url; }, 900);
                 }
             } catch {
-                resultEl.textContent = '네트워크 오류가 발생했습니다.';
+                resultEl.textContent = T.networkError;
             }
             sendBtn.disabled = false;
-            sendBtn.textContent = '설계 시작';
+            sendBtn.textContent = T.send;
         }
 
         sendBtn.addEventListener('click', send);

@@ -117,7 +117,10 @@ RewriteRule ^collection/([a-zA-Z][a-zA-Z0-9_-]*)/?$ src/collection/$1.php [L,QSA
 # 가이드 아티클은 문서 길이의 본문이라 문구 사전(i18n/en.php) 대신 영문 전용 파일로 관리한다.
 # /en/guide/{name} 요청에 src/guide/en/{name}.php가 있으면 그걸 서빙하고, 없으면 아래 한글 본문으로
 # 폴백한다(번역 안 된 문서도 깨지지 않고 한글로 보임).
-RewriteCond %{REQUEST_URI} ^/en/
+# 언어 판별에 %{REQUEST_URI}를 쓰면 안 된다 — 위에서 /en 접두사를 떼는 순간 이 변수는
+# 재작성된 경로(/guide/...)로 갱신돼서 조건이 항상 실패한다(사이드바만 영문, 본문은 한글이 되는 증상).
+# %{THE_REQUEST}는 원본 HTTP 요청 라인이라 내부 재작성에도 바뀌지 않으므로 이걸로 검사한다.
+RewriteCond %{THE_REQUEST} \s/en/guide/ [NC]
 RewriteCond %{DOCUMENT_ROOT}/src/guide/en/$1.php -f
 RewriteRule ^guide/([a-zA-Z][a-zA-Z0-9_-]*)/?$ src/guide/en/$1.php [L,QSA]
 
