@@ -3,6 +3,7 @@ require_once __DIR__ . '/../lib/logger.php';
 require_once __DIR__ . '/../lib/meta.php';
 require_once __DIR__ . '/../lib/db.php';
 require_once __DIR__ . '/../lib/jwt.php';
+require_once __DIR__ . '/../lib/i18n.php';
 
 // 로그인/어드민 메뉴는 크롤러가 비로그인 상태에서도 마크업을 그대로 볼 수 없도록
 // 서버사이드에서 조건부 렌더링한다 (기존엔 CSS display:none으로만 숨겨 소스에는 항상 노출됨).
@@ -111,7 +112,7 @@ $navStudioIcons = [
              alt="평목" class="pm-nav-logo">
         <span class="pm-nav-tagline"> </span>
     </a>
-    <button class="navbar-toggler border-0" id="pmNavToggler" type="button" aria-expanded="false" aria-label="메뉴 열기">
+    <button class="navbar-toggler border-0" id="pmNavToggler" type="button" aria-expanded="false" aria-label="<?= htmlspecialchars(t('nav_menu_open')) ?>">
         <span class="navbar-toggler-icon"></span>
     </button>
     <?php if (!empty($_engine_nav)): ?>
@@ -120,7 +121,7 @@ $navStudioIcons = [
             <div class="pm-nav-prompt-box" id="navPromptBox">
                 <i class="bi bi-stars pm-nav-prompt-icon"></i>
                 <input type="text" id="navPromptInput" class="pm-nav-prompt-input"
-                       placeholder="예: 완자살 미서기문 3짝, 가로 1800 세로 1200으로 바꿔줘" autocomplete="off">
+                       placeholder="<?= htmlspecialchars(t('nav_engine_prompt_ph')) ?>" autocomplete="off">
                 <button id="navPromptSend" class="pm-nav-prompt-btn">
                     <i class="bi bi-send-fill"></i>
                 </button>
@@ -132,7 +133,7 @@ $navStudioIcons = [
     <div class="collapse navbar-collapse justify-content-end" id="pmNavMenu">
         <ul class="navbar-nav gap-3">
             <li class="nav-item dropdown">
-                <a href="#" class="nav-link pm-nav-dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">스튜디오 <i class="bi bi-chevron-down pm-nav-caret"></i></a>
+                <a href="#" class="nav-link pm-nav-dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><?= htmlspecialchars(t('nav_studio')) ?> <i class="bi bi-chevron-down pm-nav-caret"></i></a>
                 <ul class="dropdown-menu">
                     <?php foreach ($navStudioItems as $navItem):
                         $navKey = $navItem['engine_key'];
@@ -151,46 +152,49 @@ $navStudioIcons = [
                             <rect x="3" y="13" width="8" height="8" rx="1.5"/>
                             <rect x="13" y="13" width="8" height="8" rx="1.5"/>
                         </svg>
-                        도면 관리
+                        <?= htmlspecialchars(t('nav_drawing_manage')) ?>
                     </a></li>
                 </ul>
             </li>
             <li class="nav-item">
-                <a href="/collection/" class="nav-link <?= $isLibrary ? 'active' : '' ?>">컬렉션</a>
+                <a href="/collection/" class="nav-link <?= $isLibrary ? 'active' : '' ?>"><?= htmlspecialchars(t('nav_collection')) ?></a>
             </li>
-            <li class="nav-item"><a href="/portfolio/" class="nav-link <?= $isWork ? 'active' : '' ?>">포트폴리오</a></li>
+            <li class="nav-item"><a href="/portfolio/" class="nav-link <?= $isWork ? 'active' : '' ?>"><?= htmlspecialchars(t('nav_portfolio')) ?></a></li>
             <li class="nav-item dropdown">
-                <a href="/guide/" class="nav-link pm-nav-dropdown-toggle <?= $isGuide ? 'active' : '' ?>" data-bs-toggle="dropdown" aria-expanded="false">가이드 <i class="bi bi-chevron-down pm-nav-caret"></i></a>
+                <a href="/guide/" class="nav-link pm-nav-dropdown-toggle <?= $isGuide ? 'active' : '' ?>" data-bs-toggle="dropdown" aria-expanded="false"><?= htmlspecialchars(t('nav_guide')) ?> <i class="bi bi-chevron-down pm-nav-caret"></i></a>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="/guide/"><i class="bi bi-book me-2"></i>가이드 홈</a></li>
+                    <li><a class="dropdown-item" href="/guide/"><i class="bi bi-book me-2"></i><?= htmlspecialchars(t('nav_guide_home')) ?></a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="/guide/intro"><i class="bi bi-info-circle me-2"></i>스튜디오 소개</a></li>
-                    <li><a class="dropdown-item" href="/guide/studio-classic"><i class="bi bi-pencil-square me-2"></i>스튜디오 사용법</a></li>
-                    <li><a class="dropdown-item" href="/guide/drawing"><i class="bi bi-folder2-open me-2"></i>도면 관리</a></li>
-                    <li><a class="dropdown-item" href="/guide/render"><i class="bi bi-stars me-2"></i>AI 렌더링</a></li>
-                    <li><a class="dropdown-item" href="/guide/collection"><i class="bi bi-collection-fill me-2"></i>컬렉션</a></li>
-                    <li><a class="dropdown-item" href="/guide/account"><i class="bi bi-person-gear me-2"></i>계정 설정</a></li>
-                    <li><a class="dropdown-item" href="/guide/order"><i class="bi bi-cart-check me-2"></i>주문</a></li>
-                    <li><a class="dropdown-item" href="/guide/delivery"><i class="bi bi-truck me-2"></i>배송</a></li>
+                    <li><a class="dropdown-item" href="/guide/intro"><i class="bi bi-info-circle me-2"></i><?= htmlspecialchars(t('nav_guide_intro')) ?></a></li>
+                    <li><a class="dropdown-item" href="/guide/studio-classic"><i class="bi bi-pencil-square me-2"></i><?= htmlspecialchars(t('nav_guide_studio_usage')) ?></a></li>
+                    <li><a class="dropdown-item" href="/guide/drawing"><i class="bi bi-folder2-open me-2"></i><?= htmlspecialchars(t('nav_drawing_manage')) ?></a></li>
+                    <li><a class="dropdown-item" href="/guide/render"><i class="bi bi-stars me-2"></i><?= htmlspecialchars(t('nav_guide_render')) ?></a></li>
+                    <li><a class="dropdown-item" href="/guide/collection"><i class="bi bi-collection-fill me-2"></i><?= htmlspecialchars(t('nav_collection')) ?></a></li>
+                    <li><a class="dropdown-item" href="/guide/account"><i class="bi bi-person-gear me-2"></i><?= htmlspecialchars(t('nav_guide_account')) ?></a></li>
+                    <li><a class="dropdown-item" href="/guide/order"><i class="bi bi-cart-check me-2"></i><?= htmlspecialchars(t('nav_guide_order')) ?></a></li>
+                    <li><a class="dropdown-item" href="/guide/delivery"><i class="bi bi-truck me-2"></i><?= htmlspecialchars(t('nav_guide_delivery')) ?></a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="/guide/faq"><i class="bi bi-question-circle me-2"></i>FAQ</a></li>
+                    <li><a class="dropdown-item" href="/guide/faq"><i class="bi bi-question-circle me-2"></i><?= htmlspecialchars(t('nav_guide_faq')) ?></a></li>
                 </ul>
             </li>
             <li class="nav-item">
-                <a href="/blog/" class="nav-link <?= $isBlog ? 'active' : '' ?>">블로그</a>
+                <a href="/blog/" class="nav-link <?= $isBlog ? 'active' : '' ?>"><?= htmlspecialchars(t('nav_blog')) ?></a>
             </li>
             <li class="nav-item dropdown">
-                <a href="/company/" class="nav-link pm-nav-dropdown-toggle <?= $isCompany ? 'active' : '' ?>" data-bs-toggle="dropdown" aria-expanded="false">평목 소개 <i class="bi bi-chevron-down pm-nav-caret"></i></a>
+                <a href="/company/" class="nav-link pm-nav-dropdown-toggle <?= $isCompany ? 'active' : '' ?>" data-bs-toggle="dropdown" aria-expanded="false"><?= htmlspecialchars(t('nav_company')) ?> <i class="bi bi-chevron-down pm-nav-caret"></i></a>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="/company/"><i class="bi bi-info-circle me-2"></i>소개</a></li>
-                    <li><a class="dropdown-item" href="/company/#studio"><i class="bi bi-pencil-square me-2"></i>스튜디오</a></li>
-                    <li><a class="dropdown-item" href="/company/#contact"><i class="bi bi-envelope me-2"></i>연락처</a></li>
+                    <li><a class="dropdown-item" href="/company/"><i class="bi bi-info-circle me-2"></i><?= htmlspecialchars(t('nav_company_intro')) ?></a></li>
+                    <li><a class="dropdown-item" href="/company/#studio"><i class="bi bi-pencil-square me-2"></i><?= htmlspecialchars(t('nav_company_studio')) ?></a></li>
+                    <li><a class="dropdown-item" href="/company/#contact"><i class="bi bi-envelope me-2"></i><?= htmlspecialchars(t('nav_company_contact')) ?></a></li>
                 </ul>
+            </li>
+            <li class="nav-item">
+                <a href="<?= htmlspecialchars(lang_switch_url(is_en() ? 'ko' : 'en')) ?>" class="nav-link"><?= htmlspecialchars(t('nav_lang_switch')) ?></a>
             </li>
             <?php if (!$navIsLoggedIn): ?>
             <!-- 비로그인 -->
             <li class="nav-item" id="navLoginBtn">
-                <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#authModal">로그인</a>
+                <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#authModal"><?= htmlspecialchars(t('nav_login')) ?></a>
             </li>
             <?php else: ?>
             <!-- 로그인 후 -->
@@ -200,22 +204,22 @@ $navStudioIcons = [
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li><span class="dropdown-item-text" style="font-size:12px;font-weight:600;color:var(--text);padding:10px 18px 2px;display:flex;align-items:center;gap:6px;"><i class="bi bi-person-circle" style="font-size:16px;"></i><span id="navUserEmail"></span></span></li>
-                    <li><span class="dropdown-item-text" style="font-size:11px;color:var(--text-muted);padding:2px 18px 6px;">마지막 접속 <span id="navLastLogin" style="color:var(--text-muted);font-weight:600;">—</span></span></li>
+                    <li><span class="dropdown-item-text" style="font-size:11px;color:var(--text-muted);padding:2px 18px 6px;"><?= htmlspecialchars(t('nav_last_login')) ?> <span id="navLastLogin" style="color:var(--text-muted);font-weight:600;">—</span></span></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="/mypage/profile"><i class="bi bi-person me-1"></i>프로필</a></li>
-                    <li><a class="dropdown-item" href="/mypage/company"><i class="bi bi-building me-1"></i>회사 정보</a></li>
-                    <li><a class="dropdown-item" href="/mypage/dashboard"><i class="bi bi-grid me-1"></i>도면 관리</a></li>
-                    <li><a class="dropdown-item" href="/mypage/dashboard#orders"><i class="bi bi-receipt me-1"></i>주문내역</a></li>
+                    <li><a class="dropdown-item" href="/mypage/profile"><i class="bi bi-person me-1"></i><?= htmlspecialchars(t('nav_profile')) ?></a></li>
+                    <li><a class="dropdown-item" href="/mypage/company"><i class="bi bi-building me-1"></i><?= htmlspecialchars(t('nav_company_info')) ?></a></li>
+                    <li><a class="dropdown-item" href="/mypage/dashboard"><i class="bi bi-grid me-1"></i><?= htmlspecialchars(t('nav_drawing_manage')) ?></a></li>
+                    <li><a class="dropdown-item" href="/mypage/dashboard#orders"><i class="bi bi-receipt me-1"></i><?= htmlspecialchars(t('nav_orders')) ?></a></li>
                     <li id="navBoardSection" style="display:none;">
                         <hr class="dropdown-divider">
-                        <span class="dropdown-header" style="font-size:10px;letter-spacing:.06em;color:var(--text-muted);padding:4px 16px 2px;">내 보드</span>
+                        <span class="dropdown-header" style="font-size:10px;letter-spacing:.06em;color:var(--text-muted);padding:4px 16px 2px;"><?= htmlspecialchars(t('nav_my_boards')) ?></span>
                     </li>
                     <div id="navBoardList"></div>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="#" onclick="authLogout();return false;"><i class="bi bi-box-arrow-right me-1"></i>로그아웃</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="authLogout();return false;"><i class="bi bi-box-arrow-right me-1"></i><?= htmlspecialchars(t('nav_logout')) ?></a></li>
                     <?php if ($navIsAdmin): ?>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="/src/admin/"><i class="bi bi-speedometer2 me-1"></i>어드민</a></li>
+                    <li><a class="dropdown-item" href="/src/admin/"><i class="bi bi-speedometer2 me-1"></i><?= htmlspecialchars(t('nav_admin')) ?></a></li>
                     <?php endif; ?>
                 </ul>
             </li>
@@ -232,7 +236,7 @@ $navStudioIcons = [
             <img src="/src/assets/logo.svg"
                  alt="평목" class="pm-nav-logo">
         </a>
-        <button class="pm-dw-close" id="pmNavDrawerClose" aria-label="닫기">
+        <button class="pm-dw-close" id="pmNavDrawerClose" aria-label="<?= htmlspecialchars(t('nav_drawer_close')) ?>">
             <i class="bi bi-x-lg"></i>
         </button>
     </div>
@@ -240,7 +244,7 @@ $navStudioIcons = [
 
         <!-- 스튜디오 (기본 열림) -->
         <div class="pm-dw-acc open">
-            <button class="pm-dw-acc-hd"><span><i class="bi bi-pencil-square pm-dw-acc-icon"></i>스튜디오</span><i class="bi bi-chevron-down"></i></button>
+            <button class="pm-dw-acc-hd"><span><i class="bi bi-pencil-square pm-dw-acc-icon"></i><?= htmlspecialchars(t('nav_studio')) ?></span><i class="bi bi-chevron-down"></i></button>
             <div class="pm-dw-acc-bd">
                 <?php foreach ($navStudioItems as $navItem):
                     $navKey = $navItem['engine_key']; ?>
@@ -252,37 +256,39 @@ $navStudioIcons = [
                 <?php endforeach; ?>
                 <a class="pm-dw-link" href="/mypage/dashboard">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/></svg>
-                    <span>도면 관리</span>
+                    <span><?= htmlspecialchars(t('nav_drawing_manage')) ?></span>
                 </a>
             </div>
         </div>
 
-        <a class="pm-dw-link-top <?= $isLibrary ? 'active' : '' ?>" href="/collection/"><i class="bi bi-collection pm-dw-acc-icon"></i>컬렉션</a>
-        <a class="pm-dw-link-top <?= $isWork ? 'active' : '' ?>" href="/portfolio/"><i class="bi bi-images pm-dw-acc-icon"></i>포트폴리오</a>
+        <a class="pm-dw-link-top <?= $isLibrary ? 'active' : '' ?>" href="/collection/"><i class="bi bi-collection pm-dw-acc-icon"></i><?= htmlspecialchars(t('nav_collection')) ?></a>
+        <a class="pm-dw-link-top <?= $isWork ? 'active' : '' ?>" href="/portfolio/"><i class="bi bi-images pm-dw-acc-icon"></i><?= htmlspecialchars(t('nav_portfolio')) ?></a>
 
         <!-- 가이드 -->
         <div class="pm-dw-acc">
-            <button class="pm-dw-acc-hd"><span><i class="bi bi-book pm-dw-acc-icon"></i>가이드</span><i class="bi bi-chevron-down"></i></button>
+            <button class="pm-dw-acc-hd"><span><i class="bi bi-book pm-dw-acc-icon"></i><?= htmlspecialchars(t('nav_guide')) ?></span><i class="bi bi-chevron-down"></i></button>
             <div class="pm-dw-acc-bd">
-                <a class="pm-dw-link" href="/guide/"><i class="bi bi-book"></i><span>가이드 홈</span></a>
-                <a class="pm-dw-link" href="/guide/intro"><i class="bi bi-info-circle"></i><span>스튜디오 소개</span></a>
-                <a class="pm-dw-link" href="/guide/studio-classic"><i class="bi bi-pencil-square"></i><span>스튜디오 사용법</span></a>
-                <a class="pm-dw-link" href="/guide/drawing"><i class="bi bi-folder2-open"></i><span>도면 관리</span></a>
-                <a class="pm-dw-link" href="/guide/render"><i class="bi bi-stars"></i><span>AI 렌더링</span></a>
-                <a class="pm-dw-link" href="/guide/faq"><i class="bi bi-question-circle"></i><span>FAQ</span></a>
+                <a class="pm-dw-link" href="/guide/"><i class="bi bi-book"></i><span><?= htmlspecialchars(t('nav_guide_home')) ?></span></a>
+                <a class="pm-dw-link" href="/guide/intro"><i class="bi bi-info-circle"></i><span><?= htmlspecialchars(t('nav_guide_intro')) ?></span></a>
+                <a class="pm-dw-link" href="/guide/studio-classic"><i class="bi bi-pencil-square"></i><span><?= htmlspecialchars(t('nav_guide_studio_usage')) ?></span></a>
+                <a class="pm-dw-link" href="/guide/drawing"><i class="bi bi-folder2-open"></i><span><?= htmlspecialchars(t('nav_drawing_manage')) ?></span></a>
+                <a class="pm-dw-link" href="/guide/render"><i class="bi bi-stars"></i><span><?= htmlspecialchars(t('nav_guide_render')) ?></span></a>
+                <a class="pm-dw-link" href="/guide/faq"><i class="bi bi-question-circle"></i><span><?= htmlspecialchars(t('nav_guide_faq')) ?></span></a>
             </div>
         </div>
 
-        <a class="pm-dw-link-top <?= $isBlog ? 'active' : '' ?>" href="/blog/"><i class="bi bi-journal-text pm-dw-acc-icon"></i>블로그</a>
+        <a class="pm-dw-link-top <?= $isBlog ? 'active' : '' ?>" href="/blog/"><i class="bi bi-journal-text pm-dw-acc-icon"></i><?= htmlspecialchars(t('nav_blog')) ?></a>
 
         <div class="pm-dw-acc<?= $isCompany ? ' open' : '' ?>">
-            <button class="pm-dw-acc-hd"><span><i class="bi bi-building pm-dw-acc-icon"></i>평목 소개</span><i class="bi bi-chevron-down"></i></button>
+            <button class="pm-dw-acc-hd"><span><i class="bi bi-building pm-dw-acc-icon"></i><?= htmlspecialchars(t('nav_company')) ?></span><i class="bi bi-chevron-down"></i></button>
             <div class="pm-dw-acc-bd">
-                <a class="pm-dw-link" href="/company/"><i class="bi bi-info-circle"></i><span>소개</span></a>
-                <a class="pm-dw-link" href="/company/#studio"><i class="bi bi-pencil-square"></i><span>스튜디오</span></a>
-                <a class="pm-dw-link" href="/company/#contact"><i class="bi bi-envelope"></i><span>연락처</span></a>
+                <a class="pm-dw-link" href="/company/"><i class="bi bi-info-circle"></i><span><?= htmlspecialchars(t('nav_company_intro')) ?></span></a>
+                <a class="pm-dw-link" href="/company/#studio"><i class="bi bi-pencil-square"></i><span><?= htmlspecialchars(t('nav_company_studio')) ?></span></a>
+                <a class="pm-dw-link" href="/company/#contact"><i class="bi bi-envelope"></i><span><?= htmlspecialchars(t('nav_company_contact')) ?></span></a>
             </div>
         </div>
+
+        <a class="pm-dw-link-top" href="<?= htmlspecialchars(lang_switch_url(is_en() ? 'ko' : 'en')) ?>"><i class="bi bi-translate pm-dw-acc-icon"></i><?= htmlspecialchars(t('nav_lang_switch')) ?></a>
 
         <div class="pm-dw-divider"></div>
 
@@ -290,7 +296,7 @@ $navStudioIcons = [
         <?php if (!$navIsLoggedIn): ?>
         <a class="pm-dw-link-top" id="drawerLoginBtn" href="#"
            data-bs-toggle="modal" data-bs-target="#authModal">
-            <i class="bi bi-person pm-dw-acc-icon"></i><span>로그인</span>
+            <i class="bi bi-person pm-dw-acc-icon"></i><span><?= htmlspecialchars(t('nav_login')) ?></span>
         </a>
         <?php else: ?>
         <div id="drawerUserMenu">
@@ -298,16 +304,16 @@ $navStudioIcons = [
                 <i class="bi bi-person-circle"></i>
                 <span id="drawerUserEmail" class="pm-dw-user-email"></span>
             </div>
-            <a class="pm-dw-link" href="/mypage/profile"><i class="bi bi-person"></i><span>프로필</span></a>
-            <a class="pm-dw-link" href="/mypage/dashboard"><i class="bi bi-grid"></i><span>도면 관리</span></a>
-            <a class="pm-dw-link" href="/mypage/dashboard#orders"><i class="bi bi-receipt"></i><span>주문내역</span></a>
+            <a class="pm-dw-link" href="/mypage/profile"><i class="bi bi-person"></i><span><?= htmlspecialchars(t('nav_profile')) ?></span></a>
+            <a class="pm-dw-link" href="/mypage/dashboard"><i class="bi bi-grid"></i><span><?= htmlspecialchars(t('nav_drawing_manage')) ?></span></a>
+            <a class="pm-dw-link" href="/mypage/dashboard#orders"><i class="bi bi-receipt"></i><span><?= htmlspecialchars(t('nav_orders')) ?></span></a>
             <div id="drawerBoardSection" style="display:none;">
-                <div class="pm-dw-board-label">내 보드</div>
+                <div class="pm-dw-board-label"><?= htmlspecialchars(t('nav_my_boards')) ?></div>
                 <div id="drawerBoardList"></div>
             </div>
-            <a class="pm-dw-link" href="#" onclick="authLogout();return false;"><i class="bi bi-box-arrow-right"></i><span>로그아웃</span></a>
+            <a class="pm-dw-link" href="#" onclick="authLogout();return false;"><i class="bi bi-box-arrow-right"></i><span><?= htmlspecialchars(t('nav_logout')) ?></span></a>
             <?php if ($navIsAdmin && !$isAdminPage): ?>
-            <a class="pm-dw-link" href="/src/admin/" id="drawerAdminLink"><i class="bi bi-speedometer2"></i><span>어드민</span></a>
+            <a class="pm-dw-link" href="/src/admin/" id="drawerAdminLink"><i class="bi bi-speedometer2"></i><span><?= htmlspecialchars(t('nav_admin')) ?></span></a>
             <?php endif; ?>
         </div>
         <?php endif; ?>

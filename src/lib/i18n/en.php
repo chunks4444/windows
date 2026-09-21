@@ -1,0 +1,134 @@
+<?php
+// English UI strings. Missing keys fall back to ko.php automatically (see t() in i18n.php).
+return [
+    // nav.php
+    'nav_menu_open'            => 'Open menu',
+    'nav_drawer_close'         => 'Close',
+    'nav_engine_prompt_ph'     => 'e.g. Change to Wanja-sal sliding door, 3 panels, 1800×1200',
+    'nav_studio'               => 'Studio',
+    'nav_drawing_manage'       => 'My Drawings',
+    'nav_collection'           => 'Collection',
+    'nav_portfolio'            => 'Portfolio',
+    'nav_guide'                => 'Guide',
+    'nav_guide_home'           => 'Guide Home',
+    'nav_guide_intro'          => 'Studio Intro',
+    'nav_guide_studio_usage'   => 'Studio Guide',
+    'nav_guide_render'         => 'AI Rendering',
+    'nav_guide_account'        => 'Account Settings',
+    'nav_guide_order'          => 'Ordering',
+    'nav_guide_delivery'       => 'Delivery',
+    'nav_guide_faq'            => 'FAQ',
+    'nav_blog'                 => 'Blog',
+    'nav_company'              => 'About',
+    'nav_company_intro'        => 'About Us',
+    'nav_company_studio'       => 'Studio',
+    'nav_company_contact'      => 'Contact',
+    'nav_login'                => 'Log in',
+    'nav_last_login'           => 'Last login',
+    'nav_profile'              => 'Profile',
+    'nav_company_info'         => 'Company Info',
+    'nav_orders'                => 'Order History',
+    'nav_my_boards'            => 'My Boards',
+    'nav_logout'               => 'Log out',
+    'nav_admin'                => 'Admin',
+    'nav_lang_switch'          => '한국어',
+
+    // index.php — hero
+    'home_h1'                  => 'Pyeongmok — Design Your Own Hanok Lattice Windows in Real Time',
+    'home_hero_top'            => 'No two spaces are alike, so we draw to fit the dimensions and the light.',
+    'home_hero_sub'            => 'Hanok windows, made with traditional technique — shaped exactly as you draw them',
+    'home_ai_placeholder'      => 'Describe the window you want — e.g. Jeongja-sal, hinged, 2 panels, 900×2000',
+    'home_ai_send'             => 'Start Designing',
+    'home_engine_alt'          => '%s pattern preview',
+
+    // Default engine card descriptions (used when no DB override exists)
+    'home_engine_desc_classic'  => 'The simplest traditional lattice pattern — thin slats woven only vertically and horizontally, spaced wide apart.<br>The generous negative space gives it a plain, open feel.',
+    'home_engine_desc_square'   => 'A square lattice pattern where horizontal and vertical slats cross tightly to form repeating 井-shaped grids.<br>It expresses a refined, restrained beauty.',
+    'home_engine_desc_cross'    => 'A diamond lattice pattern crossing at a 45° diagonal.<br>The dynamic flow of diagonal lines adds tension to the space.',
+    'home_engine_desc_triangle' => "This engine recreates Semo-sotgeul-sal, where a vertical slat and two diagonal slats meet at a single point from three directions. \u{2018}Sotgeul\u{2019} means \u{201C}rising,\u{201D} named for the way the slats overlap and rise at each crossing point, giving the weave a layered, three-dimensional feel. Because the crossing slats repeat as equilateral triangles across the whole surface, it creates a taut, tense impression — quite different from the round, generous feel of the hexagon pattern. The vertical cell count is calculated automatically so every cell forms an equilateral triangle, and can't be set manually.",
+    'home_engine_desc_diamond'  => 'A pattern where slats cross radially from four directions, including the diagonals.<br>It creates an ornate, three-dimensional structure.',
+    'home_engine_desc_hexagon'  => "This engine recreates Yukmo-sotgeul-sal (also called Eogeum-yukmo), which uses the same three-directional slats as Semo-sotgeul-sal, but offsets the crossing points instead of joining them at a single point, opening up hexagons. \u{2018}Sotgeul\u{2019} means \u{201C}rising,\u{201D} named for the way the slats overlap and rise at each crossing point, giving the weave a layered feel. The honeycomb-like hexagons the slats form are closer to a circle than a square, so — even with the same weaving technique — it gives a round, generous impression instead of the triangle pattern's tautness.",
+
+    // Collection strip
+    'home_collection_title'    => 'Pick a pattern you like and start editing.',
+    'home_collection_more'     => 'View Full Collection',
+    'home_collection_prev'     => 'View previous pattern',
+    'home_collection_next'     => 'View next pattern',
+
+    // Light & Lattice
+    'home_light_label'         => 'Light & Lattice',
+    'home_light_title'         => "Hanok windows don't block light —<br>they divide it as it enters.",
+    'home_light_p1a'           => "Glass lets light in whole; a wall blocks it whole. The lattice sits between the two — it blocks while letting in, and filters while it lets through.",
+    'home_light_p1b'           => 'Tight spacing breaks the light into fine pieces that fill a room evenly. Wide spacing lets it in as solid shapes that fall as sharp shadows on the floor. <b>The same pattern looks different depending on which way the window faces and what time it is.</b>',
+    'home_light_p2a'           => "That's why old carpenters wove a different lattice for every room. The inner room and the great hall could never be the same; a south-facing window and a north-facing one could never be the same.",
+    'home_light_p2b'           => "In the studio, adjusting the lattice spacing may look like picking a pattern — but it's really deciding how the light will enter that room.",
+
+    // How the lattice is used
+    'home_usage2_label'        => 'How the Lattice Is Used',
+    'home_usage2_title'        => 'Traditional Korean windows and wood windows,<br>woven with the same lattice technique.',
+    'home_usage2_sub'          => "Whether it goes into a hanok or a modern space, the weaving grammar is the same — only the scale changes.",
+    'home_line1_title'         => 'Hanok Windows',
+    'home_line1_body'          => 'Se-sal, Jeongja-sal, Wanja-sal, Gyo-sal, Sotgeul-sal — hinged, sliding, or lift-and-fold. Where the lattice stands at its true scale.',
+    'home_line2_title'         => 'Wood Windows',
+    'home_line2_body'          => "Windows and doors for spaces outside the hanok. The lattice stays the same — only the frame follows the space's dimensions.",
+    'home_line3_title'         => 'Partitions',
+    'home_line3_body'          => 'For dividing a space without building a wall. The density of the lattice decides how far the eye can travel.',
+    'home_line4_title'         => 'Furniture & Objects',
+    'home_line4_body'          => 'The same lattice at a scale you can hold. On cabinet doors and lamps, the slats grow much finer.',
+
+    // Process
+    'home_process_label'       => 'How It Works',
+    'home_process_title'       => 'What You Draw Is What You Get',
+    'home_process_body'        => "There's no step where your design gets translated into words between design and production. Your finished drawing is built exactly as drawn, at the Pyeongmok workshop.",
+    'home_guide_more'          => 'View Full Guide',
+
+    'home_step1_title'         => 'Design the Pattern',
+    'home_step1_desc'          => 'Pyeongmok Studio is a window design tool you can use right in your browser. Pick a lattice pattern from the Studio menu above, then adjust the frame size, slat spacing, and pattern to complete your own window.',
+    'home_step1_hint1'         => 'Enter the frame width and height',
+    'home_step1_hint2'         => 'Adjust slat spacing and thickness with sliders',
+    'home_step1_hint3'         => 'See the result update in real time',
+    'home_step1_link'          => 'View Studio Guide',
+
+    'home_step2_title'         => 'Save & Explore',
+    'home_step2_desc'          => 'Save your finished drawing and find inspiration in the Collection.',
+    'home_step2_hint1'         => 'Save a drawing and manage it under My Drawings',
+    'home_step2_hint2'         => 'Browse a variety of patterns in the Collection',
+    'home_step2_hint3'         => 'Collect patterns you like on a board',
+    'home_step2_link'          => 'View Drawing Management Guide',
+
+    'home_step3_title'         => 'Render & Export',
+    'home_step3_desc'          => 'Export your finished drawing as PNG, PDF, or DXF — or use AI rendering to see it placed in a real space.',
+    'home_step3_hint1'         => 'Export high-resolution PNG or PDF',
+    'home_step3_hint2'         => 'Export DXF for CAD work and precise dimensions',
+    'home_step3_hint3'         => 'Visualize the space with AI rendering',
+    'home_step3_hint4'         => 'Preview your drawing composited over a background image',
+    'home_step3_link'          => 'View Rendering Guide',
+
+    'home_step4_title'         => 'Place an Order',
+    'home_step4_desc'          => 'Order production using your finished drawing.',
+    'home_step4_hint1'         => 'Click the quote request button at the top right of your drawing',
+    'home_step4_hint2'         => 'Get a consultation based on your saved drawing',
+    'home_step4_hint3'         => 'Receive a final quote after workshop review',
+    'home_step4_cta'           => 'Request a Quote',
+    'home_step4_link'          => 'View Ordering Guide',
+
+    // FAQ
+    'home_faq_label'           => 'FAQ',
+    'home_faq_title'           => 'Frequently Asked Questions',
+    'home_faq_more'            => 'View All',
+
+    // Blog
+    'home_blog_label'          => 'Blog',
+    'home_blog_title'          => 'Window Stories',
+    'home_blog_body'           => 'Stories about windows and hanok lattices, told by the Pyeongmok workshop.',
+    'home_blog_more'           => 'View All',
+    'home_blog_quote_read'     => 'Read the story',
+    'home_blog_episode'        => 'Ep. %d',
+
+    // Contact CTA
+    'home_contact_label'       => 'Contact',
+    'home_contact_title'       => 'Even a small question is welcome.',
+    'home_contact_body'        => 'From design, production, and installation consultations<br>to collaboration and project proposals — all welcome.<br><br>Feel free to reach out.<br>We\'ll get back to you quickly.',
+    'home_contact_email_btn'   => 'Email Us',
+    'home_contact_hint'        => 'Open weekdays 10 AM – 6 PM · Email inquiries accepted on weekends and holidays',
+];
