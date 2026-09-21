@@ -54,7 +54,7 @@ async function loadNextPage() {
 
     if (currentPage === 1 && typeof data.total === 'number') {
         const countEl = document.getElementById('libResultCount');
-        if (countEl) countEl.innerHTML = `<strong>${data.total}</strong>개 패턴`;
+        if (countEl) countEl.innerHTML = _t('<strong>%s</strong>개 패턴', data.total);
     }
 
     loadedPatterns = [...loadedPatterns, ...patterns];
@@ -63,7 +63,7 @@ async function loadNextPage() {
 
     const masonry = document.getElementById('libMasonry');
     if (!patterns.length && currentPage === 2) {
-        masonry.innerHTML = '<p style="color:var(--text-3);font-size:13px;grid-column:1/-1;padding:40px 0;text-align:center;">검색 결과가 없습니다.</p>';
+        masonry.innerHTML = '<p style="color:var(--text-3);font-size:13px;grid-column:1/-1;padding:40px 0;text-align:center;">' + _t('검색 결과가 없습니다.') + '</p>';
     } else {
         masonry.insertAdjacentHTML('beforeend', patterns.map(buildCard).join(''));
     }
@@ -104,7 +104,7 @@ function buildCard(p) {
         : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--text-3);font-size:40px;"><i class="bi bi-image"></i></div>`;
 
     const editorBtn = p.editor_url && p.drawing_id
-        ? `<a href="${esc(p.editor_url)}?drawing_id=${p.drawing_id}" class="lib-btn lib-btn-primary" onclick="return openCollectionEditor(event,'${esc(p.editor_url)}?drawing_id=${p.drawing_id}')"><i class="bi bi-pencil"></i> 열기</a>`
+        ? `<a href="${esc(p.editor_url)}?drawing_id=${p.drawing_id}" class="lib-btn lib-btn-primary" onclick="return openCollectionEditor(event,'${esc(p.editor_url)}?drawing_id=${p.drawing_id}')"><i class="bi bi-pencil"></i> ${_t('열기')}</a>`
         : '';
 
     const kwHtml = (p.keywords || []).slice(0, 3).map(k => `<span style="font-size:11px;color:var(--text);">${esc(k)}</span>`).join(' · ');
@@ -115,13 +115,13 @@ function buildCard(p) {
                 ${imgHtml}
                 <div class="lib-overlay">
                     <div class="lib-overlay-top">
-                        <button class="lib-icon-btn lib-like-btn${likes[p.id] ? ' liked' : ''}" onclick="toggleLike(event,${p.id})" title="좋아요">
+                        <button class="lib-icon-btn lib-like-btn${likes[p.id] ? ' liked' : ''}" onclick="toggleLike(event,${p.id})" title="${_t('좋아요')}">
                             <i class="bi bi-heart${likes[p.id] ? '-fill' : ''}"></i>
                         </button>
-                        <button class="lib-icon-btn lib-board-btn" onclick="openBoardModal(event,${p.id},'${esc(displayName)}')" title="보드에 저장">
+                        <button class="lib-icon-btn lib-board-btn" onclick="openBoardModal(event,${p.id},'${esc(displayName)}')" title="${_t('보드에 저장')}">
                             <i class="bi bi-collection"></i>
                         </button>
-                        <button class="lib-icon-btn lib-share-btn" onclick="shareCollectionPattern(event,'${esc(p.slug)}','${esc(displayName)}','${esc(p.image_path || '')}')" title="공유">
+                        <button class="lib-icon-btn lib-share-btn" onclick="shareCollectionPattern(event,'${esc(p.slug)}','${esc(displayName)}','${esc(p.image_path || '')}')" title="${_t('공유')}">
                             <i class="bi bi-share"></i>
                         </button>
                     </div>
@@ -318,21 +318,21 @@ function closeBoardModal() {
 
 async function fetchAndRenderBoards() {
     const list = document.getElementById('boardList');
-    list.innerHTML = '<p class="bm-empty">불러오는 중…</p>';
+    list.innerHTML = '<p class="bm-empty">' + _t('불러오는 중…') + '</p>';
     try {
         const res  = await fetch('/src/api/boards/list.php', { headers: _authHeaders() });
         const data = await res.json();
         boardCache = data.boards || [];
         renderBoardList();
     } catch {
-        list.innerHTML = '<p class="bm-empty">불러오기 실패</p>';
+        list.innerHTML = '<p class="bm-empty">' + _t('불러오기 실패') + '</p>';
     }
 }
 
 function renderBoardList() {
     const list = document.getElementById('boardList');
     if (!boardCache.length) {
-        list.innerHTML = '<p class="bm-empty">아직 보드가 없습니다.</p>';
+        list.innerHTML = '<p class="bm-empty">' + _t('아직 보드가 없습니다.') + '</p>';
         return;
     }
     list.innerHTML = boardCache.map(b => `
@@ -340,7 +340,7 @@ function renderBoardList() {
             <div class="bm-board-icon"><i class="bi bi-collection"></i></div>
             <div class="bm-board-info">
                 <div class="bm-board-name">${esc(b.name)}</div>
-                <div class="bm-board-count">${b.item_count}개 패턴</div>
+                <div class="bm-board-count">${_t('%s개 패턴', b.item_count)}</div>
             </div>
             <i class="bi bi-plus bm-board-plus"></i>
         </div>`).join('');
@@ -354,7 +354,7 @@ async function addToBoard(boardId, boardName) {
         body: JSON.stringify({ board_id: boardId, pattern_id: boardTarget.id }),
     });
     closeBoardModal();
-    showToast(`"${boardName}" 보드에 저장됐습니다.`);
+    showToast(_t('"%s" 보드에 저장됐습니다.', boardName));
 }
 
 async function createBoard() {
@@ -367,7 +367,7 @@ async function createBoard() {
         body: JSON.stringify({ name }),
     });
     const data = await res.json();
-    if (!res.ok) { alert(data.error || '보드 생성 실패'); return; }
+    if (!res.ok) { alert(data.error || _t('보드 생성 실패')); return; }
     if (boardTarget) {
         await fetch('/src/api/boards/add_item.php', {
             method: 'POST',
@@ -377,7 +377,7 @@ async function createBoard() {
     }
     input.value = '';
     closeBoardModal();
-    showToast(`"${name}" 보드가 만들어졌습니다.`);
+    showToast(_t('"%s" 보드가 만들어졌습니다.', name));
 }
 
 function showToast(msg) {

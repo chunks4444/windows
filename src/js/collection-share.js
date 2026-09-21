@@ -13,7 +13,7 @@ function openCollectionEditor(e, url) {
 }
 
 function openCollectionShareModal(url, title, image) {
-    _libShareCtx = { url, title: title || '평목 컬렉션', image };
+    _libShareCtx = { url, title: title || _t('평목 컬렉션'), image };
     const linkInput = document.getElementById('libShareModalLink');
     if (linkInput) linkInput.value = url;
     const modal = document.getElementById('libShareModal');
@@ -32,11 +32,11 @@ async function _libShareCopyLink() {
         await navigator.clipboard.writeText(_libShareCtx.url);
         if (btn) {
             const orig = btn.textContent;
-            btn.textContent = '복사됨';
+            btn.textContent = _t('복사됨');
             setTimeout(() => { btn.textContent = orig; }, 1500);
         }
     } catch (e) {
-        window.prompt('아래 링크를 복사하세요:', _libShareCtx.url);
+        window.prompt(_t('아래 링크를 복사하세요:'), _libShareCtx.url);
     }
 }
 
@@ -47,7 +47,7 @@ function _libShareToKakao() {
         objectType: 'feed',
         content: {
             title: _libShareCtx.title,
-            description: '평목 스튜디오에서 만든 문살 패턴을 확인해보세요.',
+            description: _t('평목 스튜디오에서 만든 문살 패턴을 확인해보세요.'),
             imageUrl: _libShareCtx.image || (location.origin + '/src/assets/logo.png'),
             link: { mobileWebUrl: _libShareCtx.url, webUrl: _libShareCtx.url },
         },

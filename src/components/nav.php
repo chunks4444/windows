@@ -19,6 +19,19 @@ if (!defined('BOOTSTRAP_LOADED')) {
 }
 echo '<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">';
 ?>
+<script>
+// .js 파일 안의 문구 번역용. 한글 원문을 키로 찾고, 사전에 없으면 원문을 그대로 돌려준다.
+// %s/%d는 인자로 순서대로 치환 — _t('"%s" 보드에 저장됐습니다.', name)
+window.PMOK_LANG = <?= json_encode(current_lang()) ?>;
+window.PMOK_T = <?= is_en()
+    ? json_encode(require __DIR__ . '/../lib/i18n/js.php', JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT)
+    : '{}' ?>;
+window._t = function (s) {
+    var out = (window.PMOK_T && window.PMOK_T[s]) || s;
+    for (var i = 1; i < arguments.length; i++) out = out.replace(/%[sd]/, arguments[i]);
+    return out;
+};
+</script>
 <?php css_tag('/src/css/tokens.css'); ?>
 <?php css_tag('/src/css/common.css'); ?>
 <?php css_tag('/src/css/nav.css'); ?>
