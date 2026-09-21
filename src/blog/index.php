@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../lib/db.php';
+require_once __DIR__ . '/../lib/i18n.php';
 try {
     $pdo = db();
 
@@ -125,7 +126,7 @@ try {
 }
 ?>
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="<?= is_en() ? 'en' : 'ko' ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -146,14 +147,14 @@ try {
     <div class="bg-hero">
         <div class="bg-hero-inner">
             <p class="bg-hero-label">Blog</p>
-            <h1>창호 이야기</h1>
-            <p class="bg-hero-sub">평목 공방이 전하는 창호와 한옥 살창 이야기입니다.</p>
+            <h1><?= htmlspecialchars(t('home_blog_title')) ?></h1>
+            <p class="bg-hero-sub"><?= htmlspecialchars(t('home_blog_body')) ?></p>
         </div>
     </div>
 
     <?php if ($totalCount === 0): ?>
     <section class="bg-list-section">
-        <div class="bg-empty">아직 등록된 글이 없습니다.</div>
+        <div class="bg-empty"><?= htmlspecialchars(t('blog_no_posts')) ?></div>
     </section>
     <?php else: ?>
 
@@ -177,7 +178,7 @@ try {
                             <img src="<?= htmlspecialchars($fp['thumbnail_url']) ?>" class="bg-feature-img" alt="">
                             <div class="bg-feature-caption">
                                 <?php if ($fp['series_name']): ?>
-                                <span class="bg-feature-badge"><?= htmlspecialchars($fp['series_name']) ?><?= $fp['series_order'] ? ' · ' . (int)$fp['series_order'] . '화' : '' ?></span>
+                                <span class="bg-feature-badge"><?= htmlspecialchars($fp['series_name']) ?><?= $fp['series_order'] ? ' · ' . htmlspecialchars(sprintf(t('home_blog_episode'), (int)$fp['series_order'])) : '' ?></span>
                                 <?php endif; ?>
                                 <h2 class="bg-feature-title">"<?= htmlspecialchars($fp['title']) ?>"</h2>
                             </div>
@@ -200,7 +201,7 @@ try {
                     <a class="bg-ranked-link" href="/blog/<?= rawurlencode($p['slug']) ?>">
                         <div class="bg-ranked-text">
                             <p class="bg-ranked-cat">
-                                <?php if ($p['series_name']): ?><?= htmlspecialchars($p['series_name']) ?><?= $p['series_order'] ? ' · ' . (int)$p['series_order'] . '화' : '' ?> · <?php endif; ?><?= date('Y.m.d', strtotime($p['created_at'])) ?>
+                                <?php if ($p['series_name']): ?><?= htmlspecialchars($p['series_name']) ?><?= $p['series_order'] ? ' · ' . htmlspecialchars(sprintf(t('home_blog_episode'), (int)$p['series_order'])) : '' ?> · <?php endif; ?><?= date('Y.m.d', strtotime($p['created_at'])) ?>
                             </p>
                             <h3 class="bg-ranked-title"><?= htmlspecialchars($p['title']) ?></h3>
                             <?php if ($p['summary']): ?>
@@ -218,14 +219,14 @@ try {
             </ol>
 
             <?php if ($totalPages > 1): ?>
-            <nav class="bg-pagination" aria-label="페이지">
+            <nav class="bg-pagination" aria-label="<?= htmlspecialchars(t('blog_page')) ?>">
                 <a class="bg-page-arrow <?= $page <= 1 ? 'disabled' : '' ?>"
-                   href="?page=<?= max(1, $page - 1) ?>" aria-label="이전 페이지"><i class="bi bi-chevron-left"></i></a>
+                   href="?page=<?= max(1, $page - 1) ?>" aria-label="<?= htmlspecialchars(t('blog_prev_page')) ?>"><i class="bi bi-chevron-left"></i></a>
                 <?php for ($pn = 1; $pn <= $totalPages; $pn++): ?>
                 <a class="bg-page-num <?= $pn === $page ? 'active' : '' ?>" href="?page=<?= $pn ?>"><?= $pn ?></a>
                 <?php endfor; ?>
                 <a class="bg-page-arrow <?= $page >= $totalPages ? 'disabled' : '' ?>"
-                   href="?page=<?= min($totalPages, $page + 1) ?>" aria-label="다음 페이지"><i class="bi bi-chevron-right"></i></a>
+                   href="?page=<?= min($totalPages, $page + 1) ?>" aria-label="<?= htmlspecialchars(t('blog_next_page')) ?>"><i class="bi bi-chevron-right"></i></a>
             </nav>
             <?php endif; ?>
         </main>
@@ -241,8 +242,8 @@ try {
                     <?= htmlspecialchars($sc['name']) ?>
                     <?php endif; ?>
                     <span class="bg-side-card-meta">
-                        <span class="bg-side-card-count">전체 <?= (int)$sc['total'] ?>화</span>
-                        <span class="bg-side-card-status <?= $sc['is_completed'] ? 'is-completed' : 'is-ongoing' ?>"><?= $sc['is_completed'] ? '완결' : '연재중' ?></span>
+                        <span class="bg-side-card-count"><?= htmlspecialchars(sprintf(t('blog_total_episodes'), (int)$sc['total'])) ?></span>
+                        <span class="bg-side-card-status <?= $sc['is_completed'] ? 'is-completed' : 'is-ongoing' ?>"><?= htmlspecialchars($sc['is_completed'] ? t('blog_status_complete') : t('blog_status_ongoing')) ?></span>
                     </span>
                 </h3>
                 <?php if ($sc['tagline']): ?>
@@ -251,7 +252,7 @@ try {
                 <ul class="bg-side-card-posts">
                     <?php foreach ($sc['posts'] as $sp): ?>
                     <li>
-                        <a href="/blog/<?= rawurlencode($sp['slug']) ?>"><?= $sp['series_order'] ? (int)$sp['series_order'] . '화 ' : '' ?><?= htmlspecialchars($sp['title']) ?></a>
+                        <a href="/blog/<?= rawurlencode($sp['slug']) ?>"><?= $sp['series_order'] ? htmlspecialchars(sprintf(t('home_blog_episode'), (int)$sp['series_order'])) . ' ' : '' ?><?= htmlspecialchars($sp['title']) ?></a>
                         <span class="bg-side-card-date"><?= date('Y.m.d', strtotime($sp['created_at'])) ?></span>
                     </li>
                     <?php endforeach; ?>
@@ -259,10 +260,10 @@ try {
             </div>
             <?php endforeach; ?>
             <?php if (empty($seriesCards)): ?>
-            <p class="bg-side-empty">아직 등록된 시리즈가 없습니다.</p>
+            <p class="bg-side-empty"><?= htmlspecialchars(t('blog_no_series')) ?></p>
             <?php else: ?>
             <button type="button" id="bgSideMoreBtn" class="bg-side-more-btn">
-                더보기 <i class="bi bi-chevron-down"></i>
+                <?= htmlspecialchars(t('wk_load_more')) ?> <i class="bi bi-chevron-down"></i>
             </button>
             <?php endif; ?>
         </aside>

@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../lib/db.php';
+require_once __DIR__ . '/../lib/i18n.php';
 require_once __DIR__ . '/../lib/meta.php';
 require_once __DIR__ . '/../lib/jwt.php';
 
@@ -204,11 +205,11 @@ $metaKeywords = implode(', ', array_unique(array_filter([
 ])));
 ?>
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="<?= is_en() ? 'en' : 'ko' ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($post['title']) ?> — 평목 공방 블로그</title>
+    <title><?= htmlspecialchars($post['title']) ?> — <?= htmlspecialchars(t('bd_title_suffix')) ?></title>
     <meta name="description" content="<?= htmlspecialchars($metaDesc) ?>">
     <meta name="keywords" content="<?= htmlspecialchars($metaKeywords) ?>">
     <meta name="robots" content="max-image-preview:large">
@@ -236,30 +237,30 @@ $metaKeywords = implode(', ', array_unique(array_filter([
     <article class="bd-article">
 
         <header class="bd-header">
-            <a href="/blog/" class="bd-back"><i class="bi bi-arrow-left"></i> 블로그</a>
+            <a href="/blog/" class="bd-back"><i class="bi bi-arrow-left"></i> <?= htmlspecialchars(t('bd_back')) ?></a>
             <h1 class="bd-title"><?= htmlspecialchars($post['title']) ?></h1>
             <time class="bd-date" datetime="<?= date('Y-m-d', strtotime($post['created_at'])) ?>">
                 <?= date('Y.m.d', strtotime($post['created_at'])) ?><?= $post['author_name'] ? ' · ' . htmlspecialchars($post['author_name']) : '' ?>
             </time>
             <div class="bd-share-row">
-                <button id="btnShare" type="button" class="bd-share-btn" title="공유하기"><i class="bi bi-share"></i></button>
-                <button id="btnShareKakao" type="button" class="bd-share-btn" title="카카오톡 공유">
+                <button id="btnShare" type="button" class="bd-share-btn" title="<?= htmlspecialchars(t('share_title')) ?>"><i class="bi bi-share"></i></button>
+                <button id="btnShareKakao" type="button" class="bd-share-btn" title="<?= htmlspecialchars(t('share_kakao_aria')) ?>">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.8 5.3 4.6 6.7-.2.7-.7 2.6-.8 3-.1.5.2.5.4.4.2-.1 2.6-1.8 3.6-2.5.7.1 1.4.2 2.2.2 5.5 0 10-3.6 10-8 0-4.4-4.5-7.8-10-7.8z"/></svg>
                 </button>
-                <button id="btnShareFb" type="button" class="bd-share-btn" title="페이스북 공유">
+                <button id="btnShareFb" type="button" class="bd-share-btn" title="<?= htmlspecialchars(t('share_fb_aria')) ?>">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7.9h2.7l.4-3.1h-3.1V8.1c0-.9.3-1.5 1.6-1.5h1.7V3.8C15.9 3.7 14.8 3.6 13.6 3.6c-2.5 0-4.2 1.5-4.2 4.3v2.1H6.7v3.1h2.7V21h4.1z"/></svg>
                 </button>
-                <a id="btnShareX" class="bd-share-btn" href="#" target="_blank" rel="noopener" title="X에 공유"><i class="bi bi-twitter-x"></i></a>
-                <a id="btnShareThreads" class="bd-share-btn" href="#" target="_blank" rel="noopener" title="스레드에 공유"><i class="bi bi-threads"></i></a>
+                <a id="btnShareX" class="bd-share-btn" href="#" target="_blank" rel="noopener" title="<?= htmlspecialchars(t('bd_share_x_aria')) ?>"><i class="bi bi-twitter-x"></i></a>
+                <a id="btnShareThreads" class="bd-share-btn" href="#" target="_blank" rel="noopener" title="<?= htmlspecialchars(t('share_threads_aria')) ?>"><i class="bi bi-threads"></i></a>
                 <?php if ($isSuperViewer): ?>
-                <a class="bd-share-btn" href="/src/admin/blog.php?edit=<?= (int)$post['id'] ?>" title="이 글 편집"><i class="bi bi-pencil-fill"></i></a>
+                <a class="bd-share-btn" href="/src/admin/blog.php?edit=<?= (int)$post['id'] ?>" title="<?= htmlspecialchars(t('blog_edit_post')) ?>"><i class="bi bi-pencil-fill"></i></a>
                 <?php endif; ?>
             </div>
         </header>
 
         <?php if ($seriesInfo): ?>
         <div class="bd-series-box">
-            <p class="bd-series-box-label">이 시리즈 · <?= htmlspecialchars($seriesInfo['name']) ?><?= $post['series_order'] ? ' · ' . (int)$post['series_order'] . '화' : '' ?> <span class="bd-series-box-total">(전체 <?= count($seriesEpisodes) ?>화)</span> <span class="bd-series-box-status <?= $seriesInfo['is_completed'] ? 'is-completed' : 'is-ongoing' ?>"><?= $seriesInfo['is_completed'] ? '완결' : '연재중' ?></span></p>
+            <p class="bd-series-box-label"><?= htmlspecialchars(t('bd_series_label')) ?> · <?= htmlspecialchars($seriesInfo['name']) ?><?= $post['series_order'] ? ' · ' . (int)$post['series_order'] . '화' : '' ?> <span class="bd-series-box-total">(전체 <?= count($seriesEpisodes) ?>화)</span> <span class="bd-series-box-status <?= $seriesInfo['is_completed'] ? 'is-completed' : 'is-ongoing' ?>"><?= $seriesInfo['is_completed'] ? '완결' : '연재중' ?></span></p>
             <?php if ($seriesInfo['tagline']): ?>
             <p class="bd-series-box-tagline">"<?= htmlspecialchars($seriesInfo['tagline']) ?>"</p>
             <?php endif; ?>
@@ -286,10 +287,10 @@ $metaKeywords = implode(', ', array_unique(array_filter([
         ?>
         <div class="bd-source-notice">
             <?php if (count($bdSourceLines) === 1): ?>
-            <p class="bd-source-text">출처: <?= htmlspecialchars($bdSourceLines[0]) ?></p>
+            <p class="bd-source-text"><?= htmlspecialchars(sprintf(t('bd_source_prefix'), $bdSourceLines[0])) ?></p>
             <hr class="bd-divider bd-divider-source">
             <?php elseif (count($bdSourceLines) > 1): ?>
-            <p class="bd-source-text">출처</p>
+            <p class="bd-source-text"><?= htmlspecialchars(t('bd_source')) ?></p>
             <ul class="bd-source-list">
                 <?php foreach ($bdSourceLines as $bdSourceLine): ?>
                 <li><?= htmlspecialchars($bdSourceLine) ?></li>
@@ -306,7 +307,7 @@ $metaKeywords = implode(', ', array_unique(array_filter([
         ?>
         <?php if ($bdEngineKey && isset($engineLabels[$bdEngineKey])): ?>
         <div class="bd-engine-box">
-            <p class="bd-engine-box-title">이 살의 이야기, 직접 만들어보세요</p>
+            <p class="bd-engine-box-title"><?= htmlspecialchars(t('bd_engine_box_title')) ?></p>
             <p class="bd-engine-box-desc">글에서 다룬 <?= htmlspecialchars($post['related_category_name'] ?: $engineLabels[$bdEngineKey]) ?> 패턴을 스튜디오에서 바로 조작해볼 수 있습니다.</p>
             <?php
             $bdEngineUrl = '/src/engine/' . $bdEngineKey . '/' . $bdEngineKey . '.php'
@@ -315,7 +316,7 @@ $metaKeywords = implode(', ', array_unique(array_filter([
             <a class="bd-engine-box-btn"
                href="<?= htmlspecialchars($bdEngineUrl) ?>"
                <?= $post['related_drawing_id'] ? "onclick=\"return openCollectionEditor(event,'" . htmlspecialchars($bdEngineUrl, ENT_QUOTES) . "')\"" : '' ?>>
-                스튜디오에서 열기 <i class="bi bi-arrow-right"></i>
+                <?= htmlspecialchars(t('bd_open_in_studio')) ?> <i class="bi bi-arrow-right"></i>
             </a>
         </div>
         <?php endif; ?>
@@ -327,8 +328,8 @@ $metaKeywords = implode(', ', array_unique(array_filter([
         </div>
         <?php else: ?>
         <div class="bd-cta">
-            <p class="bd-cta-title"><?= htmlspecialchars($post['cta_text'] ?: '평목 스튜디오의 다양한 패턴 디자인 보러가기') ?></p>
-            <a href="/collection/" class="bd-cta-btn">컬렉션 보러가기 <i class="bi bi-arrow-right"></i></a>
+            <p class="bd-cta-title"><?= htmlspecialchars($post['cta_text'] ?: t('bd_cta_default')) ?></p>
+            <a href="<?= lang_href('/collection/') ?>" class="bd-cta-btn"><?= htmlspecialchars(t('bd_go_collection')) ?> <i class="bi bi-arrow-right"></i></a>
         </div>
         <?php endif; ?>
 
@@ -338,22 +339,22 @@ $metaKeywords = implode(', ', array_unique(array_filter([
         <div class="bd-pager-grid">
             <?php if ($prev): ?>
             <a class="bd-pager-link bd-pager-prev" href="/blog/<?= rawurlencode($prev['slug']) ?>">
-                <span class="bd-pager-label">이전 편</span>
+                <span class="bd-pager-label"><?= htmlspecialchars(t('bd_pager_prev')) ?></span>
                 <span class="bd-pager-title"><?= htmlspecialchars($prev['title']) ?></span>
             </a>
             <?php else: ?><span></span><?php endif; ?>
             <a href="/blog/" class="bd-pager-link bd-pager-list">
-                <span class="bd-pager-label">블로그</span>
-                <span class="bd-pager-title">전체 목록 보기</span>
+                <span class="bd-pager-label"><?= htmlspecialchars(t('bd_back')) ?></span>
+                <span class="bd-pager-title"><?= htmlspecialchars(t('bd_pager_all')) ?></span>
             </a>
             <?php if ($next): ?>
             <a class="bd-pager-link bd-pager-next" href="/blog/<?= rawurlencode($next['slug']) ?>">
-                <span class="bd-pager-label">다음 편</span>
+                <span class="bd-pager-label"><?= htmlspecialchars(t('bd_pager_next')) ?></span>
                 <span class="bd-pager-title"><?= htmlspecialchars($next['title']) ?></span>
             </a>
             <?php elseif ($nextSeries): ?>
             <a class="bd-pager-link bd-pager-next" href="/blog/<?= rawurlencode($nextSeries['slug']) ?>">
-                <span class="bd-pager-label">다음 시리즈 · <?= htmlspecialchars($nextSeries['series_name']) ?> · 1화</span>
+                <span class="bd-pager-label"><?= htmlspecialchars(t('bd_next_series')) ?> · <?= htmlspecialchars($nextSeries['series_name']) ?> · 1화</span>
                 <span class="bd-pager-title"><?= htmlspecialchars($nextSeries['title']) ?></span>
             </a>
             <?php else: ?><span></span><?php endif; ?>
@@ -368,6 +369,11 @@ $metaKeywords = implode(', ', array_unique(array_filter([
     const shareUrl   = <?= json_encode(SITE_URL . '/blog/' . rawurlencode($post['slug'])) ?>;
     const shareTitle = <?= json_encode($post['title']) ?>;
     const shareImage = <?= json_encode($metaImage) ?>;
+    const BD_T = <?= json_encode([
+        'linkCopied'     => t('bd_link_copied'),
+        'linkCopyFailed' => t('bd_link_copy_failed'),
+        'kakaoDesc'      => t('bd_kakao_desc'),
+    ], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
 
     function showToast(msg) {
         const t = document.getElementById('bdToast');
@@ -384,9 +390,9 @@ $metaKeywords = implode(', ', array_unique(array_filter([
         }
         try {
             await navigator.clipboard.writeText(shareUrl);
-            showToast('링크가 복사되었습니다.');
+            showToast(BD_T.linkCopied);
         } catch (e) {
-            showToast('링크 복사에 실패했습니다.');
+            showToast(BD_T.linkCopyFailed);
         }
     });
 
@@ -397,14 +403,14 @@ $metaKeywords = implode(', ', array_unique(array_filter([
 
     document.getElementById('btnShareKakao').addEventListener('click', () => {
         if (!window.Kakao?.isInitialized?.()) {
-            navigator.clipboard?.writeText(shareUrl).then(() => showToast('링크가 복사되었습니다.'));
+            navigator.clipboard?.writeText(shareUrl).then(() => showToast(BD_T.linkCopied));
             return;
         }
         Kakao.Share.sendDefault({
             objectType: 'feed',
             content: {
                 title: shareTitle,
-                description: '평목 블로그에서 이 글을 확인해보세요.',
+                description: BD_T.kakaoDesc,
                 imageUrl: shareImage,
                 link: { mobileWebUrl: shareUrl, webUrl: shareUrl },
             },

@@ -2,6 +2,7 @@
 header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../lib/db.php';
 require_once __DIR__ . '/../lib/slug.php';
+require_once __DIR__ . '/../lib/i18n.php';
 try {
     $totalPatterns = (int) db()->query("SELECT COUNT(*) FROM library_patterns WHERE is_active = 1")->fetchColumn();
 } catch (Throwable $e) {
@@ -81,13 +82,13 @@ function collection_card_html(array $p, array $navStudioIcons, array $engineEdit
                 ' . $imgHtml . '
                 <div class="lib-overlay">
                     <div class="lib-overlay-top">
-                        <button class="lib-icon-btn lib-like-btn" onclick="toggleLike(event,' . (int)$p['id'] . ')" title="좋아요">
+                        <button class="lib-icon-btn lib-like-btn" onclick="toggleLike(event,' . (int)$p['id'] . ')" title="' . htmlspecialchars(t('col_like'), ENT_QUOTES) . '">
                             <i class="bi bi-heart"></i>
                         </button>
-                        <button class="lib-icon-btn lib-board-btn" onclick="openBoardModal(event,' . (int)$p['id'] . ',\'' . htmlspecialchars($displayName, ENT_QUOTES) . '\')" title="보드에 저장">
+                        <button class="lib-icon-btn lib-board-btn" onclick="openBoardModal(event,' . (int)$p['id'] . ',\'' . htmlspecialchars($displayName, ENT_QUOTES) . '\')" title="' . htmlspecialchars(t('col_save_board'), ENT_QUOTES) . '">
                             <i class="bi bi-collection"></i>
                         </button>
-                        <button class="lib-icon-btn lib-share-btn" onclick="shareCollectionPattern(event,\'' . htmlspecialchars($p['slug'], ENT_QUOTES) . '\',\'' . htmlspecialchars($displayName, ENT_QUOTES) . '\',\'' . htmlspecialchars($p['image_path'] ?? '', ENT_QUOTES) . '\')" title="공유">
+                        <button class="lib-icon-btn lib-share-btn" onclick="shareCollectionPattern(event,\'' . htmlspecialchars($p['slug'], ENT_QUOTES) . '\',\'' . htmlspecialchars($displayName, ENT_QUOTES) . '\',\'' . htmlspecialchars($p['image_path'] ?? '', ENT_QUOTES) . '\')" title="' . htmlspecialchars(t('share_title'), ENT_QUOTES) . '">
                             <i class="bi bi-share"></i>
                         </button>
                     </div>
@@ -105,7 +106,7 @@ function collection_card_html(array $p, array $navStudioIcons, array $engineEdit
 }
 ?>
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="<?= is_en() ? 'en' : 'ko' ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -126,10 +127,10 @@ function collection_card_html(array $p, array $navStudioIcons, array $engineEdit
 <div class="lib-hero">
     <div class="lib-hero-inner">
         <p class="lib-hero-label">Collection</p>
-        <h1>컬렉션</h1>
+        <h1><?= htmlspecialchars(t('nav_collection')) ?></h1>
         <p class="lib-hero-sub">
-            평목 스튜디오에서 제작된 창호 격자 패턴을 둘러보세요.&ensp;
-            <span class="lib-count-badge"><?= $totalPatterns ?>개 패턴</span>
+            <?= htmlspecialchars(t('col_sub')) ?>&ensp;
+            <span class="lib-count-badge"><?= htmlspecialchars(sprintf(t('col_count'), (int)$totalPatterns)) ?></span>
         </p>
     </div>
 </div>
@@ -139,27 +140,27 @@ function collection_card_html(array $p, array $navStudioIcons, array $engineEdit
     <div class="lib-toolbar-inner">
         <div class="lib-select-row">
             <select id="libKrSelect" class="lib-select">
-                <option value="" disabled selected hidden>우리살</option>
-                <option value="kr">우리살</option>
+                <option value="" disabled selected hidden><?= htmlspecialchars(t('col_group_kr')) ?></option>
+                <option value="kr"><?= htmlspecialchars(t('col_group_kr')) ?></option>
                 <!-- 11계열은 initGroupFilter()가 JS로 여기 뒤에 채움 -->
             </select>
             <select id="libNewSelect" class="lib-select">
-                <option value="" disabled selected hidden>새살</option>
-                <option value="new">새살</option>
+                <option value="" disabled selected hidden><?= htmlspecialchars(t('col_group_new')) ?></option>
+                <option value="new"><?= htmlspecialchars(t('col_group_new')) ?></option>
             </select>
             <select id="libJpSelect" class="lib-select">
-                <option value="" disabled selected hidden>일본살</option>
-                <option value="jp">일본살</option>
-                <option value="jp-shoji">쇼지</option>
-                <option value="jp-kumiko">쿠미꼬</option>
+                <option value="" disabled selected hidden><?= htmlspecialchars(t('col_group_jp')) ?></option>
+                <option value="jp"><?= htmlspecialchars(t('col_group_jp')) ?></option>
+                <option value="jp-shoji"><?= htmlspecialchars(t('col_group_shoji')) ?></option>
+                <option value="jp-kumiko"><?= htmlspecialchars(t('col_group_kumiko')) ?></option>
             </select>
             <button class="lib-filter-like" id="libLikeBtn"><svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M8 14.2s-5.6-3.4-5.6-7.4c0-1.9 1.5-3.4 3.4-3.4 1.1 0 2.1.5 2.7 1.4.6-.9 1.6-1.4 2.7-1.4 1.9 0 3.4 1.5 3.4 3.4 0 4-5.6 7.4-5.6 7.4z"/></svg> 좋아요</button>
         </div>
         <div class="lib-right-group">
-            <span class="lib-result-count" id="libResultCount"><strong><?= (int)$totalPatterns ?></strong>개 패턴</span>
+            <span class="lib-result-count" id="libResultCount"><?= htmlspecialchars(sprintf(t('col_count'), (int)$totalPatterns)) ?></span>
             <div class="lib-search">
                 <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7" cy="7" r="5"/><line x1="10.8" y1="10.8" x2="14" y2="14" stroke-linecap="round"/></svg>
-                <input type="text" id="libSearch" placeholder="패턴 검색…" autocomplete="off" value="<?= htmlspecialchars($ssrQuery, ENT_QUOTES) ?>">
+                <input type="text" id="libSearch" placeholder="<?= htmlspecialchars(t('col_search_ph')) ?>" autocomplete="off" value="<?= htmlspecialchars($ssrQuery, ENT_QUOTES) ?>">
             </div>
         </div>
     </div>
@@ -173,7 +174,7 @@ function collection_card_html(array $p, array $navStudioIcons, array $engineEdit
     ?></div>
     <div id="libLoadMore" style="display:none;text-align:center;padding:24px 0;">
         <button class="lib-loadmore-btn" onclick="loadNextPage()">
-            <span id="libLoadMoreText">더 보기</span>
+            <span id="libLoadMoreText"><?= htmlspecialchars(t('wk_load_more')) ?></span>
             <span id="libLoadMoreSpinner" style="display:none;"></span>
         </button>
     </div>
@@ -189,29 +190,29 @@ window.__pmokEngineIcons = <?= json_encode(array_map(fn($svg) => $svg, $navStudi
 <div id="libShareModal" class="bm-backdrop" style="display:none;">
     <div class="bm-modal">
         <div class="bm-header">
-            <span class="bm-title">공유하기</span>
+            <span class="bm-title"><?= htmlspecialchars(t('share_title')) ?></span>
             <button class="bm-close" id="libShareModalClose"><i class="bi bi-x-lg"></i></button>
         </div>
         <div class="lib-share-linkrow">
             <input type="text" id="libShareModalLink" readonly>
-            <button type="button" id="libShareModalCopy">복사</button>
+            <button type="button" id="libShareModalCopy"><?= htmlspecialchars(t('share_copy')) ?></button>
         </div>
         <div class="lib-share-channels">
-            <button type="button" id="libShareModalKakao" title="카카오톡 공유">
+            <button type="button" id="libShareModalKakao" title="<?= htmlspecialchars(t('share_kakao_aria')) ?>">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.8 5.3 4.6 6.7-.2.7-.7 2.6-.8 3-.1.5.2.5.4.4.2-.1 2.6-1.8 3.6-2.5.7.1 1.4.2 2.2.2 5.5 0 10-3.6 10-8 0-4.4-4.5-7.8-10-7.8z"/></svg>
-                <span>카카오</span>
+                <span><?= htmlspecialchars(t('share_kakao')) ?></span>
             </button>
-            <button type="button" id="libShareModalFb" title="페이스북 공유">
+            <button type="button" id="libShareModalFb" title="<?= htmlspecialchars(t('share_fb_aria')) ?>">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7.9h2.7l.4-3.1h-3.1V8.1c0-.9.3-1.5 1.6-1.5h1.7V3.8C15.9 3.7 14.8 3.6 13.6 3.6c-2.5 0-4.2 1.5-4.2 4.3v2.1H6.7v3.1h2.7V21h4.1z"/></svg>
                 <span>FB</span>
             </button>
-            <button type="button" id="libShareModalX" title="X(트위터) 공유">
+            <button type="button" id="libShareModalX" title="<?= htmlspecialchars(t('share_x_aria')) ?>">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 3H22l-7.5 8.6L23 21h-6.9l-5.4-6.6L4.4 21H1.3l8-9.2L1 3h7l4.9 6.1L18.9 3zm-1.2 16h1.9L7.4 4.9H5.4L17.7 19z"/></svg>
                 <span>X</span>
             </button>
-            <button type="button" id="libShareModalThreads" title="스레드에 공유">
+            <button type="button" id="libShareModalThreads" title="<?= htmlspecialchars(t('share_threads_aria')) ?>">
                 <i class="bi bi-threads"></i>
-                <span>스레드</span>
+                <span><?= htmlspecialchars(t('share_threads')) ?></span>
             </button>
         </div>
     </div>
@@ -221,14 +222,14 @@ window.__pmokEngineIcons = <?= json_encode(array_map(fn($svg) => $svg, $navStudi
 <div id="boardModal" class="bm-backdrop" style="display:none;">
     <div class="bm-modal">
         <div class="bm-header">
-            <span class="bm-title">보드에 저장</span>
+            <span class="bm-title"><?= htmlspecialchars(t('col_save_board')) ?></span>
             <button class="bm-close" onclick="closeBoardModal()"><i class="bi bi-x-lg"></i></button>
         </div>
         <div id="boardList" class="bm-list"></div>
         <div class="bm-divider"></div>
         <div class="bm-new">
-            <input id="boardNameInput" class="bm-input" type="text" placeholder="새 보드 이름…" maxlength="40">
-            <button class="bm-create-btn" onclick="createBoard()">만들기</button>
+            <input id="boardNameInput" class="bm-input" type="text" placeholder="<?= htmlspecialchars(t('col_new_board_ph')) ?>" maxlength="40">
+            <button class="bm-create-btn" onclick="createBoard()"><?= htmlspecialchars(t('col_create')) ?></button>
         </div>
     </div>
 </div>
