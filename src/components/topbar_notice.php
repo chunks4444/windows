@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../lib/i18n.php';
 if (!empty($_hide_topbar_notice)) return;
 $_noticeText = '';
 $_noticeLink = '';
@@ -32,7 +33,7 @@ body { padding-top: 108px !important; }
             <span style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"><?= htmlspecialchars($_noticeText) ?></span>
         <?php endif; ?>
     </div>
-    <button onclick="pmDismissNotice('<?= $_noticeHash ?>')" aria-label="닫기"
+    <button onclick="pmDismissNotice('<?= $_noticeHash ?>')" aria-label="<?= htmlspecialchars(t('auth_close')) ?>"
             style="position:absolute;right:14px;background:none;border:none;color:inherit;opacity:0.65;cursor:pointer;font-size:15px;padding:6px;line-height:1;display:flex;align-items:center;">
         <i class="bi bi-x-lg"></i>
     </button>

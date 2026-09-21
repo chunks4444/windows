@@ -6,6 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 require_once __DIR__ . '/../../lib/db.php';
+require_once __DIR__ . '/../../lib/i18n.php';
 require_once __DIR__ . '/../../lib/mailer.php';
 
 // multipart/form-data로 받는다 (파일 첨부 지원을 위해 JSON 대신 $_POST/$_FILES 사용)
@@ -29,13 +30,13 @@ if ($openedAt > 0) {
 }
 
 if (!$name || !$email || !$subject || !$message) {
-    http_response_code(422); echo json_encode(['error' => '모든 항목을 입력해주세요.']); exit;
+    http_response_code(422); echo json_encode(['error' => t('ct_err_all_fields')]); exit;
 }
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    http_response_code(422); echo json_encode(['error' => '이메일 형식이 올바르지 않습니다.']); exit;
+    http_response_code(422); echo json_encode(['error' => t('ct_err_email_format')]); exit;
 }
 if (mb_strlen($message) > 2000) {
-    http_response_code(422); echo json_encode(['error' => '내용은 2000자 이내로 입력해주세요.']); exit;
+    http_response_code(422); echo json_encode(['error' => t('ct_err_message_len')]); exit;
 }
 
 // 첨부파일 (선택) — 10MB 이하, 허용 확장자만
@@ -43,15 +44,15 @@ $attachments = [];
 if (!empty($_FILES['file']) && $_FILES['file']['error'] !== UPLOAD_ERR_NO_FILE) {
     $file = $_FILES['file'];
     if ($file['error'] !== UPLOAD_ERR_OK) {
-        http_response_code(422); echo json_encode(['error' => '파일 업로드에 실패했습니다.']); exit;
+        http_response_code(422); echo json_encode(['error' => t('ct_err_upload_failed')]); exit;
     }
     if ($file['size'] > 10 * 1024 * 1024) {
-        http_response_code(422); echo json_encode(['error' => '첨부파일은 10MB 이하만 가능합니다.']); exit;
+        http_response_code(422); echo json_encode(['error' => t('ct_err_file_size')]); exit;
     }
     $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
     $allowedExt = ['jpg','jpeg','png','gif','webp','pdf','zip','dwg','dxf','doc','docx','xls','xlsx','hwp'];
     if (!in_array($ext, $allowedExt, true)) {
-        http_response_code(422); echo json_encode(['error' => '지원하지 않는 파일 형식입니다.']); exit;
+        http_response_code(422); echo json_encode(['error' => t('ct_err_file_type')]); exit;
     }
     $attachments[] = [
         'name'     => basename($file['name']),
@@ -73,7 +74,7 @@ $ipHash = substr(md5($ip), 0, 8);
 $cnt = $pdo->prepare("SELECT COUNT(*) FROM contact_log WHERE ip_hash = ? AND sent_at > DATE_SUB(NOW(), INTERVAL 1 HOUR)");
 $cnt->execute([$ipHash]);
 if ((int)$cnt->fetchColumn() >= 5) {
-    http_response_code(429); echo json_encode(['error' => '잠시 후 다시 시도해주세요.']); exit;
+    http_response_code(429); echo json_encode(['error' => t('auth_err_retry_later')]); exit;
 }
 
 $attachmentName = $attachments ? $attachments[0]['name'] : '';
@@ -89,7 +90,7 @@ $sent = send_mail(
 );
 
 if (!$sent) {
-    http_response_code(500); echo json_encode(['error' => '메일 전송에 실패했습니다. 직접 이메일로 문의해주세요.']); exit;
+    http_response_code(500); echo json_encode(['error' => t('ct_err_mail_failed')]); exit;
 }
 
 $pdo->prepare("INSERT INTO contact_log (ip_hash, name, email, subject, sent_at) VALUES (?, ?, ?, ?, NOW())")

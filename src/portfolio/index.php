@@ -2,6 +2,7 @@
 header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../lib/db.php';
 require_once __DIR__ . '/../lib/engine_icons.php';
+require_once __DIR__ . '/../lib/i18n.php';
 try {
 $pdo = db();
 
@@ -96,7 +97,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
 }
 ?>
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="<?= is_en() ? 'en' : 'ko' ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -116,23 +117,23 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
         <div class="wkg-header-row">
             <div>
                 <p class="wkg-label">Portfolio</p>
-                <h1>포트폴리오</h1>
+                <h1><?= htmlspecialchars(t('nav_portfolio')) ?></h1>
                 <p class="wkg-sub">
-                    평목 공방에서 완성된 작품들입니다.
-                    <span class="wkg-count-badge"><?= $total ?>개 작품</span>
+                    <?= htmlspecialchars(t('wk_sub')) ?>
+                    <span class="wkg-count-badge"><?= htmlspecialchars(sprintf(t('wk_count'), $total)) ?></span>
                 </p>
             </div>
             <div class="wkg-filter-wrap">
                 <button type="button" class="wkg-filter-btn" id="wkgFilterBtn" aria-haspopup="true" aria-expanded="false">
                     <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><line x1="2" y1="4" x2="14" y2="4"/><line x1="2" y1="8" x2="14" y2="8"/><line x1="2" y1="12" x2="14" y2="12"/><circle cx="6" cy="4" r="1.6" fill="currentColor" stroke="none"/><circle cx="11" cy="8" r="1.6" fill="currentColor" stroke="none"/><circle cx="7" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg>
-                    필터
+                    <?= htmlspecialchars(t('wk_filter')) ?>
                 </button>
                 <div class="wkg-filter-dropdown" id="wkFilterDropdown" role="listbox" aria-hidden="true">
                     <?php foreach ($tags as $i => $tag): ?>
                     <button class="wkg-filter-option wk-tag<?= $i === 0 ? ' active' : '' ?>"
                             data-tag="<?= htmlspecialchars($tag) ?>"
                             role="option" aria-selected="<?= $i === 0 ? 'true' : 'false' ?>">
-                        <?= htmlspecialchars($tag) ?>
+                        <?= htmlspecialchars($tag === '전체' ? t('wk_tag_all') : term($tag)) ?>
                     </button>
                     <?php endforeach; ?>
                 </div>
@@ -173,11 +174,11 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
         </div>
 
         <div class="wk-empty" id="wkEmpty" style="display:none;">
-            해당 카테고리의 작품이 없습니다.
+            <?= htmlspecialchars(t('wk_empty')) ?>
         </div>
 
         <div class="wkg-load-more-wrap">
-            <button type="button" class="wkg-load-more-btn" id="wkgLoadMoreBtn" style="display:none;">더 보기</button>
+            <button type="button" class="wkg-load-more-btn" id="wkgLoadMoreBtn" style="display:none;"><?= htmlspecialchars(t('wk_load_more')) ?></button>
         </div>
     </div>
 
@@ -185,11 +186,11 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
 
 <!-- ── 디테일 뷰 모달 (네비게이션 없이 이미지·제목만) ── -->
 <div class="wk-modal" id="wkModal" aria-hidden="true">
-    <button class="wk-modal-close" id="wkModalClose" aria-label="닫기">&times;</button>
+    <button class="wk-modal-close" id="wkModalClose" aria-label="<?= htmlspecialchars(t('auth_close')) ?>">&times;</button>
     <div class="wk-modal-viewer">
-        <button class="wk-modal-arrow prev" id="wkModalPrev" aria-label="이전 사진"></button>
+        <button class="wk-modal-arrow prev" id="wkModalPrev" aria-label="<?= htmlspecialchars(t('wk_prev_photo')) ?>"></button>
         <img class="wk-modal-img" id="wkModalImg" src="" alt="">
-        <button class="wk-modal-arrow next" id="wkModalNext" aria-label="다음 사진"></button>
+        <button class="wk-modal-arrow next" id="wkModalNext" aria-label="<?= htmlspecialchars(t('wk_next_photo')) ?>"></button>
     </div>
     <div class="wk-modal-foot">
         <span class="wk-modal-eyebrow" id="wkModalEyebrow">Portfolio</span>

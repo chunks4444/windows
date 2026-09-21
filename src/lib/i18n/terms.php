@@ -20,7 +20,7 @@ return [
     '미서기'     => 'sliding',
     '미닫이'     => 'sliding',
     '들어열개'   => 'lift-and-fold',
-    '중문'       => 'entrance partition door',
+    '중문'       => 'Partition door',
 
     // 일반 용어
     '창호'       => 'windows & doors',
@@ -28,8 +28,18 @@ return [
     '목창호'     => 'wood windows & doors',
     '살창'       => 'lattice window',
     '문살'       => 'lattice pattern',
-    '파티션'     => 'partition',
+    '파티션'     => 'Partition',
     '도면'       => 'drawing',
     '공방'       => 'workshop',
-    '한옥'       => 'hanok (traditional Korean house)',
+    '한옥'       => 'Hanok',
+
+    // 공간·용도 (포트폴리오 태그 등)
+    '전체'       => 'All',
+    '거실'       => 'Living room',
+    '카페'       => 'Café',
+    '서재'       => 'Study',
+    '현관'       => 'Entrance',
+    '다실'       => 'Tea room',
+    '침실'       => 'Bedroom',
+    '갤러리'     => 'Gallery',
 ];
