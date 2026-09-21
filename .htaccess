@@ -114,6 +114,13 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^collection/([a-zA-Z][a-zA-Z0-9_-]*)/?$ src/collection/$1.php [L,QSA]
 
+# 가이드 아티클은 문서 길이의 본문이라 문구 사전(i18n/en.php) 대신 영문 전용 파일로 관리한다.
+# /en/guide/{name} 요청에 src/guide/en/{name}.php가 있으면 그걸 서빙하고, 없으면 아래 한글 본문으로
+# 폴백한다(번역 안 된 문서도 깨지지 않고 한글로 보임).
+RewriteCond %{REQUEST_URI} ^/en/
+RewriteCond %{DOCUMENT_ROOT}/src/guide/en/$1.php -f
+RewriteRule ^guide/([a-zA-Z][a-zA-Z0-9_-]*)/?$ src/guide/en/$1.php [L,QSA]
+
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^guide/([a-zA-Z][a-zA-Z0-9_-]*)/?$ src/guide/$1.php [L,QSA]

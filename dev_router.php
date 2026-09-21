@@ -49,6 +49,11 @@ if (preg_match('#^/portfolio/([^/]+)/?$#', $route, $m))  return $serve('src/port
 
 foreach (['collection', 'guide', 'mypage'] as $section) {
     if (preg_match('#^/' . $section . '/([a-zA-Z][a-zA-Z0-9_-]*)/?$#', $route, $m)) {
+        // 가이드 아티클은 영문 전용 본문 파일이 있으면 그걸 우선 (없으면 한글 본문으로 폴백)
+        if ($route !== $path) {
+            $enFile = "src/{$section}/en/{$m[1]}.php";
+            if (is_file(__DIR__ . '/' . $enFile)) return $serve($enFile);
+        }
         $file = "src/{$section}/{$m[1]}.php";
         if (is_file(__DIR__ . '/' . $file)) return $serve($file);
     }
