@@ -166,7 +166,7 @@
 }
 
 .ab-section-title {
-    font-family: 'Space Grotesk', 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     font-size: clamp(var(--fs-16), 2.2vw, var(--fs-22));
     font-weight: 700;
     line-height: 1.4;
@@ -746,7 +746,7 @@
     padding: 20px 24px 16px;
 }
 #contactModal .modal-title {
-    font-family: 'Space Grotesk', 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     font-size: var(--fs-16); font-weight: 700;
 }
 #contactModal .modal-body { padding: 24px; }
@@ -818,7 +818,7 @@
 }
 
 .home-contact-title {
-    font-family: 'Space Grotesk', 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
     font-size: clamp(var(--fs-16), 2.2vw, var(--fs-22));
     font-weight: 700;
     line-height: 1.35;

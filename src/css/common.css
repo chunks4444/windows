@@ -1,50 +1,57 @@
 @import url('https://cdn.jsdelivr.net/npm/pretendard/dist/web/static/pretendard.css');
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
-/* ── 영문 전용 폰트 (Switzer) ───────────────────────
-   한글은 그대로 Pretendard를 쓰고, 라틴 문자 범위만 Switzer로 대체.
+/* ── 영문 전용 폰트 (Inter) ───────────────────────
+   한글은 그대로 Pretendard를 쓰고, 라틴 문자 범위만 Inter로 대체.
    font-family 이름을 'Pretendard'로 재사용해 unicode-range로 글자 단위 분기시키는 방식이라
-   본문 CSS의 font-family 선언은 건드릴 필요 없음. */
+   본문 CSS의 font-family 선언은 건드릴 필요 없음.
+   제목도 같은 Inter를 쓴다 — 예전에는 헤딩만 Space Grotesk였는데 영문 폰트를 하나로 통일. */
 @font-face {
     font-family: 'Pretendard';
-    src: url('//cdn.fontshare.com/wf/EW5HJEX6O4L64XUWQA2XU7Q6BZ3B4JA4/ZWUP4SQYHHMMSS5LFHFFBX6DXL7C3DTU/H5EOHLIZH5K7IZK6SGYJI75L4KV6FUO7.woff2') format('woff2');
+    src: url('https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.16/files/inter-latin-300-normal.woff2') format('woff2');
     font-weight: 300;
     font-display: swap;
     unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
     font-family: 'Pretendard';
-    src: url('//cdn.fontshare.com/wf/BLNB4FAQFNK56DWWNF7PMGTCOTZHOEII/ST3WKSSDMBK2MIQQO3MAVYWLF4FTOLFV/6IN5WOLRCYP4G4MOCOHOMXNON6Q7MDAR.woff2') format('woff2');
+    src: url('https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.16/files/inter-latin-400-normal.woff2') format('woff2');
     font-weight: 400;
     font-display: swap;
     unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
     font-family: 'Pretendard';
-    src: url('//cdn.fontshare.com/wf/OYB4CXKJQXKTNSLJMTDQOIVUL2V5EL7S/WYO2P7DQVV5RNXGMCUO2HL4RJP4VFUAS/6XPIMU23OJVRY676OG5YVJMWEHWICATX.woff2') format('woff2');
+    src: url('https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.16/files/inter-latin-500-normal.woff2') format('woff2');
     font-weight: 500;
     font-display: swap;
     unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
     font-family: 'Pretendard';
-    src: url('//cdn.fontshare.com/wf/5SZVFDB7V52TI6ULVC6J3WQZQCIZVDV5/ODYPSTCUDMKSTYIPTV4CLQ7URIK7XYBJ/YS3VPNVO4B3TOJMEXDGFZQ4TLZGGSRZC.woff2') format('woff2');
+    src: url('https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.16/files/inter-latin-600-normal.woff2') format('woff2');
     font-weight: 600;
     font-display: swap;
     unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
     font-family: 'Pretendard';
-    src: url('//cdn.fontshare.com/wf/HBNTRIISA5MEXGL5WPYI7CV2HIWTDV3Q/YDPDINVT673XLXNSTMLG4JNCZZMVVNPN/Y7SCNZJOT2MW5ADSGOFLDGH4TNL4JCQY.woff2') format('woff2');
+    src: url('https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.16/files/inter-latin-700-normal.woff2') format('woff2');
     font-weight: 700;
     font-display: swap;
     unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
     font-family: 'Pretendard';
-    src: url('//cdn.fontshare.com/wf/ZME55SZ3XN6FJ6WZ26BVFLFSAZ5I2VWW/YETVURK7HXO34ARWAMVG6MSPWALMBOUD/SMQAIKPHV4D6DU77XSDVYN543XEEYX6R.woff2') format('woff2');
-    font-weight: 800 900;
+    src: url('https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.16/files/inter-latin-800-normal.woff2') format('woff2');
+    font-weight: 800;
+    font-display: swap;
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+    font-family: 'Pretendard';
+    src: url('https://cdn.jsdelivr.net/npm/@fontsource/inter@5.0.16/files/inter-latin-900-normal.woff2') format('woff2');
+    font-weight: 900;
     font-display: swap;
     unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
@@ -132,12 +139,6 @@ body {
     background: var(--bg);
     -webkit-overflow-scrolling: touch;
 }
-/* 제목(헤딩) 태그는 전부 Space Grotesk 우선 — 한글 글리프가 없어 한글은 자동으로 Pretendard로 폴백,
-   영문만 Space Grotesk가 적용됨. 본문(body 상속)은 건드리지 않음. */
-h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
-}
-
 body:not(.pm-generator) .container { max-width: 1320px; }
 
 /* ── 글로벌 푸터 (엔진/관리자 페이지 제외 전체 화면 공용) ───── */

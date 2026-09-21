@@ -1,6 +1,5 @@
 /* ── WORK INDEX — 화이트 배경 정사각형 카드 그리드, 3열, 카드 사이 1px 블랙(바깥 외곽선 없음) ── */
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 .wkg-page { background: var(--bg); min-height: 100vh; }
 
@@ -24,7 +23,7 @@
     margin-bottom: .6rem;
 }
 .wkg-header h1 {
-    font-family: 'Space Grotesk', 'Pretendard', 'Noto Sans KR', sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
     font-size: clamp(1.9rem, 2.9vw, 2.5rem);
     font-weight: 800; letter-spacing: -.01em; color: var(--text);
     line-height: 1.15; margin: 0 0 .7rem;
@@ -203,14 +202,14 @@
     text-align: center;
 }
 .wk-modal-eyebrow {
-    font-family: 'Space Grotesk', 'Pretendard', 'Noto Sans KR', sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
     font-size: var(--fs-12); font-weight: 700; letter-spacing: .1em;
     text-transform: uppercase; color: #fff; opacity: .6;
     margin-bottom: .5rem;
     transition: color .3s ease;
 }
 .wk-modal-title {
-    font-family: 'Space Grotesk', 'Pretendard', 'Noto Sans KR', sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
     color: #fff; font-weight: 800; letter-spacing: -.01em;
     font-size: clamp(1.2rem, 2vw, 1.6rem); line-height: 1.2;
     transition: color .3s ease;
@@ -221,12 +220,12 @@
     transition: background-color .3s ease;
 }
 .wk-modal-desc {
-    font-family: 'Space Grotesk', 'Pretendard', 'Noto Sans KR', sans-serif;
+    font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
     color: rgba(255,255,255,.72); font-size: var(--fs-14); line-height: 1.6;
     margin-bottom: .6rem;
     transition: color .3s ease;
 }
-.wk-modal-counter { font-family: 'Space Grotesk', 'Pretendard', 'Noto Sans KR', sans-serif; color: rgba(255,255,255,.72); font-size: var(--fs-12); font-variant-numeric: tabular-nums; letter-spacing: .04em; transition: color .3s ease; }
+.wk-modal-counter { font-family: 'Pretendard', 'Noto Sans KR', sans-serif; color: rgba(255,255,255,.72); font-size: var(--fs-12); font-variant-numeric: tabular-nums; letter-spacing: .04em; transition: color .3s ease; }
 
 .wk-modal-thumbs {
     flex: 0 0 auto;
