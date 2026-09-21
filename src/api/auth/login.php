@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json');
 require_once __DIR__ . '/../../lib/cors.php';
+require_once __DIR__ . '/../../lib/i18n.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') exit;
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -17,7 +18,7 @@ require_once __DIR__ . '/../../lib/rate_limit.php';
 $ip = pm_get_ip();
 if (!rate_limit_check('login:' . $ip, 10, 900)) {
     http_response_code(429);
-    echo json_encode(['error' => '로그인 시도가 너무 많습니다. 15분 후 다시 시도해주세요.']);
+    echo json_encode(['error' => t('auth_err_too_many')]);
     exit;
 }
 
@@ -27,7 +28,7 @@ $password = $body['password'] ?? '';
 
 if (!$email || !$password) {
     http_response_code(422);
-    echo json_encode(['error' => '이메일과 비밀번호를 입력해주세요.']);
+    echo json_encode(['error' => t('auth_err_missing_fields')]);
     exit;
 }
 
@@ -39,13 +40,13 @@ try {
 
     if (!$user || !password_verify($password, $user['password_hash'])) {
         http_response_code(401);
-        echo json_encode(['error' => '이메일 또는 비밀번호가 올바르지 않습니다.']);
+        echo json_encode(['error' => t('auth_err_bad_credentials')]);
         exit;
     }
 
     if ($user['withdrawn_at']) {
         http_response_code(403);
-        echo json_encode(['error' => '탈퇴한 계정입니다.']);
+        echo json_encode(['error' => t('auth_err_withdrawn')]);
         exit;
     }
 
@@ -70,5 +71,5 @@ try {
     echo json_encode(['token' => $token, 'user' => ['id' => $user['id'], 'email' => $user['email'], 'role' => $user['role']]]);
 } catch (Throwable $e) {
     http_response_code(500);
-    echo json_encode(['error' => '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.']);
+    echo json_encode(['error' => t('auth_err_server_retry')]);
 }

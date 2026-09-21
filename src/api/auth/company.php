@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json');
 require_once __DIR__ . '/../../lib/cors.php';
+require_once __DIR__ . '/../../lib/i18n.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') exit;
 
@@ -10,7 +11,7 @@ require_once __DIR__ . '/../../lib/jwt.php';
 $payload = jwt_from_request();
 if (!$payload) {
     http_response_code(401);
-    echo json_encode(['error' => '인증이 필요합니다.']);
+    echo json_encode(['error' => t('auth_err_need_auth')]);
     exit;
 }
 
@@ -45,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
         mb_strlen($ceo) > 100 || mb_strlen($phone) > 30 ||
         mb_strlen($zip) > 10 || mb_strlen($addr) > 255 || mb_strlen($detail) > 100) {
         http_response_code(422);
-        echo json_encode(['error' => '입력값이 너무 깁니다.']);
+        echo json_encode(['error' => t('auth_err_too_long')]);
         exit;
     }
 

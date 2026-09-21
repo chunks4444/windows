@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json');
 require_once __DIR__ . '/../../lib/cors.php';
+require_once __DIR__ . '/../../lib/i18n.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') exit;
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -14,10 +15,10 @@ $token    = $body['token']    ?? '';
 $password = $body['password'] ?? '';
 
 if (strlen($token) !== 64) {
-    http_response_code(400); echo json_encode(['error' => '유효하지 않은 링크입니다.']); exit;
+    http_response_code(400); echo json_encode(['error' => t('auth_err_link_invalid')]); exit;
 }
 if (strlen($password) < 6) {
-    http_response_code(422); echo json_encode(['error' => '비밀번호는 6자 이상이어야 합니다.']); exit;
+    http_response_code(422); echo json_encode(['error' => t('auth_err_pw_min')]); exit;
 }
 
 $pdo  = db();
@@ -26,7 +27,7 @@ $stmt->execute([$token]);
 $row = $stmt->fetch();
 
 if (!$row) {
-    http_response_code(400); echo json_encode(['error' => '유효하지 않거나 만료된 링크입니다. 다시 요청해 주세요.']); exit;
+    http_response_code(400); echo json_encode(['error' => t('auth_err_link_expired')]); exit;
 }
 
 $pdo->prepare('UPDATE users SET password_hash = ? WHERE id = ?')

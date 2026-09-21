@@ -1,6 +1,7 @@
 <?php
 // 회원가입 / 로그인 모달 컴포넌트
 // nav.php 에서 include 됨
+require_once __DIR__ . '/../lib/i18n.php';
 ?>
 <!-- 관리자 대리 로그인 중 표시 배너 — localStorage에 원래 관리자 세션이 보관되어 있을 때만
      (즉 대리 로그인을 시작한 그 관리자 브라우저에서만) 보인다. 대상 회원 본인 화면·계정 데이터에는
@@ -16,13 +17,13 @@
     <div class="modal-dialog modal-dialog-centered auth-modal-dialog">
         <div class="modal-content border-0 auth-modal-content">
 
-            <button type="button" class="btn-close auth-modal-close" data-bs-dismiss="modal" aria-label="닫기"></button>
+            <button type="button" class="btn-close auth-modal-close" data-bs-dismiss="modal" aria-label="<?= htmlspecialchars(t('auth_close')) ?>"></button>
 
             <!-- 좌측: 로고 패널 -->
             <div class="auth-modal-brand">
                 <img src="/src/assets/logo.svg"
                      alt="평목" class="auth-modal-brand-logo">
-                <p class="auth-modal-brand-copy">같은 공간은 없으니까요.<br>치수와 빛에 맞춰 그립니다.</p>
+                <p class="auth-modal-brand-copy"><?= t('auth_brand_copy') ?></p>
             </div>
 
             <!-- 우측: 폼 패널 -->
@@ -31,11 +32,11 @@
             <!-- 탭 헤더 -->
             <div class="modal-header border-0 pb-0 pt-4 px-4">
                 <div id="authTabsRow">
-                    <button class="auth-tab active" id="tabLogin" onclick="authSwitchTab('login')">로그인</button>
-                    <button class="auth-tab" id="tabRegister" onclick="authSwitchTab('register')">회원가입</button>
+                    <button class="auth-tab active" id="tabLogin" onclick="authSwitchTab('login')"><?= htmlspecialchars(t('nav_login')) ?></button>
+                    <button class="auth-tab" id="tabRegister" onclick="authSwitchTab('register')"><?= htmlspecialchars(t('auth_tab_register')) ?></button>
                 </div>
                 <div id="authBackRow" style="display:none;width:100%;">
-                    <button type="button" onclick="authSwitchTab('login')">&#8592; 로그인으로</button>
+                    <button type="button" onclick="authSwitchTab('login')">&#8592; <?= htmlspecialchars(t('auth_back_to_login')) ?></button>
                 </div>
             </div>
 
@@ -46,83 +47,88 @@
                 <!-- 약관 동의 (회원가입 탭에서만 노출, 소셜 버튼도 이걸로 잠금) -->
                 <label class="auth-consent" id="regAgreeRow" style="display:none;">
                     <input type="checkbox" id="regAgree" required form="formRegister" onchange="updateSnsLock()">
-                    <span><a href="/terms" target="_blank" rel="noopener">이용약관</a> 및 <a href="/privacy" target="_blank" rel="noopener">개인정보처리방침</a>에 동의합니다 (필수)</span>
+                    <?php
+                    // 약관·방침 본문은 한국어 원문이 법적 기준이라 번역하지 않고 링크도 한글 페이지로 둔다.
+                    $termsLink   = '<a href="/terms" target="_blank" rel="noopener">' . htmlspecialchars(t('auth_terms')) . '</a>';
+                    $privacyLink = '<a href="/privacy" target="_blank" rel="noopener">' . htmlspecialchars(t('auth_privacy')) . '</a>';
+                    ?>
+                    <span><?= sprintf(t('auth_consent'), $termsLink, $privacyLink) ?></span>
                 </label>
 
                 <!-- SNS 로그인 버튼 -->
                 <div id="formSns">
                     <div class="auth-sns-btns">
-                        <a href="/src/api/auth/oauth/redirect.php?provider=google" class="auth-sns-btn" aria-label="Google로 계속하기" title="Google로 계속하기" onclick="guardSnsClick(event)">
+                        <a href="/src/api/auth/oauth/redirect.php?provider=google" class="auth-sns-btn" aria-label="<?= htmlspecialchars(t('auth_sns_google')) ?>" title="<?= htmlspecialchars(t('auth_sns_google')) ?>" onclick="guardSnsClick(event)">
                             <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
                         </a>
-                        <a href="/src/api/auth/oauth/redirect.php?provider=kakao" class="auth-sns-btn auth-sns-kakao" aria-label="카카오로 계속하기" title="카카오로 계속하기" onclick="guardSnsClick(event)">
+                        <a href="/src/api/auth/oauth/redirect.php?provider=kakao" class="auth-sns-btn auth-sns-kakao" aria-label="<?= htmlspecialchars(t('auth_sns_kakao')) ?>" title="<?= htmlspecialchars(t('auth_sns_kakao')) ?>" onclick="guardSnsClick(event)">
                             <span class="auth-sns-badge auth-sns-badge-kakao">
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="#191919"><path d="M12 3C6.477 3 2 6.477 2 10.8c0 2.7 1.696 5.077 4.273 6.496L5.1 21l4.91-2.618A11.6 11.6 0 0 0 12 18.6c5.523 0 10-3.477 10-7.8S17.523 3 12 3z"/></svg>
                             </span>
                         </a>
-                        <a href="/src/api/auth/oauth/redirect.php?provider=naver" class="auth-sns-btn auth-sns-naver" aria-label="네이버로 계속하기" title="네이버로 계속하기" onclick="guardSnsClick(event)">
+                        <a href="/src/api/auth/oauth/redirect.php?provider=naver" class="auth-sns-btn auth-sns-naver" aria-label="<?= htmlspecialchars(t('auth_sns_naver')) ?>" title="<?= htmlspecialchars(t('auth_sns_naver')) ?>" onclick="guardSnsClick(event)">
                             <span class="auth-sns-badge auth-sns-badge-naver">N</span>
                         </a>
                     </div>
-                    <div class="auth-divider"><span>또는 이메일로</span></div>
+                    <div class="auth-divider"><span><?= htmlspecialchars(t('auth_divider')) ?></span></div>
                 </div>
 
                 <!-- 로그인 폼 -->
                 <form id="formLogin" onsubmit="authLogin(event)">
                     <div class="auth-field">
-                        <label>이메일</label>
+                        <label><?= htmlspecialchars(t('auth_email')) ?></label>
                         <input type="email" id="loginEmail" placeholder="hello@example.com" required autocomplete="email">
                     </div>
                     <div class="auth-field">
-                        <label>비밀번호</label>
+                        <label><?= htmlspecialchars(t('auth_password')) ?></label>
                         <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password">
                     </div>
-                    <button type="submit" class="auth-submit" id="btnLogin">로그인</button>
+                    <button type="submit" class="auth-submit" id="btnLogin"><?= htmlspecialchars(t('nav_login')) ?></button>
                     <div class="auth-forgot-link">
-                        <button type="button" onclick="authSwitchPanel('forgot')">비밀번호를 잊으셨나요?</button>
+                        <button type="button" onclick="authSwitchPanel('forgot')"><?= htmlspecialchars(t('auth_forgot')) ?></button>
                     </div>
                 </form>
 
                 <!-- 회원가입 폼 -->
                 <form id="formRegister" onsubmit="authRegister(event)" style="display:none;">
                     <div class="auth-field">
-                        <label>이메일</label>
+                        <label><?= htmlspecialchars(t('auth_email')) ?></label>
                         <input type="email" id="regEmail" placeholder="hello@example.com" required autocomplete="email">
                     </div>
                     <div class="auth-field">
-                        <label>비밀번호</label>
-                        <input type="password" id="regPassword" placeholder="6자 이상" required autocomplete="new-password" minlength="6">
+                        <label><?= htmlspecialchars(t('auth_password')) ?></label>
+                        <input type="password" id="regPassword" placeholder="<?= htmlspecialchars(t('auth_password_min')) ?>" required autocomplete="new-password" minlength="6">
                     </div>
                     <div class="auth-field">
-                        <label>비밀번호 확인</label>
-                        <input type="password" id="regPassword2" placeholder="비밀번호 재입력" required autocomplete="new-password">
+                        <label><?= htmlspecialchars(t('auth_password_confirm')) ?></label>
+                        <input type="password" id="regPassword2" placeholder="<?= htmlspecialchars(t('auth_password_retype')) ?>" required autocomplete="new-password">
                     </div>
-                    <button type="submit" class="auth-submit" id="btnRegister">회원가입</button>
+                    <button type="submit" class="auth-submit" id="btnRegister"><?= htmlspecialchars(t('auth_tab_register')) ?></button>
                 </form>
 
                 <!-- 비밀번호 찾기 폼 -->
                 <form id="formForgot" onsubmit="authForgot(event)" style="display:none;">
-                    <p class="auth-hint">가입하신 이메일 주소를 입력하시면<br>비밀번호 재설정 링크를 보내드립니다.</p>
+                    <p class="auth-hint"><?= t('auth_forgot_hint') ?></p>
                     <div class="auth-field">
-                        <label>이메일</label>
+                        <label><?= htmlspecialchars(t('auth_email')) ?></label>
                         <input type="email" id="forgotEmail" placeholder="hello@example.com" required autocomplete="email">
                     </div>
-                    <button type="submit" class="auth-submit" id="btnForgot">재설정 메일 발송</button>
+                    <button type="submit" class="auth-submit" id="btnForgot"><?= htmlspecialchars(t('auth_btn_forgot')) ?></button>
                 </form>
 
                 <!-- 비밀번호 재설정 폼 (URL에 ?reset=TOKEN 있을 때) -->
                 <form id="formReset" onsubmit="authReset(event)" style="display:none;">
-                    <p class="auth-reset-hint">새 비밀번호를 입력해 주세요.</p>
+                    <p class="auth-reset-hint"><?= htmlspecialchars(t('auth_reset_hint')) ?></p>
                     <input type="hidden" id="resetToken">
                     <div class="auth-field">
-                        <label>새 비밀번호</label>
-                        <input type="password" id="resetPassword" placeholder="6자 이상" required autocomplete="new-password" minlength="6">
+                        <label><?= htmlspecialchars(t('auth_new_password')) ?></label>
+                        <input type="password" id="resetPassword" placeholder="<?= htmlspecialchars(t('auth_password_min')) ?>" required autocomplete="new-password" minlength="6">
                     </div>
                     <div class="auth-field">
-                        <label>비밀번호 확인</label>
-                        <input type="password" id="resetPassword2" placeholder="비밀번호 재입력" required autocomplete="new-password">
+                        <label><?= htmlspecialchars(t('auth_password_confirm')) ?></label>
+                        <input type="password" id="resetPassword2" placeholder="<?= htmlspecialchars(t('auth_password_retype')) ?>" required autocomplete="new-password">
                     </div>
-                    <button type="submit" class="auth-submit" id="btnReset">비밀번호 변경</button>
+                    <button type="submit" class="auth-submit" id="btnReset"><?= htmlspecialchars(t('auth_btn_reset')) ?></button>
                 </form>
             </div>
 
@@ -137,10 +143,10 @@
         <div class="modal-content border-0" style="border-radius:16px;box-shadow:0 8px 16px rgba(var(--text-rgb), 0.06),0 24px 64px rgba(var(--text-rgb), 0.14);overflow:hidden;text-align:center;">
             <div class="modal-body px-5 py-5">
                 <div style="font-size:40px;margin-bottom:20px;">🎉</div>
-                <h4 style="font-family:'Pretendard','Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-bottom:10px;">평목에 오신 것을 환영합니다!</h4>
+                <h4 style="font-family:'Pretendard','Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;font-size:20px;font-weight:800;letter-spacing:-0.5px;margin-bottom:10px;"><?= htmlspecialchars(t('auth_welcome_title')) ?></h4>
                 <p id="welcomeEmail" style="font-size:13px;color:var(--text-muted);margin-bottom:6px;"></p>
-                <p style="font-size:13px;color:var(--accent-hover);line-height:1.8;margin-bottom:32px;">이제 창호를 직접 설계하고,<br>AI로 공간에 적용된 모습까지 확인해 보세요.</p>
-                <button class="auth-submit" onclick="welcomeGo()" style="max-width:240px;margin:0 auto;">스튜디오 시작하기</button>
+                <p style="font-size:13px;color:var(--accent-hover);line-height:1.8;margin-bottom:32px;"><?= t('auth_welcome_body') ?></p>
+                <button class="auth-submit" onclick="welcomeGo()" style="max-width:240px;margin:0 auto;"><?= htmlspecialchars(t('auth_welcome_btn')) ?></button>
             </div>
         </div>
     </div>
@@ -152,6 +158,22 @@
 <script>
 const AUTH_TOKEN_KEY = 'pmok_auth_token';
 const AUTH_USER_KEY  = 'pmok_auth_user';
+// JS 메시지와 이동 경로도 현재 언어에 맞춰 PHP에서 주입.
+// API는 URL에 /en/ 접두사가 없어 언어를 알 수 없으므로 요청 헤더(X-Pmok-Lang)로 알려준다.
+const AUTH_LANG = <?= json_encode(current_lang()) ?>;
+const AUTH_T = <?= json_encode([
+    'agree'        => t('auth_msg_agree'),
+    'loginFail'    => t('auth_msg_login_fail'),
+    'registerFail' => t('auth_msg_register_fail'),
+    'serverError'  => t('auth_msg_server_error'),
+    'pwMismatch'   => t('auth_msg_pw_mismatch'),
+    'error'        => t('auth_msg_error'),
+    'resetSent'    => t('auth_msg_reset_sent'),
+    'pwChanged'    => t('auth_msg_pw_changed'),
+    'homeUrl'      => lang_href('/'),
+    'dashboardUrl' => lang_href('/mypage/dashboard'),
+], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
+const AUTH_HEADERS = { 'Content-Type': 'application/json', 'X-Pmok-Lang': AUTH_LANG };
 
 function authSwitchPanel(panel) {
     document.getElementById('formLogin').style.display    = panel === 'login'    ? '' : 'none';
@@ -177,7 +199,7 @@ function updateSnsLock() {
 function guardSnsClick(e) {
     if (document.getElementById('formSns').classList.contains('auth-sns-locked')) {
         e.preventDefault();
-        authShowError('이용약관 및 개인정보처리방침에 동의해주세요.');
+        authShowError(AUTH_T.agree);
         document.getElementById('regAgree').focus();
     }
 }
@@ -228,7 +250,7 @@ function pmokAfterLogin() {
         returnUrl = sessionStorage.getItem('pmok_return_url');
         sessionStorage.removeItem('pmok_return_url');
     } catch (e) {}
-    location.href = returnUrl || '/mypage/dashboard';
+    location.href = returnUrl || AUTH_T.dashboardUrl;
 }
 
 async function authLogin(e) {
@@ -239,21 +261,21 @@ async function authLogin(e) {
     try {
         const res = await fetch('/src/api/auth/login.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: AUTH_HEADERS,
             body: JSON.stringify({
                 email:    document.getElementById('loginEmail').value,
                 password: document.getElementById('loginPassword').value,
             }),
         });
         const data = await res.json();
-        if (!res.ok) { authShowError(data.error || '로그인 실패'); return; }
+        if (!res.ok) { authShowError(data.error || AUTH_T.loginFail); return; }
         authSaveSession(data.token, data.user);
         bootstrap.Modal.getInstance(document.getElementById('authModal')).hide();
         authUpdateNav(true);
         window.dispatchEvent(new CustomEvent('pmokAuthChanged'));
         pmokAfterLogin();
     } catch {
-        authShowError('서버 오류가 발생했습니다.');
+        authShowError(AUTH_T.serverError);
     } finally {
         btn.disabled = false;
     }
@@ -264,14 +286,14 @@ async function authRegister(e) {
     authHideError();
     const pw  = document.getElementById('regPassword').value;
     const pw2 = document.getElementById('regPassword2').value;
-    if (pw !== pw2) { authShowError('비밀번호가 일치하지 않습니다.'); return; }
-    if (!document.getElementById('regAgree').checked) { authShowError('이용약관 및 개인정보처리방침에 동의해주세요.'); return; }
+    if (pw !== pw2) { authShowError(AUTH_T.pwMismatch); return; }
+    if (!document.getElementById('regAgree').checked) { authShowError(AUTH_T.agree); return; }
     const btn = document.getElementById('btnRegister');
     btn.disabled = true;
     try {
         const res = await fetch('/src/api/auth/register.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: AUTH_HEADERS,
             body: JSON.stringify({
                 email:    document.getElementById('regEmail').value,
                 password: pw,
@@ -279,7 +301,7 @@ async function authRegister(e) {
             }),
         });
         const data = await res.json();
-        if (!res.ok) { authShowError(data.error || '회원가입 실패'); return; }
+        if (!res.ok) { authShowError(data.error || AUTH_T.registerFail); return; }
         authSaveSession(data.token, data.user);
         bootstrap.Modal.getInstance(document.getElementById('authModal')).hide();
         authUpdateNav(true);
@@ -287,7 +309,7 @@ async function authRegister(e) {
         document.getElementById('welcomeEmail').textContent = data.user.email;
         new bootstrap.Modal(document.getElementById('welcomeModal')).show();
     } catch {
-        authShowError('서버 오류가 발생했습니다.');
+        authShowError(AUTH_T.serverError);
     } finally {
         btn.disabled = false;
     }
@@ -310,7 +332,7 @@ function authLogout() {
     fetch('/src/api/auth/logout.php', {
         method: 'POST',
         keepalive: true,
-    }).finally(() => { location.href = '/'; });
+    }).finally(() => { location.href = AUTH_T.homeUrl; });
 }
 
 function authGetUser() {
@@ -495,15 +517,15 @@ async function authForgot(e) {
     try {
         const res = await fetch('/src/api/auth/forgot.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: AUTH_HEADERS,
             body: JSON.stringify({ email: document.getElementById('forgotEmail').value }),
         });
         const data = await res.json();
-        if (!res.ok) { authShowError(data.error || '오류가 발생했습니다.'); return; }
+        if (!res.ok) { authShowError(data.error || AUTH_T.error); return; }
         document.getElementById('formForgot').style.display = 'none';
-        authShowSuccess('재설정 링크를 이메일로 보냈습니다. 메일함을 확인해 주세요.');
+        authShowSuccess(AUTH_T.resetSent);
     } catch {
-        authShowError('서버 오류가 발생했습니다.');
+        authShowError(AUTH_T.serverError);
     } finally {
         btn.disabled = false;
     }
@@ -514,26 +536,26 @@ async function authReset(e) {
     authHideError();
     const pw  = document.getElementById('resetPassword').value;
     const pw2 = document.getElementById('resetPassword2').value;
-    if (pw !== pw2) { authShowError('비밀번호가 일치하지 않습니다.'); return; }
+    if (pw !== pw2) { authShowError(AUTH_T.pwMismatch); return; }
     const btn = document.getElementById('btnReset');
     btn.disabled = true;
     try {
         const res = await fetch('/src/api/auth/reset.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: AUTH_HEADERS,
             body: JSON.stringify({
                 token:    document.getElementById('resetToken').value,
                 password: pw,
             }),
         });
         const data = await res.json();
-        if (!res.ok) { authShowError(data.error || '오류가 발생했습니다.'); return; }
+        if (!res.ok) { authShowError(data.error || AUTH_T.error); return; }
         document.getElementById('formReset').style.display = 'none';
-        authShowSuccess('비밀번호가 변경되었습니다. 다시 로그인해 주세요.');
+        authShowSuccess(AUTH_T.pwChanged);
         history.replaceState(null, '', location.pathname);
         setTimeout(() => authSwitchTab('login'), 2000);
     } catch {
-        authShowError('서버 오류가 발생했습니다.');
+        authShowError(AUTH_T.serverError);
     } finally {
         btn.disabled = false;
     }
@@ -587,7 +609,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 // 취소한 뒤 나중에 다른 경로로 로그인해도 그때의 옛 복귀 URL로 튕기는 문제가 있었음).
                 window.__pmokAuthSuccessCallback = null;
                 try { sessionStorage.removeItem('pmok_return_url'); } catch (e) {}
-                location.href = '/';
+                location.href = AUTH_T.homeUrl;
             }
         });
     }

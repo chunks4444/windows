@@ -4,6 +4,9 @@
 function current_lang(): string {
     static $lang = null;
     if ($lang !== null) return $lang;
+    // API 엔드포인트는 URL에 /en/ 접두사가 없어 경로로 언어를 알 수 없다.
+    // 그래서 프런트가 X-Pmok-Lang 헤더로 알려주면 그걸 먼저 따른다.
+    if (($_SERVER['HTTP_X_PMOK_LANG'] ?? '') === 'en') return $lang = 'en';
     $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
     $lang = preg_match('#^/en(/|$)#', $path) ? 'en' : 'ko';
     return $lang;

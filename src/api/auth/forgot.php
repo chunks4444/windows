@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json');
 require_once __DIR__ . '/../../lib/cors.php';
+require_once __DIR__ . '/../../lib/i18n.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') exit;
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -14,7 +15,7 @@ $body  = json_decode(file_get_contents('php://input'), true) ?? [];
 $email = trim($body['email'] ?? '');
 
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    http_response_code(422); echo json_encode(['error' => '유효하지 않은 이메일입니다.']); exit;
+    http_response_code(422); echo json_encode(['error' => t('auth_err_email_invalid')]); exit;
 }
 
 $pdo  = db();

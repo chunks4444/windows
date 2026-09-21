@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json');
 require_once __DIR__ . '/../../lib/cors.php';
+require_once __DIR__ . '/../../lib/i18n.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') exit;
 
@@ -10,7 +11,7 @@ require_once __DIR__ . '/../../lib/jwt.php';
 $payload = jwt_from_request();
 if (!$payload) {
     http_response_code(401);
-    echo json_encode(['error' => '인증이 필요합니다.']);
+    echo json_encode(['error' => t('auth_err_need_auth')]);
     exit;
 }
 
@@ -21,7 +22,7 @@ $user = $stmt->fetch();
 
 if (!$user) {
     http_response_code(404);
-    echo json_encode(['error' => '사용자를 찾을 수 없습니다.']);
+    echo json_encode(['error' => t('auth_err_user_not_found')]);
     exit;
 }
 

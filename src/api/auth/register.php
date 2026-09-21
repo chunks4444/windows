@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: application/json');
 require_once __DIR__ . '/../../lib/cors.php';
+require_once __DIR__ . '/../../lib/i18n.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') exit;
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -15,7 +16,7 @@ require_once __DIR__ . '/../../lib/rate_limit.php';
 
 $ip = pm_get_ip();
 if (!rate_limit_check('register:' . $ip, 5, 3600)) {
-    http_response_code(429); echo json_encode(['error' => '잠시 후 다시 시도해주세요.']); exit;
+    http_response_code(429); echo json_encode(['error' => t('auth_err_retry_later')]); exit;
 }
 
 $body     = json_decode(file_get_contents('php://input'), true);
@@ -24,13 +25,13 @@ $password = $body['password'] ?? '';
 $agree    = !empty($body['agree']);
 
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    http_response_code(422); echo json_encode(['error' => '유효하지 않은 이메일입니다.']); exit;
+    http_response_code(422); echo json_encode(['error' => t('auth_err_email_invalid')]); exit;
 }
 if (strlen($password) < 6) {
-    http_response_code(422); echo json_encode(['error' => '비밀번호는 6자 이상이어야 합니다.']); exit;
+    http_response_code(422); echo json_encode(['error' => t('auth_err_pw_min')]); exit;
 }
 if (!$agree) {
-    http_response_code(422); echo json_encode(['error' => '이용약관 및 개인정보처리방침에 동의해주세요.']); exit;
+    http_response_code(422); echo json_encode(['error' => t('auth_msg_agree')]); exit;
 }
 
 try {
@@ -38,7 +39,7 @@ try {
     $stmt = $pdo->prepare('SELECT id FROM users WHERE email = ?');
     $stmt->execute([$email]);
     if ($stmt->fetch()) {
-        http_response_code(409); echo json_encode(['error' => '이미 사용 중인 이메일입니다.']); exit;
+        http_response_code(409); echo json_encode(['error' => t('auth_err_email_taken')]); exit;
     }
     $hash = password_hash($password, PASSWORD_BCRYPT);
     $stmt = $pdo->prepare('INSERT INTO users (email, password_hash, terms_agreed_at) VALUES (?, ?, NOW())');
@@ -60,5 +61,5 @@ try {
     echo json_encode(['token' => $token, 'user' => ['id' => $userId, 'email' => $email, 'role' => 'u']]);
 } catch (Throwable $e) {
     http_response_code(500);
-    echo json_encode(['error' => '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.']);
+    echo json_encode(['error' => t('auth_err_server_retry')]);
 }

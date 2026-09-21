@@ -243,7 +243,7 @@ foreach ($studioCards as $sc) $cardsByKey[$sc['engine_key']] = $sc;
                 <dl class="ab-contact-dl">
                     <div class="ab-contact-row">
                         <dt><?= htmlspecialchars(t('company_contact_address')) ?></dt>
-                        <dd>경기도 양평군 양서면 도곡리 107-2</dd>
+                        <dd><?= htmlspecialchars(t('company_address_value')) ?></dd>
                     </div>
                     <div class="ab-contact-row">
                         <dt><?= htmlspecialchars(t('company_contact_phone')) ?></dt>
