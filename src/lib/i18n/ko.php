@@ -174,4 +174,48 @@ return [
     'company_gallery_1'        => '공방 사진 1',
     'company_gallery_2'        => '공방 사진 2',
     'company_gallery_4'        => '공방 사진 4',
+
+    // src/guide/ — 공통 사이드바·브레드크럼·페이저
+    'guide_sidebar_home'       => '평목 가이드',
+    'guide_breadcrumb_root'    => '가이드',
+    'guide_pager_prev'         => '이전',
+    'guide_pager_next'         => '다음',
+
+    'guide_sec_about'          => '평목 소개',
+    'guide_sec_drawing'        => '도면 관리',
+    'guide_sec_export'         => '도면 내보내기',
+
+    // 사이드바 문서 제목 (엔진 이름은 영문에서 로마자 표기로 짧게 — 본문 제목은 용어집 전체 표기 사용)
+    'guide_art_intro'          => '평목 스튜디오란?',
+    'guide_art_getting_started'=> '시작하기',
+    'guide_art_classic'        => '세살',
+    'guide_art_square'         => '정자살',
+    'guide_art_cross'          => '빗살',
+    'guide_art_diamond'        => '격자빗살',
+    'guide_art_triangle'       => '세모솟을살',
+    'guide_art_hexagon'        => '육모솟을살',
+    'guide_art_canvas_toolbar' => '캔버스 툴바',
+    'guide_art_svg_insert'     => '문양 삽입 & SVG 업로드',
+    'guide_art_drawing'        => '도면 저장 & 불러오기',
+    'guide_art_export'         => 'PDF / PNG / DXF 내보내기',
+    'guide_art_render'         => 'AI 렌더링 사용법',
+    'guide_art_collection'     => '컬렉션 & 내 보드',
+    'guide_art_account'        => '프로필 & 회사 정보',
+    'guide_art_order'          => '주문 안내',
+    'guide_art_delivery'       => '배송 안내',
+
+    // src/guide/index.php — 가이드 홈
+    'guide_landing_title'      => '가이드',
+    'guide_landing_sub'        => '전통 창호 도면 설계부터 AI 렌더링까지, 평목 스튜디오의 모든 기능을 안내합니다.',
+    'guide_article_count'      => '%d개 아티클',
+    'guide_card_intro_desc'    => '평목이 무엇인지, 어떻게 시작하는지 알아보세요.',
+    'guide_card_studio_title'  => '스튜디오란?',
+    'guide_card_studio_desc'   => '6가지 격자 패턴 엔진의 상세 사용 방법을 안내합니다.',
+    'guide_card_drawing_desc'  => '도면 저장, 버전 관리, PDF·PNG 내보내기 방법을 안내합니다.',
+    'guide_card_render_desc'   => '배경 이미지와 도면을 합성해 AI로 공간을 시각화합니다.',
+    'guide_card_collection_desc'=> '공개 라이브러리 패턴을 열람하고 내 보드에 저장하세요.',
+    'guide_card_account_desc'  => '프로필, 비밀번호, 회사 정보를 관리하는 방법을 안내합니다.',
+    'guide_card_order_desc'    => '견적요청 방법과 주문 흐름, 도면 잠금 정책을 안내합니다.',
+    'guide_card_delivery_desc' => '배송 방법·배송비 안내 및 반품·교환 정책을 확인하세요.',
+    'guide_card_faq_desc'      => '자주 묻는 질문: 치수 입력, 견적 요청, 목재·마감 선택 등을 안내합니다.',
 ];

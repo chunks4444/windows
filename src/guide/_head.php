@@ -3,83 +3,85 @@
 // $guide_title   : 페이지 제목
 // $guide_cat     : 카테고리명
 
+require_once __DIR__ . '/../lib/i18n.php';
+
 $guide_nav = [
     [
-        'title' => '평목 소개', 'icon' => 'bi-info-circle',
+        'title' => t('guide_sec_about'), 'icon' => 'bi-info-circle',
         'bg' => 'var(--accent-tint)', 'color' => 'var(--accent)',
         'articles' => [
-            ['file' => 'intro.php',           'title' => '평목 스튜디오란?'],
-            ['file' => 'getting-started.php', 'title' => '시작하기'],
+            ['file' => 'intro.php',           'title' => t('guide_art_intro')],
+            ['file' => 'getting-started.php', 'title' => t('guide_art_getting_started')],
         ],
     ],
     [
-        'title' => '스튜디오', 'icon' => 'bi-pencil-square',
+        'title' => t('nav_studio'), 'icon' => 'bi-pencil-square',
         'bg' => 'var(--danger-tint)', 'color' => 'var(--danger)',
         'articles' => [
-            ['file' => 'studio-classic.php',  'title' => '세살',      'engine' => 'classic'],
-            ['file' => 'studio-square.php',   'title' => '정자살',    'engine' => 'square'],
-            ['file' => 'studio-cross.php',    'title' => '빗살',      'engine' => 'cross'],
-            ['file' => 'studio-diamond.php',  'title' => '격자빗살', 'engine' => 'diamond'],
-            ['file' => 'studio-triangle.php', 'title' => '세모솟을살', 'engine' => 'triangle'],
-            ['file' => 'studio-hexagon.php',  'title' => '육모솟을살', 'engine' => 'hexagon'],
+            ['file' => 'studio-classic.php',  'title' => t('guide_art_classic'),  'engine' => 'classic'],
+            ['file' => 'studio-square.php',   'title' => t('guide_art_square'),   'engine' => 'square'],
+            ['file' => 'studio-cross.php',    'title' => t('guide_art_cross'),    'engine' => 'cross'],
+            ['file' => 'studio-diamond.php',  'title' => t('guide_art_diamond'),  'engine' => 'diamond'],
+            ['file' => 'studio-triangle.php', 'title' => t('guide_art_triangle'), 'engine' => 'triangle'],
+            ['file' => 'studio-hexagon.php',  'title' => t('guide_art_hexagon'),  'engine' => 'hexagon'],
         ],
     ],
     [
-        'title' => '도면 관리', 'icon' => 'bi-folder2-open',
+        'title' => t('guide_sec_drawing'), 'icon' => 'bi-folder2-open',
         'bg' => 'var(--accent-tint)', 'color' => 'var(--accent)',
         'articles' => [
-            ['file' => 'canvas-toolbar.php', 'title' => '캔버스 툴바'],
-            ['file' => 'svg-insert.php', 'title' => '문양 삽입 & SVG 업로드'],
-            ['file' => 'drawing.php', 'title' => '도면 저장 & 불러오기'],
+            ['file' => 'canvas-toolbar.php', 'title' => t('guide_art_canvas_toolbar')],
+            ['file' => 'svg-insert.php', 'title' => t('guide_art_svg_insert')],
+            ['file' => 'drawing.php', 'title' => t('guide_art_drawing')],
         ],
     ],
     [
-        'title' => '도면 내보내기', 'icon' => 'bi-download',
+        'title' => t('guide_sec_export'), 'icon' => 'bi-download',
         'bg' => 'var(--accent-tint)', 'color' => 'var(--accent)',
         'articles' => [
-            ['file' => 'export.php',  'title' => 'PDF / PNG / DXF 내보내기'],
+            ['file' => 'export.php',  'title' => t('guide_art_export')],
         ],
     ],
     [
-        'title' => 'AI 렌더링', 'icon' => 'bi-stars',
+        'title' => t('nav_guide_render'), 'icon' => 'bi-stars',
         'bg' => 'var(--accent-tint)', 'color' => 'var(--accent)',
         'articles' => [
-            ['file' => 'render.php', 'title' => 'AI 렌더링 사용법'],
+            ['file' => 'render.php', 'title' => t('guide_art_render')],
         ],
     ],
     [
-        'title' => '컬렉션', 'icon' => 'bi-collection',
+        'title' => t('nav_collection'), 'icon' => 'bi-collection',
         'bg' => 'var(--accent-tint)', 'color' => 'var(--accent)',
         'articles' => [
-            ['file' => 'collection.php', 'title' => '컬렉션 & 내 보드'],
+            ['file' => 'collection.php', 'title' => t('guide_art_collection')],
         ],
     ],
     [
-        'title' => '계정 설정', 'icon' => 'bi-person-gear',
+        'title' => t('nav_guide_account'), 'icon' => 'bi-person-gear',
         'bg' => 'var(--accent-tint)', 'color' => 'var(--accent)',
         'articles' => [
-            ['file' => 'account.php', 'title' => '프로필 & 회사 정보'],
+            ['file' => 'account.php', 'title' => t('guide_art_account')],
         ],
     ],
     [
-        'title' => '주문', 'icon' => 'bi-cart-check',
+        'title' => t('nav_guide_order'), 'icon' => 'bi-cart-check',
         'bg' => 'var(--accent-tint)', 'color' => 'var(--accent)',
         'articles' => [
-            ['file' => 'order.php', 'title' => '주문 안내'],
+            ['file' => 'order.php', 'title' => t('guide_art_order')],
         ],
     ],
     [
-        'title' => '배송', 'icon' => 'bi-truck',
+        'title' => t('nav_guide_delivery'), 'icon' => 'bi-truck',
         'bg' => 'var(--accent-tint)', 'color' => 'var(--accent)',
         'articles' => [
-            ['file' => 'delivery.php', 'title' => '배송 안내'],
+            ['file' => 'delivery.php', 'title' => t('guide_art_delivery')],
         ],
     ],
     [
-        'title' => 'FAQ', 'icon' => 'bi-patch-question',
+        'title' => t('nav_guide_faq'), 'icon' => 'bi-patch-question',
         'bg' => 'var(--accent-tint)', 'color' => 'var(--accent)',
         'articles' => [
-            ['file' => 'faq.php', 'title' => '자주 묻는 질문'],
+            ['file' => 'faq.php', 'title' => t('home_faq_title')],
         ],
     ],
 ];
@@ -139,7 +141,7 @@ foreach ($guide_nav as $sec) {
 ?>
 <?php header('Content-Type: text/html; charset=UTF-8'); ?>
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="<?= is_en() ? 'en' : 'ko' ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -161,8 +163,8 @@ foreach ($guide_nav as $sec) {
 
 <!-- ── 사이드바 ── -->
 <aside class="guide-sidebar">
-    <a href="/guide/" class="gs-home">
-        <i class="bi bi-book-half"></i> 평목 가이드
+    <a href="<?= lang_href('/guide/') ?>" class="gs-home">
+        <i class="bi bi-book-half"></i> <?= htmlspecialchars(t('guide_sidebar_home')) ?>
     </a>
     <nav>
     <?php foreach ($guide_nav as $sec):
@@ -179,7 +181,7 @@ foreach ($guide_nav as $sec) {
             </button>
             <div class="gs-section-body">
                 <?php foreach ($sec['articles'] as $art): ?>
-                <a href="/guide/<?= basename($art['file'], '.php') ?>"
+                <a href="<?= lang_href('/guide/' . basename($art['file'], '.php')) ?>"
                    class="gs-link<?= ($art['file'] === ($guide_current ?? '')) ? ' active' : '' ?>">
                     <?php if (isset($art['engine'])): ?>
                     <span class="gs-link-icon"><?= $guideEngineIcons[$art['engine']] ?? '' ?></span>
@@ -206,7 +208,7 @@ foreach ($guide_nav as $sec) {
 
 <?php if ($current_cat): ?>
 <nav class="guide-breadcrumb">
-    <a href="/guide/">가이드</a>
+    <a href="<?= lang_href('/guide/') ?>"><?= htmlspecialchars(t('guide_breadcrumb_root')) ?></a>
     <span class="sep"><i class="bi bi-chevron-right"></i></span>
     <span><?= htmlspecialchars($current_cat) ?></span>
     <span class="sep"><i class="bi bi-chevron-right"></i></span>

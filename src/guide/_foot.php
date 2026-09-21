@@ -5,8 +5,8 @@
 
 <div class="guide-pager">
     <?php if (!empty($guide_prev)): ?>
-    <a href="/guide/<?= basename($guide_prev['href'], '.php') ?>" class="guide-pager-btn prev">
-        <span class="pager-label"><i class="bi bi-arrow-left"></i> 이전</span>
+    <a href="<?= lang_href('/guide/' . basename($guide_prev['href'], '.php')) ?>" class="guide-pager-btn prev">
+        <span class="pager-label"><i class="bi bi-arrow-left"></i> <?= htmlspecialchars(t('guide_pager_prev')) ?></span>
         <span class="pager-title"><?= htmlspecialchars($guide_prev['title']) ?></span>
     </a>
     <?php else: ?>
@@ -14,8 +14,8 @@
     <?php endif; ?>
 
     <?php if (!empty($guide_next)): ?>
-    <a href="/guide/<?= basename($guide_next['href'], '.php') ?>" class="guide-pager-btn next">
-        <span class="pager-label">다음 <i class="bi bi-arrow-right"></i></span>
+    <a href="<?= lang_href('/guide/' . basename($guide_next['href'], '.php')) ?>" class="guide-pager-btn next">
+        <span class="pager-label"><?= htmlspecialchars(t('guide_pager_next')) ?> <i class="bi bi-arrow-right"></i></span>
         <span class="pager-title"><?= htmlspecialchars($guide_next['title']) ?></span>
     </a>
     <?php endif; ?>

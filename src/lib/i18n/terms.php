@@ -12,6 +12,8 @@ return [
     '마름모살'   => 'Mareummo-sal (Diamond Lattice)',
     '세살'       => 'Se-sal (Plain Straight Lattice)',
     '솟을살'     => 'Sotgeul-sal (Raised-joint Lattice)',
+    '빗살'       => 'Bit-sal (Diagonal Lattice)',
+    '격자빗살'   => 'Gyeokja-bit-sal (Grid-and-Diagonal Lattice)',
 
     // 창호 형식
     '여닫이'     => 'hinged',

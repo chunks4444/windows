@@ -36,6 +36,15 @@ function term(string $korean): string {
     return $terms[$korean] ?? $korean;
 }
 
+// 내부 링크에 현재 언어 접두사를 붙인다. en 모드에서 /collection/ 같은 링크를 그대로 두면
+// 클릭 순간 한국어로 돌아가 버리므로, 사이트 내부 링크는 모두 이 함수를 거치게 한다.
+// 외부 URL(http…)·앵커(#)·mailto/tel은 그대로 반환.
+function lang_href(string $path): string {
+    if (!is_en()) return $path;
+    if ($path === '' || $path[0] !== '/') return $path;
+    return '/en' . $path;
+}
+
 // 현재 경로를 유지한 채 언어만 바꾼 URL (nav 언어 스위처용)
 function lang_switch_url(string $targetLang): string {
     $uri  = $_SERVER['REQUEST_URI'] ?? '/';

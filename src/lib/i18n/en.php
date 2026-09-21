@@ -174,4 +174,48 @@ return [
     'company_gallery_1'        => 'Workshop photo 1',
     'company_gallery_2'        => 'Workshop photo 2',
     'company_gallery_4'        => 'Workshop photo 4',
+
+    // src/guide/ — shared sidebar, breadcrumb, pager
+    'guide_sidebar_home'       => 'Pyeongmok Guide',
+    'guide_breadcrumb_root'    => 'Guide',
+    'guide_pager_prev'         => 'Previous',
+    'guide_pager_next'         => 'Next',
+
+    'guide_sec_about'          => 'About Pyeongmok',
+    'guide_sec_drawing'        => 'Managing Drawings',
+    'guide_sec_export'         => 'Exporting Drawings',
+
+    // Sidebar article titles — engine names kept as short romanizations so the sidebar stays compact
+    'guide_art_intro'          => 'What is Pyeongmok Studio?',
+    'guide_art_getting_started'=> 'Getting Started',
+    'guide_art_classic'        => 'Se-sal',
+    'guide_art_square'         => 'Jeongja-sal',
+    'guide_art_cross'          => 'Bit-sal',
+    'guide_art_diamond'        => 'Gyeokja-bit-sal',
+    'guide_art_triangle'       => 'Semo-sotgeul-sal',
+    'guide_art_hexagon'        => 'Yukmo-sotgeul-sal',
+    'guide_art_canvas_toolbar' => 'Canvas Toolbar',
+    'guide_art_svg_insert'     => 'Inserting Motifs & Uploading SVGs',
+    'guide_art_drawing'        => 'Saving & Loading Drawings',
+    'guide_art_export'         => 'PDF / PNG / DXF Export',
+    'guide_art_render'         => 'Using AI Rendering',
+    'guide_art_collection'     => 'Collection & My Boards',
+    'guide_art_account'        => 'Profile & Company Info',
+    'guide_art_order'          => 'Ordering Guide',
+    'guide_art_delivery'       => 'Delivery Guide',
+
+    // src/guide/index.php — guide home
+    'guide_landing_title'      => 'Guide',
+    'guide_landing_sub'        => 'From designing traditional window drawings to AI rendering — a guide to every feature of Pyeongmok Studio.',
+    'guide_article_count'      => '%d articles',
+    'guide_card_intro_desc'    => 'Learn what Pyeongmok is and how to get started.',
+    'guide_card_studio_title'  => 'What is the Studio?',
+    'guide_card_studio_desc'   => 'Detailed instructions for all six lattice pattern engines.',
+    'guide_card_drawing_desc'  => 'How to save drawings, manage versions, and export to PDF or PNG.',
+    'guide_card_render_desc'   => 'Composite your drawing over a background image and visualize the space with AI.',
+    'guide_card_collection_desc'=> 'Browse the public pattern library and save patterns to your boards.',
+    'guide_card_account_desc'  => 'How to manage your profile, password, and company information.',
+    'guide_card_order_desc'    => 'How to request a quote, the ordering flow, and the drawing lock policy.',
+    'guide_card_delivery_desc' => 'Shipping methods, delivery fees, and the return and exchange policy.',
+    'guide_card_faq_desc'      => 'Common questions about entering dimensions, requesting quotes, choosing wood and finishes, and more.',
 ];
