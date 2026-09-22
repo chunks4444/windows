@@ -320,7 +320,7 @@ body:has(.guide-wrap) {
 }
 .guide-tip  { background: rgba(var(--text-rgb), .07); color: var(--text); border-left: 3px solid var(--text); }
 .guide-note { background: rgba(var(--text-rgb), .07); color: var(--text); border-left: 3px solid var(--border); }
-.guide-warn { background: rgba(var(--text-rgb), .07); color: var(--warning-text); border-left: 3px solid var(--danger); }
+.guide-warn { background: var(--danger-tint); color: var(--danger); border-left: 3px solid var(--danger); }
 .guide-tip i, .guide-note i, .guide-warn i { flex-shrink: 0; font-size: 15px; margin-top: 1px; }
 
 /* UI 레이블 칩 */
