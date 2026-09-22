@@ -670,7 +670,7 @@
 .home-quote-sub {
     font-size: var(--fs-14);
     font-weight: 600;
-    color: var(--accent, var(--accent));
+    color: var(--text, var(--text));
     margin: 0;
 }
 
