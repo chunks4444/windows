@@ -850,3 +850,14 @@ ON DUPLICATE KEY UPDATE english = VALUES(english);
 -- i18n_terms 용어집으로는 처리 불가 — 카드별 영문 컬럼을 따로 둔다. NULL이면 표시할 때 한글로 폴백.
 -- ALTER TABLE studio_cards ADD COLUMN title_en       VARCHAR(80) NULL     COMMENT '영문 제목 (NULL이면 en 모드에서도 한글 title로 폴백)' AFTER title;
 -- ALTER TABLE studio_cards ADD COLUMN description_en TEXT        NULL     COMMENT '영문 설명 — <br> 태그 포함 형식은 description과 동일' AFTER description;
+
+-- 2026-09-22 FAQ·블로그도 studio_cards와 같은 방식(자유서술형 콘텐츠라 용어집 대신 컬럼 분리)으로
+-- 영문 컬럼 추가. src/lib/i18n.php db_field($row, 'question') 같은 식으로 조회.
+-- ALTER TABLE faqs ADD COLUMN question_en VARCHAR(255) NULL COMMENT '영문 질문' AFTER question;
+-- ALTER TABLE faqs ADD COLUMN answer_en   TEXT         NULL COMMENT '영문 답변' AFTER answer;
+-- ALTER TABLE blog_posts ADD COLUMN title_en       VARCHAR(255) NULL COMMENT '영문 제목' AFTER title;
+-- ALTER TABLE blog_posts ADD COLUMN summary_en     VARCHAR(500) NULL COMMENT '영문 요약' AFTER summary;
+-- ALTER TABLE blog_posts ADD COLUMN question_en    VARCHAR(255) NULL COMMENT '영문 질문(FAQ 스키마용)' AFTER question;
+-- ALTER TABLE blog_posts ADD COLUMN cta_text_en    VARCHAR(255) NULL COMMENT '영문 CTA 문구' AFTER cta_text;
+-- ALTER TABLE blog_posts ADD COLUMN source_text_en TEXT         NULL COMMENT '영문 출처 목록' AFTER source_text;
+-- ALTER TABLE blog_posts ADD COLUMN content_en     LONGTEXT     NULL COMMENT '영문 본문' AFTER content;

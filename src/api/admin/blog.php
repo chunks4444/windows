@@ -74,6 +74,12 @@ if ($action === 'save') {
     $related_engine = trim($body['related_engine'] ?? '') ?: null;
     $related_drawing_id = (int)($body['related_drawing_id'] ?? 0) ?: null;
     $question       = trim($body['question'] ?? '');
+    $title_en       = trim($body['title_en'] ?? '') ?: null;
+    $summary_en     = trim($body['summary_en'] ?? '') ?: null;
+    $cta_text_en    = trim($body['cta_text_en'] ?? '') ?: null;
+    $source_text_en = trim($body['source_text_en'] ?? '') ?: null;
+    $content_en     = trim($body['content_en'] ?? '') ?: null;
+    $question_en    = trim($body['question_en'] ?? '') ?: null;
     // 새 글은 지정 안 하면 현재 로그인한 관리자를 글쓴이로 기본 저장, 수정 시엔 select에서 고른 값 그대로 반영
     $author_id      = (int)($body['author_id'] ?? 0) ?: (int)$payload['sub'];
 
@@ -93,9 +99,11 @@ if ($action === 'save') {
     if ($id) {
         // is_featured는 목록의 별표 토글(action=toggle_featured) 전용 — 일반 저장에서는 건드리지 않는다
         $pdo->prepare('UPDATE blog_posts SET title=?, summary=?, cta_text=?, source_text=?, content=?, thumbnail_url=?,
-                series_id=?, series_order=?, related_engine=?, related_drawing_id=?, question=?, author_id=? WHERE id=?')
+                series_id=?, series_order=?, related_engine=?, related_drawing_id=?, question=?, author_id=?,
+                title_en=?, summary_en=?, cta_text_en=?, source_text_en=?, content_en=?, question_en=? WHERE id=?')
             ->execute([$title, $summary, $cta_text, $source_text, $content, $thumbnail_url,
-                $series_id, $series_order, $related_engine, $related_drawing_id, $question, $author_id, $id]);
+                $series_id, $series_order, $related_engine, $related_drawing_id, $question, $author_id,
+                $title_en, $summary_en, $cta_text_en, $source_text_en, $content_en, $question_en, $id]);
     } else {
         // 새 글은 항상 비공개(is_active=0)로 시작하고 slug는 NULL — 관리자가 검토 후
         // "표시"(공개 전환)를 눌러야 그 시점에 slug가 생성된다 (draft 상태에는 URL이 없어야 함)
@@ -104,9 +112,12 @@ if ($action === 'save') {
         $minOrder = (float)$pdo->query('SELECT COALESCE(MIN(sort_order), 0) FROM blog_posts')->fetchColumn();
         $newOrder = $minOrder - 1;
         $pdo->prepare('INSERT INTO blog_posts (title, slug, summary, cta_text, source_text, content, thumbnail_url, is_featured, sort_order,
-                series_id, series_order, related_engine, related_drawing_id, question, author_id, is_active) VALUES (?,NULL,?,?,?,?,?,?,?,?,?,?,?,?,?,0)')
+                series_id, series_order, related_engine, related_drawing_id, question, author_id,
+                title_en, summary_en, cta_text_en, source_text_en, content_en, question_en, is_active)
+                VALUES (?,NULL,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,0)')
             ->execute([$title, $summary, $cta_text, $source_text, $content, $thumbnail_url, $is_featured, $newOrder,
-                $series_id, $series_order, $related_engine, $related_drawing_id, $question, $author_id]);
+                $series_id, $series_order, $related_engine, $related_drawing_id, $question, $author_id,
+                $title_en, $summary_en, $cta_text_en, $source_text_en, $content_en, $question_en]);
         $id = (int)$pdo->lastInsertId();
     }
     $stmt = $pdo->prepare('SELECT * FROM blog_posts WHERE id=?');

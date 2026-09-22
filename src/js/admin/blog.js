@@ -131,11 +131,18 @@ function openModal(id) {
     document.getElementById('postQuestion').value           = p?.question ?? '';
     document.getElementById('postRelatedEngine').value      = p?.related_engine ?? '';
     document.getElementById('postRelatedDrawingId').value   = p?.related_drawing_id ?? '';
+    document.getElementById('postTitleEn').value       = p?.title_en ?? '';
+    document.getElementById('postSummaryEn').value     = p?.summary_en ?? '';
+    document.getElementById('postCtaTextEn').value     = p?.cta_text_en ?? '';
+    document.getElementById('postSourceTextEn').value  = p?.source_text_en ?? '';
+    document.getElementById('postQuestionEn').value    = p?.question_en ?? '';
+    document.getElementById('postContentEn').value     = p?.content_en ?? '';
     window._postThumbData = null;
     document.getElementById('blogModalOverlay').classList.add('open');
     document.getElementById('blogModalOverlay').classList.remove('fullscreen-active');
     document.getElementById('blogInfoSection').classList.remove('collapsed');
     document.getElementById('blogSeriesSection').classList.add('collapsed');
+    document.getElementById('blogEnSection').classList.add('collapsed');
     setTimeout(() => quill.focus(), 50);
 }
 
@@ -416,6 +423,12 @@ async function savePost() {
         question:            document.getElementById('postQuestion').value.trim(),
         related_engine:      document.getElementById('postRelatedEngine').value,
         related_drawing_id:  parseInt(document.getElementById('postRelatedDrawingId').value) || 0,
+        title_en:            document.getElementById('postTitleEn').value.trim(),
+        summary_en:          document.getElementById('postSummaryEn').value.trim(),
+        cta_text_en:         document.getElementById('postCtaTextEn').value.trim(),
+        source_text_en:      document.getElementById('postSourceTextEn').value.trim(),
+        question_en:         document.getElementById('postQuestionEn').value.trim(),
+        content_en:          document.getElementById('postContentEn').value.trim(),
     };
     if (!body.title || quill.getText().trim().length === 0) { alert('제목과 본문을 입력해주세요.'); return; }
     if (/[-—"'*:]/.test(body.title)) { alert('제목에는 - — " \' * : 문자를 쓸 수 없습니다.'); return; }

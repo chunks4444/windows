@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/i18n.php';
+
 function css_url(string $path): string {
     $abs = $_SERVER['DOCUMENT_ROOT'] . $path;
     $v = file_exists($abs) ? filemtime($abs) : 0;
@@ -127,10 +129,10 @@ function faq_jsonld(array $faqs): void {
         'mainEntity' => array_map(static function (array $faq): array {
             return [
                 '@type'          => 'Question',
-                'name'           => $faq['question'],
+                'name'           => db_field($faq, 'question'),
                 'acceptedAnswer' => [
                     '@type' => 'Answer',
-                    'text'  => trim(html_entity_decode(strip_tags($faq['answer']), ENT_QUOTES | ENT_HTML5)),
+                    'text'  => trim(html_entity_decode(strip_tags(db_field($faq, 'answer')), ENT_QUOTES | ENT_HTML5)),
                 ],
             ];
         }, $faqs),
@@ -142,7 +144,7 @@ function article_jsonld(array $post, string $url, string $image, string $descrip
     echo '<script type="application/ld+json">' . json_encode([
         '@context'      => 'https://schema.org',
         '@type'         => 'Article',
-        'headline'      => $post['title'],
+        'headline'      => db_field($post, 'title'),
         'description'   => $description,
         'image'         => $image,
         'datePublished' => date('c', strtotime($post['created_at'])),

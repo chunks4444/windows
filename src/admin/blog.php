@@ -249,6 +249,37 @@ foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
                 <div id="postContentEditor"></div>
                 <input type="file" id="postContentImgFile" accept="image/*" style="display:none;">
             </div>
+            <div class="blog-info-section collapsed" id="blogEnSection">
+                <button type="button" class="blog-info-toggle" onclick="toggleInfoSection('blogEnSection')">
+                    <i class="bi bi-chevron-down"></i> 영문(/en/) 버전 — 비워두면 한글 원문으로 폴백
+                </button>
+                <div class="blog-info-body" id="blogEnBody">
+                    <div class="adm-mfield">
+                        <label>제목 (영문)</label>
+                        <input id="postTitleEn" type="text" maxlength="255">
+                    </div>
+                    <div class="adm-mfield">
+                        <label>요약 (영문)</label>
+                        <textarea id="postSummaryEn" class="blog-textarea" rows="2" maxlength="500"></textarea>
+                    </div>
+                    <div class="adm-mfield">
+                        <label>하단 CTA 문구 (영문)</label>
+                        <input id="postCtaTextEn" type="text" maxlength="255">
+                    </div>
+                    <div class="adm-mfield">
+                        <label>출처 (영문)</label>
+                        <textarea id="postSourceTextEn" class="blog-textarea" rows="3" maxlength="1000"></textarea>
+                    </div>
+                    <div class="adm-mfield">
+                        <label>질문형 인덱스용 한 줄 질문 (영문)</label>
+                        <input id="postQuestionEn" type="text" maxlength="255">
+                    </div>
+                    <div class="adm-mfield">
+                        <label>본문 (영문, HTML) <span style="font-size:11px;color: var(--text);font-weight:400;">(한글 본문과 같은 &lt;p&gt;/&lt;h2&gt;/&lt;strong&gt; 구조로 직접 입력)</span></label>
+                        <textarea id="postContentEn" class="blog-textarea" rows="14" style="font-family:monospace;font-size:12px;"></textarea>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="adm-modal-foot">
             <span id="postSaveStatus" class="pc-status" style="margin-right:auto;"></span>

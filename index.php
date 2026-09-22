@@ -440,12 +440,12 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                         <div class="accordion-item faq-item">
                             <h3 class="accordion-header">
                                 <button class="accordion-button faq-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq<?= $faq['id'] ?>">
-                                    <?= htmlspecialchars($faq['question']) ?>
+                                    <?= htmlspecialchars(db_field($faq, 'question')) ?>
                                 </button>
                             </h3>
                             <div id="faq<?= $faq['id'] ?>" class="accordion-collapse collapse" data-bs-parent="#faqAccordionLeft">
                                 <div class="accordion-body faq-body">
-                                    <?= $faq['answer'] ?>
+                                    <?= db_field($faq, 'answer') ?>
                                 </div>
                             </div>
                         </div>
@@ -456,12 +456,12 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                         <div class="accordion-item faq-item">
                             <h3 class="accordion-header">
                                 <button class="accordion-button faq-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq<?= $faq['id'] ?>">
-                                    <?= htmlspecialchars($faq['question']) ?>
+                                    <?= htmlspecialchars(db_field($faq, 'question')) ?>
                                 </button>
                             </h3>
                             <div id="faq<?= $faq['id'] ?>" class="accordion-collapse collapse" data-bs-parent="#faqAccordionRight">
                                 <div class="accordion-body faq-body">
-                                    <?= $faq['answer'] ?>
+                                    <?= db_field($faq, 'answer') ?>
                                 </div>
                             </div>
                         </div>

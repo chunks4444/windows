@@ -86,6 +86,14 @@ require_admin_role('s');
                 <label>답변</label>
                 <div id="faqEditor"></div>
             </div>
+            <div class="adm-mfield">
+                <label>질문 (영문)</label>
+                <input id="faqQuestionEn" type="text" placeholder="비워두면 영문 사이트에서도 한글 질문이 보입니다" maxlength="255">
+            </div>
+            <div class="adm-mfield">
+                <label>답변 (영문)</label>
+                <div id="faqEditorEn"></div>
+            </div>
         </div>
         <div class="adm-modal-foot">
             <button class="adm-btn-cancel" onclick="closeModal()">취소</button>

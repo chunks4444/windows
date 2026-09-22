@@ -29,9 +29,11 @@ $body   = json_decode(file_get_contents('php://input'), true) ?? [];
 $action = $body['action'] ?? '';
 
 if ($action === 'save') {
-    $id       = (int)($body['id'] ?? 0);
-    $question = trim($body['question'] ?? '');
-    $answer   = trim($body['answer'] ?? '');
+    $id          = (int)($body['id'] ?? 0);
+    $question    = trim($body['question'] ?? '');
+    $answer      = trim($body['answer'] ?? '');
+    $question_en = trim($body['question_en'] ?? '') ?: null;
+    $answer_en   = trim($body['answer_en'] ?? '') ?: null;
 
     if ($question === '' || $answer === '') {
         echo json_encode(['error' => '질문과 답변을 모두 입력하세요.']);
@@ -39,12 +41,12 @@ if ($action === 'save') {
     }
 
     if ($id) {
-        $pdo->prepare('UPDATE faqs SET question=?, answer=? WHERE id=?')
-            ->execute([$question, $answer, $id]);
+        $pdo->prepare('UPDATE faqs SET question=?, answer=?, question_en=?, answer_en=? WHERE id=?')
+            ->execute([$question, $answer, $question_en, $answer_en, $id]);
     } else {
         $maxOrder = (int)$pdo->query('SELECT COALESCE(MAX(sort_order),0) FROM faqs')->fetchColumn();
-        $pdo->prepare('INSERT INTO faqs (question, answer, sort_order) VALUES (?,?,?)')
-            ->execute([$question, $answer, $maxOrder + 1]);
+        $pdo->prepare('INSERT INTO faqs (question, answer, question_en, answer_en, sort_order) VALUES (?,?,?,?,?)')
+            ->execute([$question, $answer, $question_en, $answer_en, $maxOrder + 1]);
         $id = (int)$pdo->lastInsertId();
     }
 

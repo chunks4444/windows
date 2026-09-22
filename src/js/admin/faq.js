@@ -1,7 +1,7 @@
 const API = '/src/api/admin/faq.php';
 function _h() { return { 'Authorization': 'Bearer ' + localStorage.getItem('pmok_auth_token'), 'Content-Type': 'application/json' }; }
 
-let faqs = [], dragSrc, quill;
+let faqs = [], dragSrc, quill, quillEn;
 
 async function loadFaqs() {
     const res  = await fetch(API, { headers: _h() });
@@ -59,9 +59,11 @@ function esc(s) {
 function openModal(id) {
     const f = id ? faqs.find(x => x.id == id) : null;
     document.getElementById('faqModalTitle').textContent = f ? 'FAQ 수정' : 'FAQ 추가';
-    document.getElementById('faqId').value       = f?.id ?? '';
-    document.getElementById('faqQuestion').value = f?.question ?? '';
-    quill.root.innerHTML = f?.answer ?? '';
+    document.getElementById('faqId').value         = f?.id ?? '';
+    document.getElementById('faqQuestion').value   = f?.question ?? '';
+    document.getElementById('faqQuestionEn').value = f?.question_en ?? '';
+    quill.root.innerHTML   = f?.answer ?? '';
+    quillEn.root.innerHTML = f?.answer_en ?? '';
     document.getElementById('faqModalOverlay').classList.add('open');
     setTimeout(() => quill.focus(), 50);
 }
@@ -72,10 +74,12 @@ function closeModal() {
 
 async function saveFaq() {
     const body = {
-        action:   'save',
-        id:       parseInt(document.getElementById('faqId').value) || 0,
-        question: document.getElementById('faqQuestion').value.trim(),
-        answer:   quill.root.innerHTML.trim(),
+        action:      'save',
+        id:          parseInt(document.getElementById('faqId').value) || 0,
+        question:    document.getElementById('faqQuestion').value.trim(),
+        answer:      quill.root.innerHTML.trim(),
+        question_en: document.getElementById('faqQuestionEn').value.trim(),
+        answer_en:   quillEn.root.innerHTML.trim() === '<p><br></p>' ? '' : quillEn.root.innerHTML.trim(),
     };
     const res  = await fetch(API, { method: 'POST', headers: _h(), body: JSON.stringify(body) });
     const data = await res.json();
@@ -124,6 +128,18 @@ document.addEventListener('DOMContentLoaded', () => {
             ],
         },
         placeholder: '답변 내용을 입력하세요.',
+    });
+    quillEn = new Quill('#faqEditorEn', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                ['bold', 'italic', 'underline'],
+                [{ list: 'ordered' }, { list: 'bullet' }],
+                ['link'],
+                ['clean'],
+            ],
+        },
+        placeholder: 'English answer (leave blank to fall back to the Korean answer on the English site).',
     });
 
     document.getElementById('faqModalOverlay').addEventListener('click', e => {

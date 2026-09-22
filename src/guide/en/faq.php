@@ -1,7 +1,7 @@
 <?php
 // 영문 본문. 한글 원문은 ../faq.php
-// 주의: 질문·답변은 DB(faqs 테이블)에서 오는 한글 콘텐츠라 이 페이지에서는 그대로 한글로 나온다.
-// 영문 Q&A를 쓰려면 faqs 테이블에 영문 컬럼을 추가해야 한다(아직 미구현).
+// 질문·답변은 DB(faqs 테이블)에서 온다 — question_en/answer_en이 있으면 그걸, 없으면
+// 한글 원문으로 폴백한다(db_field(), src/lib/i18n.php 참고).
 $guide_current = 'faq.php';
 $guide_title   = 'Frequently Asked Questions';
 $guide_prev    = ['href' => 'delivery.php', 'title' => 'Delivery Guide'];
@@ -30,14 +30,14 @@ $faqs = db()->query('SELECT * FROM faqs WHERE is_active=1 ORDER BY sort_order, i
                     data-bs-toggle="collapse"
                     data-bs-target="#gfaq<?= (int)$faq['id'] ?>"
                     aria-expanded="<?= $i === 0 ? 'true' : 'false' ?>">
-                <?= htmlspecialchars($faq['question']) ?>
+                <?= htmlspecialchars(db_field($faq, 'question')) ?>
             </button>
         </h3>
         <div id="gfaq<?= (int)$faq['id'] ?>"
              class="accordion-collapse collapse<?= $i === 0 ? ' show' : '' ?>"
              data-bs-parent="#guideAccordion">
             <div class="faq-guide-body">
-                <?= $faq['answer'] ?>
+                <?= db_field($faq, 'answer') ?>
             </div>
         </div>
     </div>

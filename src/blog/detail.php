@@ -174,10 +174,10 @@ if (!$isAdminViewer && !$isBotViewer && !$isUaRotationBot && !$isUaFingerprintBo
 
 // summary가 비어 있으면 본문 첫 문단(<p>)을 메타 설명으로 씀 — 문단 경계 없이 전체를 자르면
 // 여러 문단이 뒤섞여 문장이 끊길 수 있어 첫 문단만 뽑는다
-$metaDesc = $post['summary'];
+$metaDesc = db_field($post, 'summary');
 if (!$metaDesc) {
     $metaDesc = '';
-    if (preg_match_all('/<p[^>]*>(.*?)<\/p>/is', $post['content'], $bdParaMatches)) {
+    if (preg_match_all('/<p[^>]*>(.*?)<\/p>/is', db_field($post, 'content'), $bdParaMatches)) {
         foreach ($bdParaMatches[1] as $bdPara) {
             // 문단 전체가 <strong>...</strong>로만 감싸진 경우는 소제목이라 건너뜀
             if (preg_match('/^<strong[^>]*>.*<\/strong>$/is', trim($bdPara))) continue;
@@ -185,7 +185,7 @@ if (!$metaDesc) {
             if ($bdParaText !== '') { $metaDesc = $bdParaText; break; }
         }
     }
-    if ($metaDesc === '') $metaDesc = strip_tags($post['content']);
+    if ($metaDesc === '') $metaDesc = strip_tags(db_field($post, 'content'));
     $metaDesc = mb_substr($metaDesc, 0, 120);
 }
 // og:image는 절대 URL이어야 카톡·페이스북 공유 카드가 정상 노출됨 (thumbnail_url은 /uploads/... 상대경로로 저장됨)
@@ -209,7 +209,7 @@ $metaKeywords = implode(', ', array_unique(array_filter([
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($post['title']) ?> — <?= htmlspecialchars(t('bd_title_suffix')) ?></title>
+    <title><?= htmlspecialchars(db_field($post, 'title')) ?> — <?= htmlspecialchars(t('bd_title_suffix')) ?></title>
     <meta name="description" content="<?= htmlspecialchars($metaDesc) ?>">
     <meta name="keywords" content="<?= htmlspecialchars($metaKeywords) ?>">
     <meta name="robots" content="max-image-preview:large">
@@ -218,7 +218,7 @@ $metaKeywords = implode(', ', array_unique(array_filter([
     <link rel="alternate icon" href="/src/assets/favicon.png">
     <link rel="apple-touch-icon" href="/src/assets/apple-touch-icon.png">
     <link rel="canonical" href="<?= htmlspecialchars(SITE_URL . '/blog/' . rawurlencode($post['slug'])) ?>">
-    <meta property="og:title" content="<?= htmlspecialchars($post['title']) ?>">
+    <meta property="og:title" content="<?= htmlspecialchars(db_field($post, 'title')) ?>">
     <meta property="og:description" content="<?= htmlspecialchars($metaDesc) ?>">
     <meta property="og:image" content="<?= htmlspecialchars($metaImage) ?>">
     <?php article_jsonld($post, SITE_URL . '/blog/' . rawurlencode($post['slug']), $metaImage, $metaDesc); ?>
@@ -238,7 +238,7 @@ $metaKeywords = implode(', ', array_unique(array_filter([
 
         <header class="bd-header">
             <a href="/blog/" class="bd-back"><i class="bi bi-arrow-left"></i> <?= htmlspecialchars(t('bd_back')) ?></a>
-            <h1 class="bd-title"><?= htmlspecialchars($post['title']) ?></h1>
+            <h1 class="bd-title"><?= htmlspecialchars(db_field($post, 'title')) ?></h1>
             <time class="bd-date" datetime="<?= date('Y-m-d', strtotime($post['created_at'])) ?>">
                 <?= date('Y.m.d', strtotime($post['created_at'])) ?><?= $post['author_name'] ? ' · ' . htmlspecialchars($post['author_name']) : '' ?>
             </time>
@@ -280,10 +280,17 @@ $metaKeywords = implode(', ', array_unique(array_filter([
 
         <hr class="bd-divider">
 
-        <div class="bd-body"><?= $post['content'] ?></div>
+        <div class="bd-body"><?= db_field($post, 'content') ?></div>
+
+        <?php if (is_en() && !empty($post['content_en'])): ?>
+        <p class="bd-ai-translation-notice" style="font-size:12px;color:var(--text-muted);margin-top:16px;">
+            Originally written in Korean by the author. Translated with the help of AI.
+            <a href="<?= htmlspecialchars('/blog/' . rawurlencode($post['slug'])) ?>">Read the original</a>
+        </p>
+        <?php endif; ?>
 
         <?php
-        $bdSourceLines = array_values(array_filter(array_map('trim', preg_split('/\r\n|\r|\n/', $post['source_text'] ?? ''))));
+        $bdSourceLines = array_values(array_filter(array_map('trim', preg_split('/\r\n|\r|\n/', db_field($post, 'source_text') ?? ''))));
         ?>
         <div class="bd-source-notice">
             <?php if (count($bdSourceLines) === 1): ?>
@@ -298,7 +305,7 @@ $metaKeywords = implode(', ', array_unique(array_filter([
             </ul>
             <hr class="bd-divider bd-divider-source">
             <?php endif; ?>
-            <p class="bd-source-license">평목 블로그의 글과 기록은 출처(pyeongmok.com)를 밝히고 자유롭게 인용 및 발췌하실 수 있습니다.</p>
+            <p class="bd-source-license"><?= htmlspecialchars(t('bd_license')) ?></p>
         </div>
 
         <?php
@@ -308,7 +315,7 @@ $metaKeywords = implode(', ', array_unique(array_filter([
         <?php if ($bdEngineKey && isset($engineLabels[$bdEngineKey])): ?>
         <div class="bd-engine-box">
             <p class="bd-engine-box-title"><?= htmlspecialchars(t('bd_engine_box_title')) ?></p>
-            <p class="bd-engine-box-desc">글에서 다룬 <?= htmlspecialchars($post['related_category_name'] ?: $engineLabels[$bdEngineKey]) ?> 패턴을 스튜디오에서 바로 조작해볼 수 있습니다.</p>
+            <p class="bd-engine-box-desc"><?= htmlspecialchars(sprintf(t('bd_engine_box_desc'), $post['related_category_name'] ? term($post['related_category_name']) : $engineLabels[$bdEngineKey])) ?></p>
             <?php
             $bdEngineUrl = '/src/engine/' . $bdEngineKey . '/' . $bdEngineKey . '.php'
                 . ($post['related_drawing_id'] ? '?drawing_id=' . (int)$post['related_drawing_id'] : '');
@@ -321,14 +328,16 @@ $metaKeywords = implode(', ', array_unique(array_filter([
         </div>
         <?php endif; ?>
 
-        <?php if ($post['related_category_name'] && $post['related_category_id']): ?>
+        <?php if ($post['related_category_name'] && $post['related_category_id']):
+            $bdCatName = term($post['related_category_name']);
+        ?>
         <div class="bd-cta">
-            <p class="bd-cta-title">이 살은 <?= htmlspecialchars($post['related_category_name']) ?> 계열입니다 — 실제 제작 사례를 컬렉션에서 확인해보세요.</p>
-            <a href="/collection/?category=<?= (int)$post['related_category_id'] ?>" class="bd-cta-btn"><?= htmlspecialchars($post['related_category_name']) ?> 컬렉션 보기 <i class="bi bi-arrow-right"></i></a>
+            <p class="bd-cta-title"><?= htmlspecialchars(sprintf(t('bd_cta_category'), $bdCatName)) ?></p>
+            <a href="<?= lang_href('/collection/?category=' . (int)$post['related_category_id']) ?>" class="bd-cta-btn"><?= htmlspecialchars(sprintf(t('bd_cta_category_btn'), $bdCatName)) ?> <i class="bi bi-arrow-right"></i></a>
         </div>
         <?php else: ?>
         <div class="bd-cta">
-            <p class="bd-cta-title"><?= htmlspecialchars($post['cta_text'] ?: t('bd_cta_default')) ?></p>
+            <p class="bd-cta-title"><?= htmlspecialchars(db_field($post, 'cta_text') ?: t('bd_cta_default')) ?></p>
             <a href="<?= lang_href('/collection/') ?>" class="bd-cta-btn"><?= htmlspecialchars(t('bd_go_collection')) ?> <i class="bi bi-arrow-right"></i></a>
         </div>
         <?php endif; ?>
@@ -367,7 +376,7 @@ $metaKeywords = implode(', ', array_unique(array_filter([
 <script>
 (function () {
     const shareUrl   = <?= json_encode(SITE_URL . '/blog/' . rawurlencode($post['slug'])) ?>;
-    const shareTitle = <?= json_encode($post['title']) ?>;
+    const shareTitle = <?= json_encode(db_field($post, 'title')) ?>;
     const shareImage = <?= json_encode($metaImage) ?>;
     const BD_T = <?= json_encode([
         'linkCopied'     => t('bd_link_copied'),

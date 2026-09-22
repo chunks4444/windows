@@ -56,6 +56,14 @@ function lang_href(string $path): string {
     return '/en' . $path;
 }
 
+// DB 행에서 "{field}_en" 영문 컬럼을 우선 반환하는 공용 헬퍼 — FAQ·블로그 글처럼 자유서술형이라
+// 용어집(term())으로 못 다루고 컬럼을 따로 둔 콘텐츠에 쓴다. en 모드가 아니거나 영문 컬럼이
+// 비어있으면(어드민 미입력) 한글 원문으로 폴백한다.
+function db_field(array $row, string $field): string {
+    if (is_en() && !empty($row[$field . '_en'])) return $row[$field . '_en'];
+    return $row[$field] ?? '';
+}
+
 // 현재 경로를 유지한 채 언어만 바꾼 URL (nav 언어 스위처용)
 function lang_switch_url(string $targetLang): string {
     $uri  = $_SERVER['REQUEST_URI'] ?? '/';

@@ -62,7 +62,7 @@ try {
     $offset     = ($page - 1) * $perPage;
 
     $stmt = $pdo->prepare("
-        SELECT p.id, p.title, p.slug, p.summary, p.thumbnail_url, p.created_at, p.view_count,
+        SELECT p.id, p.title, p.title_en, p.slug, p.summary, p.summary_en, p.thumbnail_url, p.created_at, p.view_count,
                p.series_order, s.name AS series_name
         FROM blog_posts p
         LEFT JOIN blog_series s ON s.id = p.series_id
@@ -77,7 +77,7 @@ try {
 
     // 상단 피처 캐로셀 — 관리자가 직접 선택한 글만(is_featured), 날짜 무관, sort_order 순
     $featurePosts = $pdo->query("
-        SELECT p.id, p.title, p.slug, p.thumbnail_url, p.series_order, s.name AS series_name
+        SELECT p.id, p.title, p.title_en, p.slug, p.thumbnail_url, p.series_order, s.name AS series_name
         FROM blog_posts p
         LEFT JOIN blog_series s ON s.id = p.series_id
         WHERE p.is_active = 1 AND p.is_featured = 1
@@ -88,7 +88,7 @@ try {
     // 사이드바 — 시리즈별 카드 (시리즈명 + 태그라인 + 최근 글 최대 3개)
     // 첫 카드만 최신 발행글 기준, 나머지는 어드민이 지정한 시리즈 순서(sort_order)를 따름
     $seriesRows = $pdo->query("
-        SELECT p.id, p.title, p.slug, p.created_at, p.series_id, p.series_order,
+        SELECT p.id, p.title, p.title_en, p.slug, p.created_at, p.series_id, p.series_order,
                s.name AS series_name, s.tagline AS series_tagline, s.sort_order AS series_sort, s.is_completed
         FROM blog_posts p
         JOIN blog_series s ON s.id = p.series_id
@@ -180,7 +180,7 @@ try {
                                 <?php if ($fp['series_name']): ?>
                                 <span class="bg-feature-badge"><?= htmlspecialchars($fp['series_name']) ?><?= $fp['series_order'] ? ' · ' . htmlspecialchars(sprintf(t('home_blog_episode'), (int)$fp['series_order'])) : '' ?></span>
                                 <?php endif; ?>
-                                <h2 class="bg-feature-title">"<?= htmlspecialchars($fp['title']) ?>"</h2>
+                                <h2 class="bg-feature-title">"<?= htmlspecialchars(db_field($fp, 'title')) ?>"</h2>
                             </div>
                         </a>
                     </div>
@@ -203,9 +203,9 @@ try {
                             <p class="bg-ranked-cat">
                                 <?php if ($p['series_name']): ?><?= htmlspecialchars($p['series_name']) ?><?= $p['series_order'] ? ' · ' . htmlspecialchars(sprintf(t('home_blog_episode'), (int)$p['series_order'])) : '' ?> · <?php endif; ?><?= date('Y.m.d', strtotime($p['created_at'])) ?>
                             </p>
-                            <h3 class="bg-ranked-title"><?= htmlspecialchars($p['title']) ?></h3>
+                            <h3 class="bg-ranked-title"><?= htmlspecialchars(db_field($p, 'title')) ?></h3>
                             <?php if ($p['summary']): ?>
-                            <p class="bg-ranked-summary"><?= htmlspecialchars($p['summary']) ?></p>
+                            <p class="bg-ranked-summary"><?= htmlspecialchars(db_field($p, 'summary')) ?></p>
                             <?php endif; ?>
                         </div>
                         <?php if ($p['thumbnail_url']): ?>
@@ -252,7 +252,7 @@ try {
                 <ul class="bg-side-card-posts">
                     <?php foreach ($sc['posts'] as $sp): ?>
                     <li>
-                        <a href="/blog/<?= rawurlencode($sp['slug']) ?>"><?= $sp['series_order'] ? htmlspecialchars(sprintf(t('home_blog_episode'), (int)$sp['series_order'])) . ' ' : '' ?><?= htmlspecialchars($sp['title']) ?></a>
+                        <a href="/blog/<?= rawurlencode($sp['slug']) ?>"><?= $sp['series_order'] ? htmlspecialchars(sprintf(t('home_blog_episode'), (int)$sp['series_order'])) . ' ' : '' ?><?= htmlspecialchars(db_field($sp, 'title')) ?></a>
                         <span class="bg-side-card-date"><?= date('Y.m.d', strtotime($sp['created_at'])) ?></span>
                     </li>
                     <?php endforeach; ?>
