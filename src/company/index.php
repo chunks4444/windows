@@ -227,8 +227,8 @@ function sc_desc(array $cardsByKey, string $key, string $fallbackKey): string {
                 <li><?= htmlspecialchars(t('company_feature5')) ?></li>
                 <li><?= htmlspecialchars(t('company_feature6')) ?></li>
                 <li><?= htmlspecialchars(t('company_feature7')) ?></li>
+                <li class="ab-common-features-highlight"><?= htmlspecialchars(t('company_feature_highlight')) ?></li>
             </ul>
-            <p class="ab-common-features-highlight"><?= htmlspecialchars(t('company_feature_highlight')) ?></p>
         </div>
 
         <div class="ab-studio-next">
