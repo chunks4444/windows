@@ -220,21 +220,21 @@ body {
 }
 .ab-common-features-list li {
     position: relative;
-    padding-left: 16px;
+    padding-left: 18px;
     font-size: var(--fs-14);
     line-height: 1.7;
     color: var(--text);
     word-break: keep-all;
 }
 .ab-common-features-list li::before {
-    content: '·';
+    content: '';
     position: absolute;
     left: 0;
-    top: -0.3em;
-    font-size: 1.6em;
-    line-height: 1;
-    color: var(--accent);
-    font-weight: 700;
+    top: calc(0.85em - 3.5px);
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--text);
 }
 .ab-common-features-highlight {
     font-size: var(--fs-16);
