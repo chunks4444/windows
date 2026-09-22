@@ -142,7 +142,7 @@ body { background: var(--bg); }
     transition: background .15s ease, color .15s ease;
 }
 .bg-page-num:hover, .bg-page-arrow:hover { background: var(--bg, #f5f5f5); }
-.bg-page-num.active { background: var(--accent); color: #fff; font-weight: 700; }
+.bg-page-num.active { background: var(--text); color: #fff; font-weight: 700; }
 .bg-page-arrow.disabled { pointer-events: none; opacity: .3; }
 
 /* ── 사이드바: 시리즈 카드 ────────────────────────────────── */
