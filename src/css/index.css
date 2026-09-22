@@ -644,7 +644,7 @@
     transition: color 0.2s, gap 0.2s;
     white-space: nowrap;
 }
-.home-blog-more:hover { color: #5B6066; gap: 9px; }
+.home-blog-more:hover { color: var(--text-muted); gap: 9px; }
 
 .home-quote-banner {
     display: block;
