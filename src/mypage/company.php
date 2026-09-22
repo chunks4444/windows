@@ -1,8 +1,9 @@
 <?php
 header('Content-Type: text/html; charset=UTF-8');
+require_once __DIR__ . '/../lib/i18n.php';
 ?>
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="<?= is_en() ? 'en' : 'ko' ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,9 +23,9 @@ header('Content-Type: text/html; charset=UTF-8');
 <!-- 로그인 필요 -->
 <div class="db-page" id="pageAuthWall" style="display:none;">
     <div class="db-auth-banner">
-        <p>회사 정보를 수정하려면 로그인이 필요합니다.</p>
+        <p><?= htmlspecialchars(t('db_auth_wall_company')) ?></p>
         <button class="db-auth-btn" data-bs-toggle="modal" data-bs-target="#authModal">
-            <i class="bi bi-person-circle"></i> 로그인
+            <i class="bi bi-person-circle"></i> <?= htmlspecialchars(t('nav_login')) ?>
         </button>
     </div>
 </div>
@@ -32,20 +33,20 @@ header('Content-Type: text/html; charset=UTF-8');
 <!-- 회사정보 폼 -->
 <div class="db-page" id="companyPage" style="display:none;">
     <div class="db-header">
-        <h1 class="db-title"><i class="bi bi-building me-2"></i>회사 정보</h1>
+        <h1 class="db-title"><i class="bi bi-building me-2"></i><?= htmlspecialchars(t('cp_title')) ?></h1>
     </div>
 
     <div class="pf-card">
         <div class="pf-section">
-            <h2 class="pf-section-title">기본 정보</h2>
+            <h2 class="pf-section-title"><?= htmlspecialchars(t('pf_basic_info')) ?></h2>
             <div class="pf-email-row">
-                <span class="pf-label">이메일</span>
+                <span class="pf-label"><?= htmlspecialchars(t('auth_email')) ?></span>
                 <span class="pf-email" id="cpEmail">—</span>
             </div>
         </div>
 
         <div class="pf-section">
-            <h2 class="pf-section-title">회사 정보</h2>
+            <h2 class="pf-section-title"><?= htmlspecialchars(t('cp_info')) ?></h2>
 
             <div id="cpAlert" class="pf-alert" style="display:none;"></div>
 
@@ -55,36 +56,36 @@ header('Content-Type: text/html; charset=UTF-8');
                     <div class="pf-col">
                         <div class="pf-row">
                             <div class="pf-field">
-                                <label class="pf-label" for="cpName">회사명</label>
+                                <label class="pf-label" for="cpName"><?= htmlspecialchars(t('cp_name')) ?></label>
                                 <input id="cpName" name="company_name" type="text" class="pf-input"
-                                       placeholder="(주)평목" maxlength="100">
+                                       placeholder="<?= htmlspecialchars(t('cp_name_ph')) ?>" maxlength="100">
                             </div>
                             <div class="pf-field">
-                                <label class="pf-label" for="cpBizNo">사업자등록번호</label>
+                                <label class="pf-label" for="cpBizNo"><?= htmlspecialchars(t('cp_biz_no')) ?></label>
                                 <input id="cpBizNo" name="company_biz_no" type="text" class="pf-input"
                                        placeholder="000-00-00000" maxlength="20">
                             </div>
                         </div>
                         <div class="pf-row" style="margin-top:12px;">
                             <div class="pf-field">
-                                <label class="pf-label" for="cpBizType">업태</label>
+                                <label class="pf-label" for="cpBizType"><?= htmlspecialchars(t('cp_biz_type')) ?></label>
                                 <input id="cpBizType" name="company_biz_type" type="text" class="pf-input"
-                                       placeholder="제조업" maxlength="100">
+                                       placeholder="<?= htmlspecialchars(t('cp_biz_type_ph')) ?>" maxlength="100">
                             </div>
                             <div class="pf-field">
-                                <label class="pf-label" for="cpBizCat">업종</label>
+                                <label class="pf-label" for="cpBizCat"><?= htmlspecialchars(t('cp_biz_cat')) ?></label>
                                 <input id="cpBizCat" name="company_biz_category" type="text" class="pf-input"
-                                       placeholder="목재가구" maxlength="100">
+                                       placeholder="<?= htmlspecialchars(t('cp_biz_cat_ph')) ?>" maxlength="100">
                             </div>
                         </div>
                         <div class="pf-row" style="margin-top:12px;">
                             <div class="pf-field">
-                                <label class="pf-label" for="cpCeo">대표자명</label>
+                                <label class="pf-label" for="cpCeo"><?= htmlspecialchars(t('cp_ceo')) ?></label>
                                 <input id="cpCeo" name="company_ceo" type="text" class="pf-input"
-                                       placeholder="홍길동" maxlength="100">
+                                       placeholder="<?= htmlspecialchars(t('pf_name_ph')) ?>" maxlength="100">
                             </div>
                             <div class="pf-field">
-                                <label class="pf-label" for="cpPhone">대표 연락처</label>
+                                <label class="pf-label" for="cpPhone"><?= htmlspecialchars(t('cp_phone')) ?></label>
                                 <input id="cpPhone" name="company_phone" type="tel" class="pf-input"
                                        placeholder="02-0000-0000" maxlength="30">
                             </div>
@@ -94,22 +95,22 @@ header('Content-Type: text/html; charset=UTF-8');
                     <!-- 오른쪽: 주소 -->
                     <div class="pf-col pf-col--address">
                         <div class="pf-field">
-                            <label class="pf-label" for="cpZipcode">회사 주소</label>
+                            <label class="pf-label" for="cpZipcode"><?= htmlspecialchars(t('cp_address')) ?></label>
                             <div class="pf-zipcode-row">
                                 <input id="cpZipcode" name="company_zipcode" type="text" class="pf-input pf-input--sm"
-                                       placeholder="우편번호" maxlength="6" readonly>
-                                <button type="button" class="pf-btn-zip" onclick="openPostcode()">우편번호 검색</button>
+                                       placeholder="<?= htmlspecialchars(t('pf_zipcode_ph')) ?>" maxlength="6" readonly>
+                                <button type="button" class="pf-btn-zip" onclick="openPostcode()"><?= htmlspecialchars(t('pf_zipcode_search')) ?></button>
                             </div>
                             <input id="cpAddress" name="company_address" type="text" class="pf-input"
-                                   placeholder="도로명 주소" maxlength="255" readonly>
+                                   placeholder="<?= htmlspecialchars(t('pf_road_address_ph')) ?>" maxlength="255" readonly>
                             <input id="cpAddressDetail" name="company_address_detail" type="text" class="pf-input"
-                                   placeholder="상세 주소 (층/호 등)" maxlength="100">
+                                   placeholder="<?= htmlspecialchars(t('cp_address_detail_ph')) ?>" maxlength="100">
                         </div>
                     </div>
                 </div>
 
                 <div class="pf-actions">
-                    <button type="submit" class="pf-btn-save" id="cpSaveBtn">저장</button>
+                    <button type="submit" class="pf-btn-save" id="cpSaveBtn"><?= htmlspecialchars(t('pf_save')) ?></button>
                 </div>
             </form>
         </div>

@@ -1,8 +1,9 @@
 <?php
 header('Content-Type: text/html; charset=UTF-8');
+require_once __DIR__ . '/../lib/i18n.php';
 ?>
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="<?= is_en() ? 'en' : 'ko' ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,9 +25,9 @@ header('Content-Type: text/html; charset=UTF-8');
 <div class="lib-hero">
     <div class="lib-hero-inner">
         <p class="lib-hero-label">My Page</p>
-        <h1>도면관리</h1>
+        <h1><?= htmlspecialchars(t('db_title')) ?></h1>
         <p class="lib-hero-sub">
-            저장한 도면과 보드를 관리하세요.&ensp;
+            <?= htmlspecialchars(t('db_sub')) ?>&ensp;
             <span class="lib-count-badge" id="libCountBadge"></span>
         </p>
     </div>
@@ -35,12 +36,12 @@ header('Content-Type: text/html; charset=UTF-8');
 <div class="db-page" id="dbPage" style="display:none;">
     <div class="db-header">
         <div class="db-tabs">
-            <button class="db-tab active" id="tabDrawings" onclick="switchTab('drawings')">내 도면</button>
-            <button class="db-tab" id="tabBoards" onclick="switchTab('boards')">내 보드</button>
-            <button class="db-tab" id="tabRenders" onclick="switchTab('renders')">렌더링</button>
-            <button class="db-tab" id="tabOrders" onclick="switchTab('orders')">주문내역</button>
+            <button class="db-tab active" id="tabDrawings" onclick="switchTab('drawings')"><?= htmlspecialchars(t('db_tab_drawings')) ?></button>
+            <button class="db-tab" id="tabBoards" onclick="switchTab('boards')"><?= htmlspecialchars(t('db_tab_boards')) ?></button>
+            <button class="db-tab" id="tabRenders" onclick="switchTab('renders')"><?= htmlspecialchars(t('db_tab_renders')) ?></button>
+            <button class="db-tab" id="tabOrders" onclick="switchTab('orders')"><?= htmlspecialchars(t('db_tab_orders')) ?></button>
         </div>
-        <input type="text" id="dbDrawingsSearch" class="db-search-input" placeholder="도면 이름으로 검색…" oninput="onDrawingsSearch(this.value)">
+        <input type="text" id="dbDrawingsSearch" class="db-search-input" placeholder="<?= htmlspecialchars(t('db_search_ph')) ?>" oninput="onDrawingsSearch(this.value)">
     </div>
     <div id="dbContent"></div>
     <div id="dbBoardsContent" style="display:none;"></div>
@@ -65,9 +66,9 @@ header('Content-Type: text/html; charset=UTF-8');
         <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--bg);">
             <h3 id="dbRenderModalTitle" style="margin:0;font-size:15px;font-weight:700;color:var(--text-muted,var(--text-muted));"></h3>
             <div style="display:flex;gap:8px;align-items:center;">
-                <button id="dbRenderModalShare" title="공유" style="border:none;background:var(--bg);color:var(--text);border-radius:6px;padding:6px 12px;font-size:14px;display:flex;align-items:center;cursor:pointer;"><i class="bi bi-share-fill"></i></button>
-                <button id="dbRenderModalDownload" style="border:none;background:var(--accent,var(--accent));color:var(--bg);border-radius:6px;padding:6px 14px;font-size:13px;font-weight:600;cursor:pointer;">다운로드</button>
-                <button id="dbRenderModalDelete" style="border:none;background:var(--bg);color:var(--danger);border-radius:6px;padding:6px 14px;font-size:13px;font-weight:600;cursor:pointer;">삭제</button>
+                <button id="dbRenderModalShare" title="<?= htmlspecialchars(t('share_title')) ?>" style="border:none;background:var(--bg);color:var(--text);border-radius:6px;padding:6px 12px;font-size:14px;display:flex;align-items:center;cursor:pointer;"><i class="bi bi-share-fill"></i></button>
+                <button id="dbRenderModalDownload" style="border:none;background:var(--accent,var(--accent));color:var(--bg);border-radius:6px;padding:6px 14px;font-size:13px;font-weight:600;cursor:pointer;"><?= htmlspecialchars(t('db_download')) ?></button>
+                <button id="dbRenderModalDelete" style="border:none;background:var(--bg);color:var(--danger);border-radius:6px;padding:6px 14px;font-size:13px;font-weight:600;cursor:pointer;"><?= htmlspecialchars(t('db_delete')) ?></button>
                 <button onclick="document.getElementById('dbRenderModal').style.display='none'" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-muted);">&times;</button>
             </div>
         </div>
@@ -91,18 +92,18 @@ header('Content-Type: text/html; charset=UTF-8');
 <!-- 도면 복사 모달 -->
 <div id="dbCopyModal" class="db-delete-modal" style="display:none;" role="dialog" aria-modal="true">
     <div class="db-delete-modal-box">
-        <button type="button" class="db-delete-modal-close" id="dbCopyModalClose" aria-label="닫기">
+        <button type="button" class="db-delete-modal-close" id="dbCopyModalClose" aria-label="<?= htmlspecialchars(t('auth_close')) ?>">
             <i class="bi bi-x-lg"></i>
         </button>
         <div class="db-delete-modal-icon" style="color:var(--accent);">
             <i class="bi bi-copy"></i>
         </div>
-        <div class="db-delete-modal-title" id="dbCopyModalTitle">도면 복사</div>
+        <div class="db-delete-modal-title" id="dbCopyModalTitle"><?= htmlspecialchars(t('db_copy_title')) ?></div>
         <div class="db-delete-modal-desc" id="dbCopyModalDesc"></div>
-        <input type="text" id="dbCopyModalInput" class="db-copy-input" maxlength="40" placeholder="복사본 이름 입력…">
+        <input type="text" id="dbCopyModalInput" class="db-copy-input" maxlength="40" placeholder="<?= htmlspecialchars(t('db_copy_input_ph')) ?>">
         <div class="db-delete-modal-actions">
-            <button class="db-delete-modal-cancel" id="dbCopyModalCancel">취소</button>
-            <button class="db-delete-modal-confirm" id="dbCopyModalConfirm" style="background:var(--accent);">복사</button>
+            <button class="db-delete-modal-cancel" id="dbCopyModalCancel"><?= htmlspecialchars(t('db_cancel')) ?></button>
+            <button class="db-delete-modal-confirm" id="dbCopyModalConfirm" style="background:var(--accent);"><?= htmlspecialchars(t('db_copy')) ?></button>
         </div>
     </div>
 </div>
@@ -110,35 +111,35 @@ header('Content-Type: text/html; charset=UTF-8');
 <!-- 공유 모달 -->
 <div id="dbShareModal" class="db-delete-modal" style="display:none;" role="dialog" aria-modal="true">
     <div class="db-delete-modal-box">
-        <button type="button" class="db-delete-modal-close" id="dbShareModalClose" aria-label="닫기">
+        <button type="button" class="db-delete-modal-close" id="dbShareModalClose" aria-label="<?= htmlspecialchars(t('auth_close')) ?>">
             <i class="bi bi-x-lg"></i>
         </button>
         <div class="db-delete-modal-icon" style="background:var(--accent-tint,#eee);color:var(--accent);">
             <i class="bi bi-share-fill"></i>
         </div>
-        <div class="db-delete-modal-title" id="dbShareModalTitle">도면 공유</div>
-        <div class="db-delete-modal-desc" id="dbShareModalId">도면 #—</div>
+        <div class="db-delete-modal-title" id="dbShareModalTitle"><?= htmlspecialchars(t('db_share_title')) ?></div>
+        <div class="db-delete-modal-desc" id="dbShareModalId"><?= htmlspecialchars(sprintf(t('db_share_id'), '—')) ?></div>
         <div class="db-share-linkrow">
             <input type="text" id="dbShareModalLink" readonly>
-            <button type="button" id="dbShareModalCopy">복사</button>
+            <button type="button" id="dbShareModalCopy"><?= htmlspecialchars(t('share_copy')) ?></button>
         </div>
         <div class="db-share-channels">
-            <button type="button" id="dbShareModalKakao" title="카카오톡 공유">
+            <button type="button" id="dbShareModalKakao" title="<?= htmlspecialchars(t('share_kakao_aria')) ?>">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.8 5.3 4.6 6.7-.2.7-.7 2.6-.8 3-.1.5.2.5.4.4.2-.1 2.6-1.8 3.6-2.5.7.1 1.4.2 2.2.2 5.5 0 10-3.6 10-8 0-4.4-4.5-7.8-10-7.8z"/></svg>
-                <span>카카오</span>
+                <span><?= htmlspecialchars(t('share_kakao')) ?></span>
             </button>
-            <button type="button" id="dbShareModalFb" title="페이스북 공유">
+            <button type="button" id="dbShareModalFb" title="<?= htmlspecialchars(t('share_fb_aria')) ?>">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7.9h2.7l.4-3.1h-3.1V8.1c0-.9.3-1.5 1.6-1.5h1.7V3.8C15.9 3.7 14.8 3.6 13.6 3.6c-2.5 0-4.2 1.5-4.2 4.3v2.1H6.7v3.1h2.7V21h4.1z"/></svg>
                 <span>FB</span>
             </button>
-            <button type="button" id="dbShareModalX" title="X(트위터) 공유">
+            <button type="button" id="dbShareModalX" title="<?= htmlspecialchars(t('share_x_aria')) ?>">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 3H22l-7.5 8.6L23 21h-6.9l-5.4-6.6L4.4 21H1.3l8-9.2L1 3h7l4.9 6.1L18.9 3zm-1.2 16h1.9L7.4 4.9H5.4L17.7 19z"/></svg>
                 <span>X</span>
             </button>
         </div>
         <div class="db-delete-modal-actions">
-            <button class="db-delete-modal-cancel" id="dbShareModalOff">공유 끄기</button>
-            <button class="db-delete-modal-confirm" id="dbShareModalDone" style="background:var(--accent);">닫기</button>
+            <button class="db-delete-modal-cancel" id="dbShareModalOff"><?= htmlspecialchars(t('db_share_off')) ?></button>
+            <button class="db-delete-modal-confirm" id="dbShareModalDone" style="background:var(--accent);"><?= htmlspecialchars(t('db_close')) ?></button>
         </div>
     </div>
 </div>
@@ -149,11 +150,11 @@ header('Content-Type: text/html; charset=UTF-8');
         <div class="db-delete-modal-icon">
             <i class="bi bi-trash3"></i>
         </div>
-        <div class="db-delete-modal-title" id="dbDeleteModalTitle">삭제하시겠습니까?</div>
+        <div class="db-delete-modal-title" id="dbDeleteModalTitle"><?= htmlspecialchars(t('db_delete_confirm_title')) ?></div>
         <div class="db-delete-modal-desc" id="dbDeleteModalDesc"></div>
         <div class="db-delete-modal-actions">
-            <button class="db-delete-modal-cancel" id="dbDeleteModalCancel">취소</button>
-            <button class="db-delete-modal-confirm" id="dbDeleteModalConfirm">삭제</button>
+            <button class="db-delete-modal-cancel" id="dbDeleteModalCancel"><?= htmlspecialchars(t('db_cancel')) ?></button>
+            <button class="db-delete-modal-confirm" id="dbDeleteModalConfirm"><?= htmlspecialchars(t('db_delete')) ?></button>
         </div>
     </div>
 </div>
@@ -161,9 +162,9 @@ header('Content-Type: text/html; charset=UTF-8');
 <!-- 비로그인 -->
 <div class="db-page" id="dbAuthWall" style="display:none;">
     <div class="db-auth-banner">
-        <p>도면을 저장하고 관리하려면 로그인이 필요합니다.</p>
+        <p><?= htmlspecialchars(t('db_auth_wall_drawing')) ?></p>
         <button class="db-auth-btn" data-bs-toggle="modal" data-bs-target="#authModal">
-            <i class="bi bi-person-circle"></i> 로그인
+            <i class="bi bi-person-circle"></i> <?= htmlspecialchars(t('nav_login')) ?>
         </button>
     </div>
 </div>
