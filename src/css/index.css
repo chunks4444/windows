@@ -539,7 +539,7 @@
     cursor: pointer;
     transition: background .2s, transform .15s;
 }
-.process-cta-btn:hover { background: var(--accent-active); color: var(--bg); transform: translateY(-1px); }
+.process-cta-btn:hover { opacity: .85; color: var(--bg); transform: translateY(-1px); }
 
 @media (max-width: 1024px) {
     .process-container { grid-template-columns: repeat(2, 1fr); }
@@ -861,8 +861,7 @@
     border: 2px solid var(--text);
 }
 .home-contact-btn--primary:hover {
-    background: var(--accent-active);
-    border-color: var(--accent-active);
+    opacity: .85;
     color: var(--bg);
     transform: translateY(-2px);
 }

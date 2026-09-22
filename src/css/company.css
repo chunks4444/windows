@@ -388,13 +388,13 @@ body {
     display: inline-flex; align-items: center; gap: 8px;
     margin-top: 24px;
     height: 40px; padding: 0 20px;
-    background: var(--accent); color: var(--bg); border: none;
+    background: var(--text); color: var(--bg); border: none;
     border-radius: 4px; font-family: inherit;
     font-size: var(--fs-14); font-weight: 600; cursor: pointer;
     text-decoration: none;
-    transition: background .15s;
+    transition: opacity .15s;
 }
-.ab-contact-btn:hover { background: var(--accent-active); }
+.ab-contact-btn:hover { opacity: .85; }
 .ab-contact-btn--outline {
     background: transparent;
     color: var(--text);
