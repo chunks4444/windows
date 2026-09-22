@@ -154,7 +154,7 @@ function collection_card_html(array $p, array $navStudioIcons, array $engineEdit
                 <option value="jp-shoji"><?= htmlspecialchars(t('col_group_shoji')) ?></option>
                 <option value="jp-kumiko"><?= htmlspecialchars(t('col_group_kumiko')) ?></option>
             </select>
-            <button class="lib-filter-like" id="libLikeBtn"><svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M8 14.2s-5.6-3.4-5.6-7.4c0-1.9 1.5-3.4 3.4-3.4 1.1 0 2.1.5 2.7 1.4.6-.9 1.6-1.4 2.7-1.4 1.9 0 3.4 1.5 3.4 3.4 0 4-5.6 7.4-5.6 7.4z"/></svg> 좋아요</button>
+            <button class="lib-filter-like" id="libLikeBtn"><svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M8 14.2s-5.6-3.4-5.6-7.4c0-1.9 1.5-3.4 3.4-3.4 1.1 0 2.1.5 2.7 1.4.6-.9 1.6-1.4 2.7-1.4 1.9 0 3.4 1.5 3.4 3.4 0 4-5.6 7.4-5.6 7.4z"/></svg> <?= htmlspecialchars(t('col_like')) ?></button>
         </div>
         <div class="lib-right-group">
             <span class="lib-result-count" id="libResultCount"><?= htmlspecialchars(sprintf(t('col_count'), (int)$totalPatterns)) ?></span>

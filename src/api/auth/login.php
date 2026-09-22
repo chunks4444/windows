@@ -16,7 +16,7 @@ require_once __DIR__ . '/../../lib/logger.php';
 require_once __DIR__ . '/../../lib/rate_limit.php';
 
 $ip = pm_get_ip();
-if (!rate_limit_check('login:' . $ip, 10, 900)) {
+if (IS_PROD && !rate_limit_check('login:' . $ip, 10, 900)) {
     http_response_code(429);
     echo json_encode(['error' => t('auth_err_too_many')]);
     exit;

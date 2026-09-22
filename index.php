@@ -158,11 +158,12 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                 ?>
                 <div class="engine-icon-row">
                 <?php foreach ($renderCards as $sc):
-                    $key = $sc['engine_key'];
+                    $key   = $sc['engine_key'];
+                    $title = (is_en() && !empty($sc['title_en'])) ? $sc['title_en'] : $sc['title'];
                 ?>
-                    <a href="/src/engine/<?= htmlspecialchars($key) ?>/<?= htmlspecialchars($key) ?>.php" class="engine-icon-shortcut" aria-label="<?= htmlspecialchars(sprintf(t('home_engine_alt'), $sc['title'])) ?>">
+                    <a href="/src/engine/<?= htmlspecialchars($key) ?>/<?= htmlspecialchars($key) ?>.php" class="engine-icon-shortcut" aria-label="<?= htmlspecialchars(sprintf(t('home_engine_alt'), $title)) ?>">
                         <span class="engine-icon-circle"><?= $svgIcons[$key] ?? '' ?></span>
-                        <span class="engine-icon-label"><?= htmlspecialchars($sc['title']) ?></span>
+                        <span class="engine-icon-label"><?= htmlspecialchars($title) ?></span>
                     </a>
                 <?php endforeach; ?>
                 </div>

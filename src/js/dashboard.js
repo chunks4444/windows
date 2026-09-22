@@ -420,7 +420,7 @@ let _patternCats = [];
 
 async function loadCategories() {
     try {
-        const res = await fetch('/src/api/drawings/categories.php');
+        const res = await fetch('/src/api/drawings/categories.php', { headers: { 'X-Pmok-Lang': window.PMOK_LANG || 'ko' } });
         _patternCats = (await res.json()).categories || [];
     } catch {}
 }

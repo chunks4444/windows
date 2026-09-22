@@ -15,7 +15,7 @@ require_once __DIR__ . '/../../lib/logger.php';
 require_once __DIR__ . '/../../lib/rate_limit.php';
 
 $ip = pm_get_ip();
-if (!rate_limit_check('register:' . $ip, 5, 3600)) {
+if (IS_PROD && !rate_limit_check('register:' . $ip, 5, 3600)) {
     http_response_code(429); echo json_encode(['error' => t('auth_err_retry_later')]); exit;
 }
 

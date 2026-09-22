@@ -69,6 +69,14 @@ require_admin_role('s');
                 <textarea id="scDesc" rows="3" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg);font-family:inherit;font-size:var(--fs-14);color:var(--text);outline:none;resize:vertical;" placeholder="카드 설명 텍스트 (HTML 허용)"></textarea>
             </div>
             <div class="adm-mfield">
+                <label>제목 (영문)</label>
+                <input id="scTitleEn" type="text" placeholder="예: Jeongja-sal — 비워두면 영문 사이트에서도 한글 제목이 보입니다" maxlength="80">
+            </div>
+            <div class="adm-mfield">
+                <label>설명 (영문)</label>
+                <textarea id="scDescEn" rows="3" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg);font-family:inherit;font-size:var(--fs-14);color:var(--text);outline:none;resize:vertical;" placeholder="영문 사이트(/en/)에서 이 카드에 쓸 설명 (HTML 허용) — 비워두면 기본 영문 문구로 대체됩니다"></textarea>
+            </div>
+            <div class="adm-mfield">
                 <label>배경 이미지</label>
                 <img id="scImgPreview" class="sc-img-preview" src="" alt="">
                 <p style="font-size:11px;color: var(--text);margin:0 0 6px;">표준 사이즈 1200 X 800 px 권장 (없으면 호버 시 이미지 없이 표시됩니다)</p>

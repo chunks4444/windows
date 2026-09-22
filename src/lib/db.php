@@ -25,6 +25,10 @@ if (@is_readable($_sock)) {
 
 unset($_sock);
 
+// 운영서버 여부(=소켓 접속) 그대로 재사용 — 로컬 개발 중엔 로그인 실패 재시도 제한 등
+// 운영 전용 보호장치를 끄는 데 쓴다.
+define('IS_PROD', DB_SOCKET !== null);
+
 define('DB_NAME',    'windowspyeongmok');
 define('DB_USER',    'webpyeongmok');
 define('DB_PASS',    '@@@Chun20662782@@');

@@ -50,6 +50,8 @@ function openModal(id) {
     document.getElementById('scEngineLabel').textContent = ENGINE_LABELS[c.engine_key] || c.engine_key;
     document.getElementById('scTitle').value       = c.title;
     document.getElementById('scDesc').value        = c.description || '';
+    document.getElementById('scTitleEn').value     = c.title_en || '';
+    document.getElementById('scDescEn').value      = c.description_en || '';
     document.getElementById('scImageUrl').value    = c.image_url || '';
     document.getElementById('scImgFile').value     = '';
     window._scImageData = null;
@@ -115,9 +117,11 @@ async function saveCard() {
         action:      'save',
         id:          parseInt(document.getElementById('scId').value) || 0,
         engine_key:  document.getElementById('scEngineKey').value,
-        title:       document.getElementById('scTitle').value.trim(),
-        description: document.getElementById('scDesc').value.trim(),
-        image_url:   document.getElementById('scImageUrl').value.trim(),
+        title:          document.getElementById('scTitle').value.trim(),
+        description:    document.getElementById('scDesc').value.trim(),
+        title_en:       document.getElementById('scTitleEn').value.trim(),
+        description_en: document.getElementById('scDescEn').value.trim(),
+        image_url:      document.getElementById('scImageUrl').value.trim(),
     };
     if (window._scImageData) body.image_data = window._scImageData;
     const res  = await fetch(API, { method: 'POST', headers: _h(), body: JSON.stringify(body) });

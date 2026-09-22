@@ -31,11 +31,19 @@ function t(string $key): string {
 }
 
 // 창호 전문 용어. 단순 번역이 아니라 "로마자 표기 (영문 설명)" 형태의 용어집 —
-// src/lib/i18n/terms.php에서 관리. en 모드가 아니거나 용어집에 없으면 원문(한글) 그대로 반환.
+// i18n_terms 테이블에서 관리(어드민 src/admin/i18n_terms.php). en 모드가 아니거나
+// 용어집에 없으면 원문(한글) 그대로 반환. 요청당 한 번만 테이블 전체를 읽어 캐시한다.
 function term(string $korean): string {
     static $terms = null;
     if (!is_en()) return $korean;
-    if ($terms === null) $terms = require __DIR__ . '/i18n/terms.php';
+    if ($terms === null) {
+        try {
+            require_once __DIR__ . '/db.php';
+            $terms = db()->query('SELECT korean, english FROM i18n_terms')->fetchAll(PDO::FETCH_KEY_PAIR);
+        } catch (Throwable $e) {
+            $terms = [];
+        }
+    }
     return $terms[$korean] ?? $korean;
 }
 

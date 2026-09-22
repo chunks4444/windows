@@ -14,6 +14,20 @@ try {
 }
 $cardsByKey = [];
 foreach ($studioCards as $sc) $cardsByKey[$sc['engine_key']] = $sc;
+
+// studio_cards.title/description은 자유서술형 긴 글이라 용어집(term())으로 못 다루고,
+// title_en/description_en 컬럼을 따로 관리한다(어드민 미입력 시 한글로 폴백).
+function sc_title(array $cardsByKey, string $key, string $fallback): string {
+    $sc = $cardsByKey[$key] ?? null;
+    if (!$sc) return $fallback;
+    return (is_en() && !empty($sc['title_en'])) ? $sc['title_en'] : $sc['title'];
+}
+function sc_desc(array $cardsByKey, string $key, string $fallbackKey): string {
+    $sc = $cardsByKey[$key] ?? null;
+    if (!$sc) return t($fallbackKey);
+    if (is_en()) return !empty($sc['description_en']) ? $sc['description_en'] : t($fallbackKey);
+    return $sc['description'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="<?= is_en() ? 'en' : 'ko' ?>">
@@ -135,8 +149,8 @@ foreach ($studioCards as $sc) $cardsByKey[$sc['engine_key']] = $sc;
                     <rect fill="currentColor" x="486" y="148" width="46" height="384" rx="4"/>
                 </svg>
                 <div>
-                    <p class="ab-tool-name"><?= htmlspecialchars($cardsByKey['classic']['title'] ?? 'Classic Lattice') ?></p>
-                    <p class="ab-tool-desc"><?= $cardsByKey['classic']['description'] ?? t('home_engine_desc_classic') ?></p>
+                    <p class="ab-tool-name"><?= htmlspecialchars(sc_title($cardsByKey, 'classic', 'Classic Lattice')) ?></p>
+                    <p class="ab-tool-desc"><?= sc_desc($cardsByKey, 'classic', 'home_engine_desc_classic') ?></p>
                 </div>
             </a>
             <a href="/src/engine/square/square.php" class="ab-tool-card">
@@ -147,8 +161,8 @@ foreach ($studioCards as $sc) $cardsByKey[$sc['engine_key']] = $sc;
                     <rect fill="currentColor" x="430" y="148" width="46" height="384" rx="4"/>
                 </svg>
                 <div>
-                    <p class="ab-tool-name"><?= htmlspecialchars($cardsByKey['square']['title'] ?? 'Square Lattice') ?></p>
-                    <p class="ab-tool-desc"><?= $cardsByKey['square']['description'] ?? t('home_engine_desc_square') ?></p>
+                    <p class="ab-tool-name"><?= htmlspecialchars(sc_title($cardsByKey, 'square', 'Square Lattice')) ?></p>
+                    <p class="ab-tool-desc"><?= sc_desc($cardsByKey, 'square', 'home_engine_desc_square') ?></p>
                 </div>
             </a>
             <a href="/src/engine/cross/cross.php" class="ab-tool-card">
@@ -161,8 +175,8 @@ foreach ($studioCards as $sc) $cardsByKey[$sc['engine_key']] = $sc;
                     </g>
                 </svg>
                 <div>
-                    <p class="ab-tool-name"><?= htmlspecialchars($cardsByKey['cross']['title'] ?? 'Cross Lattice') ?></p>
-                    <p class="ab-tool-desc"><?= $cardsByKey['cross']['description'] ?? t('home_engine_desc_cross') ?></p>
+                    <p class="ab-tool-name"><?= htmlspecialchars(sc_title($cardsByKey, 'cross', 'Cross Lattice')) ?></p>
+                    <p class="ab-tool-desc"><?= sc_desc($cardsByKey, 'cross', 'home_engine_desc_cross') ?></p>
                 </div>
             </a>
             <a href="/src/engine/diamond/diamond.php" class="ab-tool-card">
@@ -173,8 +187,8 @@ foreach ($studioCards as $sc) $cardsByKey[$sc['engine_key']] = $sc;
                     <g transform="rotate(135 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="4"/></g>
                 </svg>
                 <div>
-                    <p class="ab-tool-name"><?= htmlspecialchars($cardsByKey['diamond']['title'] ?? 'Diamond Lattice') ?></p>
-                    <p class="ab-tool-desc"><?= $cardsByKey['diamond']['description'] ?? t('home_engine_desc_diamond') ?></p>
+                    <p class="ab-tool-name"><?= htmlspecialchars(sc_title($cardsByKey, 'diamond', 'Diamond Lattice')) ?></p>
+                    <p class="ab-tool-desc"><?= sc_desc($cardsByKey, 'diamond', 'home_engine_desc_diamond') ?></p>
                 </div>
             </a>
             <a href="/src/engine/triangle/triangle.php" class="ab-tool-card">
@@ -184,8 +198,8 @@ foreach ($studioCards as $sc) $cardsByKey[$sc['engine_key']] = $sc;
                     <g transform="rotate(120 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="4"/></g>
                 </svg>
                 <div>
-                    <p class="ab-tool-name"><?= htmlspecialchars($cardsByKey['triangle']['title'] ?? 'Triangle Lattice') ?></p>
-                    <p class="ab-tool-desc"><?= $cardsByKey['triangle']['description'] ?? t('home_engine_desc_triangle') ?></p>
+                    <p class="ab-tool-name"><?= htmlspecialchars(sc_title($cardsByKey, 'triangle', 'Triangle Lattice')) ?></p>
+                    <p class="ab-tool-desc"><?= sc_desc($cardsByKey, 'triangle', 'home_engine_desc_triangle') ?></p>
                 </div>
             </a>
             <a href="/src/engine/hexagon/hexagon.php" class="ab-tool-card">
@@ -197,8 +211,8 @@ foreach ($studioCards as $sc) $cardsByKey[$sc['engine_key']] = $sc;
                     <line x1="470" y1="415" x2="340" y2="490" stroke="currentColor" stroke-width="46" stroke-linecap="round"/>
                 </svg>
                 <div>
-                    <p class="ab-tool-name"><?= htmlspecialchars($cardsByKey['hexagon']['title'] ?? 'Hexagon Lattice') ?></p>
-                    <p class="ab-tool-desc"><?= $cardsByKey['hexagon']['description'] ?? t('home_engine_desc_hexagon') ?></p>
+                    <p class="ab-tool-name"><?= htmlspecialchars(sc_title($cardsByKey, 'hexagon', 'Hexagon Lattice')) ?></p>
+                    <p class="ab-tool-desc"><?= sc_desc($cardsByKey, 'hexagon', 'home_engine_desc_hexagon') ?></p>
                 </div>
             </a>
         </div>

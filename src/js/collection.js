@@ -201,12 +201,14 @@ async function initGroupFilter() {
     if (!krSelect) return;
 
     try {
-        const res  = await fetch('/src/api/drawings/categories.php');
+        const res  = await fetch('/src/api/drawings/categories.php', { headers: { 'X-Pmok-Lang': window.PMOK_LANG || 'ko' } });
         const cats = (await res.json()).categories || [];
         cats.filter(c => c.code !== 'PYM' && c.code !== 'ETC').forEach(c => {
             const opt = document.createElement('option');
             opt.value       = c.id;
-            opt.textContent = c.name;
+            // 필터는 공간이 좁아 괄호 설명("Jeongja-sal (Grid Lattice)")은 자르고 로마자 표기만 표시.
+            // 전체 설명은 다른 곳(가이드·블로그 등)의 term() 출력에서 그대로 유지된다.
+            opt.textContent = c.name.replace(/\s*\([^)]*\)\s*$/, '');
             krSelect.appendChild(opt);
         });
         // URL로 넘어온 category가 옵션 로드 전에 세팅됐을 수 있으니 다시 반영

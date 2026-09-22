@@ -24,6 +24,8 @@ $pdo->exec("CREATE TABLE IF NOT EXISTS studio_cards (
     engine_key VARCHAR(20) NOT NULL UNIQUE,
     title VARCHAR(100) NOT NULL,
     description TEXT,
+    title_en VARCHAR(80),
+    description_en TEXT,
     image_url VARCHAR(500),
     sort_order INT DEFAULT 0,
     is_active TINYINT DEFAULT 1
@@ -39,11 +41,13 @@ $body = json_decode(file_get_contents('php://input'), true) ?? [];
 $action = $body['action'] ?? '';
 
 if ($action === 'save') {
-    $id          = (int)($body['id'] ?? 0);
-    $engine_key  = trim($body['engine_key'] ?? '');
-    $title       = trim($body['title'] ?? '');
-    $description = trim($body['description'] ?? '');
-    $is_active   = isset($body['is_active']) ? (int)$body['is_active'] : 1;
+    $id             = (int)($body['id'] ?? 0);
+    $engine_key     = trim($body['engine_key'] ?? '');
+    $title          = trim($body['title'] ?? '');
+    $description    = trim($body['description'] ?? '');
+    $title_en       = trim($body['title_en'] ?? '') ?: null;
+    $description_en = trim($body['description_en'] ?? '') ?: null;
+    $is_active      = isset($body['is_active']) ? (int)$body['is_active'] : 1;
 
     $image_url = trim($body['image_url'] ?? '');
     if (!empty($body['image_data'])) {
@@ -58,12 +62,12 @@ if ($action === 'save') {
     }
 
     if ($id) {
-        $pdo->prepare('UPDATE studio_cards SET title=?, description=?, image_url=?, is_active=? WHERE id=?')
-            ->execute([$title, $description, $image_url, $is_active, $id]);
+        $pdo->prepare('UPDATE studio_cards SET title=?, description=?, title_en=?, description_en=?, image_url=?, is_active=? WHERE id=?')
+            ->execute([$title, $description, $title_en, $description_en, $image_url, $is_active, $id]);
     } else {
         $maxOrder = (int)$pdo->query('SELECT COALESCE(MAX(sort_order),0) FROM studio_cards')->fetchColumn();
-        $pdo->prepare('INSERT INTO studio_cards (engine_key, title, description, image_url, sort_order, is_active) VALUES (?,?,?,?,?,?)')
-            ->execute([$engine_key, $title, $description, $image_url, $maxOrder + 1, $is_active]);
+        $pdo->prepare('INSERT INTO studio_cards (engine_key, title, description, title_en, description_en, image_url, sort_order, is_active) VALUES (?,?,?,?,?,?,?,?)')
+            ->execute([$engine_key, $title, $description, $title_en, $description_en, $image_url, $maxOrder + 1, $is_active]);
         $id = $pdo->lastInsertId();
     }
 

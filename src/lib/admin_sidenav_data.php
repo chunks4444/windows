@@ -33,6 +33,7 @@ return [
         ['pattern_categories.php','bi-tags',           '패턴 카테고리'],
         ['pattern_modifiers.php', 'bi-tag',            '수식어 관리'],
         ['pattern_drawings.php',  'bi-diagram-3',      '도면 분류'],
+        ['i18n_terms.php',       'bi-translate',       '영문 용어집'],
         ['ai_tuning.php',        'bi-stars',           'AI 튜닝'],
         ['ai_stats.php',         'bi-bar-chart-line',  'AI 사용 통계'],
     ]],

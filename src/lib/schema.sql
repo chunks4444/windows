@@ -789,3 +789,64 @@ CREATE TABLE IF NOT EXISTS blog_view_snapshots (
 -- DO
 --   INSERT IGNORE INTO blog_view_snapshots (snapshot_date, total_views)
 --   SELECT CURDATE(), COALESCE(SUM(view_count), 0) FROM blog_posts WHERE is_active = 1;
+
+-- 2026-09-22 영문(en) 사이트용 창호 전문 용어집 — 코드 파일(src/lib/i18n/terms.php)에 하드코딩해
+-- 관리하던 것을 DB로 옮김. 배포 없이 어드민(src/admin/i18n_terms.php)에서 바로 추가/수정 가능.
+-- src/lib/i18n.php term()이 이 테이블을 조회한다. "로마자 표기 (영문 설명)" 형태 권장이나 강제하지 않음.
+CREATE TABLE IF NOT EXISTS i18n_terms (
+    id         INT UNSIGNED      NOT NULL AUTO_INCREMENT,
+    korean     VARCHAR(60)       NOT NULL COMMENT '원문 그대로 매칭되는 한글 키 (term() 호출 인자)',
+    english    VARCHAR(160)      NOT NULL,
+    category   VARCHAR(20)       NOT NULL DEFAULT 'general' COMMENT '문살/형식/일반/공간 등 — 어드민 화면 그룹핑용, 조회 로직과 무관',
+    sort_order SMALLINT UNSIGNED NOT NULL DEFAULT 0,
+    updated_at TIMESTAMP         NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_i18n_terms_korean (korean)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='영문 사이트 창호 용어집 (한글→영문 치환)';
+
+-- 기존 src/lib/i18n/terms.php에 있던 항목 시드 — korean(unique)로 매칭되므로 재실행해도 안전
+INSERT INTO i18n_terms (korean, english, category, sort_order) VALUES
+('정자살',     'Jeongja-sal (Grid Lattice)',                  'lattice', 1),
+('완자살',     'Wanja-sal (Swastika-motif Lattice)',          'lattice', 2),
+('교살',       'Gyo-sal (Diagonal Cross Lattice)',            'lattice', 3),
+('세모솟을살', 'Semo-sotgeul-sal (Triangle Raised Lattice)',  'lattice', 4),
+('육모솟을살', 'Yukmo-sotgeul-sal (Hexagon Raised Lattice)',  'lattice', 5),
+('어금육모',   'Eogeum-yukmo (Offset Hexagon Lattice)',       'lattice', 6),
+('마름모살',   'Mareummo-sal (Diamond Lattice)',              'lattice', 7),
+('세살',       'Se-sal (Plain Straight Lattice)',             'lattice', 8),
+('솟을살',     'Sotgeul-sal (Raised-joint Lattice)',          'lattice', 9),
+('빗살',       'Bit-sal (Diagonal Lattice)',                  'lattice', 10),
+('격자빗살',   'Gyeokja-bit-sal (Grid-and-Diagonal Lattice)', 'lattice', 11),
+('아자살',     'Aja-sal (Ah-character Lattice)',              'lattice', 12),
+('숫대살',     'Sutdae-sal (Bold Grid Lattice)',              'lattice', 13),
+('용자살',     'Yongja-sal (Yong-character Lattice)',         'lattice', 14),
+('귀갑살',     'Gwigap-sal (Tortoise-shell Lattice)',         'lattice', 15),
+('범살장지',   'Beomsal-jangji (Wide-bar Lattice Door)',      'lattice', 16),
+('여닫이',     'hinged',                                      'door_type', 1),
+('미서기',     'sliding',                                     'door_type', 2),
+('미닫이',     'sliding',                                     'door_type', 3),
+('들어열개',   'lift-and-fold',                               'door_type', 4),
+('중문',       'Partition door',                              'door_type', 5),
+('창호',       'windows & doors',                             'general', 1),
+('한식 창호',  'traditional Korean windows & doors',          'general', 2),
+('목창호',     'wood windows & doors',                        'general', 3),
+('살창',       'lattice window',                              'general', 4),
+('문살',       'lattice pattern',                             'general', 5),
+('파티션',     'Partition',                                   'general', 6),
+('도면',       'drawing',                                     'general', 7),
+('공방',       'workshop',                                    'general', 8),
+('한옥',       'Hanok',                                       'general', 9),
+('전체',       'All',                                         'space', 1),
+('거실',       'Living room',                                 'space', 2),
+('카페',       'Café',                                        'space', 3),
+('서재',       'Study',                                       'space', 4),
+('현관',       'Entrance',                                    'space', 5),
+('다실',       'Tea room',                                    'space', 6),
+('침실',       'Bedroom',                                     'space', 7),
+('갤러리',     'Gallery',                                     'space', 8)
+ON DUPLICATE KEY UPDATE english = VALUES(english);
+
+-- 2026-09-22 studio_cards(홈·회사소개 "6개 스튜디오" 카드)는 title/description이 자유서술형 긴 글이라
+-- i18n_terms 용어집으로는 처리 불가 — 카드별 영문 컬럼을 따로 둔다. NULL이면 표시할 때 한글로 폴백.
+-- ALTER TABLE studio_cards ADD COLUMN title_en       VARCHAR(80) NULL     COMMENT '영문 제목 (NULL이면 en 모드에서도 한글 title로 폴백)' AFTER title;
+-- ALTER TABLE studio_cards ADD COLUMN description_en TEXT        NULL     COMMENT '영문 설명 — <br> 태그 포함 형식은 description과 동일' AFTER description;
