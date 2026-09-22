@@ -258,6 +258,16 @@ $metaKeywords = implode(', ', array_unique(array_filter([
             </div>
         </header>
 
+        <?php if (is_en() && !empty($post['content_en'])): ?>
+        <div class="bd-ai-translation-notice" style="font-size:12px;color:var(--text-muted);margin:12px 0 0;">
+            <p style="margin:0 0 4px;">
+                Originally written in Korean by the author. Translated with the help of AI.
+                <a href="<?= htmlspecialchars('/blog/' . rawurlencode($post['slug'])) ?>">Read the original</a>
+            </p>
+            <p style="margin:0;"><?= htmlspecialchars(t('bd_license')) ?></p>
+        </div>
+        <?php endif; ?>
+
         <?php if ($seriesInfo): ?>
         <div class="bd-series-box">
             <p class="bd-series-box-label"><?= htmlspecialchars(t('bd_series_label')) ?> · <?= htmlspecialchars(db_field($seriesInfo, 'name')) ?><?= $post['series_order'] ? ' · ' . htmlspecialchars(sprintf(t('bd_series_episode'), (int)$post['series_order'])) : '' ?> <span class="bd-series-box-total"><?= htmlspecialchars(sprintf(t('bd_series_total'), count($seriesEpisodes))) ?></span> <span class="bd-series-box-status <?= $seriesInfo['is_completed'] ? 'is-completed' : 'is-ongoing' ?>"><?= htmlspecialchars($seriesInfo['is_completed'] ? t('bd_series_completed') : t('bd_series_ongoing')) ?></span></p>
@@ -282,13 +292,6 @@ $metaKeywords = implode(', ', array_unique(array_filter([
 
         <div class="bd-body"><?= db_field($post, 'content') ?></div>
 
-        <?php if (is_en() && !empty($post['content_en'])): ?>
-        <p class="bd-ai-translation-notice" style="font-size:12px;color:var(--text-muted);margin-top:16px;">
-            Originally written in Korean by the author. Translated with the help of AI.
-            <a href="<?= htmlspecialchars('/blog/' . rawurlencode($post['slug'])) ?>">Read the original</a>
-        </p>
-        <?php endif; ?>
-
         <?php
         $bdSourceLines = array_values(array_filter(array_map('trim', preg_split('/\r\n|\r|\n/', db_field($post, 'source_text') ?? ''))));
         ?>
@@ -305,7 +308,9 @@ $metaKeywords = implode(', ', array_unique(array_filter([
             </ul>
             <hr class="bd-divider bd-divider-source">
             <?php endif; ?>
+            <?php if (!(is_en() && !empty($post['content_en']))): ?>
             <p class="bd-source-license"><?= htmlspecialchars(t('bd_license')) ?></p>
+            <?php endif; ?>
         </div>
 
         <?php
