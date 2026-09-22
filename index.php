@@ -482,29 +482,29 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                         <h2 class="ab-section-title"><?= htmlspecialchars(t('home_blog_title')) ?></h2>
                         <p class="ab-section-body"><?= htmlspecialchars(t('home_blog_body')) ?></p>
                     </div>
-                    <a href="/blog/" class="home-blog-more"><?= htmlspecialchars(t('home_blog_more')) ?> <i class="bi bi-arrow-right"></i></a>
+                    <a href="<?= lang_href('/blog/') ?>" class="home-blog-more"><?= htmlspecialchars(t('home_blog_more')) ?> <i class="bi bi-arrow-right"></i></a>
                 </div>
                 <?php if ($blogQuote): ?>
-                <a href="/blog/<?= rawurlencode($blogQuote['slug']) ?>" class="home-quote-banner">
+                <a href="<?= lang_href('/blog/' . rawurlencode($blogQuote['slug'])) ?>" class="home-quote-banner">
                     <p class="home-quote-text">"<?= htmlspecialchars($blogQuote['tagline']) ?>"</p>
                     <p class="home-quote-sub"><?= htmlspecialchars($blogQuote['series_name']) ?> · <?= htmlspecialchars(sprintf(t('home_blog_episode'), 1)) ?> <?= htmlspecialchars(t('home_blog_quote_read')) ?> <i class="bi bi-arrow-right"></i></p>
                 </a>
                 <?php endif; ?>
                 <div class="home-blog-grid">
                     <?php foreach ($latestPosts as $p): ?>
-                    <a href="/blog/<?= rawurlencode($p['slug']) ?>" class="home-blog-card">
+                    <a href="<?= lang_href('/blog/' . rawurlencode($p['slug'])) ?>" class="home-blog-card">
                         <?php if ($p['thumbnail_url']): ?>
                         <div class="home-blog-card-thumb">
-                            <img src="<?= htmlspecialchars($p['thumbnail_url']) ?>" alt="<?= htmlspecialchars($p['title']) ?>" loading="lazy">
+                            <img src="<?= htmlspecialchars($p['thumbnail_url']) ?>" alt="<?= htmlspecialchars(db_field($p, 'title')) ?>" loading="lazy">
                         </div>
                         <?php endif; ?>
                         <div class="home-blog-card-body">
                             <?php if ($p['series_name']): ?>
                             <p class="home-blog-card-cat"><?= htmlspecialchars($p['series_name']) ?><?= $p['series_order'] ? ' · ' . htmlspecialchars(sprintf(t('home_blog_episode'), (int)$p['series_order'])) : '' ?></p>
                             <?php endif; ?>
-                            <div class="home-blog-card-title"><?= htmlspecialchars($p['title']) ?></div>
+                            <div class="home-blog-card-title"><?= htmlspecialchars(db_field($p, 'title')) ?></div>
                             <?php if ($p['summary']): ?>
-                            <div class="home-blog-card-summary"><?= htmlspecialchars($p['summary']) ?></div>
+                            <div class="home-blog-card-summary"><?= htmlspecialchars(db_field($p, 'summary')) ?></div>
                             <?php endif; ?>
                             <time class="home-blog-card-date"><?= date('Y.m.d', strtotime($p['created_at'])) ?></time>
                         </div>

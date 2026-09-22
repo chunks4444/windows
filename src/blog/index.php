@@ -174,7 +174,7 @@ try {
                 <div class="carousel-inner">
                     <?php foreach ($featurePosts as $i => $fp): ?>
                     <div class="carousel-item <?= $i === 0 ? 'active' : '' ?>">
-                        <a href="/blog/<?= rawurlencode($fp['slug']) ?>" class="bg-feature-link">
+                        <a href="<?= lang_href('/blog/' . rawurlencode($fp['slug'])) ?>" class="bg-feature-link">
                             <img src="<?= htmlspecialchars($fp['thumbnail_url']) ?>" class="bg-feature-img" alt="">
                             <div class="bg-feature-caption">
                                 <?php if ($fp['series_name']): ?>
@@ -198,7 +198,7 @@ try {
             <ol class="bg-ranked-list" start="<?= $offset + 1 ?>">
                 <?php foreach ($pagePosts as $p): ?>
                 <li class="bg-ranked-item">
-                    <a class="bg-ranked-link" href="/blog/<?= rawurlencode($p['slug']) ?>">
+                    <a class="bg-ranked-link" href="<?= lang_href('/blog/' . rawurlencode($p['slug'])) ?>">
                         <div class="bg-ranked-text">
                             <p class="bg-ranked-cat">
                                 <?php if ($p['series_name']): ?><?= htmlspecialchars($p['series_name']) ?><?= $p['series_order'] ? ' · ' . htmlspecialchars(sprintf(t('home_blog_episode'), (int)$p['series_order'])) : '' ?> · <?php endif; ?><?= date('Y.m.d', strtotime($p['created_at'])) ?>
@@ -237,7 +237,7 @@ try {
             <div class="bg-side-card">
                 <h3 class="bg-side-card-title">
                     <?php if ($sc['first_slug']): ?>
-                    <a class="bg-side-card-title-link" href="/blog/<?= rawurlencode($sc['first_slug']) ?>"><?= htmlspecialchars($sc['name']) ?></a>
+                    <a class="bg-side-card-title-link" href="<?= lang_href('/blog/' . rawurlencode($sc['first_slug'])) ?>"><?= htmlspecialchars($sc['name']) ?></a>
                     <?php else: ?>
                     <?= htmlspecialchars($sc['name']) ?>
                     <?php endif; ?>
@@ -252,7 +252,7 @@ try {
                 <ul class="bg-side-card-posts">
                     <?php foreach ($sc['posts'] as $sp): ?>
                     <li>
-                        <a href="/blog/<?= rawurlencode($sp['slug']) ?>"><?= $sp['series_order'] ? htmlspecialchars(sprintf(t('home_blog_episode'), (int)$sp['series_order'])) . ' ' : '' ?><?= htmlspecialchars(db_field($sp, 'title')) ?></a>
+                        <a href="<?= lang_href('/blog/' . rawurlencode($sp['slug'])) ?>"><?= $sp['series_order'] ? htmlspecialchars(sprintf(t('home_blog_episode'), (int)$sp['series_order'])) . ' ' : '' ?><?= htmlspecialchars(db_field($sp, 'title')) ?></a>
                         <span class="bg-side-card-date"><?= date('Y.m.d', strtotime($sp['created_at'])) ?></span>
                     </li>
                     <?php endforeach; ?>

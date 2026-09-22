@@ -29,7 +29,7 @@ $legacySlugRedirects = [
 $id   = (int)($_GET['id'] ?? 0);
 $slug = trim($_GET['slug'] ?? '');
 if (isset($legacySlugRedirects[$slug])) {
-    header('Location: /blog/' . rawurlencode($legacySlugRedirects[$slug]), true, 301);
+    header('Location: ' . lang_href('/blog/' . rawurlencode($legacySlugRedirects[$slug])), true, 301);
     exit;
 }
 $post = null;
@@ -57,15 +57,15 @@ try {
         $stmt = $pdo->prepare($relatedDrawingJoin . ' WHERE p.id=? AND p.is_active=1');
         $stmt->execute([$id]);
         $post = $stmt->fetch();
-        if ($post) { header('Location: /blog/' . rawurlencode($post['slug']), true, 301); exit; }
+        if ($post) { header('Location: ' . lang_href('/blog/' . rawurlencode($post['slug'])), true, 301); exit; }
     }
     if ($post && $post['series_id']) {
         // 시리즈 내 이전/다음 (시간순이 아니라 읽는 순서 기준)
-        $prev = $pdo->prepare('SELECT id,title,slug FROM blog_posts WHERE is_active=1 AND series_id=? AND series_order<? ORDER BY series_order DESC LIMIT 1');
+        $prev = $pdo->prepare('SELECT id,title,title_en,slug FROM blog_posts WHERE is_active=1 AND series_id=? AND series_order<? ORDER BY series_order DESC LIMIT 1');
         $prev->execute([$post['series_id'], $post['series_order']]);
         $prev = $prev->fetch();
 
-        $next = $pdo->prepare('SELECT id,title,slug FROM blog_posts WHERE is_active=1 AND series_id=? AND series_order>? ORDER BY series_order ASC LIMIT 1');
+        $next = $pdo->prepare('SELECT id,title,title_en,slug FROM blog_posts WHERE is_active=1 AND series_id=? AND series_order>? ORDER BY series_order ASC LIMIT 1');
         $next->execute([$post['series_id'], $post['series_order']]);
         $next = $next->fetch();
 
@@ -73,14 +73,14 @@ try {
         $si->execute([$post['series_id']]);
         $seriesInfo = $si->fetch();
 
-        $eps = $pdo->prepare('SELECT id,title,slug,series_order FROM blog_posts WHERE is_active=1 AND series_id=? ORDER BY series_order');
+        $eps = $pdo->prepare('SELECT id,title,title_en,slug,series_order FROM blog_posts WHERE is_active=1 AND series_id=? ORDER BY series_order');
         $eps->execute([$post['series_id']]);
         $seriesEpisodes = $eps->fetchAll();
 
         if (!$next && $seriesInfo) {
             // 마지막 편이면 다음 시리즈의 1편으로 안내
             $ns = $pdo->prepare("
-                SELECT p.id, p.title, p.slug, s.name AS series_name
+                SELECT p.id, p.title, p.title_en, p.slug, s.name AS series_name
                 FROM blog_posts p JOIN blog_series s ON s.id = p.series_id
                 WHERE p.is_active=1 AND p.series_order=1 AND s.sort_order > ?
                 ORDER BY s.sort_order LIMIT 1
@@ -90,18 +90,18 @@ try {
         }
     } elseif ($post) {
         // 시리즈 미지정 글 — 기존 시간순 방식 유지
-        $prev = $pdo->prepare('SELECT id,title,slug FROM blog_posts WHERE is_active=1 AND (sort_order < ? OR (sort_order=? AND id<?)) ORDER BY sort_order DESC, id DESC LIMIT 1');
+        $prev = $pdo->prepare('SELECT id,title,title_en,slug FROM blog_posts WHERE is_active=1 AND (sort_order < ? OR (sort_order=? AND id<?)) ORDER BY sort_order DESC, id DESC LIMIT 1');
         $prev->execute([$post['sort_order'], $post['sort_order'], $post['id']]);
         $prev = $prev->fetch();
 
-        $next = $pdo->prepare('SELECT id,title,slug FROM blog_posts WHERE is_active=1 AND (sort_order > ? OR (sort_order=? AND id>?)) ORDER BY sort_order ASC, id ASC LIMIT 1');
+        $next = $pdo->prepare('SELECT id,title,title_en,slug FROM blog_posts WHERE is_active=1 AND (sort_order > ? OR (sort_order=? AND id>?)) ORDER BY sort_order ASC, id ASC LIMIT 1');
         $next->execute([$post['sort_order'], $post['sort_order'], $post['id']]);
         $next = $next->fetch();
     }
 } catch (Throwable $e) {
     $post = null;
 }
-if (!$post) { header('Location: /blog/'); exit; }
+if (!$post) { header('Location: ' . lang_href('/blog/')); exit; }
 
 require_once __DIR__ . '/../lib/engine_icons.php';
 $engineLabels = [];
@@ -237,7 +237,7 @@ $metaKeywords = implode(', ', array_unique(array_filter([
     <article class="bd-article">
 
         <header class="bd-header">
-            <a href="/blog/" class="bd-back"><i class="bi bi-arrow-left"></i> <?= htmlspecialchars(t('bd_back')) ?></a>
+            <a href="<?= lang_href('/blog/') ?>" class="bd-back"><i class="bi bi-arrow-left"></i> <?= htmlspecialchars(t('bd_back')) ?></a>
             <h1 class="bd-title"><?= htmlspecialchars(db_field($post, 'title')) ?></h1>
             <time class="bd-date" datetime="<?= date('Y-m-d', strtotime($post['created_at'])) ?>">
                 <?= date('Y.m.d', strtotime($post['created_at'])) ?><?= $post['author_name'] ? ' · ' . htmlspecialchars($post['author_name']) : '' ?>
@@ -260,7 +260,7 @@ $metaKeywords = implode(', ', array_unique(array_filter([
 
         <?php if ($seriesInfo): ?>
         <div class="bd-series-box">
-            <p class="bd-series-box-label"><?= htmlspecialchars(t('bd_series_label')) ?> · <?= htmlspecialchars($seriesInfo['name']) ?><?= $post['series_order'] ? ' · ' . (int)$post['series_order'] . '화' : '' ?> <span class="bd-series-box-total">(전체 <?= count($seriesEpisodes) ?>화)</span> <span class="bd-series-box-status <?= $seriesInfo['is_completed'] ? 'is-completed' : 'is-ongoing' ?>"><?= $seriesInfo['is_completed'] ? '완결' : '연재중' ?></span></p>
+            <p class="bd-series-box-label"><?= htmlspecialchars(t('bd_series_label')) ?> · <?= htmlspecialchars($seriesInfo['name']) ?><?= $post['series_order'] ? ' · ' . htmlspecialchars(sprintf(t('bd_series_episode'), (int)$post['series_order'])) : '' ?> <span class="bd-series-box-total"><?= htmlspecialchars(sprintf(t('bd_series_total'), count($seriesEpisodes))) ?></span> <span class="bd-series-box-status <?= $seriesInfo['is_completed'] ? 'is-completed' : 'is-ongoing' ?>"><?= htmlspecialchars($seriesInfo['is_completed'] ? t('bd_series_completed') : t('bd_series_ongoing')) ?></span></p>
             <?php if ($seriesInfo['tagline']): ?>
             <p class="bd-series-box-tagline">"<?= htmlspecialchars($seriesInfo['tagline']) ?>"</p>
             <?php endif; ?>
@@ -268,9 +268,9 @@ $metaKeywords = implode(', ', array_unique(array_filter([
                 <?php foreach ($seriesEpisodes as $ep): ?>
                 <li class="<?= $ep['id'] === $post['id'] ? 'current' : '' ?>">
                     <?php if ($ep['id'] === $post['id']): ?>
-                    <span><?= $ep['series_order'] ?>화 <?= htmlspecialchars($ep['title']) ?></span>
+                    <span><?= htmlspecialchars(sprintf(t('bd_series_episode'), $ep['series_order'])) ?> <?= htmlspecialchars(db_field($ep, 'title')) ?></span>
                     <?php else: ?>
-                    <a href="/blog/<?= rawurlencode($ep['slug']) ?>"><?= $ep['series_order'] ?>화 <?= htmlspecialchars($ep['title']) ?></a>
+                    <a href="<?= lang_href('/blog/' . rawurlencode($ep['slug'])) ?>"><?= htmlspecialchars(sprintf(t('bd_series_episode'), $ep['series_order'])) ?> <?= htmlspecialchars(db_field($ep, 'title')) ?></a>
                     <?php endif; ?>
                 </li>
                 <?php endforeach; ?>
@@ -347,24 +347,24 @@ $metaKeywords = implode(', ', array_unique(array_filter([
     <nav class="bd-pager">
         <div class="bd-pager-grid">
             <?php if ($prev): ?>
-            <a class="bd-pager-link bd-pager-prev" href="/blog/<?= rawurlencode($prev['slug']) ?>">
+            <a class="bd-pager-link bd-pager-prev" href="<?= lang_href('/blog/' . rawurlencode($prev['slug'])) ?>">
                 <span class="bd-pager-label"><?= htmlspecialchars(t('bd_pager_prev')) ?></span>
-                <span class="bd-pager-title"><?= htmlspecialchars($prev['title']) ?></span>
+                <span class="bd-pager-title"><?= htmlspecialchars(db_field($prev, 'title')) ?></span>
             </a>
             <?php else: ?><span></span><?php endif; ?>
-            <a href="/blog/" class="bd-pager-link bd-pager-list">
+            <a href="<?= lang_href('/blog/') ?>" class="bd-pager-link bd-pager-list">
                 <span class="bd-pager-label"><?= htmlspecialchars(t('bd_back')) ?></span>
                 <span class="bd-pager-title"><?= htmlspecialchars(t('bd_pager_all')) ?></span>
             </a>
             <?php if ($next): ?>
-            <a class="bd-pager-link bd-pager-next" href="/blog/<?= rawurlencode($next['slug']) ?>">
+            <a class="bd-pager-link bd-pager-next" href="<?= lang_href('/blog/' . rawurlencode($next['slug'])) ?>">
                 <span class="bd-pager-label"><?= htmlspecialchars(t('bd_pager_next')) ?></span>
-                <span class="bd-pager-title"><?= htmlspecialchars($next['title']) ?></span>
+                <span class="bd-pager-title"><?= htmlspecialchars(db_field($next, 'title')) ?></span>
             </a>
             <?php elseif ($nextSeries): ?>
-            <a class="bd-pager-link bd-pager-next" href="/blog/<?= rawurlencode($nextSeries['slug']) ?>">
-                <span class="bd-pager-label"><?= htmlspecialchars(t('bd_next_series')) ?> · <?= htmlspecialchars($nextSeries['series_name']) ?> · 1화</span>
-                <span class="bd-pager-title"><?= htmlspecialchars($nextSeries['title']) ?></span>
+            <a class="bd-pager-link bd-pager-next" href="<?= lang_href('/blog/' . rawurlencode($nextSeries['slug'])) ?>">
+                <span class="bd-pager-label"><?= htmlspecialchars(t('bd_next_series')) ?> · <?= htmlspecialchars($nextSeries['series_name']) ?> · <?= htmlspecialchars(sprintf(t('bd_series_episode'), 1)) ?></span>
+                <span class="bd-pager-title"><?= htmlspecialchars(db_field($nextSeries, 'title')) ?></span>
             </a>
             <?php else: ?><span></span><?php endif; ?>
         </div>
