@@ -139,7 +139,7 @@ body { background: var(--bg); }
 }
 .bd-engine-box-btn {
     display: inline-flex; align-items: center; gap: .5rem;
-    background: var(--accent); color: var(--bg);
+    background: var(--text); color: var(--bg);
     font-size: var(--fs-14); font-weight: 700;
     padding: .65rem 1.4rem;
     border-radius: 999px;
