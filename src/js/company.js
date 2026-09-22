@@ -30,7 +30,7 @@ document.getElementById('cpForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = document.getElementById('cpSaveBtn');
     btn.disabled    = true;
-    btn.textContent = '저장 중…';
+    btn.textContent = _t('저장 중…');
 
     const body = {
         company_name:           document.getElementById('cpName').value.trim(),
@@ -51,13 +51,13 @@ document.getElementById('cpForm').addEventListener('submit', async (e) => {
             body: JSON.stringify(body),
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || '오류가 발생했습니다.');
-        showAlert('저장되었습니다.', 'success');
+        if (!res.ok) throw new Error(data.error || _t('오류가 발생했습니다.'));
+        showAlert(_t('저장되었습니다.'), 'success');
     } catch (err) {
         showAlert(err.message, 'error');
     } finally {
         btn.disabled    = false;
-        btn.textContent = '저장';
+        btn.textContent = _t('저장');
     }
 });
 

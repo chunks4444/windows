@@ -85,11 +85,11 @@ function fmtDate(ts) {
 }
 
 function fmtWorkTime(sec) {
-    if (!sec || sec < 60)  return '1분 미만';
+    if (!sec || sec < 60)  return _t('1분 미만');
     const h = Math.floor(sec / 3600);
     const m = Math.floor((sec % 3600) / 60);
-    if (h > 0) return m > 0 ? `${h}시간 ${m}분` : `${h}시간`;
-    return `${m}분`;
+    if (h > 0) return m > 0 ? _t('%s시간 %s분', h, m) : _t('%s시간', h);
+    return _t('%s분', m);
 }
 
 function openDrawing(type, title) {
@@ -116,18 +116,18 @@ function renderCard(d) {
            </div>`;
     const orderStatus = ORDER_STATUS_LABELS[d.order_status];
     const lockedBadge = d.locked_at
-        ? `<div class="db-quote-badge"><i class="bi bi-lock-fill"></i> ${orderStatus ? escHtml(orderStatus.label) : '견적요청중'}</div>`
+        ? `<div class="db-quote-badge"><i class="bi bi-lock-fill"></i> ${orderStatus ? escHtml(orderStatus.label) : _t('견적요청중')}</div>`
         : '';
     return `
         <div class="db-card" data-id="${d.id}" onclick="openDrawing('${escAttr(d.type)}', '${escAttr(d.title)}')">
             ${lockedBadge}
-            <button class="db-card-copy" onclick="copyDrawing(event,'${escAttr(d.type)}','${escAttr(d.title)}')" title="복사">
+            <button class="db-card-copy" onclick="copyDrawing(event,'${escAttr(d.type)}','${escAttr(d.title)}')" title="${_t('복사')}">
                 <i class="bi bi-copy"></i>
             </button>
-            <button class="db-card-share${d.is_shared ? ' db-card-share-on' : ''}" onclick="openShareModal(event,${d.id},'${escAttr(d.type)}','${escAttr(d.title)}',${d.is_shared ? 'true' : 'false'})" title="공유">
+            <button class="db-card-share${d.is_shared ? ' db-card-share-on' : ''}" onclick="openShareModal(event,${d.id},'${escAttr(d.type)}','${escAttr(d.title)}',${d.is_shared ? 'true' : 'false'})" title="${_t('공유')}">
                 <i class="bi bi-share-fill"></i>
             </button>
-            <button class="db-card-delete" onclick="deleteDrawing(event,'${escAttr(d.type)}','${escAttr(d.title)}')" title="삭제">
+            <button class="db-card-delete" onclick="deleteDrawing(event,'${escAttr(d.type)}','${escAttr(d.title)}')" title="${_t('삭제')}">
                 <i class="bi bi-trash"></i>
             </button>
             <div class="db-thumb">${thumb}</div>
@@ -140,7 +140,7 @@ function renderCard(d) {
                     <div class="db-card-meta-row">
                         <i class="bi bi-tag"></i>
                         <select class="db-cat-select" onclick="event.stopPropagation()" onchange="updateCategory(event,${d.id})">
-                            <option value="">분류 없음</option>
+                            <option value="">${_t('분류 없음')}</option>
                             ${_patternCats.map(c => `<option value="${c.id}"${d.pattern_category == c.id ? ' selected' : ''}>${escHtml(c.name)}</option>`).join('')}
                         </select>
                     </div>
@@ -150,11 +150,11 @@ function renderCard(d) {
                     </div>
                     <div class="db-card-meta-row">
                         <i class="bi bi-pencil"></i>
-                        <span>수정 <strong>${fmtDate(new Date(d.updated_at).getTime())}</strong></span>
+                        <span>${_t('수정')} <strong>${fmtDate(new Date(d.updated_at).getTime())}</strong></span>
                     </div>
                     <div class="db-card-meta-row">
                         <i class="bi bi-clock"></i>
-                        <span>작업 <strong>${fmtWorkTime(d.work_time_sec)}</strong></span>
+                        <span>${_t('작업')} <strong>${fmtWorkTime(d.work_time_sec)}</strong></span>
                     </div>
                 </div>
             </div>
@@ -187,8 +187,8 @@ function showDeleteModal(desc, onConfirm, { title, confirmText } = {}) {
     const confirm = document.getElementById('dbDeleteModalConfirm');
     const cancel  = document.getElementById('dbDeleteModalCancel');
 
-    document.getElementById('dbDeleteModalTitle').textContent = title ?? '삭제하시겠습니까?';
-    confirm.textContent = confirmText ?? '삭제';
+    document.getElementById('dbDeleteModalTitle').textContent = title ?? _t('삭제하시겠습니까?');
+    confirm.textContent = confirmText ?? _t('삭제');
     descEl.textContent = desc;
     modal.style.display = 'flex';
 
@@ -212,10 +212,10 @@ function showCopyModal(sourceTitle, onConfirm, { desc, initialValue, title, conf
     const confirm = document.getElementById('dbCopyModalConfirm');
     const cancel  = document.getElementById('dbCopyModalCancel');
     const closeX  = document.getElementById('dbCopyModalClose');
-    document.getElementById('dbCopyModalTitle').textContent = title ?? '도면 복사';
-    confirm.textContent = confirmText ?? '복사';
-    document.getElementById('dbCopyModalDesc').textContent = desc ?? `"${sourceTitle}" 도면의 마지막 버전을 복사합니다.`;
-    input.value = initialValue ?? `${sourceTitle} - 복사`;
+    document.getElementById('dbCopyModalTitle').textContent = title ?? _t('도면 복사');
+    confirm.textContent = confirmText ?? _t('복사');
+    document.getElementById('dbCopyModalDesc').textContent = desc ?? _t('"%s" 도면의 마지막 버전을 복사합니다.', sourceTitle);
+    input.value = initialValue ?? _t('%s - 복사', sourceTitle);
     modal.style.display = 'flex';
     setTimeout(() => { input.select(); input.focus(); }, 80);
 
@@ -253,7 +253,7 @@ async function copyDrawing(e, type, title) {
                 body: JSON.stringify({ type, title }),
             });
             const data = await loadRes.json();
-            if (!data?.versions?.length) { alert('도면을 불러올 수 없습니다.'); return; }
+            if (!data?.versions?.length) { alert(_t('도면을 불러올 수 없습니다.')); return; }
 
             const last = data.versions[data.versions.length - 1];
             const now  = Date.now();
@@ -275,10 +275,10 @@ async function copyDrawing(e, type, title) {
             if (saveRes.ok && !result.error) {
                 loadDashboard();
             } else {
-                alert(result.error || '복사에 실패했습니다.');
+                alert(result.error || _t('복사에 실패했습니다.'));
             }
         } catch {
-            alert('복사 중 오류가 발생했습니다.');
+            alert(_t('복사 중 오류가 발생했습니다.'));
         }
     });
 }
@@ -286,7 +286,7 @@ async function copyDrawing(e, type, title) {
 async function deleteDrawing(e, type, title) {
     e.stopPropagation();
     const card = e.target.closest('.db-card');
-    showDeleteModal(`"${title}" 도면을 삭제합니다.\n이 작업은 되돌릴 수 없습니다.`, async () => {
+    showDeleteModal(_t('"%s" 도면을 삭제합니다.\n이 작업은 되돌릴 수 없습니다.', title), async () => {
         const res = await fetch('/src/api/drawings/delete.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', ..._headers() },
@@ -296,11 +296,11 @@ async function deleteDrawing(e, type, title) {
             card.remove();
             const grid = document.querySelector('#dbContent .db-grid');
             if (grid && !grid.children.length) {
-                document.getElementById('dbContent').innerHTML = '<div class="db-empty">저장된 도면이 없습니다.</div>';
+                document.getElementById('dbContent').innerHTML = '<div class="db-empty">' + _t('저장된 도면이 없습니다.') + '</div>';
             }
         } else {
             const data = await res.json().catch(() => ({}));
-            alert(data.error || '삭제에 실패했습니다.');
+            alert(data.error || _t('삭제에 실패했습니다.'));
         }
     });
 }
@@ -315,7 +315,7 @@ function _shareUrl() {
 }
 
 function _updateShareModalUI() {
-    document.getElementById('dbShareModalId').textContent   = _shareCtx.kind === 'render' ? _shareCtx.title : '도면 #' + _shareCtx.id;
+    document.getElementById('dbShareModalId').textContent   = _shareCtx.kind === 'render' ? _shareCtx.title : _t('도면 #%s', _shareCtx.id);
     document.getElementById('dbShareModalLink').value       = _shareUrl();
     document.getElementById('dbShareModalOff').style.display = (_shareCtx.kind !== 'render' && _shareCtx.isShared) ? '' : 'none';
     const card = _shareCtx.card;
@@ -328,7 +328,7 @@ function _updateShareModalUI() {
 async function openShareModal(e, id, type, title, isShared) {
     e.stopPropagation();
     _shareCtx = { kind: 'drawing', id, type, title, isShared, card: e.target.closest('.db-card') };
-    document.getElementById('dbShareModalTitle').textContent = `"${title}" 공유`;
+    document.getElementById('dbShareModalTitle').textContent = _t('"%s" 공유', title);
     _updateShareModalUI();
     document.getElementById('dbShareModal').style.display = 'flex';
 
@@ -339,7 +339,7 @@ async function openShareModal(e, id, type, title, isShared) {
             body: JSON.stringify({ id, shared: true }),
         });
         const data = await res.json().catch(() => ({}));
-        if (!res.ok || !data.ok) { alert(data.error || '공유 설정에 실패했습니다.'); document.getElementById('dbShareModal').style.display = 'none'; return; }
+        if (!res.ok || !data.ok) { alert(data.error || _t('공유 설정에 실패했습니다.')); document.getElementById('dbShareModal').style.display = 'none'; return; }
         _shareCtx.isShared = true;
         _updateShareModalUI();
     }
@@ -351,8 +351,8 @@ function openRenderShareModal(item) {
     // (경로 구조 노출 방지 + 카카오/X/FB에 og:image 붙은 정상 미리보기 카드 제공)
     const fname = item.filepath.split('/').pop().replace(/\.png$/, '');
     const url = location.origin + '/src/renders/view.php?r=' + encodeURIComponent(fname);
-    _shareCtx = { kind: 'render', url, imageUrl: location.origin + item.filepath, title: `${TYPE_CONFIG[item.engine]?.label || item.engine} 렌더링`, isShared: true, card: null };
-    document.getElementById('dbShareModalTitle').textContent = '렌더링 이미지 공유';
+    _shareCtx = { kind: 'render', url, imageUrl: location.origin + item.filepath, title: _t('%s 렌더링', TYPE_CONFIG[item.engine]?.label || item.engine), isShared: true, card: null };
+    document.getElementById('dbShareModalTitle').textContent = _t('렌더링 이미지 공유');
     _updateShareModalUI();
     document.getElementById('dbShareModal').style.display = 'flex';
 }
@@ -365,7 +365,7 @@ async function turnShareOffFromDashboard() {
         body: JSON.stringify({ id: _shareCtx.id, shared: false }),
     });
     const data = await res.json().catch(() => ({}));
-    if (!res.ok || !data.ok) { alert(data.error || '공유 설정에 실패했습니다.'); return; }
+    if (!res.ok || !data.ok) { alert(data.error || _t('공유 설정에 실패했습니다.')); return; }
     _shareCtx.isShared = false;
     _updateShareModalUI();
 }
@@ -376,7 +376,7 @@ async function copyShareLinkFromDashboard() {
         try { await navigator.clipboard.writeText(url); return; }
         catch { /* 권한 거부 등 — 아래 prompt로 대체 */ }
     }
-    window.prompt('아래 링크를 복사하세요:', url);
+    window.prompt(_t('아래 링크를 복사하세요:'), url);
 }
 
 function shareToKakaoFromDashboard() {
@@ -385,8 +385,8 @@ function shareToKakaoFromDashboard() {
     Kakao.Share.sendDefault({
         objectType: 'feed',
         content: {
-            title: _shareCtx.title || '평목 도면',
-            description: _shareCtx.kind === 'render' ? '평목에서 렌더링한 창호 이미지를 확인해보세요.' : '평목에서 설계한 문살 도면을 확인해보세요.',
+            title: _shareCtx.title || _t('평목 도면'),
+            description: _shareCtx.kind === 'render' ? _t('평목에서 렌더링한 창호 이미지를 확인해보세요.') : _t('평목에서 설계한 문살 도면을 확인해보세요.'),
             imageUrl: _shareCtx.imageUrl || thumbImg?.src || (location.origin + '/src/assets/logo.png'),
             link: { mobileWebUrl: _shareUrl(), webUrl: _shareUrl() },
         },
@@ -398,7 +398,7 @@ function shareToFacebookFromDashboard() {
 }
 
 function shareToXFromDashboard() {
-    window.open('https://twitter.com/intent/tweet?url=' + encodeURIComponent(_shareUrl()) + '&text=' + encodeURIComponent(_shareCtx.title || '평목 도면'), '_blank', 'noopener,width=600,height=500');
+    window.open('https://twitter.com/intent/tweet?url=' + encodeURIComponent(_shareUrl()) + '&text=' + encodeURIComponent(_shareCtx.title || _t('평목 도면')), '_blank', 'noopener,width=600,height=500');
 }
 
 document.getElementById('dbShareModalCopy')?.addEventListener('click', copyShareLinkFromDashboard);
@@ -545,7 +545,7 @@ async function loadDashboard() {
 }
 
 async function loadDrawingsList() {
-    document.getElementById('dbContent').innerHTML  = '<div class="db-loading">불러오는 중…</div>';
+    document.getElementById('dbContent').innerHTML  = '<div class="db-loading">' + _t('불러오는 중…') + '</div>';
     drawingsPage    = 1;
     drawingsHasMore = true;
 
@@ -554,7 +554,7 @@ async function loadDrawingsList() {
         const data = await res.json();
 
         if (!res.ok || data.error) {
-            document.getElementById('dbContent').innerHTML = '<div class="db-loading">불러오기 실패</div>';
+            document.getElementById('dbContent').innerHTML = '<div class="db-loading">' + _t('불러오기 실패') + '</div>';
             return;
         }
 
@@ -563,11 +563,11 @@ async function loadDrawingsList() {
         drawingsPage    = 2;
 
         const countBadge = document.getElementById('libCountBadge');
-        if (countBadge && typeof data.total === 'number') countBadge.textContent = `${data.total}개 도면`;
+        if (countBadge && typeof data.total === 'number') countBadge.textContent = _t('%s개 도면', data.total);
 
         if (!drawings.length) {
             document.getElementById('dbContent').innerHTML =
-                `<div class="db-empty">${drawingsQuery ? '검색 결과가 없습니다.' : '저장된 도면이 없습니다.'}</div>`;
+                `<div class="db-empty">${drawingsQuery ? _t('검색 결과가 없습니다.') : _t('저장된 도면이 없습니다.')}</div>`;
             return;
         }
 
@@ -575,7 +575,7 @@ async function loadDrawingsList() {
             `<div class="db-grid">${drawings.map(renderCard).join('')}</div>` +
             `<div id="dbLoadMore" style="display:none;text-align:center;padding:24px 0;">
                 <button class="db-loadmore-btn" onclick="loadMoreDrawings()">
-                    <span class="db-loadmore-text">더 보기</span>
+                    <span class="db-loadmore-text">${_t('더 보기')}</span>
                     <span class="db-loadmore-spinner" style="display:none;"></span>
                 </button>
              </div>`;
@@ -584,7 +584,7 @@ async function loadDrawingsList() {
         setupDrawingsObserver();
         lazyLoadThumbnails(drawings);
     } catch (e) {
-        document.getElementById('dbContent').innerHTML = '<div class="db-loading">오류가 발생했습니다.</div>';
+        document.getElementById('dbContent').innerHTML = '<div class="db-loading">' + _t('오류가 발생했습니다.') + '</div>';
     }
 }
 
@@ -594,19 +594,19 @@ let boardsLoaded = false;
 async function loadBoards() {
     if (boardsLoaded) return;
     const el = document.getElementById('dbBoardsContent');
-    el.innerHTML = '<div class="db-loading">불러오는 중…</div>';
+    el.innerHTML = '<div class="db-loading">' + _t('불러오는 중…') + '</div>';
     try {
         const res    = await fetch('/src/api/boards/list.php', { headers: _headers() });
         const data   = await res.json();
         const boards = data.boards || [];
         if (!boards.length) {
-            el.innerHTML = '<div class="db-empty">저장된 보드가 없습니다.<br><small style="font-weight:400;color:#999;">컬렉션에서 패턴을 보드에 추가해보세요.</small></div>';
+            el.innerHTML = '<div class="db-empty">' + _t('저장된 보드가 없습니다.') + '<br><small style="font-weight:400;color:#999;">' + _t('컬렉션에서 패턴을 보드에 추가해보세요.') + '</small></div>';
         } else {
             el.innerHTML = `<div class="db-grid">${boards.map(renderBoardCard).join('')}</div>`;
         }
         boardsLoaded = true;
     } catch {
-        el.innerHTML = '<div class="db-loading">오류가 발생했습니다.</div>';
+        el.innerHTML = '<div class="db-loading">' + _t('오류가 발생했습니다.') + '</div>';
     }
 }
 
@@ -616,10 +616,10 @@ function renderBoardCard(b) {
         : `<div class="db-thumb-placeholder"><i class="bi bi-collection" style="font-size:36px;color:#ccc;"></i></div>`;
     return `
         <div class="db-card" data-board-id="${b.id}" onclick="openBoard(${b.id},'${escAttr(b.name)}')">
-            <button class="db-card-copy" onclick="renameBoard(event,${b.id},'${escAttr(b.name)}')" title="이름 변경">
+            <button class="db-card-copy" onclick="renameBoard(event,${b.id},'${escAttr(b.name)}')" title="${_t('이름 변경')}">
                 <i class="bi bi-pencil"></i>
             </button>
-            <button class="db-card-delete" onclick="deleteBoard(event,${b.id},'${escAttr(b.name)}')" title="삭제">
+            <button class="db-card-delete" onclick="deleteBoard(event,${b.id},'${escAttr(b.name)}')" title="${_t('삭제')}">
                 <i class="bi bi-trash"></i>
             </button>
             <div class="db-thumb db-board-thumb">${thumb}</div>
@@ -628,7 +628,7 @@ function renderBoardCard(b) {
                 <div class="db-card-meta">
                     <div class="db-card-meta-row">
                         <i class="bi bi-image"></i>
-                        <span>패턴 <strong>${b.item_count}</strong>개</span>
+                        <span>${_t('패턴 %s개', b.item_count)}</span>
                     </div>
                 </div>
             </div>
@@ -652,12 +652,12 @@ async function openBoard(boardId, boardName) {
             <div class="db-board-item" ${clickAttr}>
                 <img src="${escAttr(p.image_path)}" alt="${escAttr(displayName)}" loading="lazy">
                 <div class="db-board-item-name">${escHtml(displayName)}</div>
-                <button class="db-board-item-remove" onclick="removeBoardItem(event,${boardId},${p.id},this)" title="제거">
+                <button class="db-board-item-remove" onclick="removeBoardItem(event,${boardId},${p.id},this)" title="${_t('제거')}">
                     <i class="bi bi-x"></i>
                 </button>
             </div>`;
           }).join('')
-        : '<p style="color:#999;padding:20px;">패턴이 없습니다.</p>';
+        : '<p style="color:#999;padding:20px;">' + _t('패턴이 없습니다.') + '</p>';
 
     document.getElementById('dbBoardModalTitle').textContent = boardName;
     document.getElementById('dbBoardModalBody').innerHTML    = content;
@@ -684,9 +684,9 @@ async function renameBoard(e, boardId, currentName) {
             boardsLoaded = false;
             loadBoards();
         } else {
-            alert('이름 변경에 실패했습니다.');
+            alert(_t('이름 변경에 실패했습니다.'));
         }
-    }, { title: '이름 변경', confirmText: '변경', desc: `"${currentName}" 보드 이름을 변경합니다.`, initialValue: currentName });
+    }, { title: _t('이름 변경'), confirmText: _t('변경'), desc: _t('"%s" 보드 이름을 변경합니다.', currentName), initialValue: currentName });
 }
 
 async function removeBoardItem(e, boardId, patternId, btn) {
@@ -703,7 +703,7 @@ async function removeBoardItem(e, boardId, patternId, btn) {
 async function deleteBoard(e, boardId, boardName) {
     e.stopPropagation();
     const card = e.target.closest('.db-card');
-    showDeleteModal(`"${boardName}" 보드를 삭제합니다.\n이 작업은 되돌릴 수 없습니다.`, async () => {
+    showDeleteModal(_t('"%s" 보드를 삭제합니다.\n이 작업은 되돌릴 수 없습니다.', boardName), async () => {
         const res = await fetch('/src/api/boards/delete.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', ..._headers() },
@@ -714,7 +714,7 @@ async function deleteBoard(e, boardId, boardName) {
             boardsLoaded = false;
             const grid = document.querySelector('#dbBoardsContent .db-grid');
             if (grid && !grid.children.length) {
-                document.getElementById('dbBoardsContent').innerHTML = '<div class="db-empty">저장된 보드가 없습니다.</div>';
+                document.getElementById('dbBoardsContent').innerHTML = '<div class="db-empty">' + _t('저장된 보드가 없습니다.') + '</div>';
             }
         }
     });
@@ -750,17 +750,17 @@ function loadRenders() {
     fetch('/src/api/renders/list.php', { headers: { Authorization: 'Bearer ' + _token() } })
         .then(r => r.json())
         .then(data => {
-            if (data.error) { el.innerHTML = '<div class="db-empty">렌더링 목록을 불러오지 못했습니다. 다시 로그인해주세요.</div>'; return; }
+            if (data.error) { el.innerHTML = '<div class="db-empty">' + _t('렌더링 목록을 불러오지 못했습니다. 다시 로그인해주세요.') + '</div>'; return; }
             _renderItemsCache = data.renders || [];
             _renderLimitCache = data.limit || 300;
 
             let html = '';
             if (_renderItemsCache.length >= _renderLimitCache) {
-                html += `<div class="rh-usage-banner"><i class="bi bi-exclamation-triangle-fill"></i> 저장 가능한 렌더링(${_renderLimitCache}장)이 가득 찼습니다. 오래된 항목을 삭제해야 새로 렌더링할 수 있어요.</div>`;
+                html += `<div class="rh-usage-banner"><i class="bi bi-exclamation-triangle-fill"></i> ${_t('저장 가능한 렌더링(%s장)이 가득 찼습니다. 오래된 항목을 삭제해야 새로 렌더링할 수 있어요.', _renderLimitCache)}</div>`;
             }
 
             if (!_renderItemsCache.length) {
-                html += '<div class="db-empty">저장된 렌더링이 없습니다.</div>';
+                html += '<div class="db-empty">' + _t('저장된 렌더링이 없습니다.') + '</div>';
                 el.innerHTML = html;
                 return;
             }
@@ -770,8 +770,8 @@ function loadRenders() {
                 <div class="rh-item" data-idx="${i}">
                     <img src="${r.filepath}" loading="lazy">
                     <span class="rh-item-engine">${(TYPE_CONFIG[r.engine]?.label || r.engine)}</span>
-                    <span class="rh-item-share" title="공유" onclick="event.stopPropagation(); openRenderShareModal(_renderItemsCache[${i}])"><i class="bi bi-share-fill"></i></span>
-                    <span class="rh-item-del" title="삭제" onclick="event.stopPropagation(); deleteRenderItem(${r.id})"><i class="bi bi-x"></i></span>
+                    <span class="rh-item-share" title="${_t('공유')}" onclick="event.stopPropagation(); openRenderShareModal(_renderItemsCache[${i}])"><i class="bi bi-share-fill"></i></span>
+                    <span class="rh-item-del" title="${_t('삭제')}" onclick="event.stopPropagation(); deleteRenderItem(${r.id})"><i class="bi bi-x"></i></span>
                 </div>`).join('') + '</div>';
             el.innerHTML = html;
 
@@ -779,7 +779,7 @@ function loadRenders() {
                 node.addEventListener('click', () => openRenderModal(_renderItemsCache[parseInt(node.dataset.idx)]));
             });
         })
-        .catch(() => { el.innerHTML = '<div class="db-empty">렌더링 목록을 불러오지 못했습니다.</div>'; });
+        .catch(() => { el.innerHTML = '<div class="db-empty">' + _t('렌더링 목록을 불러오지 못했습니다.') + '</div>'; });
 }
 
 function deleteRenderItem(id) {
@@ -825,11 +825,11 @@ function loadOrders() {
     fetch('/src/api/orders/list.php', { headers: { Authorization: 'Bearer ' + _token() } })
         .then(r => r.json())
         .then(data => {
-            if (data.error) { el.innerHTML = '<div class="db-empty">주문내역을 불러오지 못했습니다. 다시 로그인해주세요.</div>'; return; }
+            if (data.error) { el.innerHTML = '<div class="db-empty">' + _t('주문내역을 불러오지 못했습니다. 다시 로그인해주세요.') + '</div>'; return; }
             _orderItemsCache = data.orders || [];
 
             if (!_orderItemsCache.length) {
-                el.innerHTML = '<div class="db-empty">주문내역이 없습니다.</div>';
+                el.innerHTML = '<div class="db-empty">' + _t('주문내역이 없습니다.') + '</div>';
                 return;
             }
 
@@ -840,10 +840,10 @@ function loadOrders() {
                 <div class="ord-row" data-idx="${i}">
                     ${o.thumbnail ? `<img class="ord-row-thumb" src="${o.thumbnail}" loading="lazy">` : '<div class="ord-row-thumb ord-row-thumb-empty"></div>'}
                     <div class="ord-row-main">
-                        <div class="ord-row-title">주문번호 #${o.id} · ${(cfg?.label || o.engine)} · ${escHtml(o.title || '(제목 없음)')}</div>
-                        <div class="ord-row-sub">주문일 ${o.created_at ? o.created_at.slice(0, 10) : '—'}${o.due_date ? ' · 납기희망 ' + o.due_date : ''}</div>
+                        <div class="ord-row-title">${_t('주문번호 #%s · %s · %s', o.id, (cfg?.label || o.engine), escHtml(o.title || _t('(제목 없음)')))}</div>
+                        <div class="ord-row-sub">${_t('주문일 %s', o.created_at ? o.created_at.slice(0, 10) : '—')}${o.due_date ? _t(' · 납기희망 %s', o.due_date) : ''}</div>
                     </div>
-                    ${o.drawing_id && o.title ? `<button class="ord-modal-btn" onclick="event.stopPropagation(); openDrawing('${escAttr(o.engine)}','${escAttr(o.title)}')">도면 보기</button>` : '<span></span>'}
+                    ${o.drawing_id && o.title ? `<button class="ord-modal-btn" onclick="event.stopPropagation(); openDrawing('${escAttr(o.engine)}','${escAttr(o.title)}')">${_t('도면 보기')}</button>` : '<span></span>'}
                     <span class="ord-status-pill" data-tone="${st.tone}">${st.label}</span>
                 </div>`;
             }).join('') + '</div>';
@@ -852,43 +852,43 @@ function loadOrders() {
                 node.addEventListener('click', () => openOrderModal(_orderItemsCache[parseInt(node.dataset.idx)]));
             });
         })
-        .catch(() => { el.innerHTML = '<div class="db-empty">주문내역을 불러오지 못했습니다.</div>'; });
+        .catch(() => { el.innerHTML = '<div class="db-empty">' + _t('주문내역을 불러오지 못했습니다.') + '</div>'; });
 }
 
 function openOrderModal(o) {
     const st = ORDER_STATUS_LABELS[o.status] || { label: o.status, tone: 'wait' };
     const cfg = TYPE_CONFIG[o.engine];
-    document.getElementById('dbOrderModalTitle').textContent = `${fmtOrderCode(o.engine, o.id)} · ${cfg?.label || o.engine} · ${o.title || '(제목 없음)'}`;
+    document.getElementById('dbOrderModalTitle').textContent = `${fmtOrderCode(o.engine, o.id)} · ${cfg?.label || o.engine} · ${o.title || _t('(제목 없음)')}`;
 
     let html = `<div style="margin-bottom:14px;"><span class="ord-status-pill" data-tone="${st.tone}">${st.label}</span></div>`;
 
     if (o.memo) {
-        html += `<div class="ord-modal-note"><strong>요청사항</strong><p>${escHtml(o.memo)}</p></div>`;
+        html += `<div class="ord-modal-note"><strong>${_t('요청사항')}</strong><p>${escHtml(o.memo)}</p></div>`;
     }
     if (o.status === 'revision_requested' && o.revision_note) {
-        html += `<div class="ord-modal-note"><strong>수정요청 사유</strong><p>${escHtml(o.revision_note)}</p></div>`;
+        html += `<div class="ord-modal-note"><strong>${_t('수정요청 사유')}</strong><p>${escHtml(o.revision_note)}</p></div>`;
     }
     if (o.status === 'shipped' || o.status === 'delivered') {
         if (o.tracking_carrier || o.tracking_number) {
-            html += `<div class="ord-modal-note"><strong>배송 정보</strong><p>${escHtml(o.tracking_carrier || '')} ${escHtml(o.tracking_number || '')}</p></div>`;
+            html += `<div class="ord-modal-note"><strong>${_t('배송 정보')}</strong><p>${escHtml(o.tracking_carrier || '')} ${escHtml(o.tracking_number || '')}</p></div>`;
         }
     }
 
-    const won = n => Number(n).toLocaleString() + '원';
+    const won = n => Number(n).toLocaleString() + _t('원');
     html += `<div class="ord-modal-meta">
-        <div><span>주문일</span>${fmtOrderDatetime(o.created_at)}</div>
-        <div><span>납기희망일</span>${o.due_date || '—'}</div>
-        <div><span>최근 처리일</span>${fmtOrderDatetime(o.reviewed_at)}</div>
-        <div><span>예상견적</span>${o.estimated_price ? won(o.estimated_price) : '—'}</div>
-        ${o.final_price ? `<div><span>확정 가격</span>${won(o.final_price)}</div>` : ''}
+        <div><span>${_t('주문일')}</span>${fmtOrderDatetime(o.created_at)}</div>
+        <div><span>${_t('납기희망일')}</span>${o.due_date || '—'}</div>
+        <div><span>${_t('최근 처리일')}</span>${fmtOrderDatetime(o.reviewed_at)}</div>
+        <div><span>${_t('예상견적')}</span>${o.estimated_price ? won(o.estimated_price) : '—'}</div>
+        ${o.final_price ? `<div><span>${_t('확정 가격')}</span>${won(o.final_price)}</div>` : ''}
     </div>`;
 
     const actions = [];
     if (o.drawing_id && o.title) {
-        actions.push(`<button class="ord-modal-btn" onclick="openDrawing('${escAttr(o.engine)}','${escAttr(o.title)}')">도면 보기</button>`);
+        actions.push(`<button class="ord-modal-btn" onclick="openDrawing('${escAttr(o.engine)}','${escAttr(o.title)}')">${_t('도면 보기')}</button>`);
     }
     if (['pending_review', 'revision_requested'].includes(o.status)) {
-        actions.push(`<button class="ord-modal-btn ord-modal-btn-danger" onclick="cancelOrder(${o.id})">견적요청/주문취소</button>`);
+        actions.push(`<button class="ord-modal-btn ord-modal-btn-danger" onclick="cancelOrder(${o.id})">${_t('견적요청/주문취소')}</button>`);
     }
     if (actions.length) {
         html += `<div class="ord-modal-actions">${actions.join('')}</div>`;
@@ -900,7 +900,7 @@ function openOrderModal(o) {
 
 function cancelOrder(id) {
     showDeleteModal(
-        '취소 후에는 되돌릴 수 없습니다.',
+        _t('취소 후에는 되돌릴 수 없습니다.'),
         async () => {
             const res  = await fetch('/src/api/orders/cancel.php', {
                 method: 'POST',
@@ -908,11 +908,11 @@ function cancelOrder(id) {
                 body: JSON.stringify({ id }),
             });
             const data = await res.json();
-            if (!res.ok) { alert(data.error || '취소에 실패했습니다.'); return; }
+            if (!res.ok) { alert(data.error || _t('취소에 실패했습니다.')); return; }
             document.getElementById('dbOrderModal').style.display = 'none';
             loadOrders();
         },
-        { title: '견적요청/주문을 취소하시겠습니까?', confirmText: '취소하기' }
+        { title: _t('견적요청/주문을 취소하시겠습니까?'), confirmText: _t('취소하기') }
     );
 }
 

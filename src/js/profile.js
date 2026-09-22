@@ -12,7 +12,7 @@ async function loadProfile() {
 
     const u = data.user;
     document.getElementById('pfEmail').textContent        = u.email          || '—';
-    const roleMap = { s: '슈퍼', m: '관리자', a: '작가', u: '회원' };
+    const roleMap = { s: _t('슈퍼'), m: _t('관리자'), a: _t('작가'), u: _t('회원') };
     const badge = document.getElementById('pfRoleBadge');
     badge.textContent  = roleMap[u.role] || u.role || '';
     badge.dataset.role = u.role || 'u';
@@ -30,7 +30,7 @@ document.getElementById('pfForm').addEventListener('submit', async (e) => {
 
     alertEl.style.display = 'none';
     btn.disabled    = true;
-    btn.textContent = '저장 중…';
+    btn.textContent = _t('저장 중…');
 
     const body = {
         name:           document.getElementById('pfName').value.trim(),
@@ -47,13 +47,13 @@ document.getElementById('pfForm').addEventListener('submit', async (e) => {
             body: JSON.stringify(body),
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || '오류가 발생했습니다.');
-        showAlert('저장되었습니다.', 'success');
+        if (!res.ok) throw new Error(data.error || _t('오류가 발생했습니다.'));
+        showAlert(_t('저장되었습니다.'), 'success');
     } catch (err) {
         showAlert(err.message, 'error');
     } finally {
         btn.disabled    = false;
-        btn.textContent = '저장';
+        btn.textContent = _t('저장');
     }
 });
 
@@ -64,11 +64,11 @@ document.getElementById('pfPwForm').addEventListener('submit', async (e) => {
     const next    = document.getElementById('pfPwNew').value;
     const confirm = document.getElementById('pfPwConfirm').value;
 
-    if (next.length < 6) return showPwAlert('새 비밀번호는 6자 이상이어야 합니다.', 'error');
-    if (next !== confirm) return showPwAlert('새 비밀번호가 일치하지 않습니다.', 'error');
+    if (next.length < 6) return showPwAlert(_t('새 비밀번호는 6자 이상이어야 합니다.'), 'error');
+    if (next !== confirm) return showPwAlert(_t('새 비밀번호가 일치하지 않습니다.'), 'error');
 
     btn.disabled    = true;
-    btn.textContent = '변경 중…';
+    btn.textContent = _t('변경 중…');
     try {
         const res  = await fetch('/src/api/auth/password.php', {
             method:  'PUT',
@@ -76,14 +76,14 @@ document.getElementById('pfPwForm').addEventListener('submit', async (e) => {
             body: JSON.stringify({ current, password: next }),
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || '오류가 발생했습니다.');
-        showPwAlert('비밀번호가 변경되었습니다.', 'success');
+        if (!res.ok) throw new Error(data.error || _t('오류가 발생했습니다.'));
+        showPwAlert(_t('비밀번호가 변경되었습니다.'), 'success');
         document.getElementById('pfPwForm').reset();
     } catch (err) {
         showPwAlert(err.message, 'error');
     } finally {
         btn.disabled    = false;
-        btn.textContent = '변경';
+        btn.textContent = _t('변경');
     }
 });
 
