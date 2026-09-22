@@ -402,18 +402,40 @@ $metaKeywords = implode(', ', array_unique(array_filter([
         setTimeout(() => t.classList.remove('visible'), 2400);
     }
 
+    // 구형 브라우저·Clipboard API 권한 차단 등으로 navigator.clipboard가 실패하는 경우를 대비한
+    // execCommand 폴백 — textarea에 담아 선택 후 복사하는 구식 방식이지만 대부분 환경에서 동작한다.
+    function legacyCopy(text) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        let ok = false;
+        try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+        document.body.removeChild(ta);
+        return ok;
+    }
+
+    async function copyShareUrl() {
+        try {
+            if (navigator.clipboard?.writeText) {
+                await navigator.clipboard.writeText(shareUrl);
+                showToast(BD_T.linkCopied);
+                return;
+            }
+        } catch (e) { /* 아래 폴백으로 이어감 */ }
+        showToast(legacyCopy(shareUrl) ? BD_T.linkCopied : BD_T.linkCopyFailed);
+    }
+
     document.getElementById('btnShare').addEventListener('click', async () => {
         if (navigator.share) {
             try { await navigator.share({ title: shareTitle, text: shareTitle, url: shareUrl }); }
             catch (e) { /* 사용자가 공유 취소한 경우 등 — 무시 */ }
             return;
         }
-        try {
-            await navigator.clipboard.writeText(shareUrl);
-            showToast(BD_T.linkCopied);
-        } catch (e) {
-            showToast(BD_T.linkCopyFailed);
-        }
+        await copyShareUrl();
     });
 
     document.getElementById('btnShareX').href =
@@ -421,9 +443,9 @@ $metaKeywords = implode(', ', array_unique(array_filter([
     document.getElementById('btnShareThreads').href =
         'https://www.threads.net/intent/post?text=' + encodeURIComponent(shareTitle + ' ' + shareUrl);
 
-    document.getElementById('btnShareKakao').addEventListener('click', () => {
+    document.getElementById('btnShareKakao').addEventListener('click', async () => {
         if (!window.Kakao?.isInitialized?.()) {
-            navigator.clipboard?.writeText(shareUrl).then(() => showToast(BD_T.linkCopied));
+            await copyShareUrl();
             return;
         }
         Kakao.Share.sendDefault({
