@@ -210,7 +210,7 @@ body { background: var(--bg); }
     transition: color .18s;
 }
 .bg-side-more-btn.is-visible { display: flex; }
-.bg-side-more-btn:hover { color: var(--accent); }
+.bg-side-more-btn:hover { color: var(--text); }
 
 /* 빈 상태 */
 .bg-empty {
