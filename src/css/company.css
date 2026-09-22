@@ -176,7 +176,7 @@ body {
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 .ab-tool-card:hover {
-    border-color: var(--accent);
+    border-color: var(--text);
     box-shadow: 0 4px 20px rgba(var(--text-rgb), 0.06);
     color: inherit;
 }
