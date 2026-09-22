@@ -1,30 +1,34 @@
-/* 평목 색상 시스템 — 기준 팔레트 5색 */
+/* 평목 색상 시스템 — 흰 바탕 + 한지 작업판 (2026-09-23 개편)
+   기존 회벽/청묵 모노톤 팔레트에서, 흰 바탕 + 한지색 섹션 + 인주(빨강) 포인트로 전환.
+   기존 토큰명(--bg, --text, --accent 등)은 그대로 유지해 사이트 전역이 자동으로 새 팔레트를 따라가고,
+   --pm-* 별칭은 새로 쓰는 컴포넌트(.pm-band 등)에서 의미가 더 분명하도록 병행 제공. */
 :root {
-    /* 바탕 (회벽) */
-    --bg:              #E1DDD4;
-    --bg-rgb:           225, 221, 212;
+    /* 바탕 */
+    --bg:              #FFFFFF; /* 페이지 기본 (메인·블로그·가이드) */
+    --bg-rgb:           255, 255, 255;
+    --pm-hanji:        #FAF9F6; /* 한지 띠 섹션, 스튜디오 작업판 */
+    --pm-hanji-deep:   #F6F4EF; /* 작업판이 흰색과 구분 안 될 때 대체 */
+    --pm-surface:      #FFFFFF; /* 카드, 도면 캔버스, 사이드바 */
 
-    /* 텍스트 (청묵 → 참조 사이트의 잉크색으로 통일, accent와 동일) */
-    --text:            #20201E;
-    --text-rgb:         32, 32, 30;
+    /* 텍스트 */
+    --text:            #26241F;
+    --text-rgb:         38, 36, 31;
+    --text-muted:      #86817A;
+    --text-muted-rgb:   134, 129, 122;
 
-    /* 보조 텍스트 (기와) */
-    --text-muted:      #6E645A;
-    --text-muted-rgb:   110, 100, 90;
+    /* 선 / 보더 */
+    --border:          #ECE9E2;
+    --border-rgb:       236, 233, 226;
+    --pm-line-strong:  #D9D5CB; /* 호버·포커스 테두리 */
 
-    /* 선 / 보더 (화강암) — 참조 사이트처럼 텍스트색 반투명으로 파생 */
-    --border:          rgba(32, 32, 30, 0.18);
-    --border-rgb:       32, 32, 30;
-
-    /* 강조 (먹) */
-    --accent:          #20201E;
-    --accent-rgb:       32, 32, 30;
-    --accent-hover:    #9C9688;
-    --accent-hover-rgb: 156, 150, 136;
-    --accent-tint:     #CCC6BA;
-    --accent-tint-rgb:  204, 198, 186;
-    /* 버튼 배경(hover/press) 전용 — accent-hover(밝은 톤, 텍스트 hover용)와 달리 accent보다 진하게 */
-    --accent-active:   #0D0D0C;
+    /* 강조 — 인주(印朱), 한 화면에 한 번 */
+    --accent:          #D6261C;
+    --accent-rgb:       214, 38, 28;
+    --accent-hover:    #B31E16;
+    --accent-hover-rgb: 179, 30, 22;
+    --accent-tint:     #EDEFF2; /* 카드·배지 배경용 — 강조색이 아니라 쿨톤 그레이 */
+    --accent-tint-rgb:  237, 239, 242;
+    --accent-active:   #8F160F;
 
     /* 위험 (기존 --red/--danger 통합) */
     --danger:          #DC2626;
@@ -40,3 +44,25 @@
     /* 기능색 (캔버스 선택 하이라이트, 팔레트 대응 없음 - 토큰명만 부여) */
     --select:          #FFE066;
 }
+
+/* 한지 띠 섹션 — 흰 배경 사이에 톤을 살짝 낮춘 구획 (히어로 아래, 컬렉션 스트립 등) */
+.pm-band {
+    background: var(--pm-hanji);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+}
+
+/* 스튜디오 작업판 + 흰 도면 캔버스 */
+.pm-workspace { background: var(--pm-hanji); }
+.pm-canvas {
+    background: var(--pm-surface);
+    border: 1px solid var(--border);
+}
+
+/* 포인트 버튼 — 기존 .btn-primary/.adm-btn-save 등은 var(--accent)를 그대로 쓰므로 자동 적용됨.
+   .pm-btn-primary는 새로 짜는 마크업에서 이름이 더 분명하도록 제공하는 별칭. */
+.pm-btn-primary {
+    background: var(--accent);
+    color: #FFFFFF;
+}
+.pm-btn-primary:hover { background: var(--accent-hover); }

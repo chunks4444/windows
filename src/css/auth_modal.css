@@ -125,7 +125,7 @@
     font-size: var(--fs-16);
     color: var(--text);
     outline: none;
-    background: #F7F4ED;
+    background: var(--accent-tint, #EDEFF2);
     font-family: inherit;
     transition: border-color .18s, box-shadow .18s;
 }
@@ -134,7 +134,7 @@
 }
 .auth-field input:focus {
     border-color: var(--text);
-    background: #F7F4ED;
+    background: var(--accent-tint, #EDEFF2);
     box-shadow: 0 0 0 3px rgba(var(--text-rgb), .12);
 }
 
@@ -156,8 +156,8 @@
 .auth-field input:-webkit-autofill:hover,
 .auth-field input:-webkit-autofill:focus {
     -webkit-text-fill-color: var(--text);
-    -webkit-box-shadow: 0 0 0 1000px #F7F4ED inset;
-    box-shadow: 0 0 0 1000px #F7F4ED inset;
+    -webkit-box-shadow: 0 0 0 1000px var(--accent-tint, #EDEFF2) inset;
+    box-shadow: 0 0 0 1000px var(--accent-tint, #EDEFF2) inset;
     transition: background-color 5000s ease-in-out 0s;
 }
 
@@ -291,7 +291,7 @@
     border-radius: 10px;
     text-decoration: none;
     border: 1.5px solid var(--border);
-    background: #F7F4ED;
+    background: var(--accent-tint, #EDEFF2);
     color: var(--text);
     transition: background .15s, border-color .15s;
     font-family: inherit;
@@ -321,7 +321,7 @@
     cursor: not-allowed;
 }
 .auth-sns-locked .auth-sns-btn:hover {
-    background: #F7F4ED;
+    background: var(--accent-tint, #EDEFF2);
     border-color: var(--accent-tint);
 }
 
