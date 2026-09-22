@@ -90,7 +90,7 @@ body { background: var(--bg); }
 .bd-hero-img img {
     display: block;
     width: 100%;
-    height: 400px;
+    height: 500px;
     object-fit: cover;
     border-radius: var(--r-sm);
 }
