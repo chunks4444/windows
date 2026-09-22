@@ -152,6 +152,11 @@ body { background: var(--bg); }
     color: var(--text);
     word-break: keep-all;
 }
+/* 영문은 한글 기준(17px/1.7)보다 살짝 크고 줄간격은 더 타이트해야 장문 가독성이 좋다 */
+html[lang="en"] .bd-body {
+    font-size: 18px;
+    line-height: 1.6;
+}
 .bd-body p {
     margin: 0 0 0.4em;
 }
