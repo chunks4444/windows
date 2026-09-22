@@ -245,15 +245,15 @@ html[lang="en"] .bd-body {
 }
 .bd-cta-btn {
     display: inline-flex; align-items: center; gap: .5rem;
-    background: var(--bg); color: var(--text);
+    background: var(--text); color: var(--bg);
     border: 1.5px solid var(--text);
     font-size: var(--fs-14); font-weight: 700;
     padding: .7rem 1.5rem;
     border-radius: 999px;
     text-decoration: none;
-    transition: background .18s, color .18s;
+    transition: opacity .18s;
 }
-.bd-cta-btn:hover { background: var(--text); color: var(--bg); }
+.bd-cta-btn:hover { opacity: .85; }
 
 /* ── 공유 토스트 ────────────────────────────────────────── */
 .bd-toast {
