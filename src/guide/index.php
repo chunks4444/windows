@@ -42,7 +42,7 @@ require_once __DIR__ . '/../lib/i18n.php';
         </a>
 
         <a href="<?= lang_href("/guide/studio-classic") ?>" class="guide-cat-card">
-            <div class="guide-cat-icon" style="background:var(--danger-tint);color:#000;">
+            <div class="guide-cat-icon" style="background:var(--accent-tint);color:#000;">
                 <svg width="22" height="22" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
                     <rect fill="currentColor" x="148" y="204" width="384" height="46" rx="23"/>
                     <rect fill="currentColor" x="148" y="430" width="384" height="46" rx="23"/>

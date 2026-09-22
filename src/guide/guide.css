@@ -106,7 +106,7 @@ body:has(.guide-wrap) {
 }
 
 .guide-cat-card {
-    background: #F7F4ED;
+    background: var(--accent-tint, #EDEFF2);
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 24px;
