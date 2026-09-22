@@ -279,16 +279,16 @@ $metaKeywords = implode(', ', array_unique(array_filter([
         <?php endif; ?>
 
         <?php if (is_en() && !empty($post['content_en'])): ?>
-        <div class="bd-ai-translation-notice" style="font-size:12px;color:var(--text-muted);margin:20px 0 0;">
-            <p style="margin:0 0 4px;">
+        <div class="bd-ai-translation-notice" style="font-size:12px;color:var(--text-muted);margin:20px 0 28px;">
+            <p style="margin:0;">
                 Originally written in Korean by the author. Translated with the help of AI.
                 <a href="<?= htmlspecialchars('/blog/' . rawurlencode($post['slug'])) ?>">Read the original</a>
+                · <?= htmlspecialchars(t('bd_license')) ?>
             </p>
-            <p style="margin:0;"><?= htmlspecialchars(t('bd_license')) ?></p>
         </div>
         <?php endif; ?>
 
-        <hr class="bd-divider">
+        <hr class="bd-divider<?= (is_en() && !empty($post['content_en'])) ? ' bd-divider-thin' : '' ?>">
 
         <div class="bd-body"><?= db_field($post, 'content') ?></div>
 

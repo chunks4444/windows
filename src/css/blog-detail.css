@@ -77,6 +77,11 @@ body { background: var(--bg); }
     border-top: 2px solid var(--text);
     margin: 0 0 2rem;
 }
+/* AI 번역 고지 바로 아래에 오는 구분선 — 본문 시작 전 시각적 무게를 가볍게 */
+.bd-divider-thin {
+    border-top-width: 1px;
+    opacity: .5;
+}
 
 /* ── 이 시리즈 박스 ─────────────────────────────────────── */
 .bd-series-box {
