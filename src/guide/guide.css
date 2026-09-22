@@ -136,7 +136,7 @@ body:has(.guide-wrap) {
 }
 .guide-cat-count {
     font-size: 11px; font-weight: 600;
-    color: var(--accent);
+    color: var(--text);
 }
 
 /* ── 아티클 레이아웃 ─────────────────────────── */
