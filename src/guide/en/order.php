@@ -31,7 +31,7 @@ include __DIR__ . '/../_head.php';
 </table>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>The quote request button won't work until your name and phone number are saved. See the <a href="<?= lang_href('/guide/account') ?>">profile settings guide</a>.</span>
 </div>
 
@@ -88,7 +88,7 @@ include __DIR__ . '/../_head.php';
 </div>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <div>
         <div>※ Shipping and installation costs are not included.</div>
         <div>※ The amount shown on the drawing is an estimate. The final quote is confirmed after we review your edits.</div>
@@ -110,7 +110,7 @@ include __DIR__ . '/../_head.php';
 </p>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>If a staff member changes the status to <strong>Revision requested</strong>, the lock is released and you can edit and save the drawing again. Locks are also released after delivery is complete or the order is canceled.</span>
 </div>
 
@@ -149,7 +149,7 @@ include __DIR__ . '/../_head.php';
 </table>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span><strong>Canceled</strong> is a terminal status outside this flow. It applies when you cancel the order yourself or our staff cancel it, and no further steps follow.</span>
 </div>
 
@@ -164,7 +164,7 @@ include __DIR__ . '/../_head.php';
 </ul>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>You can <span class="guide-ui">cancel an order</span> directly from the order history only while its status is <strong>Quote review</strong> or <strong>Revision requested</strong>. For later stages, please contact our staff.</span>
 </div>
 

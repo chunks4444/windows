@@ -31,7 +31,7 @@ include __DIR__ . '/_head.php';
 </table>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>배송 방법은 제품 사양 확정 후 담당자가 안내드립니다. 견적 상담 시 문의해주세요.</span>
 </div>
 

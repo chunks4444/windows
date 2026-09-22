@@ -48,7 +48,7 @@ include __DIR__ . '/../_head.php';
 </ul>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>Filters <strong>do not combine.</strong> Applying one automatically clears the others, so only the condition you just applied is used. For example, if you type a search term and then choose Uri-sal, the search term is cleared and only the Uri-sal filter applies. Arriving at the Collection with no filter set shows <strong>Uri-sal</strong> patterns by default.</span>
 </div>
 
@@ -65,7 +65,7 @@ include __DIR__ . '/../_head.php';
 </p>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>Drawings loaded from the Collection never overwrite the original. Be sure to enter a new name when saving so it becomes your own drawing.</span>
 </div>
 

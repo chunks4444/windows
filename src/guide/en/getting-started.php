@@ -47,7 +47,7 @@ include __DIR__ . '/../_head.php';
 </ol>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>Drawings are stored in the cloud, so you can reach the same drawing by logging in from any device.</span>
 </div>
 

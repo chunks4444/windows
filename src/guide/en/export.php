@@ -44,7 +44,7 @@ include __DIR__ . '/../_head.php';
 </ol>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>Lattice intersections and the outer frame are exported as rectangular polylines at each member's actual width. Tenon projections and the transom panel's inner fill board are not included yet, and slat intersections are represented as simple overlaps without groove geometry — this is a first version, intended as a shape reference.</span>
 </div>
 
@@ -61,7 +61,7 @@ include __DIR__ . '/../_head.php';
 </table>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>PDF export uses the jsPDF library in your browser. Large drawings may take several seconds to generate.</span>
 </div>
 

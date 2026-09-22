@@ -27,7 +27,7 @@ include __DIR__ . '/../_head.php';
 </ol>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>Uploaded SVGs are saved to your account only, up to a maximum file size of 2MB. A solid-color rectangle filling the whole background (a canvas background layer, for example) is removed automatically on upload, so the motif is stored with a transparent background.</span>
 </div>
 

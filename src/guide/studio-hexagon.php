@@ -52,7 +52,7 @@ include __DIR__ . '/_head.php';
 </table>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>다른 5개 엔진의 제작 시방서에는 "전체 문폭" 카드가 있지만, 육모솟을살에는 이 항목이 없습니다. 전체 폭이 필요하면 외경 가로 값을 참고하세요.</span>
 </div>
 

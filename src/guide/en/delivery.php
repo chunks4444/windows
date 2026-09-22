@@ -32,7 +32,7 @@ include __DIR__ . '/../_head.php';
 </table>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>Our staff will confirm the shipping method once the product specifications are settled. Feel free to ask during the quote consultation.</span>
 </div>
 

@@ -41,7 +41,7 @@ include __DIR__ . '/_head.php';
     </tbody>
 </table>
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>여기서 입력하는 값은 벽 개구부(문틀 외곽) 치수입니다. 실제 문짝 크기는 문틀 두께·틈새(문틀 두께 설정값, 관리자 설정)를 자동으로 뺀 값으로 계산되며, 미서기는 문짝이 겹치는 폭만큼 추가로 보정됩니다. 계산된 실측 치수는 아래 <strong>제작 시방서</strong>에서 확인할 수 있습니다.</span>
 </div>
 
@@ -134,7 +134,7 @@ include __DIR__ . '/_head.php';
 </table>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>PNG 내보내기는 배경 사진을 포함하지 않습니다. 도면(격자살 레이어)만 투명 배경으로 출력됩니다. AI 렌더링 결과물은 렌더링 팝업에서 별도 다운로드합니다.</span>
 </div>
 

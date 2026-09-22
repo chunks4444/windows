@@ -146,7 +146,7 @@ include __DIR__ . '/_head.php';
 </p>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <div>
         <p style="margin:0 0 4px;">렌더링 결과물은 서버에 저장되어 같은 계정이면 다른 기기·브라우저에서도 동일하게 보입니다.</p>
         <p style="margin:0;">단, 계정당 보관 가능한 렌더링은 최대 <strong>300장</strong>입니다. 한도를 초과하면 새 렌더링이 거부되고 안내 메시지가 표시되므로, 오래된 렌더링을 오른쪽 사이드바 히스토리에서 <i class="bi bi-x"></i>로 정리하거나 필요한 결과물은 <span class="guide-ui">다운로드</span>로 백업해두세요.</p>

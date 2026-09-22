@@ -46,7 +46,7 @@ include __DIR__ . '/../_head.php';
     </tbody>
 </table>
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>The values you enter here are the wall opening (outer frame) dimensions. The actual door panel size is calculated by automatically subtracting the frame thickness and clearance (set by the administrator), and sliding doors are further adjusted for the width where panels overlap. You can check the resulting measured dimensions under <strong>Production Specification</strong> below.</span>
 </div>
 
@@ -140,7 +140,7 @@ include __DIR__ . '/../_head.php';
 </table>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>PNG export does not include the background photo — only the drawing (the lattice layer) is output, on a transparent background. AI rendering results are downloaded separately from the rendering popup.</span>
 </div>
 

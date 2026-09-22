@@ -29,7 +29,7 @@ include __DIR__ . '/../_head.php';
 </ol>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>Accounts registered through social login (Google or Kakao) do not show the password change menu.</span>
 </div>
 
@@ -52,7 +52,7 @@ include __DIR__ . '/../_head.php';
 </table>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>There are no separate fields for a work email or website URL. Your login account's email is used as-is.</span>
 </div>
 
@@ -80,7 +80,7 @@ include __DIR__ . '/../_head.php';
 </table>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>If you need viewing access, contact the workshop to request approval for your account. Quote requests and ordering themselves work regardless of viewing access.</span>
 </div>
 

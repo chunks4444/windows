@@ -60,7 +60,7 @@ include __DIR__ . '/_head.php';
 </table>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>랜덤 생성은 클릭할 때마다 다른 결과를 만듭니다. 마음에 드는 결과가 나오면 바로 저장하세요. 초기화 전에는 이전 결과가 남아있지 않습니다.</span>
 </div>
 

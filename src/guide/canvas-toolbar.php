@@ -61,7 +61,7 @@ include __DIR__ . '/_head.php';
 </table>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>도형 그리기 기능은 창살 격자와 별도의 오버레이 레이어에 그려집니다. 치수 표기·부재 목록 등 제작 시방서 계산에는 포함되지 않는 <strong>주석·메모 용도</strong>입니다.</span>
 </div>
 

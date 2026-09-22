@@ -64,7 +64,7 @@ include __DIR__ . '/../_head.php';
 </table>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>Shapes are drawn on an overlay layer, separate from the lattice itself. They are meant for <strong>annotations and notes</strong> — they are not included in production specification calculations such as dimension labels or the parts list.</span>
 </div>
 

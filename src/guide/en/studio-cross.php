@@ -36,7 +36,7 @@ include __DIR__ . '/../_head.php';
 </table>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>Bit-sal has no zoning settings like the "vertical ratio" or "top/middle/bottom layout" found in Jeongja-sal and Se-sal. To change the grid density, adjust the horizontal cell count or the slat thickness.</span>
 </div>
 

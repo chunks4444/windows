@@ -59,7 +59,7 @@ include __DIR__ . '/../_head.php';
 </ul>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>AI rendering needs server processing time. A stable network connection is recommended.</span>
 </div>
 

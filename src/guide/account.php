@@ -28,7 +28,7 @@ include __DIR__ . '/_head.php';
 </ol>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>소셜 로그인(Google·Kakao)으로 가입한 계정은 비밀번호 변경 메뉴가 표시되지 않습니다.</span>
 </div>
 
@@ -51,7 +51,7 @@ include __DIR__ . '/_head.php';
 </table>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>업무용 이메일·홈페이지 URL 입력란은 따로 없습니다. 이메일은 로그인 계정의 이메일이 그대로 사용됩니다.</span>
 </div>
 
@@ -78,7 +78,7 @@ include __DIR__ . '/_head.php';
 </table>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>열람 권한이 필요하다면 공방 담당자에게 문의해 계정 승인을 요청해주세요. 견적요청·주문 자체는 열람 권한과 무관하게 이용할 수 있습니다.</span>
 </div>
 

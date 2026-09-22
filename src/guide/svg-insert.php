@@ -26,7 +26,7 @@ include __DIR__ . '/_head.php';
 </ol>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>업로드한 SVG는 로그인한 계정에만 저장되며, 파일 크기는 최대 2MB까지 지원합니다. 배경을 꽉 채우는 단색 사각형(예: 캔버스용 배경 레이어)은 업로드 시 자동으로 제거되어 투명 배경으로 저장됩니다.</span>
 </div>
 

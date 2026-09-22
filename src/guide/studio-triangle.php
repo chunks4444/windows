@@ -39,7 +39,7 @@ include __DIR__ . '/_head.php';
 </table>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>세로 칸수, 세로 비율 같은 별도 설정 항목은 없습니다. 삼각형 크기를 바꾸려면 가로 칸수 또는 창살 두께를 조정하세요.</span>
 </div>
 

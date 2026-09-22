@@ -55,7 +55,7 @@ include __DIR__ . '/../_head.php';
 </table>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>The other five engines show a "total door width" card in the production specification, but Yukmo-sotgeul-sal does not. If you need the overall width, use the outer width value.</span>
 </div>
 

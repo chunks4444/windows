@@ -57,7 +57,7 @@ include __DIR__ . '/_head.php';
 </ul>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>AI 렌더링 기능은 서버 처리 시간이 필요합니다. 안정적인 네트워크 환경에서 사용을 권장합니다.</span>
 </div>
 

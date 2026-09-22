@@ -36,7 +36,7 @@ include __DIR__ . '/_head.php';
 </table>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>정자살의 "세로 비율"이나 세살의 "상/중/하 배열" 같은 구획 설정은 격자빗살에는 없습니다. 사선 밀도는 별도 항목이 아니라 가로 칸수·창살 두께에 종속됩니다.</span>
 </div>
 

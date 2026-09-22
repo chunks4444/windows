@@ -148,7 +148,7 @@ include __DIR__ . '/../_head.php';
 </p>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <div>
         <p style="margin:0 0 4px;">Renders are stored on the server, so they appear the same on any device or browser as long as you're signed in to the same account.</p>
         <p style="margin:0;">Note that each account can keep at most <strong>300</strong> renders. Beyond that limit, new renders are refused with a notice — so clear out old ones with the <i class="bi bi-x"></i> button in the right sidebar's history, or back up the ones you need with <span class="guide-ui">Download</span>.</p>

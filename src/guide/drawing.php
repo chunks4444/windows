@@ -40,7 +40,7 @@ include __DIR__ . '/_head.php';
 </ol>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>버전은 도면당 최대 <strong>20개</strong>까지 보관되며, 초과하면 가장 오래된 버전부터 자동으로 삭제됩니다.</span>
 </div>
 

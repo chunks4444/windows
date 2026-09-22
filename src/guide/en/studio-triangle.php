@@ -42,7 +42,7 @@ include __DIR__ . '/../_head.php';
 </table>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>There are no separate settings for vertical cell count or vertical ratio. To change the triangle size, adjust the horizontal cell count or the slat thickness.</span>
 </div>
 

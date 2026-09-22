@@ -30,7 +30,7 @@ include __DIR__ . '/_head.php';
 </table>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>이름과 연락처가 등록되어 있지 않으면 견적요청 버튼이 동작하지 않습니다. <a href="/guide/account">프로필 설정 가이드</a>를 참고하세요.</span>
 </div>
 
@@ -87,7 +87,7 @@ include __DIR__ . '/_head.php';
 </div>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <div>
         <div>※ 배송비·시공비 제외</div>
         <div>※ 도면에 보이는 금액은 예상금액입니다. 사용자 편집 내용을 검토한 후 최종 견적이 확정됩니다.</div>
@@ -106,7 +106,7 @@ include __DIR__ . '/_head.php';
 </p>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>담당자가 <strong>수정요청</strong>으로 상태를 바꾸면 잠금이 풀려 도면을 다시 편집·저장할 수 있습니다. 배송완료 또는 주문취소 후에도 잠금은 해제됩니다.</span>
 </div>
 
@@ -144,7 +144,7 @@ include __DIR__ . '/_head.php';
 </table>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span><strong>취소</strong>는 이 흐름과 별개인 종결 상태입니다. 고객이 직접 취소하거나 담당자가 취소 처리하면 해당 상태로 바뀌며, 이후 단계로 진행되지 않습니다.</span>
 </div>
 
@@ -159,7 +159,7 @@ include __DIR__ . '/_head.php';
 </ul>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>상태가 <strong>견적검토</strong> 또는 <strong>수정요청</strong>일 때만 주문내역에서 직접 <span class="guide-ui">주문취소</span>가 가능합니다. 이후 단계는 담당자에게 연락해주세요.</span>
 </div>
 

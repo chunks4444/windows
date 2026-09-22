@@ -43,7 +43,7 @@ include __DIR__ . '/_head.php';
 </ol>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>살(격자) 교차선과 울거미 외곽선이 각 부재 폭 그대로의 사각형 폴리라인으로 나갑니다. 촉(사개) 돌출부와 풍판 내부 채움판은 아직 포함되지 않으며, 살 교차부는 홈 형상 없이 단순 겹침으로 표현되는 형상 참고용 1차 버전입니다.</span>
 </div>
 
@@ -60,7 +60,7 @@ include __DIR__ . '/_head.php';
 </table>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>PDF 내보내기는 브라우저의 jsPDF 라이브러리를 사용합니다. 대용량 도면은 생성에 수 초가 걸릴 수 있습니다.</span>
 </div>
 

@@ -38,7 +38,7 @@ include __DIR__ . '/../_head.php';
 </table>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>Gyeokja-bit-sal has no zoning settings like Jeongja-sal's "vertical ratio" or Se-sal's "top/middle/bottom layout." Diagonal density is not a separate setting — it follows from the horizontal cell count and slat thickness.</span>
 </div>
 

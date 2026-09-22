@@ -46,7 +46,7 @@ include __DIR__ . '/_head.php';
 </ol>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>도면은 클라우드에 저장되므로, 다른 기기에서 로그인해도 동일한 도면에 접근할 수 있습니다.</span>
 </div>
 

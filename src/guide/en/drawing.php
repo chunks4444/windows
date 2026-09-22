@@ -41,7 +41,7 @@ include __DIR__ . '/../_head.php';
 </ol>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>Up to <strong>20</strong> versions are kept per drawing. Beyond that, the oldest versions are deleted automatically.</span>
 </div>
 

@@ -45,7 +45,7 @@ include __DIR__ . '/_head.php';
 </ul>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>필터는 <strong>동시에 조합되지 않습니다.</strong> 하나를 적용하면 나머지는 자동으로 초기화되고, 방금 적용한 조건 하나만으로 검색됩니다. 예를 들어 검색어를 입력한 뒤 우리살을 선택하면 검색어는 지워지고 우리살 필터만 적용됩니다. 별다른 필터 없이 컬렉션에 처음 들어오면 기본으로 <strong>우리살</strong> 패턴만 표시됩니다.</span>
 </div>
 
@@ -62,7 +62,7 @@ include __DIR__ . '/_head.php';
 </p>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>컬렉션에서 불러온 도면은 원본을 덮어쓰지 않습니다. 저장 시 반드시 새 이름을 입력해 내 도면으로 저장하세요.</span>
 </div>
 

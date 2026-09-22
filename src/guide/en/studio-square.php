@@ -61,7 +61,7 @@ include __DIR__ . '/../_head.php';
 </table>
 
 <div class="guide-note">
-    <i class="bi bi-info-circle"></i>
+    <i class="bi bi-info-circle-fill"></i>
     <span>Each click produces a different result. Save as soon as you get one you like — previous results are not kept, and reset discards the current one.</span>
 </div>
 
