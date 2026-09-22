@@ -173,7 +173,7 @@ body { background: var(--bg); }
     padding: .1rem .5rem; border-radius: 999px;
     white-space: nowrap;
 }
-.bg-side-card-status.is-ongoing { background: rgba(var(--accent-rgb), 0.12); color: var(--accent); }
+.bg-side-card-status.is-ongoing { background: rgba(var(--text-rgb), 0.1); color: var(--text); }
 .bg-side-card-status.is-completed { background: rgba(var(--text-rgb), 0.08); color: var(--text-muted); }
 .bg-side-card-tagline {
     font-size: var(--fs-12); color: var(--text);
