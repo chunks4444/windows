@@ -83,6 +83,17 @@ body { background: var(--bg); }
     opacity: .5;
 }
 
+/* ── 본문 상단 메인 이미지 ──────────────────────────────── */
+.bd-hero-img {
+    margin: 0 0 2rem;
+}
+.bd-hero-img img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--r-sm);
+}
+
 /* ── 이 시리즈 박스 ─────────────────────────────────────── */
 .bd-series-box {
     background: var(--accent-tint);

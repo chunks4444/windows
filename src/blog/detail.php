@@ -290,6 +290,12 @@ $metaKeywords = implode(', ', array_unique(array_filter([
 
         <hr class="bd-divider<?= (is_en() && !empty($post['content_en'])) ? ' bd-divider-thin' : '' ?>">
 
+        <?php if (!empty($post['thumbnail_url'])): ?>
+        <figure class="bd-hero-img">
+            <img src="<?= htmlspecialchars($post['thumbnail_url']) ?>" alt="<?= htmlspecialchars(db_field($post, 'title')) ?>">
+        </figure>
+        <?php endif; ?>
+
         <div class="bd-body"><?= db_field($post, 'content') ?></div>
 
         <?php
