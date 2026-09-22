@@ -21,7 +21,7 @@
 .guid-label-callout .num {
     flex-shrink: 0;
     width: 20px; height: 20px; border-radius: 50%;
-    background: var(--accent); color: var(--bg);
+    background: var(--text); color: var(--bg);
     font-size: 11px; font-weight: 700;
     display: flex; align-items: center; justify-content: center;
 }
@@ -174,8 +174,8 @@ body:has(.guide-wrap) {
     border-bottom: 1px solid var(--border);
     margin-bottom: 8px;
 }
-.gs-home i { font-size: 16px; color: var(--accent); }
-.gs-home:hover { color: var(--accent); }
+.gs-home i { font-size: 16px; color: var(--text); }
+.gs-home:hover { color: var(--text); }
 
 .gs-section { margin-bottom: 2px; }
 .gs-section-hd {
@@ -189,7 +189,7 @@ body:has(.guide-wrap) {
     cursor: pointer;
     font-family: inherit;
 }
-.gs-section-hd:hover { color: var(--accent); }
+.gs-section-hd:hover { color: var(--text); }
 .gs-section-hd-title { flex: 1; text-align: left; }
 .gs-section-chevron { font-size: 11px; transition: transform .15s ease; }
 .gs-section.open .gs-section-chevron { transform: rotate(180deg); }
@@ -215,13 +215,13 @@ body:has(.guide-wrap) {
     flex-shrink: 0;
     color: var(--text-muted);
 }
-.gs-link.active .gs-link-icon { color: var(--accent); }
+.gs-link.active .gs-link-icon { color: var(--text); }
 .gs-link:hover { background: rgba(var(--text-rgb), .05); color: var(--text); }
 .gs-link.active {
     background: var(--accent-tint);
-    color: var(--accent);
+    color: var(--text);
     font-weight: 600;
-    border-right-color: var(--accent);
+    border-right-color: var(--text);
 }
 
 /* ── 본문 영역 ───────────────────────────────── */
@@ -240,7 +240,7 @@ body:has(.guide-wrap) {
     margin-bottom: 28px;
 }
 .guide-breadcrumb a { color: var(--text); text-decoration: none; }
-.guide-breadcrumb a:hover { color: var(--accent); }
+.guide-breadcrumb a:hover { color: var(--text); }
 .guide-breadcrumb .sep { font-size: 10px; font-weight: 400; color: var(--text); }
 
 /* 제목 */
@@ -254,7 +254,7 @@ body:has(.guide-wrap) {
     display: flex; align-items: center; justify-content: center;
     width: 44px; height: 44px;
     border-radius: 10px;
-    background: var(--danger-tint); color: var(--danger);
+    background: var(--accent-tint); color: var(--text);
     flex-shrink: 0;
 }
 .guide-h1-icon svg { width: 24px; height: 24px; }
@@ -290,7 +290,7 @@ body:has(.guide-wrap) {
 }
 .guide-article strong { color: var(--text); font-weight: 600; }
 .guide-article a { color: var(--text); font-weight: 700; text-decoration: underline; }
-.guide-article a:hover { color: var(--accent); }
+.guide-article a:hover { color: var(--text); }
 
 /* 단계 목록 */
 .guide-steps { list-style: none; padding: 0; counter-reset: step; }
@@ -306,7 +306,7 @@ body:has(.guide-wrap) {
     content: counter(step);
     position: absolute; left: 0; top: 14px;
     width: 28px; height: 28px;
-    background: var(--accent); color: var(--bg);
+    background: var(--text); color: var(--bg);
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-size: 12px; font-weight: 700;
@@ -318,7 +318,7 @@ body:has(.guide-wrap) {
     padding: 14px 16px; border-radius: 8px;
     margin: 20px 0; font-size: 13px; line-height: 1.7;
 }
-.guide-tip  { background: rgba(var(--text-rgb), .07); color: var(--accent); border-left: 3px solid var(--accent); }
+.guide-tip  { background: rgba(var(--text-rgb), .07); color: var(--text); border-left: 3px solid var(--text); }
 .guide-note { background: rgba(var(--text-rgb), .07); color: var(--text); border-left: 3px solid var(--border); }
 .guide-warn { background: rgba(var(--text-rgb), .07); color: var(--warning-text); border-left: 3px solid var(--danger); }
 .guide-tip i, .guide-note i, .guide-warn i { flex-shrink: 0; font-size: 15px; margin-top: 1px; }
@@ -362,7 +362,7 @@ body:has(.guide-wrap) {
     transition: color .15s;
     color: inherit;
 }
-.guide-pager-btn:hover { color: var(--accent); }
+.guide-pager-btn:hover { color: var(--text); }
 .guide-pager-btn.next { align-items: flex-end; }
 .pager-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
 .pager-title { font-size: 13px; font-weight: 600; color: var(--text); }
