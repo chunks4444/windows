@@ -85,7 +85,7 @@ body { background: var(--bg); }
 
 /* ── 이 시리즈 박스 ─────────────────────────────────────── */
 .bd-series-box {
-    background: rgba(var(--accent-rgb), 0.06);
+    background: var(--accent-tint);
     border-radius: var(--r);
     padding: 1.25rem 1.4rem;
     margin-bottom: 2rem;
@@ -126,7 +126,7 @@ body { background: var(--bg); }
     display: flex; flex-direction: column; align-items: flex-start; gap: .6rem;
     margin-top: 2.5rem;
     padding: 1.5rem 1.6rem;
-    background: rgba(var(--accent-rgb), 0.06);
+    background: var(--accent-tint);
     border-radius: var(--r);
 }
 .bd-engine-box-title {
@@ -236,7 +236,7 @@ html[lang="en"] .bd-body {
     text-align: center;
     margin-top: 3rem;
     padding: 2.25rem 1.5rem;
-    background: rgba(var(--accent-rgb), 0.06);
+    background: var(--accent-tint);
     border-radius: var(--r);
 }
 .bd-cta-title {

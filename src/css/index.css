@@ -14,7 +14,7 @@
     padding: 10px 10px 10px 20px;
     transition: box-shadow .3s ease;
 }
-.idx-ai-icon { color: var(--accent); font-size: 18px; flex-shrink: 0; }
+.idx-ai-icon { color: var(--text); font-size: 18px; flex-shrink: 0; }
 .idx-ai-input {
     flex: 1;
     min-width: 0;
