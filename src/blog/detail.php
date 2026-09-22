@@ -69,7 +69,7 @@ try {
         $next->execute([$post['series_id'], $post['series_order']]);
         $next = $next->fetch();
 
-        $si = $pdo->prepare('SELECT id,name,tagline,sort_order,is_completed FROM blog_series WHERE id=?');
+        $si = $pdo->prepare('SELECT id,name,name_en,tagline,tagline_en,sort_order,is_completed FROM blog_series WHERE id=?');
         $si->execute([$post['series_id']]);
         $seriesInfo = $si->fetch();
 
@@ -80,7 +80,7 @@ try {
         if (!$next && $seriesInfo) {
             // 마지막 편이면 다음 시리즈의 1편으로 안내
             $ns = $pdo->prepare("
-                SELECT p.id, p.title, p.title_en, p.slug, s.name AS series_name
+                SELECT p.id, p.title, p.title_en, p.slug, s.name AS series_name, s.name_en AS series_name_en
                 FROM blog_posts p JOIN blog_series s ON s.id = p.series_id
                 WHERE p.is_active=1 AND p.series_order=1 AND s.sort_order > ?
                 ORDER BY s.sort_order LIMIT 1
@@ -260,9 +260,9 @@ $metaKeywords = implode(', ', array_unique(array_filter([
 
         <?php if ($seriesInfo): ?>
         <div class="bd-series-box">
-            <p class="bd-series-box-label"><?= htmlspecialchars(t('bd_series_label')) ?> · <?= htmlspecialchars($seriesInfo['name']) ?><?= $post['series_order'] ? ' · ' . htmlspecialchars(sprintf(t('bd_series_episode'), (int)$post['series_order'])) : '' ?> <span class="bd-series-box-total"><?= htmlspecialchars(sprintf(t('bd_series_total'), count($seriesEpisodes))) ?></span> <span class="bd-series-box-status <?= $seriesInfo['is_completed'] ? 'is-completed' : 'is-ongoing' ?>"><?= htmlspecialchars($seriesInfo['is_completed'] ? t('bd_series_completed') : t('bd_series_ongoing')) ?></span></p>
+            <p class="bd-series-box-label"><?= htmlspecialchars(t('bd_series_label')) ?> · <?= htmlspecialchars(db_field($seriesInfo, 'name')) ?><?= $post['series_order'] ? ' · ' . htmlspecialchars(sprintf(t('bd_series_episode'), (int)$post['series_order'])) : '' ?> <span class="bd-series-box-total"><?= htmlspecialchars(sprintf(t('bd_series_total'), count($seriesEpisodes))) ?></span> <span class="bd-series-box-status <?= $seriesInfo['is_completed'] ? 'is-completed' : 'is-ongoing' ?>"><?= htmlspecialchars($seriesInfo['is_completed'] ? t('bd_series_completed') : t('bd_series_ongoing')) ?></span></p>
             <?php if ($seriesInfo['tagline']): ?>
-            <p class="bd-series-box-tagline">"<?= htmlspecialchars($seriesInfo['tagline']) ?>"</p>
+            <p class="bd-series-box-tagline">"<?= htmlspecialchars(db_field($seriesInfo, 'tagline')) ?>"</p>
             <?php endif; ?>
             <ol class="bd-series-box-list">
                 <?php foreach ($seriesEpisodes as $ep): ?>
@@ -363,7 +363,7 @@ $metaKeywords = implode(', ', array_unique(array_filter([
             </a>
             <?php elseif ($nextSeries): ?>
             <a class="bd-pager-link bd-pager-next" href="<?= lang_href('/blog/' . rawurlencode($nextSeries['slug'])) ?>">
-                <span class="bd-pager-label"><?= htmlspecialchars(t('bd_next_series')) ?> · <?= htmlspecialchars($nextSeries['series_name']) ?> · <?= htmlspecialchars(sprintf(t('bd_series_episode'), 1)) ?></span>
+                <span class="bd-pager-label"><?= htmlspecialchars(t('bd_next_series')) ?> · <?= htmlspecialchars(db_field($nextSeries, 'series_name')) ?> · <?= htmlspecialchars(sprintf(t('bd_series_episode'), 1)) ?></span>
                 <span class="bd-pager-title"><?= htmlspecialchars(db_field($nextSeries, 'title')) ?></span>
             </a>
             <?php else: ?><span></span><?php endif; ?>

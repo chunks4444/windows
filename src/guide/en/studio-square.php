@@ -10,7 +10,7 @@ include __DIR__ . '/../_head.php';
 <h1><span class="guide-h1-icon"><?= $guideEngineIcons['square'] ?></span>Jeongja-sal</h1>
 <p class="guide-lead">This engine recreates Jeongja-sal (井字箭), where both vertical and horizontal slats
     fill the frame completely to form a grid. The name comes from 井, the character for "well," which the
-    woven shape resembles — an even, gapless grid is the face of this window. Also called man-sal (滿箭),
+    woven shape resembles — an even, gapless grid is the face of this changho. Also called man-sal (滿箭),
     it was the second most common form after Se-sal.
     It shares most of its sidebar structure with Se-sal (door settings, dimensions, lattice settings,
     finish, background, export), but uses a <strong>single-ratio even grid</strong> instead of three
@@ -77,9 +77,9 @@ include __DIR__ . '/../_head.php';
 
 <h2>Example Uses</h2>
 <ul>
-    <li>Sliding windows in contemporary hanok</li>
-    <li>Partition windows for cafés and commercial spaces</li>
-    <li>Irregular window designs made with the random pattern</li>
+    <li>Sliding changho in contemporary hanok</li>
+    <li>Partition changho for cafés and commercial spaces</li>
+    <li>Irregular changho designs made with the random pattern</li>
 </ul>
 
 <?php include __DIR__ . '/../_foot.php'; ?>

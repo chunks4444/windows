@@ -9,9 +9,9 @@ include __DIR__ . '/../_head.php';
 
 <h1>What is Pyeongmok Studio?</h1>
 <p class="guide-lead">
-    Pyeongmok (平木) is an online studio where you can design and export traditional Korean window
-    (changho) drawings in real time, right in your browser. Six lattice pattern engines and AI
-    rendering are available with nothing to install.
+    Pyeongmok (平木) is an online studio for designing and exporting <strong>changho</strong> — the
+    windows, doors, and lattice screens of a traditional Korean hanok — in real time, right in your
+    browser. Six lattice pattern engines and AI rendering are available with nothing to install.
 </p>
 
 <h2>Key Features</h2>
@@ -36,7 +36,7 @@ include __DIR__ . '/../_head.php';
 <p>The studio is divided into six engines according to how the lattice slats are arranged.</p>
 
 <ul>
-    <li><strong>Se-sal</strong> — The traditional quarter-lap structure. The classic window pattern of crossing vertical and horizontal slats</li>
+    <li><strong>Se-sal</strong> — The traditional quarter-lap structure. The classic changho pattern of crossing vertical and horizontal slats</li>
     <li><strong>Jeongja-sal</strong> — A simple square grid. The basic pattern built from vertical and horizontal slats</li>
     <li><strong>Bit-sal</strong> — A grid rotated 45°. A diagonal pattern of crossing angled slats</li>
     <li><strong>Gyeokja-bit-sal</strong> — A composite diamond pattern. An advanced pattern combining vertical, horizontal and diagonal slats</li>

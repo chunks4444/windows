@@ -9,7 +9,7 @@ include __DIR__ . '/../_head.php';
 
 <h1>AI Rendering — Compositing a Background Photo with Your Drawing</h1>
 <p class="guide-lead">
-    This feature layers your window drawing over a photo of the site and has AI composite the two into a
+    This feature layers your changho drawing over a photo of the site and has AI composite the two into a
     realistic installed view. It follows the flow
     <strong>background image + lattice drawing = AI rendering</strong>, and the whole process happens in the
     <strong>right sidebar</strong> of the Se-sal studio.
@@ -83,7 +83,7 @@ include __DIR__ . '/../_head.php';
 
 <h3>② Adjust the drawing parameters</h3>
 <p>
-    Adjust the window's dimensions and lattice settings in the left sidebar.
+    Adjust the changho's dimensions and lattice settings in the left sidebar.
     Because the drawing is composited over the background photo live, you can judge the proportions and
     pattern against the real space on the spot.
 </p>

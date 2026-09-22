@@ -22,7 +22,7 @@ include __DIR__ . '/../_head.php';
 
 <div class="guide-tip">
     <i class="bi bi-lightbulb-fill"></i>
-    <span>Naming drawings after the project or site makes them easier to find later. For example: <em>Cheongdam-dong_hanok_front-window</em></span>
+    <span>Naming drawings after the project or site makes them easier to find later. For example: <em>Cheongdam-dong_hanok_front-changho</em></span>
 </div>
 
 <h2>Loading a Drawing</h2>

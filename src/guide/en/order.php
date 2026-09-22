@@ -41,7 +41,7 @@ include __DIR__ . '/../_head.php';
     <div class="guide-flow-step">
         <span class="step-icon"><i class="bi bi-pencil-square" style="color:var(--accent)"></i></span>
         <div class="step-title">Design the drawing</div>
-        <div class="step-desc">Complete your window drawing in the studio.</div>
+        <div class="step-desc">Complete your changho drawing in the studio.</div>
     </div>
     <div class="guide-flow-arrow"><i class="bi bi-chevron-right"></i></div>
     <div class="guide-flow-step">

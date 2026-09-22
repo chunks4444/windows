@@ -67,7 +67,7 @@ include __DIR__ . '/../_head.php';
 <h2>Example Uses</h2>
 <ul>
     <li>Variations on the aja-sal (亞字窓) patterns of palaces and temples</li>
-    <li>Windows for high-end hanok guesthouses</li>
+    <li>Changho for high-end hanok guesthouses</li>
     <li>Partitions for traditional craft exhibition halls</li>
 </ul>
 

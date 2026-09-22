@@ -861,3 +861,7 @@ ON DUPLICATE KEY UPDATE english = VALUES(english);
 -- ALTER TABLE blog_posts ADD COLUMN cta_text_en    VARCHAR(255) NULL COMMENT '영문 CTA 문구' AFTER cta_text;
 -- ALTER TABLE blog_posts ADD COLUMN source_text_en TEXT         NULL COMMENT '영문 출처 목록' AFTER source_text;
 -- ALTER TABLE blog_posts ADD COLUMN content_en     LONGTEXT     NULL COMMENT '영문 본문' AFTER content;
+
+-- 2026-09-22 블로그 시리즈명/태그라인도 영문 컬럼 추가 (blog_posts와 같은 패턴)
+-- ALTER TABLE blog_series ADD COLUMN name_en    VARCHAR(80)  NULL COMMENT '영문 시리즈명' AFTER name;
+-- ALTER TABLE blog_series ADD COLUMN tagline_en VARCHAR(200) NULL COMMENT '영문 태그라인' AFTER tagline;

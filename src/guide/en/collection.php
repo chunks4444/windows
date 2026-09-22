@@ -9,7 +9,7 @@ include __DIR__ . '/../_head.php';
 
 <h1>Collection &amp; My Boards</h1>
 <p class="guide-lead">
-    The Collection is a public library of window drawings curated by the Pyeongmok team.
+    The Collection is a public library of changho drawings curated by the Pyeongmok team.
     Open a pattern you like directly in the studio, or save it with a like or to your boards to keep as inspiration.
 </p>
 

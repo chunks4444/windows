@@ -10,7 +10,7 @@ include __DIR__ . '/../_head.php';
 <h1><span class="guide-h1-icon"><?= $guideEngineIcons['cross'] ?></span>Bit-sal</h1>
 <p class="guide-lead">This engine recreates Bit-sal, where the slats are tilted 45° and woven
     diagonally inside the frame. The name comes from <em>bit</em>, "slanted," after the way the slats are
-    set at an angle — the diamond grid formed by those crossing slats is the face of this window.
+    set at an angle — the diamond grid formed by those crossing slats is the face of this changho.
     You set only the horizontal cell count; the vertical count is calculated automatically so the cells
     stay perfectly square, and there is no separate setting for the angle.</p>
 

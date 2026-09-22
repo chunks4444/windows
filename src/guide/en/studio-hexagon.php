@@ -67,7 +67,7 @@ include __DIR__ . '/../_head.php';
 
 <h2>Example Uses</h2>
 <ul>
-    <li>Traditional hanok hexagonal lattice windows</li>
+    <li>Traditional hanok hexagonal lattice changho</li>
     <li>Lattice patterns for temple halls</li>
     <li>Partitions for upscale Korean restaurants</li>
 </ul>

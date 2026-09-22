@@ -34,10 +34,10 @@ return [
     'nav_lang_switch'          => '한국어',
 
     // index.php — hero
-    'home_h1'                  => 'Pyeongmok — Design Your Own Hanok Lattice Windows in Real Time',
+    'home_h1'                  => 'Pyeongmok — Design Your Own Hanok Changho in Real Time',
     'home_hero_top'            => 'No two spaces are alike, so we draw to fit the dimensions and the light.',
-    'home_hero_sub'            => 'Hanok windows, made with traditional technique — shaped exactly as you draw them',
-    'home_ai_placeholder'      => 'Describe the window you want — e.g. Jeongja-sal, hinged, 2 panels, 900×2000',
+    'home_hero_sub'            => 'Hanok changho, made with traditional technique — shaped exactly as you draw it',
+    'home_ai_placeholder'      => 'Describe the changho you want — e.g. Jeongja-sal, hinged, 2 panels, 900×2000',
     'home_ai_send'             => 'Start Designing',
     'home_engine_alt'          => '%s pattern preview',
 
@@ -57,20 +57,20 @@ return [
 
     // Light & Lattice
     'home_light_label'         => 'Light & Lattice',
-    'home_light_title'         => "Hanok windows don't block light —<br>they divide it as it enters.",
+    'home_light_title'         => "Hanok changho doesn't block light —<br>it divides it as it enters.",
     'home_light_p1a'           => "Glass lets light in whole; a wall blocks it whole. The lattice sits between the two — it blocks while letting in, and filters while it lets through.",
-    'home_light_p1b'           => 'Tight spacing breaks the light into fine pieces that fill a room evenly. Wide spacing lets it in as solid shapes that fall as sharp shadows on the floor. <b>The same pattern looks different depending on which way the window faces and what time it is.</b>',
-    'home_light_p2a'           => "That's why old carpenters wove a different lattice for every room. The inner room and the great hall could never be the same; a south-facing window and a north-facing one could never be the same.",
+    'home_light_p1b'           => 'Tight spacing breaks the light into fine pieces that fill a room evenly. Wide spacing lets it in as solid shapes that fall as sharp shadows on the floor. <b>The same pattern looks different depending on which way the changho faces and what time it is.</b>',
+    'home_light_p2a'           => "That's why old carpenters wove a different lattice for every room. The inner room and the great hall could never be the same; a south-facing changho and a north-facing one could never be the same.",
     'home_light_p2b'           => "In the studio, adjusting the lattice spacing may look like picking a pattern — but it's really deciding how the light will enter that room.",
 
     // How the lattice is used
     'home_usage2_label'        => 'How the Lattice Is Used',
-    'home_usage2_title'        => 'Traditional Korean windows and wood windows,<br>woven with the same lattice technique.',
+    'home_usage2_title'        => 'Traditional Korean changho and wood changho,<br>woven with the same lattice technique.',
     'home_usage2_sub'          => "Whether it goes into a hanok or a modern space, the weaving grammar is the same — only the scale changes.",
-    'home_line1_title'         => 'Hanok Windows',
+    'home_line1_title'         => 'Hanok Changho',
     'home_line1_body'          => 'Se-sal, Jeongja-sal, Wanja-sal, Gyo-sal, Sotgeul-sal — hinged, sliding, or lift-and-fold. Where the lattice stands at its true scale.',
-    'home_line2_title'         => 'Wood Windows',
-    'home_line2_body'          => "Windows and doors for spaces outside the hanok. The lattice stays the same — only the frame follows the space's dimensions.",
+    'home_line2_title'         => 'Wood Changho',
+    'home_line2_body'          => "Changho for spaces outside the hanok. The lattice stays the same — only the frame follows the space's dimensions.",
     'home_line3_title'         => 'Partitions',
     'home_line3_body'          => 'For dividing a space without building a wall. The density of the lattice decides how far the eye can travel.',
     'home_line4_title'         => 'Furniture & Objects',
@@ -83,7 +83,7 @@ return [
     'home_guide_more'          => 'View Full Guide',
 
     'home_step1_title'         => 'Design the Pattern',
-    'home_step1_desc'          => 'Pyeongmok Studio is a window design tool you can use right in your browser. Pick a lattice pattern from the Studio menu above, then adjust the frame size, slat spacing, and pattern to complete your own window.',
+    'home_step1_desc'          => 'Pyeongmok Studio is a changho design tool you can use right in your browser. Pick a lattice pattern from the Studio menu above, then adjust the frame size, slat spacing, and pattern to complete your own changho.',
     'home_step1_hint1'         => 'Enter the frame width and height',
     'home_step1_hint2'         => 'Adjust slat spacing and thickness with sliders',
     'home_step1_hint3'         => 'See the result update in real time',
@@ -119,8 +119,8 @@ return [
 
     // Blog
     'home_blog_label'          => 'Blog',
-    'home_blog_title'          => 'Window Stories',
-    'home_blog_body'           => 'Stories about windows and hanok lattices, told by the Pyeongmok workshop.',
+    'home_blog_title'          => 'Changho Stories',
+    'home_blog_body'           => 'Stories about changho and hanok lattices, told by the Pyeongmok workshop.',
     'home_blog_more'           => 'View All',
     'home_blog_quote_read'     => 'Read the story',
     'home_blog_episode'        => 'Ep. %d',
@@ -135,23 +135,23 @@ return [
     // src/company/index.php
     'company_hero_label'       => 'About 평목',
     'company_hero_title'       => 'The path of light and wind,<br>made of wood — <em>Pyeongmok</em>',
-    'company_hero_desc'        => "Pyeongmok (平木) is a window design studio that brings the beauty of traditional Korean windows into modern spaces.<br>We reinterpret centuries-old lattice-weaving techniques through digital tools, building an environment where anyone can design their own window <br>and carry it all the way through to production.",
+    'company_hero_desc'        => "Pyeongmok (平木) is a changho design studio that brings the beauty of traditional Korean changho into modern spaces.<br>We reinterpret centuries-old lattice-weaving techniques through digital tools, building an environment where anyone can design their own changho <br>and carry it all the way through to production.",
 
     'company_phil_label'       => 'Philosophy',
     'company_phil_title'       => '평목 (Pyeongmok)',
     'company_phil_p1'          => "The tool once used to level off grain measured by the \u{2018}doe\u{2019} or \u{2018}mal\u{2019}<br>is called a \u{2018}pyeongmire\u{2019} in Korean —<br>and \u{2018}평목 (平木)’ is the Hanja word for exactly that tool.",
     'company_phil_p2'          => "A pyeongmok's job is balance —<br>not letting things overflow,<br>not letting them fall short.",
-    'company_phil_p3'          => "The carpenters at Pyeongmok, who shape solid wood,<br>aim to make windows and furniture that don't wear down with time —<br>but gain character because of it.",
+    'company_phil_p3'          => "The carpenters at Pyeongmok, who shape solid wood,<br>aim to make changho and furniture that don't wear down with time —<br>but gain character because of it.",
     'company_phil_item1_title' => 'The joinery stays true to the original.',
-    'company_phil_item1_desc'  => "Se-sal, Jeongja-sal, Bit-sal, Sotgeul-sal. We carried the exact joinery used in Joseon-era windows straight into the engine. <br>Only the slat spacing and proportions are adapted to fit today's spaces.",
+    'company_phil_item1_desc'  => "Se-sal, Jeongja-sal, Bit-sal, Sotgeul-sal. We carried the exact joinery used in Joseon-era changho straight into the engine. <br>Only the slat spacing and proportions are adapted to fit today's spaces.",
     'company_phil_item2_title' => 'Real-Time Design',
     'company_phil_item2_desc'  => 'Move the dimensions or slat spacing and the drawing updates with you. <br>That same drawing becomes the production drawing, exactly as is.',
     'company_phil_item3_title' => 'Made to Order',
-    'company_phil_item3_desc'  => "Your drawing goes straight to our workshop in Yangpyeong. <br>No two spaces are alike, so no two windows come out the same — each one is woven to fit its own dimensions and light.",
+    'company_phil_item3_desc'  => "Your drawing goes straight to our workshop in Yangpyeong. <br>No two spaces are alike, so no two changho come out the same — each one is woven to fit its own dimensions and light.",
 
     'company_studio_label'     => 'Studio',
     'company_studio_title'     => 'Try designing it yourself.',
-    'company_studio_body'      => 'Pyeongmok Studio is a <strong>window design tool</strong> you can use right in your browser. <br>Adjust the frame size, slat spacing, and pattern to complete a window of your own. Your finished design is built at the Pyeongmok workshop, using traditional window-making technique exactly as drawn.',
+    'company_studio_body'      => 'Pyeongmok Studio is a <strong>changho design tool</strong> you can use right in your browser. <br>Adjust the frame size, slat spacing, and pattern to complete a changho of your own. Your finished design is built at the Pyeongmok workshop, using traditional changho-making technique exactly as drawn.',
     'company_features_title'   => 'What all six engines have in common',
     'company_feature1'         => 'Choose hinged or sliding, and the number of panels',
     'company_feature2'         => 'Frame dimensions, left/right and top/bottom stile thickness, slat thickness',
@@ -207,7 +207,7 @@ return [
 
     // src/guide/index.php — guide home
     'guide_landing_title'      => 'Guide',
-    'guide_landing_sub'        => 'From designing traditional window drawings to AI rendering — a guide to every feature of Pyeongmok Studio.',
+    'guide_landing_sub'        => 'From designing traditional changho drawings to AI rendering — a guide to every feature of Pyeongmok Studio.',
     'guide_article_count'      => '%d articles',
     'guide_card_intro_desc'    => 'Learn what Pyeongmok is and how to get started.',
     'guide_card_studio_title'  => 'What is the Studio?',
@@ -251,7 +251,7 @@ return [
     'auth_new_password'       => 'New password',
     'auth_btn_reset'          => 'Change password',
     'auth_welcome_title'      => 'Welcome to Pyeongmok!',
-    'auth_welcome_body'       => 'Now design your own windows —<br>and see them placed in a real space with AI.',
+    'auth_welcome_body'       => 'Now design your own changho —<br>and see it placed in a real space with AI.',
     'auth_welcome_btn'        => 'Start in the Studio',
 
     // Login / sign-up client and server messages

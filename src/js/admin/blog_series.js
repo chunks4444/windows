@@ -16,6 +16,8 @@ function renderSeriesTable() {
         <tr id="series-row-${s.id}">
             <td><input class="bs-name-input" id="series-name-${s.id}" value="${esc(s.name)}"></td>
             <td><input class="bs-tagline-input" id="series-tagline-${s.id}" value="${esc(s.tagline)}"></td>
+            <td><input class="bs-name-input" id="series-name-en-${s.id}" value="${esc(s.name_en)}"></td>
+            <td><input class="bs-tagline-input" id="series-tagline-en-${s.id}" value="${esc(s.tagline_en)}"></td>
             <td><input class="bs-sort-input" id="series-order-${s.id}" type="number" value="${s.sort_order}"></td>
             <td style="text-align:center;"><input type="checkbox" id="series-showhome-${s.id}" ${Number(s.show_on_home) ? 'checked' : ''}></td>
             <td style="text-align:center;"><input type="checkbox" id="series-completed-${s.id}" ${Number(s.is_completed) ? 'checked' : ''}></td>
@@ -24,19 +26,21 @@ function renderSeriesTable() {
                 <button class="bs-btn bs-btn-del" onclick="deleteSeriesRow(${s.id}, '${esc(s.name)}')">삭제</button>
                 <span class="bs-status" id="series-status-${s.id}"></span>
             </td>
-        </tr>`).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--text);padding:20px;">시리즈가 없습니다.</td></tr>';
+        </tr>`).join('') || '<tr><td colspan="8" style="text-align:center;color:var(--text);padding:20px;">시리즈가 없습니다.</td></tr>';
 }
 
 async function saveSeriesRow(id) {
     const name    = document.getElementById(`series-name-${id}`).value.trim();
     const tagline = document.getElementById(`series-tagline-${id}`).value.trim();
+    const nameEn    = document.getElementById(`series-name-en-${id}`).value.trim();
+    const taglineEn = document.getElementById(`series-tagline-en-${id}`).value.trim();
     const order   = parseInt(document.getElementById(`series-order-${id}`).value) || 0;
     const showOnHome = document.getElementById(`series-showhome-${id}`).checked;
     const completed  = document.getElementById(`series-completed-${id}`).checked;
     const st = document.getElementById(`series-status-${id}`);
     if (!name) { st.className = 'bs-status err'; st.textContent = '이름 필수'; return; }
     const data = await (await fetch(SERIES_API, { method: 'PUT', headers: _h(),
-        body: JSON.stringify({ id, name, tagline, sort_order: order, show_on_home: showOnHome, is_completed: completed }) })).json();
+        body: JSON.stringify({ id, name, tagline, name_en: nameEn, tagline_en: taglineEn, sort_order: order, show_on_home: showOnHome, is_completed: completed }) })).json();
     st.className = data.ok ? 'bs-status ok' : 'bs-status err';
     st.textContent = data.ok ? '저장됨' : (data.error || '오류');
     if (data.ok) setTimeout(() => st.textContent = '', 2000);

@@ -9,7 +9,7 @@ include __DIR__ . '/../_head.php';
 
 <h1>Delivery Guide</h1>
 <p class="guide-lead">
-    Finished windows are shipped by parcel or freight depending on their size and quantity.
+    Finished changho are shipped by parcel or freight depending on their size and quantity.
     Shipping costs are paid by the customer; return shipping for defective products is covered by Pyeongmok.
 </p>
 

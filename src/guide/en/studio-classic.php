@@ -10,11 +10,11 @@ include __DIR__ . '/../_head.php';
 ?>
 
 <h1><span class="guide-h1-icon"><?= $guideEngineIcons['classic'] ?></span>Se-sal</h1>
-<p class="guide-lead">This engine recreates Se-sal (細箭), a window whose frame is filled with closely spaced
+<p class="guide-lead">This engine recreates Se-sal (細箭), a changho whose frame is filled with closely spaced
     vertical slats, crossed by only three or four horizontal slats at the top, middle and bottom.
     The name comes from 細 ("fine"), pointing to the slats' slenderness — the fine, straight grain
-    created by those dense vertical slats is the face of this window. Also called ttisal-chang,
-    it was the most widely used lattice window form of the Joseon period.
+    created by those dense vertical slats is the face of this changho. Also called ttisal-chang,
+    it was the most widely used lattice changho form of the Joseon period.
     The studio is laid out in three panels — <strong>the design sidebar on the left, the canvas,
     and the background and export sidebar on the right</strong> — and every parameter change appears
     on the canvas immediately.</p>

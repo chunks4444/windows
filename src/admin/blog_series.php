@@ -54,7 +54,7 @@ require_admin_role('s');
     <div class="bs-wrap">
         <div class="bs-card" style="overflow-x:auto;">
             <table class="bs-table" id="bsTable">
-                <thead><tr><th>이름</th><th>명제(tagline)</th><th style="width:80px;">순서</th><th style="width:70px;">홈노출</th><th style="width:70px;">완결</th><th></th></tr></thead>
+                <thead><tr><th>이름</th><th>명제(tagline)</th><th>이름(영문)</th><th>명제(영문)</th><th style="width:80px;">순서</th><th style="width:70px;">홈노출</th><th style="width:70px;">완결</th><th></th></tr></thead>
                 <tbody id="bsBody"></tbody>
             </table>
         </div>
