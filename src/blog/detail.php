@@ -217,11 +217,11 @@ $metaKeywords = implode(', ', array_unique(array_filter([
     <link rel="icon" type="image/svg+xml" href="/src/assets/favicon.svg">
     <link rel="alternate icon" href="/src/assets/favicon.png">
     <link rel="apple-touch-icon" href="/src/assets/apple-touch-icon.png">
-    <link rel="canonical" href="<?= htmlspecialchars(SITE_URL . '/blog/' . rawurlencode($post['slug'])) ?>">
+    <link rel="canonical" href="<?= htmlspecialchars(SITE_URL . lang_href('/blog/' . rawurlencode($post['slug']))) ?>">
     <meta property="og:title" content="<?= htmlspecialchars(db_field($post, 'title')) ?>">
     <meta property="og:description" content="<?= htmlspecialchars($metaDesc) ?>">
     <meta property="og:image" content="<?= htmlspecialchars($metaImage) ?>">
-    <?php article_jsonld($post, SITE_URL . '/blog/' . rawurlencode($post['slug']), $metaImage, $metaDesc); ?>
+    <?php article_jsonld($post, SITE_URL . lang_href('/blog/' . rawurlencode($post['slug'])), $metaImage, $metaDesc); ?>
     <?php define('BOOTSTRAP_LOADED', true); ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <?php if ($kakaoJsKey = kakao_js_key()): ?>
@@ -386,7 +386,7 @@ $metaKeywords = implode(', ', array_unique(array_filter([
 
 <script>
 (function () {
-    const shareUrl   = <?= json_encode(SITE_URL . '/blog/' . rawurlencode($post['slug'])) ?>;
+    const shareUrl   = <?= json_encode(SITE_URL . lang_href('/blog/' . rawurlencode($post['slug']))) ?>;
     const shareTitle = <?= json_encode(db_field($post, 'title')) ?>;
     const shareImage = <?= json_encode($metaImage) ?>;
     const BD_T = <?= json_encode([
