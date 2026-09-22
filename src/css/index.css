@@ -711,7 +711,7 @@
 
 .home-blog-card-body { padding: 18px 20px 20px; display: flex; flex-direction: column; flex: 1; }
 .home-blog-card-cat {
-    font-size: var(--fs-12); font-weight: 600; color: var(--accent);
+    font-size: var(--fs-12); font-weight: 600; color: var(--text);
     margin: 0 0 .25rem;
 }
 .home-blog-card-title {
