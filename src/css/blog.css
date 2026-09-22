@@ -98,7 +98,7 @@ body { background: var(--bg); }
 }
 .bg-ranked-text { flex: 1; min-width: 0; }
 .bg-ranked-cat {
-    font-size: var(--fs-12); font-weight: 600; color: var(--text);
+    font-size: var(--fs-12); font-weight: 600; color: var(--text-muted);
     margin: 0 0 .25rem;
 }
 .bg-ranked-title {
