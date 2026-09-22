@@ -432,12 +432,12 @@ body {
 .ct-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .ct-submit {
     width: 100%; height: 40px; margin-top: 4px;
-    background: var(--accent); color: var(--bg); border: none;
+    background: var(--text); color: var(--bg); border: none;
     border-radius: 4px; font-family: inherit;
     font-size: var(--fs-14); font-weight: 600; cursor: pointer;
-    transition: background .15s;
+    transition: opacity .15s;
 }
-.ct-submit:hover { background: var(--accent-active); }
+.ct-submit:hover { opacity: .85; }
 .ct-submit:disabled { background: var(--text-muted); cursor: not-allowed; }
 .ct-error {
     background: var(--accent-tint); border-left: 3px solid var(--accent);
