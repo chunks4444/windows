@@ -8,7 +8,7 @@ require_once __DIR__ . '/../lib/i18n.php';
 $guide_nav = [
     [
         'title' => t('guide_sec_about'), 'icon' => 'bi-info-circle',
-        'bg' => 'var(--accent-tint)', 'color' => 'var(--accent)',
+        'bg' => 'var(--accent-tint)', 'color' => 'var(--text)',
         'articles' => [
             ['file' => 'intro.php',           'title' => t('guide_art_intro')],
             ['file' => 'getting-started.php', 'title' => t('guide_art_getting_started')],
@@ -16,7 +16,7 @@ $guide_nav = [
     ],
     [
         'title' => t('nav_studio'), 'icon' => 'bi-pencil-square',
-        'bg' => 'var(--danger-tint)', 'color' => 'var(--danger)',
+        'bg' => 'var(--accent-tint)', 'color' => 'var(--text)',
         'articles' => [
             ['file' => 'studio-classic.php',  'title' => t('guide_art_classic'),  'engine' => 'classic'],
             ['file' => 'studio-square.php',   'title' => t('guide_art_square'),   'engine' => 'square'],
@@ -28,7 +28,7 @@ $guide_nav = [
     ],
     [
         'title' => t('guide_sec_drawing'), 'icon' => 'bi-folder2-open',
-        'bg' => 'var(--accent-tint)', 'color' => 'var(--accent)',
+        'bg' => 'var(--accent-tint)', 'color' => 'var(--text)',
         'articles' => [
             ['file' => 'canvas-toolbar.php', 'title' => t('guide_art_canvas_toolbar')],
             ['file' => 'svg-insert.php', 'title' => t('guide_art_svg_insert')],
@@ -37,49 +37,49 @@ $guide_nav = [
     ],
     [
         'title' => t('guide_sec_export'), 'icon' => 'bi-download',
-        'bg' => 'var(--accent-tint)', 'color' => 'var(--accent)',
+        'bg' => 'var(--accent-tint)', 'color' => 'var(--text)',
         'articles' => [
             ['file' => 'export.php',  'title' => t('guide_art_export')],
         ],
     ],
     [
         'title' => t('nav_guide_render'), 'icon' => 'bi-stars',
-        'bg' => 'var(--accent-tint)', 'color' => 'var(--accent)',
+        'bg' => 'var(--accent-tint)', 'color' => 'var(--text)',
         'articles' => [
             ['file' => 'render.php', 'title' => t('guide_art_render')],
         ],
     ],
     [
         'title' => t('nav_collection'), 'icon' => 'bi-collection',
-        'bg' => 'var(--accent-tint)', 'color' => 'var(--accent)',
+        'bg' => 'var(--accent-tint)', 'color' => 'var(--text)',
         'articles' => [
             ['file' => 'collection.php', 'title' => t('guide_art_collection')],
         ],
     ],
     [
         'title' => t('nav_guide_account'), 'icon' => 'bi-person-gear',
-        'bg' => 'var(--accent-tint)', 'color' => 'var(--accent)',
+        'bg' => 'var(--accent-tint)', 'color' => 'var(--text)',
         'articles' => [
             ['file' => 'account.php', 'title' => t('guide_art_account')],
         ],
     ],
     [
         'title' => t('nav_guide_order'), 'icon' => 'bi-cart-check',
-        'bg' => 'var(--accent-tint)', 'color' => 'var(--accent)',
+        'bg' => 'var(--accent-tint)', 'color' => 'var(--text)',
         'articles' => [
             ['file' => 'order.php', 'title' => t('guide_art_order')],
         ],
     ],
     [
         'title' => t('nav_guide_delivery'), 'icon' => 'bi-truck',
-        'bg' => 'var(--accent-tint)', 'color' => 'var(--accent)',
+        'bg' => 'var(--accent-tint)', 'color' => 'var(--text)',
         'articles' => [
             ['file' => 'delivery.php', 'title' => t('guide_art_delivery')],
         ],
     ],
     [
         'title' => t('nav_guide_faq'), 'icon' => 'bi-patch-question',
-        'bg' => 'var(--accent-tint)', 'color' => 'var(--accent)',
+        'bg' => 'var(--accent-tint)', 'color' => 'var(--text)',
         'articles' => [
             ['file' => 'faq.php', 'title' => t('home_faq_title')],
         ],
