@@ -189,6 +189,7 @@ body { background: var(--bg); }
     font-size: var(--fs-13); font-weight: 500; color: var(--text);
     text-decoration: none;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    flex: 1; min-width: 0;
 }
 .bg-side-card-posts a:hover { color: var(--accent); }
 .bg-side-card-date {
