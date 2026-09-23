@@ -89,10 +89,10 @@ body { background: var(--bg); }
 }
 .bd-hero-img img {
     display: block;
-    width: auto;
+    width: 100%;
     height: auto;
-    max-width: 100%;
     max-height: 500px;
+    object-fit: cover;  /* 가로는 항상 칼럼 폭, 500px 넘는 세로만 위아래를 잘라냄 */
     border-radius: var(--r-sm);
 }
 
