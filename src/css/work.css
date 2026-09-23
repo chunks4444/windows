@@ -98,7 +98,7 @@
 .wkg-load-more-wrap { display: flex; justify-content: center; padding-top: 32px; }
 .wkg-load-more-btn {
     padding: 9px 16px;
-    border: 1px solid var(--border); border-radius: 999px;
+    border: 1px solid var(--text); border-radius: 999px;
     background: var(--bg); color: var(--text);
     font-size: var(--fs-13); font-weight: 600;
     cursor: pointer;
