@@ -101,7 +101,9 @@ try {
 } catch (Throwable $e) {
     $post = null;
 }
-if (!$post) { header('Location: ' . lang_href('/blog/')); exit; }
+// 존재하지 않는 슬러그는 목록으로 302 리다이렉트하면 검색엔진이 200으로 착각해 색인할
+// 수 있는 soft-404가 된다 — 실제 404 상태코드로 응답해야 한다.
+if (!$post) { http_response_code(404); include __DIR__ . '/../../404.php'; exit; }
 
 require_once __DIR__ . '/../lib/engine_icons.php';
 $engineLabels = [];
