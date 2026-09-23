@@ -636,7 +636,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
 
                 const res  = await fetch('/src/api/ai/chat.php', {
                     method:  'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json', 'X-Pmok-Lang': window.PMOK_LANG || 'ko' },
                     body:    JSON.stringify({ engine: DEFAULT_ENGINE, message: msg, params: {}, session_key: sessionKey }),
                 });
                 const data = await res.json();

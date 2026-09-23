@@ -2014,7 +2014,7 @@ function drawSvgInserts() {
         try {
             const res  = await fetch('/src/api/ai/chat.php', {
                 method:  'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'X-Pmok-Lang': window.PMOK_LANG || 'ko' },
                 body:    JSON.stringify({ engine, message, params: getParams(), session_key: aiSessionKey() }),
             });
             const data = await res.json();
@@ -2023,7 +2023,7 @@ function drawSvgInserts() {
             } else if (data.engine && data.engine !== engine) {
                 sessionStorage.setItem('pmok_ai_params', JSON.stringify(Object.assign({}, getParams(), data.params)));
                 notifyReply(data.reply || (data.engine + _t(' 엔진으로 이동합니다…')), false);
-                setTimeout(() => { location.href = '/src/engine/' + data.engine + '/' + data.engine + '.php'; }, 1200);
+                setTimeout(() => { location.href = (window.PMOK_LANG === 'en' ? '/en' : '') + '/src/engine/' + data.engine + '/' + data.engine + '.php'; }, 1200);
             } else {
                 const merged = Object.assign({}, getParams(), data.params);
                 applyParams(merged);

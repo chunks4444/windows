@@ -4,6 +4,10 @@ require_once __DIR__ . '/../../lib/cors.php';
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') exit;
 require_once __DIR__ . '/../../lib/db.php';
 require_once __DIR__ . '/../../lib/jwt.php';
+require_once __DIR__ . '/../../lib/i18n.php';
+
+// 답변(reply) 언어 — 프런트가 X-Pmok-Lang 헤더로 알려준다. 영문 페이지에서 한국어 답이 나오지 않도록.
+$replyLang = is_en() ? '영어(English)' : '한국어';
 
 $body       = json_decode(file_get_contents('php://input'), true) ?? [];
 $engine     = trim($body['engine']      ?? 'classic');
@@ -46,8 +50,9 @@ try {
 // 엔진 이름 — studio_cards 단일 소스 (메뉴·메인·가이드·AI 공통)
 $engineDesc = [];
 try {
-    $rows = db()->query('SELECT engine_key, title FROM studio_cards')->fetchAll();
-    foreach ($rows as $r) $engineDesc[$r['engine_key']] = $r['title'];
+    // 영문 모드에선 영문 이름을 넘겨야 답변에 한글 이름이 섞여 나오지 않는다
+    $rows = db()->query('SELECT engine_key, title, title_en FROM studio_cards')->fetchAll();
+    foreach ($rows as $r) $engineDesc[$r['engine_key']] = (is_en() && !empty($r['title_en'])) ? $r['title_en'] : $r['title'];
 } catch (Throwable $e) {}
 
 $paramDescDefault = <<<'EOT'
@@ -151,7 +156,8 @@ $systemPrompt = <<<EOT
 1. 변경이 필요한 파라미터만 params에 포함하세요.
 2. 숫자 범위를 반드시 지키세요.
 3. 사용자가 현재와 다른 패턴(엔진)을 요청하거나 추천이 현재 엔진과 다르면 engine 필드에 해당 키를 반환하세요. 같으면 engine 생략.
-4. reply는 한국어 2–3문장으로 추천 이유 또는 변경 내용을 설명하세요.
+4. reply는 반드시 {$replyLang} 2–3문장으로 추천 이유 또는 변경 내용을 설명하세요. 사용자 메시지나 이전 대화의 언어와 상관없이 이 언어를 지키세요. 영어로 답할 때는 한글(엔진 이름 포함)을 섞지 마세요.
+5. params 값(wood, finish 등)은 위 설명의 한국어 값을 그대로 쓰세요 — reply 언어와 무관합니다.
 {$extraStr}
 반드시 apply_design_change 도구를 호출해서 답하세요. 일반 텍스트로 답하지 마세요.
 EOT;
@@ -183,7 +189,7 @@ $payload = [
                 ],
                 'reply' => [
                     'type'        => 'string',
-                    'description' => '한국어 2~3문장으로 추천 이유 또는 변경 내용 설명',
+                    'description' => $replyLang . ' 2~3문장으로 추천 이유 또는 변경 내용 설명',
                 ],
             ],
             'required' => ['params', 'reply'],
