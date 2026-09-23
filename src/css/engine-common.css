@@ -101,7 +101,9 @@ body.pm-generator .pm-navbar .dropdown-menu { background: var(--sidebar-bg) !imp
 .pm-nav-prompt-input::placeholder { color: rgba(var(--bg-rgb), 0.6); }
 .pm-nav-prompt-btn {
     border: none;
-    background: var(--accent);
+    /* 사이트 공통 "다크블랙 버튼"과 같은 색. 엔진 네비바 배경(--sidebar-bg = var(--text))과
+       같은 색이라 원형 윤곽은 보이지 않고 흰 아이콘만 떠 보인다 — 의도한 모양. */
+    background: var(--text);
     color: var(--bg);
     border-radius: 999px;
     width: 26px;
@@ -266,7 +268,7 @@ body.pm-generator .pm-navbar .dropdown-menu { background: var(--sidebar-bg) !imp
     height: 32px;
     padding: 0 12px;
     border-radius: var(--r-sm);
-    border: 1px solid rgba(var(--bg-rgb), 0.15);
+    border: 1px solid rgba(var(--bg-rgb), 0.30);
     background: var(--sidebar-bg);
     color: rgba(var(--bg-rgb), 0.9);
     font-size: var(--fs-11);
@@ -280,7 +282,9 @@ body.pm-generator .pm-navbar .dropdown-menu { background: var(--sidebar-bg) !imp
     letter-spacing: -0.2px;
 }
 
-.hbtn:hover { background: rgba(255, 255, 255, 0.12); border-color: rgba(var(--bg-rgb), 0.25); color: var(--bg); }
+/* 호버 테두리는 기본(0.30)보다 밝아야 한다 — 기본값을 올릴 때 여기도 같이 올리지 않으면
+   마우스를 올렸을 때 오히려 테두리가 흐려진다 */
+.hbtn:hover { background: rgba(255, 255, 255, 0.12); border-color: rgba(var(--bg-rgb), 0.45); color: var(--bg); }
 .hbtn-primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
 .hbtn-primary:hover { background: var(--accent-active); border-color: var(--accent-active); color: var(--bg); }
 #btnOrder { background: var(--danger); border-color: var(--danger); }
@@ -1265,8 +1269,10 @@ input[type="range"]::-webkit-slider-thumb {
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    background: var(--text-muted);
-    border: 2px solid var(--accent);
+    /* --text-muted(#5B6066)와 --text(#26241F) 사이의 중간 회색. 토큰에 없어 리터럴로 둔다.
+       링이 밝고 속이 진해야 테두리가 또렷하게 읽힌다 — 어두운 사이드바 기준 */
+    background: #3F4348;
+    border: 2px solid rgba(var(--bg-rgb), 0.40);
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.35);
     cursor: pointer;
     margin-top: -2px; /* 트랙(3px) 중심에 썸(14px)을 맞춤 — 웹킷은 자동 정렬 안 됨 */
@@ -1282,8 +1288,8 @@ input[type="range"]::-moz-range-thumb {
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    background: var(--text-muted);
-    border: 2px solid var(--accent);
+    background: #3F4348;   /* webkit 썸과 같은 값 — 한쪽만 바꾸면 브라우저마다 색이 달라진다 */
+    border: 2px solid rgba(var(--bg-rgb), 0.40);
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.35);
     cursor: pointer;
 }
@@ -1533,6 +1539,58 @@ input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
 }
 
 .color-preview-btn:hover { background: rgba(255, 255, 255, 0.12); border-color: rgba(var(--bg-rgb), 0.3); }
+
+.color-code-box {
+    background: var(--sidebar-bg);
+    border-color: rgba(var(--bg-rgb), 0.15);
+    color: rgba(var(--bg-rgb), 0.9);
+}
+
+/* 색상 네 줄(울거미·살·문틀·면)의 칩을 같은 모양으로 맞춘다.
+   위 두 줄은 팔레트 팝업을 여는 <button> + 색상명 <span>,
+   아래 두 줄은 <input type="color"> + color-hex-input.js가 붙이는 헥사 입력칸이라 구조가 다르다.
+
+   너비는 칩에 고정값을 주는 대신 "텍스트 칸"만 같은 폭으로 둔다 —
+   네 줄 모두 앞에 14px 색상칩 + gap 5px + 같은 padding/border를 쓰므로
+   텍스트 칸이 같으면 칩 전체 너비가 저절로 일치한다. */
+body.pm-generator .color-preview-btn > span:last-child,
+body.pm-generator .color-code-box .pmok-hex-input {
+    width: 58px;        /* "#28241e" 7글자가 들어가는 폭 */
+    flex: none;
+    text-align: right;
+}
+
+/* 헥사 입력칸은 이미 테두리가 있는 칩 안에 들어가므로, 자기 테두리·배경을 지워 칩에 녹인다.
+   common.css의 밝은 기본형을 그대로 두면 테두리가 겹쳐 이중 박스가 된다.
+   engine-common.css가 common.css보다 먼저 로드돼 같은 특정도로는 지므로,
+   body.pm-generator를 붙여 순서와 무관하게 이기도록 특정도를 올린다. */
+body.pm-generator .color-code-box .pmok-hex-input {
+    margin-left: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    outline: none;
+    /* 위 두 줄의 색상명 텍스트와 같은 서체·굵기·색으로 */
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    color: inherit;
+}
+body.pm-generator .color-code-box .pmok-hex-input::placeholder { color: rgba(var(--bg-rgb), 0.35); }
+
+/* 문틀·면의 <input type="color">를 위 두 줄의 .color-preview-dot과 같은 칩으로 보이게 한다.
+   (지름 14px / radius 3px / 1px 테두리 — .color-preview-dot과 값이 같아야 한다) */
+.color-code-swatch {
+    width: 14px;
+    height: 14px;
+    padding: 0;
+    flex-shrink: 0;
+    cursor: pointer;
+    border: 1px solid rgba(var(--text-rgb), 0.12);
+    border-radius: 3px;
+}
+.color-code-swatch::-webkit-color-swatch { border: none; border-radius: 2px; }
+.color-code-swatch::-moz-color-swatch    { border: none; border-radius: 2px; }
 
 .color-preview-dot {
     width: 14px;

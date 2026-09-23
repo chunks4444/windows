@@ -13,7 +13,7 @@
                 badge = document.createElement('span');
                 badge.id = 'lockBanner';
                 badge.className = 'lock-banner';
-                badge.innerHTML = '<i class="bi bi-lock-fill"></i> 견적요청 중 · 편집 불가';
+                badge.innerHTML = `<i class="bi bi-lock-fill"></i> ${_t('견적요청 중 · 편집 불가')}`;
                 group.insertBefore(badge, group.firstChild);
             }
         } else if (badge) {
@@ -84,7 +84,7 @@
 
         const btn = document.createElement('button');
         btn.className = 'rp-remove';
-        btn.title = '제거';
+        btn.title = _t('제거');
         btn.textContent = '✕';
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -186,7 +186,7 @@
             });
             if (res.status === 401) return 'auth';
             const data = await res.json();
-            if (data.error) { console.warn('배경 업로드 실패:', data.error); return null; }
+            if (data.error) { console.warn(_t('배경 업로드 실패:'), data.error); return null; }
             return { id: data.id, url: data.url };
         } catch { return null; }
     }
@@ -202,7 +202,7 @@
     aiFileUploader.addEventListener('change', function(e) {
         const files = Array.from(e.target.files);
         files.forEach(file => {
-            if (!['image/jpeg', 'image/png'].includes(file.type)) { alert('PNG 또는 JPG 파일만 업로드할 수 있습니다.'); return; }
+            if (!['image/jpeg', 'image/png'].includes(file.type)) { alert(_t('PNG 또는 JPG 파일만 업로드할 수 있습니다.')); return; }
             _uploadPending++;
             _setThumbBtnLoading(true);
             const reader = new FileReader();
@@ -224,7 +224,7 @@
                     if (result === 'auth') {
                         if (!_wpAuthWarned) {
                             _wpAuthWarned = true;
-                            pmAlert('배경 이미지는 로그인해야 서버에 저장됩니다. 지금은 화면에서만 보이고, 로그인 후 다시 저장하면 함께 저장됩니다.', { type: 'danger' });
+                            pmAlert(_t('배경 이미지는 로그인해야 서버에 저장됩니다. 지금은 화면에서만 보이고, 로그인 후 다시 저장하면 함께 저장됩니다.'), { type: 'danger' });
                         }
                     } else if (result) {
                         const thumb = thumbImages.find(t => t.id === id);
@@ -334,7 +334,7 @@
         }
 
         function getCurrentHex() {
-            return inp ? inp.value : '#c8102e';
+            return inp ? inp.value : '#28241e';
         }
 
         function updateClearBtn(hasColors) {
@@ -476,13 +476,13 @@
     }
 
     function pmAlert(msg, { sub = '', type = 'info' } = {}) {
-        _pmShow(msg, sub, type, `<button class="pm-btn-ok" id="pmOk">확인</button>`);
+        _pmShow(msg, sub, type, `<button class="pm-btn-ok" id="pmOk">${_t('확인')}</button>`);
         document.getElementById('pmOk').onclick = _pmHide;
     }
 
-    function pmConfirm(msg, onConfirm, { sub = '', type = 'danger', confirmText = '삭제' } = {}) {
+    function pmConfirm(msg, onConfirm, { sub = '', type = 'danger', confirmText = _t('삭제') } = {}) {
         _pmShow(msg, sub, type, `
-            <button class="pm-btn-cancel" id="pmCancel">취소</button>
+            <button class="pm-btn-cancel" id="pmCancel">${_t('취소')}</button>
             <button class="pm-btn-${type}" id="pmConfirmBtn">${confirmText}</button>`);
         document.getElementById('pmCancel').onclick = _pmHide;
         document.getElementById('pmConfirmBtn').onclick = () => { _pmHide(); onConfirm(); };
@@ -513,7 +513,7 @@
         const { engine, getSpec, getDrawingId, getTitle, getThumbnail, getVersionLabel, onLocked } = opts;
         // 저장 안 된 도면으로 주문하면 drawing_id 없이 접수돼 도면관리에서 잠금/연결이 전혀 안 됨 — 먼저 저장하도록 안내
         if (!getDrawingId()) {
-            pmAlert('먼저 도면을 저장해주세요.', { sub: '저장 후 주문하셔야 도면관리에서 이 주문과 연결됩니다.', type: 'danger' });
+            pmAlert(_t('먼저 도면을 저장해주세요.'), { sub: _t('저장 후 주문하셔야 도면관리에서 이 주문과 연결됩니다.'), type: 'danger' });
             return;
         }
         const headers = { Authorization: 'Bearer ' + token };
@@ -526,9 +526,9 @@
 
             if (!user.name || !user.phone) {
                 pmConfirm(
-                    '견적요청하려면 프로필에 이름과 연락처를 먼저 입력해주세요.',
+                    _t('견적요청하려면 프로필에 이름과 연락처를 먼저 입력해주세요.'),
                     () => { location.href = '/mypage/profile'; },
-                    { sub: '프로필 페이지에서 입력 후 다시 시도해주세요.', type: 'ok', confirmText: '프로필로 이동' }
+                    { sub: _t('프로필 페이지에서 입력 후 다시 시도해주세요.'), type: 'ok', confirmText: _t('프로필로 이동') }
                 );
                 return;
             }
@@ -543,7 +543,7 @@
             } else {
                 companyRow.style.display = 'none';
             }
-            document.getElementById('orderDrawingTitle').textContent   = getTitle() || '(제목 없음)';
+            document.getElementById('orderDrawingTitle').textContent   = getTitle() || _t('(제목 없음)');
             document.getElementById('orderDrawingVersion').textContent = (getVersionLabel && getVersionLabel()) || '—';
 
             const dueDateEl = document.getElementById('orderDueDate');
@@ -590,9 +590,9 @@
                 const shipPhone = document.getElementById('orderShipPhone').value.trim();
                 const memo      = document.getElementById('orderMemo').value.trim();
 
-                if (!dueDate)        { pmAlert('납기 희망일을 선택해주세요.',     { type: 'danger' }); return; }
-                if (!shipAddr)       { pmAlert('배송지 주소를 입력해주세요.',     { type: 'danger' }); return; }
-                if (!shipPhone)      { pmAlert('배송지 연락처를 입력해주세요.',   { type: 'danger' }); return; }
+                if (!dueDate)        { pmAlert(_t('납기 희망일을 선택해주세요.'),     { type: 'danger' }); return; }
+                if (!shipAddr)       { pmAlert(_t('배송지 주소를 입력해주세요.'),     { type: 'danger' }); return; }
+                if (!shipPhone)      { pmAlert(_t('배송지 연락처를 입력해주세요.'),   { type: 'danger' }); return; }
 
                 fetch('/src/api/orders/create.php', {
                     method: 'POST',
@@ -617,10 +617,10 @@
                     if (data.error) { pmAlert(data.error, { type: 'danger' }); return; }
                     _orderHide();
                     if (getDrawingId()) onLocked && onLocked();
-                    pmAlert('견적요청이 접수되었습니다.', { sub: `주문번호 #${data.order_id} · 담당자가 확인 후 연락드립니다.` });
-                }).catch(() => pmAlert('견적요청 접수에 실패했습니다.', { type: 'danger' }));
+                    pmAlert(_t('견적요청이 접수되었습니다.'), { sub: _t('주문번호 #%s · 담당자가 확인 후 연락드립니다.', data.order_id) });
+                }).catch(() => pmAlert(_t('견적요청 접수에 실패했습니다.'), { type: 'danger' }));
             };
-        }).catch(() => pmAlert('프로필 정보를 불러오지 못했습니다.', { type: 'danger' }));
+        }).catch(() => pmAlert(_t('프로필 정보를 불러오지 못했습니다.'), { type: 'danger' }));
     }
 
     document.getElementById('orderCancelBtn')?.addEventListener('click', _orderHide);
@@ -635,7 +635,7 @@
         savedRenders.forEach((r) => {
             const item = document.createElement('div');
             item.className = 'render-saved-item';
-            item.innerHTML = `<img src="${r.src}"><span class="render-saved-del" title="삭제"><i class="bi bi-x"></i></span>`;
+            item.innerHTML = `<img src="${r.src}"><span class="render-saved-del" title="${_t('삭제')}"><i class="bi bi-x"></i></span>`;
             item.querySelector('img').addEventListener('click', () => {
                 showRenderResult(r.src);
             });
@@ -728,7 +728,7 @@
     }
 
     function getExportFilename(ext) {
-        const name = (document.getElementById('drawingName')?.value || '').trim() || '창호도면';
+        const name = (document.getElementById('drawingName')?.value || '').trim() || _t('창호도면');
         const ver  = (document.getElementById('verLabel')?.textContent || '').trim();
         const suffix = ver && ver !== '—' ? `_${ver}` : '';
         const safe = (name + suffix).replace(/[\\/:*?"<>|]/g, '_');
@@ -1007,9 +1007,9 @@
         }
 
         // 헤더: 도면명 / 출력일 (우측, 로고와 세로 중심 정렬)
-        const drawingName = (document.getElementById('drawingName')?.value || '').trim() || '창호도면';
+        const drawingName = (document.getElementById('drawingName')?.value || '').trim() || _t('창호도면');
         const dateStr = new Date().toISOString().slice(0, 10);
-        const headerLines = [`도면명: ${drawingName}`, `출력일: ${dateStr}`];
+        const headerLines = [_t('도면명: %s', drawingName), _t('출력일: %s', dateStr)];
         ctx.textAlign = 'right';
         ctx.textBaseline = 'middle';
         ctx.fillStyle = '#23262A';
@@ -1661,7 +1661,7 @@ function renderSvgInsertPanel() {
         groupInfo.style.cssText = 'font-size:11px;color:var(--text-3);padding:2px 0 4px;';
         panel.insertBefore(groupInfo, panel.firstChild);
     }
-    groupInfo.textContent = count > 1 ? `${count}개 선택됨 (Shift+클릭으로 추가/해제)` : '';
+    groupInfo.textContent = count > 1 ? _t('%s개 선택됨 (Shift+클릭으로 추가/해제)', count) : '';
     groupInfo.style.display = count > 1 ? '' : 'none';
 }
 
@@ -1868,11 +1868,11 @@ function drawSvgInserts() {
         const modal = document.getElementById('svgPickerModal');
         const grid  = document.getElementById('svgPickerGrid');
         if (!modal || !grid) return;
-        grid.innerHTML = '<div style="grid-column:1/-1;font-size:12px;color:var(--text-3);">불러오는 중…</div>';
+        grid.innerHTML = `<div style="grid-column:1/-1;font-size:12px;color:var(--text-3);">${_t('불러오는 중…')}</div>`;
         modal.style.display = 'flex';
         fetch('/src/api/svg_motifs.php').then(r => r.json()).then(data => {
             const motifs = data.motifs || [];
-            if (!motifs.length) { grid.innerHTML = '<div style="grid-column:1/-1;font-size:12px;color:var(--text-3);">등록된 문양이 없습니다.</div>'; return; }
+            if (!motifs.length) { grid.innerHTML = `<div style="grid-column:1/-1;font-size:12px;color:var(--text-3);">${_t('등록된 문양이 없습니다.')}</div>`; return; }
             grid.innerHTML = motifs.map(m => `
                 <div class="svg-picker-item" data-url="${m.svg_url}" title="${m.name}">
                     <img src="${m.svg_url}" alt="${m.name}">
@@ -1887,7 +1887,7 @@ function drawSvgInserts() {
                     img.src = el.dataset.url;
                 });
             });
-        }).catch(() => { grid.innerHTML = '<div style="grid-column:1/-1;font-size:12px;color:var(--text-3);">불러오기 실패</div>'; });
+        }).catch(() => { grid.innerHTML = `<div style="grid-column:1/-1;font-size:12px;color:var(--text-3);">${_t('불러오기 실패')}</div>`; });
     }
 
     function closeLibraryPicker() {
@@ -1899,7 +1899,7 @@ function drawSvgInserts() {
         const file = input.files[0];
         if (!file) return;
         if (!/\.svg$/i.test(file.name) && file.type !== 'image/svg+xml') {
-            alert('SVG 파일만 업로드할 수 있습니다.');
+            alert(_t('SVG 파일만 업로드할 수 있습니다.'));
             input.value = '';
             return;
         }
@@ -1915,7 +1915,7 @@ function drawSvgInserts() {
                 });
                 const data = await res.json();
                 input.value = '';
-                if (!data.ok) { alert(data.error || '업로드 실패'); return; }
+                if (!data.ok) { alert(data.error || _t('업로드 실패')); return; }
                 const img = new Image();
                 img.onload = () => addSvgInsert(data.url, img.naturalWidth, img.naturalHeight);
                 img.onerror = () => addSvgInsert(data.url, 100, 100);
@@ -1975,9 +1975,9 @@ function drawSvgInserts() {
         if (!breakdown) {
             [...Object.keys(wonFieldKeys), 'spCraftTime', 'spFinishCost'].forEach(id => set(id, '–'));
         } else {
-            for (const [id, key] of Object.entries(wonFieldKeys)) set(id, won(breakdown[key] ?? 0) + '원');
+            for (const [id, key] of Object.entries(wonFieldKeys)) set(id, won(breakdown[key] ?? 0) + _t('원'));
             set('spCraftTime', breakdown.craftTime ?? '');
-            set('spFinishCost', breakdown.finish > 0 ? won(breakdown.finish) + '원' : '–');
+            set('spFinishCost', breakdown.finish > 0 ? won(breakdown.finish) + _t('원') : '–');
         }
     }
 
@@ -2004,7 +2004,7 @@ function drawSvgInserts() {
         const replyEl = document.getElementById('aiChatReply');
         const sendBtn = document.getElementById('aiChatSend');
         if (sendBtn) sendBtn.disabled = true;
-        if (replyEl) { replyEl.textContent = '생각하는 중…'; replyEl.className = 'ai-chat-reply ai-chat-thinking'; }
+        if (replyEl) { replyEl.textContent = _t('생각하는 중…'); replyEl.className = 'ai-chat-reply ai-chat-thinking'; }
 
         function notifyReply(text, isError) {
             if (replyEl) { replyEl.textContent = text; replyEl.className = 'ai-chat-reply ' + (isError ? 'ai-chat-error' : 'ai-chat-ok'); }
@@ -2019,18 +2019,18 @@ function drawSvgInserts() {
             });
             const data = await res.json();
             if (data.error) {
-                notifyReply('오류: ' + data.error, true);
+                notifyReply(_t('오류: ') + data.error, true);
             } else if (data.engine && data.engine !== engine) {
                 sessionStorage.setItem('pmok_ai_params', JSON.stringify(Object.assign({}, getParams(), data.params)));
-                notifyReply(data.reply || (data.engine + ' 엔진으로 이동합니다…'), false);
+                notifyReply(data.reply || (data.engine + _t(' 엔진으로 이동합니다…')), false);
                 setTimeout(() => { location.href = '/src/engine/' + data.engine + '/' + data.engine + '.php'; }, 1200);
             } else {
                 const merged = Object.assign({}, getParams(), data.params);
                 applyParams(merged);
-                notifyReply(data.reply || '적용됐습니다.', false);
+                notifyReply(data.reply || _t('적용됐습니다.'), false);
             }
         } catch (e) {
-            notifyReply('네트워크 오류가 발생했습니다.', true);
+            notifyReply(_t('네트워크 오류가 발생했습니다.'), true);
         }
         if (sendBtn) sendBtn.disabled = false;
         if (_onDone) _onDone();
@@ -2072,13 +2072,13 @@ function drawSvgInserts() {
                 const msg = navInput.value.trim();
                 if (!msg) return;
                 navBtn.disabled = true;
-                navInput.placeholder = '생각하는 중…';
+                navInput.placeholder = _t('생각하는 중…');
                 if (navReply) navReply.style.display = 'none';
                 pmokAiChat({ ...opts, message: msg,
                     _onReply: (text, isError) => showNavReply(text, isError),
                     _onDone: () => {
                         navBtn.disabled = false;
-                        navInput.placeholder = '예: 완자살 미서기문 3짝, 가로 1800 세로 1200으로 바꿔줘';
+                        navInput.placeholder = _t('예: 완자살 미서기문 3짝, 가로 1800 세로 1200으로 바꿔줘');
                     }
                 });
             }
@@ -2102,7 +2102,7 @@ function drawSvgInserts() {
                     const merged = Object.assign({}, opts.getParams(), aiParams);
                     opts.applyParams(merged);
                     const replyEl = document.getElementById('aiChatReply');
-                    if (replyEl) { replyEl.textContent = 'AI 설계 조건이 적용됐습니다.'; replyEl.className = 'ai-chat-reply ai-chat-ok'; }
+                    if (replyEl) { replyEl.textContent = _t('AI 설계 조건이 적용됐습니다.'); replyEl.className = 'ai-chat-reply ai-chat-ok'; }
                     // 홈에서 입력했던 프롬프트를 엔진 프롬프트 창에 그대로 보여줌
                     if (navInput && storedText) navInput.value = storedText;
                     if (storedReply) showNavReply(storedReply, false);

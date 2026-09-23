@@ -31,6 +31,14 @@ window._t = function (s) {
     for (var i = 1; i < arguments.length; i++) out = out.replace(/%[sd]/, arguments[i]);
     return out;
 };
+// PHP의 lang_href()와 같은 일을 JS에서 한다. JS가 만들어 붙이는 내부 링크(엔진 에디터 주소 등)에
+// en 모드에서 /en/ 접두사를 붙여, 영문 페이지에서 넘어간 화면이 한글로 떨어지지 않게 한다.
+window._lh = function (path) {
+    if (window.PMOK_LANG !== 'en') return path;
+    if (typeof path !== 'string' || path.charAt(0) !== '/') return path;
+    if (path === '/en' || path.indexOf('/en/') === 0) return path;
+    return '/en' + path;
+};
 </script>
 <?php css_tag('/src/css/tokens.css'); ?>
 <?php css_tag('/src/css/common.css'); ?>
@@ -154,7 +162,7 @@ $navStudioIcons = [
                     <li><a class="dropdown-item <?= ($navStudioActive[$navKey] ?? false) ? 'active' : '' ?> d-flex align-items-center gap-2"
                            href="<?= lang_href("/src/engine/" . $navKey . "/" . $navKey . ".php") ?>">
                         <?= $navStudioIcons[$navKey] ?? '' ?>
-                        <?= htmlspecialchars($navItem['title']) ?>
+                        <?= htmlspecialchars(term($navItem['title'])) ?>
                     </a></li>
                     <?php endforeach; ?>
                     <li><hr class="dropdown-divider"></li>
@@ -264,7 +272,7 @@ $navStudioIcons = [
                 <a class="pm-dw-link <?= ($navStudioActive[$navKey] ?? false) ? 'active' : '' ?>"
                    href="<?= lang_href("/src/engine/" . $navKey . "/" . $navKey . ".php") ?>">
                     <?= $navStudioIcons[$navKey] ?? '' ?>
-                    <span><?= htmlspecialchars($navItem['title']) ?></span>
+                    <span><?= htmlspecialchars(term($navItem['title'])) ?></span>
                 </a>
                 <?php endforeach; ?>
                 <a class="pm-dw-link" href="<?= lang_href('/mypage/dashboard') ?>">

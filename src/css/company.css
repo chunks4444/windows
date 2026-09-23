@@ -97,6 +97,23 @@ body {
     word-break: keep-all;
 }
 
+/* ── 빛과 살 — 두 단 산문 ──────────────────────── */
+.ab-prose {
+    display: grid;
+    gap: clamp(20px, 3vw, 44px);
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    margin-top: 34px;
+}
+.ab-prose p {
+    margin: 0 0 16px;
+    font-size: var(--fs-16);
+    line-height: 1.9;
+    color: var(--text);
+    word-break: keep-all;
+}
+.ab-prose p:last-child { margin-bottom: 0; }
+.ab-prose b { color: var(--text); font-weight: 700; }
+
 /* ── PHILOSOPHY ──────────────────────────────── */
 .ab-phil-cols {
     display: grid;

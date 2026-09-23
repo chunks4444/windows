@@ -44,12 +44,25 @@
         hexInput.spellcheck = false;
         hexInput.value = colorInput.value;
         hexInput.placeholder = '#000000';
-        hexInput.style.cssText = 'width:70px;font-size:11px;font-family:monospace;'
-            + 'border:1px solid var(--border, #ccc);border-radius:4px;padding:2px 6px;'
-            + 'margin-left:4px;background:var(--bg, #fff);color:var(--text, #222);';
+        // 모양은 전부 .pmok-hex-input CSS에 맡기고 여기선 인라인 스타일을 주지 않는다.
+        // 이 입력창은 밝은 어드민 페이지와 어두운 엔진 사이드바 양쪽에 붙는데,
+        // 인라인 스타일은 CSS로 덮을 수 없어서 한쪽에 맞추면 다른 쪽이 반드시 깨진다.
 
         colorInput.insertAdjacentElement('afterend', hexInput);
         colorInput._pmokHexInput = hexInput;
+
+        // 엔진 사이드바의 색상 칩(.color-code-box)에서는 칩 어디를 눌러도 색상 선택창이 열리게 한다.
+        // 위 두 줄(울거미·살)은 칩 전체가 <button>이라 아무 데나 눌러도 팔레트가 열리는데,
+        // 여기는 14px짜리 색상칩을 정확히 눌러야만 열려서 조작감이 달랐다.
+        // 단, 헥사 입력칸을 누른 경우는 제외한다 — 그건 직접 타이핑하라고 둔 자리다.
+        const chip = colorInput.closest('.color-code-box');
+        if (chip) {
+            chip.style.cursor = 'pointer';
+            chip.addEventListener('click', e => {
+                if (e.target === hexInput || e.target === colorInput) return;
+                colorInput.click();
+            });
+        }
 
         colorInput.addEventListener('input', () => { hexInput.value = colorInput.value; });
 

@@ -60,7 +60,7 @@ try {
     )->fetchAll() : [];
     foreach ($collectionCards as &$cc) {
         $engineKey  = strtolower($cc['engine'] ?? '');
-        $editorUrl  = $collectionEditorMap[$engineKey] ?? null;
+        $editorUrl  = isset($collectionEditorMap[$engineKey]) ? lang_href($collectionEditorMap[$engineKey]) : null;
         $cc['is_editor_link'] = (bool)($editorUrl && $cc['drawing_id']);
         $cc['href'] = $cc['is_editor_link']
             ? $editorUrl . '?drawing_id=' . (int)$cc['drawing_id']
@@ -289,23 +289,6 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
         <!-- home-wrapper -->
 
         <div class="hc">
-        <section class="hc-band">
-          <div class="container">
-            <p class="hc-label"><?= htmlspecialchars(t('home_light_label')) ?></p>
-            <h2 class="hc-title-compact"><?= t('home_light_title') ?></h2>
-            <div class="hc-prose">
-              <div>
-                <p><?= htmlspecialchars(t('home_light_p1a')) ?></p>
-                <p><?= t('home_light_p1b') ?></p>
-              </div>
-              <div>
-                <p><?= htmlspecialchars(t('home_light_p2a')) ?></p>
-                <p><?= htmlspecialchars(t('home_light_p2b')) ?></p>
-              </div>
-            </div>
-          </div>
-        </section>
-
         <section class="hc-band">
           <div class="container">
             <p class="hc-label"><?= htmlspecialchars(t('home_usage2_label')) ?></p>
@@ -542,13 +525,14 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
     <script src="/src/js/collection-share.js?v=<?= md5_file(__DIR__ . '/src/js/collection-share.js') ?>"></script>
     <script>
     (function () {
+        // en 모드에서는 /en/ 접두사가 붙은 주소로 이동해야 엔진 페이지도 영문으로 열린다
         const ENGINE_URLS = {
-            classic:  '/src/engine/classic/classic.php',
-            square:   '/src/engine/square/square.php',
-            cross:    '/src/engine/cross/cross.php',
-            triangle: '/src/engine/triangle/triangle.php',
-            diamond:  '/src/engine/diamond/diamond.php',
-            hexagon:  '/src/engine/hexagon/hexagon.php',
+            classic:  '<?= lang_href('/src/engine/classic/classic.php') ?>',
+            square:   '<?= lang_href('/src/engine/square/square.php') ?>',
+            cross:    '<?= lang_href('/src/engine/cross/cross.php') ?>',
+            triangle: '<?= lang_href('/src/engine/triangle/triangle.php') ?>',
+            diamond:  '<?= lang_href('/src/engine/diamond/diamond.php') ?>',
+            hexagon:  '<?= lang_href('/src/engine/hexagon/hexagon.php') ?>',
         };
         const DEFAULT_ENGINE = 'classic';
         // JS에서 쓰는 문구도 PHP 사전에서 주입 (en 모드에서 버튼·상태 메시지가 한글로 남지 않도록)

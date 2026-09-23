@@ -60,7 +60,7 @@ function collection_card_html(array $p, array $navStudioIcons, array $engineEdit
     $displayName = library_pattern_display_name($p['slug'], $p['name_ko'] ?? '');
     $keywords    = $p['keywords'] ? explode(',', $p['keywords']) : [];
     $engineKey   = strtolower($p['engine'] ?? '');
-    $editorUrl   = $engineEditorMap[$engineKey] ?? null;
+    $editorUrl   = isset($engineEditorMap[$engineKey]) ? lang_href($engineEditorMap[$engineKey]) : null;
     $loadAttr    = $eager ? '' : ' loading="lazy"';
 
     $imgHtml = $p['image_path']

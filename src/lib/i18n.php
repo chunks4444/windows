@@ -30,6 +30,15 @@ function t(string $key): string {
     return $key;
 }
 
+// 엔진 페이지 UI 문구. t()와 달리 "한글 원문"을 키로 쓴다 — 이유는 src/lib/i18n/engine.php 머리말 참고.
+// en 모드가 아니거나 사전에 없으면 한글 원문을 그대로 돌려주므로, 빠진 문구가 있어도 화면은 깨지지 않는다.
+function te(string $korean): string {
+    static $dict = null;
+    if (!is_en()) return $korean;
+    if ($dict === null) $dict = require __DIR__ . '/i18n/engine.php';
+    return $dict[$korean] ?? $korean;
+}
+
 // 창호 전문 용어. 단순 번역이 아니라 "로마자 표기 (영문 설명)" 형태의 용어집 —
 // i18n_terms 테이블에서 관리(어드민 src/admin/i18n_terms.php). en 모드가 아니거나
 // 용어집에 없으면 원문(한글) 그대로 반환. 요청당 한 번만 테이블 전체를 읽어 캐시한다.
@@ -45,6 +54,14 @@ function term(string $korean): string {
         }
     }
     return $terms[$korean] ?? $korean;
+}
+
+// term()의 짧은 형태 — 뒤에 붙는 "(영문 설명)"을 떼고 로마자 표기만 돌려준다.
+// 용어집 형식("Beomsal-jangji (Wide-bar Lattice Door)")은 본문에서 처음 나올 때 설명하려고 만든 것이라
+// 엔진 사이드바의 좁은 select에 넣으면 목록이 화면을 넘칠 만큼 길어진다.
+// 선택지가 전부 살 이름인 자리에서는 로마자 표기만으로 충분하다.
+function term_short(string $korean): string {
+    return preg_replace('/\s*\([^)]*\)\s*$/u', '', term($korean));
 }
 
 // 내부 링크에 현재 언어 접두사를 붙인다. en 모드에서 /collection/ 같은 링크를 그대로 두면

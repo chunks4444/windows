@@ -97,7 +97,7 @@ function openDrawing(type, title) {
     if (!cfg) return;
     const form = document.createElement('form');
     form.method = 'POST';
-    form.action = cfg.editorUrl;
+    form.action = _lh(cfg.editorUrl);
     const input = document.createElement('input');
     input.type  = 'hidden';
     input.name  = 'drawing';
@@ -311,7 +311,7 @@ let _shareCtx = null; // { kind: 'drawing'|'render', id, type, title, isShared, 
 function _shareUrl() {
     if (_shareCtx.kind === 'render') return _shareCtx.url;
     const cfg = TYPE_CONFIG[_shareCtx.type] || {};
-    return location.origin + (cfg.editorUrl || '') + '?drawing_id=' + _shareCtx.id;
+    return location.origin + _lh(cfg.editorUrl || '') + '?drawing_id=' + _shareCtx.id;
 }
 
 function _updateShareModalUI() {
@@ -669,7 +669,7 @@ function openBoardItem(e, drawingId, engine) {
     e.stopPropagation();
     const cfg = TYPE_CONFIG[engine];
     if (!cfg || !drawingId) return;
-    location.href = `${cfg.editorUrl}?drawing_id=${drawingId}`;
+    location.href = `${_lh(cfg.editorUrl)}?drawing_id=${drawingId}`;
 }
 
 async function renameBoard(e, boardId, currentName) {

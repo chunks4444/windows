@@ -55,14 +55,6 @@ return [
     'home_collection_prev'     => 'View previous pattern',
     'home_collection_next'     => 'View next pattern',
 
-    // Light & Lattice
-    'home_light_label'         => 'Light & Lattice',
-    'home_light_title'         => "Hanok changho doesn't block light —<br>it divides it as it enters.",
-    'home_light_p1a'           => "Glass lets light in whole; a wall blocks it whole. The lattice sits between the two — it blocks while letting in, and filters while it lets through.",
-    'home_light_p1b'           => 'Tight spacing breaks the light into fine pieces that fill a room evenly. Wide spacing lets it in as solid shapes that fall as sharp shadows on the floor. <b>The same pattern looks different depending on which way the changho faces and what time it is.</b>',
-    'home_light_p2a'           => "That's why old carpenters wove a different lattice for every room. The inner room and the great hall could never be the same; a south-facing changho and a north-facing one could never be the same.",
-    'home_light_p2b'           => "In the studio, adjusting the lattice spacing may look like picking a pattern — but it's really deciding how the light will enter that room.",
-
     // How the lattice is used
     'home_usage2_label'        => 'How the Lattice Is Used',
     'home_usage2_title'        => 'Traditional Korean changho and wood changho,<br>woven with the same lattice technique.',
@@ -148,6 +140,14 @@ return [
     'company_phil_item2_desc'  => 'Move the dimensions or slat spacing and the drawing updates with you. <br>That same drawing becomes the production drawing, exactly as is.',
     'company_phil_item3_title' => 'Made to Order',
     'company_phil_item3_desc'  => "Your drawing goes straight to our workshop in Yangpyeong. <br>No two spaces are alike, so no two changho come out the same — each one is woven to fit its own dimensions and light.",
+
+    // Light & Lattice — prose section directly under Philosophy
+    'company_light_label'      => 'Light & Lattice',
+    'company_light_title'      => "Hanok changho doesn't block light —<br>it divides it as it enters.",
+    'company_light_p1a'        => "Glass lets light in whole; a wall blocks it whole. The lattice sits between the two — it blocks while letting in, and filters while it lets through.",
+    'company_light_p1b'        => 'Tight spacing breaks the light into fine pieces that fill a room evenly. Wide spacing lets it in as solid shapes that fall as sharp shadows on the floor. <b>The same pattern looks different depending on which way the changho faces and what time it is.</b>',
+    'company_light_p2a'        => "That's why old carpenters wove a different lattice for every room. The inner room and the great hall could never be the same; a south-facing changho and a north-facing one could never be the same.",
+    'company_light_p2b'        => "In the studio, adjusting the lattice spacing may look like picking a pattern — but it's really deciding how the light will enter that room.",
 
     'company_studio_label'     => 'Studio',
     'company_studio_title'     => 'Try designing it yourself.',

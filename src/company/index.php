@@ -93,6 +93,24 @@ function sc_desc(array $cardsByKey, string $key, string $fallbackKey): string {
     </div>
 </div>
 
+<!-- LIGHT & LATTICE — Philosophy 산문의 연장. 홈에서 옮겨온 섹션 -->
+<div class="container">
+    <section class="ab-section" id="light">
+        <p class="ab-section-label"><?= htmlspecialchars(t('company_light_label')) ?></p>
+        <h2 class="ab-section-title"><?= t('company_light_title') ?></h2>
+        <div class="ab-prose">
+            <div>
+                <p><?= htmlspecialchars(t('company_light_p1a')) ?></p>
+                <p><?= t('company_light_p1b') ?></p>
+            </div>
+            <div>
+                <p><?= htmlspecialchars(t('company_light_p2a')) ?></p>
+                <p><?= htmlspecialchars(t('company_light_p2b')) ?></p>
+            </div>
+        </div>
+    </section>
+</div>
+
 <!-- Hero Carousel (Philosophy 아래) -->
 <?php if (!empty($heroSlides)): ?>
 <div class="hero-carousel-outer">

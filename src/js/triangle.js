@@ -10,7 +10,7 @@
     const colorGroups = window.__pmokColorGroups || [];
 
     let selectedFrameColor  = '#28241e';
-    let selectedMuntolColor = '#4a4a4a';
+    let selectedMuntolColor = '#28241e';
     let showMuntol          = true;
     let selectedSlatColor  = '#28241e';
     let faceColorMap       = null;
@@ -111,12 +111,12 @@
     // ── Rendering ──────────────────────────────
     function startAISynthesis() {
         if (!appBackgroundImage) {
-            pmAlert('먼저 사진을 업로드해주세요.', { type: 'info' });
+            pmAlert(_t('먼저 사진을 업로드해주세요.'), { type: 'info' });
             return;
         }
         const prompt = (document.getElementById('aiPrompt')?.value || '').trim();
         if (!prompt) {
-            pmAlert('렌더링 프롬프트를 입력해주세요.', { type: 'info' });
+            pmAlert(_t('렌더링 프롬프트를 입력해주세요.'), { type: 'info' });
             document.getElementById('aiPrompt')?.focus();
             return;
         }
@@ -167,7 +167,7 @@
 
         const _tok = localStorage.getItem('pmok_auth_token');
         const _renderAbort = new AbortController();
-        const _renderTimer = setTimeout(() => { _renderAbort.abort(); overlay.style.display = 'none'; pmAlert('렌더링 시간이 초과됐습니다. (120초)', { type: 'danger' }); }, 120000);
+        const _renderTimer = setTimeout(() => { _renderAbort.abort(); overlay.style.display = 'none'; pmAlert(_t('렌더링 시간이 초과됐습니다. (120초)'), { type: 'danger' }); }, 120000);
         fetch('api/render.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', ...(_tok ? { 'Authorization': 'Bearer ' + _tok } : {}) },
@@ -178,7 +178,7 @@
         .then(data => {
             overlay.style.display = 'none';
             if (data.error) { pmAlert(data.error, { type: 'danger' }); return; }
-            if (!data.image) { pmAlert('서버 오류', { type: 'danger' }); return; }
+            if (!data.image) { pmAlert(_t('서버 오류'), { type: 'danger' }); return; }
             const img = new Image();
             img.onload = () => {
                 // 서버에서 이미 원본 해상도(logW×logH)로 합성되어 오므로 그대로 사용
@@ -192,7 +192,7 @@
             };
             img.src = data.image;
         })
-        .catch(() => { pmAlert('렌더링 중 오류가 발생했습니다.', { type: 'danger' }); overlay.style.display = 'none'; });
+        .catch(() => { pmAlert(_t('렌더링 중 오류가 발생했습니다.'), { type: 'danger' }); overlay.style.display = 'none'; });
     }
 
     function showRenderResult(src) {
@@ -204,9 +204,9 @@
             pop.innerHTML = `
                 <div class="render-result-inner">
                     <div class="render-result-toolbar">
-                        <span class="render-result-title">Rendering 결과 <span id="rrFilename" class="render-result-filename"></span></span>
+                        <span class="render-result-title">${_t('Rendering 결과')} <span id="rrFilename" class="render-result-filename"></span></span>
                         <div style="display:flex;gap:6px;">
-                            <button class="render-result-apply" id="rrDownload">다운로드</button>
+                            <button class="render-result-apply" id="rrDownload">${_t('다운로드')}</button>
                             <button class="render-result-close" id="rrClose">✕</button>
                         </div>
                     </div>
@@ -518,7 +518,7 @@ async function draw() {
         p.diagList.forEach(({ len, cnt }) => {
             const el = document.createElement('div');
             el.className = 'slat-row';
-            el.innerHTML = `<span class="slat-len">${p.slatW}×${geo.slatT}×${len}mm</span><span class="slat-cnt">${cnt}개</span>`;
+            el.innerHTML = `<span class="slat-len">${p.slatW}×${geo.slatT}×${len}mm</span><span class="slat-cnt">${cnt}${_t('개')}</span>`;
             diagListEl.appendChild(el);
         });
         document.getElementById('spMtVLen').textContent = `${p.mtFace}×${p.mtW}×${p.mtVLen}mm`;
@@ -1066,7 +1066,7 @@ async function draw() {
 
         // 세로/가로부재 업데이트
         const hCntEl = document.getElementById('spHSlatCnt');
-        if (hCntEl) hCntEl.textContent = Math.max(0, adjStraightCnt) + '개';
+        if (hCntEl) hCntEl.textContent = Math.max(0, adjStraightCnt) + _t('개');
 
         adjDiag = adjDiag.filter(item => item.cnt > 0);
 
@@ -1093,7 +1093,7 @@ async function draw() {
         adjDiag.forEach(({ len, cnt }) => {
             const el = document.createElement('div');
             el.className = 'slat-row';
-            el.innerHTML = `<span class="slat-len">${p.slatW}×${geo.slatT}×${len}mm</span><span class="slat-cnt">${cnt}개</span>`;
+            el.innerHTML = `<span class="slat-len">${p.slatW}×${geo.slatT}×${len}mm</span><span class="slat-cnt">${cnt}${_t('개')}</span>`;
             diagListEl.appendChild(el);
         });
     }
@@ -1567,7 +1567,7 @@ async function draw() {
             rCtx.font = '12px -apple-system, sans-serif';
             rCtx.textAlign = 'left';
             rCtx.textBaseline = 'top';
-            rCtx.fillText(`• 문짝: ${Math.round(geo.outerW)} x ${Math.round(geo.outerH)}mm`, R + 16, R + 16);
+            rCtx.fillText(_t('• 문짝: %s x %smm', Math.round(geo.outerW), Math.round(geo.outerH)), R + 16, R + 16);
         }
 
         rCtx.restore();
@@ -1979,7 +1979,7 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
     document.getElementById('btnEditDelete').addEventListener('click', () => setEditMode('delete'));
     document.getElementById('btnEditAdd').addEventListener('click', () => setEditMode('add'));
     document.getElementById('btnEditClear').addEventListener('click', () => {
-        pmConfirm('편집 내용을 모두 초기화하시겠습니까?', () => {
+        pmConfirm(_t('편집 내용을 모두 초기화하시겠습니까?'), () => {
             deletedSegs.clear();
             addedLines  = [];
             addLineStart = null;
@@ -2048,14 +2048,14 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
         if (!btn) return;
         btn.disabled = !drawingId;
         btn.classList.toggle('share-on', !!isShared);
-        btn.title = !drawingId ? '먼저 저장해주세요' : (isShared ? '공유 중' : '공유하기');
+        btn.title = !drawingId ? _t('먼저 저장해주세요') : (isShared ? _t('공유 중') : _t('공유하기'));
         const label = btn.querySelector('span');
-        if (label) label.textContent = isShared ? '공유중' : '공유';
+        if (label) label.textContent = isShared ? _t('공유중') : _t('공유');
 
         const idEl   = document.getElementById('shareDdId');
         const linkEl = document.getElementById('shareDdLink');
         const offBtn = document.getElementById('shareDdOff');
-        if (idEl)   idEl.textContent = drawingId ? ('도면 #' + drawingId) : '도면 #—';
+        if (idEl)   idEl.textContent = drawingId ? (_t('도면 #') + drawingId) : _t('도면 #—');
         if (linkEl) linkEl.value     = drawingId ? shareUrl() : '';
         if (offBtn) offBtn.style.display = isShared ? 'block' : 'none';
     }
@@ -2071,7 +2071,7 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
         updateShareButtonUI();
         if (!isShared) {
             const result = await /** @type {any} */ (window.DrawingSync).setShared(drawingId, true);
-            if (!result.ok) { pmAlert('공유 설정에 실패했습니다.', { type: 'danger' }); dd.classList.remove('open'); return; }
+            if (!result.ok) { pmAlert(_t('공유 설정에 실패했습니다.'), { type: 'danger' }); dd.classList.remove('open'); return; }
             isShared = result.is_shared;
             updateShareButtonUI();
         }
@@ -2080,21 +2080,21 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
     async function turnShareOff() {
         if (!drawingId) return;
         const result = await /** @type {any} */ (window.DrawingSync).setShared(drawingId, false);
-        if (!result.ok) { pmAlert('공유 설정에 실패했습니다.', { type: 'danger' }); return; }
+        if (!result.ok) { pmAlert(_t('공유 설정에 실패했습니다.'), { type: 'danger' }); return; }
         isShared = result.is_shared;
         updateShareButtonUI();
         document.getElementById('shareDropdown')?.classList.remove('open');
-        pmShowSaveToast('공유를 껐습니다.');
+        pmShowSaveToast(_t('공유를 껐습니다.'));
     }
 
     // 클립보드 API는 클릭 직후 곧바로 호출해야 브라우저가 허용하므로, 이 버튼 전용 클릭 핸들러에서 바로 호출한다.
     async function copyShareLink() {
         const url = shareUrl();
         if (navigator.clipboard?.writeText) {
-            try { await navigator.clipboard.writeText(url); pmShowSaveToast('링크가 복사되었습니다.'); return; }
+            try { await navigator.clipboard.writeText(url); pmShowSaveToast(_t('링크가 복사되었습니다.')); return; }
             catch { /* 권한 거부 등 — 아래 prompt로 대체 */ }
         }
-        window.prompt('아래 링크를 복사하세요:', url);
+        window.prompt(_t('아래 링크를 복사하세요:'), url);
     }
 
     function shareToKakao() {
@@ -2105,7 +2105,7 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
         Kakao.Share.sendDefault({
             objectType: 'feed',
             content: {
-                title:       titleMeta?.content || '평목 도면',
+                title:       titleMeta?.content || _t('평목 도면'),
                 description: descMeta?.content  || '',
                 imageUrl:    imgMeta?.content    || '',
                 link: { mobileWebUrl: shareUrl(), webUrl: shareUrl() },
@@ -2118,7 +2118,7 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
     }
 
     function shareToX() {
-        const text = document.getElementById('drawingName').value.trim() || '평목 도면';
+        const text = document.getElementById('drawingName').value.trim() || _t('평목 도면');
         window.open('https://twitter.com/intent/tweet?url=' + encodeURIComponent(shareUrl()) + '&text=' + encodeURIComponent(text), '_blank', 'noopener,width=600,height=500');
     }
 
@@ -2322,7 +2322,7 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
     function renderVerList() {
         const list = document.getElementById('verList');
         if (versions.length === 0) {
-            list.innerHTML = '<div class="ver-empty">저장된 버전이 없습니다</div>';
+            list.innerHTML = `<div class="ver-empty">${_t('저장된 버전이 없습니다')}</div>`;
             return;
         }
         list.innerHTML = '';
@@ -2330,7 +2330,7 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
             const realIdx = versions.length - 1 - i;
             const item = document.createElement('div');
             item.className = 'ver-item' + (realIdx === currentVerIdx ? ' active' : '');
-            item.innerHTML = `<span class="ver-num">v${realIdx + 1}</span><span class="ver-date">${fmtDate(ver.savedAt)}</span><span class="ver-del" title="삭제"><i class="bi bi-x-lg"></i></span>`;
+            item.innerHTML = `<span class="ver-num">v${realIdx + 1}</span><span class="ver-date">${fmtDate(ver.savedAt)}</span><span class="ver-del" title="${_t('삭제')}"><i class="bi bi-x-lg"></i></span>`;
             item.addEventListener('click', () => {
                 currentVerIdx = realIdx;
                 if (ver.params.panX !== undefined) { panX = ver.params.panX; panY = ver.params.panY; scaleFactor = ver.params.scaleFactor; }
@@ -2342,7 +2342,7 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
             });
             item.querySelector('.ver-del').addEventListener('click', (e) => {
                 e.stopPropagation();
-                pmConfirm(`v${realIdx + 1}를 정말 삭제하시겠습니까?`, () => {
+                pmConfirm(_t('v%s를 정말 삭제하시겠습니까?', realIdx + 1), () => {
                     versions.splice(realIdx, 1);
                     localStorage.setItem(VERSIONS_KEY, JSON.stringify(versions));
                     if (currentVerIdx >= versions.length) currentVerIdx = versions.length - 1;
@@ -2368,15 +2368,15 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
                     <p class="mb-0 fw-semibold" id="verDelModalMsg" style="font-size:14px;"></p>
                 </div>
                 <div class="modal-footer justify-content-center border-0 pt-0 pb-4 gap-2">
-                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">취소</button>
-                    <button type="button" class="btn btn-sm btn-danger" id="verDelModalConfirm">삭제</button>
+                    <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">${_t('취소')}</button>
+                    <button type="button" class="btn btn-sm btn-danger" id="verDelModalConfirm">${_t('삭제')}</button>
                 </div>
             </div>
         </div>`;
     document.body.appendChild(_verDelModalEl);
 
     function showVerDelConfirm(label, onConfirm) {
-        document.getElementById('verDelModalMsg').textContent = `${label}를 정말 삭제하시겠습니까?`;
+        document.getElementById('verDelModalMsg').textContent = _t('%s를 정말 삭제하시겠습니까?', label);
         const modal = new bootstrap.Modal(_verDelModalEl);
         document.getElementById('verDelModalConfirm').onclick = () => { modal.hide(); onConfirm(); };
         modal.show();
@@ -2480,7 +2480,7 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
             pmShowSaveToast();
         } else if (result.reason === 'auth') {
             pmHideSaveToast();
-            pmAlert('로그인이 필요합니다. 다시 로그인해 주세요.', { type: 'danger' });
+            pmAlert(_t('로그인이 필요합니다. 다시 로그인해 주세요.'), { type: 'danger' });
         } else if (result.reason !== 'no_token') {
             pmHideSaveToast();
             btn.classList.add('save-err');
@@ -2526,7 +2526,7 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
 
     async function saveVersion() {
         if (isDrawingLocked) {
-            pmAlert('이 도면은 견적요청 중이라 편집할 수 없습니다.', { type: 'danger' });
+            pmAlert(_t('이 도면은 견적요청 중이라 편집할 수 없습니다.'), { type: 'danger' });
             return;
         }
         const badge = document.querySelector('.hdr-title-badge');
@@ -2554,15 +2554,15 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
         }
 
         const saveBtn = document.getElementById('btnSave');
-        saveBtn.classList.add('save-busy'); saveBtn.disabled = true; pmShowSaveToast('저장 중...', true);
+        saveBtn.classList.add('save-busy'); saveBtn.disabled = true; pmShowSaveToast(_t('저장 중...'), true);
         try {
             const drawings = await /** @type {any} */ (window.DrawingSync).list('triangle');
             const dup = drawings.find(d => d.title === title && String(d.id) !== String(drawingId));
             if (dup) {
                 pmConfirm(
-                    `'${title}' 이름의 도면이 이미 있습니다.`,
+                    _t("'%s' 이름의 도면이 이미 있습니다.", title),
                     async () => {
-                        saveBtn.classList.add('save-busy'); saveBtn.disabled = true; pmShowSaveToast('저장 중...', true);
+                        saveBtn.classList.add('save-busy'); saveBtn.disabled = true; pmShowSaveToast(_t('저장 중...'), true);
                         try {
                             const loaded = await /** @type {any} */ (window.DrawingSync).load('triangle', title);
                             const base = loaded?.versions ?? [];
@@ -2578,7 +2578,7 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
                             saveBtn.classList.remove('save-busy'); saveBtn.disabled = false;
                         }
                     },
-                    { sub: '확인하면 기존 도면에 버전이 추가됩니다.', type: 'danger', confirmText: '이어서 저장' }
+                    { sub: _t('확인하면 기존 도면에 버전이 추가됩니다.'), type: 'danger', confirmText: _t('이어서 저장') }
                 );
                 pmHideSaveToast();
                 return;
@@ -2630,10 +2630,10 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
 
     async function refreshDrawingList() {
         const list = document.getElementById('dmList');
-        list.innerHTML = '<div class="dm-empty">불러오는 중…</div>';
+        list.innerHTML = `<div class="dm-empty">${_t('불러오는 중…')}</div>`;
         const drawings = await /** @type {any} */ (window.DrawingSync).list('triangle');
         if (!drawings.length) {
-            list.innerHTML = '<div class="dm-empty">저장된 도면이 없습니다</div>';
+            list.innerHTML = `<div class="dm-empty">${_t('저장된 도면이 없습니다')}</div>`;
             return;
         }
         list.innerHTML = '';
@@ -2643,12 +2643,12 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
             item.className = 'dm-item' + (d.title === curTitle ? ' dm-active' : '');
             item.innerHTML = `
                 <div class="dm-item-info">
-                    <div class="dm-title">${escHtml(d.title)}${d.locked_at ? ` <i class="bi bi-lock-fill dm-lock-icon" title="${escHtml((ORDER_STATUS_LABELS[d.order_status] || {}).label || '견적요청 중')}"></i>` : ''}</div>
+                    <div class="dm-title">${escHtml(d.title)}${d.locked_at ? ` <i class="bi bi-lock-fill dm-lock-icon" title="${escHtml((ORDER_STATUS_LABELS[d.order_status] || {}).label || _t('견적요청 중'))}"></i>` : ''}</div>
                     <div class="dm-date">${fmtDate(new Date(d.updated_at).getTime())}</div>
                 </div>
                 <div class="dm-actions">
                     <button class="dm-btn dm-rename-btn" title="이름 변경"><i class="bi bi-pencil"></i></button>
-                    <button class="dm-btn dm-del-btn" title="삭제"><i class="bi bi-x-lg"></i></button>
+                    <button class="dm-btn dm-del-btn" title="${_t('삭제')}"><i class="bi bi-x-lg"></i></button>
                 </div>`;
             item.addEventListener('click', (e) => {
                 if (e.target.closest('.dm-actions')) return;
@@ -2660,14 +2660,14 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
             });
             item.querySelector('.dm-del-btn').addEventListener('click', (e) => {
                 e.stopPropagation();
-                if (d.locked_at) { pmAlert('이 도면은 견적요청 중이라 삭제할 수 없습니다.', { type: 'danger' }); return; }
-                pmConfirm(`"${d.title}" 도면을 삭제하시겠습니까?`, async () => {
+                if (d.locked_at) { pmAlert(_t('이 도면은 견적요청 중이라 삭제할 수 없습니다.'), { type: 'danger' }); return; }
+                pmConfirm(_t('"%s" 도면을 삭제하시겠습니까?', d.title), async () => {
                     await /** @type {any} */ (window.DrawingSync).delete('triangle', d.title);
                     if (d.title === document.getElementById('drawingName').value.trim()) {
                         startNewDrawing();
                     }
                     refreshDrawingList();
-                }, { sub: '모든 버전이 함께 삭제됩니다.' });
+                }, { sub: _t('모든 버전이 함께 삭제됩니다.') });
             });
             list.appendChild(item);
         });
@@ -2676,7 +2676,7 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
     async function openDrawingByTitle(title) {
         const data = await /** @type {any} */ (window.DrawingSync).load('triangle', title);
         if (!data || !data.versions || !data.versions.length) {
-            pmAlert('도면을 불러올 수 없습니다.');
+            pmAlert(_t('도면을 불러올 수 없습니다.'));
             return;
         }
         versions      = data.versions;
@@ -2771,7 +2771,7 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
             document.getElementById('dmRenameBackdrop').classList.remove('pm-active');
             refreshDrawingList();
         } else {
-            pmAlert('이름 변경에 실패했습니다.', { sub: '이미 같은 제목의 도면이 있을 수 있습니다.' });
+            pmAlert(_t('이름 변경에 실패했습니다.'), { sub: _t('이미 같은 제목의 도면이 있을 수 있습니다.') });
         }
     });
     document.getElementById('dmRenameInput').addEventListener('keydown', (e) => {

@@ -1003,18 +1003,6 @@
 .hc h3 { margin: 0; font-size: 18px; font-weight: 700; letter-spacing: -.02em; line-height: 1.4; }
 .hc-sub { margin: 18px 0 0; max-width: 34em; font-size: var(--fs-16); color: var(--text); }
 
-/* 빛과 살 — 두 단 산문 */
-.hc-prose {
-    display: grid;
-    gap: clamp(20px, 3vw, 44px);
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    margin-top: 34px;
-    max-width: 56em;
-}
-.hc-prose p { margin: 0 0 16px; font-size: var(--fs-16); color: var(--text); }
-.hc-prose p:last-child { margin-bottom: 0; }
-.hc-prose b { color: var(--text); font-weight: 700; }
-
 /* 살의 쓰임 */
 .hc-lines { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(235px, 1fr)); margin-top: 38px; }
 .hc-line { background: var(--text); border: 1px solid var(--text); border-radius: 16px; padding: 26px 24px 28px; color: #FFFFFF; }

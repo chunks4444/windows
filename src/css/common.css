@@ -243,3 +243,18 @@ body:has(.global-footer) {
         display: none;
     }
 }
+
+/* 헥사코드 직접입력 칸 (src/js/color-hex-input.js가 <input type="color"> 옆에 붙인다).
+   여기 값이 밝은 배경(어드민 색상관리·작품관리) 기준 기본형이고,
+   어두운 엔진 사이드바용은 engine-common.css의 body.pm-generator 규칙이 덮는다. */
+.pmok-hex-input {
+    width: 70px;
+    font-size: 11px;
+    font-family: monospace;
+    padding: 2px 6px;
+    margin-left: 4px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--bg);
+    color: var(--text);
+}

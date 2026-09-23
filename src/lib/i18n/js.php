@@ -121,4 +121,92 @@ return [
     '새 비밀번호가 일치하지 않습니다.'     => 'The new passwords do not match.',
     '변경 중…'                    => 'Changing…',
     '비밀번호가 변경되었습니다.'  => 'Your password has been changed.',
+
+    // ── 엔진 에디터 (engine-common.js + 6엔진 js) ──────────────────────────
+    // 사이드바 라벨은 PHP쪽 사전(i18n/engine.php)에 있다. 여기는 JS가 만들어내는 문구만.
+    // 낱말은 engine.php·가이드 영문본과 맞춘다 — 같은 버튼이 화면마다 다른 이름이면 안 된다.
+
+    // 도면 저장·불러오기
+    '저장 중...'                  => 'Saving…',
+    '이어서 저장'                 => 'Save as new version',
+    '확인하면 기존 도면에 버전이 추가됩니다.' => 'Confirming adds a new version to the existing drawing.',
+    "'%s' 이름의 도면이 이미 있습니다."       => 'A drawing named "%s" already exists.',
+    '이미 같은 제목의 도면이 있을 수 있습니다.' => 'A drawing with the same title may already exist.',
+    '저장된 도면이 없습니다'      => 'You have no saved drawings',
+    '저장된 버전이 없습니다'      => 'No saved versions',
+    // '도면을 불러올 수 없습니다.'는 위 dashboard.js 구역에 이미 있다 (사전은 파일 전체가 한 배열이라 키가 겹치면 나중 것이 이긴다)
+    '%s를 정말 삭제하시겠습니까?' => 'Delete %s?',
+    '"%s" 도면을 삭제하시겠습니까?' => 'Delete the drawing "%s"?',
+    'v%s를 정말 삭제하시겠습니까?'  => 'Delete v%s?',
+    '모든 버전이 함께 삭제됩니다.'  => 'All of its versions are deleted too.',
+    '편집 내용을 모두 초기화하시겠습니까?' => 'Reset every edit you have made?',
+    '창호도면'                    => 'changho-drawing',
+    '도면명: %s'                  => 'Drawing: %s',
+    '출력일: %s'                  => 'Printed: %s',
+    '• 문짝: %s x %smm'           => '• Door panel: %s × %smm',
+    '개'                          => ' pcs',
+    '확인'                        => 'OK',
+
+    // 공유
+    '공유하기'                    => 'Share',
+    '공유중'                      => 'Shared',
+    '공유 중'                     => 'Sharing',
+    '공유를 껐습니다.'            => 'Sharing is now off.',
+    '링크가 복사되었습니다.'      => 'Link copied.',
+    '도면 #'                      => 'Drawing #',
+    '도면 #—'                     => 'Drawing #—',
+
+    // 견적요청·주문
+    '견적요청 중'                 => 'Quote requested',
+    '견적요청 중 · 편집 불가'     => 'Quote requested · editing locked',
+    '이 도면은 견적요청 중이라 편집할 수 없습니다.' => 'This drawing is locked for editing while a quote is being prepared.',
+    '이 도면은 견적요청 중이라 삭제할 수 없습니다.' => 'This drawing cannot be deleted while a quote is being prepared.',
+    '견적요청이 접수되었습니다.'  => 'Your quote request has been received.',
+    '견적요청 접수에 실패했습니다.' => 'Could not submit your quote request.',
+    '주문번호 #%s · 담당자가 확인 후 연락드립니다.' => 'Order #%s · We will review it and get back to you.',
+    '먼저 도면을 저장해주세요.'   => 'Please save the drawing first.',
+    '저장 후 주문하셔야 도면관리에서 이 주문과 연결됩니다.'
+        => 'Ordering after you save is what links the order to the drawing in My Drawings.',
+    '견적요청하려면 프로필에 이름과 연락처를 먼저 입력해주세요.'
+        => 'Add your name and phone number to your profile before requesting a quote.',
+    '프로필 페이지에서 입력 후 다시 시도해주세요.' => 'Fill them in on your profile page and try again.',
+    '프로필 정보를 불러오지 못했습니다.' => 'Could not load your profile.',
+    '프로필로 이동'               => 'Go to profile',
+    '납기 희망일을 선택해주세요.' => 'Please choose a requested delivery date.',
+    '배송지 주소를 입력해주세요.' => 'Please enter a delivery address.',
+    '배송지 연락처를 입력해주세요.' => 'Please enter a delivery phone number.',
+
+    // AI 렌더링
+    'Rendering 결과'              => 'Render result',
+    '다운로드'                    => 'Download',
+    '렌더링 프롬프트를 입력해주세요.' => 'Please enter a rendering prompt.',
+    '렌더링 시간이 초과됐습니다. (120초)' => 'Rendering timed out (120s).',
+    '렌더링 중 오류가 발생했습니다.' => 'Something went wrong while rendering.',
+    '렌더링 중 오류: '            => 'Rendering error: ',
+    '먼저 사진을 업로드해주세요.' => 'Please upload a photo first.',
+    '먼저 저장해주세요'           => 'Please save first',
+
+    // 문양·배경 업로드
+    'SVG 파일만 업로드할 수 있습니다.'     => 'Only SVG files can be uploaded.',
+    'PNG 또는 JPG 파일만 업로드할 수 있습니다.' => 'Only PNG or JPG files can be uploaded.',
+    '등록된 문양이 없습니다.'     => 'No motifs have been added yet.',
+    '업로드 실패'                 => 'Upload failed',
+    '배경 업로드 실패:'           => 'Background upload failed:',
+    '배경 이미지는 로그인해야 서버에 저장됩니다. 지금은 화면에서만 보이고, 로그인 후 다시 저장하면 함께 저장됩니다.'
+        => 'Background images are only stored on the server once you sign in. For now it shows on screen only — sign in and save again to keep it.',
+    '%s개 선택됨 (Shift+클릭으로 추가/해제)' => '%s selected (Shift+click to add or remove)',
+
+    // 홈 AI 프롬프트에서 엔진으로 넘어올 때
+    '생각하는 중…'                => 'Thinking…',
+    'AI 설계 조건이 적용됐습니다.' => 'The AI design settings have been applied.',
+    '적용됐습니다.'               => 'Applied.',
+    ' 엔진으로 이동합니다…'       => ' — opening that studio…',
+    '예: 완자살 미서기문 3짝, 가로 1800 세로 1200으로 바꿔줘'
+        => 'e.g. make it a 3-panel Wanja-sal sliding door, 1800 wide and 1200 high',
+
+    // 공통 오류
+    '로그인이 필요합니다. 다시 로그인해 주세요.' => 'You need to sign in. Please log in again.',
+    '네트워크 오류가 발생했습니다.' => 'A network error occurred.',
+    '서버 오류'                   => 'Server error',
+    '오류: '                      => 'Error: ',
 ];
