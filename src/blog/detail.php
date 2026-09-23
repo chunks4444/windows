@@ -197,12 +197,13 @@ $metaImage = $post['thumbnail_url']
 // 자동으로 뽑아서 "이 글 고유 문화 키워드"와 "평목 상품 브릿지 키워드"를 항상 함께 노출한다.
 // 문화 콘텐츠로 유입된 검색엔진 트래픽이 제품 키워드와도 매칭되도록 하기 위함 — 새 글을 써도 자동 적용됨.
 $metaKeywords = implode(', ', array_unique(array_filter([
-    preg_replace('/^\[.*?\]\s*/', '', $post['title']),
-    $seriesInfo['name'] ?? null,
-    $post['question'] ?: null,
-    ($post['related_engine'] && isset($engineLabels[$post['related_engine']])) ? $engineLabels[$post['related_engine']] : null,
-    '평목', '전통창호 제작', '맞춤 창호 디자인', '격자무늬 창호',
+    preg_replace('/^\[.*?\]\s*/', '', db_field($post, 'title')),
+    $seriesInfo ? db_field($seriesInfo, 'name') : null,
+    db_field($post, 'question') ?: null,
+    ($post['related_engine'] && isset($engineLabels[$post['related_engine']])) ? term_short($engineLabels[$post['related_engine']]) : null,
 ])));
+// 브랜드 키워드는 언어별로 따로 둔다 — 영문 페이지에 한글 키워드가 섞이면 검색엔진이 언어를 헷갈린다
+$metaKeywords = trim($metaKeywords . ', ' . t('meta_brand_keywords'), ', ');
 ?>
 <!DOCTYPE html>
 <html lang="<?= is_en() ? 'en' : 'ko' ?>">

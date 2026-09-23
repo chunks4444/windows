@@ -1,6 +1,7 @@
 <?php
 header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../lib/db.php';
+require_once __DIR__ . '/../lib/i18n.php';   // db_field() / t() / lang_href()
 
 $id     = (int)($_GET['id'] ?? 0);
 $slug   = trim($_GET['slug'] ?? '');
@@ -28,10 +29,10 @@ try {
         if (empty($images) && $work['image_url']) $images = [$work['image_url']];
 
         // 다음 작품
-        $next = $pdo->prepare('SELECT id,title,slug FROM works WHERE is_active=1 AND (sort_order > ? OR (sort_order=? AND id>?)) ORDER BY sort_order ASC, id ASC LIMIT 1');
+        $next = $pdo->prepare('SELECT id,title,title_en,slug FROM works WHERE is_active=1 AND (sort_order > ? OR (sort_order=? AND id>?)) ORDER BY sort_order ASC, id ASC LIMIT 1');
         $next->execute([$work['sort_order'], $work['sort_order'], $work['id']]);
         $next = $next->fetch();
-        if (!$next) $next = $pdo->query('SELECT id,title,slug FROM works WHERE is_active=1 ORDER BY sort_order ASC, id ASC LIMIT 1')->fetch();
+        if (!$next) $next = $pdo->query('SELECT id,title,title_en,slug FROM works WHERE is_active=1 ORDER BY sort_order ASC, id ASC LIMIT 1')->fetch();
     }
 } catch (Throwable $e) {
     $work = null;
@@ -46,7 +47,7 @@ $desc  = strip_tags($work['description'] ?? '');
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($work['title']) ?> — 평목</title>
+    <title><?= htmlspecialchars(db_field($work, 'title')) ?> — <?= htmlspecialchars(t('wk_title_suffix')) ?></title>
     <meta name="description" content="<?= htmlspecialchars($desc) ?>">
     <meta name="robots" content="max-image-preview:large">
     <?php require_once __DIR__ . '/../lib/meta.php'; ?>
@@ -54,7 +55,7 @@ $desc  = strip_tags($work['description'] ?? '');
     <link rel="alternate icon" href="/src/assets/favicon.png">
     <link rel="apple-touch-icon" href="/src/assets/apple-touch-icon.png">
     <link rel="canonical" href="<?= htmlspecialchars(SITE_URL . '/portfolio/' . rawurlencode($work['slug'])) ?>">
-    <meta property="og:title" content="<?= htmlspecialchars($work['title']) ?>">
+    <meta property="og:title" content="<?= htmlspecialchars(db_field($work, 'title')) ?>">
     <meta property="og:description" content="<?= htmlspecialchars($desc) ?>">
     <meta property="og:image" content="<?= htmlspecialchars($images[0] ?? SITE_DEFAULT_IMAGE) ?>">
     <?php define('BOOTSTRAP_LOADED', true); ?>
@@ -81,7 +82,7 @@ $desc  = strip_tags($work['description'] ?? '');
             <img id="wdMainImg"
                  class="wd-main-img"
                  src="<?= htmlspecialchars($images[0]) ?>"
-                 alt="<?= htmlspecialchars($work['title']) ?>">
+                 alt="<?= htmlspecialchars(db_field($work, 'title')) ?>">
 
             <!-- 다음 버튼 -->
             <button class="wd-arrow wd-arrow-next" id="wdNext" <?= $total <= 1 ? 'disabled' : '' ?>>
@@ -104,7 +105,7 @@ $desc  = strip_tags($work['description'] ?? '');
                 <?php foreach ($images as $i => $img): ?>
                 <div class="wd-thumb <?= $i === 0 ? 'active' : '' ?>" data-idx="<?= $i ?>">
                     <img src="<?= htmlspecialchars($img) ?>"
-                         alt="<?= htmlspecialchars($work['title']) ?> <?= $i + 1 ?>">
+                         alt="<?= htmlspecialchars(db_field($work, 'title')) ?> <?= $i + 1 ?>">
                 </div>
                 <?php endforeach; ?>
             </div>
@@ -126,13 +127,13 @@ $desc  = strip_tags($work['description'] ?? '');
         </div>
 
         <div class="wd-info-center">
-            <h1 class="wd-title"><?= htmlspecialchars($work['title']) ?></h1>
+            <h1 class="wd-title"><?= htmlspecialchars(db_field($work, 'title')) ?></h1>
         </div>
 
         <?php if ($next && $next['id'] !== $work['id']): ?>
         <a class="wd-next-link" href="/portfolio/<?= rawurlencode($next['slug']) ?>">
             <span class="wd-next-label">next</span>
-            <?= htmlspecialchars($next['title']) ?>
+            <?= htmlspecialchars(db_field($next, 'title')) ?>
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                 <path d="M3 7H11M11 7L7 3M11 7L7 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>

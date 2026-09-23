@@ -805,7 +805,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                         <div style="display:flex;align-items:center;justify-content:space-between;">
                             <span class="color-label"><?= te('문틀 컬러') ?></span>
                             <div class="color-preview-btn color-code-box" style="gap:5px;">
-                                <input type="color" id="muntolColorInput" value="#28241e" class="color-code-swatch">
+                                <input type="color" id="muntolColorInput" value="#3d382f" class="color-code-swatch">
                                 <span id="muntolColorCode">#28241e</span>
                             </div>
                         </div>

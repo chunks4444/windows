@@ -3,6 +3,7 @@ header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../lib/db.php';
 require_once __DIR__ . '/../lib/meta.php';
 require_once __DIR__ . '/../lib/slug.php';
+require_once __DIR__ . '/../lib/i18n.php';   // t() / term_short() / lang_href()
 
 $slug = trim($_GET['slug'] ?? '');
 $id   = (int)($_GET['id'] ?? 0);
@@ -43,21 +44,23 @@ try {
 if (!$pattern) { header('Location: /collection/'); exit; }
 
 $engineKey  = strtolower($pattern['engine'] ?? '');
-$editorUrl  = $editorMap[$engineKey] ?? null;
-$metaDesc   = $keywords ? implode(', ', $keywords) . ' — 평목 스튜디오 컬렉션' : '평목 스튜디오에서 만든 창호 격자 패턴';
+$editorUrl  = isset($editorMap[$engineKey]) ? lang_href($editorMap[$engineKey]) : null;
+// 키워드는 살 이름·공간 이름이라 용어집 번역이 있다 (짧은 형태로)
+$keywordLabels = array_map('term_short', $keywords);
+$metaDesc   = $keywordLabels ? implode(', ', $keywordLabels) . ' — ' . t('col_meta_suffix') : t('col_meta_default');
 // og:image는 절대 URL이어야 카톡·페이스북 공유 카드가 정상 노출됨
 $metaImage  = $pattern['image_path']
     ? (strpos($pattern['image_path'], 'http') === 0 ? $pattern['image_path'] : SITE_URL . $pattern['image_path'])
     : SITE_DEFAULT_IMAGE;
-$shareUrl   = SITE_URL . '/collection/detail?slug=' . rawurlencode($pattern['slug']);
-$displayName = library_pattern_display_name($pattern['slug'], $pattern['name_ko']);
+$shareUrl   = SITE_URL . lang_href('/collection/detail') . '?slug=' . rawurlencode($pattern['slug']);
+$displayName = term_short(library_pattern_display_name($pattern['slug'], $pattern['name_ko']));
 ?>
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="<?= is_en() ? 'en' : 'ko' ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($displayName) ?> — 평목 컬렉션</title>
+    <title><?= htmlspecialchars($displayName) ?> — <?= htmlspecialchars(t('col_title_suffix')) ?></title>
     <meta name="description" content="<?= htmlspecialchars($metaDesc) ?>">
     <meta name="robots" content="max-image-preview:large">
     <link rel="icon" type="image/svg+xml" href="/src/assets/favicon.svg">
@@ -80,8 +83,8 @@ $displayName = library_pattern_display_name($pattern['slug'], $pattern['name_ko'
 <?php include __DIR__ . '/../components/nav.php'; ?>
 
 <div class="lib-main" style="max-width:640px;margin:0 auto;padding-top:2rem;">
-    <a href="/collection/" style="display:inline-flex;align-items:center;gap:4px;font-size:13px;color:var(--text-muted);text-decoration:none;margin-bottom:16px;">
-        <i class="bi bi-arrow-left"></i> 컬렉션
+    <a href="<?= lang_href('/collection/') ?>" style="display:inline-flex;align-items:center;gap:4px;font-size:13px;color:var(--text-muted);text-decoration:none;margin-bottom:16px;">
+        <i class="bi bi-arrow-left"></i> <?= htmlspecialchars(t('nav_collection')) ?>
     </a>
 
     <div style="border-radius:12px;overflow:hidden;aspect-ratio:1/1;background:var(--bg);">
@@ -92,17 +95,17 @@ $displayName = library_pattern_display_name($pattern['slug'], $pattern['name_ko'
 
     <h1 style="font-size:20px;font-weight:700;margin:16px 0 4px;"><?= htmlspecialchars($displayName) ?></h1>
     <?php if ($keywords): ?>
-    <p style="font-size:13px;color:var(--text-muted);margin:0 0 20px;"><?= htmlspecialchars(implode(' · ', $keywords)) ?></p>
+    <p style="font-size:13px;color:var(--text-muted);margin:0 0 20px;"><?= htmlspecialchars(implode(' · ', $keywordLabels)) ?></p>
     <?php endif; ?>
 
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
         <?php if ($editorUrl && $pattern['drawing_id']): ?>
-        <a href="<?= htmlspecialchars($editorUrl) ?>?drawing_id=<?= (int)$pattern['drawing_id'] ?>" class="lib-btn lib-btn-primary" onclick="return openCollectionEditor(event,'<?= htmlspecialchars($editorUrl, ENT_QUOTES) ?>?drawing_id=<?= (int)$pattern['drawing_id'] ?>')"><i class="bi bi-pencil"></i> 스튜디오에서 열기</a>
+        <a href="<?= htmlspecialchars($editorUrl) ?>?drawing_id=<?= (int)$pattern['drawing_id'] ?>" class="lib-btn lib-btn-primary" onclick="return openCollectionEditor(event,'<?= htmlspecialchars($editorUrl, ENT_QUOTES) ?>?drawing_id=<?= (int)$pattern['drawing_id'] ?>')"><i class="bi bi-pencil"></i> <?= htmlspecialchars(t('col_open_studio')) ?></a>
         <?php endif; ?>
     </div>
 
     <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button id="btnShare" class="lib-icon-btn lib-share-btn" title="공유하기"><i class="bi bi-share"></i></button>
+        <button id="btnShare" class="lib-icon-btn lib-share-btn" title="<?= htmlspecialchars(t('col_share')) ?>"><i class="bi bi-share"></i></button>
     </div>
 </div>
 
@@ -112,29 +115,29 @@ $displayName = library_pattern_display_name($pattern['slug'], $pattern['name_ko'
 <div id="libShareModal" class="bm-backdrop" style="display:none;">
     <div class="bm-modal">
         <div class="bm-header">
-            <span class="bm-title">공유하기</span>
+            <span class="bm-title"><?= htmlspecialchars(t('col_share')) ?></span>
             <button class="bm-close" id="libShareModalClose"><i class="bi bi-x-lg"></i></button>
         </div>
         <div class="lib-share-linkrow">
             <input type="text" id="libShareModalLink" readonly>
-            <button type="button" id="libShareModalCopy">복사</button>
+            <button type="button" id="libShareModalCopy"><?= htmlspecialchars(t('col_copy')) ?></button>
         </div>
         <div class="lib-share-channels">
-            <button type="button" id="libShareModalKakao" title="카카오톡 공유">
+            <button type="button" id="libShareModalKakao" title="<?= htmlspecialchars(t('col_share_kakao')) ?>">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.8 5.3 4.6 6.7-.2.7-.7 2.6-.8 3-.1.5.2.5.4.4.2-.1 2.6-1.8 3.6-2.5.7.1 1.4.2 2.2.2 5.5 0 10-3.6 10-8 0-4.4-4.5-7.8-10-7.8z"/></svg>
-                <span>카카오</span>
+                <span><?= htmlspecialchars(t('col_kakao')) ?></span>
             </button>
-            <button type="button" id="libShareModalFb" title="페이스북 공유">
+            <button type="button" id="libShareModalFb" title="<?= htmlspecialchars(t('col_share_fb')) ?>">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7.9h2.7l.4-3.1h-3.1V8.1c0-.9.3-1.5 1.6-1.5h1.7V3.8C15.9 3.7 14.8 3.6 13.6 3.6c-2.5 0-4.2 1.5-4.2 4.3v2.1H6.7v3.1h2.7V21h4.1z"/></svg>
                 <span>FB</span>
             </button>
-            <button type="button" id="libShareModalX" title="X(트위터) 공유">
+            <button type="button" id="libShareModalX" title="<?= htmlspecialchars(t('col_share_x')) ?>">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 3H22l-7.5 8.6L23 21h-6.9l-5.4-6.6L4.4 21H1.3l8-9.2L1 3h7l4.9 6.1L18.9 3zm-1.2 16h1.9L7.4 4.9H5.4L17.7 19z"/></svg>
                 <span>X</span>
             </button>
-            <button type="button" id="libShareModalThreads" title="스레드에 공유">
+            <button type="button" id="libShareModalThreads" title="<?= htmlspecialchars(t('col_share_threads')) ?>">
                 <i class="bi bi-threads"></i>
-                <span>스레드</span>
+                <span><?= htmlspecialchars(t('col_threads')) ?></span>
             </button>
         </div>
     </div>

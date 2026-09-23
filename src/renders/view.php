@@ -2,6 +2,7 @@
 header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../lib/db.php';
 require_once __DIR__ . '/../lib/meta.php';
+require_once __DIR__ . '/../lib/i18n.php';   // t() / term_short() / lang_href()
 
 $engineLabels = [
     'classic'  => '세살',
@@ -32,18 +33,19 @@ if (!$render) {
     $engineLabel = null;
 } else {
     $imageUrl    = SITE_URL . htmlspecialchars($render['filepath'], ENT_QUOTES);
-    $engineLabel = $engineLabels[$render['engine']] ?? $render['engine'];
+    // 살 이름은 용어집을 거친다. 공유 링크로 들어온 영문 사용자도 패턴 이름을 읽을 수 있어야 함
+    $engineLabel = term_short($engineLabels[$render['engine']] ?? $render['engine']);
 }
 ?>
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="<?= is_en() ? 'en' : 'ko' ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php
     meta_tags([
-        'title'       => $render ? "{$engineLabel} 렌더링 | 평목" : '렌더링을 찾을 수 없습니다 | 평목',
-        'description' => $render ? "평목에서 {$engineLabel} 패턴으로 렌더링한 이미지입니다." : '요청하신 렌더링 이미지를 찾을 수 없습니다.',
+        'title'       => $render ? sprintf(t('rv_title'), $engineLabel) : t('rv_title_notfound'),
+        'description' => $render ? sprintf(t('rv_desc'), $engineLabel) : t('rv_desc_notfound'),
         'image'       => $imageUrl,
     ]);
     ?>
@@ -67,16 +69,16 @@ if (!$render) {
     <div class="rv-page">
     <div class="rv-wrap">
         <?php if ($render): ?>
-            <img class="rv-img" src="<?= $imageUrl ?>" alt="<?= htmlspecialchars($engineLabel) ?> 렌더링 이미지">
-            <p class="rv-label"><?= htmlspecialchars($engineLabel) ?> · 평목 AI 렌더링</p>
-            <p class="rv-sub">평목 스튜디오에서 문살 패턴을 직접 설계하고 실제 공간에 렌더링해볼 수 있습니다.</p>
-            <a class="rv-btn" href="/src/engine/<?= htmlspecialchars($render['engine']) ?>/<?= htmlspecialchars($render['engine']) ?>.php">
-                나도 <?= htmlspecialchars($engineLabel) ?> 설계해보기 <i class="bi bi-arrow-right"></i>
+            <img class="rv-img" src="<?= $imageUrl ?>" alt="<?= htmlspecialchars(sprintf(t('rv_alt'), $engineLabel)) ?>">
+            <p class="rv-label"><?= htmlspecialchars(sprintf(t('rv_label'), $engineLabel)) ?></p>
+            <p class="rv-sub"><?= htmlspecialchars(t('rv_sub')) ?></p>
+            <a class="rv-btn" href="<?= htmlspecialchars(lang_href('/src/engine/' . $render['engine'] . '/' . $render['engine'] . '.php')) ?>">
+                <?= htmlspecialchars(sprintf(t('rv_cta'), $engineLabel)) ?> <i class="bi bi-arrow-right"></i>
             </a>
         <?php else: ?>
             <div class="rv-empty">
-                <p>요청하신 렌더링 이미지를 찾을 수 없습니다.</p>
-                <a class="rv-btn" href="/">평목 홈으로</a>
+                <p><?= htmlspecialchars(t('rv_desc_notfound')) ?></p>
+                <a class="rv-btn" href="<?= lang_href('/') ?>"><?= htmlspecialchars(t('rv_home')) ?></a>
             </div>
         <?php endif; ?>
     </div>

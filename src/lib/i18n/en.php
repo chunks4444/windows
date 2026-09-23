@@ -125,7 +125,7 @@ return [
     'home_contact_hint'        => 'Open weekdays 10 AM – 6 PM · Email inquiries accepted on weekends and holidays',
 
     // src/company/index.php
-    'company_hero_label'       => 'About 평목',
+    'company_hero_label'       => 'About Pyeongmok',
     'company_hero_title'       => 'The path of light and wind,<br>made of wood — <em>Pyeongmok</em>',
     'company_hero_desc'        => "Pyeongmok (平木) is a changho design studio that brings the beauty of traditional Korean changho into modern spaces.<br>We reinterpret centuries-old lattice-weaving techniques through digital tools, building an environment where anyone can design their own changho <br>and carry it all the way through to production.",
 
@@ -337,6 +337,19 @@ return [
     'col_group_jp'            => 'Ilbon-sal (Japanese)',
     'col_group_shoji'         => 'Shoji',
     'col_group_kumiko'        => 'Kumiko',
+    'col_meta_suffix'         => 'Pyeongmok Studio Collection',
+    'col_meta_default'        => 'A changho lattice pattern made in Pyeongmok Studio',
+    'col_title_suffix'        => 'Pyeongmok Collection',
+    'col_open_studio'         => 'Open in Studio',
+    'col_share'               => 'Share',
+    'col_copy'                => 'Copy',
+    'col_share_kakao'         => 'Share on KakaoTalk',
+    'col_kakao'               => 'Kakao',
+    'col_share_fb'            => 'Share on Facebook',
+    'col_share_x'             => 'Share on X (Twitter)',
+    'col_share_threads'       => 'Share on Threads',
+    'col_threads'             => 'Threads',
+    'col_open'                => 'Open',
     'col_save_board'          => 'Save to board',
     'col_new_board_ph'        => 'New board name…',
     'col_create'              => 'Create',
@@ -439,4 +452,22 @@ return [
     'cp_phone'                  => 'Company phone',
     'cp_address'                => 'Company address',
     'cp_address_detail_ph'      => 'Detailed address (floor, unit, etc.)',
+
+    // Site-wide default meta (page_meta has no English columns yet, so en mode uses these)
+    'meta_brand_keywords'     => 'Pyeongmok, traditional changho making, custom changho design, lattice window',
+    'wk_title_suffix'         => 'Pyeongmok',
+    'meta_default_title'      => 'Pyeongmok — Design Hanok Changho in Real Time',
+    'meta_default_desc'       => 'A hanok changho and lattice design studio by the Pyeongmok workshop. Design your own lattice pattern in the browser and order it made.',
+    'meta_default_keywords'   => 'hanok changho, Korean lattice window, wooden window design, custom changho, traditional Korean window, lattice pattern, Jeongja-sal, Wanja-sal, Gyo-sal, Semo-sotgeul-sal, Mareummo-sal, Yukmo-sotgeul-sal, online window design, woodworking studio, Pyeongmok',
+
+    // src/renders/view.php — AI render share landing (people arrive here from a shared link)
+    'rv_title'                => '%s render | Pyeongmok',
+    'rv_title_notfound'       => 'Render not found | Pyeongmok',
+    'rv_desc'                 => 'An image rendered from a %s pattern in Pyeongmok.',
+    'rv_desc_notfound'        => "We couldn't find the render you asked for.",
+    'rv_alt'                  => '%s render image',
+    'rv_label'                => '%s · Pyeongmok AI render',
+    'rv_sub'                  => 'In Pyeongmok Studio you can design your own lattice pattern and render it into a real space.',
+    'rv_cta'                  => 'Design your own %s',
+    'rv_home'                 => 'Back to Pyeongmok home',
 ];

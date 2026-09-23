@@ -16,6 +16,9 @@ try {
     $faqVisible = true;
 }
 // 홈 AI 프롬프트 샘플 문구 (어드민 > AI 튜닝에서 편집, 값 없으면 기본값 사용)
+// 이건 화면에 보여주는 글이 아니라 "누르면 그대로 AI에 보내지는 입력값"이라 단순 번역이 아니다 —
+// en 모드에서는 영문 예시를 따로 둬야 영문 사용자가 누른 문장이 영문 그대로 AI에 전달된다.
+// 어드민이 편집한 값은 site_config에 언어별 키로 나눠 저장한다.
 $homeAiSampleDefaults = [
     '정자살 여닫이 2짝 900×2000',
     '완자살 미서기 3짝 1200×2100',
@@ -28,13 +31,27 @@ $homeAiSampleDefaults = [
     '교살 미닫이 2짝 어두운 원목톤',
     '마름모살 현관 중문 1000×2100',
 ];
+$homeAiSampleDefaultsEn = [
+    'Jeongja-sal, hinged, 2 panels, 900×2000',
+    'Wanja-sal, sliding, 3 panels, 1200×2100',
+    'Gyo-sal, hinged, 1 panel, 700×1800, white',
+    'Semo-sotgeul-sal, sliding, 2 panels, 1500×2200',
+    'Mareummo-sal, hinged, 4 panels, 2000×2100',
+    'Yukmo-sotgeul-sal, sliding, 3 panels, 1800×2000',
+    'Wanja-sal, small window, 600×900',
+    'Jeongja-sal, wide picture window, 2400×2200',
+    'Gyo-sal, sliding, 2 panels, dark wood tone',
+    'Mareummo-sal, entry partition door, 1000×2100',
+];
+$homeAiSampleKey = is_en() ? 'home_ai_sample_prompts_en' : 'home_ai_sample_prompts';
 try {
-    $homeAiSamplesRaw = $pdo ? $pdo->query("SELECT value FROM site_config WHERE key_name='home_ai_sample_prompts'")->fetchColumn() : false;
+    $stmt = $pdo ? $pdo->prepare("SELECT value FROM site_config WHERE key_name=?") : null;
+    if ($stmt) { $stmt->execute([$homeAiSampleKey]); $homeAiSamplesRaw = $stmt->fetchColumn(); } else { $homeAiSamplesRaw = false; }
     $homeAiSamples    = $homeAiSamplesRaw ? array_values(array_filter((array)json_decode($homeAiSamplesRaw, true))) : [];
 } catch (Throwable $e) {
     $homeAiSamples = [];
 }
-if (!$homeAiSamples) $homeAiSamples = $homeAiSampleDefaults;
+if (!$homeAiSamples) $homeAiSamples = is_en() ? $homeAiSampleDefaultsEn : $homeAiSampleDefaults;
 // 스튜디오 카드 (테이블 없으면 빈 배열)
 try {
     $studioCards = $pdo ? $pdo->query('SELECT * FROM studio_cards WHERE is_active=1 ORDER BY sort_order, id')->fetchAll() : [];
@@ -74,7 +91,8 @@ try {
 // 블로그 글 3개 — 블로그 메인 히어로와 동일하게, 관리자가 직접 고른 글만(is_featured), 날짜 무관
 try {
     $latestPosts = $pdo ? $pdo->query(
-        "SELECT p.*, s.name AS series_name
+        // series_name_en까지 같이 가져와야 db_field()가 en 모드에서 영문 시리즈명을 고를 수 있다
+        "SELECT p.*, s.name AS series_name, s.name_en AS series_name_en
          FROM blog_posts p
          LEFT JOIN blog_series s ON s.id = p.series_id
          WHERE p.is_active=1 AND p.is_featured=1 ORDER BY p.sort_order, p.id LIMIT 3"
@@ -85,7 +103,7 @@ try {
 // 블로그 시리즈 명제 배너 — 썸네일 카드보다 문장이 이 블로그의 자산이라 순환 인용 배너로 노출
 try {
     $blogQuotes = $pdo ? $pdo->query("
-        SELECT s.tagline, p.slug, s.name AS series_name
+        SELECT s.tagline, s.tagline_en, p.slug, s.name AS series_name, s.name_en AS series_name_en
         FROM blog_series s
         JOIN blog_posts p ON p.series_id = s.id AND p.series_order = 1 AND p.is_active = 1
         WHERE s.tagline <> '' AND s.show_on_home = 1
@@ -469,8 +487,8 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                 </div>
                 <?php if ($blogQuote): ?>
                 <a href="<?= lang_href('/blog/' . rawurlencode($blogQuote['slug'])) ?>" class="home-quote-banner">
-                    <p class="home-quote-text">"<?= htmlspecialchars($blogQuote['tagline']) ?>"</p>
-                    <p class="home-quote-sub"><?= htmlspecialchars($blogQuote['series_name']) ?> · <?= htmlspecialchars(sprintf(t('home_blog_episode'), 1)) ?> <?= htmlspecialchars(t('home_blog_quote_read')) ?> <i class="bi bi-arrow-right"></i></p>
+                    <p class="home-quote-text">"<?= htmlspecialchars(db_field($blogQuote, 'tagline')) ?>"</p>
+                    <p class="home-quote-sub"><?= htmlspecialchars(db_field($blogQuote, 'series_name')) ?> · <?= htmlspecialchars(sprintf(t('home_blog_episode'), 1)) ?> <?= htmlspecialchars(t('home_blog_quote_read')) ?> <i class="bi bi-arrow-right"></i></p>
                 </a>
                 <?php endif; ?>
                 <div class="home-blog-grid">
@@ -483,7 +501,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                         <?php endif; ?>
                         <div class="home-blog-card-body">
                             <?php if ($p['series_name']): ?>
-                            <p class="home-blog-card-cat"><?= htmlspecialchars($p['series_name']) ?><?= $p['series_order'] ? ' · ' . htmlspecialchars(sprintf(t('home_blog_episode'), (int)$p['series_order'])) : '' ?></p>
+                            <p class="home-blog-card-cat"><?= htmlspecialchars(db_field($p, 'series_name')) ?><?= $p['series_order'] ? ' · ' . htmlspecialchars(sprintf(t('home_blog_episode'), (int)$p['series_order'])) : '' ?></p>
                             <?php endif; ?>
                             <div class="home-blog-card-title"><?= htmlspecialchars(db_field($p, 'title')) ?></div>
                             <?php if ($p['summary']): ?>

@@ -57,7 +57,8 @@ try {
 }
 
 function collection_card_html(array $p, array $navStudioIcons, array $engineEditorMap, bool $eager = false): string {
-    $displayName = library_pattern_display_name($p['slug'], $p['name_ko'] ?? '');
+    // 코드형 슬러그(PYM-PM-015)는 그대로, 살 이름이면 용어집 번역을 태운다
+    $displayName = term_short(library_pattern_display_name($p['slug'], $p['name_ko'] ?? ''));
     $keywords    = $p['keywords'] ? explode(',', $p['keywords']) : [];
     $engineKey   = strtolower($p['engine'] ?? '');
     $editorUrl   = isset($engineEditorMap[$engineKey]) ? lang_href($engineEditorMap[$engineKey]) : null;
@@ -68,10 +69,12 @@ function collection_card_html(array $p, array $navStudioIcons, array $engineEdit
         : '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--text-3);font-size:40px;"><i class="bi bi-image"></i></div>';
 
     $editorBtn = ($editorUrl && $p['drawing_id'])
-        ? '<a href="' . htmlspecialchars($editorUrl, ENT_QUOTES) . '?drawing_id=' . (int)$p['drawing_id'] . '" class="lib-btn lib-btn-primary" onclick="return openCollectionEditor(event,\'' . htmlspecialchars($editorUrl, ENT_QUOTES) . '?drawing_id=' . (int)$p['drawing_id'] . '\')"><i class="bi bi-pencil"></i> 열기</a>'
+        ? '<a href="' . htmlspecialchars($editorUrl, ENT_QUOTES) . '?drawing_id=' . (int)$p['drawing_id'] . '" class="lib-btn lib-btn-primary" onclick="return openCollectionEditor(event,\'' . htmlspecialchars($editorUrl, ENT_QUOTES) . '?drawing_id=' . (int)$p['drawing_id'] . '\')"><i class="bi bi-pencil"></i> ' . htmlspecialchars(t('col_open')) . '</a>'
         : '';
 
-    $kwHtml = implode(' &middot; ', array_map(fn($k) => '<span style="font-size:11px;color:var(--text);">' . htmlspecialchars($k, ENT_QUOTES) . '</span>', array_slice($keywords, 0, 3)));
+    // 키워드는 살 이름(격자빗살…)과 공간 이름(거실·현관…)이라 용어집에 번역이 들어 있다.
+    // 카드에 나란히 붙는 짧은 꼬리표라 괄호 설명은 빼고 로마자 표기만 쓴다.
+    $kwHtml = implode(' &middot; ', array_map(fn($k) => '<span style="font-size:11px;color:var(--text);">' . htmlspecialchars(term_short($k), ENT_QUOTES) . '</span>', array_slice($keywords, 0, 3)));
 
     $engineIcon = $navStudioIcons[$engineKey] ?? '';
     $engineIconHtml = $engineIcon ? '<span class="lib-card-engine-icon">' . $engineIcon . '</span>' : '';

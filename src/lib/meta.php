@@ -21,7 +21,7 @@ function page_meta(): array {
     $path = $_SERVER['PHP_SELF'] ?? '/';
     $row = null;
     try {
-        $stmt = db()->prepare('SELECT title, description, keywords, og_image FROM page_meta WHERE path=? LIMIT 1');
+        $stmt = db()->prepare('SELECT title, title_en, description, description_en, keywords, keywords_en, og_image FROM page_meta WHERE path=? LIMIT 1');
         $stmt->execute([$path]);
         $row = $stmt->fetch();
         if (!$row) {
@@ -32,7 +32,7 @@ function page_meta(): array {
         $row = null;
     }
 
-    $cache = $row ?: ['title' => '', 'description' => '', 'keywords' => '', 'og_image' => ''];
+    $cache = $row ?: ['title' => '', 'title_en' => '', 'description' => '', 'description_en' => '', 'keywords' => '', 'keywords_en' => '', 'og_image' => ''];
     return $cache;
 }
 
@@ -55,14 +55,18 @@ function meta_tags(?array $override = null): void {
     echo '<link rel="alternate icon" href="/src/assets/favicon.png">' . "\n    ";
     echo '<link rel="apple-touch-icon" href="/src/assets/apple-touch-icon.png">' . "\n    ";
     $m = page_meta();
-    $title = $override['title'] ?? ($m['title'] ?: SITE_DEFAULT_TITLE);
-    $desc  = $override['description'] ?? ($m['description'] ?: SITE_DEFAULT_DESC);
+    // 메타는 page_meta의 언어별 컬럼(title_en 등)에서 고른다. db_field()가 en 모드에서
+    // *_en을 쓰고 비어 있으면 한글로 폴백하므로, 영문 값을 아직 안 채운 경로도 화면이 깨지지 않는다.
+    // 그마저 비면 사전의 사이트 기본 메타로 떨어진다.
+    $title = $override['title'] ?? (db_field($m, 'title') ?: t('meta_default_title'));
+    $desc  = $override['description'] ?? (db_field($m, 'description') ?: t('meta_default_desc'));
     $image = $override['image'] ?? ($m['og_image'] ?: SITE_DEFAULT_IMAGE);
     $path  = strtok($_SERVER['REQUEST_URI'] ?? ($_SERVER['PHP_SELF'] ?? '/'), '?');
 
     echo '<title>' . htmlspecialchars($title, ENT_QUOTES) . '</title>' . "\n    ";
     echo '<meta name="description" content="' . htmlspecialchars($desc, ENT_QUOTES) . '">' . "\n    ";
-    if ($m['keywords']) echo '<meta name="keywords" content="' . htmlspecialchars($m['keywords'], ENT_QUOTES) . '">' . "\n    ";
+    $keywords = db_field($m, 'keywords') ?: t('meta_default_keywords');
+    if ($keywords) echo '<meta name="keywords" content="' . htmlspecialchars($keywords, ENT_QUOTES) . '">' . "\n    ";
     $canonical = $override['canonical'] ?? (SITE_URL . $path);
     echo '<link rel="canonical" href="' . htmlspecialchars($canonical, ENT_QUOTES) . '">' . "\n    ";
     echo '<meta property="og:title"       content="' . htmlspecialchars($title, ENT_QUOTES) . '">' . "\n    ";

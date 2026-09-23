@@ -145,12 +145,12 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
     <div class="wkg-grid-wrap container">
         <div class="wkg-grid">
             <?php foreach ($works as $w):
-                $desc = strip_tags($w['description']);
+                $desc = strip_tags(db_field($w, 'description'));
                 $icon = engine_icon_svg($w['engine_key'] ?? '');
                 $images = $workImages[$w['id']] ?? ($w['image_url'] ? [['url' => $w['image_url'], 'panel_bg' => null, 'font_color' => null]] : []);
             ?>
             <div class="wkg-card"
-                 data-title="<?= htmlspecialchars($w['title']) ?>"
+                 data-title="<?= htmlspecialchars(db_field($w, 'title')) ?>"
                  data-desc="<?= htmlspecialchars($desc) ?>"
                  data-images="<?= htmlspecialchars(json_encode($images)) ?>"
                  data-panel-bg="<?= htmlspecialchars($w['panel_bg'] ?: '#111111') ?>"
@@ -163,7 +163,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
                 <?php else: ?>
                 <img class="wkg-card-img"
                      src="<?= htmlspecialchars($w['image_url']) ?>"
-                     alt="<?= htmlspecialchars($w['title']) ?>"
+                     alt="<?= htmlspecialchars(db_field($w, 'title')) ?>"
                      loading="lazy">
                 <?php if ($icon): ?>
                 <span class="wkg-card-icon"><?= $icon ?></span>

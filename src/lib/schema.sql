@@ -227,8 +227,11 @@ CREATE TABLE IF NOT EXISTS page_meta (
     id          INT UNSIGNED  NOT NULL AUTO_INCREMENT,
     path        VARCHAR(120)  NOT NULL COMMENT 'URL 경로 (PHP_SELF 기준)',
     title       VARCHAR(200)  NOT NULL DEFAULT '',
+    title_en    VARCHAR(255)  NOT NULL DEFAULT '' COMMENT '영문 값. 비어 있으면 화면에서 한글로 자동 폴백(src/lib/i18n.php의 db_field())',
     description VARCHAR(320)  NOT NULL DEFAULT '',
+    description_en VARCHAR(500) NOT NULL DEFAULT '' COMMENT '영문 값. 비어 있으면 화면에서 한글로 자동 폴백(src/lib/i18n.php의 db_field())',
     keywords    VARCHAR(500)  NOT NULL DEFAULT '',
+    keywords_en VARCHAR(500)  NOT NULL DEFAULT '' COMMENT '영문 값. 비어 있으면 화면에서 한글로 자동 폴백(src/lib/i18n.php의 db_field())',
     og_image    VARCHAR(500)  NOT NULL DEFAULT '',
     updated_at  DATETIME      NOT NULL DEFAULT NOW() ON UPDATE NOW(),
     PRIMARY KEY (id),
@@ -330,7 +333,9 @@ INSERT IGNORE INTO space_cards (id, label, image_url, collection_query, sort_ord
 CREATE TABLE IF NOT EXISTS hero_slides (
     id        INT UNSIGNED NOT NULL AUTO_INCREMENT,
     title     VARCHAR(120) NOT NULL DEFAULT '',
+    title_en  VARCHAR(120) NOT NULL DEFAULT '' COMMENT '영문 값. 비어 있으면 화면에서 한글로 자동 폴백(src/lib/i18n.php의 db_field())',
     subtitle  VARCHAR(255) NOT NULL DEFAULT '',
+    subtitle_en VARCHAR(255) NOT NULL DEFAULT '' COMMENT '영문 값. 비어 있으면 화면에서 한글로 자동 폴백(src/lib/i18n.php의 db_field())',
     image_url VARCHAR(512) NOT NULL DEFAULT '',
     sort_order SMALLINT    NOT NULL DEFAULT 0,
     is_active TINYINT(1)   NOT NULL DEFAULT 1,
@@ -452,8 +457,10 @@ CREATE TABLE IF NOT EXISTS color_swatches (
 CREATE TABLE IF NOT EXISTS works (
     id          INT UNSIGNED      NOT NULL AUTO_INCREMENT,
     title       VARCHAR(100)      NOT NULL DEFAULT '',
+    title_en    VARCHAR(100)      NOT NULL DEFAULT '' COMMENT '영문 값. 비어 있으면 화면에서 한글로 자동 폴백(src/lib/i18n.php의 db_field())',
     slug        VARCHAR(200)      NOT NULL DEFAULT '',
     description VARCHAR(300)      NOT NULL DEFAULT '',
+    description_en VARCHAR(300)   NOT NULL DEFAULT '' COMMENT '영문 값. 비어 있으면 화면에서 한글로 자동 폴백(src/lib/i18n.php의 db_field())',
     image_url   VARCHAR(500)      NOT NULL DEFAULT '',
     sort_order  SMALLINT UNSIGNED NOT NULL DEFAULT 0,
     is_active   TINYINT(1)        NOT NULL DEFAULT 1,
@@ -865,3 +872,15 @@ ON DUPLICATE KEY UPDATE english = VALUES(english);
 -- 2026-09-22 블로그 시리즈명/태그라인도 영문 컬럼 추가 (blog_posts와 같은 패턴)
 -- ALTER TABLE blog_series ADD COLUMN name_en    VARCHAR(80)  NULL COMMENT '영문 시리즈명' AFTER name;
 -- ALTER TABLE blog_series ADD COLUMN tagline_en VARCHAR(200) NULL COMMENT '영문 태그라인' AFTER tagline;
+
+-- 2026-09-23 사이트 전체 번역 점검에서 남아 있던 세 군데에 영문 컬럼 추가 (studio_cards·blog_posts와 같은 패턴).
+-- works/hero_slides는 작품명·캐러셀 문구가 자유서술형이라 용어집(i18n_terms)으로 못 다루고,
+-- page_meta는 값이 전부 한글이라 영문 페이지의 <title>/description까지 한글로 나가고 있었다.
+-- 빈 문자열이면 db_field()가 한글 컬럼으로 폴백하므로, 영문을 안 채운 행이 있어도 화면은 깨지지 않는다.
+-- ALTER TABLE works       ADD COLUMN title_en       VARCHAR(100) NOT NULL DEFAULT '' AFTER title;
+-- ALTER TABLE works       ADD COLUMN description_en VARCHAR(300) NOT NULL DEFAULT '' AFTER description;
+-- ALTER TABLE hero_slides ADD COLUMN title_en       VARCHAR(120) NOT NULL DEFAULT '' AFTER title;
+-- ALTER TABLE hero_slides ADD COLUMN subtitle_en    VARCHAR(255) NOT NULL DEFAULT '' AFTER subtitle;
+-- ALTER TABLE page_meta   ADD COLUMN title_en       VARCHAR(255) NOT NULL DEFAULT '' AFTER title;
+-- ALTER TABLE page_meta   ADD COLUMN description_en VARCHAR(500) NOT NULL DEFAULT '' AFTER description;
+-- ALTER TABLE page_meta   ADD COLUMN keywords_en    VARCHAR(500) NOT NULL DEFAULT '' AFTER keywords;

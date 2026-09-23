@@ -12,7 +12,7 @@
 
     let selectedFrameColor  = '#28241e';
     let selectedSlatColor   = '#28241e';
-    let selectedMuntolColor = '#28241e';
+    let selectedMuntolColor = '#3d382f';
     let showMuntol          = true;
     let faceColorMap        = null;
     let facePaintMode      = false;

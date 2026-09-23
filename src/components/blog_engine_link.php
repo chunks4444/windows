@@ -6,7 +6,7 @@ if (!empty($blogEngineKey)) {
     try {
         require_once __DIR__ . '/../lib/db.php';
         require_once __DIR__ . '/../lib/i18n.php';   // te() / lang_href()
-        $stmt = db()->prepare("SELECT title, slug FROM blog_posts WHERE is_active=1 AND related_engine=? ORDER BY id DESC LIMIT 1");
+        $stmt = db()->prepare("SELECT title, title_en, slug FROM blog_posts WHERE is_active=1 AND related_engine=? ORDER BY id DESC LIMIT 1");
         $stmt->execute([$blogEngineKey]);
         $blogEngineLinkPost = $stmt->fetch();
     } catch (Throwable $e) {
@@ -14,7 +14,7 @@ if (!empty($blogEngineKey)) {
     }
     if ($blogEngineLinkPost):
 ?>
-<a class="pm-engine-story-link" href="<?= lang_href('/blog/' . rawurlencode($blogEngineLinkPost['slug'])) ?>" title="<?= htmlspecialchars($blogEngineLinkPost['title']) ?>">
+<a class="pm-engine-story-link" href="<?= lang_href('/blog/' . rawurlencode($blogEngineLinkPost['slug'])) ?>" title="<?= htmlspecialchars(db_field($blogEngineLinkPost, 'title')) ?>">
     <i class="bi bi-book"></i> <?= te('이 살의 이야기') ?>
 </a>
 <?php endif; } ?>

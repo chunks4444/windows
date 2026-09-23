@@ -126,14 +126,14 @@ function sc_desc(array $cardsByKey, string $key, string $fallbackKey): string {
         <div class="carousel-inner">
             <?php foreach ($heroSlides as $i => $sl): ?>
             <div class="carousel-item <?= $i === 0 ? 'active' : '' ?>">
-                <img src="<?= htmlspecialchars($sl['image_url']) ?>" class="hero-slide-img" alt="<?= htmlspecialchars($sl['title']) ?>">
+                <img src="<?= htmlspecialchars($sl['image_url']) ?>" class="hero-slide-img" alt="<?= htmlspecialchars(db_field($sl, 'title')) ?>">
                 <?php if ($sl['title'] || $sl['subtitle']): ?>
                 <div class="hero-slide-caption">
                     <?php if ($sl['title']): ?>
-                    <h2 class="hero-slide-title"><?= htmlspecialchars($sl['title']) ?></h2>
+                    <h2 class="hero-slide-title"><?= htmlspecialchars(db_field($sl, 'title')) ?></h2>
                     <?php endif; ?>
                     <?php if ($sl['subtitle']): ?>
-                    <p class="hero-slide-sub"><?= htmlspecialchars($sl['subtitle']) ?></p>
+                    <p class="hero-slide-sub"><?= htmlspecialchars(db_field($sl, 'subtitle')) ?></p>
                     <?php endif; ?>
                 </div>
                 <?php endif; ?>
@@ -158,7 +158,7 @@ function sc_desc(array $cardsByKey, string $key, string $fallbackKey): string {
         <h2 class="ab-section-title"><?= htmlspecialchars(t('company_studio_title')) ?></h2>
         <p class="ab-section-body"><?= t('company_studio_body') ?></p>
         <div class="ab-tools-grid">
-            <a href="/src/engine/classic/classic.php" class="ab-tool-card">
+            <a href="<?= lang_href('/src/engine/classic/classic.php') ?>" class="ab-tool-card">
                 <svg class="ab-tool-icon" width="48" height="48" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
                     <rect fill="currentColor" x="148" y="204" width="384" height="46" rx="4"/>
                     <rect fill="currentColor" x="148" y="430" width="384" height="46" rx="4"/>
@@ -171,7 +171,7 @@ function sc_desc(array $cardsByKey, string $key, string $fallbackKey): string {
                     <p class="ab-tool-desc"><?= sc_desc($cardsByKey, 'classic', 'home_engine_desc_classic') ?></p>
                 </div>
             </a>
-            <a href="/src/engine/square/square.php" class="ab-tool-card">
+            <a href="<?= lang_href('/src/engine/square/square.php') ?>" class="ab-tool-card">
                 <svg class="ab-tool-icon" width="48" height="48" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
                     <rect fill="currentColor" x="148" y="204" width="384" height="46" rx="4"/>
                     <rect fill="currentColor" x="148" y="430" width="384" height="46" rx="4"/>
@@ -183,7 +183,7 @@ function sc_desc(array $cardsByKey, string $key, string $fallbackKey): string {
                     <p class="ab-tool-desc"><?= sc_desc($cardsByKey, 'square', 'home_engine_desc_square') ?></p>
                 </div>
             </a>
-            <a href="/src/engine/cross/cross.php" class="ab-tool-card">
+            <a href="<?= lang_href('/src/engine/cross/cross.php') ?>" class="ab-tool-card">
                 <svg class="ab-tool-icon" width="48" height="48" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
                     <g transform="rotate(45 340 340)">
                         <rect fill="currentColor" x="148" y="204" width="384" height="46" rx="4"/>
@@ -197,7 +197,7 @@ function sc_desc(array $cardsByKey, string $key, string $fallbackKey): string {
                     <p class="ab-tool-desc"><?= sc_desc($cardsByKey, 'cross', 'home_engine_desc_cross') ?></p>
                 </div>
             </a>
-            <a href="/src/engine/diamond/diamond.php" class="ab-tool-card">
+            <a href="<?= lang_href('/src/engine/diamond/diamond.php') ?>" class="ab-tool-card">
                 <svg class="ab-tool-icon" width="48" height="48" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
                     <rect fill="currentColor" x="317" y="148" width="46" height="384" rx="4"/>
                     <rect fill="currentColor" x="148" y="317" width="384" height="46" rx="4"/>
@@ -209,7 +209,7 @@ function sc_desc(array $cardsByKey, string $key, string $fallbackKey): string {
                     <p class="ab-tool-desc"><?= sc_desc($cardsByKey, 'diamond', 'home_engine_desc_diamond') ?></p>
                 </div>
             </a>
-            <a href="/src/engine/triangle/triangle.php" class="ab-tool-card">
+            <a href="<?= lang_href('/src/engine/triangle/triangle.php') ?>" class="ab-tool-card">
                 <svg class="ab-tool-icon" width="48" height="48" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
                     <rect fill="currentColor" x="317" y="148" width="46" height="384" rx="4"/>
                     <g transform="rotate(60 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="4"/></g>
@@ -220,7 +220,7 @@ function sc_desc(array $cardsByKey, string $key, string $fallbackKey): string {
                     <p class="ab-tool-desc"><?= sc_desc($cardsByKey, 'triangle', 'home_engine_desc_triangle') ?></p>
                 </div>
             </a>
-            <a href="/src/engine/hexagon/hexagon.php" class="ab-tool-card">
+            <a href="<?= lang_href('/src/engine/hexagon/hexagon.php') ?>" class="ab-tool-card">
                 <svg class="ab-tool-icon" width="48" height="48" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
                     <polyline points="210,265 340,190 470,265" fill="none" stroke="currentColor" stroke-width="46" stroke-linejoin="round" stroke-linecap="round"/>
                     <line x1="210" y1="265" x2="210" y2="415" stroke="currentColor" stroke-width="46" stroke-linecap="round"/>
