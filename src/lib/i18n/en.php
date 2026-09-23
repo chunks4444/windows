@@ -115,7 +115,7 @@ return [
     'home_blog_body'           => 'Stories about changho and hanok lattices, told by the Pyeongmok workshop.',
     'home_blog_more'           => 'View All',
     'home_blog_quote_read'     => 'Read the story',
-    'home_blog_episode'        => 'Ep. %d',
+    'home_blog_episode'        => 'No. %d',
 
     // Contact CTA
     'home_contact_label'       => 'Contact',
@@ -370,7 +370,7 @@ return [
     'bd_back'                 => 'Blog',
     'bd_share_x_aria'         => 'Share on X',
     'bd_series_label'         => 'This series',
-    'bd_series_episode'       => 'Ep. %d',
+    'bd_series_episode'       => 'No. %d',
     'bd_series_total'         => '(%d episodes total)',
     'bd_series_completed'     => 'Completed',
     'bd_series_ongoing'       => 'Ongoing',
