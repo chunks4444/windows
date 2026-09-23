@@ -91,8 +91,8 @@ body { background: var(--bg); }
     display: block;
     width: 100%;
     height: auto;
-    max-height: 500px;
-    object-fit: cover;  /* 가로는 항상 칼럼 폭, 500px 넘는 세로만 위아래를 잘라냄 */
+    max-height: 700px;
+    object-fit: cover;  /* 가로는 항상 칼럼 폭, 700px 넘는 세로만 위아래를 잘라냄 */
     border-radius: var(--r-sm);
 }
 
