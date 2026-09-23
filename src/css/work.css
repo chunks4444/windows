@@ -102,9 +102,9 @@
     background: var(--bg); color: var(--text);
     font-size: var(--fs-13); font-weight: 600;
     cursor: pointer;
-    transition: border-color .2s, color .2s;
+    transition: border-color .2s, color .2s, background .2s;
 }
-.wkg-load-more-btn:hover { border-color: var(--text); }
+.wkg-load-more-btn:hover { border-color: #000; background: #000; color: #fff; }
 
 /* ── 키워드 필터 드롭다운 (필터 버튼 바로 아래) ── */
 .wkg-filter-wrap { position: relative; }
