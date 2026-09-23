@@ -241,14 +241,14 @@ try {
                     <?php else: ?>
                     <?= htmlspecialchars(db_field($sc, 'name')) ?>
                     <?php endif; ?>
-                    <span class="bg-side-card-meta">
-                        <span class="bg-side-card-count"><?= htmlspecialchars(sprintf(t('blog_total_episodes'), (int)$sc['total'])) ?></span>
-                        <span class="bg-side-card-status <?= $sc['is_completed'] ? 'is-completed' : 'is-ongoing' ?>"><?= htmlspecialchars($sc['is_completed'] ? t('blog_status_complete') : t('blog_status_ongoing')) ?></span>
-                    </span>
                 </h3>
                 <?php if ($sc['tagline']): ?>
                 <p class="bg-side-card-tagline">"<?= htmlspecialchars(db_field($sc, 'tagline')) ?>"</p>
                 <?php endif; ?>
+                <span class="bg-side-card-meta">
+                    <span class="bg-side-card-count"><?= htmlspecialchars(sprintf(t('blog_total_episodes'), (int)$sc['total'])) ?></span>
+                    <span class="bg-side-card-status <?= $sc['is_completed'] ? 'is-completed' : 'is-ongoing' ?>"><?= htmlspecialchars($sc['is_completed'] ? t('blog_status_complete') : t('blog_status_ongoing')) ?></span>
+                </span>
                 <ul class="bg-side-card-posts">
                     <?php foreach ($sc['posts'] as $sp): ?>
                     <li>
