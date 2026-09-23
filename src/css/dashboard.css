@@ -74,7 +74,7 @@ body {
     display: flex;
     align-items: center;
     flex-shrink: 0;
-    color: var(--accent);
+    color: #000;
 }
 
 .db-card-engine-icon svg {
@@ -378,7 +378,7 @@ body {
     border: none;
     background: transparent;
     font-size: var(--fs-12);
-    color: var(--accent);
+    color: #000;
     font-weight: 600;
     cursor: pointer;
     padding: 0;
