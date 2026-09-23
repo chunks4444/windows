@@ -1,5 +1,5 @@
 .pf-card {
-    background: var(--accent-tint, #EDEFF2);
+    background: color-mix(in srgb, var(--accent-tint, #EDEFF2) 45%, #fff);
     border-radius: 14px;
     overflow: hidden;
     max-width: 100%;
