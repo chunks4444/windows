@@ -67,6 +67,7 @@ $displayName = term_short(library_pattern_display_name($pattern['slug'], $patter
     <link rel="alternate icon" href="/src/assets/favicon.png">
     <link rel="apple-touch-icon" href="/src/assets/apple-touch-icon.png">
     <link rel="canonical" href="<?= htmlspecialchars($shareUrl) ?>">
+    <?php hreflang_tags('/collection/detail?slug=' . rawurlencode($pattern['slug'])); ?>
     <meta property="og:title" content="<?= htmlspecialchars($displayName) ?>">
     <meta property="og:description" content="<?= htmlspecialchars($metaDesc) ?>">
     <meta property="og:image" content="<?= htmlspecialchars($metaImage) ?>">

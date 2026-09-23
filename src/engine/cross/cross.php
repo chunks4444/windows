@@ -52,7 +52,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
     }
     ?>
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="<?= is_en() ? 'en' : 'ko' ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -130,7 +130,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="<?= is_en() ? 'en' : 'ko' ?>">
 
 <head>
     <meta charset="UTF-8">

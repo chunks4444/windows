@@ -43,7 +43,7 @@ $total = count($images);
 $desc  = strip_tags($work['description'] ?? '');
 ?>
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="<?= is_en() ? 'en' : 'ko' ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -54,7 +54,8 @@ $desc  = strip_tags($work['description'] ?? '');
     <link rel="icon" type="image/svg+xml" href="/src/assets/favicon.svg">
     <link rel="alternate icon" href="/src/assets/favicon.png">
     <link rel="apple-touch-icon" href="/src/assets/apple-touch-icon.png">
-    <link rel="canonical" href="<?= htmlspecialchars(SITE_URL . '/portfolio/' . rawurlencode($work['slug'])) ?>">
+    <link rel="canonical" href="<?= htmlspecialchars(SITE_URL . lang_href('/portfolio/' . rawurlencode($work['slug']))) ?>">
+    <?php hreflang_tags('/portfolio/' . rawurlencode($work['slug']), !empty($work['title_en'])); ?>
     <meta property="og:title" content="<?= htmlspecialchars(db_field($work, 'title')) ?>">
     <meta property="og:description" content="<?= htmlspecialchars($desc) ?>">
     <meta property="og:image" content="<?= htmlspecialchars($images[0] ?? SITE_DEFAULT_IMAGE) ?>">

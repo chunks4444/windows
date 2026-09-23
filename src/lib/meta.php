@@ -69,9 +69,26 @@ function meta_tags(?array $override = null): void {
     if ($keywords) echo '<meta name="keywords" content="' . htmlspecialchars($keywords, ENT_QUOTES) . '">' . "\n    ";
     $canonical = $override['canonical'] ?? (SITE_URL . $path);
     echo '<link rel="canonical" href="' . htmlspecialchars($canonical, ENT_QUOTES) . '">' . "\n    ";
+    // 한글 전용 페이지(약관·404 등)는 'hreflang' => false로 끈다. 쿼리까지 포함해야 하는 페이지는
+    // 한글 경로 문자열을 직접 넘긴다(예: 블로그 목록 2쪽 이상).
+    $hreflang = $override['hreflang'] ?? preg_replace('#^/en(?=/|$)#', '', $path);
+    if ($hreflang !== false) hreflang_tags($hreflang ?: '/');
     echo '<meta property="og:title"       content="' . htmlspecialchars($title, ENT_QUOTES) . '">' . "\n    ";
     echo '<meta property="og:description" content="' . htmlspecialchars($desc, ENT_QUOTES) . '">' . "\n    ";
     echo '<meta property="og:image"       content="' . htmlspecialchars($image, ENT_QUOTES) . '">' . "\n    ";
+}
+
+// 검색엔진에 같은 페이지의 한/영 버전을 서로 알려주는 태그. 이게 없으면 구글이 /en/ 페이지를
+// 한글 페이지의 중복으로 보고 영어권 검색에 한글 페이지를 내보내거나 영문 페이지를 아예 빼버릴 수 있다.
+// $koPath는 /en 접두사를 뗀 한글 경로. 영문 본문이 없는 글(블로그 title_en 미입력 등)은 $hasEn=false로
+// 넘겨 태그를 생략한다 — 한글 본문을 영문 버전이라고 알려주면 오히려 신호가 꼬인다.
+function hreflang_tags(string $koPath, bool $hasEn = true): void {
+    if (!$hasEn) return;
+    $ko = SITE_URL . $koPath;
+    $en = SITE_URL . '/en' . $koPath;
+    echo '<link rel="alternate" hreflang="ko" href="' . htmlspecialchars($ko, ENT_QUOTES) . '">' . "\n    ";
+    echo '<link rel="alternate" hreflang="en" href="' . htmlspecialchars($en, ENT_QUOTES) . '">' . "\n    ";
+    echo '<link rel="alternate" hreflang="x-default" href="' . htmlspecialchars($ko, ENT_QUOTES) . '">' . "\n    ";
 }
 
 // 카카오톡 공유(Kakao Share SDK)용 JavaScript 키. site_config(key_name='kakao_js_key')에서 읽어온다.

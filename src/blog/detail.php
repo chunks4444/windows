@@ -219,6 +219,7 @@ $metaKeywords = trim($metaKeywords . ', ' . t('meta_brand_keywords'), ', ');
     <link rel="alternate icon" href="/src/assets/favicon.png">
     <link rel="apple-touch-icon" href="/src/assets/apple-touch-icon.png">
     <link rel="canonical" href="<?= htmlspecialchars(SITE_URL . lang_href('/blog/' . rawurlencode($post['slug']))) ?>">
+    <?php hreflang_tags('/blog/' . rawurlencode($post['slug']), !empty($post['title_en'])); ?>
     <meta property="og:title" content="<?= htmlspecialchars(db_field($post, 'title')) ?>">
     <meta property="og:description" content="<?= htmlspecialchars($metaDesc) ?>">
     <meta property="og:image" content="<?= htmlspecialchars($metaImage) ?>">
