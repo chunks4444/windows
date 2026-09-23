@@ -886,9 +886,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                         <div class="export-select-menu">
                             <button class="export-select-item" id="btnSavePDF" type="button">PDF</button>
                             <button class="export-select-item" id="btnSavePNG" type="button">PNG</button>
-                            <?php if ($navIsAdmin): ?>
                             <button class="export-select-item" id="btnSaveDXF" type="button">DXF</button>
-                            <?php endif; ?>
                         </div>
                     </details>
                 </div>
