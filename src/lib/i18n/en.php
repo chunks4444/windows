@@ -376,6 +376,7 @@ return [
     'bd_series_ongoing'       => 'Ongoing',
     'bd_source'               => 'Source',
     'bd_source_prefix'        => 'Source: %s',
+    'bd_glossary_title'       => 'Terms in This Post',
     'bd_license'              => 'You are free to quote and excerpt posts and records from the Pyeongmok blog, as long as you credit the source (pyeongmok.com).',
     'bd_engine_box_title'     => 'Try designing this lattice yourself',
     'bd_engine_box_desc'      => 'Try adjusting the %s pattern covered in this post yourself, right in the studio.',

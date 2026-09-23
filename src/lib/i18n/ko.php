@@ -376,6 +376,7 @@ return [
     'bd_series_ongoing'       => '연재중',
     'bd_source'               => '출처',
     'bd_source_prefix'        => '출처: %s',
+    'bd_glossary_title'       => '용어 풀이',
     'bd_license'              => '평목 블로그의 글과 기록은 출처(pyeongmok.com)를 밝히고 자유롭게 인용 및 발췌하실 수 있습니다.',
     'bd_engine_box_title'     => '이 살의 이야기, 직접 만들어보세요',
     'bd_engine_box_desc'      => '글에서 다룬 %s 패턴을 스튜디오에서 바로 조작해볼 수 있습니다.',

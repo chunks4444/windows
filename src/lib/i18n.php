@@ -56,6 +56,33 @@ function term(string $korean): string {
     return $terms[$korean] ?? $korean;
 }
 
+// 영문 블로그 글 하단 "용어 풀이" 박스용. 용어집에서 "로마자 (설명)" 형태인 항목만 골라,
+// 주어진 영문 본문에 로마자 표기가 실제로 나오는 것을 본문 등장 순서대로 [로마자, 설명] 배열로 돌려준다.
+// 본문마다 첫 등장에 풀이를 넣는 대신 여기 한 곳에서 모아 보여주려는 것 — 용어집(어드민)에
+// 항목을 추가하면 모든 글에 자동 반영된다. 설명 없는 항목(hinged, Hanok 등)은 제외.
+function glossary_terms_in(string $html): array {
+    require_once __DIR__ . '/db.php';
+    try {
+        $rows = db()->query('SELECT english FROM i18n_terms')->fetchAll(PDO::FETCH_COLUMN);
+    } catch (Throwable $e) {
+        return [];
+    }
+    $text = html_entity_decode(strip_tags($html), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $found = [];
+    foreach ($rows as $english) {
+        if (!preg_match('/^(.+?)\s*\((.+)\)\s*$/u', $english, $m)) continue;
+        $roman = trim($m[1]);
+        $key = mb_strtolower($roman);
+        if (isset($found[$key])) continue;   // 격자빗살/격자밋살처럼 같은 영문을 가진 중복 항목
+        // 앞뒤가 글자나 하이픈이면 다른 단어의 일부 — Gyeokja-bit-sal 안의 bit-sal을 따로 잡지 않게 한다
+        if (preg_match('/(?<![\p{L}\p{N}-])' . preg_quote($roman, '/') . '(?![\p{L}\p{N}-])/iu', $text, $hit, PREG_OFFSET_CAPTURE)) {
+            $found[$key] = ['term' => $roman, 'desc' => trim($m[2]), 'pos' => $hit[0][1]];
+        }
+    }
+    usort($found, fn($a, $b) => $a['pos'] <=> $b['pos']);
+    return $found;
+}
+
 // term()의 짧은 형태 — 뒤에 붙는 "(영문 설명)"을 떼고 로마자 표기만 돌려준다.
 // 용어집 형식("Beomsal-jangji (Wide-bar Lattice Door)")은 본문에서 처음 나올 때 설명하려고 만든 것이라
 // 엔진 사이드바의 좁은 select에 넣으면 목록이 화면을 넘칠 만큼 길어진다.

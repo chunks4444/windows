@@ -300,6 +300,18 @@ $metaKeywords = trim($metaKeywords . ', ' . t('meta_brand_keywords'), ', ');
 
         <div class="bd-body"><?= db_field($post, 'content') ?></div>
 
+        <?php $bdGlossary = (is_en() && !empty($post['content_en'])) ? glossary_terms_in($post['title_en'] . ' ' . $post['content_en']) : []; ?>
+        <?php if ($bdGlossary): ?>
+        <aside class="bd-glossary">
+            <p class="bd-glossary-title"><?= htmlspecialchars(t('bd_glossary_title')) ?></p>
+            <dl class="bd-glossary-list">
+                <?php foreach ($bdGlossary as $g): ?>
+                <div><dt><?= htmlspecialchars($g['term']) ?></dt><dd><?= htmlspecialchars($g['desc']) ?></dd></div>
+                <?php endforeach; ?>
+            </dl>
+        </aside>
+        <?php endif; ?>
+
         <?php
         $bdSourceLines = array_values(array_filter(array_map('trim', preg_split('/\r\n|\r|\n/', db_field($post, 'source_text') ?? ''))));
         ?>
