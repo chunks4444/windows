@@ -190,6 +190,9 @@ body { background: var(--bg); }
     text-decoration: none;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     flex: 1; min-width: 0;
+    /* body의 -0.2px 자간이 작고 얇은 이 텍스트에는 상대적으로 더 빽빽해 보여
+       카드 제목(굵고 큼)과 밀도가 어긋나 보임 — 풀어서 맞춤 */
+    letter-spacing: normal;
 }
 .bg-side-card-posts a:hover { color: var(--accent); }
 .bg-side-card-date {
