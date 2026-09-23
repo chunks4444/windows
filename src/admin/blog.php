@@ -45,7 +45,7 @@ foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
         .blog-upload-label { display:block; padding:10px; border:1.5px dashed var(--border); border-radius:8px; text-align:center; cursor:pointer; color: var(--text); font-size:13px; margin-bottom:6px; }
         .blog-upload-label:hover { border-color:var(--accent); color:var(--accent); }
         .blog-textarea { resize:vertical; padding:8px 10px; border:1px solid var(--border); border-radius:var(--r-sm); background:var(--bg); font-family:inherit; font-size:13px; color:var(--text); outline:none; width:100%; }
-        #postContentEditor { height:320px; background:var(--bg); font-size:13px; }
+        #postContentEditor, #postContentEnEditor { height:320px; background:var(--bg); font-size:13px; }
         .ql-editor { font-family:'Pretendard','Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif; color: var(--text); }
         .ql-editor strong, .ql-editor b { font-weight: 600; }
         .ql-editor h1, .ql-editor h2, .ql-editor h3, .ql-editor h4 { font-weight: 600; }
@@ -56,7 +56,8 @@ foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
         .adm-modal-fullscreen-btn:hover { color:var(--text); }
         #blogModalOverlay.fullscreen-active { padding:0; }
         #blogModalOverlay.fullscreen-active .adm-modal { max-width:100%; width:100%; height:100%; max-height:100%; border-radius:0; }
-        #blogModalOverlay.fullscreen-active #postContentEditor { height:calc(100vh - 220px); }
+        #blogModalOverlay.fullscreen-active #postContentEditor,
+        #blogModalOverlay.fullscreen-active #postContentEnEditor { height:calc(100vh - 220px); }
         .blog-info-section { border:1px solid var(--border); border-radius:var(--r-sm); margin-bottom:14px; }
         .blog-info-toggle { width:100%; display:flex; align-items:center; gap:8px; background:var(--bg); border:none; padding:10px 12px; font-size:12px; font-weight:700; color: var(--text); letter-spacing:0.04em; text-transform:uppercase; cursor:pointer; border-radius:var(--r-sm); }
         .blog-info-toggle i { transition:transform .2s ease; }
@@ -275,8 +276,9 @@ foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
                         <input id="postQuestionEn" type="text" maxlength="255">
                     </div>
                     <div class="adm-mfield">
-                        <label>본문 (영문, HTML) <span style="font-size:11px;color: var(--text);font-weight:400;">(한글 본문과 같은 &lt;p&gt;/&lt;h2&gt;/&lt;strong&gt; 구조로 직접 입력)</span></label>
-                        <textarea id="postContentEn" class="blog-textarea" rows="14" style="font-family:monospace;font-size:12px;"></textarea>
+                        <label>본문 (영문)</label>
+                        <div id="postContentEnEditor"></div>
+                        <input type="file" id="postContentEnImgFile" accept="image/*" style="display:none;">
                     </div>
                 </div>
             </div>

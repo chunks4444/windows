@@ -1,7 +1,7 @@
 const API = '/src/api/admin/blog.php';
 function _h() { return { 'Authorization': 'Bearer ' + localStorage.getItem('pmok_auth_token'), 'Content-Type': 'application/json' }; }
 
-let posts = [], quill, currentUser;
+let posts = [], quill, quillEn, currentUser;
 
 async function loadPosts() {
     const res  = await fetch(API, { headers: _h() });
@@ -120,6 +120,7 @@ function openModal(id) {
     document.getElementById('postCtaText').value = p?.cta_text ?? '';
     document.getElementById('postSourceText').value = p?.source_text ?? '';
     quill.root.innerHTML = p?.content ?? '';
+    quillEn.root.innerHTML = p?.content_en ?? '';
     document.getElementById('postThumbUrl').value = p?.thumbnail_url ?? '';
     const prev = document.getElementById('postImgPreview');
     if (p?.thumbnail_url) { prev.src = p.thumbnail_url; prev.classList.add('show'); }
@@ -136,7 +137,6 @@ function openModal(id) {
     document.getElementById('postCtaTextEn').value     = p?.cta_text_en ?? '';
     document.getElementById('postSourceTextEn').value  = p?.source_text_en ?? '';
     document.getElementById('postQuestionEn').value    = p?.question_en ?? '';
-    document.getElementById('postContentEn').value     = p?.content_en ?? '';
     window._postThumbData = null;
     document.getElementById('blogModalOverlay').classList.add('open');
     document.getElementById('blogModalOverlay').classList.remove('fullscreen-active');
@@ -164,24 +164,25 @@ function toggleInfoSection(sectionId) {
 
 // ── 본문 에디터 표(table) 도구 ─────────────────────────────
 const TABLE_GRID_ROWS = 6, TABLE_GRID_COLS = 8;
-let tableGridPopup = null, tableFloatBar = null, tableFloatQuill = null;
+let tableGridPopup = null, tableGridBtnEl = null, tableFloatBar = null, tableFloatQuill = null;
 
 function closeTableGridPopup() {
     if (!tableGridPopup) return;
     tableGridPopup.remove();
     tableGridPopup = null;
+    tableGridBtnEl = null;
     document.removeEventListener('mousedown', onTableGridDocClick, true);
 }
 
 function onTableGridDocClick(e) {
-    const btn = document.querySelector('#blogModalOverlay .ql-table');
-    if (tableGridPopup && !tableGridPopup.contains(e.target) && e.target !== btn) closeTableGridPopup();
+    if (tableGridPopup && !tableGridPopup.contains(e.target) && e.target !== tableGridBtnEl) closeTableGridPopup();
 }
 
-function toggleTableGridPopup() {
+function toggleTableGridPopup(quillInstance, btn) {
     if (tableGridPopup) { closeTableGridPopup(); return; }
-    const btn = document.querySelector('#blogModalOverlay .ql-table');
     if (!btn) return;
+    tableGridBtnEl = btn;
+    tableFloatQuill = quillInstance;
 
     const label = document.createElement('div');
     label.className = 'ql-table-grid-label';
@@ -199,7 +200,7 @@ function toggleTableGridPopup() {
                 label.textContent = `${r + 1} x ${c + 1} 표 삽입`;
             });
             cell.addEventListener('click', () => {
-                quill.getModule('table').insertTable(r + 1, c + 1);
+                quillInstance.getModule('table').insertTable(r + 1, c + 1);
                 closeTableGridPopup();
             });
             cells.push({ el: cell, r, c });
@@ -339,8 +340,12 @@ function syncTableUI() {
 }
 
 function initTableTools(quillInstance) {
-    tableFloatQuill = quillInstance;
-    quillInstance.on('selection-change', syncTableUI);
+    quillInstance.on('selection-change', (range) => {
+        // 여러 에디터(한글/영문)가 공존하므로, 방금 selection이 바뀐(=지금 포커스된) 에디터를
+        // "현재 활성" 에디터로 잡아야 표 삽입 버튼·플로팅 툴바가 엉뚱한 에디터를 조작하지 않는다.
+        if (range) tableFloatQuill = quillInstance;
+        syncTableUI();
+    });
     // 에디터 내부 스크롤 시(모달 자체는 fixed라 페이지 스크롤엔 영향 없음)
     // 표 위치가 바뀌므로 핸들/툴바 위치를 다시 계산
     quillInstance.root.addEventListener('scroll', () => {
@@ -393,15 +398,15 @@ async function previewImage(input) {
     }
 }
 
-async function insertContentImage(file) {
-    const range = quill.getSelection(true);
+async function insertContentImage(file, quillInstance) {
+    const range = quillInstance.getSelection(true);
     try {
         const { dataUrl } = await fileToResizedDataUrl(file, 1600);
         const res  = await fetch(API, { method: 'POST', headers: _h(), body: JSON.stringify({ action: 'upload_content_image', image_data: dataUrl }) });
         const data = await res.json();
         if (!data.ok) { alert(data.error || '이미지 업로드 실패'); return; }
-        quill.insertEmbed(range.index, 'image', data.url, 'user');
-        quill.setSelection(range.index + 1);
+        quillInstance.insertEmbed(range.index, 'image', data.url, 'user');
+        quillInstance.setSelection(range.index + 1);
     } catch (err) {
         alert(err);
     }
@@ -428,7 +433,9 @@ async function savePost() {
         cta_text_en:         document.getElementById('postCtaTextEn').value.trim(),
         source_text_en:      document.getElementById('postSourceTextEn').value.trim(),
         question_en:         document.getElementById('postQuestionEn').value.trim(),
-        content_en:          document.getElementById('postContentEn').value.trim(),
+        // Quill의 "빈" 상태는 innerHTML이 ''가 아니라 <p><br></p>라서, 그대로 저장하면
+        // db_field()의 empty() 체크가 안 걸려 "비워두면 한글로 폴백"이 깨진다 — getText()로 판별.
+        content_en:          quillEn.getText().trim().length === 0 ? '' : quillEn.root.innerHTML.trim(),
     };
     if (!body.title || quill.getText().trim().length === 0) { alert('제목과 본문을 입력해주세요.'); return; }
     if (/[-—"'*:]/.test(body.title)) { alert('제목에는 - — " \' * : 문자를 쓸 수 없습니다.'); return; }
@@ -463,10 +470,10 @@ async function toggleFeatured(id) {
     loadPosts();
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-    const contentImgFile = document.getElementById('postContentImgFile');
-
-    quill = new Quill('#postContentEditor', {
+// 한글/영문 본문 에디터가 옵션(표·이미지 버튼 핸들러)만 다르고 나머지는 동일해 공용 팩토리로 뺀다.
+// 이미지 버튼 핸들러의 this는 Quill 툴바 모듈 인스턴스라 this.quill로 "지금 클릭된 에디터"를 알 수 있다.
+function createBlogQuillEditor(containerSelector, imgFileInput, placeholder) {
+    const q = new Quill(containerSelector, {
         theme: 'snow',
         modules: {
             table: true,
@@ -481,21 +488,33 @@ document.addEventListener('DOMContentLoaded', async () => {
                     ['clean'],
                 ],
                 handlers: {
-                    image: () => contentImgFile.click(),
-                    table: () => toggleTableGridPopup(),
+                    image: () => imgFileInput.click(),
+                    table: function () { toggleTableGridPopup(this.quill, this.container.querySelector('.ql-table')); },
                 },
             },
         },
-        placeholder: '글 내용을 입력하세요. 이미지 버튼으로 본문에 사진을 삽입할 수 있습니다.',
+        placeholder,
     });
-
-    initTableTools(quill);
-
-    contentImgFile.addEventListener('change', () => {
-        const file = contentImgFile.files[0];
-        contentImgFile.value = '';
-        if (file) insertContentImage(file);
+    initTableTools(q);
+    imgFileInput.addEventListener('change', () => {
+        const file = imgFileInput.files[0];
+        imgFileInput.value = '';
+        if (file) insertContentImage(file, q);
     });
+    return q;
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+    quill = createBlogQuillEditor(
+        '#postContentEditor',
+        document.getElementById('postContentImgFile'),
+        '글 내용을 입력하세요. 이미지 버튼으로 본문에 사진을 삽입할 수 있습니다.'
+    );
+    quillEn = createBlogQuillEditor(
+        '#postContentEnEditor',
+        document.getElementById('postContentEnImgFile'),
+        'Enter the English content. Leave empty to fall back to the Korean text.'
+    );
 
     document.getElementById('blogModalOverlay').addEventListener('click', e => {
         if (e.target === e.currentTarget) closeModal();
