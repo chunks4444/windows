@@ -2,15 +2,10 @@
 // 회원가입 / 로그인 모달 컴포넌트
 // nav.php 에서 include 됨
 require_once __DIR__ . '/../lib/i18n.php';
+// 관리자 대리 로그인 배너는 대리 로그인 여부가 localStorage(관리자 브라우저)에만 있어 서버가 알 수 없다.
+// 그래서 정적 마크업을 두지 않고 checkImpersonationBar()가 필요할 때만 JS로 만든다 —
+// 일반 방문자 HTML에는 배너 마크업이 나가지 않는다.
 ?>
-<!-- 관리자 대리 로그인 중 표시 배너 — localStorage에 원래 관리자 세션이 보관되어 있을 때만
-     (즉 대리 로그인을 시작한 그 관리자 브라우저에서만) 보인다. 대상 회원 본인 화면·계정 데이터에는
-     아무 흔적도 남지 않는다(last_login_at 갱신 안 함, page_views 접속통계 기록 제외 — impersonate.php의
-     JWT 'imp' 클레임을 logger.php가 감지해서 건너뜀, 회원 쪽 localStorage/쿠키 무관). -->
-<div id="pmImpersonateBar" style="display:none;position:fixed;top:0;left:0;right:0;z-index:2000;height:26px;background:var(--danger);color:#fff;align-items:center;justify-content:center;gap:10px;font-size:11px;font-weight:600;">
-    <span><i class="bi bi-incognito"></i> 대리 로그인 중 — <span id="pmImpersonateEmail"></span></span>
-    <button onclick="endImpersonation()" style="background:#fff;color:var(--danger);border:none;border-radius:4px;padding:1px 8px;font-size:10px;font-weight:700;cursor:pointer;">관리자로 복귀</button>
-</div>
 
 <!-- AUTH MODAL -->
 <div class="modal fade" id="authModal" tabindex="-1" aria-hidden="true">
@@ -419,20 +414,27 @@ function startImpersonation(newToken, newUser) {
 }
 
 function checkImpersonationBar() {
-    const bar = document.getElementById('pmImpersonateBar');
-    if (!bar) return;
     const barHeight = 26;
     const navbar = document.querySelector('.pm-navbar');
     const raw = localStorage.getItem(IMPERSONATE_ADMIN_KEY);
+    let bar = document.getElementById('pmImpersonateBar');
     if (!raw) {
-        bar.style.display = 'none';
+        if (bar) bar.remove();
         document.body.style.paddingTop = '';
         if (navbar) navbar.style.top = '';
         return;
     }
+    if (!bar) {
+        bar = document.createElement('div');
+        bar.id = 'pmImpersonateBar';
+        bar.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:2000;height:26px;background:var(--danger);color:#fff;display:flex;align-items:center;justify-content:center;gap:10px;font-size:11px;font-weight:600;';
+        bar.innerHTML = '<span><i class="bi bi-incognito"></i> 대리 로그인 중 — <span id="pmImpersonateEmail"></span></span>'
+            + '<button type="button" style="background:#fff;color:var(--danger);border:none;border-radius:4px;padding:1px 8px;font-size:10px;font-weight:700;cursor:pointer;">관리자로 복귀</button>';
+        bar.querySelector('button').addEventListener('click', endImpersonation);
+        document.body.prepend(bar);
+    }
     const user = authGetUser();
     document.getElementById('pmImpersonateEmail').textContent = user?.email || '';
-    bar.style.display = 'flex';
     // 배너가 상단바(.pm-navbar, fixed-top)를 그냥 덮어버리지 않도록 그만큼 밀어내림
     if (navbar) navbar.style.top = barHeight + 'px';
     const baseTop = parseInt(getComputedStyle(document.body).paddingTop, 10) || 68;

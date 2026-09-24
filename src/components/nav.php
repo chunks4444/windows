@@ -130,7 +130,7 @@ $navStudioIcons = [
 <nav class="pm-navbar navbar navbar-expand-xl fixed-top px-4 py-3">
     <a href="<?= lang_href('/') ?>" class="navbar-brand d-flex align-items-center">
         <img src="/src/assets/logo.svg"
-             alt="평목" class="pm-nav-logo">
+             alt="<?= is_en() ? 'Pyeongmok' : '평목' ?>" class="pm-nav-logo">
         <span class="pm-nav-tagline"> </span>
     </a>
     <button class="navbar-toggler border-0" id="pmNavToggler" type="button" aria-expanded="false" aria-label="<?= htmlspecialchars(t('nav_menu_open')) ?>">
@@ -255,7 +255,7 @@ $navStudioIcons = [
     <div class="pm-dw-head">
         <a href="<?= lang_href('/') ?>" class="navbar-brand d-flex align-items-center">
             <img src="/src/assets/logo.svg"
-                 alt="평목" class="pm-nav-logo">
+                 alt="<?= is_en() ? 'Pyeongmok' : '평목' ?>" class="pm-nav-logo">
         </a>
         <button class="pm-dw-close" id="pmNavDrawerClose" aria-label="<?= htmlspecialchars(t('nav_drawer_close')) ?>">
             <i class="bi bi-x-lg"></i>

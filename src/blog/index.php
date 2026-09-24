@@ -102,13 +102,20 @@ try {
             $seriesCards[$sid] = ['name' => $r['series_name'], 'name_en' => $r['series_name_en'], 'tagline' => $r['series_tagline'], 'tagline_en' => $r['series_tagline_en'], 'posts' => [], 'total' => 0, 'sort' => (int)$r['series_sort'], 'is_completed' => $r['is_completed'], 'first_slug' => null, 'first_order' => null];
         }
         $seriesCards[$sid]['total']++;
-        if (count($seriesCards[$sid]['posts']) < 3) $seriesCards[$sid]['posts'][] = $r;
+        $seriesCards[$sid]['posts'][] = $r;
         // 타이틀 클릭 시 이동할 1화(series_order 최솟값) 추적
         if ($seriesCards[$sid]['first_order'] === null || (int)$r['series_order'] < $seriesCards[$sid]['first_order']) {
             $seriesCards[$sid]['first_order'] = (int)$r['series_order'];
             $seriesCards[$sid]['first_slug']  = $r['slug'];
         }
     }
+    // 카드 안 목록은 날짜가 아니라 회차 역순으로 최근 3편 — 다른 시리즈에서 옮겨 온 글처럼
+    // 발행일이 회차 순서와 어긋나면 날짜순 정렬로는 중간 회차가 빠져 보인다
+    foreach ($seriesCards as &$card) {
+        usort($card['posts'], function ($a, $b) { return (int)$b['series_order'] <=> (int)$a['series_order']; });
+        $card['posts'] = array_slice($card['posts'], 0, 3);
+    }
+    unset($card);
     if (count($seriesCards) > 1) {
         $bgFirstSid  = array_key_first($seriesCards);
         $bgFirstCard = $seriesCards[$bgFirstSid];
