@@ -108,7 +108,8 @@ if (!$post) { http_response_code(404); include __DIR__ . '/../../404.php'; exit;
 require_once __DIR__ . '/../lib/engine_icons.php';
 $engineLabels = [];
 foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
-    $engineLabels[$engineKey] = $engineLabel . '(' . ucfirst($engineKey) . ' Lattice)';
+    // 영문판은 용어집 표기(예: Yukmo-sotgeul-sal (Hexagon Raised Lattice))로 — 한글 살 이름이 그대로 노출되지 않게
+    $engineLabels[$engineKey] = is_en() ? term($engineLabel) : $engineLabel . '(' . ucfirst($engineKey) . ' Lattice)';
 }
 
 // 조회수 집계 — 방문자당 24시간에 1회만 카운트 (쿠키 기반 중복 방지), 관리자 본인 조회·봇은 제외
@@ -344,7 +345,7 @@ $metaKeywords = trim($metaKeywords . ', ' . t('meta_brand_keywords'), ', ');
             <p class="bd-engine-box-title"><?= htmlspecialchars(t('bd_engine_box_title')) ?></p>
             <p class="bd-engine-box-desc"><?= htmlspecialchars(sprintf(t('bd_engine_box_desc'), $post['related_category_name'] ? term($post['related_category_name']) : $engineLabels[$bdEngineKey])) ?></p>
             <?php
-            $bdEngineUrl = '/src/engine/' . $bdEngineKey . '/' . $bdEngineKey . '.php'
+            $bdEngineUrl = lang_href('/src/engine/' . $bdEngineKey . '/' . $bdEngineKey . '.php')
                 . ($post['related_drawing_id'] ? '?drawing_id=' . (int)$post['related_drawing_id'] : '');
             ?>
             <a class="bd-engine-box-btn"
