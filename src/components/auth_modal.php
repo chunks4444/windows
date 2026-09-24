@@ -5,6 +5,9 @@ require_once __DIR__ . '/../lib/i18n.php';
 // 관리자 대리 로그인 배너는 대리 로그인 여부가 localStorage(관리자 브라우저)에만 있어 서버가 알 수 없다.
 // 그래서 정적 마크업을 두지 않고 checkImpersonationBar()가 필요할 때만 JS로 만든다 —
 // 일반 방문자 HTML에는 배너 마크업이 나가지 않는다.
+// 아래 <script>의 startImpersonation()은 users.js의 impersonateUser()에서 호출되어 대상 회원 계정으로 대리 로그인을 시작한다.
+// 원래 관리자 세션(token+user)을 별도 키로 보관해뒀다가 복귀 시 그대로 되돌린다.
+// (이 설명을 <script> 안 JS 주석으로 두면 모든 페이지 HTML 소스에 그대로 노출되므로 PHP 주석에 둔다.)
 ?>
 
 <!-- AUTH MODAL -->
@@ -402,8 +405,6 @@ function authUpdateNav(skipStaleCheck) {
 
 const IMPERSONATE_ADMIN_KEY = 'pmok_impersonate_admin';
 
-// 대상 회원 계정으로 대리 로그인 시작 — users.js의 impersonateUser()에서 호출.
-// 원래 관리자 세션(token+user)을 별도 키로 보관해뒀다가 복귀 시 그대로 되돌린다.
 function startImpersonation(newToken, newUser) {
     const adminToken = authGetToken();
     const adminUser  = authGetUser();
