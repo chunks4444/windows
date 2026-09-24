@@ -43,6 +43,7 @@
 -- ALTER TABLE users ADD COLUMN view_shipping TINYINT(1) NOT NULL DEFAULT 0 COMMENT '엔진 배송비 안내문구 열람 허용 (role과 별개, 회원별 개별 승인)' AFTER view_leadtime;
 -- ALTER TABLE users ADD COLUMN view_desc     TINYINT(1) NOT NULL DEFAULT 0 COMMENT '엔진 예상견적 설명(disclaimer) 열람 허용 (role과 별개, 회원별 개별 승인)' AFTER view_shipping;
 -- ALTER TABLE users MODIFY COLUMN view_spec TINYINT(1) NOT NULL DEFAULT 1 COMMENT '엔진 제작 시방서 열람 허용 (role과 별개, 회원별 개별 승인) - 임시로 기본 1 (2026-07-07~)'; -- 기존 회원 전체도 UPDATE users SET view_spec=1로 함께 적용
+-- ALTER TABLE users ADD COLUMN name_en VARCHAR(100) NULL AFTER name; -- 영문판 표기용 로마자 이름 (블로그 저자 표기 등, 비어 있으면 name으로 폴백) (2026-09-24)
 
 -- 접속 통계 (1년 rolling)
 CREATE TABLE IF NOT EXISTS page_views (

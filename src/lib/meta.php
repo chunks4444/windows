@@ -170,10 +170,10 @@ function article_jsonld(array $post, string $url, string $image, string $descrip
         'image'         => $image,
         'datePublished' => date('c', strtotime($post['created_at'])),
         'url'           => $url,
-        'author'        => ['@type' => 'Organization', 'name' => '평목'],
+        'author'        => ['@type' => 'Organization', 'name' => is_en() ? 'Pyeongmok' : '평목'],
         'publisher'     => [
             '@type' => 'Organization',
-            'name'  => '평목',
+            'name'  => is_en() ? 'Pyeongmok' : '평목',
             'logo'  => ['@type' => 'ImageObject', 'url' => SITE_DEFAULT_IMAGE],
         ],
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . '</script>' . "\n    ";

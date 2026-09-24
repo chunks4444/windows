@@ -42,7 +42,7 @@ try {
     $pdo = db();
     $relatedDrawingJoin = 'SELECT p.*, lp.name_ko AS related_pattern_name, lp.slug AS related_pattern_slug,
             pc.id AS related_category_id, pc.name AS related_category_name, d.type AS related_drawing_engine,
-            u.name AS author_name
+            u.name AS author_name, u.name_en AS author_name_en
         FROM blog_posts p
         LEFT JOIN library_patterns lp ON lp.drawing_id = p.related_drawing_id AND lp.is_active = 1
         LEFT JOIN pattern_categories pc ON pc.id = lp.pattern_category
@@ -245,7 +245,7 @@ $metaKeywords = trim($metaKeywords . ', ' . t('meta_brand_keywords'), ', ');
             <a href="<?= lang_href('/blog/') ?>" class="bd-back"><i class="bi bi-arrow-left"></i> <?= htmlspecialchars(t('bd_back')) ?></a>
             <h1 class="bd-title"><?= htmlspecialchars(db_field($post, 'title')) ?></h1>
             <time class="bd-date" datetime="<?= date('Y-m-d', strtotime($post['created_at'])) ?>">
-                <?= date('Y.m.d', strtotime($post['created_at'])) ?><?= $post['author_name'] ? ' · ' . htmlspecialchars($post['author_name']) : '' ?>
+                <?= date('Y.m.d', strtotime($post['created_at'])) ?><?php $bdAuthor = db_field($post, 'author_name'); ?><?= $bdAuthor ? ' · ' . htmlspecialchars($bdAuthor) : '' ?>
             </time>
             <div class="bd-share-row">
                 <button id="btnShare" type="button" class="bd-share-btn" title="<?= htmlspecialchars(t('share_title')) ?>"><i class="bi bi-share"></i></button>
