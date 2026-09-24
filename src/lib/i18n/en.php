@@ -366,7 +366,7 @@ return [
     'blog_edit_post'          => 'Edit this post',
 
     // Blog detail (src/blog/detail.php)
-    'bd_title_suffix'         => 'Pyeongmok Workshop Blog',
+    'bd_title_suffix'         => 'Pyeongmok Studio',
     'bd_back'                 => 'Blog',
     'bd_share_x_aria'         => 'Share on X',
     'bd_series_label'         => 'This series',

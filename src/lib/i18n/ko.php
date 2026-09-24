@@ -366,7 +366,7 @@ return [
     'blog_edit_post'          => '이 글 편집',
 
     // 블로그 상세 (src/blog/detail.php)
-    'bd_title_suffix'         => '평목 공방 블로그',
+    'bd_title_suffix'         => '평목 스튜디오',
     'bd_back'                 => '블로그',
     'bd_share_x_aria'         => 'X에 공유',
     'bd_series_label'         => '이 시리즈',
