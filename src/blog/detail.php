@@ -191,6 +191,27 @@ if (!$metaDesc) {
     if ($metaDesc === '') $metaDesc = strip_tags(db_field($post, 'content'));
     $metaDesc = mb_substr($metaDesc, 0, 120);
 }
+// summary는 여러 문단·300자 넘게 쓰인 글이 많은데, 검색결과 스니펫은 155자 안팎에서 잘린다.
+// 원문(summary)은 목록 카드에서도 쓰이니 건드리지 않고, 메타 태그용으로만 줄바꿈을 펴고
+// 160자를 넘으면 그 안의 마지막 문장 끝까지만 쓴다. 그러면 100자도 안 남는 경우(둘째 문장이 긴 글)엔
+// 너무 짧아지므로 대신 160자 안의 마지막 단어 경계에서 자르고 …를 붙인다.
+// 첫 줄이 마침표 없는 소제목인 summary가 있어서, 줄 끝에 문장부호가 없으면 마침표를 붙여 이어 붙인다.
+// (마지막 줄은 그대로 — 한 줄짜리 summary에 없던 마침표가 생기지 않게)
+$bdLines = array_values(array_filter(array_map('trim', preg_split('/\R+/u', $metaDesc)), 'strlen'));
+foreach ($bdLines as $bdIdx => $bdLine) {
+    if ($bdIdx < count($bdLines) - 1 && !preg_match('/[.!?。…:;"\'”’)]$/u', $bdLine)) $bdLines[$bdIdx] .= '.';
+}
+$metaDesc = implode(' ', $bdLines);
+$metaDesc = trim(preg_replace('/\s+/u', ' ', $metaDesc));
+if (mb_strlen($metaDesc) > 160) {
+    $bdCut = mb_substr($metaDesc, 0, 160);
+    if (preg_match('/^(.{100,}[.!?。]["\'”’)]*)\s/us', $bdCut . ' ', $bdSentence)) {
+        $metaDesc = $bdSentence[1];
+    } else {
+        $bdSpace  = mb_strrpos($bdCut, ' ');
+        $metaDesc = rtrim(mb_substr($bdCut, 0, $bdSpace ?: 159), ' ,;:—-') . '…';
+    }
+}
 // og:image는 절대 URL이어야 카톡·페이스북 공유 카드가 정상 노출됨 (thumbnail_url은 /uploads/... 상대경로로 저장됨)
 $metaImage = $post['thumbnail_url']
     ? (strpos($post['thumbnail_url'], 'http') === 0 ? $post['thumbnail_url'] : SITE_URL . $post['thumbnail_url'])

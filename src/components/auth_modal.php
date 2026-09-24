@@ -2,12 +2,18 @@
 // 회원가입 / 로그인 모달 컴포넌트
 // nav.php 에서 include 됨
 require_once __DIR__ . '/../lib/i18n.php';
-// 관리자 대리 로그인 배너는 대리 로그인 여부가 localStorage(관리자 브라우저)에만 있어 서버가 알 수 없다.
-// 그래서 정적 마크업을 두지 않고 checkImpersonationBar()가 필요할 때만 JS로 만든다 —
+require_once __DIR__ . '/../lib/jwt.php';
+// 관리자 대리 로그인 배너("관리자로 복귀")는 복귀용 관리자 토큰이 localStorage(관리자 브라우저)에만 있으므로
+// 정적 마크업을 두지 않고 checkImpersonationBar()가 필요할 때만 JS로 만든다 —
 // 일반 방문자 HTML에는 배너 마크업이 나가지 않는다.
 // 아래 <script>의 startImpersonation()은 users.js의 impersonateUser()에서 호출되어 대상 회원 계정으로 대리 로그인을 시작한다.
 // 원래 관리자 세션(token+user)을 별도 키로 보관해뒀다가 복귀 시 그대로 되돌린다.
 // (이 설명을 <script> 안 JS 주석으로 두면 모든 페이지 HTML 소스에 그대로 노출되므로 PHP 주석에 둔다.)
+// 대리 로그인 JS 자체도 필요한 사람에게만 내보낸다: 대리 로그인을 시작하는 슈퍼 관리자(s),
+// 그리고 대리 로그인 중인 세션(JWT에 imp 표식 — impersonate.php가 발급 시 넣음).
+// 일반 방문자·회원 HTML에는 이 스크립트가 나가지 않는다. 권한 검증은 어차피 서버 API가 한다.
+$authPayload       = $navAuthPayload ?? jwt_from_request();
+$showImpersonation = $authPayload && (($authPayload['role'] ?? null) === 's' || !empty($authPayload['imp']));
 ?>
 
 <!-- AUTH MODAL -->
@@ -403,6 +409,7 @@ function authUpdateNav(skipStaleCheck) {
     }
 }
 
+<?php if ($showImpersonation): ?>
 const IMPERSONATE_ADMIN_KEY = 'pmok_impersonate_admin';
 
 function startImpersonation(newToken, newUser) {
@@ -458,6 +465,7 @@ async function endImpersonation() {
     localStorage.removeItem(IMPERSONATE_ADMIN_KEY);
     location.href = '/src/admin/users.php';
 }
+<?php endif; ?>
 
 async function loadNavBoards() {
     const boardSection = document.getElementById('navBoardSection');
@@ -566,7 +574,9 @@ async function authReset(e) {
 
 document.addEventListener('DOMContentLoaded', function () {
     authUpdateNav();
+<?php if ($showImpersonation): ?>
     checkImpersonationBar();
+<?php endif; ?>
 
     const params = new URLSearchParams(location.search);
 
