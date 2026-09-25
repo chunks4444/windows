@@ -393,7 +393,7 @@ function showToast(msg) {
 function shareCollectionPattern(e, slug, name, image) {
     e.stopPropagation(); e.preventDefault();
     if (!slug) return;
-    const url = location.origin + '/collection/detail?slug=' + encodeURIComponent(slug);
+    const url = location.origin + _lh('/collection/detail') + '?slug=' + encodeURIComponent(slug);
     const imageUrl = image ? (image.startsWith('http') ? image : location.origin + image) : '';
     openCollectionShareModal(url, name, imageUrl);
 }

@@ -252,8 +252,8 @@ function sc_desc(array $cardsByKey, string $key, string $fallbackKey): string {
         <div class="ab-studio-next">
             <p class="ab-studio-next-desc"><?= t('company_studio_next_desc') ?></p>
             <div class="ab-studio-next-btns">
-                <a href="/collection/" class="ab-contact-btn"><?= htmlspecialchars(t('company_studio_btn1')) ?></a>
-                <a href="/guide/order" class="ab-contact-btn ab-contact-btn--outline"><?= htmlspecialchars(t('company_studio_btn2')) ?></a>
+                <a href="<?= lang_href('/collection/') ?>" class="ab-contact-btn"><?= htmlspecialchars(t('company_studio_btn1')) ?></a>
+                <a href="<?= lang_href('/guide/order') ?>" class="ab-contact-btn ab-contact-btn--outline"><?= htmlspecialchars(t('company_studio_btn2')) ?></a>
             </div>
         </div>
     </section>

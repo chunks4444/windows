@@ -1,7 +1,7 @@
 const token = () => localStorage.getItem('pmok_auth_token');
 
 async function loadCompany() {
-    if (!token()) { location.href = '/'; return; }
+    if (!token()) { location.href = _lh('/'); return; }
     document.getElementById('companyPage').style.display = '';
 
     const [meRes, res] = await Promise.all([

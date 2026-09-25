@@ -119,7 +119,7 @@ $desc  = strip_tags($work['description'] ?? '');
     <div class="wd-info-bar">
       <div class="wd-info-bar-inner">
         <div class="wd-info-left">
-            <a href="/portfolio/" class="wd-back">
+            <a href="<?= lang_href('/portfolio/') ?>" class="wd-back">
                 <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
                     <path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -132,7 +132,7 @@ $desc  = strip_tags($work['description'] ?? '');
         </div>
 
         <?php if ($next && $next['id'] !== $work['id']): ?>
-        <a class="wd-next-link" href="/portfolio/<?= rawurlencode($next['slug']) ?>">
+        <a class="wd-next-link" href="<?= lang_href('/portfolio/' . rawurlencode($next['slug'])) ?>">
             <span class="wd-next-label">next</span>
             <?= htmlspecialchars(db_field($next, 'title')) ?>
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">

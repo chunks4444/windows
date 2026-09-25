@@ -117,7 +117,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                     }),
                 });
                 const result = await saveRes.json();
-                if (result.ok) { location.href = '/mypage/dashboard'; }
+                if (result.ok) { location.href = _lh('/mypage/dashboard'); }
                 else { alert(result.error || '복사에 실패했습니다.'); }
             } catch { alert('복사 중 오류가 발생했습니다.'); }
         });

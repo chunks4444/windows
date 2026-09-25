@@ -53,8 +53,8 @@ $showImpersonation = $authPayload && (($authPayload['role'] ?? null) === 's' || 
                     <input type="checkbox" id="regAgree" required form="formRegister" onchange="updateSnsLock()">
                     <?php
                     // 약관·방침 본문은 한국어 원문이 법적 기준이라 번역하지 않고 링크도 한글 페이지로 둔다.
-                    $termsLink   = '<a href="/terms" target="_blank" rel="noopener">' . htmlspecialchars(t('auth_terms')) . '</a>';
-                    $privacyLink = '<a href="/privacy" target="_blank" rel="noopener">' . htmlspecialchars(t('auth_privacy')) . '</a>';
+                    $termsLink   = '<a href="' . lang_href('/terms') . '" target="_blank" rel="noopener">' . htmlspecialchars(t('auth_terms')) . '</a>';
+                    $privacyLink = '<a href="' . lang_href('/privacy') . '" target="_blank" rel="noopener">' . htmlspecialchars(t('auth_privacy')) . '</a>';
                     ?>
                     <span><?= sprintf(t('auth_consent'), $termsLink, $privacyLink) ?></span>
                 </label>
@@ -489,7 +489,7 @@ async function loadNavBoards() {
             } else {
                 boardSection.style.display = '';
                 boardList.innerHTML = boards.map(b =>
-                    `<li><a class="dropdown-item d-flex align-items-center gap-2" href="/mypage/dashboard?board=${b.id}">
+                    `<li><a class="dropdown-item d-flex align-items-center gap-2" href="${_lh('/mypage/dashboard')}?board=${b.id}">
                         <i class="bi bi-collection" style="font-size:14px;"></i>
                         <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${_escHtml(b.name)}</span>
                         <span style="font-size:10px;color:var(--text-muted);flex-shrink:0;">${b.item_count}</span>
@@ -506,7 +506,7 @@ async function loadNavBoards() {
             } else {
                 drawerBoardSection.style.display = '';
                 drawerBoardList.innerHTML = boards.map(b =>
-                    `<a class="pm-dw-link" href="/mypage/dashboard?board=${b.id}">
+                    `<a class="pm-dw-link" href="${_lh('/mypage/dashboard')}?board=${b.id}">
                         <i class="bi bi-collection"></i>
                         <span>${_escHtml(b.name)}</span>
                     </a>`

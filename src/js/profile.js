@@ -1,7 +1,7 @@
 const token = () => localStorage.getItem('pmok_auth_token');
 
 async function loadProfile() {
-    if (!token()) { location.href = '/'; return; }
+    if (!token()) { location.href = _lh('/'); return; }
     document.getElementById('profilePage').style.display = '';
 
     const res  = await fetch('/src/api/auth/profile.php', {

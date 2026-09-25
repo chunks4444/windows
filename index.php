@@ -81,7 +81,7 @@ try {
         $cc['is_editor_link'] = (bool)($editorUrl && $cc['drawing_id']);
         $cc['href'] = $cc['is_editor_link']
             ? $editorUrl . '?drawing_id=' . (int)$cc['drawing_id']
-            : '/collection/detail?slug=' . urlencode($cc['slug']);
+            : lang_href('/collection/detail?slug=' . urlencode($cc['slug']));
         $cc['display_name'] = library_pattern_display_name($cc['slug'], $cc['name_ko']);
     }
     unset($cc);
@@ -179,7 +179,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                     $key   = $sc['engine_key'];
                     $title = (is_en() && !empty($sc['title_en'])) ? $sc['title_en'] : $sc['title'];
                 ?>
-                    <a href="/src/engine/<?= htmlspecialchars($key) ?>/<?= htmlspecialchars($key) ?>.php" class="engine-icon-shortcut" aria-label="<?= htmlspecialchars(sprintf(t('home_engine_alt'), $title)) ?>">
+                    <a href="<?= htmlspecialchars(lang_href('/src/engine/' . $key . '/' . $key . '.php')) ?>" class="engine-icon-shortcut" aria-label="<?= htmlspecialchars(sprintf(t('home_engine_alt'), $title)) ?>">
                         <span class="engine-icon-circle"><?= $svgIcons[$key] ?? '' ?></span>
                         <span class="engine-icon-label"><?= htmlspecialchars($title) ?></span>
                     </a>
@@ -193,7 +193,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                         <p class="ab-section-label">Collection</p>
                         <h2 class="ab-section-title"><?= htmlspecialchars(t('home_collection_title')) ?></h2>
                     </div>
-                    <a href="/collection/" class="home-blog-more"><?= htmlspecialchars(t('home_collection_more')) ?> <i class="bi bi-arrow-right"></i></a>
+                    <a href="<?= lang_href('/collection/') ?>" class="home-blog-more"><?= htmlspecialchars(t('home_collection_more')) ?> <i class="bi bi-arrow-right"></i></a>
                 </div>
                 <!-- Collection: 사이트 폭(container)에 맞춰 정렬 -->
                 <div class="collection-strip-outer">
@@ -293,7 +293,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                 <?php if (!empty($spaceCards)): ?>
                 <div class="space-cards-wrapper">
                     <?php foreach ($spaceCards as $sc): ?>
-                    <a class="space-card" href="/collection/?q=<?= urlencode($sc['collection_query']) ?>">
+                    <a class="space-card" href="<?= htmlspecialchars(lang_href('/collection/?q=' . urlencode($sc['collection_query']))) ?>">
                         <img src="<?= htmlspecialchars($sc['image_url']) ?>" alt="<?= htmlspecialchars($sc['label']) ?>">
                         <div class="space-card-overlay"><span class="space-card-label"><?= htmlspecialchars($sc['label']) ?></span></div>
                     </a>
@@ -343,7 +343,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                         <h2 class="ab-section-title"><?= htmlspecialchars(t('home_process_title')) ?></h2>
                         <p class="ab-section-body"><?= htmlspecialchars(t('home_process_body')) ?></p>
                     </div>
-                    <a href="/guide/" class="home-blog-more"><?= htmlspecialchars(t('home_guide_more')) ?> <i class="bi bi-arrow-right"></i></a>
+                    <a href="<?= lang_href('/guide/') ?>" class="home-blog-more"><?= htmlspecialchars(t('home_guide_more')) ?> <i class="bi bi-arrow-right"></i></a>
                 </div>
                 <div class="process-container">
                     <div class="process-step">
@@ -359,7 +359,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                                 <li><i class="bi bi-check2"></i> <?= htmlspecialchars(t('home_step1_hint2')) ?></li>
                                 <li><i class="bi bi-check2"></i> <?= htmlspecialchars(t('home_step1_hint3')) ?></li>
                             </ul>
-                            <a href="/guide/studio-classic" class="process-guide-link"><?= htmlspecialchars(t('home_step1_link')) ?> <i class="bi bi-arrow-right"></i></a>
+                            <a href="<?= lang_href('/guide/studio-classic') ?>" class="process-guide-link"><?= htmlspecialchars(t('home_step1_link')) ?> <i class="bi bi-arrow-right"></i></a>
                         </div>
                     </div>
                     <div class="process-step">
@@ -375,7 +375,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                                 <li><i class="bi bi-check2"></i> <?= htmlspecialchars(t('home_step2_hint2')) ?></li>
                                 <li><i class="bi bi-check2"></i> <?= htmlspecialchars(t('home_step2_hint3')) ?></li>
                             </ul>
-                            <a href="/guide/drawing" class="process-guide-link"><?= htmlspecialchars(t('home_step2_link')) ?> <i class="bi bi-arrow-right"></i></a>
+                            <a href="<?= lang_href('/guide/drawing') ?>" class="process-guide-link"><?= htmlspecialchars(t('home_step2_link')) ?> <i class="bi bi-arrow-right"></i></a>
                         </div>
                     </div>
                     <div class="process-step">
@@ -392,7 +392,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                                 <li><i class="bi bi-check2"></i> <?= htmlspecialchars(t('home_step3_hint3')) ?></li>
                                 <li><i class="bi bi-check2"></i> <?= htmlspecialchars(t('home_step3_hint4')) ?></li>
                             </ul>
-                            <a href="/guide/render" class="process-guide-link"><?= htmlspecialchars(t('home_step3_link')) ?> <i class="bi bi-arrow-right"></i></a>
+                            <a href="<?= lang_href('/guide/render') ?>" class="process-guide-link"><?= htmlspecialchars(t('home_step3_link')) ?> <i class="bi bi-arrow-right"></i></a>
                         </div>
                     </div>
                     <div class="process-step">
@@ -412,7 +412,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                                 <button type="button" class="process-cta-btn" data-bs-toggle="modal" data-bs-target="#contactModal">
                                     <i class="bi bi-envelope-fill"></i> <?= htmlspecialchars(t('home_step4_cta')) ?>
                                 </button>
-                                <a href="/guide/order" class="process-guide-link"><?= htmlspecialchars(t('home_step4_link')) ?> <i class="bi bi-arrow-right"></i></a>
+                                <a href="<?= lang_href('/guide/order') ?>" class="process-guide-link"><?= htmlspecialchars(t('home_step4_link')) ?> <i class="bi bi-arrow-right"></i></a>
                             </div>
                         </div>
                     </div>
@@ -433,7 +433,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                         <p class="ab-section-label"><?= htmlspecialchars(t('home_faq_label')) ?></p>
                         <h2 class="ab-section-title"><?= htmlspecialchars(t('home_faq_title')) ?></h2>
                     </div>
-                    <a href="/guide/faq" class="home-blog-more"><?= htmlspecialchars(t('home_faq_more')) ?> <i class="bi bi-arrow-right"></i></a>
+                    <a href="<?= lang_href('/guide/faq') ?>" class="home-blog-more"><?= htmlspecialchars(t('home_faq_more')) ?> <i class="bi bi-arrow-right"></i></a>
                 </div>
                 <div class="faq-columns">
                     <div class="accordion faq-accordion" id="faqAccordionLeft">

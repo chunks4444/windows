@@ -129,8 +129,8 @@ require_once __DIR__ . '/../lib/i18n.php';
         <div class="pf-section">
             <h2 class="pf-section-title"><?= htmlspecialchars(t('pf_legal')) ?></h2>
             <div class="pf-legal-links">
-                <a href="/privacy/"><?= htmlspecialchars(t('auth_privacy')) ?></a>
-                <a href="/terms/"><?= htmlspecialchars(t('auth_terms')) ?></a>
+                <a href="<?= lang_href('/privacy/') ?>"><?= htmlspecialchars(t('auth_privacy')) ?></a>
+                <a href="<?= lang_href('/terms/') ?>"><?= htmlspecialchars(t('auth_terms')) ?></a>
             </div>
         </div>
     </div>

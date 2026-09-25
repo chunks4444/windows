@@ -527,7 +527,7 @@
             if (!user.name || !user.phone) {
                 pmConfirm(
                     _t('견적요청하려면 프로필에 이름과 연락처를 먼저 입력해주세요.'),
-                    () => { location.href = '/mypage/profile'; },
+                    () => { location.href = _lh('/mypage/profile'); },
                     { sub: _t('프로필 페이지에서 입력 후 다시 시도해주세요.'), type: 'ok', confirmText: _t('프로필로 이동') }
                 );
                 return;
