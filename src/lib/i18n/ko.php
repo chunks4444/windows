@@ -297,6 +297,8 @@ return [
     'ct_message'              => '내용',
     'ct_message_ph'           => '문의 내용을 입력해주세요.',
     'ct_file'                 => '첨부파일 (선택, 최대 10MB)',
+    'ct_file_choose'          => '파일 선택',
+    'ct_file_none'            => '선택된 파일 없음',
     'ct_submit'               => '보내기',
     'ct_msg_send_fail'        => '전송 실패',
     'ct_err_all_fields'       => '모든 항목을 입력해주세요.',

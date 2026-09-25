@@ -297,6 +297,8 @@ return [
     'ct_message'              => 'Message',
     'ct_message_ph'           => 'Please tell us what you need.',
     'ct_file'                 => 'Attachment (optional, max 10MB)',
+    'ct_file_choose'          => 'Choose file',
+    'ct_file_none'            => 'No file chosen',
     'ct_submit'               => 'Send',
     'ct_msg_send_fail'        => 'Failed to send',
     'ct_err_all_fields'       => 'Please fill in every field.',

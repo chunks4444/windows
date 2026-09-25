@@ -759,6 +759,15 @@
     transition: border-color .15s; resize: none;
 }
 .ct-field input:focus, .ct-field textarea:focus { border-color: var(--text); }
+.ct-file-input { display: none; }
+.ct-file { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.ct-file-btn {
+    flex-shrink: 0; padding: 7px 14px;
+    border: 1px solid var(--border); border-radius: 4px; background: var(--bg); color: var(--text);
+    font-size: var(--fs-13); font-family: inherit; cursor: pointer; transition: border-color .15s;
+}
+.ct-file-btn:hover, .ct-file-btn:focus-visible { border-color: var(--text); outline: none; }
+.ct-file-name { font-size: var(--fs-13); color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
 .ct-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .ct-submit {
     width: 100%; height: 40px; margin-top: 4px;

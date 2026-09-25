@@ -38,7 +38,12 @@
                     </div>
                     <div class="ct-field">
                         <label><?= htmlspecialchars(t('ct_file')) ?></label>
-                        <input type="file" id="ctFile" accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.zip,.dwg,.dxf,.doc,.docx,.xls,.xlsx,.hwp">
+                        <?php /* 네이티브 파일 입력의 "파일 선택/선택된 파일 없음"은 브라우저 언어로 고정돼 영문판에서도 한글로 나오므로 숨기고 버튼·파일명을 직접 그린다 */ ?>
+                        <input type="file" id="ctFile" class="ct-file-input" accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.zip,.dwg,.dxf,.doc,.docx,.xls,.xlsx,.hwp">
+                        <div class="ct-file">
+                            <button type="button" class="ct-file-btn" onclick="document.getElementById('ctFile').click()"><?= htmlspecialchars(t('ct_file_choose')) ?></button>
+                            <span class="ct-file-name" id="ctFileName"><?= htmlspecialchars(t('ct_file_none')) ?></span>
+                        </div>
                     </div>
                     <button type="submit" class="ct-submit" id="ctBtn"><?= htmlspecialchars(t('ct_submit')) ?></button>
                 </form>
@@ -47,8 +52,11 @@
     </div>
 </div>
 <script>
-const CT_T = <?= json_encode(['fileSize' => t('ct_err_file_size'), 'sendFail' => t('ct_msg_send_fail'), 'serverError' => t('auth_msg_server_error')], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
+const CT_T = <?= json_encode(['fileSize' => t('ct_err_file_size'), 'fileNone' => t('ct_file_none'), 'sendFail' => t('ct_msg_send_fail'), 'serverError' => t('auth_msg_server_error')], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
 let ctOpenedAt = 0;
+document.getElementById('ctFile').addEventListener('change', function () {
+    document.getElementById('ctFileName').textContent = this.files[0] ? this.files[0].name : CT_T.fileNone;
+});
 document.getElementById('contactModal').addEventListener('shown.bs.modal', function () {
     ctOpenedAt = Date.now();
 });
@@ -99,6 +107,7 @@ async function ctSubmit(e) {
 }
 document.getElementById('contactModal').addEventListener('hidden.bs.modal', function () {
     document.getElementById('contactForm').reset();
+    document.getElementById('ctFileName').textContent = CT_T.fileNone;
     document.getElementById('contactForm').style.display = '';
     document.getElementById('ctSuccess').style.display = 'none';
     document.getElementById('ctError').style.display = 'none';
