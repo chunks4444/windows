@@ -210,7 +210,7 @@ $navStudioIcons = [
                 </ul>
             </li>
             <li class="nav-item">
-                <a href="<?= htmlspecialchars(lang_switch_url(is_en() ? 'ko' : 'en')) ?>" class="nav-link"><?= htmlspecialchars(t('nav_lang_switch')) ?></a>
+                <a href="<?= htmlspecialchars(lang_switch_url(is_en() ? 'ko' : 'en')) ?>" class="nav-link pm-nav-lang" title="<?= htmlspecialchars(t('nav_lang_switch')) ?>" aria-label="<?= htmlspecialchars(t('nav_lang_switch')) ?>"><i class="bi bi-globe2"></i></a>
             </li>
             <?php if (!$navIsLoggedIn): ?>
             <!-- 비로그인 -->

@@ -35,6 +35,8 @@ body { padding-top: 68px; }
 .pm-navbar .nav-link:focus:not(:focus-visible) {
     outline: none;
 }
+/* 언어 전환은 문구 대신 지구본 아이콘만 — 전환될 언어 이름은 title/aria-label로 */
+.pm-navbar .pm-nav-lang .bi { font-size: 15px; line-height: 1; vertical-align: -2px; }
 .pm-nav-caret {
     font-size: .68em;
     margin-left: 2px;
