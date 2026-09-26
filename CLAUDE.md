@@ -80,7 +80,7 @@ JS 역할 분리:
 
 ### 인증
 
-JWT를 httpOnly 쿠키(`pmok_auth`)로 발급. `jwt_from_request()`가 쿠키 → `Authorization: Bearer` 순서로 검증. JWT secret은 `.htaccess`의 `SetEnv PMOK_JWT_SECRET`으로 주입.
+JWT를 httpOnly 쿠키(`pmok_auth`)로 발급. `jwt_from_request()`가 쿠키 → `Authorization: Bearer` 순서로 검증. JWT secret(`PMOK_JWT_SECRET`)과 DB 비밀번호(`PMOK_DB_PASS`)는 git 미포함 `src/lib/config.local.php`에 있음 (예시: `config.local.example.php`). 운영서버·각 개발 PC마다 하나씩 필요하고, 없으면 DB 접속·로그인이 전부 실패함.
 
 역할: `s`=슈퍼, `m`=관리자, `a`=작가, `u`=회원. 어드민 API는 `$payload['role'] === 's'` 확인.
 
