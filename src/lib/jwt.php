@@ -1,5 +1,8 @@
 <?php
-define('JWT_SECRET', getenv('PMOK_JWT_SECRET') ?: 'pmok-windows-secret-2024-!@#$%');
+// 시크릿은 git에 올리지 않는 config.local.php에서 읽는다. 예전엔 .htaccess SetEnv + 소스 내 기본값이었는데
+// 둘 다 git에 들어 있어 2026-09-26 교체하면서 분리함. 기본값 없음 — 파일이 없으면 토큰 발급 자체가 안 되는 게 맞다.
+require_once __DIR__ . '/config.local.php';
+define('JWT_SECRET', PMOK_JWT_SECRET);
 define('JWT_EXPIRE', 60 * 60 * 24 * 30); // 30일
 
 function jwt_encode(array $payload): string {

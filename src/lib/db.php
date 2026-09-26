@@ -31,7 +31,10 @@ define('IS_PROD', DB_SOCKET !== null);
 
 define('DB_NAME',    'windowspyeongmok');
 define('DB_USER',    'webpyeongmok');
-define('DB_PASS',    '@@@Chun20662782@@');
+// 비밀번호는 git에 올리지 않는 config.local.php에서 읽는다 (예시: config.local.example.php).
+// 2026-09-26 서버 침해 후 교체하면서 소스코드에서 분리함 — 이전 값은 git 기록에 남아 있어 폐기됨.
+require_once __DIR__ . '/config.local.php';
+define('DB_PASS',    PMOK_DB_PASS);
 define('DB_CHARSET', 'utf8mb4');
 
 function db(): PDO {
