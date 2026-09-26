@@ -1,14 +1,14 @@
 <?php
 $guide_current = 'getting-started.php';
 $guide_title   = '시작하기';
-$guide_prev    = ['href' => 'intro.php', 'title' => '평목이란?'];
+$guide_prev    = ['href' => 'intro.php', 'title' => '워크그룹 평목이란?'];
 $guide_next    = ['href' => 'studio-classic.php', 'title' => '세살'];
 include __DIR__ . '/_head.php';
 ?>
 
 <h1>시작하기</h1>
 <p class="guide-lead">
-    평목 계정을 만들고 첫 번째 도면을 설계하기까지의 과정을 단계별로 안내합니다.
+    워크그룹 평목 계정을 만들고 첫 번째 도면을 설계하기까지의 과정을 단계별로 안내합니다.
 </p>
 
 <h2>1단계 — 회원가입 & 로그인</h2>

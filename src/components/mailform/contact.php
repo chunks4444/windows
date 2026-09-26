@@ -9,7 +9,7 @@
       <!-- 헤더 -->
       <tr>
         <td style="background:var(--accent);padding:28px 32px;text-align:center;">
-          <span style="color:var(--bg);font-size:22px;font-weight:700;letter-spacing:-0.5px;">평목</span>
+          <span style="color:var(--bg);font-size:22px;font-weight:700;letter-spacing:-0.5px;">워크그룹 평목</span>
           <span style="color:rgba(var(--bg-rgb), 0.6);font-size:12px;margin-left:8px;letter-spacing:0.1em;">PYEONGMOK</span>
         </td>
       </tr>

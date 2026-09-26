@@ -34,7 +34,7 @@ return [
     'nav_lang_switch'          => '한국어',
 
     // index.php — hero
-    'home_h1'                  => 'Pyeongmok — Design Your Own Hanok Changho in Real Time',
+    'home_h1'                  => 'Workgroup Pyeongmok — Design Your Own Hanok Changho in Real Time',
     'home_hero_top'            => 'No two spaces are alike, so we draw to fit the dimensions and the light.',
     'home_hero_sub'            => 'Hanok changho, made with traditional technique — shaped exactly as you draw it',
     'home_ai_placeholder'      => 'Describe the changho you want — e.g. Jeongja-sal, hinged, 2 panels, 900×2000',
@@ -71,11 +71,11 @@ return [
     // Process
     'home_process_label'       => 'How It Works',
     'home_process_title'       => 'What You Draw Is What You Get',
-    'home_process_body'        => "There's no step where your design gets translated into words between design and production. Your finished drawing is built exactly as drawn, at the Pyeongmok workshop.",
+    'home_process_body'        => 'There\'s no step where your design gets translated into words between design and production. Your finished drawing is built exactly as drawn, at Workgroup Pyeongmok.',
     'home_guide_more'          => 'View Full Guide',
 
     'home_step1_title'         => 'Design the Pattern',
-    'home_step1_desc'          => 'Pyeongmok Studio is a changho design tool you can use right in your browser. Pick a lattice pattern from the Studio menu above, then adjust the frame size, slat spacing, and pattern to complete your own changho.',
+    'home_step1_desc'          => 'Workgroup Pyeongmok\'s studio is a changho design tool you can use right in your browser. Pick a lattice pattern from the Studio menu above, then adjust the frame size, slat spacing, and pattern to complete your own changho.',
     'home_step1_hint1'         => 'Enter the frame width and height',
     'home_step1_hint2'         => 'Adjust slat spacing and thickness with sliders',
     'home_step1_hint3'         => 'See the result update in real time',
@@ -112,7 +112,7 @@ return [
     // Blog
     'home_blog_label'          => 'Blog',
     'home_blog_title'          => 'Changho Stories',
-    'home_blog_body'           => 'Stories about changho and hanok lattices, told by the Pyeongmok workshop.',
+    'home_blog_body'           => 'Stories about changho and hanok lattices, told by Workgroup Pyeongmok.',
     'home_blog_more'           => 'View All',
     'home_blog_quote_read'     => 'Read the story',
     'home_blog_episode'        => 'No. %d',
@@ -125,9 +125,9 @@ return [
     'home_contact_hint'        => 'Open weekdays 10 AM – 6 PM · Email inquiries accepted on weekends and holidays',
 
     // src/company/index.php
-    'company_hero_label'       => 'About Pyeongmok',
+    'company_hero_label'       => 'About Workgroup Pyeongmok',
     'company_hero_title'       => 'The path of light and wind,<br>made of wood — <em>Pyeongmok</em>',
-    'company_hero_desc'        => "Pyeongmok (平木) is a changho design studio that brings the beauty of traditional Korean changho into modern spaces.<br>We reinterpret centuries-old lattice-weaving techniques through digital tools, building an environment where anyone can design their own changho <br>and carry it all the way through to production.",
+    'company_hero_desc'        => 'Workgroup Pyeongmok (平木) is a changho design and making workshop that brings the beauty of traditional Korean changho into modern spaces.<br>We reinterpret centuries-old lattice-weaving techniques through digital tools, building an environment where anyone can design their own changho <br>and carry it all the way through to production.',
 
     'company_phil_label'       => 'Philosophy',
     'company_phil_title'       => '평목 (Pyeongmok)',
@@ -151,7 +151,7 @@ return [
 
     'company_studio_label'     => 'Studio',
     'company_studio_title'     => 'Try designing it yourself.',
-    'company_studio_body'      => 'Pyeongmok Studio is a <strong>changho design tool</strong> you can use right in your browser. <br>Adjust the frame size, slat spacing, and pattern to complete a changho of your own. Your finished design is built at the Pyeongmok workshop, using traditional changho-making technique exactly as drawn.',
+    'company_studio_body'      => 'Workgroup Pyeongmok\'s studio is a <strong>changho design tool</strong> you can use right in your browser. <br>Adjust the frame size, slat spacing, and pattern to complete a changho of your own. Your finished design is built at Workgroup Pyeongmok, using traditional changho-making technique exactly as drawn.',
     'company_features_title'   => 'What all six engines have in common',
     'company_feature1'         => 'Choose hinged or sliding, and the number of panels',
     'company_feature2'         => 'Frame dimensions, left/right and top/bottom stile thickness, slat thickness',
@@ -177,17 +177,17 @@ return [
     'company_gallery_4'        => 'Workshop photo 4',
 
     // src/guide/ — shared sidebar, breadcrumb, pager
-    'guide_sidebar_home'       => 'Pyeongmok Guide',
+    'guide_sidebar_home'       => 'Workgroup Pyeongmok Guide',
     'guide_breadcrumb_root'    => 'Guide',
     'guide_pager_prev'         => 'Previous',
     'guide_pager_next'         => 'Next',
 
-    'guide_sec_about'          => 'About Pyeongmok',
+    'guide_sec_about'          => 'About Workgroup Pyeongmok',
     'guide_sec_drawing'        => 'Managing Drawings',
     'guide_sec_export'         => 'Exporting Drawings',
 
     // Sidebar article titles — engine names kept as short romanizations so the sidebar stays compact
-    'guide_art_intro'          => 'What is Pyeongmok Studio?',
+    'guide_art_intro'          => 'What is Workgroup Pyeongmok?',
     'guide_art_getting_started'=> 'Getting Started',
     'guide_art_classic'        => 'Se-sal',
     'guide_art_square'         => 'Jeongja-sal',
@@ -207,9 +207,9 @@ return [
 
     // src/guide/index.php — guide home
     'guide_landing_title'      => 'Guide',
-    'guide_landing_sub'        => 'From designing traditional changho drawings to AI rendering — a guide to every feature of Pyeongmok Studio.',
+    'guide_landing_sub'        => 'From designing traditional changho drawings to AI rendering — a guide to every feature of Workgroup Pyeongmok.',
     'guide_article_count'      => '%d articles',
-    'guide_card_intro_desc'    => 'Learn what Pyeongmok is and how to get started.',
+    'guide_card_intro_desc'    => 'Learn what Workgroup Pyeongmok is and how to get started.',
     'guide_card_studio_title'  => 'What is the Studio?',
     'guide_card_studio_desc'   => 'Detailed instructions for all six lattice pattern engines.',
     'guide_card_drawing_desc'  => 'How to save drawings, manage versions, and export to PDF or PNG.',
@@ -250,7 +250,7 @@ return [
     'auth_reset_hint'         => 'Please enter a new password.',
     'auth_new_password'       => 'New password',
     'auth_btn_reset'          => 'Change password',
-    'auth_welcome_title'      => 'Welcome to Pyeongmok!',
+    'auth_welcome_title'      => 'Welcome to Workgroup Pyeongmok!',
     'auth_welcome_body'       => 'Now design your own changho —<br>and see it placed in a real space with AI.',
     'auth_welcome_btn'        => 'Start in the Studio',
 
@@ -281,7 +281,7 @@ return [
     'auth_err_current_pw'     => 'Your current password is incorrect.',
 
     // Global footer (src/components/footer.php)
-    'footer_copy'              => 'Pyeongmok. All rights reserved.',
+    'footer_copy'              => 'Workgroup Pyeongmok. All rights reserved.',
     'footer_cta_sub'           => 'Design inquiries, production consultations and collaboration proposals are all welcome.',
     'footer_cta_link'          => "Let's build it together.",
 
@@ -310,7 +310,7 @@ return [
     'ct_err_mail_failed'      => 'We could not send the mail. Please email us directly.',
 
     // Portfolio (src/portfolio/index.php)
-    'wk_sub'                  => 'Works completed at the Pyeongmok workshop.',
+    'wk_sub'                  => 'Works completed at Workgroup Pyeongmok.',
     'wk_count'                => '%d works',
     'wk_filter'               => 'Filter',
     'wk_tag_all'              => 'All',
@@ -330,7 +330,7 @@ return [
     'share_threads_aria'      => 'Share on Threads',
 
     // Collection (src/collection/)
-    'col_sub'                 => 'Browse the lattice patterns created in Pyeongmok Studio.',
+    'col_sub'                 => 'Browse the lattice patterns created at Workgroup Pyeongmok.',
     'col_count'               => '%d patterns',
     'col_search_ph'           => 'Search patterns…',
     'col_like'                => 'Like',
@@ -339,9 +339,9 @@ return [
     'col_group_jp'            => 'Ilbon-sal (Japanese)',
     'col_group_shoji'         => 'Shoji',
     'col_group_kumiko'        => 'Kumiko',
-    'col_meta_suffix'         => 'Pyeongmok Studio Collection',
-    'col_meta_default'        => 'A changho lattice pattern made in Pyeongmok Studio',
-    'col_title_suffix'        => 'Pyeongmok Collection',
+    'col_meta_suffix'         => 'Workgroup Pyeongmok Collection',
+    'col_meta_default'        => 'A changho lattice pattern made at Workgroup Pyeongmok',
+    'col_title_suffix'        => 'Workgroup Pyeongmok Collection',
     'col_open_studio'         => 'Open in Studio',
     'col_share'               => 'Share',
     'col_copy'                => 'Copy',
@@ -368,7 +368,7 @@ return [
     'blog_edit_post'          => 'Edit this post',
 
     // Blog detail (src/blog/detail.php)
-    'bd_title_suffix'         => 'Pyeongmok Studio',
+    'bd_title_suffix'         => 'Workgroup Pyeongmok',
     'bd_back'                 => 'Blog',
     'bd_share_x_aria'         => 'Share on X',
     'bd_series_label'         => 'This series',
@@ -379,13 +379,13 @@ return [
     'bd_source'               => 'Sources',
     'bd_source_prefix'        => 'Source: %s',
     'bd_glossary_title'       => 'Terms in This Post',
-    'bd_license'              => 'You are free to quote and excerpt posts and records from the Pyeongmok blog, as long as you credit the source (pyeongmok.com).',
+    'bd_license'              => 'You are free to quote and excerpt posts and records from the Workgroup Pyeongmok blog, as long as you credit the source (pyeongmok.com).',
     'bd_engine_box_title'     => 'Try designing this lattice yourself',
     'bd_engine_box_desc'      => 'Try adjusting the %s pattern covered in this post yourself, right in the studio.',
     'bd_open_in_studio'       => 'Open in studio',
     'bd_cta_category'         => 'This lattice belongs to the %s series — see real production examples in the Collection.',
     'bd_cta_category_btn'     => 'View %s in the Collection',
-    'bd_cta_default'          => 'Browse the pattern designs in Pyeongmok Studio',
+    'bd_cta_default'          => 'Browse the pattern designs at Workgroup Pyeongmok',
     'bd_go_collection'        => 'Go to the Collection',
     'bd_pager_prev'           => 'Previous post',
     'bd_pager_next'           => 'Next post',
@@ -393,7 +393,7 @@ return [
     'bd_next_series'          => 'Next series',
     'bd_link_copied'          => 'Link copied.',
     'bd_link_copy_failed'     => 'Could not copy the link.',
-    'bd_kakao_desc'           => 'Read this post on the Pyeongmok blog.',
+    'bd_kakao_desc'           => 'Read this post on the Workgroup Pyeongmok blog.',
 
     // My Page shared (auth wall, etc.)
     'mp_auth_need_login'      => 'Please log in.',
@@ -457,20 +457,20 @@ return [
     'cp_address_detail_ph'      => 'Detailed address (floor, unit, etc.)',
 
     // Site-wide default meta (page_meta has no English columns yet, so en mode uses these)
-    'meta_brand_keywords'     => 'Pyeongmok, traditional changho making, custom changho design, lattice window',
-    'wk_title_suffix'         => 'Pyeongmok',
-    'meta_default_title'      => 'Pyeongmok — Design Hanok Changho in Real Time',
-    'meta_default_desc'       => 'A hanok changho and lattice design studio by the Pyeongmok workshop. Design your own lattice pattern in the browser and order it made.',
+    'meta_brand_keywords'     => 'Workgroup Pyeongmok, Pyeongmok, traditional changho making, custom changho design, lattice window',
+    'wk_title_suffix'         => 'Workgroup Pyeongmok',
+    'meta_default_title'      => 'Workgroup Pyeongmok — Design Hanok Changho in Real Time',
+    'meta_default_desc'       => 'A hanok changho and lattice design studio by Workgroup Pyeongmok. Design your own lattice pattern in the browser and order it made.',
     'meta_default_keywords'   => 'hanok changho, Korean lattice window, wooden window design, custom changho, traditional Korean window, lattice pattern, Jeongja-sal, Wanja-sal, Gyo-sal, Semo-sotgeul-sal, Mareummo-sal, Yukmo-sotgeul-sal, online window design, woodworking studio, Pyeongmok',
 
     // src/renders/view.php — AI render share landing (people arrive here from a shared link)
-    'rv_title'                => '%s render | Pyeongmok',
-    'rv_title_notfound'       => 'Render not found | Pyeongmok',
-    'rv_desc'                 => 'An image rendered from a %s pattern in Pyeongmok.',
+    'rv_title'                => '%s render | Workgroup Pyeongmok',
+    'rv_title_notfound'       => 'Render not found | Workgroup Pyeongmok',
+    'rv_desc'                 => 'An image rendered from a %s pattern at Workgroup Pyeongmok.',
     'rv_desc_notfound'        => "We couldn't find the render you asked for.",
     'rv_alt'                  => '%s render image',
-    'rv_label'                => '%s · Pyeongmok AI render',
-    'rv_sub'                  => 'In Pyeongmok Studio you can design your own lattice pattern and render it into a real space.',
+    'rv_label'                => '%s · Workgroup Pyeongmok AI render',
+    'rv_sub'                  => 'At Workgroup Pyeongmok you can design your own lattice pattern and render it into a real space.',
     'rv_cta'                  => 'Design your own %s',
-    'rv_home'                 => 'Back to Pyeongmok home',
+    'rv_home'                 => 'Back to Workgroup Pyeongmok home',
 ];

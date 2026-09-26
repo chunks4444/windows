@@ -19,7 +19,7 @@ return [
     'nav_guide_delivery'       => '배송',
     'nav_guide_faq'            => 'FAQ',
     'nav_blog'                 => '블로그',
-    'nav_company'              => '평목 소개',
+    'nav_company'              => '워크그룹 평목 소개',
     'nav_company_intro'        => '소개',
     'nav_company_studio'       => '스튜디오',
     'nav_company_contact'      => '연락처',
@@ -34,9 +34,9 @@ return [
     'nav_lang_switch'          => 'English',
 
     // index.php — 히어로
-    'home_h1'                  => '평목 - 나만의 한옥 살창·창호를 실시간으로 디자인하는 스튜디오',
+    'home_h1'                  => '워크그룹 평목 - 나만의 한옥 살창·창호를 실시간으로 디자인하는 스튜디오',
     'home_hero_top'            => '같은 공간은 없으니까요. 치수와 빛에 맞춰 그립니다.',
-    'home_hero_sub'            => '한옥 창호, 기법은 전통 — 모양은 그린 그대로 평목이 만듭니다',
+    'home_hero_sub'            => '한옥 창호, 기법은 전통 — 모양은 그린 그대로 워크그룹 평목이 만듭니다',
     'home_ai_placeholder'      => '원하는 창호를 말해보세요  예: 정자살 여닫이 2짝 900×2000',
     'home_ai_send'             => '설계 시작',
     'home_engine_alt'          => '%s 패턴 미리보기',
@@ -71,11 +71,11 @@ return [
     // 사용법(프로세스)
     'home_process_label'       => '사용법',
     'home_process_title'       => '그린 것과 나온 것이 다르지 않게',
-    'home_process_body'        => '설계와 제작 사이, 말로 옮겨 적는 단계가 없습니다. 완성한 도면 그대로 평목 공방에서 제작됩니다.',
+    'home_process_body'        => '설계와 제작 사이, 말로 옮겨 적는 단계가 없습니다. 완성한 도면 그대로 워크그룹 평목에서 제작됩니다.',
     'home_guide_more'          => '가이드 전체 보기',
 
     'home_step1_title'         => '패턴 설계',
-    'home_step1_desc'          => '평목 스튜디오는 브라우저에서 바로 사용할 수 있는 창호 설계 도구입니다. 상단 스튜디오 메뉴에서 원하는 창호 패턴을 선택하고, 문틀 크기·살 간격·패턴을 조정하며 나만의 창호를 완성해 보세요.',
+    'home_step1_desc'          => '워크그룹 평목의 스튜디오는 브라우저에서 바로 사용할 수 있는 창호 설계 도구입니다. 상단 스튜디오 메뉴에서 원하는 창호 패턴을 선택하고, 문틀 크기·살 간격·패턴을 조정하며 나만의 창호를 완성해 보세요.',
     'home_step1_hint1'         => '문틀 가로·세로 크기 입력',
     'home_step1_hint2'         => '살 간격·두께 슬라이더 조정',
     'home_step1_hint3'         => '실시간으로 결과 확인',
@@ -112,7 +112,7 @@ return [
     // 블로그
     'home_blog_label'          => '블로그',
     'home_blog_title'          => '창호 이야기',
-    'home_blog_body'           => '평목 공방이 전하는 창호와 한옥 살창 이야기.',
+    'home_blog_body'           => '워크그룹 평목이 전하는 창호와 한옥 살창 이야기.',
     'home_blog_more'           => '전체 보기',
     'home_blog_quote_read'     => '이야기 읽어보기',
     'home_blog_episode'        => '%d화',
@@ -125,9 +125,9 @@ return [
     'home_contact_hint'        => '평일 오전 10시 – 오후 6시 운영 · 주말·공휴일 이메일 접수 가능',
 
     // src/company/index.php
-    'company_hero_label'       => 'About 평목',
+    'company_hero_label'       => 'About 워크그룹 평목',
     'company_hero_title'       => '나무로 만드는<br>빛과 바람의 길,<em>평목</em>',
-    'company_hero_desc'        => '평목(平木)은 전통창호의 아름다움을 현대 공간에 담아내는 창호디자인 스튜디오입니다. <br>수백 년을 이어온 문살 기법을 디지털 도구로 재해석하여, 누구나 자신만의 창호를 <br>직접 설계하고 제작까지 연결할 수 있는 환경을 만들어갑니다.',
+    'company_hero_desc'        => '워크그룹 평목(平木)은 전통창호의 아름다움을 현대 공간에 담아내는 창호 설계·제작 공방입니다. <br>수백 년을 이어온 문살 기법을 디지털 도구로 재해석하여, 누구나 자신만의 창호를 <br>직접 설계하고 제작까지 연결할 수 있는 환경을 만들어갑니다.',
 
     'company_phil_label'       => 'Philosophy',
     'company_phil_title'       => '평목(平木)',
@@ -151,7 +151,7 @@ return [
 
     'company_studio_label'     => 'Studio',
     'company_studio_title'     => '직접 설계해 보세요.',
-    'company_studio_body'      => '평목 스튜디오는 브라우저에서 바로 사용할 수 있는 <strong>창호 설계 도구</strong>입니다. <br>문틀 크기, 살 간격, 패턴을 조정하며 나만의 창호를 완성해 보세요. 완성한 설계는 전통 창호 기법 그대로, 평목 공방에서 제작됩니다.',
+    'company_studio_body'      => '워크그룹 평목의 스튜디오는 브라우저에서 바로 사용할 수 있는 <strong>창호 설계 도구</strong>입니다. <br>문틀 크기, 살 간격, 패턴을 조정하며 나만의 창호를 완성해 보세요. 완성한 설계는 전통 창호 기법 그대로, 워크그룹 평목에서 제작됩니다.',
     'company_features_title'   => '여섯 엔진에 공통으로 들어 있는 것',
     'company_feature1'         => '여닫이·미서기, 짝수 지정',
     'company_feature2'         => '문틀 치수, 좌우·상하 울거미 두께, 살 두께',
@@ -177,17 +177,17 @@ return [
     'company_gallery_4'        => '공방 사진 4',
 
     // src/guide/ — 공통 사이드바·브레드크럼·페이저
-    'guide_sidebar_home'       => '평목 가이드',
+    'guide_sidebar_home'       => '워크그룹 평목 가이드',
     'guide_breadcrumb_root'    => '가이드',
     'guide_pager_prev'         => '이전',
     'guide_pager_next'         => '다음',
 
-    'guide_sec_about'          => '평목 소개',
+    'guide_sec_about'          => '워크그룹 평목 소개',
     'guide_sec_drawing'        => '도면 관리',
     'guide_sec_export'         => '도면 내보내기',
 
     // 사이드바 문서 제목 (엔진 이름은 영문에서 로마자 표기로 짧게 — 본문 제목은 용어집 전체 표기 사용)
-    'guide_art_intro'          => '평목 스튜디오란?',
+    'guide_art_intro'          => '워크그룹 평목이란?',
     'guide_art_getting_started'=> '시작하기',
     'guide_art_classic'        => '세살',
     'guide_art_square'         => '정자살',
@@ -207,9 +207,9 @@ return [
 
     // src/guide/index.php — 가이드 홈
     'guide_landing_title'      => '가이드',
-    'guide_landing_sub'        => '전통 창호 도면 설계부터 AI 렌더링까지, 평목 스튜디오의 모든 기능을 안내합니다.',
+    'guide_landing_sub'        => '전통 창호 도면 설계부터 AI 렌더링까지, 워크그룹 평목의 모든 기능을 안내합니다.',
     'guide_article_count'      => '%d개 아티클',
-    'guide_card_intro_desc'    => '평목이 무엇인지, 어떻게 시작하는지 알아보세요.',
+    'guide_card_intro_desc'    => '워크그룹 평목이 무엇인지, 어떻게 시작하는지 알아보세요.',
     'guide_card_studio_title'  => '스튜디오란?',
     'guide_card_studio_desc'   => '6가지 격자 패턴 엔진의 상세 사용 방법을 안내합니다.',
     'guide_card_drawing_desc'  => '도면 저장, 버전 관리, PDF·PNG 내보내기 방법을 안내합니다.',
@@ -250,7 +250,7 @@ return [
     'auth_reset_hint'         => '새 비밀번호를 입력해 주세요.',
     'auth_new_password'       => '새 비밀번호',
     'auth_btn_reset'          => '비밀번호 변경',
-    'auth_welcome_title'      => '평목에 오신 것을 환영합니다!',
+    'auth_welcome_title'      => '워크그룹 평목에 오신 것을 환영합니다!',
     'auth_welcome_body'       => '이제 창호를 직접 설계하고,<br>AI로 공간에 적용된 모습까지 확인해 보세요.',
     'auth_welcome_btn'        => '스튜디오 시작하기',
 
@@ -281,7 +281,7 @@ return [
     'auth_err_current_pw'     => '현재 비밀번호가 올바르지 않습니다.',
 
     // 공용 푸터 (src/components/footer.php)
-    'footer_copy'              => '평목(平木). All rights reserved.',
+    'footer_copy'              => '워크그룹 평목. All rights reserved.',
     'footer_cta_sub'           => '설계 문의, 제작 상담, 협업 제안 모두 환영합니다.',
     'footer_cta_link'          => '함께 만들어가요.',
 
@@ -310,7 +310,7 @@ return [
     'ct_err_mail_failed'      => '메일 전송에 실패했습니다. 직접 이메일로 보내주세요.',
 
     // 포트폴리오 (src/portfolio/index.php)
-    'wk_sub'                  => '평목 공방에서 완성된 작품들입니다.',
+    'wk_sub'                  => '워크그룹 평목에서 완성된 작품들입니다.',
     'wk_count'                => '%d개 작품',
     'wk_filter'               => '필터',
     'wk_tag_all'              => '전체',
@@ -330,7 +330,7 @@ return [
     'share_threads_aria'      => '스레드에 공유',
 
     // 컬렉션 (src/collection/)
-    'col_sub'                 => '평목 스튜디오에서 제작된 창호 격자 패턴을 둘러보세요.',
+    'col_sub'                 => '워크그룹 평목에서 제작된 창호 격자 패턴을 둘러보세요.',
     'col_count'               => '%d개 패턴',
     'col_search_ph'           => '패턴 검색…',
     'col_like'                => '좋아요',
@@ -339,9 +339,9 @@ return [
     'col_group_jp'            => '일본살',
     'col_group_shoji'         => '쇼지',
     'col_group_kumiko'        => '쿠미꼬',
-    'col_meta_suffix'         => '평목 스튜디오 컬렉션',
-    'col_meta_default'        => '평목 스튜디오에서 만든 창호 격자 패턴',
-    'col_title_suffix'        => '평목 컬렉션',
+    'col_meta_suffix'         => '워크그룹 평목 컬렉션',
+    'col_meta_default'        => '워크그룹 평목에서 만든 창호 격자 패턴',
+    'col_title_suffix'        => '워크그룹 평목 컬렉션',
     'col_open_studio'         => '스튜디오에서 열기',
     'col_share'               => '공유하기',
     'col_copy'                => '복사',
@@ -368,7 +368,7 @@ return [
     'blog_edit_post'          => '이 글 편집',
 
     // 블로그 상세 (src/blog/detail.php)
-    'bd_title_suffix'         => '평목 스튜디오',
+    'bd_title_suffix'         => '워크그룹 평목',
     'bd_back'                 => '블로그',
     'bd_share_x_aria'         => 'X에 공유',
     'bd_series_label'         => '이 시리즈',
@@ -379,13 +379,13 @@ return [
     'bd_source'               => '출처',
     'bd_source_prefix'        => '출처: %s',
     'bd_glossary_title'       => '용어 풀이',
-    'bd_license'              => '평목 블로그의 글과 기록은 출처(pyeongmok.com)를 밝히고 자유롭게 인용 및 발췌하실 수 있습니다.',
+    'bd_license'              => '워크그룹 평목 블로그의 글과 기록은 출처(pyeongmok.com)를 밝히고 자유롭게 인용 및 발췌하실 수 있습니다.',
     'bd_engine_box_title'     => '이 살의 이야기, 직접 만들어보세요',
     'bd_engine_box_desc'      => '글에서 다룬 %s 패턴을 스튜디오에서 바로 조작해볼 수 있습니다.',
     'bd_open_in_studio'       => '스튜디오에서 열기',
     'bd_cta_category'         => '이 살은 %s 계열입니다 — 실제 제작 사례를 컬렉션에서 확인해보세요.',
     'bd_cta_category_btn'     => '%s 컬렉션 보기',
-    'bd_cta_default'          => '평목 스튜디오의 다양한 패턴 디자인 보러가기',
+    'bd_cta_default'          => '워크그룹 평목의 다양한 패턴 디자인 보러가기',
     'bd_go_collection'        => '컬렉션 보러가기',
     'bd_pager_prev'           => '이전 편',
     'bd_pager_next'           => '다음 편',
@@ -393,7 +393,7 @@ return [
     'bd_next_series'          => '다음 시리즈',
     'bd_link_copied'          => '링크가 복사되었습니다.',
     'bd_link_copy_failed'     => '링크 복사에 실패했습니다.',
-    'bd_kakao_desc'           => '평목 블로그에서 이 글을 확인해보세요.',
+    'bd_kakao_desc'           => '워크그룹 평목 블로그에서 이 글을 확인해보세요.',
 
     // 마이페이지 공용 (auth wall 등)
     'mp_auth_need_login'      => '로그인이 필요합니다.',
@@ -457,20 +457,20 @@ return [
     'cp_address_detail_ph'      => '상세 주소 (층/호 등)',
 
     // 사이트 기본 메타 (page_meta 테이블에 영문 컬럼이 아직 없어, en 모드는 이 값을 쓴다)
-    'meta_brand_keywords'     => '평목, 전통창호 제작, 맞춤 창호 디자인, 격자무늬 창호',
-    'wk_title_suffix'         => '평목',
-    'meta_default_title'      => '평목 - DESIGN IN REAL TIME',
-    'meta_default_desc'       => '평목 공방이 만드는 한옥 살창·창호 디자인 스튜디오. 나만의 문살 패턴을 직접 설계하고 주문하세요.',
+    'meta_brand_keywords'     => '워크그룹 평목, 평목, 전통창호 제작, 맞춤 창호 디자인, 격자무늬 창호',
+    'wk_title_suffix'         => '워크그룹 평목',
+    'meta_default_title'      => '워크그룹 평목 - DESIGN IN REAL TIME',
+    'meta_default_desc'       => '워크그룹 평목이 만드는 한옥 살창·창호 디자인 스튜디오. 나만의 문살 패턴을 직접 설계하고 주문하세요.',
     'meta_default_keywords'   => '목 창호, 목재 창호, 나무 창호, 창호 디자인, 맞춤 창호, 전통 창호, 한옥 창호, 창호 제작, 창호 견적, 실시간 견적, 살창, 정자살, 완자살, 교살, 세모솟을살, 마름모살, 육모솟을살, 격자무늬, 문살 패턴, 온라인 창호 설계, 공방, 평목',
 
     // src/renders/view.php — AI 렌더링 공유 랜딩 (외부에서 링크 타고 들어오는 페이지)
-    'rv_title'                => '%s 렌더링 | 평목',
-    'rv_title_notfound'       => '렌더링을 찾을 수 없습니다 | 평목',
-    'rv_desc'                 => '평목에서 %s 패턴으로 렌더링한 이미지입니다.',
+    'rv_title'                => '%s 렌더링 | 워크그룹 평목',
+    'rv_title_notfound'       => '렌더링을 찾을 수 없습니다 | 워크그룹 평목',
+    'rv_desc'                 => '워크그룹 평목에서 %s 패턴으로 렌더링한 이미지입니다.',
     'rv_desc_notfound'        => '요청하신 렌더링 이미지를 찾을 수 없습니다.',
     'rv_alt'                  => '%s 렌더링 이미지',
-    'rv_label'                => '%s · 평목 AI 렌더링',
-    'rv_sub'                  => '평목 스튜디오에서 문살 패턴을 직접 설계하고 실제 공간에 렌더링해볼 수 있습니다.',
+    'rv_label'                => '%s · 워크그룹 평목 AI 렌더링',
+    'rv_sub'                  => '워크그룹 평목에서 문살 패턴을 직접 설계하고 실제 공간에 렌더링해볼 수 있습니다.',
     'rv_cta'                  => '나도 %s 설계해보기',
-    'rv_home'                 => '평목 홈으로',
+    'rv_home'                 => '워크그룹 평목 홈으로',
 ];

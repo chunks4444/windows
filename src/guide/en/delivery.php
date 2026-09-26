@@ -10,7 +10,7 @@ include __DIR__ . '/../_head.php';
 <h1>Delivery Guide</h1>
 <p class="guide-lead">
     Finished changho are shipped by parcel or freight depending on their size and quantity.
-    Shipping costs are paid by the customer; return shipping for defective products is covered by Pyeongmok.
+    Shipping costs are paid by the customer; return shipping for defective products is covered by Workgroup Pyeongmok.
 </p>
 
 <h2>Shipping Methods</h2>
@@ -47,7 +47,7 @@ include __DIR__ . '/../_head.php';
     <tbody>
         <tr>
             <td>Return due to a product defect or error</td>
-            <td><strong>Pyeongmok</strong></td>
+            <td><strong>Workgroup Pyeongmok</strong></td>
         </tr>
         <tr>
             <td>Return due to a change of mind or ordering mistake</td>

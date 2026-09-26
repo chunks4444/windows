@@ -1,13 +1,13 @@
 <?php
 // 영문 본문. 한글 원문은 ../intro.php — 구조를 같이 맞춰 두면 나중에 대조가 쉽다.
 $guide_current = 'intro.php';
-$guide_title   = 'What is Pyeongmok Studio?';
+$guide_title   = 'What is Workgroup Pyeongmok?';
 $guide_prev    = null;
 $guide_next    = ['href' => 'getting-started.php', 'title' => 'Getting Started'];
 include __DIR__ . '/../_head.php';
 ?>
 
-<h1>What is Pyeongmok Studio?</h1>
+<h1>What is Workgroup Pyeongmok?</h1>
 <p class="guide-lead">
     Pyeongmok (平木) is an online studio for designing and exporting <strong>changho</strong> — the
     windows, doors, and lattice screens of a traditional Korean hanok — in real time, right in your
@@ -15,7 +15,7 @@ include __DIR__ . '/../_head.php';
 </p>
 
 <h2>Key Features</h2>
-<p>Here is what Pyeongmok gives you.</p>
+<p>Here is what Workgroup Pyeongmok gives you.</p>
 
 <table class="guide-table">
     <thead>
@@ -50,7 +50,7 @@ include __DIR__ . '/../_head.php';
 </div>
 
 <h2>System Requirements</h2>
-<p>Pyeongmok runs in a web browser. Nothing to install — these environments are supported.</p>
+<p>Workgroup Pyeongmok runs in a web browser. Nothing to install — these environments are supported.</p>
 <ul>
     <li>Chrome 90 or later (recommended)</li>
     <li>Safari 15 or later</li>

@@ -190,7 +190,7 @@ foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
                     </div>
                     <div class="adm-mfield">
                         <label>하단 CTA 문구 <span style="font-size:11px;color: var(--text);font-weight:400;">(본문 하단 컬렉션 유도 문구, 비워두면 기본 문구 사용)</span></label>
-                        <input id="postCtaText" type="text" maxlength="200" placeholder="예: 평목 스튜디오의 다양한 패턴 디자인 보러가기">
+                        <input id="postCtaText" type="text" maxlength="200" placeholder="예: 워크그룹 평목의 다양한 패턴 디자인 보러가기">
                     </div>
                     <div class="adm-mfield">
                         <label>출처 <span style="font-size:11px;color: var(--text);font-weight:400;">(이 글이 참고한 출처, 비워두면 본문에 노출 안 됨. 여러 개면 줄바꿈으로 구분 — 리스트로 노출됩니다)</span></label>

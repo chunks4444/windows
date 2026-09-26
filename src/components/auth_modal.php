@@ -26,7 +26,7 @@ $showImpersonation = $authPayload && (($authPayload['role'] ?? null) === 's' || 
             <!-- 좌측: 로고 패널 -->
             <div class="auth-modal-brand">
                 <img src="/src/assets/logo.svg"
-                     alt="평목" class="auth-modal-brand-logo">
+                     alt="워크그룹 평목" class="auth-modal-brand-logo">
                 <p class="auth-modal-brand-copy"><?= t('auth_brand_copy') ?></p>
             </div>
 

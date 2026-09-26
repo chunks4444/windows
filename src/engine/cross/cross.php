@@ -27,8 +27,8 @@ if (!empty($_GET['drawing_id'])) {
         $_pmokAdminView = $isAdmin && !$isOwner && !empty($_GET['admin_view']);
         if ($row['is_shared'] || $row['is_library'] || $_pmokAdminView) {
             $shareMeta = [
-                'title'       => ($row['title'] ?: '평목 도면') . ' - 평목',
-                'description' => '평목에서 설계한 문살 도면을 확인해보세요.',
+                'title'       => ($row['title'] ?: '평목 도면') . ' - 워크그룹 평목',
+                'description' => '워크그룹 평목에서 설계한 문살 도면을 확인해보세요.',
                 'image'       => (strpos((string)$row['thumbnail'], '/uploads/') === 0) ? SITE_URL . $row['thumbnail'] : SITE_DEFAULT_IMAGE,
             ];
         }
@@ -42,7 +42,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
     $shareDrawingId = (int) $_GET['drawing_id'];
     $shareTitle     = $row['title'] ?: '평목 도면';
     $shareThumb     = (strpos((string) $row['thumbnail'], '/uploads/') === 0) ? $row['thumbnail'] : null;
-    $shareOwnerSub  = '평목에서 공유한 도면입니다.';
+    $shareOwnerSub  = '워크그룹 평목에서 공유한 도면입니다.';
     if ($_pmokAdminView) {
         $shareOwnerSub = htmlspecialchars((string)($row['email'] ?? ''), ENT_QUOTES) . ' 님의 도면입니다. (관리자 열람 · 편집 불가)';
     } elseif (!empty($row['email']) && strpos($row['email'], '@') !== false) {

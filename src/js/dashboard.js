@@ -386,7 +386,7 @@ function shareToKakaoFromDashboard() {
         objectType: 'feed',
         content: {
             title: _shareCtx.title || _t('평목 도면'),
-            description: _shareCtx.kind === 'render' ? _t('평목에서 렌더링한 창호 이미지를 확인해보세요.') : _t('평목에서 설계한 문살 도면을 확인해보세요.'),
+            description: _shareCtx.kind === 'render' ? _t('워크그룹 평목에서 렌더링한 창호 이미지를 확인해보세요.') : _t('워크그룹 평목에서 설계한 문살 도면을 확인해보세요.'),
             imageUrl: _shareCtx.imageUrl || thumbImg?.src || (location.origin + '/src/assets/logo.png'),
             link: { mobileWebUrl: _shareUrl(), webUrl: _shareUrl() },
         },

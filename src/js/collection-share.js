@@ -47,7 +47,7 @@ function _libShareToKakao() {
         objectType: 'feed',
         content: {
             title: _libShareCtx.title,
-            description: _t('평목 스튜디오에서 만든 문살 패턴을 확인해보세요.'),
+            description: _t('워크그룹 평목에서 만든 문살 패턴을 확인해보세요.'),
             imageUrl: _libShareCtx.image || (location.origin + '/src/assets/logo.png'),
             link: { mobileWebUrl: _libShareCtx.url, webUrl: _libShareCtx.url },
         },

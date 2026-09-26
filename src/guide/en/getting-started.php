@@ -2,14 +2,14 @@
 // 영문 본문. 한글 원문은 ../getting-started.php
 $guide_current = 'getting-started.php';
 $guide_title   = 'Getting Started';
-$guide_prev    = ['href' => 'intro.php', 'title' => 'What is Pyeongmok Studio?'];
+$guide_prev    = ['href' => 'intro.php', 'title' => 'What is Workgroup Pyeongmok?'];
 $guide_next    = ['href' => 'studio-classic.php', 'title' => 'Se-sal'];
 include __DIR__ . '/../_head.php';
 ?>
 
 <h1>Getting Started</h1>
 <p class="guide-lead">
-    A step-by-step walkthrough from creating your Pyeongmok account to designing your first drawing.
+    A step-by-step walkthrough from creating your Workgroup Pyeongmok account to designing your first drawing.
 </p>
 
 <h2>Step 1 — Sign up &amp; log in</h2>

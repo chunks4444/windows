@@ -14,7 +14,7 @@ $faqs = db()->query('SELECT * FROM faqs WHERE is_active=1 ORDER BY sort_order, i
 
 <h1>Frequently Asked Questions</h1>
 <p class="guide-lead">
-    Common questions that come up while using Pyeongmok Studio.
+    Common questions that come up while using Workgroup Pyeongmok.
     If you can't find the answer you need, please <a href="<?= lang_href('/company/') ?>#contact">contact the workshop</a>.
 </p>
 

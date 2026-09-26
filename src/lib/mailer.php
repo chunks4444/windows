@@ -1,6 +1,6 @@
 <?php
 define('SITE_URL',   'https://pyeongmok.com');
-define('SITE_NAME',  '평목');
+define('SITE_NAME',  '워크그룹 평목');
 
 // ── SMTP 서버 ─────────────────────────────────────────────
 define('SMTP_HOST', 'smtp.gmail.com');

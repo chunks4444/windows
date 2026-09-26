@@ -37,8 +37,8 @@ function page_meta(): array {
 }
 
 const SITE_URL          = 'https://pyeongmok.com';
-const SITE_DEFAULT_TITLE = '평목 - DESIGN IN REAL TIME';
-const SITE_DEFAULT_DESC  = '평목 공방이 만드는 한옥 살창·창호 디자인 스튜디오. 나만의 문살 패턴을 직접 설계하고 주문하세요.';
+const SITE_DEFAULT_TITLE = '워크그룹 평목 - DESIGN IN REAL TIME';
+const SITE_DEFAULT_DESC  = '워크그룹 평목이 만드는 한옥 살창·창호 디자인 스튜디오. 나만의 문살 패턴을 직접 설계하고 주문하세요.';
 const SITE_DEFAULT_IMAGE = SITE_URL . '/src/assets/logo.png';
 const GA4_MEASUREMENT_ID = 'G-HQY0K8CQPT';
 
@@ -112,8 +112,9 @@ function organization_jsonld(): void {
         '@context'      => 'https://schema.org',
         '@type'         => 'LocalBusiness',
         '@id'           => SITE_URL . '/#business',
-        'name'          => '평목',
-        'alternateName' => '평목 공방',
+        'name'          => '워크그룹 평목',
+        // 예전 표기(평목·평목 스튜디오·평목 공방)로 검색해도 같은 업체로 묶이도록 별칭으로 남긴다
+        'alternateName' => ['평목', '평목 스튜디오', '평목 공방', 'Pyeongmok', 'Workgroup Pyeongmok'],
         'url'           => SITE_URL . '/',
         'logo'          => SITE_URL . '/src/assets/logo.svg',
         'image'         => SITE_URL . '/uploads/meta/1785194303_75e05623.jpg',
@@ -122,6 +123,7 @@ function organization_jsonld(): void {
         'description'   => '한옥 창호와 한식 창호를 설계하고 제작하는 공방. 브라우저에서 살 간격까지 직접 설계하면 그 도면 그대로 제작합니다.',
         'address'       => [
             '@type'           => 'PostalAddress',
+            'streetAddress'   => '양서면 도곡리 107-2',
             'addressRegion'   => '경기도',
             'addressLocality' => '양평군',
             'addressCountry'  => 'KR',
@@ -132,6 +134,7 @@ function organization_jsonld(): void {
             'opens'     => '10:00',
             'closes'    => '18:00',
         ],
+        'sameAs'     => ['https://instagram.com/pyeongmok_1'],
         'areaServed' => ['@type' => 'Country', 'name' => '대한민국'],
         'makesOffer' => [
             ['@type' => 'Offer', 'itemOffered' => ['@type' => 'Product', 'name' => '한식 창호']],
@@ -170,10 +173,10 @@ function article_jsonld(array $post, string $url, string $image, string $descrip
         'image'         => $image,
         'datePublished' => date('c', strtotime($post['created_at'])),
         'url'           => $url,
-        'author'        => ['@type' => 'Organization', 'name' => is_en() ? 'Pyeongmok' : '평목'],
+        'author'        => ['@type' => 'Organization', 'name' => is_en() ? 'Workgroup Pyeongmok' : '워크그룹 평목'],
         'publisher'     => [
             '@type' => 'Organization',
-            'name'  => is_en() ? 'Pyeongmok' : '평목',
+            'name'  => is_en() ? 'Workgroup Pyeongmok' : '워크그룹 평목',
             'logo'  => ['@type' => 'ImageObject', 'url' => SITE_DEFAULT_IMAGE],
         ],
     ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . '</script>' . "\n    ";

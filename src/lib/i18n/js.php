@@ -38,7 +38,7 @@ return [
     '평목 컬렉션'                 => 'Pyeongmok Collection',
     '복사됨'                      => 'Copied',
     '아래 링크를 복사하세요:'     => 'Copy the link below:',
-    '평목 스튜디오에서 만든 문살 패턴을 확인해보세요.' => 'Check out this lattice pattern made in Pyeongmok Studio.',
+    '워크그룹 평목에서 만든 문살 패턴을 확인해보세요.' => 'Check out this lattice pattern made at Workgroup Pyeongmok.',
 
     // src/js/dashboard.js
     '1분 미만'                    => 'Less than 1 min',
@@ -64,8 +64,8 @@ return [
     '%s 렌더링'                   => '%s render',
     '렌더링 이미지 공유'          => 'Share render image',
     '평목 도면'                   => 'Pyeongmok Drawing',
-    '평목에서 렌더링한 창호 이미지를 확인해보세요.' => 'Check out this window image rendered in Pyeongmok.',
-    '평목에서 설계한 문살 도면을 확인해보세요.'     => 'Check out this lattice drawing designed in Pyeongmok.',
+    '워크그룹 평목에서 렌더링한 창호 이미지를 확인해보세요.' => 'Check out this window image rendered at Workgroup Pyeongmok.',
+    '워크그룹 평목에서 설계한 문살 도면을 확인해보세요.' => 'Check out this lattice drawing designed at Workgroup Pyeongmok.',
     '분류 없음'                   => 'No category',
     '수정'                        => 'Modified',
     '작업'                        => 'Worked',
