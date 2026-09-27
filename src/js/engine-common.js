@@ -1472,19 +1472,10 @@ function _renderPresentationThumbnailImpl(kv, targetW, targetH) {
     canvas.width = targetW; canvas.height = targetH;
     const ctx = canvas.getContext('2d');
 
-    // 배경: radial-gradient(ellipse 75% 75% at 50% 42%, #FEFDFA 0%, #FAF7F0 60%, #F3EFE5 100%)
-    ctx.save();
-    const cx = targetW * 0.5, cy = targetH * 0.42;
-    const rx = targetW * 0.75, ry = targetH * 0.75;
-    ctx.translate(cx, cy);
-    ctx.scale(1, ry / rx);
-    const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, rx);
-    grad.addColorStop(0,    '#FEFDFA');
-    grad.addColorStop(0.6,  '#FAF7F0');
-    grad.addColorStop(1,    '#F3EFE5');
-    ctx.fillStyle = grad;
-    ctx.fillRect(-cx, -cy * (rx / ry), targetW, targetH * (rx / ry));
-    ctx.restore();
+    // 배경: 컬렉션/도면 관리 카드 배경(#FAF7F0)과 정확히 맞도록 단색으로 채운다
+    // (예전엔 비네트 그라데이션이라 가장자리가 카드 배경보다 살짝 어두웠음)
+    ctx.fillStyle = '#FAF7F0';
+    ctx.fillRect(0, 0, targetW, targetH);
 
     const clampRect = (r, minPx) => {
         const x = toX(r.x), y = toY(r.y);
