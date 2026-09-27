@@ -311,7 +311,7 @@ body { background: var(--bg); }
 /* ── 카드 하단 정보 ──────────────────────────── */
 .lib-card-body {
     padding: 10px 12px 12px;
-    background: var(--accent-tint, #EDEFF2);
+    background: #FAF7F0;
     border-top: 1px solid var(--border);
 }
 
