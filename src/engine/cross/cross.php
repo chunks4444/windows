@@ -181,8 +181,8 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                     <div class="ctrl">
                         <div class="ctrl-header"><span class="ctrl-label"><?= te('문틀 가로') ?></span></div>
                         <div class="slider-row">
-                            <input type="range" id="txtW" min="400" max="10000" step="1" value="<?= htmlspecialchars($cfg['W']) ?>">
-                            <input type="number" class="slider-num" id="numW" min="400" max="10000" step="1" value="<?= htmlspecialchars($cfg['W']) ?>">
+                            <input type="range" id="txtW" min="100" max="10000" step="1" value="<?= htmlspecialchars($cfg['W']) ?>">
+                            <input type="number" class="slider-num" id="numW" min="100" max="10000" step="1" value="<?= htmlspecialchars($cfg['W']) ?>">
                         </div>
                     </div>
                     <div class="ctrl">
@@ -206,15 +206,15 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                     <div class="ctrl">
                         <div class="ctrl-header"><span class="ctrl-label"><?= te('좌우 울거미 두께') ?></span></div>
                         <div class="slider-row">
-                            <input type="range" id="txtFrame" min="20" max="150" step="1" value="<?= htmlspecialchars($cfg['frame']) ?>">
-                            <input type="number" class="slider-num" id="numFrame" min="20" max="150" step="1" value="<?= htmlspecialchars($cfg['frame']) ?>">
+                            <input type="range" id="txtFrame" min="15" max="150" step="1" value="<?= htmlspecialchars($cfg['frame']) ?>">
+                            <input type="number" class="slider-num" id="numFrame" min="15" max="150" step="1" value="<?= htmlspecialchars($cfg['frame']) ?>">
                         </div>
                     </div>
                     <div class="ctrl">
                         <div class="ctrl-header"><span class="ctrl-label"><?= te('상하 울거미 두께') ?></span></div>
                         <div class="slider-row">
-                            <input type="range" id="txtFrameH" min="20" max="150" step="1" value="<?= htmlspecialchars($cfg['frameH']) ?>">
-                            <input type="number" class="slider-num" id="numFrameH" min="20" max="150" step="1" value="<?= htmlspecialchars($cfg['frameH']) ?>">
+                            <input type="range" id="txtFrameH" min="15" max="150" step="1" value="<?= htmlspecialchars($cfg['frameH']) ?>">
+                            <input type="number" class="slider-num" id="numFrameH" min="15" max="150" step="1" value="<?= htmlspecialchars($cfg['frameH']) ?>">
                         </div>
                     </div>
                     <hr class="sb-divider">

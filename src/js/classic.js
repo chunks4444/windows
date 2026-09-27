@@ -1976,11 +1976,11 @@ async function draw() {
     // ── 슬라이더 ↔ 인풋창 양방향 동기화 ──────────────────
 
     const syncPairs = [
-        { range: txtW,      num: document.getElementById('numW'),       min: 400, max: 10000 },
+        { range: txtW,      num: document.getElementById('numW'),       min: 100, max: 10000 },
         { range: txtH,      num: document.getElementById('numH'),       min: 400,  max: 3000 },
         { range: txtCols,   num: document.getElementById('numCols'),    min: 2,    max: 30   },
-        { range: txtFrame,  num: document.getElementById('numFrame'),   min: 20,   max: 150  },
-        { range: txtFrameH, num: document.getElementById('numFrameH'),  min: 20,   max: 150  },
+        { range: txtFrame,  num: document.getElementById('numFrame'),   min: 15,   max: 150  },
+        { range: txtFrameH, num: document.getElementById('numFrameH'),  min: 15,   max: 150  },
         { range: txtSlat,   num: document.getElementById('numSlat'),    min: 8,    max: 35   },
         { range: document.getElementById('txtPungpan'), num: document.getElementById('numPungpan'), min: 0, max: 600 },
         { range: txtRatio, num: document.getElementById('numRatio'), min: 1.0, max: 5.0, step: 0.1 },
