@@ -21,7 +21,7 @@ if ($doorType === 'swing' && $doorCount > 2) $doorCount = 2;
 if ($doorCount === 5) $doorCount = 4; // 5짝은 지원하지 않음(짝 구성 미정)
 
 // 문틀(벽 개구부) 치수 → 문틀두께·갭을 양쪽에서 빼고 짝수에 따라 문 폭/높이(outerW/outerH) 역산
-$frameOpeningW = max(400, (int)($_POST['frameOpeningW'] ?? 600));
+$frameOpeningW = max(100, (int)($_POST['frameOpeningW'] ?? 600));
 $frameOpeningH = max(400, (int)($_POST['frameOpeningH'] ?? 1707));
 $frameThick    = max(0,   (int)($_POST['frameThick']    ?? 30));
 $frameGap      = max(0,   (int)($_POST['frameGap']      ?? 2));
