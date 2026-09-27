@@ -179,7 +179,7 @@ body { background: var(--bg); }
     border-radius: var(--r);
     overflow: hidden;
     cursor: pointer;
-    background: var(--accent-tint, #EDEFF2);
+    background: #FAF7F0;
     box-shadow: 0 1px 3px rgba(var(--text-rgb), 0.04);
     transition: box-shadow 0.2s, transform 0.2s;
 }
@@ -204,7 +204,7 @@ body { background: var(--bg); }
 .lib-card-img {
     width: 100%;
     overflow: hidden;
-    background: var(--accent-tint, #EDEFF2);
+    background: #FAF7F0;
     display: flex;
     align-items: center;
     justify-content: center;

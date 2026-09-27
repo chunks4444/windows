@@ -179,7 +179,7 @@ body {
 @media (max-width: 480px)  { .db-grid { grid-template-columns: 1fr; } }
 
 .db-card {
-    background: var(--accent-tint, #EDEFF2);
+    background: #FAF7F0;
     border-radius: 14px;
     overflow: hidden;
     cursor: pointer;
@@ -300,7 +300,7 @@ body {
 .db-thumb {
     width: 100%;
     aspect-ratio: 1 / 1;
-    background: var(--accent-tint, #EDEFF2);
+    background: #FAF7F0;
     overflow: hidden;
     position: relative;
 }
