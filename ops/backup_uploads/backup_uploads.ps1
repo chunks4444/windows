@@ -3,10 +3,11 @@
 # 서버 디스크에만 있으므로, DB 백업(ops/backup_db.sh)과 별도로 이 스크립트가 필요하다.
 #
 # 실행 전:
-#   1) config.example.ps1 을 config.ps1 로 복사하고 값 확인
-#   2) .pw 파일에 SSH 비밀번호만 한 줄로 저장 (config.ps1에는 절대 직접 적지 않는다)
+#   1) config.example.ps1 을 config.ps1 로 복사하고 값 확인 (개인키는 ssh pyeongmok과 동일한 것 재사용)
 #
 # Windows 예약 작업 등록은 register_task.ps1 참고.
+# 서버가 2026-09-26 침해 대응으로 SSH 비밀번호 인증을 막고 publickey만 허용하게 되면서
+# PuTTY(pscp+비밀번호) 방식에서 Windows 내장 OpenSSH(scp+키) 방식으로 전환함.
 
 $ErrorActionPreference = "Stop"
 
@@ -20,14 +21,14 @@ if (-not (Test-Path $ConfigPath)) {
 
 . $ConfigPath
 
-if (-not (Test-Path $PwFile)) {
-    Write-Error "비밀번호 파일 없음: $PwFile"
+if (-not (Test-Path $IdentityFile)) {
+    Write-Error "개인키 파일 없음: $IdentityFile"
     exit 1
 }
 
-$Pscp = "C:\Program Files\PuTTY\pscp.exe"
-if (-not (Test-Path $Pscp)) {
-    Write-Error "pscp.exe를 찾을 수 없습니다: $Pscp"
+$Scp = "$env:WINDIR\System32\OpenSSH\scp.exe"
+if (-not (Test-Path $Scp)) {
+    Write-Error "scp.exe를 찾을 수 없습니다: $Scp"
     exit 1
 }
 
@@ -46,16 +47,16 @@ New-Item -ItemType Directory -Force -Path $SnapshotDir | Out-Null
 
 Write-Log "백업 시작 -> $SnapshotDir"
 
-$pscpArgs = @(
+$scpArgs = @(
     "-P", $SshPort,
-    "-pwfile", $PwFile,
-    "-batch",
+    "-i", $IdentityFile,
+    "-o", "StrictHostKeyChecking=accept-new",
     "-r",
     "$SshUser@${SshHost}:$RemotePath",
     $SnapshotDir
 )
 
-& $Pscp @pscpArgs
+& $Scp @scpArgs
 $exitCode = $LASTEXITCODE
 
 if ($exitCode -ne 0) {
