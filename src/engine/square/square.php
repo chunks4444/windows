@@ -335,31 +335,31 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                             <div class="spec-lbl"><?= te('내경 세로') ?></div>
                             <div class="spec-val"><span id="spInnerH">0</span><span class="spec-unit">mm</span></div>
                         </div>
-                        <div class="spec-card">
+                        <div class="spec-card" id="spCountsCard">
                             <div class="spec-lbl"><?= te('가로 칸수') ?></div>
                             <div class="spec-val"><span id="spCounts">0</span><span class="spec-unit"><?= te('칸') ?></span></div>
                         </div>
-                        <div class="spec-card">
+                        <div class="spec-card" id="spRowsCard">
                             <div class="spec-lbl"><?= te('세로 칸수') ?></div>
                             <div class="spec-val"><span id="spRows">0</span><span class="spec-unit"><?= te('칸') ?></span></div>
                         </div>
-                        <div class="spec-card accent">
+                        <div class="spec-card accent" id="spStepCard">
                             <div class="spec-lbl"><?= te('가로 먹줄') ?></div>
                             <div class="spec-val"><span id="spStep">0</span><span class="spec-unit">mm</span></div>
                         </div>
-                        <div class="spec-card accent">
+                        <div class="spec-card accent" id="spStepVCard">
                             <div class="spec-lbl"><?= te('세로 먹줄') ?></div>
                             <div class="spec-val"><span id="spStepV">0</span><span class="spec-unit">mm</span></div>
                         </div>
-                        <div class="spec-card accent-blue">
+                        <div class="spec-card accent-blue" id="spHalfLapWCard">
                             <div class="spec-lbl"><?= te('반턱 너비') ?></div>
                             <div class="spec-val"><span id="spHalfLapW">0</span><span class="spec-unit">mm</span></div>
                         </div>
-                        <div class="spec-card accent-blue">
+                        <div class="spec-card accent-blue" id="spGrooveWCard">
                             <div class="spec-lbl"><?= te('세로울거미홈폭') ?></div>
                             <div class="spec-val"><span id="spGrooveW">0</span><span class="spec-unit">mm</span></div>
                         </div>
-                        <div class="spec-card accent-blue">
+                        <div class="spec-card accent-blue" id="spGrooveWHCard">
                             <div class="spec-lbl"><?= te('가로울거미홈폭') ?></div>
                             <div class="spec-val"><span id="spGrooveWH">0</span><span class="spec-unit">mm</span></div>
                         </div>

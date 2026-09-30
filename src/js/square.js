@@ -401,6 +401,16 @@ async function draw() {
     }
     geo = data.geo;
 
+    // 정자살(균등 격자)은 행이 안 딱 맞아떨어지는 나머지(surplus)를 상하 울거미에 나눠 더해
+    // 행 간격을 정확히 맞춘다. 몬드리안(랜덤 생성)은 행 개념이 없어 그럴 이유가 없는데도
+    // 이 나머지가 그대로 더해져서, 좌우(frameW, 그대로)와 달리 상하 울거미만 원래 설정값보다
+    // 두꺼워지는 문제가 있었다 — 몬드리안일 때는 상하도 frameH 그대로 쓰고, 남는 높이는
+    // 울거미가 아니라 패턴 영역 쪽에 흡수시킨다 (자유 형태라 아무 문제 없음).
+    const _moExtraH        = geo.frameHTop - geo.frameH; // frameHTop === frameHBottom (수식상 항상 같음)
+    const effFrameHTop     = mondrianLayout ? geo.frameH : geo.frameHTop;
+    const effFrameHBottom  = mondrianLayout ? geo.frameH : geo.frameHBottom;
+    const effInnerH        = mondrianLayout ? geo.innerH + _moExtraH * 2 : geo.innerH;
+
     const s = data.specs;
     if (s && document.getElementById('spFrameOpeningW')) {
         document.getElementById('spFrameOpeningW').innerText = s.frameOpeningW;
@@ -408,7 +418,7 @@ async function draw() {
         document.getElementById('spOuterW').innerText     = s.outerW;
         document.getElementById('spOuterH').innerText     = s.outerH;
         document.getElementById('spInnerW').innerText     = s.innerW;
-        document.getElementById('spInnerH').innerText     = s.innerH;
+        document.getElementById('spInnerH').innerText     = mondrianLayout ? Math.round(effInnerH) : s.innerH;
         document.getElementById('spCounts').innerText     = s.cols;
         document.getElementById('spRows').innerText       = s.rows;
         document.getElementById('spStep').innerText       = s.step;
@@ -416,8 +426,11 @@ async function draw() {
         document.getElementById('spHalfLapW').innerText   = s.halfLapW;
         document.getElementById('spGrooveW').innerText    = s.grooveW;
         document.getElementById('spGrooveWH').innerText   = s.grooveWH;
+        // 칸수·먹줄·홈폭은 균등 격자 개념이라 몬드리안(자유 형태)에는 적용되지 않아 행 통째로 숨김
+        ['spCountsCard', 'spRowsCard', 'spStepCard', 'spStepVCard', 'spHalfLapWCard', 'spGrooveWCard', 'spGrooveWHCard']
+            .forEach(id => { const el = document.getElementById(id); if (el) el.style.display = mondrianLayout ? 'none' : ''; });
         document.getElementById('spPungpan').innerText    = s.pungpan;
-        document.getElementById('spFrameHTop').innerText  = s.frameHTop;
+        document.getElementById('spFrameHTop').innerText  = mondrianLayout ? Math.round(geo.frameH) : s.frameHTop;
         document.getElementById('spTotalDoorW').innerText = s.totalDoorW;
 
         const overlapCard = document.getElementById('spOverlapCard');
@@ -610,16 +623,6 @@ async function draw() {
 
     if (buildKonvaPattern) kv.beginPattern();
     else if (!useKonvaPattern) { kv.clearPattern(); _kvKey = null; } // 배치모드: 노드 제거 + 키 무효화
-
-    // 정자살(균등 격자)은 행이 안 딱 맞아떨어지는 나머지(surplus)를 상하 울거미에 나눠 더해
-    // 행 간격을 정확히 맞춘다. 몬드리안(랜덤 생성)은 행 개념이 없어 그럴 이유가 없는데도
-    // 이 나머지가 그대로 더해져서, 좌우(frameW, 그대로)와 달리 상하 울거미만 원래 설정값보다
-    // 두꺼워지는 문제가 있었다 — 몬드리안일 때는 상하도 frameH 그대로 쓰고, 남는 높이는
-    // 울거미가 아니라 패턴 영역 쪽에 흡수시킨다 (자유 형태라 아무 문제 없음).
-    const _moExtraH        = geo.frameHTop - geo.frameH; // frameHTop === frameHBottom (수식상 항상 같음)
-    const effFrameHTop     = mondrianLayout ? geo.frameH : geo.frameHTop;
-    const effFrameHBottom  = mondrianLayout ? geo.frameH : geo.frameHBottom;
-    const effInnerH        = mondrianLayout ? geo.innerH + _moExtraH * 2 : geo.innerH;
 
     // ====== 내경 배경 (살 내부 화이트) ======
     for (const d of renderOrder) {
