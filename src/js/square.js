@@ -611,6 +611,16 @@ async function draw() {
     if (buildKonvaPattern) kv.beginPattern();
     else if (!useKonvaPattern) { kv.clearPattern(); _kvKey = null; } // 배치모드: 노드 제거 + 키 무효화
 
+    // 정자살(균등 격자)은 행이 안 딱 맞아떨어지는 나머지(surplus)를 상하 울거미에 나눠 더해
+    // 행 간격을 정확히 맞춘다. 몬드리안(랜덤 생성)은 행 개념이 없어 그럴 이유가 없는데도
+    // 이 나머지가 그대로 더해져서, 좌우(frameW, 그대로)와 달리 상하 울거미만 원래 설정값보다
+    // 두꺼워지는 문제가 있었다 — 몬드리안일 때는 상하도 frameH 그대로 쓰고, 남는 높이는
+    // 울거미가 아니라 패턴 영역 쪽에 흡수시킨다 (자유 형태라 아무 문제 없음).
+    const _moExtraH        = geo.frameHTop - geo.frameH; // frameHTop === frameHBottom (수식상 항상 같음)
+    const effFrameHTop     = mondrianLayout ? geo.frameH : geo.frameHTop;
+    const effFrameHBottom  = mondrianLayout ? geo.frameH : geo.frameHBottom;
+    const effInnerH        = mondrianLayout ? geo.innerH + _moExtraH * 2 : geo.innerH;
+
     // ====== 내경 배경 (살 내부 화이트) ======
     for (const d of renderOrder) {
         let pOffX = 0;
@@ -625,10 +635,10 @@ async function draw() {
         const tX = rx => offsetX + (pOffX + rx) * baseScale;
         const tY = ry => offsetY + ry * baseScale;
         if (buildKonvaPattern) {
-            kv.addPatternBg(tX(geo.frameW), tY(geo.frameHTop), geo.innerW * baseScale, geo.innerH * baseScale);
+            kv.addPatternBg(tX(geo.frameW), tY(effFrameHTop), geo.innerW * baseScale, effInnerH * baseScale);
         } else {
             ctx.fillStyle = '#ffffff';
-            ctx.fillRect(tX(geo.frameW), tY(geo.frameHTop), geo.innerW * baseScale, geo.innerH * baseScale);
+            ctx.fillRect(tX(geo.frameW), tY(effFrameHTop), geo.innerW * baseScale, effInnerH * baseScale);
         }
     }
 
@@ -751,9 +761,9 @@ async function draw() {
 
         if (d === renderOrder[0]) {
             lastILeft    = toCanvasX(geo.frameW);
-            lastITop     = toCanvasY(geo.frameHTop);
+            lastITop     = toCanvasY(effFrameHTop);
             lastIW       = geo.innerW * baseScale;
-            lastIH       = geo.innerH * baseScale;
+            lastIH       = effInnerH * baseScale;
             lastSlatPx   = geo.slatT  * baseScale;
             lastCellSize = geo.cellW  * baseScale;
             lastOLeft     = toCanvasX(0);
@@ -764,7 +774,7 @@ async function draw() {
 
             // 라인 편집기 노드 실좌표(mm) — 문짝마다 동일한 상대 위치라 한 번만 계산해서
             // lastNodeXs/lastNodeYs(균등 격자) 또는 lastMondrianNodes(몬드리안)에 보관해둔다.
-            const fw = geo.frameW, ft = geo.frameHTop, iw = geo.innerW, ih = geo.innerH;
+            const fw = geo.frameW, ft = effFrameHTop, iw = geo.innerW, ih = effInnerH;
             if (mondrianLayout) {
                 const lines = mondrianLayout.lines.map(l => mondrianLinePx(l, iw, ih));
                 const pts = [[fw, ft], [fw + iw, ft], [fw, ft + ih], [fw + iw, ft + ih]];
@@ -829,16 +839,16 @@ async function draw() {
         // 세로살
         // ====================================
 
-        // 내경 영역으로 클리핑 — innerH 기준
-        const clipH = geo.innerH;
+        // 내경 영역으로 클리핑 — innerH 기준 (몬드리안은 effInnerH로 확장된 영역)
+        const clipH = effInnerH;
         if (buildKonvaPattern) {
-            kv.addPatternClipGroup(d, toCanvasX(geo.frameW), toCanvasY(geo.frameHTop), geo.innerW * baseScale, clipH * baseScale);
+            kv.addPatternClipGroup(d, toCanvasX(geo.frameW), toCanvasY(effFrameHTop), geo.innerW * baseScale, clipH * baseScale);
         } else {
             ctx.save();
             ctx.beginPath();
             ctx.rect(
                 toCanvasX(geo.frameW),
-                toCanvasY(geo.frameHTop),
+                toCanvasY(effFrameHTop),
                 geo.innerW * baseScale,
                 clipH * baseScale
             );
@@ -851,8 +861,8 @@ async function draw() {
 
         if (mondrianLayout) {
             // ── 몬드리안 BSP 격자 ───────────────────────
-            const rects = mondrianLayout.rects.map(r => mondrianRectPx(r, geo.innerW, geo.innerH));
-            const lines = mondrianLayout.lines.map(l => mondrianLinePx(l, geo.innerW, geo.innerH));
+            const rects = mondrianLayout.rects.map(r => mondrianRectPx(r, geo.innerW, effInnerH));
+            const lines = mondrianLayout.lines.map(l => mondrianLinePx(l, geo.innerW, effInnerH));
             const EPS = 0.5;
 
             // 채색 셀 먼저
@@ -861,7 +871,7 @@ async function draw() {
                     if (buildKonvaPattern) {
                         kv.addPatternRectToGroup(d,
                             toCanvasX(geo.frameW + rect.x),
-                            toCanvasY(geo.frameHTop + rect.y),
+                            toCanvasY(effFrameHTop + rect.y),
                             rect.w * baseScale,
                             rect.h * baseScale,
                             rect.color,
@@ -871,7 +881,7 @@ async function draw() {
                         ctx.fillStyle = rect.color;
                         ctx.fillRect(
                             toCanvasX(geo.frameW + rect.x),
-                            toCanvasY(geo.frameHTop + rect.y),
+                            toCanvasY(effFrameHTop + rect.y),
                             rect.w * baseScale,
                             rect.h * baseScale
                         );
@@ -887,10 +897,10 @@ async function draw() {
                         const _fc = faceColorMap[`cell:${col}:${row}`] ?? null;
                         if (!_fc) continue;
                         if (buildKonvaPattern) {
-                            kv.addPatternRectToGroup(d, toCanvasX(geo.frameW + col * stepV), toCanvasY(geo.frameHTop + row * stepH), stepV * baseScale, stepH * baseScale, _fc, 'facepaint');
+                            kv.addPatternRectToGroup(d, toCanvasX(geo.frameW + col * stepV), toCanvasY(effFrameHTop + row * stepH), stepV * baseScale, stepH * baseScale, _fc, 'facepaint');
                         } else {
                             ctx.fillStyle = _fc;
-                            ctx.fillRect(toCanvasX(geo.frameW + col * stepV), toCanvasY(geo.frameHTop + row * stepH), stepV * baseScale, stepH * baseScale);
+                            ctx.fillRect(toCanvasX(geo.frameW + col * stepV), toCanvasY(effFrameHTop + row * stepH), stepV * baseScale, stepH * baseScale);
                         }
                     }
                 }
@@ -904,29 +914,29 @@ async function draw() {
                 if (ln.axis === 'v') {
                     const left = geo.frameW + ln.pos - geo.slatV / 2;
                     const cxPx    = toCanvasX(geo.frameW + ln.pos);
-                    const cyFromPx = toCanvasY(geo.frameHTop + ln.from);
-                    const cyToPx   = toCanvasY(geo.frameHTop + ln.to);
-                    const cyMidPx  = toCanvasY(geo.frameHTop + (ln.from + ln.to) / 2);
+                    const cyFromPx = toCanvasY(effFrameHTop + ln.from);
+                    const cyToPx   = toCanvasY(effFrameHTop + ln.to);
+                    const cyMidPx  = toCanvasY(effFrameHTop + (ln.from + ln.to) / 2);
                     lastSegMap.set(segKey, { cx: cxPx, cy: cyFromPx, ex: cxPx, ey: cyToPx, mx: cxPx, my: cyMidPx, normAngle: Math.PI / 2, lineKey: makeLineKey(cxPx, cyMidPx, Math.PI / 2) });
                     if (deletedSegs.has(segKey)) return;
                     if (buildKonvaPattern) {
                         if (ln.from < EPS)
-                            kv.addPatternRectToGroup(d, toCanvasX(left), toCanvasY(geo.frameHTop - geo.tenonDepth), geo.slatV * baseScale, geo.tenonDepth * baseScale, Color_Tenon_Fill);
-                        if (ln.to > geo.innerH - EPS)
-                            kv.addPatternRectToGroup(d, toCanvasX(left), toCanvasY(geo.frameHTop + geo.innerH), geo.slatV * baseScale, geo.tenonDepth * baseScale, Color_Tenon_Fill);
-                        kv.addPatternSlatRect(d, toCanvasX(left), toCanvasY(geo.frameHTop + ln.from), geo.slatV * baseScale, (ln.to - ln.from) * baseScale, Color_Slat_Fill, segKey, lastSegMap.get(segKey).lineKey);
+                            kv.addPatternRectToGroup(d, toCanvasX(left), toCanvasY(effFrameHTop - geo.tenonDepth), geo.slatV * baseScale, geo.tenonDepth * baseScale, Color_Tenon_Fill);
+                        if (ln.to > effInnerH - EPS)
+                            kv.addPatternRectToGroup(d, toCanvasX(left), toCanvasY(effFrameHTop + effInnerH), geo.slatV * baseScale, geo.tenonDepth * baseScale, Color_Tenon_Fill);
+                        kv.addPatternSlatRect(d, toCanvasX(left), toCanvasY(effFrameHTop + ln.from), geo.slatV * baseScale, (ln.to - ln.from) * baseScale, Color_Slat_Fill, segKey, lastSegMap.get(segKey).lineKey);
                     } else {
                         ctx.fillStyle = Color_Tenon_Fill;
                         if (ln.from < EPS)
-                            ctx.fillRect(toCanvasX(left), toCanvasY(geo.frameHTop - geo.tenonDepth), geo.slatV * baseScale, geo.tenonDepth * baseScale);
-                        if (ln.to > geo.innerH - EPS)
-                            ctx.fillRect(toCanvasX(left), toCanvasY(geo.frameHTop + geo.innerH), geo.slatV * baseScale, geo.tenonDepth * baseScale);
+                            ctx.fillRect(toCanvasX(left), toCanvasY(effFrameHTop - geo.tenonDepth), geo.slatV * baseScale, geo.tenonDepth * baseScale);
+                        if (ln.to > effInnerH - EPS)
+                            ctx.fillRect(toCanvasX(left), toCanvasY(effFrameHTop + effInnerH), geo.slatV * baseScale, geo.tenonDepth * baseScale);
                         ctx.fillStyle = Color_Slat_Fill;
-                        ctx.fillRect(toCanvasX(left), toCanvasY(geo.frameHTop + ln.from), geo.slatV * baseScale, (ln.to - ln.from) * baseScale);
+                        ctx.fillRect(toCanvasX(left), toCanvasY(effFrameHTop + ln.from), geo.slatV * baseScale, (ln.to - ln.from) * baseScale);
                     }
                 } else {
-                    const top = geo.frameHTop + ln.pos - geo.slatH / 2;
-                    const cyPx     = toCanvasY(geo.frameHTop + ln.pos);
+                    const top = effFrameHTop + ln.pos - geo.slatH / 2;
+                    const cyPx     = toCanvasY(effFrameHTop + ln.pos);
                     const cxFromPx = toCanvasX(geo.frameW + ln.from);
                     const cxToPx   = toCanvasX(geo.frameW + ln.to);
                     const cxMidPx  = toCanvasX(geo.frameW + (ln.from + ln.to) / 2);
@@ -1161,8 +1171,8 @@ async function draw() {
                     rx1 = lastNodeXs[ln.xi1]; ry1 = lastNodeYs[ln.yi1];
                     rx2 = lastNodeXs[ln.xi2]; ry2 = lastNodeYs[ln.yi2];
                 } else {
-                    rx1 = geo.frameW + ln.nx1 * geo.innerW; ry1 = geo.frameHTop + ln.ny1 * geo.innerH;
-                    rx2 = geo.frameW + ln.nx2 * geo.innerW; ry2 = geo.frameHTop + ln.ny2 * geo.innerH;
+                    rx1 = geo.frameW + ln.nx1 * geo.innerW; ry1 = effFrameHTop + ln.ny1 * effInnerH;
+                    rx2 = geo.frameW + ln.nx2 * geo.innerW; ry2 = effFrameHTop + ln.ny2 * effInnerH;
                 }
                 const x1 = toX(rx1), y1 = toY(ry1), x2 = toX(rx2), y2 = toY(ry2);
                 lastSegMap.set(`added:${d}:${idx}`, { cx: x1, cy: y1, ex: x2, ey: y2, mx: (x1 + x2) / 2, my: (y1 + y2) / 2, normAngle: 0 });
@@ -1202,8 +1212,8 @@ async function draw() {
 
         if (buildKonvaPattern) {
             kv.addPatternFrameRect(toCanvasX(0), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale, selectedFrameColor);
-            kv.addPatternFrameRect(toCanvasX(geo.frameW), toCanvasY(0), geo.innerW * baseScale, geo.frameHTop * baseScale, selectedFrameColor);
-            kv.addPatternFrameRect(toCanvasX(geo.frameW), toCanvasY(geo.frameHTop + geo.innerH), geo.innerW * baseScale, geo.frameHBottom * baseScale, selectedFrameColor);
+            kv.addPatternFrameRect(toCanvasX(geo.frameW), toCanvasY(0), geo.innerW * baseScale, effFrameHTop * baseScale, selectedFrameColor);
+            kv.addPatternFrameRect(toCanvasX(geo.frameW), toCanvasY(effFrameHTop + effInnerH), geo.innerW * baseScale, effFrameHBottom * baseScale, selectedFrameColor);
             kv.addPatternFrameRect(toCanvasX(geo.outerW - geo.frameW), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale, selectedFrameColor);
         } else {
             ctx.fillStyle = selectedFrameColor;
@@ -1211,9 +1221,9 @@ async function draw() {
             // 좌측 세로 울거미
             ctx.fillRect(toCanvasX(0), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale);
             // 상부 가로 울거미
-            ctx.fillRect(toCanvasX(geo.frameW), toCanvasY(0), geo.innerW * baseScale, geo.frameHTop * baseScale);
+            ctx.fillRect(toCanvasX(geo.frameW), toCanvasY(0), geo.innerW * baseScale, effFrameHTop * baseScale);
             // 하단 울거미
-            ctx.fillRect(toCanvasX(geo.frameW), toCanvasY(geo.frameHTop + geo.innerH), geo.innerW * baseScale, geo.frameHBottom * baseScale);
+            ctx.fillRect(toCanvasX(geo.frameW), toCanvasY(effFrameHTop + effInnerH), geo.innerW * baseScale, effFrameHBottom * baseScale);
             // 우측 세로 울거미
             ctx.fillRect(toCanvasX(geo.outerW - geo.frameW), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale);
         }
@@ -1864,7 +1874,7 @@ async function draw() {
         if (mondrianLayout) {
             const rx = relX / lastBaseScale; // mm, inner frame origin 기준
             const ry = relY / lastBaseScale;
-            const iW = geo.innerW, iH = geo.innerH;
+            const iW = geo.innerW, iH = effInnerH;
             const rects = mondrianLayout.rects;
             for (let i = 0; i < rects.length; i++) {
                 const r = rects[i];
