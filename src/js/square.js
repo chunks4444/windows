@@ -2028,6 +2028,12 @@ async function draw() {
             deletedSegs.clear();
             addedLines   = [];
             addLineStart = null;
+            faceColorMap = null;
+            faceColorUI.updateClearBtn(false);
+            if (mondrianLayout) {
+                mondrianLayout.rects.forEach(r => { r.color = null; });
+                _mondrianVersion++;
+            }
             draw();
         });
     });

@@ -1871,6 +1871,8 @@ async function draw() {
             deletedSegs.clear();
             addedLines   = [];
             addLineStart = null;
+            faceColorMap = null;
+            faceColorUI.updateClearBtn(false);
             draw();
         });
     });
