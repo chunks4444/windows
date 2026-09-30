@@ -1658,8 +1658,9 @@ body.pm-generator .color-code-box .pmok-hex-input::placeholder { color: rgba(var
     border-radius: var(--r-xs);
     border: 2px solid transparent;
     /* 흰색/검정에 가까운 칩(예: AURO 930-10 검정)이 팝업 배경과 구별 안 되는 문제 방지 —
-       밝은 링 + 어두운 링을 겹쳐 어떤 배경·어떤 칩 색에도 테두리가 보이게 한다 */
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,.5), inset 0 0 0 2px rgba(0,0,0,.2);
+       칩 바깥쪽(배경과 만나는 경계)에 밝은 링 + 어두운 링을 둘러서 칩 안쪽 색은 그대로 두고
+       어떤 배경·어떤 칩 색에도 테두리가 보이게 한다 (inset 아님 — 칩 색을 가리지 않음) */
+    box-shadow: 0 0 0 1px rgba(255,255,255,.6), 0 0 0 2px rgba(0,0,0,.25);
     cursor: pointer;
     transition: transform 0.1s, border-color 0.15s;
     display: flex;
@@ -1675,7 +1676,7 @@ body.pm-generator .color-code-box .pmok-hex-input::placeholder { color: rgba(var
 .color-swatch:hover { transform: scale(1.08); }
 .color-swatch.selected {
     border-color: var(--accent);
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,.5), inset 0 0 0 2px rgba(0,0,0,.2), 0 0 0 1px var(--accent);
+    box-shadow: 0 0 0 1px rgba(255,255,255,.6), 0 0 0 2px rgba(0,0,0,.25), 0 0 0 4px var(--accent);
 }
 
 /* ── RIGHT SIDEBAR ───────────────────────── */
