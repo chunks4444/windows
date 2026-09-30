@@ -10,10 +10,10 @@
     // ── 색상 그룹 ─────────────────────────────────
     const colorGroups = window.__pmokColorGroups || [];
 
-    let selectedFrameColor  = '#474747';
-    let selectedMuntolColor = '#474747';
+    let selectedFrameColor  = '#272726';
+    let selectedMuntolColor = '#272726';
     let showMuntol          = true;
-    let selectedSlatColor  = '#474747';
+    let selectedSlatColor  = '#272726';
     let faceColorMap       = null;
     let facePaintMode      = false;
     let facePaintIsDown    = false;
@@ -57,8 +57,8 @@
         document.querySelectorAll('.color-popup').forEach(p => p.classList.remove('open'));
     });
 
-    const DEFAULT_FRAME_COLOR = '#474747';
-    const DEFAULT_SLAT_COLOR  = '#474747';
+    const DEFAULT_FRAME_COLOR = '#272726';
+    const DEFAULT_SLAT_COLOR  = '#272726';
 
     selectedFrameColor = DEFAULT_FRAME_COLOR;
     selectedSlatColor  = DEFAULT_SLAT_COLOR;
@@ -897,15 +897,24 @@ async function draw() {
             }
 
             // 살 + 촉 (bars drawn on top of cells)
-            for (const ln of lines) {
+            // 각 선에 고정 segKey(d:mo:idx)를 매겨 lastSegMap에 등록 — 균등 격자(vs/hs)와
+            // 동일한 방식으로 살 삭제(handleEditClick)가 몬드리안 살도 찾아 지울 수 있게 한다.
+            lines.forEach((ln, idx) => {
+                const segKey = `${d}:mo:${idx}`;
                 if (ln.axis === 'v') {
                     const left = geo.frameW + ln.pos - geo.slatV / 2;
+                    const cxPx    = toCanvasX(geo.frameW + ln.pos);
+                    const cyFromPx = toCanvasY(geo.frameHTop + ln.from);
+                    const cyToPx   = toCanvasY(geo.frameHTop + ln.to);
+                    const cyMidPx  = toCanvasY(geo.frameHTop + (ln.from + ln.to) / 2);
+                    lastSegMap.set(segKey, { cx: cxPx, cy: cyFromPx, ex: cxPx, ey: cyToPx, mx: cxPx, my: cyMidPx, normAngle: Math.PI / 2, lineKey: makeLineKey(cxPx, cyMidPx, Math.PI / 2) });
+                    if (deletedSegs.has(segKey)) return;
                     if (buildKonvaPattern) {
                         if (ln.from < EPS)
                             kv.addPatternRectToGroup(d, toCanvasX(left), toCanvasY(geo.frameHTop - geo.tenonDepth), geo.slatV * baseScale, geo.tenonDepth * baseScale, Color_Tenon_Fill);
                         if (ln.to > geo.innerH - EPS)
                             kv.addPatternRectToGroup(d, toCanvasX(left), toCanvasY(geo.frameHTop + geo.innerH), geo.slatV * baseScale, geo.tenonDepth * baseScale, Color_Tenon_Fill);
-                        kv.addPatternRectToGroup(d, toCanvasX(left), toCanvasY(geo.frameHTop + ln.from), geo.slatV * baseScale, (ln.to - ln.from) * baseScale, Color_Slat_Fill, 'slat');
+                        kv.addPatternSlatRect(d, toCanvasX(left), toCanvasY(geo.frameHTop + ln.from), geo.slatV * baseScale, (ln.to - ln.from) * baseScale, Color_Slat_Fill, segKey, lastSegMap.get(segKey).lineKey);
                     } else {
                         ctx.fillStyle = Color_Tenon_Fill;
                         if (ln.from < EPS)
@@ -917,12 +926,18 @@ async function draw() {
                     }
                 } else {
                     const top = geo.frameHTop + ln.pos - geo.slatH / 2;
+                    const cyPx     = toCanvasY(geo.frameHTop + ln.pos);
+                    const cxFromPx = toCanvasX(geo.frameW + ln.from);
+                    const cxToPx   = toCanvasX(geo.frameW + ln.to);
+                    const cxMidPx  = toCanvasX(geo.frameW + (ln.from + ln.to) / 2);
+                    lastSegMap.set(segKey, { cx: cxFromPx, cy: cyPx, ex: cxToPx, ey: cyPx, mx: cxMidPx, my: cyPx, normAngle: 0, lineKey: makeLineKey(cxMidPx, cyPx, 0) });
+                    if (deletedSegs.has(segKey)) return;
                     if (buildKonvaPattern) {
                         if (ln.from < EPS)
                             kv.addPatternRectToGroup(d, toCanvasX(geo.frameW - geo.tenonDepth), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale, Color_Tenon_Fill);
                         if (ln.to > geo.innerW - EPS)
                             kv.addPatternRectToGroup(d, toCanvasX(geo.frameW + geo.innerW), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale, Color_Tenon_Fill);
-                        kv.addPatternRectToGroup(d, toCanvasX(geo.frameW + ln.from), toCanvasY(top), (ln.to - ln.from) * baseScale, geo.slatH * baseScale, Color_Slat_Fill, 'slat');
+                        kv.addPatternSlatRect(d, toCanvasX(geo.frameW + ln.from), toCanvasY(top), (ln.to - ln.from) * baseScale, geo.slatH * baseScale, Color_Slat_Fill, segKey, lastSegMap.get(segKey).lineKey);
                     } else {
                         ctx.fillStyle = Color_Tenon_Fill;
                         if (ln.from < EPS)
@@ -933,7 +948,7 @@ async function draw() {
                         ctx.fillRect(toCanvasX(geo.frameW + ln.from), toCanvasY(top), (ln.to - ln.from) * baseScale, geo.slatH * baseScale);
                     }
                 }
-            }
+            });
         } else {
             // ── 면 채색 (정자살 모드)
             if (faceColorMap) {
