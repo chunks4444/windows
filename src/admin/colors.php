@@ -36,6 +36,7 @@ require_admin_role('s');
                 <tr>
                     <th style="width:40px;"></th>
                     <th>그룹</th>
+                    <th>브랜드</th>
                     <th>코드</th>
                     <th>이름</th>
                     <th>헥스</th>
@@ -55,7 +56,8 @@ require_admin_role('s');
         <h5 id="colorModalTitle" style="margin:0 0 16px;font-size:15px;font-weight:700;">색상 추가</h5>
         <input type="hidden" id="editId">
         <div style="display:flex;flex-direction:column;gap:10px;">
-            <label style="font-size:12px;font-weight:600;">그룹명<input type="text" id="editGroup" class="form-control form-control-sm mt-1" placeholder="스테인"></label>
+            <label style="font-size:12px;font-weight:600;">그룹명<input type="text" id="editGroup" class="form-control form-control-sm mt-1" placeholder="AURO 930 유성"></label>
+            <label style="font-size:12px;font-weight:600;">브랜드 <span style="font-weight:400;color:#999;">(에디터 색상 버튼에 코드 앞에 표시, 비우면 코드만)</span><input type="text" id="editBrand" class="form-control form-control-sm mt-1" placeholder="AURO"></label>
             <label style="font-size:12px;font-weight:600;">정렬 순서<input type="number" id="editOrder" class="form-control form-control-sm mt-1" value="0" min="0"></label>
             <label style="font-size:12px;font-weight:600;">코드<input type="text" id="editCode" class="form-control form-control-sm mt-1" placeholder="930-00"></label>
             <label style="font-size:12px;font-weight:600;">이름<input type="text" id="editName" class="form-control form-control-sm mt-1" placeholder="투명"></label>

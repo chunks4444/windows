@@ -258,9 +258,15 @@
         const nameEl = document.getElementById(previewNameId);
         const btn    = document.getElementById(btnId);
 
+        // 버튼에는 "AURO 930-06"처럼 브랜드+코드를 노출하고, 팔레트에 없는 색(구버전 도면 등)은 헥스 그대로 보여준다
+        const colorLabel = c => c.code ? [c.brand, c.code].filter(Boolean).join(' ') : c.hex;
+        const colorTitle = c => c.code ? `${colorLabel(c)} ${c.name || ''}`.trim() : c.hex;
+
         function updatePreview(color) {
             dot.style.background = color.hex;
-            nameEl.textContent   = color.hex;
+            nameEl.textContent   = colorLabel(color);
+            btn.title            = colorTitle(color);
+            hoverInfo.textContent = btn.title;
         }
 
         const allColors = colorGroups.flatMap(g => g.colors);
@@ -277,7 +283,8 @@
                 const sw = document.createElement('div');
                 sw.className = 'color-swatch' + (color.hex === defaultHex ? ' selected' : '');
                 sw.style.background = color.hex;
-                sw.title = color.name;
+                sw.title = colorTitle(color);
+                sw.addEventListener('mouseenter', () => { hoverInfo.textContent = colorTitle(color); });
                 sw.addEventListener('click', e => {
                     e.stopPropagation();
                     popup.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
@@ -291,8 +298,15 @@
             });
         });
 
-        const def = allColors.find(c => c.hex === defaultHex) || allColors[0];
-        updatePreview(def);
+        // 팝업 맨 아래 고정 안내줄 — 스와치에 올린 색의 "AURO 560 mahogany 마호가니"를 바로 보여준다
+        // (title 툴팁은 늦게 뜨고 터치기기에선 안 보임). updatePreview()가 쓰므로 첫 호출보다 먼저 만들어야 함
+        const hoverInfo = document.createElement('div');
+        hoverInfo.className = 'color-popup-info';
+        popup.appendChild(hoverInfo);
+        popup.addEventListener('mouseleave', () => { hoverInfo.textContent = btn.title || ''; });
+
+        const findColor = hex => allColors.find(c => c.hex.toLowerCase() === String(hex || '').toLowerCase()) || null;
+        updatePreview(findColor(defaultHex) || { hex: defaultHex });
 
         btn.addEventListener('click', e => {
             e.stopPropagation();
@@ -302,8 +316,10 @@
             popup.classList.toggle('open');
         });
 
+        // 팔레트에 없는 헥스(팔레트 교체 전에 저장된 도면)는 첫 색으로 바꿔치지 말고 그 색을 그대로 유지한다
         function selectColor(hex) {
-            const color = allColors.find(c => c.hex === hex) || allColors[0];
+            if (!hex) return;
+            const color = findColor(hex) || { hex };
             popup.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
             const swatches = popup.querySelectorAll('.color-swatch');
             const idx = allColors.indexOf(color);
@@ -315,16 +331,14 @@
         return { selectColor };
     }
 
+    // 면 컬러도 울거미·살·문틀과 같은 AURO 팔레트 팝업을 쓴다 (예전엔 <input type="color">)
     function buildFaceColorUI(onClear) {
         const clearBtn = document.getElementById('btnFaceClear');
-        const inp      = document.getElementById('faceColorInput');
-        const codeEl   = document.getElementById('faceColorCode');
-
-        function syncCode() {
-            if (codeEl && inp) codeEl.textContent = inp.value;
-        }
-
-        if (inp) inp.addEventListener('input', syncCode);
+        let currentHex = '#28241e';
+        const picker = document.getElementById('facePopup')
+            ? buildColorPopup('facePopup', 'facePreviewDot', 'facePreviewName', 'facePreviewBtn',
+                hex => { currentHex = hex; }, currentHex)
+            : null;
 
         if (clearBtn) {
             clearBtn.addEventListener('click', () => {
@@ -334,7 +348,7 @@
         }
 
         function getCurrentHex() {
-            return inp ? inp.value : '#28241e';
+            return currentHex;
         }
 
         function updateClearBtn(hasColors) {
@@ -342,7 +356,8 @@
         }
 
         function restoreColor(hex) {
-            if (inp && hex) { inp.value = hex; syncCode(); }
+            if (!hex) return;
+            if (picker) picker.selectColor(hex); else currentHex = hex;
         }
 
         return { getCurrentHex, updateClearBtn, restoreColor };

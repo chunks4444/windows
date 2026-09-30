@@ -439,9 +439,13 @@ CREATE TABLE IF NOT EXISTS drawing_export_logs (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='도면 PNG/PDF 내보내기 로그';
 
 -- ── 컬러 스와치 ─────────────────────────────────────────────
+-- 울거미·살·문틀 색상 팝업(6개 엔진 공통)에 뜨는 색. 어드민 '컬러 팔레트 관리'에서 편집.
+-- 2026-09-30 brand 컬럼 추가 (기존 DB):
+-- ALTER TABLE color_swatches ADD COLUMN brand VARCHAR(30) NOT NULL DEFAULT '' AFTER group_name;
 CREATE TABLE IF NOT EXISTS color_swatches (
     id          INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    group_name  VARCHAR(50)  NOT NULL COMMENT '그룹명 (예: 스테인, 천연오일)',
+    group_name  VARCHAR(50)  NOT NULL COMMENT '그룹명 = 에디터 색상 팝업의 소제목 (예: AURO 930 유성, 천연오일)',
+    brand       VARCHAR(30)  NOT NULL DEFAULT '' COMMENT '제조사 표기 (예: AURO). 에디터 색상 버튼에 "AURO 930-06"처럼 코드 앞에 붙어 고객에게 노출됨. 비우면 코드만 표시',
     sort_order  SMALLINT     NOT NULL DEFAULT 0 COMMENT '그룹 내 정렬 순서',
     code        VARCHAR(20)  NOT NULL COMMENT '색상 코드 (예: 930-00)',
     name        VARCHAR(50)  NOT NULL COMMENT '색상 이름',
@@ -519,17 +523,95 @@ CREATE TABLE IF NOT EXISTS faqs (
     KEY idx_faqs_sort (sort_order, is_active)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='자주 묻는 질문';
 
--- 초기 데이터 (스테인)
+-- 초기 데이터 — AURO COLOURS FOR LIFE Holzlasur Nr. 560 (수성) 65색, 2026-09-30 auro.de/colours-for-life 기준.
+-- hex는 AURO 사이트의 공식 표시색. 560은 색마다 숫자코드가 없고 AURO 주문번호가 "5600000 PG1 valentine 0.75 Liter"처럼
+-- 제품번호+색이름이라 code를 "560 색이름"으로 둠 (투명만 공식 번호 560-01). 65색 전부 가격그룹 PG1.
+INSERT IGNORE INTO color_swatches (group_name, brand, sort_order, code, name, hex) VALUES
+('AURO 560 수성', 'AURO', 1, '560 valentine', '발렌타인', '#983b12'),
+('AURO 560 수성', 'AURO', 2, '560 mahogany', '마호가니', '#884220'),
+('AURO 560 수성', 'AURO', 3, '560 wine', '와인', '#83381e'),
+('AURO 560 수성', 'AURO', 4, '560 lava', '용암', '#d46d28'),
+('AURO 560 수성', 'AURO', 5, '560 pumpkin', '호박', '#d6911d'),
+('AURO 560 수성', 'AURO', 6, '560 melon ice', '멜론 아이스', '#eeaa63'),
+('AURO 560 수성', 'AURO', 7, '560 carrot', '당근', '#fea235'),
+('AURO 560 수성', 'AURO', 8, '560 goldfish', '금붕어', '#da7c29'),
+('AURO 560 수성', 'AURO', 9, '560 bumblebee', '호박벌', '#fbd10e'),
+('AURO 560 수성', 'AURO', 10, '560 banana', '바나나', '#fce30e'),
+('AURO 560 수성', 'AURO', 11, '560 lemonade', '레모네이드', '#ffe87b'),
+('AURO 560 수성', 'AURO', 12, '560 deep forest', '깊은 숲', '#24755b'),
+('AURO 560 수성', 'AURO', 13, '560 greenland', '그린란드', '#5e945b'),
+('AURO 560 수성', 'AURO', 14, '560 basil leaf', '바질잎', '#9aa642'),
+('AURO 560 수성', 'AURO', 15, '560 avocado', '아보카도', '#8e9931'),
+('AURO 560 수성', 'AURO', 16, '560 grasshopper', '메뚜기', '#bbd58c'),
+('AURO 560 수성', 'AURO', 17, '560 hemp', '대마', '#7a9d36'),
+('AURO 560 수성', 'AURO', 18, '560 palm tree', '야자수', '#4b6c31'),
+('AURO 560 수성', 'AURO', 19, '560 midnight green', '한밤 초록', '#516833'),
+('AURO 560 수성', 'AURO', 20, '560 jungle', '정글', '#5f6032'),
+('AURO 560 수성', 'AURO', 21, '560 botany', '보타니', '#706941'),
+('AURO 560 수성', 'AURO', 22, '560 matcha', '말차', '#d7de42'),
+('AURO 560 수성', 'AURO', 23, '560 earth', '어스', '#96cddf'),
+('AURO 560 수성', 'AURO', 24, '560 water bubble', '물방울', '#b3cee1'),
+('AURO 560 수성', 'AURO', 25, '560 pigeon', '비둘기', '#629aa1'),
+('AURO 560 수성', 'AURO', 26, '560 mystic', '미스틱', '#2d80a6'),
+('AURO 560 수성', 'AURO', 27, '560 navy', '네이비', '#115296'),
+('AURO 560 수성', 'AURO', 28, '560 denim', '데님', '#228b80'),
+('AURO 560 수성', 'AURO', 29, '560 royal blue', '로열 블루', '#67a7a6'),
+('AURO 560 수성', 'AURO', 30, '560 light blue', '연하늘', '#c8f3e9'),
+('AURO 560 수성', 'AURO', 31, '560 turquoise', '터키석', '#2fbda3'),
+('AURO 560 수성', 'AURO', 32, '560 yacht', '요트', '#95bbac'),
+('AURO 560 수성', 'AURO', 33, '560 purple', '보라', '#ab899f'),
+('AURO 560 수성', 'AURO', 34, '560 cherry blossom', '벚꽃', '#b88581'),
+('AURO 560 수성', 'AURO', 35, '560 cotton candy', '솜사탕', '#ebc6f2'),
+('AURO 560 수성', 'AURO', 36, '560 flowerista', '플라워리스타', '#c8c6e0'),
+('AURO 560 수성', 'AURO', 37, '560 palisander', '자단', '#564023'),
+('AURO 560 수성', 'AURO', 38, '560 iced coffee', '아이스커피', '#6a4f38'),
+('AURO 560 수성', 'AURO', 39, '560 bear', '곰', '#6c422b'),
+('AURO 560 수성', 'AURO', 40, '560 brunette', '브루넷', '#934b1b'),
+('AURO 560 수성', 'AURO', 41, '560 peanut butter', '땅콩버터', '#a7743e'),
+('AURO 560 수성', 'AURO', 42, '560 umbra', '엄버', '#936732'),
+('AURO 560 수성', 'AURO', 43, '560 bangkirai', '방킬라이', '#9a6527'),
+('AURO 560 수성', 'AURO', 44, '560 walnut', '호두', '#a86b1d'),
+('AURO 560 수성', 'AURO', 45, '560 chestnut', '밤나무', '#c77c11'),
+('AURO 560 수성', 'AURO', 46, '560 teak', '티크', '#c88019'),
+('AURO 560 수성', 'AURO', 47, '560 caramel', '캐러멜', '#c98720'),
+('AURO 560 수성', 'AURO', 48, '560 larch', '낙엽송', '#c28a31'),
+('AURO 560 수성', 'AURO', 49, '560 oak', '참나무', '#a6782a'),
+('AURO 560 수성', 'AURO', 50, '560 pine', '소나무', '#ba8327'),
+('AURO 560 수성', 'AURO', 51, '560 light oak', '밝은 참나무', '#cc8712'),
+('AURO 560 수성', 'AURO', 52, '560 fossil', '화석', '#aeaeb0'),
+('AURO 560 수성', 'AURO', 53, '560 thunder', '천둥', '#909298'),
+('AURO 560 수성', 'AURO', 54, '560 metallic', '메탈릭', '#7c7879'),
+('AURO 560 수성', 'AURO', 55, '560 dark night', '어두운 밤', '#4d4543'),
+('AURO 560 수성', 'AURO', 56, '560 space grey', '스페이스 그레이', '#474747'),
+('AURO 560 수성', 'AURO', 57, '560 classic', '클래식', '#d7d2d6'),
+('AURO 560 수성', 'AURO', 58, '560 moon rock', '월석', '#babdcc'),
+('AURO 560 수성', 'AURO', 59, '560 copper grey', '구리 회색', '#bbb9c6'),
+('AURO 560 수성', 'AURO', 60, '560 desert grey', '사막 회색', '#b9afaa'),
+('AURO 560 수성', 'AURO', 61, '560 gold grey', '금빛 회색', '#91826d'),
+('AURO 560 수성', 'AURO', 62, '560 iron', '철', '#928e83'),
+('AURO 560 수성', 'AURO', 63, '560-01', '투명', '#ebeadf'),
+('AURO 560 수성', 'AURO', 64, '560 feather', '깃털', '#ffffff'),
+('AURO 560 수성', 'AURO', 65, '560 coconut', '코코넛', '#f7f4d3');
+
+-- 초기 데이터 — AURO Holzlasur Classic Nr. 930 (유성) 컬러차트 기준 (Stand 05_2020).
+-- hex는 AURO 공식 PDF 컬러차트의 나무결 스와치 평균색을 추출한 값 (실물 도장색과 다를 수 있음)
+-- 930-08(녹색)은 현행 차트에 없어 운영DB에선 is_active=0으로 남겨둠
+INSERT IGNORE INTO color_swatches (group_name, brand, sort_order, code, name, hex) VALUES
+('AURO 930 유성', 'AURO', 1,  '930-00', '투명',      '#edc887'),
+('AURO 930 유성', 'AURO', 2,  '930-23', '흰색',      '#eddfd2'),
+('AURO 930 유성', 'AURO', 3,  '930-01', '황토노랑',  '#c98c08'),
+('AURO 930 유성', 'AURO', 4,  '930-02', '오렌지',    '#ce721c'),
+('AURO 930 유성', 'AURO', 5,  '930-32', '밝은 갈색', '#8b601a'),
+('AURO 930 유성', 'AURO', 6,  '930-05', '황토갈색',  '#723c09'),
+('AURO 930 유성', 'AURO', 7,  '930-33', '엄버',      '#6a4113'),
+('AURO 930 유성', 'AURO', 8,  '930-04', '적갈색',    '#8e3a21'),
+('AURO 930 유성', 'AURO', 9,  '930-34', '갈색',      '#773724'),
+('AURO 930 유성', 'AURO', 10, '930-20', '진한 빨강', '#860e10'),
+('AURO 930 유성', 'AURO', 11, '930-06', '중간 갈색', '#4f2b13'),
+('AURO 930 유성', 'AURO', 12, '930-22', '진한 갈색', '#4f2312'),
+('AURO 930 유성', 'AURO', 13, '930-11', '회색',      '#7b776c'),
+('AURO 930 유성', 'AURO', 14, '930-10', '검정',      '#272726');
 INSERT IGNORE INTO color_swatches (group_name, sort_order, code, name, hex) VALUES
-('스테인', 1,  '930-00', '투명',        '#dec898'),
-('스테인', 2,  '930-01', '노랑',        '#f2aa00'),
-('스테인', 3,  '930-02', '오렌지',      '#e05218'),
-('스테인', 4,  '930-04', '레드브라운',  '#7a1e08'),
-('스테인', 5,  '930-05', '황토브라운',  '#906020'),
-('스테인', 6,  '930-06', '밤색/브라운', '#5a2e10'),
-('스테인', 7,  '930-08', '녹색',        '#2c7030'),
-('스테인', 8,  '930-10', '흑단',        '#222218'),
-('스테인', 9,  '930-11', '회색',        '#888885'),
 -- 천연오일
 ('천연오일', 1, 'NO-01', '자연',    '#e2c98a'),
 ('천연오일', 2, 'NO-02', '소나무',  '#c8952a'),

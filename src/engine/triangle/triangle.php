@@ -730,7 +730,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                     </div>
                     <hr class="sb-divider">
                     <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">
-                        <div style="display:flex;align-items:center;justify-content:space-between;">
+                        <div class="color-row-stack">
                             <span class="color-label"><?= te('울거미 컬러') ?></span>
                             <div class="color-picker-wrap">
                                 <button class="color-preview-btn" id="framePreviewBtn">
@@ -740,7 +740,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                                 <div class="color-popup" id="framePopup"></div>
                             </div>
                         </div>
-                        <div style="display:flex;align-items:center;justify-content:space-between;">
+                        <div class="color-row-stack">
                             <span class="color-label"><?= te('살 컬러') ?></span>
                             <div class="color-picker-wrap">
                                 <button class="color-preview-btn" id="slatPreviewBtn">
@@ -750,20 +750,26 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                                 <div class="color-popup" id="slatPopup"></div>
                             </div>
                         </div>
-                        <div style="display:flex;align-items:center;justify-content:space-between;">
+                        <div class="color-row-stack">
                             <span class="color-label"><?= te('문틀 컬러') ?></span>
-                            <div class="color-preview-btn color-code-box" style="gap:5px;">
-                                <input type="color" id="muntolColorInput" value="#3d382f" class="color-code-swatch">
-                                <span id="muntolColorCode">#28241e</span>
+                            <div class="color-picker-wrap">
+                                <button class="color-preview-btn" id="muntolPreviewBtn">
+                                    <span class="color-preview-dot" id="muntolPreviewDot"></span>
+                                    <span id="muntolPreviewName">—</span>
+                                </button>
+                                <div class="color-popup" id="muntolPopup"></div>
                             </div>
                         </div>
                     </div>
                     <?php /* 면칠하기 임시 비활성화 (복구: display:none 제거) */ ?>
-                    <div style="margin-top:8px;display:flex;align-items:center;justify-content:space-between;display:none;">
+                    <div class="color-row-stack" style="margin-top:6px;display:none;">
                         <span class="color-label"><?= te('면 컬러') ?></span>
-                        <div class="color-preview-btn color-code-box" style="gap:5px;">
-                            <input type="color" id="faceColorInput" value="#28241e" class="color-code-swatch">
-                            <span id="faceColorCode">#28241e</span>
+                        <div class="color-picker-wrap">
+                            <button class="color-preview-btn" id="facePreviewBtn">
+                                <span class="color-preview-dot" id="facePreviewDot"></span>
+                                <span id="facePreviewName">—</span>
+                            </button>
+                            <div class="color-popup" id="facePopup"></div>
                         </div>
                     </div>
                     <div style="display:flex;gap:6px;margin-top:6px;display:none;">

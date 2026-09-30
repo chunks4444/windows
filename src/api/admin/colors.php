@@ -15,7 +15,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 if ($method === 'GET') {
     $stmt = $pdo->query(
-        'SELECT id, group_name, sort_order, code, name, hex, is_active
+        'SELECT id, group_name, brand, sort_order, code, name, hex, is_active
          FROM color_swatches ORDER BY group_name, sort_order, id'
     );
     echo json_encode(['colors' => $stmt->fetchAll()]); exit;
@@ -42,6 +42,7 @@ if ($method === 'POST') {
     // 추가 / 수정
     $id    = (int)($body['id'] ?? 0);
     $group = trim($body['group_name'] ?? '');
+    $brand = trim($body['brand'] ?? '');
     $order = (int)($body['sort_order'] ?? 0);
     $code  = trim($body['code'] ?? '');
     $name  = trim($body['name'] ?? '');
@@ -53,11 +54,11 @@ if ($method === 'POST') {
 
     try {
         if ($id) {
-            $pdo->prepare('UPDATE color_swatches SET group_name=?, sort_order=?, code=?, name=?, hex=? WHERE id=?')
-                ->execute([$group, $order, $code, $name, $hex, $id]);
+            $pdo->prepare('UPDATE color_swatches SET group_name=?, brand=?, sort_order=?, code=?, name=?, hex=? WHERE id=?')
+                ->execute([$group, $brand, $order, $code, $name, $hex, $id]);
         } else {
-            $pdo->prepare('INSERT INTO color_swatches (group_name, sort_order, code, name, hex) VALUES (?, ?, ?, ?, ?)')
-                ->execute([$group, $order, $code, $name, $hex]);
+            $pdo->prepare('INSERT INTO color_swatches (group_name, brand, sort_order, code, name, hex) VALUES (?, ?, ?, ?, ?, ?)')
+                ->execute([$group, $brand, $order, $code, $name, $hex]);
         }
     } catch (\PDOException $e) {
         if ($e->getCode() === '23000') {

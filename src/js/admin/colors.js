@@ -18,13 +18,14 @@ function renderTable(colors) {
             lastGroup = c.group_name;
             const gr = document.createElement('tr');
             gr.className = 'group-header';
-            gr.innerHTML = `<td colspan="8">${esc(c.group_name)}</td>`;
+            gr.innerHTML = `<td colspan="9">${esc(c.group_name)}</td>`;
             tbody.appendChild(gr);
         }
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td><span class="color-dot" style="background:${esc(c.hex)};"></span></td>
             <td style="font-size:12px;color:#999;">${esc(c.group_name)}</td>
+            <td>${esc(c.brand || '')}</td>
             <td><code>${esc(c.code)}</code></td>
             <td>${esc(c.name)}</td>
             <td><code>${esc(c.hex)}</code></td>
@@ -43,6 +44,7 @@ function renderTable(colors) {
 function openAddModal() {
     document.getElementById('editId').value    = '';
     document.getElementById('editGroup').value = '';
+    document.getElementById('editBrand').value = '';
     document.getElementById('editOrder').value = 0;
     document.getElementById('editCode').value  = '';
     document.getElementById('editName').value  = '';
@@ -55,6 +57,7 @@ function openAddModal() {
 function openEditModal(c) {
     document.getElementById('editId').value    = c.id;
     document.getElementById('editGroup').value = c.group_name;
+    document.getElementById('editBrand').value = c.brand || '';
     document.getElementById('editOrder').value = c.sort_order;
     document.getElementById('editCode').value  = c.code;
     document.getElementById('editName').value  = c.name;
@@ -76,6 +79,7 @@ async function saveColor() {
     const body = {
         id:         id ? parseInt(id) : null,
         group_name: document.getElementById('editGroup').value.trim(),
+        brand:      document.getElementById('editBrand').value.trim(),
         sort_order: parseInt(document.getElementById('editOrder').value) || 0,
         code:       document.getElementById('editCode').value.trim(),
         name:       document.getElementById('editName').value.trim(),

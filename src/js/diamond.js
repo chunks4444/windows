@@ -75,6 +75,8 @@
         hex => { selectedFrameColor = hex; }, selectedFrameColor);
     const slatColorPicker  = buildColorPopup('slatPopup',  'slatPreviewDot',  'slatPreviewName',  'slatPreviewBtn',
         hex => { selectedSlatColor  = hex; }, selectedSlatColor);
+    const muntolColorPicker = buildColorPopup('muntolPopup', 'muntolPreviewDot', 'muntolPreviewName', 'muntolPreviewBtn',
+        hex => { selectedMuntolColor = hex; }, selectedMuntolColor);
     const faceColorUI = buildFaceColorUI(
         () => { faceColorMap = null; draw(); }
     );
@@ -1915,8 +1917,6 @@ async function draw() {
 
 document.getElementById('chkDimension').addEventListener('change', e => { showDimensions = e.target.checked; draw(); });
 document.getElementById('chkMuntol')?.addEventListener('change', e => { showMuntol = e.target.checked; draw(); });
-document.getElementById('muntolColorInput')?.addEventListener('input', e => { selectedMuntolColor = e.target.value; const el = document.getElementById('muntolColorCode'); if (el) el.textContent = e.target.value; draw(); });
-document.getElementById('muntolColorInput')?.addEventListener('input', e => { selectedMuntolColor = e.target.value; document.getElementById('muntolColorCode').textContent = e.target.value; draw(); });
         document.getElementById('chkShrinkH').addEventListener('change', draw);
 
     // ── 슬라이더 ↔ 인풋창 양방향 동기화 ──────────────────
@@ -2274,7 +2274,7 @@ document.getElementById('muntolColorInput')?.addEventListener('input', e => { se
         faceColorUI.restoreColor(p.faceBrushColor || null);
         faceColorUI.updateClearBtn(!!faceColorMap);
         updateDoorCountOptions();
-        if (p.muntolColor) { selectedMuntolColor = p.muntolColor; const _mi = document.getElementById('muntolColorInput'); if (_mi) { _mi.value = p.muntolColor; const _mc = document.getElementById('muntolColorCode'); if (_mc) _mc.textContent = p.muntolColor; } }
+        if (p.muntolColor) muntolColorPicker.selectColor(p.muntolColor);
         showMuntol = p.showMuntol !== false;
         const _chkM = document.getElementById('chkMuntol'); if (_chkM) _chkM.checked = showMuntol;
         draw();

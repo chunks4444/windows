@@ -100,6 +100,8 @@
         hex => { selectedFrameColor = hex; }, selectedFrameColor);
     const slatColorPicker  = buildColorPopup('slatPopup',  'slatPreviewDot',  'slatPreviewName',  'slatPreviewBtn',
         hex => { selectedSlatColor  = hex; }, selectedSlatColor);
+    const muntolColorPicker = buildColorPopup('muntolPopup', 'muntolPreviewDot', 'muntolPreviewName', 'muntolPreviewBtn',
+        hex => { selectedMuntolColor = hex; }, selectedMuntolColor);
     const faceColorUI = buildFaceColorUI(
         () => { faceColorMap = null; draw(); }
     );
@@ -1859,15 +1861,6 @@ async function draw() {
     if (frameColorInp && frameColorCodeEl) {
         frameColorInp.addEventListener('input', () => { frameColorCodeEl.textContent = frameColorInp.value; });
     }
-    const muntolColorInp = document.getElementById('muntolColorInput');
-    const muntolColorCodeEl = document.getElementById('muntolColorCode');
-    if (muntolColorInp) {
-        muntolColorInp.addEventListener('input', () => {
-            selectedMuntolColor = muntolColorInp.value;
-            if (muntolColorCodeEl) muntolColorCodeEl.textContent = muntolColorInp.value;
-            draw();
-        });
-    }
     const chkMuntol = document.getElementById('chkMuntol');
     if (chkMuntol) {
         chkMuntol.addEventListener('change', () => {
@@ -2358,10 +2351,7 @@ async function draw() {
         slatColorPicker.selectColor(p.slatColor);
         faceColorMap  = p.faceColorMap  || null;
         frameColorMap = p.frameColorMap || null;
-        if (p.muntolColor) {
-            selectedMuntolColor = p.muntolColor;
-            if (muntolColorInp) { muntolColorInp.value = p.muntolColor; if (muntolColorCodeEl) muntolColorCodeEl.textContent = p.muntolColor; }
-        }
+        if (p.muntolColor) muntolColorPicker.selectColor(p.muntolColor);
         showMuntol = p.showMuntol !== false;
         if (chkMuntol) chkMuntol.checked = showMuntol;
         faceColorUI.restoreColor(p.faceBrushColor || null);
