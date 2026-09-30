@@ -9,10 +9,10 @@
     // ── 색상 그룹 ─────────────────────────────────
     const colorGroups = window.__pmokColorGroups || [];
 
-    let selectedFrameColor  = '#28241e';
-    let selectedMuntolColor = '#3d382f';
+    let selectedFrameColor  = '#474747';
+    let selectedMuntolColor = '#474747';
     let showMuntol          = true;
-    let selectedSlatColor  = '#28241e';
+    let selectedSlatColor  = '#474747';
     let faceColorMap       = null;
     let facePaintMode      = false;
     let facePaintIsDown    = false;
@@ -24,8 +24,8 @@
         document.querySelectorAll('.color-popup').forEach(p => p.classList.remove('open'));
     });
 
-    const DEFAULT_FRAME_COLOR = '#28241e';
-    const DEFAULT_SLAT_COLOR  = '#28241e';
+    const DEFAULT_FRAME_COLOR = '#474747';
+    const DEFAULT_SLAT_COLOR  = '#474747';
 
     selectedFrameColor = DEFAULT_FRAME_COLOR;
     selectedSlatColor  = DEFAULT_SLAT_COLOR;
