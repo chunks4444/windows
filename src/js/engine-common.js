@@ -267,14 +267,18 @@
             nameEl.textContent   = colorLabel(color);
             btn.title            = colorTitle(color);
             hoverInfo.textContent = btn.title;
+            currentHex            = color.hex;
         }
+        let currentHex = defaultHex;
 
         const allColors = colorGroups.flatMap(g => g.colors);
 
-        colorGroups.forEach(group => {
+        colorGroups.forEach((group, gi) => {
             // 그룹 레이블
             const isFirst = group === colorGroups[0];
             const lbl = document.createElement('div');
+            lbl.className = 'color-popup-group';
+            lbl.dataset.group = gi;
             lbl.style.cssText = `grid-column:1/-1;font-size:9px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-3);padding:2px 0 1px;${isFirst ? '' : 'border-top:1px solid var(--border);margin-top:4px;'}`;
             lbl.textContent = group.label;
             popup.appendChild(lbl);
@@ -283,6 +287,7 @@
                 const sw = document.createElement('div');
                 sw.className = 'color-swatch' + (color.hex === defaultHex ? ' selected' : '');
                 sw.style.background = color.hex;
+                sw.dataset.group = gi;
                 sw.title = colorTitle(color);
                 sw.addEventListener('mouseenter', () => { hoverInfo.textContent = colorTitle(color); });
                 sw.addEventListener('click', e => {
@@ -328,8 +333,69 @@
             onSelect(color.hex);
         }
 
-        return { selectColor };
+        // 마감에 맞는 그룹만 보이게 (수성스테인 → AURO 560 그룹만). pred가 null이면 전부 표시
+        let groupPred = null;
+        function setGroupFilter(pred) {
+            groupPred = pred;
+            let firstShown = true;
+            popup.querySelectorAll('[data-group]').forEach(el => {
+                const show = !pred || pred(colorGroups[+el.dataset.group]);
+                el.style.display = show ? '' : 'none';
+                if (show && el.classList.contains('color-popup-group')) {
+                    el.style.borderTop = firstShown ? 'none' : '1px solid var(--border)';
+                    el.style.marginTop = firstShown ? '0' : '4px';
+                    firstShown = false;
+                }
+            });
+        }
+
+        // 지금 색이 보이는 그룹에 없으면(예: 수성 560 색인데 유성스테인으로 바꿈) RGB상 가장 가까운 색으로 옮긴다
+        // — 마감은 930인데 색 코드는 560으로 주문이 나가는 걸 막기 위함
+        function snapToFilter() {
+            if (!groupPred) return;
+            const allowed = colorGroups.filter(groupPred).flatMap(g => g.colors);
+            if (!allowed.length || allowed.some(c => c.hex.toLowerCase() === String(currentHex).toLowerCase())) return;
+            const rgb = h => [1, 3, 5].map(i => parseInt(String(h).slice(i, i + 2), 16) || 0);
+            const [r, g, b] = rgb(currentHex);
+            let best = allowed[0], bestD = Infinity;
+            allowed.forEach(c => {
+                const [r2, g2, b2] = rgb(c.hex);
+                const d = (r - r2) ** 2 + (g - g2) ** 2 + (b - b2) ** 2;
+                if (d < bestD) { bestD = d; best = c; }
+            });
+            selectColor(best.hex);
+        }
+
+        const api = { selectColor, setGroupFilter, snapToFilter };
+        (window.__pmokColorPickers = window.__pmokColorPickers || []).push(api);
+        return api;
     }
+
+    // 마감 select에 따라 컬러 피커를 켜고 끈다.
+    // 마감 이름에 "AURO 560"처럼 제품번호가 있고, 같은 번호의 팔레트 그룹(color_swatches.group_name)이 있을 때만 표시.
+    // 들기름·오일마감(AURO 126)처럼 팔레트 그룹이 없는 마감은 숨김 — 나중에 126 색을 어드민에 추가하면 자동으로 보인다.
+    // fromUser=true(사용자가 직접 바꿈)일 때만 색을 새 팔레트로 맞추고, 도면 불러오기에선 저장된 색을 그대로 둔다.
+    window.applyFinishColorPicker = function (fromUser) {
+        const sel   = document.getElementById('txtFinish');
+        const block = document.getElementById('finishColorBlock');
+        if (!sel || !block) return;
+        const m   = /AURO\s*(\d{3})/i.exec(sel.value || '');
+        const key = m ? 'AURO ' + m[1] : null;
+        const pred = key ? (g => String(g.key || g.label).toUpperCase().startsWith(key)) : null;
+        const show = !!pred && colorGroups.some(pred);
+        block.hidden = !show;
+        const pickers = window.__pmokColorPickers || [];
+        if (!show) {
+            block.querySelectorAll('.color-popup.open').forEach(p => p.classList.remove('open'));
+            return;
+        }
+        pickers.forEach(p => p.setGroupFilter(pred));
+        if (fromUser) { pickers.forEach(p => p.snapToFilter()); window.draw?.(); }
+    };
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('txtFinish')?.addEventListener('change', () => window.applyFinishColorPicker(true));
+        window.applyFinishColorPicker(false);
+    });
 
     // 면 컬러도 울거미·살·문틀과 같은 AURO 팔레트 팝업을 쓴다 (예전엔 <input type="color">)
     function buildFaceColorUI(onClear) {

@@ -728,53 +728,57 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                             <?php endforeach; ?>
                         </select>
                     </div>
-                    <hr class="sb-divider">
-                    <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">
-                        <div class="color-row-stack">
-                            <span class="color-label"><?= te('울거미 컬러') ?></span>
-                            <div class="color-picker-wrap">
-                                <button class="color-preview-btn" id="framePreviewBtn">
-                                    <span class="color-preview-dot" id="framePreviewDot"></span>
-                                    <span id="framePreviewName">—</span>
-                                </button>
-                                <div class="color-popup" id="framePopup"></div>
+                    <!-- 컬러 피커는 AURO 스테인 마감(이름에 "AURO 560"처럼 제품번호가 있고 같은 번호의 팔레트 그룹이 있는 것)을
+                         골랐을 때만 보인다 — engine-common.js applyFinishColorPicker() -->
+                    <div id="finishColorBlock" hidden>
+                        <hr class="sb-divider">
+                        <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">
+                            <div class="color-row-stack">
+                                <span class="color-label"><?= te('울거미 컬러') ?></span>
+                                <div class="color-picker-wrap">
+                                    <button class="color-preview-btn" id="framePreviewBtn">
+                                        <span class="color-preview-dot" id="framePreviewDot"></span>
+                                        <span id="framePreviewName">—</span>
+                                    </button>
+                                    <div class="color-popup" id="framePopup"></div>
+                                </div>
+                            </div>
+                            <div class="color-row-stack">
+                                <span class="color-label"><?= te('살 컬러') ?></span>
+                                <div class="color-picker-wrap">
+                                    <button class="color-preview-btn" id="slatPreviewBtn">
+                                        <span class="color-preview-dot" id="slatPreviewDot"></span>
+                                        <span id="slatPreviewName">—</span>
+                                    </button>
+                                    <div class="color-popup" id="slatPopup"></div>
+                                </div>
+                            </div>
+                            <div class="color-row-stack">
+                                <span class="color-label"><?= te('문틀 컬러') ?></span>
+                                <div class="color-picker-wrap">
+                                    <button class="color-preview-btn" id="muntolPreviewBtn">
+                                        <span class="color-preview-dot" id="muntolPreviewDot"></span>
+                                        <span id="muntolPreviewName">—</span>
+                                    </button>
+                                    <div class="color-popup" id="muntolPopup"></div>
+                                </div>
                             </div>
                         </div>
-                        <div class="color-row-stack">
-                            <span class="color-label"><?= te('살 컬러') ?></span>
+                        <?php /* 면칠하기 임시 비활성화 (복구: display:none 제거) */ ?>
+                        <div class="color-row-stack" style="margin-top:6px;display:none;">
+                            <span class="color-label"><?= te('면 컬러') ?></span>
                             <div class="color-picker-wrap">
-                                <button class="color-preview-btn" id="slatPreviewBtn">
-                                    <span class="color-preview-dot" id="slatPreviewDot"></span>
-                                    <span id="slatPreviewName">—</span>
+                                <button class="color-preview-btn" id="facePreviewBtn">
+                                    <span class="color-preview-dot" id="facePreviewDot"></span>
+                                    <span id="facePreviewName">—</span>
                                 </button>
-                                <div class="color-popup" id="slatPopup"></div>
+                                <div class="color-popup" id="facePopup"></div>
                             </div>
                         </div>
-                        <div class="color-row-stack">
-                            <span class="color-label"><?= te('문틀 컬러') ?></span>
-                            <div class="color-picker-wrap">
-                                <button class="color-preview-btn" id="muntolPreviewBtn">
-                                    <span class="color-preview-dot" id="muntolPreviewDot"></span>
-                                    <span id="muntolPreviewName">—</span>
-                                </button>
-                                <div class="color-popup" id="muntolPopup"></div>
-                            </div>
+                        <div style="display:flex;gap:6px;margin-top:6px;display:none;">
+                            <button id="btnFacePaint" type="button" class="hbtn" style="flex:1;justify-content:center;font-size:11px;display:none;"><?= te('면컬러 칠하기') ?></button>
+                            <button id="btnFaceClear" type="button" class="hbtn" style="flex-shrink:0;padding:0 8px;font-size:11px;display:none;width:auto;justify-content:center;"><?= te('초기화') ?></button>
                         </div>
-                    </div>
-                    <?php /* 면칠하기 임시 비활성화 (복구: display:none 제거) */ ?>
-                    <div class="color-row-stack" style="margin-top:6px;display:none;">
-                        <span class="color-label"><?= te('면 컬러') ?></span>
-                        <div class="color-picker-wrap">
-                            <button class="color-preview-btn" id="facePreviewBtn">
-                                <span class="color-preview-dot" id="facePreviewDot"></span>
-                                <span id="facePreviewName">—</span>
-                            </button>
-                            <div class="color-popup" id="facePopup"></div>
-                        </div>
-                    </div>
-                    <div style="display:flex;gap:6px;margin-top:6px;display:none;">
-                        <button id="btnFacePaint" type="button" class="hbtn" style="flex:1;justify-content:center;font-size:11px;display:none;"><?= te('면컬러 칠하기') ?></button>
-                        <button id="btnFaceClear" type="button" class="hbtn" style="flex-shrink:0;padding:0 8px;font-size:11px;display:none;width:auto;justify-content:center;"><?= te('초기화') ?></button>
                     </div>
                 </div>
                 <div class="sb-section">

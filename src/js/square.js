@@ -2382,7 +2382,7 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
         document.getElementById('chkShrinkH').checked = p.shrinkH || false;
         document.getElementById('txtWood').value    = p.wood || '소나무';
         const _fEl = document.getElementById('txtFinish');
-        if (_fEl) { _fEl.value = p.finish ?? ''; if (_fEl.selectedIndex < 0) _fEl.selectedIndex = 0; }
+        if (_fEl) { _fEl.value = p.finish ?? ''; if (_fEl.selectedIndex < 0) _fEl.selectedIndex = 0; } window.applyFinishColorPicker?.(false);
         const hwEl = document.getElementById('txtHardware'); if (hwEl) hwEl.value = p.hardware ?? '';
         document.getElementById('pungpanCtrl').style.display = p.pungpanOn ? 'block' : 'none';
         placementMode        = p.placementMode        || false;
@@ -2565,7 +2565,7 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
     async function loadVersions() {
         scaleFactor = 1.0; panX = 0; panY = 0;
         const _woodEl = document.getElementById('txtWood');     if (_woodEl) _woodEl.value = '소나무';
-        const _finishEl = document.getElementById('txtFinish'); if (_finishEl) _finishEl.value = '';
+        const _finishEl = document.getElementById('txtFinish'); if (_finishEl) _finishEl.value = ''; window.applyFinishColorPicker?.(false);
         const _hwEl = document.getElementById('txtHardware');  if (_hwEl) _hwEl.value = '';
 
         const resumed = await tryResumePendingSave();
