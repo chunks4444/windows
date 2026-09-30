@@ -1147,6 +1147,14 @@ async function draw() {
         const vCntEl = document.getElementById('spVSlatCnt');
         if (vCntEl) vCntEl.textContent = Math.max(0, adjVSlatCnt) + _t('개');
 
+        // 몬드리안(랜덤 생성)은 살마다 길이가 제각각이라 격자 기준 단일 길이값이
+        // 의미가 없다 — 평균 등으로 대충 값을 보여주는 대신 "가변"으로 명시한다.
+        if (mondrianLayout) {
+            const hLenEl = document.getElementById('spHSlatLen');
+            if (hLenEl) hLenEl.textContent = `${p.slatW}×${geo.slatT}×${_t('가변')}`;
+            const vLenEl = document.getElementById('spVSlatLen');
+            if (vLenEl) vLenEl.textContent = `${p.slatW}×${geo.slatT}×${_t('가변')}`;
+        }
     }
 
     // ====== 추가 선 그리기 (모든 문짝에 동일하게 복제) ======
