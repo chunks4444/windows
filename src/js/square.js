@@ -1937,6 +1937,107 @@ async function draw() {
         }
     });
 
+    // ── 몬드리안(랜덤 생성) 분할선 드래그 이동 ──────────────
+    // 선 하나를 옮기면, 그 선에 맞닿은 칸들의 경계와 그 선에서 끝나는 수직선들의
+    // 끝점을 같이 옮겨서 빈틈·겹침 없이 리사이즈되게 한다 (rects는 전부 리프라 이 두
+    // 케이스만 처리하면 더 깊은 단계까지 연쇄로 손볼 필요가 없다).
+    function hitTestMondrianLine(cx, cy) {
+        if (!mondrianLayout) return null;
+        let bestIdx = null, bestAxis = null, bestDist = Infinity;
+        const threshold = Math.max(lastSlatPx * 3, 8);
+        for (const [key, seg] of lastSegMap) {
+            const m = /^\d+:mo:(\d+)$/.exec(key);
+            if (!m) continue;
+            const dist = distToSeg(cx, cy, seg);
+            if (dist < bestDist) {
+                bestDist = dist;
+                bestIdx  = parseInt(m[1], 10);
+                bestAxis = seg.normAngle < 0.05 ? 'h' : 'v';
+            }
+        }
+        return (bestIdx !== null && bestDist < threshold) ? { idx: bestIdx, axis: bestAxis } : null;
+    }
+
+    function clampMondrianLinePos(idx, desiredPos) {
+        const ln = mondrianLayout.lines[idx];
+        const EPS = 0.002, MIN_SIZE = 0.04; // 최소 칸 크기(비율) 이하로는 못 좁히게
+        let lo = 0, hi = 1;
+        mondrianLayout.rects.forEach(r => {
+            if (ln.axis === 'v') {
+                if (r.y >= ln.to - EPS || r.y + r.h <= ln.from + EPS) return;
+                if (Math.abs(r.x + r.w - ln.pos) < EPS) lo = Math.max(lo, r.x + MIN_SIZE);
+                if (Math.abs(r.x - ln.pos) < EPS)        hi = Math.min(hi, r.x + r.w - MIN_SIZE);
+            } else {
+                if (r.x >= ln.to - EPS || r.x + r.w <= ln.from + EPS) return;
+                if (Math.abs(r.y + r.h - ln.pos) < EPS) lo = Math.max(lo, r.y + MIN_SIZE);
+                if (Math.abs(r.y - ln.pos) < EPS)        hi = Math.min(hi, r.y + r.h - MIN_SIZE);
+            }
+        });
+        if (lo > hi) return ln.pos;
+        return Math.min(hi, Math.max(lo, desiredPos));
+    }
+
+    function moveMondrianLine(idx, newPos) {
+        const ln = mondrianLayout.lines[idx];
+        const oldPos = ln.pos;
+        const EPS = 0.002;
+        mondrianLayout.rects.forEach(r => {
+            if (ln.axis === 'v') {
+                if (r.y >= ln.to - EPS || r.y + r.h <= ln.from + EPS) return;
+                if (Math.abs(r.x + r.w - oldPos) < EPS) { r.w = newPos - r.x; }
+                else if (Math.abs(r.x - oldPos) < EPS)  { r.w = r.x + r.w - newPos; r.x = newPos; }
+            } else {
+                if (r.x >= ln.to - EPS || r.x + r.w <= ln.from + EPS) return;
+                if (Math.abs(r.y + r.h - oldPos) < EPS) { r.h = newPos - r.y; }
+                else if (Math.abs(r.y - oldPos) < EPS)  { r.h = r.y + r.h - newPos; r.y = newPos; }
+            }
+        });
+        // 이 선에서 끝나는(T자로 맞닿는) 수직 선들의 끝점도 같이 이동
+        mondrianLayout.lines.forEach(other => {
+            if (other === ln || other.axis === ln.axis) return;
+            if (other.pos > ln.to + EPS || other.pos < ln.from - EPS) return;
+            if (Math.abs(other.from - oldPos) < EPS) other.from = newPos;
+            if (Math.abs(other.to   - oldPos) < EPS) other.to   = newPos;
+        });
+        ln.pos = newPos;
+    }
+
+    let mondrianDrag = null; // { idx, axis }
+
+    canvas.addEventListener('mousedown', e => {
+        if (e.button !== 0 || !mondrianLayout || lineEditMode || facePaintMode || panMode || placementMode) return;
+        const coord = screenToCtxCoord(e.clientX, e.clientY);
+        const hit = hitTestMondrianLine(coord.x, coord.y);
+        if (!hit) return;
+        mondrianDrag = hit;
+        canvas.style.cursor = hit.axis === 'v' ? 'col-resize' : 'row-resize';
+        e.preventDefault();
+    });
+
+    window.addEventListener('mousemove', e => {
+        if (mondrianDrag) {
+            const coord = screenToCtxCoord(e.clientX, e.clientY);
+            const desiredPos = mondrianDrag.axis === 'v'
+                ? (coord.x - lastILeft) / lastIW
+                : (coord.y - lastITop)  / lastIH;
+            moveMondrianLine(mondrianDrag.idx, clampMondrianLinePos(mondrianDrag.idx, desiredPos));
+            _mondrianVersion++;
+            draw();
+            return;
+        }
+        if (mondrianLayout && !lineEditMode && !facePaintMode && !panMode && !placementMode) {
+            const coord = screenToCtxCoord(e.clientX, e.clientY);
+            const hit = hitTestMondrianLine(coord.x, coord.y);
+            canvas.style.cursor = hit ? (hit.axis === 'v' ? 'col-resize' : 'row-resize') : 'default';
+        }
+    });
+
+    window.addEventListener('mouseup', () => {
+        if (!mondrianDrag) return;
+        mondrianDrag = null;
+        canvas.style.cursor = panMode ? 'grab' : 'default';
+    });
+
     document.getElementById('btnOrder')?.addEventListener('click', () => {
         openOrderModal({
             engine:       WALLPAPER_ENGINE,
