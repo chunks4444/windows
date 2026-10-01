@@ -2058,25 +2058,22 @@ async function draw() {
         ln.pos = newPos;
     }
 
-    // 사용자가 그린 선(자르기)도 드래그로 옮길 수 있게 — 끝점 근처를 잡으면 그 끝점만,
-    // 선 중간을 잡으면 선 전체를 평행 이동한다.
+    // 사용자가 그린 선(자르기)도 드래그로 옮길 수 있게 — 클릭하면 선 전체를 평행 이동한다
+    // (끝점만 따로 잡는 건 혼동이 있어서 뺌. 단순하게 통째로 이동만 지원).
+    // lastSegMap을 거치지 않고 addedLines에서 직접 화면 좌표를 계산 — 등록 타이밍 등에
+    // 영향을 안 받게 독립적으로 동작.
     function hitTestAddedLine(cx, cy) {
-        let bestIdx = null, bestSeg = null, bestDist = Infinity;
-        for (const [key, seg] of lastSegMap) {
-            const m = /^added:\d+:(\d+)$/.exec(key);
-            if (!m) continue;
-            const dist = distToSeg(cx, cy, seg);
-            if (dist < bestDist) { bestDist = dist; bestIdx = parseInt(m[1], 10); bestSeg = seg; }
-        }
+        if (!addedLines.length || !lastBaseScale) return null;
+        let bestIdx = null, bestDist = Infinity;
+        addedLines.forEach((ln, idx) => {
+            if (ln.xi1 !== undefined) return; // 격자 인덱스 포맷(정자살)은 드래그 미지원
+            const p1 = normToCtx(ln.nx1, ln.ny1);
+            const p2 = normToCtx(ln.nx2, ln.ny2);
+            const dist = distToSeg(cx, cy, { cx: p1.x, cy: p1.y, ex: p2.x, ey: p2.y });
+            if (dist < bestDist) { bestDist = dist; bestIdx = idx; }
+        });
         const threshold = Math.max(lastSlatPx * 3, 8);
-        if (bestIdx === null || bestDist > threshold) return null;
-        const endpointThreshold = Math.max(lastSlatPx * 4, 14);
-        const dEnd1 = Math.hypot(bestSeg.cx - cx, bestSeg.cy - cy);
-        const dEnd2 = Math.hypot(bestSeg.ex - cx, bestSeg.ey - cy);
-        if (Math.min(dEnd1, dEnd2) < endpointThreshold) {
-            return { kind: 'endpoint', idx: bestIdx, which: dEnd1 <= dEnd2 ? 1 : 2 };
-        }
-        return { kind: 'whole', idx: bestIdx };
+        return (bestIdx !== null && bestDist <= threshold) ? { idx: bestIdx } : null;
     }
 
     let mondrianDrag = null;
@@ -2086,8 +2083,12 @@ async function draw() {
         const coord = screenToCtxCoord(e.clientX, e.clientY);
         const addedHit = hitTestAddedLine(coord.x, coord.y);
         if (addedHit) {
-            mondrianDrag = { type: 'added', ...addedHit };
-            canvas.style.cursor = addedHit.kind === 'whole' ? 'move' : 'crosshair';
+            const ln = addedLines[addedHit.idx];
+            mondrianDrag = {
+                type: 'added', idx: addedHit.idx,
+                start: { nx1: ln.nx1, ny1: ln.ny1, nx2: ln.nx2, ny2: ln.ny2, cx: coord.x, cy: coord.y },
+            };
+            canvas.style.cursor = 'move';
             e.preventDefault();
             return;
         }
@@ -2104,20 +2105,10 @@ async function draw() {
             if (mondrianDrag.type === 'added') {
                 const ln = addedLines[mondrianDrag.idx];
                 if (!ln) { mondrianDrag = null; return; }
-                if (mondrianDrag.kind === 'endpoint') {
-                    const snapped = snapToNode(coord.x, coord.y);
-                    const norm = ctxToNorm(snapped ? snapped.cx : coord.x, snapped ? snapped.cy : coord.y);
-                    if (mondrianDrag.which === 1) { ln.nx1 = norm.nx; ln.ny1 = norm.ny; }
-                    else { ln.nx2 = norm.nx; ln.ny2 = norm.ny; }
-                } else {
-                    if (!mondrianDrag.start) {
-                        mondrianDrag.start = { nx1: ln.nx1, ny1: ln.ny1, nx2: ln.nx2, ny2: ln.ny2, cx: coord.x, cy: coord.y };
-                    }
-                    const dnx = (coord.x - mondrianDrag.start.cx) / lastIW;
-                    const dny = (coord.y - mondrianDrag.start.cy) / lastIH;
-                    ln.nx1 = mondrianDrag.start.nx1 + dnx; ln.ny1 = mondrianDrag.start.ny1 + dny;
-                    ln.nx2 = mondrianDrag.start.nx2 + dnx; ln.ny2 = mondrianDrag.start.ny2 + dny;
-                }
+                const dnx = (coord.x - mondrianDrag.start.cx) / lastIW;
+                const dny = (coord.y - mondrianDrag.start.cy) / lastIH;
+                ln.nx1 = mondrianDrag.start.nx1 + dnx; ln.ny1 = mondrianDrag.start.ny1 + dny;
+                ln.nx2 = mondrianDrag.start.nx2 + dnx; ln.ny2 = mondrianDrag.start.ny2 + dny;
                 draw();
                 return;
             }
@@ -2133,7 +2124,7 @@ async function draw() {
             const coord = screenToCtxCoord(e.clientX, e.clientY);
             const addedHit = hitTestAddedLine(coord.x, coord.y);
             if (addedHit) {
-                canvas.style.cursor = addedHit.kind === 'whole' ? 'move' : 'crosshair';
+                canvas.style.cursor = 'move';
                 return;
             }
             const hit = hitTestMondrianLine(coord.x, coord.y);
