@@ -2062,35 +2062,17 @@ async function draw() {
     // (끝점만 따로 잡는 건 혼동이 있어서 뺌. 단순하게 통째로 이동만 지원).
     // lastSegMap을 거치지 않고 addedLines에서 직접 화면 좌표를 계산 — 등록 타이밍 등에
     // 영향을 안 받게 독립적으로 동작.
-    // 임시 진단용 — 화면에 직접 상태를 표시 (콘솔 조작 불필요). 원인 찾으면 제거할 것.
-    let _dbgBox = null;
-    function _dbgShow(text) {
-        if (!_dbgBox) {
-            _dbgBox = document.createElement('div');
-            _dbgBox.style.cssText = 'position:fixed;top:8px;left:8px;z-index:99999;background:#000;color:#0f0;font:11px monospace;padding:8px;max-width:420px;white-space:pre-wrap;border-radius:6px;opacity:0.92;pointer-events:none;';
-            document.body.appendChild(_dbgBox);
-        }
-        _dbgBox.textContent = text;
-    }
-
     function hitTestAddedLine(cx, cy) {
-        if (!addedLines.length || !lastBaseScale) {
-            _dbgShow(`addedLines.length=${addedLines.length} lastBaseScale=${lastBaseScale}`);
-            return null;
-        }
+        if (!addedLines.length || !lastBaseScale) return null;
         let bestIdx = null, bestDist = Infinity;
-        let dbgLines = [`cx=${cx.toFixed(1)} cy=${cy.toFixed(1)} lastILeft=${lastILeft.toFixed(1)} lastITop=${lastITop.toFixed(1)} lastIW=${lastIW.toFixed(1)} lastIH=${lastIH.toFixed(1)}`];
         addedLines.forEach((ln, idx) => {
-            if (ln.xi1 !== undefined) { dbgLines.push(`#${idx}: xi1 포맷(격자) — 스킵`); return; }
+            if (ln.xi1 !== undefined) return; // 격자 인덱스 포맷(정자살)은 드래그 미지원
             const p1 = normToCtx(ln.nx1, ln.ny1);
             const p2 = normToCtx(ln.nx2, ln.ny2);
             const dist = distToSeg(cx, cy, { cx: p1.x, cy: p1.y, ex: p2.x, ey: p2.y });
-            dbgLines.push(`#${idx}: nx1=${ln.nx1?.toFixed?.(3)} ny1=${ln.ny1?.toFixed?.(3)} nx2=${ln.nx2?.toFixed?.(3)} ny2=${ln.ny2?.toFixed?.(3)} -> p1=(${p1.x.toFixed(1)},${p1.y.toFixed(1)}) p2=(${p2.x.toFixed(1)},${p2.y.toFixed(1)}) dist=${dist.toFixed(1)}`);
             if (dist < bestDist) { bestDist = dist; bestIdx = idx; }
         });
         const threshold = Math.max(lastSlatPx * 3, 8);
-        dbgLines.push(`bestIdx=${bestIdx} bestDist=${bestDist.toFixed(1)} threshold=${threshold.toFixed(1)} HIT=${bestIdx !== null && bestDist <= threshold}`);
-        _dbgShow(dbgLines.join('\n'));
         return (bestIdx !== null && bestDist <= threshold) ? { idx: bestIdx } : null;
     }
 
@@ -2127,6 +2109,9 @@ async function draw() {
                 const dny = (coord.y - mondrianDrag.start.cy) / lastIH;
                 ln.nx1 = mondrianDrag.start.nx1 + dnx; ln.ny1 = mondrianDrag.start.ny1 + dny;
                 ln.nx2 = mondrianDrag.start.nx2 + dnx; ln.ny2 = mondrianDrag.start.ny2 + dny;
+                // Konva 패턴 캐시 키가 addedLines.length만 보고 내용(좌표) 변화는 못 봐서,
+                // 이게 없으면 데이터는 바뀌어도 화면(Konva)엔 반영이 안 된다.
+                _mondrianVersion++;
                 draw();
                 return;
             }
