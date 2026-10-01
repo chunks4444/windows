@@ -342,7 +342,8 @@ function snapToNode(cx, cy) {
             if (d < bestDist) { bestDist = d; best = { cx: px, cy: py }; }
         }
     }
-    return (best && bestDist < lastCellSize) ? best : null;
+    const snapThreshold = Math.max(lastSlatPx * 2, lastCellSize * 0.2);
+    return (best && bestDist < snapThreshold) ? best : null;
 }
 
 let _geoController = null;
