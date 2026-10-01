@@ -2089,16 +2089,24 @@ async function draw() {
             const ln = addedLines[addedHit.idx];
             // 랜덤 생성된 살(분할선)과 같은 방식으로 수직/수평 축 고정 이동 — 세로선은
             // 좌우로만, 가로선은 상하로만 움직인다.
-            // 이 선의 끝점에 맞닿아 있는 다른 그려진 선들도 같이 따라오게 — 시작 시점에
-            // 한 번 찾아서 기록해두고, 드래그 내내 같은 델타를 같이 적용한다.
-            const EPS = 0.002;
+            // 이 선 위(끝점뿐 아니라 임의의 점 스냅으로 중간에 붙은 경우도)에 맞닿아 있는
+            // 다른 그려진 선들도 같이 따라오게 — 시작 시점에 한 번 찾아서 기록해두고,
+            // 드래그 내내 같은 델타를 같이 적용한다 (평행이동이라 어디에 붙어있었든
+            // 델타만 똑같이 더하면 계속 선 위에 붙어있는 채로 따라온다).
+            const EPS = 0.004;
+            const onDraggedLine = (nx, ny) => {
+                const dx = ln.nx2 - ln.nx1, dy = ln.ny2 - ln.ny1;
+                const lenSq = dx * dx + dy * dy;
+                if (lenSq === 0) return Math.hypot(nx - ln.nx1, ny - ln.ny1) < EPS;
+                const t = Math.max(0, Math.min(1, ((nx - ln.nx1) * dx + (ny - ln.ny1) * dy) / lenSq));
+                const px = ln.nx1 + t * dx, py = ln.ny1 + t * dy;
+                return Math.hypot(nx - px, ny - py) < EPS;
+            };
             const connected = [];
             addedLines.forEach((other, oi) => {
                 if (oi === addedHit.idx || other.xi1 !== undefined) return;
-                const touches = (nx, ny) => Math.abs(nx - ln.nx1) < EPS && Math.abs(ny - ln.ny1) < EPS
-                                           || Math.abs(nx - ln.nx2) < EPS && Math.abs(ny - ln.ny2) < EPS;
-                if (touches(other.nx1, other.ny1)) connected.push({ idx: oi, which: 1, nx: other.nx1, ny: other.ny1 });
-                if (touches(other.nx2, other.ny2)) connected.push({ idx: oi, which: 2, nx: other.nx2, ny: other.ny2 });
+                if (onDraggedLine(other.nx1, other.ny1)) connected.push({ idx: oi, which: 1, nx: other.nx1, ny: other.ny1 });
+                if (onDraggedLine(other.nx2, other.ny2)) connected.push({ idx: oi, which: 2, nx: other.nx2, ny: other.ny2 });
             });
             mondrianDrag = {
                 type: 'added', idx: addedHit.idx, axis: addedHit.axis, connected,
