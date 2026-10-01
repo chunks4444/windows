@@ -321,13 +321,32 @@ function nodeIdxToCtx(xi, yi) {
 }
 
 function snapToNode(cx, cy) {
-    if (!lastNodeList.length) return null;
-    let best = null, bestDist = Infinity;
-    for (const node of lastNodeList) {
-        const d = Math.hypot(node.cx - cx, node.cy - cy);
-        if (d < bestDist) { bestDist = d; best = node; }
+    if (lastNodeList.length) {
+        let best = null, bestDist = Infinity;
+        for (const node of lastNodeList) {
+            const d = Math.hypot(node.cx - cx, node.cy - cy);
+            if (d < bestDist) { bestDist = d; best = node; }
+        }
+        if (best && bestDist < lastCellSize) return best;
     }
-    return (best && bestDist < lastCellSize) ? best : null;
+    // 몬드리안(랜덤 생성)은 교점뿐 아니라 살 위 임의의 지점에서도 선을 그을 수 있게,
+    // 교점 근처에 아무것도 없으면 가장 가까운 살(mo:idx) 위로 투영한 점을 폴백으로 쓴다.
+    // 반환값에 xi/yi가 없어 handleEditClick이 비율(nx,ny) 경로로 자연히 처리한다.
+    if (mondrianLayout) {
+        let bestPt = null, bestDist2 = Infinity;
+        for (const [key, seg] of lastSegMap) {
+            if (!/^\d+:mo:\d+$/.test(key)) continue;
+            const dx = seg.ex - seg.cx, dy = seg.ey - seg.cy;
+            const lenSq = dx * dx + dy * dy;
+            if (lenSq === 0) continue;
+            const t  = Math.max(0, Math.min(1, ((cx - seg.cx) * dx + (cy - seg.cy) * dy) / lenSq));
+            const px = seg.cx + t * dx, py = seg.cy + t * dy;
+            const d  = Math.hypot(cx - px, cy - py);
+            if (d < bestDist2) { bestDist2 = d; bestPt = { cx: px, cy: py }; }
+        }
+        if (bestPt && bestDist2 < lastCellSize) return bestPt;
+    }
+    return null;
 }
 
 let _geoController = null;
