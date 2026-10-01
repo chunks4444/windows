@@ -320,26 +320,43 @@ function nodeIdxToCtx(xi, yi) {
     return { x: lastOLeft + lastNodeXs[xi] * lastBaseScale, y: lastOTop + lastNodeYs[yi] * lastBaseScale };
 }
 
+// 점(cx,cy)을 선분(x1,y1)-(x2,y2) 위로 투영한 가장 가까운 점
+function projectOnSegment(cx, cy, x1, y1, x2, y2) {
+    const dx = x2 - x1, dy = y2 - y1;
+    const lenSq = dx * dx + dy * dy;
+    if (lenSq === 0) return { x: x1, y: y1 };
+    const t = Math.max(0, Math.min(1, ((cx - x1) * dx + (cy - y1) * dy) / lenSq));
+    return { x: x1 + t * dx, y: y1 + t * dy };
+}
+
 function snapToNode(cx, cy) {
     let best = null, bestDist = Infinity;
     for (const node of lastNodeList) {
         const d = Math.hypot(node.cx - cx, node.cy - cy);
         if (d < bestDist) { bestDist = d; best = node; }
     }
-    // 몬드리안(랜덤 생성)은 교점뿐 아니라 살 위 임의의 지점에서도 선을 그을 수 있게,
-    // 살(mo:idx) 위로 투영한 점도 같은 거리 비교에 넣어서 실제로 더 가까운 쪽이 이기게
-    // 한다 — 교점이 있으면 무조건 교점으로 가던 문제 수정. 반환값에 xi/yi가 없으면
+    // 몬드리안(랜덤 생성)은 교점뿐 아니라 살·울거미 위 임의의 지점에서도 선을 그을 수
+    // 있게, 투영한 점도 같은 거리 비교에 넣어서 실제로 더 가까운 쪽이 이기게 한다 —
+    // 교점이 있으면 무조건 교점으로 가던 문제 수정. 반환값에 xi/yi가 없으면
     // handleEditClick이 비율(nx,ny) 경로로 자연히 처리한다.
     if (mondrianLayout) {
         for (const [key, seg] of lastSegMap) {
             if (!/^\d+:mo:\d+$/.test(key)) continue;
-            const dx = seg.ex - seg.cx, dy = seg.ey - seg.cy;
-            const lenSq = dx * dx + dy * dy;
-            if (lenSq === 0) continue;
-            const t  = Math.max(0, Math.min(1, ((cx - seg.cx) * dx + (cy - seg.cy) * dy) / lenSq));
-            const px = seg.cx + t * dx, py = seg.cy + t * dy;
-            const d  = Math.hypot(cx - px, cy - py);
-            if (d < bestDist) { bestDist = d; best = { cx: px, cy: py }; }
+            const p = projectOnSegment(cx, cy, seg.cx, seg.cy, seg.ex, seg.ey);
+            const d = Math.hypot(cx - p.x, cy - p.y);
+            if (d < bestDist) { bestDist = d; best = { cx: p.x, cy: p.y }; }
+        }
+        // 내경 울거미(좌/우/상/하) 네 변도 스냅 후보에 포함
+        const edges = [
+            [lastILeft,           lastITop,           lastILeft,           lastITop + lastIH],
+            [lastILeft + lastIW,  lastITop,           lastILeft + lastIW,  lastITop + lastIH],
+            [lastILeft,           lastITop,           lastILeft + lastIW,  lastITop],
+            [lastILeft,           lastITop + lastIH,  lastILeft + lastIW,  lastITop + lastIH],
+        ];
+        for (const [x1, y1, x2, y2] of edges) {
+            const p = projectOnSegment(cx, cy, x1, y1, x2, y2);
+            const d = Math.hypot(cx - p.x, cy - p.y);
+            if (d < bestDist) { bestDist = d; best = { cx: p.x, cy: p.y }; }
         }
     }
     const snapThreshold = Math.max(lastSlatPx * 2, lastCellSize * 0.2);
@@ -2026,17 +2043,56 @@ async function draw() {
             if (Math.abs(other.from - oldPos) < EPS) other.from = newPos;
             if (Math.abs(other.to   - oldPos) < EPS) other.to   = newPos;
         });
+        // 사용자가 그린 선(자르기)의 끝점이 이 선 위에 붙어있으면 같이 따라오게
+        addedLines.forEach(a => {
+            if (typeof a.nx1 !== 'number') return; // 정자살(격자 인덱스) 포맷은 몬드리안에서 안 씀
+            if (ln.axis === 'v') {
+                if (Math.abs(a.nx1 - oldPos) < EPS && a.ny1 >= ln.from - EPS && a.ny1 <= ln.to + EPS) a.nx1 = newPos;
+                if (Math.abs(a.nx2 - oldPos) < EPS && a.ny2 >= ln.from - EPS && a.ny2 <= ln.to + EPS) a.nx2 = newPos;
+            } else {
+                if (Math.abs(a.ny1 - oldPos) < EPS && a.nx1 >= ln.from - EPS && a.nx1 <= ln.to + EPS) a.ny1 = newPos;
+                if (Math.abs(a.ny2 - oldPos) < EPS && a.nx2 >= ln.from - EPS && a.nx2 <= ln.to + EPS) a.ny2 = newPos;
+            }
+        });
         ln.pos = newPos;
     }
 
-    let mondrianDrag = null; // { idx, axis }
+    // 사용자가 그린 선(자르기)도 드래그로 옮길 수 있게 — 끝점 근처를 잡으면 그 끝점만,
+    // 선 중간을 잡으면 선 전체를 평행 이동한다.
+    function hitTestAddedLine(cx, cy) {
+        let bestIdx = null, bestSeg = null, bestDist = Infinity;
+        for (const [key, seg] of lastSegMap) {
+            const m = /^added:\d+:(\d+)$/.exec(key);
+            if (!m) continue;
+            const dist = distToSeg(cx, cy, seg);
+            if (dist < bestDist) { bestDist = dist; bestIdx = parseInt(m[1], 10); bestSeg = seg; }
+        }
+        const threshold = Math.max(lastSlatPx * 3, 8);
+        if (bestIdx === null || bestDist > threshold) return null;
+        const endpointThreshold = Math.max(lastSlatPx * 4, 14);
+        const dEnd1 = Math.hypot(bestSeg.cx - cx, bestSeg.cy - cy);
+        const dEnd2 = Math.hypot(bestSeg.ex - cx, bestSeg.ey - cy);
+        if (Math.min(dEnd1, dEnd2) < endpointThreshold) {
+            return { kind: 'endpoint', idx: bestIdx, which: dEnd1 <= dEnd2 ? 1 : 2 };
+        }
+        return { kind: 'whole', idx: bestIdx };
+    }
+
+    let mondrianDrag = null;
 
     canvas.addEventListener('mousedown', e => {
         if (e.button !== 0 || !mondrianLayout || lineEditMode || facePaintMode || panMode || placementMode) return;
         const coord = screenToCtxCoord(e.clientX, e.clientY);
+        const addedHit = hitTestAddedLine(coord.x, coord.y);
+        if (addedHit) {
+            mondrianDrag = { type: 'added', ...addedHit };
+            canvas.style.cursor = addedHit.kind === 'whole' ? 'move' : 'crosshair';
+            e.preventDefault();
+            return;
+        }
         const hit = hitTestMondrianLine(coord.x, coord.y);
         if (!hit) return;
-        mondrianDrag = hit;
+        mondrianDrag = { type: 'bsp', ...hit };
         canvas.style.cursor = hit.axis === 'v' ? 'col-resize' : 'row-resize';
         e.preventDefault();
     });
@@ -2044,6 +2100,26 @@ async function draw() {
     window.addEventListener('mousemove', e => {
         if (mondrianDrag) {
             const coord = screenToCtxCoord(e.clientX, e.clientY);
+            if (mondrianDrag.type === 'added') {
+                const ln = addedLines[mondrianDrag.idx];
+                if (!ln) { mondrianDrag = null; return; }
+                if (mondrianDrag.kind === 'endpoint') {
+                    const snapped = snapToNode(coord.x, coord.y);
+                    const norm = ctxToNorm(snapped ? snapped.cx : coord.x, snapped ? snapped.cy : coord.y);
+                    if (mondrianDrag.which === 1) { ln.nx1 = norm.nx; ln.ny1 = norm.ny; }
+                    else { ln.nx2 = norm.nx; ln.ny2 = norm.ny; }
+                } else {
+                    if (!mondrianDrag.start) {
+                        mondrianDrag.start = { nx1: ln.nx1, ny1: ln.ny1, nx2: ln.nx2, ny2: ln.ny2, cx: coord.x, cy: coord.y };
+                    }
+                    const dnx = (coord.x - mondrianDrag.start.cx) / lastIW;
+                    const dny = (coord.y - mondrianDrag.start.cy) / lastIH;
+                    ln.nx1 = mondrianDrag.start.nx1 + dnx; ln.ny1 = mondrianDrag.start.ny1 + dny;
+                    ln.nx2 = mondrianDrag.start.nx2 + dnx; ln.ny2 = mondrianDrag.start.ny2 + dny;
+                }
+                draw();
+                return;
+            }
             const desiredPos = mondrianDrag.axis === 'v'
                 ? (coord.x - lastILeft) / lastIW
                 : (coord.y - lastITop)  / lastIH;
@@ -2054,6 +2130,11 @@ async function draw() {
         }
         if (mondrianLayout && !lineEditMode && !facePaintMode && !panMode && !placementMode) {
             const coord = screenToCtxCoord(e.clientX, e.clientY);
+            const addedHit = hitTestAddedLine(coord.x, coord.y);
+            if (addedHit) {
+                canvas.style.cursor = addedHit.kind === 'whole' ? 'move' : 'crosshair';
+                return;
+            }
             const hit = hitTestMondrianLine(coord.x, coord.y);
             canvas.style.cursor = hit ? (hit.axis === 'v' ? 'col-resize' : 'row-resize') : 'default';
         }
