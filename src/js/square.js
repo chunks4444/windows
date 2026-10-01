@@ -2089,8 +2089,19 @@ async function draw() {
             const ln = addedLines[addedHit.idx];
             // 랜덤 생성된 살(분할선)과 같은 방식으로 수직/수평 축 고정 이동 — 세로선은
             // 좌우로만, 가로선은 상하로만 움직인다.
+            // 이 선의 끝점에 맞닿아 있는 다른 그려진 선들도 같이 따라오게 — 시작 시점에
+            // 한 번 찾아서 기록해두고, 드래그 내내 같은 델타를 같이 적용한다.
+            const EPS = 0.002;
+            const connected = [];
+            addedLines.forEach((other, oi) => {
+                if (oi === addedHit.idx || other.xi1 !== undefined) return;
+                const touches = (nx, ny) => Math.abs(nx - ln.nx1) < EPS && Math.abs(ny - ln.ny1) < EPS
+                                           || Math.abs(nx - ln.nx2) < EPS && Math.abs(ny - ln.ny2) < EPS;
+                if (touches(other.nx1, other.ny1)) connected.push({ idx: oi, which: 1, nx: other.nx1, ny: other.ny1 });
+                if (touches(other.nx2, other.ny2)) connected.push({ idx: oi, which: 2, nx: other.nx2, ny: other.ny2 });
+            });
             mondrianDrag = {
-                type: 'added', idx: addedHit.idx, axis: addedHit.axis,
+                type: 'added', idx: addedHit.idx, axis: addedHit.axis, connected,
                 start: { nx1: ln.nx1, ny1: ln.ny1, nx2: ln.nx2, ny2: ln.ny2, cx: coord.x, cy: coord.y },
             };
             canvas.style.cursor = addedHit.axis === 'v' ? 'col-resize' : 'row-resize';
@@ -2115,6 +2126,13 @@ async function draw() {
                 const dny = mondrianDrag.axis === 'h' ? (coord.y - mondrianDrag.start.cy) / lastIH : 0;
                 ln.nx1 = mondrianDrag.start.nx1 + dnx; ln.ny1 = mondrianDrag.start.ny1 + dny;
                 ln.nx2 = mondrianDrag.start.nx2 + dnx; ln.ny2 = mondrianDrag.start.ny2 + dny;
+                // 이 선 끝점에 맞닿아 있던 다른 그려진 선들도 같은 델타로 같이 이동
+                mondrianDrag.connected.forEach(c => {
+                    const other = addedLines[c.idx];
+                    if (!other) return;
+                    other[`nx${c.which}`] = c.nx + dnx;
+                    other[`ny${c.which}`] = c.ny + dny;
+                });
                 // Konva 패턴 캐시 키가 addedLines.length만 보고 내용(좌표) 변화는 못 봐서,
                 // 이게 없으면 데이터는 바뀌어도 화면(Konva)엔 반영이 안 된다.
                 _mondrianVersion++;
