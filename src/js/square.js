@@ -2063,6 +2063,7 @@ async function draw() {
     // lastSegMap을 거치지 않고 addedLines에서 직접 화면 좌표를 계산 — 등록 타이밍 등에
     // 영향을 안 받게 독립적으로 동작.
     function hitTestAddedLine(cx, cy) {
+        if (window.__pmokDebugAdded) console.log('[hitTestAddedLine]', { cx, cy, addedLines: JSON.parse(JSON.stringify(addedLines)), lastBaseScale, lastILeft, lastITop, lastIW, lastIH });
         if (!addedLines.length || !lastBaseScale) return null;
         let bestIdx = null, bestDist = Infinity;
         addedLines.forEach((ln, idx) => {
@@ -2070,9 +2071,11 @@ async function draw() {
             const p1 = normToCtx(ln.nx1, ln.ny1);
             const p2 = normToCtx(ln.nx2, ln.ny2);
             const dist = distToSeg(cx, cy, { cx: p1.x, cy: p1.y, ex: p2.x, ey: p2.y });
+            if (window.__pmokDebugAdded) console.log('[hitTestAddedLine] seg', idx, { p1, p2, dist });
             if (dist < bestDist) { bestDist = dist; bestIdx = idx; }
         });
         const threshold = Math.max(lastSlatPx * 3, 8);
+        if (window.__pmokDebugAdded) console.log('[hitTestAddedLine] result', { bestIdx, bestDist, threshold });
         return (bestIdx !== null && bestDist <= threshold) ? { idx: bestIdx } : null;
     }
 
