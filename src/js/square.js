@@ -341,7 +341,8 @@ function snapToNode(cx, cy) {
     // handleEditClick이 비율(nx,ny) 경로로 자연히 처리한다.
     if (mondrianLayout) {
         for (const [key, seg] of lastSegMap) {
-            if (!/^\d+:mo:\d+$/.test(key)) continue;
+            // mo: = 랜덤 생성된 원래 살, added: = 사용자가 이미 그은 선 — 둘 다 스냅 대상
+            if (!/^\d+:mo:\d+$/.test(key) && !/^added:\d+:\d+$/.test(key)) continue;
             const p = projectOnSegment(cx, cy, seg.cx, seg.cy, seg.ex, seg.ey);
             const d = Math.hypot(cx - p.x, cy - p.y);
             if (d < bestDist) { bestDist = d; best = { cx: p.x, cy: p.y }; }
