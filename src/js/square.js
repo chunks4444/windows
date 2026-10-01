@@ -2130,8 +2130,14 @@ async function draw() {
                 const ln = addedLines[mondrianDrag.idx];
                 if (!ln) { mondrianDrag = null; return; }
                 // 세로선은 좌우(dnx)로만, 가로선은 상하(dny)로만 — 랜덤 생성된 살과 동일하게
-                const dnx = mondrianDrag.axis === 'v' ? (coord.x - mondrianDrag.start.cx) / lastIW : 0;
-                const dny = mondrianDrag.axis === 'h' ? (coord.y - mondrianDrag.start.cy) / lastIH : 0;
+                let dnx = mondrianDrag.axis === 'v' ? (coord.x - mondrianDrag.start.cx) / lastIW : 0;
+                let dny = mondrianDrag.axis === 'h' ? (coord.y - mondrianDrag.start.cy) / lastIH : 0;
+                // 울거미(내경 0~1 범위) 밖으로 못 나가게 — 분할선(clampMondrianLinePos)과 동일 조건
+                if (mondrianDrag.axis === 'v') {
+                    dnx = Math.max(0 - mondrianDrag.start.nx1, Math.min(1 - mondrianDrag.start.nx1, dnx));
+                } else {
+                    dny = Math.max(0 - mondrianDrag.start.ny1, Math.min(1 - mondrianDrag.start.ny1, dny));
+                }
                 ln.nx1 = mondrianDrag.start.nx1 + dnx; ln.ny1 = mondrianDrag.start.ny1 + dny;
                 ln.nx2 = mondrianDrag.start.nx2 + dnx; ln.ny2 = mondrianDrag.start.ny2 + dny;
                 // 이 선 끝점에 맞닿아 있던 다른 그려진 선들도 같은 델타로 같이 이동
