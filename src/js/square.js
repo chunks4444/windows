@@ -2073,7 +2073,10 @@ async function draw() {
             if (dist < bestDist) { bestDist = dist; bestIdx = idx; }
         });
         const threshold = Math.max(lastSlatPx * 3, 8);
-        return (bestIdx !== null && bestDist <= threshold) ? { idx: bestIdx } : null;
+        if (bestIdx === null || bestDist > threshold) return null;
+        const bln = addedLines[bestIdx];
+        const axis = Math.abs(bln.nx1 - bln.nx2) < 0.001 ? 'v' : 'h';
+        return { idx: bestIdx, axis };
     }
 
     let mondrianDrag = null;
@@ -2084,11 +2087,13 @@ async function draw() {
         const addedHit = hitTestAddedLine(coord.x, coord.y);
         if (addedHit) {
             const ln = addedLines[addedHit.idx];
+            // 랜덤 생성된 살(분할선)과 같은 방식으로 수직/수평 축 고정 이동 — 세로선은
+            // 좌우로만, 가로선은 상하로만 움직인다.
             mondrianDrag = {
-                type: 'added', idx: addedHit.idx,
+                type: 'added', idx: addedHit.idx, axis: addedHit.axis,
                 start: { nx1: ln.nx1, ny1: ln.ny1, nx2: ln.nx2, ny2: ln.ny2, cx: coord.x, cy: coord.y },
             };
-            canvas.style.cursor = 'move';
+            canvas.style.cursor = addedHit.axis === 'v' ? 'col-resize' : 'row-resize';
             e.preventDefault();
             return;
         }
@@ -2105,8 +2110,9 @@ async function draw() {
             if (mondrianDrag.type === 'added') {
                 const ln = addedLines[mondrianDrag.idx];
                 if (!ln) { mondrianDrag = null; return; }
-                const dnx = (coord.x - mondrianDrag.start.cx) / lastIW;
-                const dny = (coord.y - mondrianDrag.start.cy) / lastIH;
+                // 세로선은 좌우(dnx)로만, 가로선은 상하(dny)로만 — 랜덤 생성된 살과 동일하게
+                const dnx = mondrianDrag.axis === 'v' ? (coord.x - mondrianDrag.start.cx) / lastIW : 0;
+                const dny = mondrianDrag.axis === 'h' ? (coord.y - mondrianDrag.start.cy) / lastIH : 0;
                 ln.nx1 = mondrianDrag.start.nx1 + dnx; ln.ny1 = mondrianDrag.start.ny1 + dny;
                 ln.nx2 = mondrianDrag.start.nx2 + dnx; ln.ny2 = mondrianDrag.start.ny2 + dny;
                 // Konva 패턴 캐시 키가 addedLines.length만 보고 내용(좌표) 변화는 못 봐서,
@@ -2127,7 +2133,7 @@ async function draw() {
             const coord = screenToCtxCoord(e.clientX, e.clientY);
             const addedHit = hitTestAddedLine(coord.x, coord.y);
             if (addedHit) {
-                canvas.style.cursor = 'move';
+                canvas.style.cursor = addedHit.axis === 'v' ? 'col-resize' : 'row-resize';
                 return;
             }
             const hit = hitTestMondrianLine(coord.x, coord.y);
