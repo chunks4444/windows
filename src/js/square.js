@@ -2217,12 +2217,24 @@ async function draw() {
                     ? (start.xi === addLineStart.xi && start.yi === addLineStart.yi)
                     : (Math.abs(start.nx - addLineStart.nx) < 0.001 && Math.abs(start.ny - addLineStart.ny) < 0.001);
                 if (same) return;
+                // 라인은 수직/수평으로만 그어지게 — 시작점에서 더 많이 벌어진 축만 반영하고
+                // 반대 축은 시작점 값 그대로 고정한다 (대각선 방지).
+                const startPt = addLineStart.xi !== undefined
+                    ? nodeIdxToCtx(addLineStart.xi, addLineStart.yi)
+                    : normToCtx(addLineStart.nx, addLineStart.ny);
+                const horizontal = Math.abs(coord.x - startPt.x) >= Math.abs(coord.y - startPt.y);
                 // mondrianLayout 여부는 draw() 한 프레임 안에서 고정이라 두 끝점이 항상 같은
                 // 체계(둘 다 격자 인덱스 또는 둘 다 비율)로 잡힌다.
                 if (start.xi !== undefined) {
-                    addedLines.push({ xi1: addLineStart.xi, yi1: addLineStart.yi, xi2: start.xi, yi2: start.yi });
+                    const xi2 = horizontal ? start.xi : addLineStart.xi;
+                    const yi2 = horizontal ? addLineStart.yi : start.yi;
+                    if (xi2 === addLineStart.xi && yi2 === addLineStart.yi) return; // 축 고정 후 길이 0이면 무시
+                    addedLines.push({ xi1: addLineStart.xi, yi1: addLineStart.yi, xi2, yi2 });
                 } else {
-                    addedLines.push({ nx1: addLineStart.nx, ny1: addLineStart.ny, nx2: start.nx, ny2: start.ny });
+                    const nx2 = horizontal ? start.nx : addLineStart.nx;
+                    const ny2 = horizontal ? addLineStart.ny : start.ny;
+                    if (Math.abs(nx2 - addLineStart.nx) < 0.001 && Math.abs(ny2 - addLineStart.ny) < 0.001) return;
+                    addedLines.push({ nx1: addLineStart.nx, ny1: addLineStart.ny, nx2, ny2 });
                 }
                 addLineStart = null;
                 draw();
