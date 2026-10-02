@@ -48,16 +48,15 @@ function engine_icon_svg(string $key): string {
                      $rot(120, $bar('317','148','46','384',3));
             break;
         case 'mondrian':
-            // 다른 엔진 아이콘과 달리 색이 고정이라 wk-icon-bar(단색 accent)를 안 쓰고 직접 채움
+            // 다른 엔진 아이콘과 달리 색이 고정이라 wk-icon-bar(단색 accent)를 안 쓰고 직접 채움.
+            // 다른 아이콘들과 같은 148~532 범위(680 기준)에 맞춰 크기를 통일.
             return '<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">'
-                . '<rect x="120" y="120" width="440" height="440" fill="none" stroke="#1a1a1a" stroke-width="40"/>'
-                . '<rect x="160" y="160" width="160" height="200" fill="#d1232a"/>'
-                . '<rect x="160" y="400" width="360" height="120" fill="#ffffff"/>'
-                . '<rect x="360" y="160" width="160" height="200" fill="#ffffff"/>'
-                . '<rect x="400" y="440" width="120" height="80" fill="#1c3f94"/>'
-                . '<line x1="320" y1="160" x2="320" y2="520" stroke="#1a1a1a" stroke-width="18"/>'
-                . '<line x1="160" y1="400" x2="520" y2="400" stroke="#1a1a1a" stroke-width="18"/>'
-                . '<line x1="400" y1="400" x2="400" y2="520" stroke="#1a1a1a" stroke-width="18"/>'
+                . '<rect x="148" y="148" width="384" height="384" fill="none" stroke="#1a1a1a" stroke-width="40"/>'
+                . '<rect x="148" y="148" width="160" height="192" fill="#d1232a"/>'
+                . '<rect x="388" y="340" width="144" height="80" fill="#1c3f94"/>'
+                . '<line x1="308" y1="148" x2="308" y2="532" stroke="#1a1a1a" stroke-width="18"/>'
+                . '<line x1="148" y1="340" x2="532" y2="340" stroke="#1a1a1a" stroke-width="18"/>'
+                . '<line x1="388" y1="340" x2="388" y2="532" stroke="#1a1a1a" stroke-width="18"/>'
                 . '</svg>';
         case 'hexagon':
             return '<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg" fill="none">'
