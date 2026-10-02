@@ -54,6 +54,7 @@ $isClassic    = (stripos($_SERVER['PHP_SELF'], '/classic/') !== false);
 $isDiamond  = (!$isSquare && !$isCross && !$isClassic && stripos($currentFile, 'diamond') !== false);
 $isTriangle  = (stripos($currentFile, 'triangle') !== false);
 $isHexagon   = (stripos($_SERVER['PHP_SELF'], '/hexagon/') !== false);
+$isMondrian  = (stripos($_SERVER['PHP_SELF'], '/mondrian/') !== false);
 $isIndex      = ($currentFile === 'index.php' || $_SERVER['PHP_SELF'] === '/');
 $isLibrary    = (strpos($_SERVER['PHP_SELF'], '/collection/') !== false);
 $isWork       = (strpos($_SERVER['PHP_SELF'], '/portfolio/') !== false);
@@ -75,6 +76,7 @@ $navStudioDefaults = [
     ['engine_key' => 'triangle', 'title' => 'Triangle Lattice'],
     ['engine_key' => 'diamond',  'title' => 'Diamond Lattice'],
     ['engine_key' => 'hexagon',  'title' => 'Hexagon Lattice'],
+    ['engine_key' => 'mondrian', 'title' => 'Mondrian'],
 ];
 $navStudioItems = !empty($navStudioCards) ? $navStudioCards : $navStudioDefaults;
 $navStudioActive = [
@@ -84,6 +86,7 @@ $navStudioActive = [
     'diamond'  => $isDiamond,
     'triangle' => $isTriangle,
     'hexagon'  => $isHexagon,
+    'mondrian' => $isMondrian,
 ];
 $navStudioIcons = [
     'classic' => '<svg width="27" height="27" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
@@ -124,6 +127,11 @@ $navStudioIcons = [
             <line x1="470" y1="265" x2="470" y2="415" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
             <line x1="210" y1="415" x2="340" y2="490" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
             <line x1="470" y1="415" x2="340" y2="490" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
+        </svg>',
+    'mondrian' => '<svg width="27" height="27" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+            <rect fill="none" stroke="currentColor" stroke-width="40" x="120" y="120" width="440" height="440"/>
+            <line x1="320" y1="120" x2="320" y2="560" stroke="currentColor" stroke-width="18"/>
+            <line x1="120" y1="380" x2="560" y2="380" stroke="currentColor" stroke-width="18"/>
         </svg>',
 ];
 ?>

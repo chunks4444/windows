@@ -88,7 +88,7 @@ function get_engine_settings(string $engine): array {
     return array_merge($defaults, $rows);
 }
 
-const ENGINE_SETTING_NAMES = ['classic', 'square', 'cross', 'diamond', 'triangle', 'hexagon'];
+const ENGINE_SETTING_NAMES = ['classic', 'square', 'cross', 'diamond', 'triangle', 'hexagon', 'mondrian'];
 
 // 원가 계산용 상수 — cost_table (labor/overhead 카테고리) 기반
 // $engine = 엔진명 또는 '*' (공통만)

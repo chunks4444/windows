@@ -7,12 +7,13 @@
  */
 
 const ENGINE_LABELS = [
-    'classic'  => '세살',
-    'square'   => '정자살',
-    'cross'    => '빗살',
-    'diamond'  => '격자빗살',
-    'triangle' => '세모솟을살',
-    'hexagon'  => '육모솟을살',
+    'classic'   => '세살',
+    'square'    => '정자살',
+    'cross'     => '빗살',
+    'diamond'   => '격자빗살',
+    'triangle'  => '세모솟을살',
+    'hexagon'   => '육모솟을살',
+    'mondrian'  => '몬드리안',
 ];
 
 function engine_icon_svg(string $key): string {
@@ -46,6 +47,18 @@ function engine_icon_svg(string $key): string {
                      $rot(60,  $bar('317','148','46','384',2)) .
                      $rot(120, $bar('317','148','46','384',3));
             break;
+        case 'mondrian':
+            // 다른 엔진 아이콘과 달리 색이 고정이라 wk-icon-bar(단색 accent)를 안 쓰고 직접 채움
+            return '<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">'
+                . '<rect x="120" y="120" width="440" height="440" fill="none" stroke="#1a1a1a" stroke-width="40"/>'
+                . '<rect x="160" y="160" width="160" height="200" fill="#d1232a"/>'
+                . '<rect x="160" y="400" width="360" height="120" fill="#ffffff"/>'
+                . '<rect x="360" y="160" width="160" height="200" fill="#ffffff"/>'
+                . '<rect x="400" y="440" width="120" height="80" fill="#1c3f94"/>'
+                . '<line x1="320" y1="160" x2="320" y2="520" stroke="#1a1a1a" stroke-width="18"/>'
+                . '<line x1="160" y1="400" x2="520" y2="400" stroke="#1a1a1a" stroke-width="18"/>'
+                . '<line x1="400" y1="400" x2="400" y2="520" stroke="#1a1a1a" stroke-width="18"/>'
+                . '</svg>';
         case 'hexagon':
             return '<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg" fill="none">'
                 . '<polyline class="wk-icon-stroke s1" points="210,265 340,190 470,265"/>'

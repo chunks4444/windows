@@ -21,7 +21,7 @@ function fmtOrderDatetime(dt) {
 }
 
 // 도면번호(주문 코드) 표기: {엔진약어}-{order.id}, 예) CL-1024
-const ENGINE_CODE = { classic: 'CL', square: 'SQ', cross: 'CR', diamond: 'DM', triangle: 'TR', hexagon: 'HX' };
+const ENGINE_CODE = { classic: 'CL', square: 'SQ', cross: 'CR', diamond: 'DM', triangle: 'TR', hexagon: 'HX', mondrian: 'MD' };
 function fmtOrderCode(engine, id) {
     return (ENGINE_CODE[engine] || 'PM') + '-' + id;
 }

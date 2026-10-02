@@ -15,7 +15,7 @@ async function loadCards() {
     render();
 }
 
-const ENGINE_LABELS = { classic: 'Classic', square: 'Square', cross: 'Cross', triangle: 'Triangle', diamond: 'Diamond', hexagon: 'Hexagon' };
+const ENGINE_LABELS = { classic: 'Classic', square: 'Square', cross: 'Cross', triangle: 'Triangle', diamond: 'Diamond', hexagon: 'Hexagon', mondrian: 'Mondrian' };
 
 function render() {
     document.getElementById('scBody').innerHTML = cards.map(c => `
