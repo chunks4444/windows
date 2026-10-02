@@ -20,15 +20,6 @@
 
     // ── 라인 편집 상태 ──────────────────────────────
     let deletedSegs  = new Set();
-    let mondrianLayout = null; // rects/lines는 innerW·innerH 대비 0~1 비율로 저장 (가로/세로폭이 바뀌어도 형태 유지)
-    function mondrianRectPx(r, iw, ih) {
-        return { x: r.x * iw, y: r.y * ih, w: r.w * iw, h: r.h * ih, color: r.color };
-    }
-    function mondrianLinePx(l, iw, ih) {
-        return l.axis === 'v'
-            ? { axis: 'v', pos: l.pos * iw, from: l.from * ih, to: l.to * ih }
-            : { axis: 'h', pos: l.pos * ih, from: l.from * iw, to: l.to * iw };
-    }
     let addedLines   = [];
     let lineEditMode = null;
     let addLineStart = null;
@@ -45,8 +36,7 @@
 
     let lastSegMap   = new Map();
     let lastNodeList = [];
-    let lastNodeXs   = [], lastNodeYs = []; // 균등 격자(정자살) 노드의 실좌표(mm) 배열 — addedLines를 노드 인덱스로 다시 찾을 때 씀 (몬드리안 레이아웃은 해당 없음)
-    let lastMondrianNodes = []; // 몬드리안 레이아웃 노드의 실좌표(mm) 목록 — [ [x,y], ... ]
+    let lastNodeXs   = [], lastNodeYs = []; // 균등 격자(정자살) 노드의 실좌표(mm) 배열 — addedLines를 노드 인덱스로 다시 찾을 때 씀
     let lastILeft = 0, lastITop = 0, lastIW = 1, lastIH = 1, lastSlatPx = 1, lastCellSize = 1;
     let lastBaseScale = 1, lastOLeft = 0, lastOTop = 0, lastDoorWpx = 0, lastDoorHpx = 0;
     let showDimensions = true;
@@ -303,30 +293,11 @@ function screenToCtxCoord(clientX, clientY) {
     };
 }
 
-// 몬드리안 레이아웃 노드는 xi/yi 인덱스가 없어(동적 선분이라 균등 격자가 아님) 이
-// 비율 기반 경로를 그대로 쓴다 — 균등 격자(정자살)만 아래 nodeIdxToCtx로 대체.
-function ctxToNorm(cx, cy) {
-    return { nx: (cx - lastILeft) / lastIW, ny: (cy - lastITop) / lastIH };
-}
-
-function normToCtx(nx, ny) {
-    return { x: lastILeft + nx * lastIW, y: lastITop + ny * lastIH };
-}
-
 // 노드 인덱스(xi,yi) → 현재 캔버스 좌표. lastNodeXs/lastNodeYs는 draw()가 매번 geo
 // 기준으로 다시 채우므로, 문 크기가 바뀌어 격자가 재배치돼도 항상 "그 교점"의
-// 최신 위치를 돌려준다 (몬드리안 레이아웃 노드는 xi/yi가 없어 이 경로를 안 탐).
+// 최신 위치를 돌려준다.
 function nodeIdxToCtx(xi, yi) {
     return { x: lastOLeft + lastNodeXs[xi] * lastBaseScale, y: lastOTop + lastNodeYs[yi] * lastBaseScale };
-}
-
-// 점(cx,cy)을 선분(x1,y1)-(x2,y2) 위로 투영한 가장 가까운 점
-function projectOnSegment(cx, cy, x1, y1, x2, y2) {
-    const dx = x2 - x1, dy = y2 - y1;
-    const lenSq = dx * dx + dy * dy;
-    if (lenSq === 0) return { x: x1, y: y1 };
-    const t = Math.max(0, Math.min(1, ((cx - x1) * dx + (cy - y1) * dy) / lenSq));
-    return { x: x1 + t * dx, y: y1 + t * dy };
 }
 
 function snapToNode(cx, cy) {
@@ -334,31 +305,6 @@ function snapToNode(cx, cy) {
     for (const node of lastNodeList) {
         const d = Math.hypot(node.cx - cx, node.cy - cy);
         if (d < bestDist) { bestDist = d; best = node; }
-    }
-    // 몬드리안(랜덤 생성)은 교점뿐 아니라 살·울거미 위 임의의 지점에서도 선을 그을 수
-    // 있게, 투영한 점도 같은 거리 비교에 넣어서 실제로 더 가까운 쪽이 이기게 한다 —
-    // 교점이 있으면 무조건 교점으로 가던 문제 수정. 반환값에 xi/yi가 없으면
-    // handleEditClick이 비율(nx,ny) 경로로 자연히 처리한다.
-    if (mondrianLayout) {
-        for (const [key, seg] of lastSegMap) {
-            // mo: = 랜덤 생성된 원래 살, added: = 사용자가 이미 그은 선 — 둘 다 스냅 대상
-            if (!/^\d+:mo:\d+$/.test(key) && !/^added:\d+:\d+$/.test(key)) continue;
-            const p = projectOnSegment(cx, cy, seg.cx, seg.cy, seg.ex, seg.ey);
-            const d = Math.hypot(cx - p.x, cy - p.y);
-            if (d < bestDist) { bestDist = d; best = { cx: p.x, cy: p.y }; }
-        }
-        // 내경 울거미(좌/우/상/하) 네 변도 스냅 후보에 포함
-        const edges = [
-            [lastILeft,           lastITop,           lastILeft,           lastITop + lastIH],
-            [lastILeft + lastIW,  lastITop,           lastILeft + lastIW,  lastITop + lastIH],
-            [lastILeft,           lastITop,           lastILeft + lastIW,  lastITop],
-            [lastILeft,           lastITop + lastIH,  lastILeft + lastIW,  lastITop + lastIH],
-        ];
-        for (const [x1, y1, x2, y2] of edges) {
-            const p = projectOnSegment(cx, cy, x1, y1, x2, y2);
-            const d = Math.hypot(cx - p.x, cy - p.y);
-            if (d < bestDist) { bestDist = d; best = { cx: p.x, cy: p.y }; }
-        }
     }
     const snapThreshold = Math.max(lastSlatPx * 2, lastCellSize * 0.2);
     return (best && bestDist < snapThreshold) ? best : null;
@@ -415,7 +361,6 @@ let _panRaf = null;
 let _geoCache = null;
 let _kvKey  = null; // Konva 패턴 노드를 마지막으로 빌드한 시점의 파라미터 키
 let _kvCornerMode = null; // 마지막 빌드 시점의 doorCornerPositions 모드
-let _mondrianVersion = 0; // generateMondrian() 호출마다 증가 → Konva 캐시 무효화
 function drawPan() {
     if (_panRaf) return;
     _panRaf = requestAnimationFrame(() => { _panRaf = null; draw(); });
@@ -435,16 +380,6 @@ async function draw() {
     }
     geo = data.geo;
 
-    // 정자살(균등 격자)은 행이 안 딱 맞아떨어지는 나머지(surplus)를 상하 울거미에 나눠 더해
-    // 행 간격을 정확히 맞춘다. 몬드리안(랜덤 생성)은 행 개념이 없어 그럴 이유가 없는데도
-    // 이 나머지가 그대로 더해져서, 좌우(frameW, 그대로)와 달리 상하 울거미만 원래 설정값보다
-    // 두꺼워지는 문제가 있었다 — 몬드리안일 때는 상하도 frameH 그대로 쓰고, 남는 높이는
-    // 울거미가 아니라 패턴 영역 쪽에 흡수시킨다 (자유 형태라 아무 문제 없음).
-    const _moExtraH        = geo.frameHTop - geo.frameH; // frameHTop === frameHBottom (수식상 항상 같음)
-    const effFrameHTop     = mondrianLayout ? geo.frameH : geo.frameHTop;
-    const effFrameHBottom  = mondrianLayout ? geo.frameH : geo.frameHBottom;
-    const effInnerH        = mondrianLayout ? geo.innerH + _moExtraH * 2 : geo.innerH;
-
     const s = data.specs;
     if (s && document.getElementById('spFrameOpeningW')) {
         document.getElementById('spFrameOpeningW').innerText = s.frameOpeningW;
@@ -452,7 +387,7 @@ async function draw() {
         document.getElementById('spOuterW').innerText     = s.outerW;
         document.getElementById('spOuterH').innerText     = s.outerH;
         document.getElementById('spInnerW').innerText     = s.innerW;
-        document.getElementById('spInnerH').innerText     = mondrianLayout ? Math.round(effInnerH) : s.innerH;
+        document.getElementById('spInnerH').innerText     = s.innerH;
         document.getElementById('spCounts').innerText     = s.cols;
         document.getElementById('spRows').innerText       = s.rows;
         document.getElementById('spStep').innerText       = s.step;
@@ -460,11 +395,8 @@ async function draw() {
         document.getElementById('spHalfLapW').innerText   = s.halfLapW;
         document.getElementById('spGrooveW').innerText    = s.grooveW;
         document.getElementById('spGrooveWH').innerText   = s.grooveWH;
-        // 칸수·먹줄·홈폭은 균등 격자 개념이라 몬드리안(자유 형태)에는 적용되지 않아 행 통째로 숨김
-        ['spCountsCard', 'spRowsCard', 'spStepCard', 'spStepVCard', 'spHalfLapWCard', 'spGrooveWCard', 'spGrooveWHCard']
-            .forEach(id => { const el = document.getElementById(id); if (el) el.style.display = mondrianLayout ? 'none' : ''; });
         document.getElementById('spPungpan').innerText    = s.pungpan;
-        document.getElementById('spFrameHTop').innerText  = mondrianLayout ? Math.round(geo.frameH) : s.frameHTop;
+        document.getElementById('spFrameHTop').innerText  = s.frameHTop;
         document.getElementById('spTotalDoorW').innerText = s.totalDoorW;
 
         const overlapCard = document.getElementById('spOverlapCard');
@@ -650,7 +582,6 @@ async function draw() {
         selectedSlatColor,
         selectedFrameColor,
         Math.round(baseScale * 1000),
-        _mondrianVersion,
     ]);
     const buildKonvaPattern = useKonvaPattern &&
         (_newKvKey !== _kvKey || !!doorCornerPositions !== !!_kvCornerMode);
@@ -672,10 +603,10 @@ async function draw() {
         const tX = rx => offsetX + (pOffX + rx) * baseScale;
         const tY = ry => offsetY + ry * baseScale;
         if (buildKonvaPattern) {
-            kv.addPatternBg(tX(geo.frameW), tY(effFrameHTop), geo.innerW * baseScale, effInnerH * baseScale);
+            kv.addPatternBg(tX(geo.frameW), tY(geo.frameHTop), geo.innerW * baseScale, geo.innerH * baseScale);
         } else {
             ctx.fillStyle = '#ffffff';
-            ctx.fillRect(tX(geo.frameW), tY(effFrameHTop), geo.innerW * baseScale, effInnerH * baseScale);
+            ctx.fillRect(tX(geo.frameW), tY(geo.frameHTop), geo.innerW * baseScale, geo.innerH * baseScale);
         }
     }
 
@@ -798,9 +729,9 @@ async function draw() {
 
         if (d === renderOrder[0]) {
             lastILeft    = toCanvasX(geo.frameW);
-            lastITop     = toCanvasY(effFrameHTop);
+            lastITop     = toCanvasY(geo.frameHTop);
             lastIW       = geo.innerW * baseScale;
-            lastIH       = effInnerH * baseScale;
+            lastIH       = geo.innerH * baseScale;
             lastSlatPx   = geo.slatT  * baseScale;
             lastCellSize = geo.cellW  * baseScale;
             lastOLeft     = toCanvasX(0);
@@ -810,82 +741,49 @@ async function draw() {
             lastDoorHpx   = totalH     * baseScale;
 
             // 라인 편집기 노드 실좌표(mm) — 문짝마다 동일한 상대 위치라 한 번만 계산해서
-            // lastNodeXs/lastNodeYs(균등 격자) 또는 lastMondrianNodes(몬드리안)에 보관해둔다.
-            const fw = geo.frameW, ft = effFrameHTop, iw = geo.innerW, ih = effInnerH;
-            if (mondrianLayout) {
-                const lines = mondrianLayout.lines.map(l => mondrianLinePx(l, iw, ih));
-                const pts = [[fw, ft], [fw + iw, ft], [fw, ft + ih], [fw + iw, ft + ih]];
-                for (const ln of lines) {
-                    if (ln.axis === 'v') {
-                        pts.push([fw + ln.pos, ft + ln.from]);
-                        pts.push([fw + ln.pos, ft + ln.to]);
-                    } else {
-                        pts.push([fw + ln.from, ft + ln.pos]);
-                        pts.push([fw + ln.to,   ft + ln.pos]);
-                    }
-                }
-                const vLines = lines.filter(l => l.axis === 'v');
-                const hLines = lines.filter(l => l.axis === 'h');
-                for (const vl of vLines) {
-                    for (const hl of hLines) {
-                        if (vl.from <= hl.pos + 0.5 && hl.pos - 0.5 <= vl.to &&
-                            hl.from <= vl.pos + 0.5 && vl.pos - 0.5 <= hl.to) {
-                            pts.push([fw + vl.pos, ft + hl.pos]);
-                        }
-                    }
-                }
-                lastMondrianNodes = pts;
-                lastNodeXs = []; lastNodeYs = [];
-            } else {
-                // 정자살 균등 격자: 세로살 중심 × 가로살 중심 교점
-                // xi/yi 인덱스로 lastNodeXs/lastNodeYs에 보관해둔다 — addedLines를 좌표
-                // 비율이 아니라 이 인덱스로 저장해야 문 크기가 바뀌어도 실제 그 교점의
-                // 새 위치를 다시 찾아 선이 격자에 붙어 따라온다.
-                const nodeXs = [fw];
-                for (let i = 1; i < geo.cols; i++) {
-                    nodeXs.push(fw + i * (geo.cellW + geo.slatV) - geo.slatV / 2);
-                }
-                nodeXs.push(fw + iw);
-                const nodeYs = [ft];
-                for (let j = 1; j < geo.rowsInt; j++) {
-                    nodeYs.push(ft + j * (geo.cellH + geo.slatH) - geo.slatH / 2);
-                }
-                nodeYs.push(ft + ih);
-                lastNodeXs = nodeXs;
-                lastNodeYs = nodeYs;
-                lastMondrianNodes = [];
+            // lastNodeXs/lastNodeYs에 보관해둔다.
+            const fw = geo.frameW, ft = geo.frameHTop, iw = geo.innerW, ih = geo.innerH;
+            // 정자살 균등 격자: 세로살 중심 × 가로살 중심 교점
+            // xi/yi 인덱스로 lastNodeXs/lastNodeYs에 보관해둔다 — addedLines를 좌표
+            // 비율이 아니라 이 인덱스로 저장해야 문 크기가 바뀌어도 실제 그 교점의
+            // 새 위치를 다시 찾아 선이 격자에 붙어 따라온다.
+            const nodeXs = [fw];
+            for (let i = 1; i < geo.cols; i++) {
+                nodeXs.push(fw + i * (geo.cellW + geo.slatV) - geo.slatV / 2);
             }
+            nodeXs.push(fw + iw);
+            const nodeYs = [ft];
+            for (let j = 1; j < geo.rowsInt; j++) {
+                nodeYs.push(ft + j * (geo.cellH + geo.slatH) - geo.slatH / 2);
+            }
+            nodeYs.push(ft + ih);
+            lastNodeXs = nodeXs;
+            lastNodeYs = nodeYs;
         }
 
         // 위에서 계산해둔 노드 실좌표를 "이번 문짝(d)"의 화면 좌표로 찍어 lastNodeList에
         // 추가한다 — d===renderOrder[0] 제한 없이 매 문짝마다 실행해야, 오른쪽(두 번째
         // 이후) 문짝을 클릭해도 근처 교점을 찾아 선 추가/삭제가 동작한다.
-        if (mondrianLayout) {
-            lastMondrianNodes.forEach(([rx, ry]) => {
-                lastNodeList.push({ cx: toCanvasX(rx), cy: toCanvasY(ry) });
+        lastNodeXs.forEach((rx, xi) => {
+            lastNodeYs.forEach((ry, yi) => {
+                lastNodeList.push({ cx: toCanvasX(rx), cy: toCanvasY(ry), xi, yi });
             });
-        } else {
-            lastNodeXs.forEach((rx, xi) => {
-                lastNodeYs.forEach((ry, yi) => {
-                    lastNodeList.push({ cx: toCanvasX(rx), cy: toCanvasY(ry), xi, yi });
-                });
-            });
-        }
+        });
 
         // ====================================
         // 세로살
         // ====================================
 
-        // 내경 영역으로 클리핑 — innerH 기준 (몬드리안은 effInnerH로 확장된 영역)
-        const clipH = effInnerH;
+        // 내경 영역으로 클리핑 — innerH 기준
+        const clipH = geo.innerH;
         if (buildKonvaPattern) {
-            kv.addPatternClipGroup(d, toCanvasX(geo.frameW), toCanvasY(effFrameHTop), geo.innerW * baseScale, clipH * baseScale);
+            kv.addPatternClipGroup(d, toCanvasX(geo.frameW), toCanvasY(geo.frameHTop), geo.innerW * baseScale, clipH * baseScale);
         } else {
             ctx.save();
             ctx.beginPath();
             ctx.rect(
                 toCanvasX(geo.frameW),
-                toCanvasY(effFrameHTop),
+                toCanvasY(geo.frameHTop),
                 geo.innerW * baseScale,
                 clipH * baseScale
             );
@@ -896,107 +794,7 @@ async function draw() {
         // 세로살
         // ====================================
 
-        if (mondrianLayout) {
-            // ── 몬드리안 BSP 격자 ───────────────────────
-            const rects = mondrianLayout.rects.map(r => mondrianRectPx(r, geo.innerW, effInnerH));
-            const lines = mondrianLayout.lines.map(l => mondrianLinePx(l, geo.innerW, effInnerH));
-            const EPS = 0.5;
-
-            // 채색 셀 먼저
-            for (const rect of rects) {
-                if (rect.color) {
-                    if (buildKonvaPattern) {
-                        kv.addPatternRectToGroup(d,
-                            toCanvasX(geo.frameW + rect.x),
-                            toCanvasY(effFrameHTop + rect.y),
-                            rect.w * baseScale,
-                            rect.h * baseScale,
-                            rect.color,
-                            'facepaint'
-                        );
-                    } else {
-                        ctx.fillStyle = rect.color;
-                        ctx.fillRect(
-                            toCanvasX(geo.frameW + rect.x),
-                            toCanvasY(effFrameHTop + rect.y),
-                            rect.w * baseScale,
-                            rect.h * baseScale
-                        );
-                    }
-                }
-            }
-
-            // 면 채색 — Mondrian 배경 위, 살 아래
-            if (faceColorMap) {
-                const stepV = geo.cellW + geo.slatV, stepH = geo.cellH + geo.slatH;
-                for (let row = 0; row < geo.rowsInt; row++) {
-                    for (let col = 0; col < geo.cols; col++) {
-                        const _fc = faceColorMap[`cell:${col}:${row}`] ?? null;
-                        if (!_fc) continue;
-                        if (buildKonvaPattern) {
-                            kv.addPatternRectToGroup(d, toCanvasX(geo.frameW + col * stepV), toCanvasY(effFrameHTop + row * stepH), stepV * baseScale, stepH * baseScale, _fc, 'facepaint');
-                        } else {
-                            ctx.fillStyle = _fc;
-                            ctx.fillRect(toCanvasX(geo.frameW + col * stepV), toCanvasY(effFrameHTop + row * stepH), stepV * baseScale, stepH * baseScale);
-                        }
-                    }
-                }
-            }
-
-            // 살 + 촉 (bars drawn on top of cells)
-            // 각 선에 고정 segKey(d:mo:idx)를 매겨 lastSegMap에 등록 — 균등 격자(vs/hs)와
-            // 동일한 방식으로 살 삭제(handleEditClick)가 몬드리안 살도 찾아 지울 수 있게 한다.
-            lines.forEach((ln, idx) => {
-                const segKey = `${d}:mo:${idx}`;
-                if (ln.axis === 'v') {
-                    const left = geo.frameW + ln.pos - geo.slatV / 2;
-                    const cxPx    = toCanvasX(geo.frameW + ln.pos);
-                    const cyFromPx = toCanvasY(effFrameHTop + ln.from);
-                    const cyToPx   = toCanvasY(effFrameHTop + ln.to);
-                    const cyMidPx  = toCanvasY(effFrameHTop + (ln.from + ln.to) / 2);
-                    lastSegMap.set(segKey, { cx: cxPx, cy: cyFromPx, ex: cxPx, ey: cyToPx, mx: cxPx, my: cyMidPx, normAngle: Math.PI / 2, lineKey: makeLineKey(cxPx, cyMidPx, Math.PI / 2) });
-                    if (deletedSegs.has(segKey)) return;
-                    if (buildKonvaPattern) {
-                        if (ln.from < EPS)
-                            kv.addPatternRectToGroup(d, toCanvasX(left), toCanvasY(effFrameHTop - geo.tenonDepth), geo.slatV * baseScale, geo.tenonDepth * baseScale, Color_Tenon_Fill);
-                        if (ln.to > effInnerH - EPS)
-                            kv.addPatternRectToGroup(d, toCanvasX(left), toCanvasY(effFrameHTop + effInnerH), geo.slatV * baseScale, geo.tenonDepth * baseScale, Color_Tenon_Fill);
-                        kv.addPatternSlatRect(d, toCanvasX(left), toCanvasY(effFrameHTop + ln.from), geo.slatV * baseScale, (ln.to - ln.from) * baseScale, Color_Slat_Fill, segKey, lastSegMap.get(segKey).lineKey);
-                    } else {
-                        ctx.fillStyle = Color_Tenon_Fill;
-                        if (ln.from < EPS)
-                            ctx.fillRect(toCanvasX(left), toCanvasY(effFrameHTop - geo.tenonDepth), geo.slatV * baseScale, geo.tenonDepth * baseScale);
-                        if (ln.to > effInnerH - EPS)
-                            ctx.fillRect(toCanvasX(left), toCanvasY(effFrameHTop + effInnerH), geo.slatV * baseScale, geo.tenonDepth * baseScale);
-                        ctx.fillStyle = Color_Slat_Fill;
-                        ctx.fillRect(toCanvasX(left), toCanvasY(effFrameHTop + ln.from), geo.slatV * baseScale, (ln.to - ln.from) * baseScale);
-                    }
-                } else {
-                    const top = effFrameHTop + ln.pos - geo.slatH / 2;
-                    const cyPx     = toCanvasY(effFrameHTop + ln.pos);
-                    const cxFromPx = toCanvasX(geo.frameW + ln.from);
-                    const cxToPx   = toCanvasX(geo.frameW + ln.to);
-                    const cxMidPx  = toCanvasX(geo.frameW + (ln.from + ln.to) / 2);
-                    lastSegMap.set(segKey, { cx: cxFromPx, cy: cyPx, ex: cxToPx, ey: cyPx, mx: cxMidPx, my: cyPx, normAngle: 0, lineKey: makeLineKey(cxMidPx, cyPx, 0) });
-                    if (deletedSegs.has(segKey)) return;
-                    if (buildKonvaPattern) {
-                        if (ln.from < EPS)
-                            kv.addPatternRectToGroup(d, toCanvasX(geo.frameW - geo.tenonDepth), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale, Color_Tenon_Fill);
-                        if (ln.to > geo.innerW - EPS)
-                            kv.addPatternRectToGroup(d, toCanvasX(geo.frameW + geo.innerW), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale, Color_Tenon_Fill);
-                        kv.addPatternSlatRect(d, toCanvasX(geo.frameW + ln.from), toCanvasY(top), (ln.to - ln.from) * baseScale, geo.slatH * baseScale, Color_Slat_Fill, segKey, lastSegMap.get(segKey).lineKey);
-                    } else {
-                        ctx.fillStyle = Color_Tenon_Fill;
-                        if (ln.from < EPS)
-                            ctx.fillRect(toCanvasX(geo.frameW - geo.tenonDepth), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale);
-                        if (ln.to > geo.innerW - EPS)
-                            ctx.fillRect(toCanvasX(geo.frameW + geo.innerW), toCanvasY(top), geo.tenonDepth * baseScale, geo.slatH * baseScale);
-                        ctx.fillStyle = Color_Slat_Fill;
-                        ctx.fillRect(toCanvasX(geo.frameW + ln.from), toCanvasY(top), (ln.to - ln.from) * baseScale, geo.slatH * baseScale);
-                    }
-                }
-            });
-        } else {
+        {
             // ── 면 채색 (정자살 모드)
             if (faceColorMap) {
                 const stepV = geo.cellW + geo.slatV, stepH = geo.cellH + geo.slatH;
@@ -1183,15 +981,6 @@ async function draw() {
         if (hCntEl) hCntEl.textContent = Math.max(0, adjHSlatCnt) + _t('개');
         const vCntEl = document.getElementById('spVSlatCnt');
         if (vCntEl) vCntEl.textContent = Math.max(0, adjVSlatCnt) + _t('개');
-
-        // 몬드리안(랜덤 생성)은 살마다 길이가 제각각이라 격자 기준 단일 길이값이
-        // 의미가 없다 — 평균 등으로 대충 값을 보여주는 대신 "가변"으로 명시한다.
-        if (mondrianLayout) {
-            const hLenEl = document.getElementById('spHSlatLen');
-            if (hLenEl) hLenEl.textContent = `${p.slatW}×${geo.slatT}×${_t('가변')}`;
-            const vLenEl = document.getElementById('spVSlatLen');
-            if (vLenEl) vLenEl.textContent = `${p.slatW}×${geo.slatT}×${_t('가변')}`;
-        }
     }
 
     // ====== 추가 선 그리기 (모든 문짝에 동일하게 복제) ======
@@ -1216,8 +1005,8 @@ async function draw() {
                     rx1 = lastNodeXs[ln.xi1]; ry1 = lastNodeYs[ln.yi1];
                     rx2 = lastNodeXs[ln.xi2]; ry2 = lastNodeYs[ln.yi2];
                 } else {
-                    rx1 = geo.frameW + ln.nx1 * geo.innerW; ry1 = effFrameHTop + ln.ny1 * effInnerH;
-                    rx2 = geo.frameW + ln.nx2 * geo.innerW; ry2 = effFrameHTop + ln.ny2 * effInnerH;
+                    rx1 = geo.frameW + ln.nx1 * geo.innerW; ry1 = geo.frameHTop + ln.ny1 * geo.innerH;
+                    rx2 = geo.frameW + ln.nx2 * geo.innerW; ry2 = geo.frameHTop + ln.ny2 * geo.innerH;
                 }
                 const x1 = toX(rx1), y1 = toY(ry1), x2 = toX(rx2), y2 = toY(ry2);
                 lastSegMap.set(`added:${d}:${idx}`, { cx: x1, cy: y1, ex: x2, ey: y2, mx: (x1 + x2) / 2, my: (y1 + y2) / 2, normAngle: 0 });
@@ -1257,8 +1046,8 @@ async function draw() {
 
         if (buildKonvaPattern) {
             kv.addPatternFrameRect(toCanvasX(0), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale, selectedFrameColor);
-            kv.addPatternFrameRect(toCanvasX(geo.frameW), toCanvasY(0), geo.innerW * baseScale, effFrameHTop * baseScale, selectedFrameColor);
-            kv.addPatternFrameRect(toCanvasX(geo.frameW), toCanvasY(effFrameHTop + effInnerH), geo.innerW * baseScale, effFrameHBottom * baseScale, selectedFrameColor);
+            kv.addPatternFrameRect(toCanvasX(geo.frameW), toCanvasY(0), geo.innerW * baseScale, geo.frameHTop * baseScale, selectedFrameColor);
+            kv.addPatternFrameRect(toCanvasX(geo.frameW), toCanvasY(geo.frameHTop + geo.innerH), geo.innerW * baseScale, geo.frameHBottom * baseScale, selectedFrameColor);
             kv.addPatternFrameRect(toCanvasX(geo.outerW - geo.frameW), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale, selectedFrameColor);
         } else {
             ctx.fillStyle = selectedFrameColor;
@@ -1266,9 +1055,9 @@ async function draw() {
             // 좌측 세로 울거미
             ctx.fillRect(toCanvasX(0), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale);
             // 상부 가로 울거미
-            ctx.fillRect(toCanvasX(geo.frameW), toCanvasY(0), geo.innerW * baseScale, effFrameHTop * baseScale);
+            ctx.fillRect(toCanvasX(geo.frameW), toCanvasY(0), geo.innerW * baseScale, geo.frameHTop * baseScale);
             // 하단 울거미
-            ctx.fillRect(toCanvasX(geo.frameW), toCanvasY(effFrameHTop + effInnerH), geo.innerW * baseScale, effFrameHBottom * baseScale);
+            ctx.fillRect(toCanvasX(geo.frameW), toCanvasY(geo.frameHTop + geo.innerH), geo.innerW * baseScale, geo.frameHBottom * baseScale);
             // 우측 세로 울거미
             ctx.fillRect(toCanvasX(geo.outerW - geo.frameW), toCanvasY(0), geo.frameW * baseScale, geo.outerH * baseScale);
         }
@@ -1351,7 +1140,7 @@ async function draw() {
     // buildKonvaPattern은 지오메트리 캐시 히트 시 false라서(=클릭만 해도 이 프레임은 재빌드 안 됨)
     // useKonvaPattern 기준으로 분기하고, Konva는 패턴 재빌드와 무관한 지속 노드(setEditMarker)로 갱신
     if (lineEditMode === 'add' && addLineStart) {
-        const pt = addLineStart.xi !== undefined ? nodeIdxToCtx(addLineStart.xi, addLineStart.yi) : normToCtx(addLineStart.nx, addLineStart.ny);
+        const pt = nodeIdxToCtx(addLineStart.xi, addLineStart.yi);
         if (useKonvaPattern) {
             kv.setEditMarker(pt.x, pt.y, lastSlatPx * 1.5, '#3A8C82');
         } else {
@@ -1915,22 +1704,6 @@ async function draw() {
         const relX = cx - lastILeft, relY = cy - lastITop;
         if (relX < 0 || relY < 0 || relX > lastIW || relY > lastIH) return null;
 
-        // Mondrian 모드: 클릭 위치가 속하는 BSP 렉트 인덱스 반환
-        if (mondrianLayout) {
-            const rx = relX / lastBaseScale; // mm, inner frame origin 기준
-            const ry = relY / lastBaseScale;
-            const iW = geo.innerW, iH = effInnerH;
-            const rects = mondrianLayout.rects;
-            for (let i = 0; i < rects.length; i++) {
-                const r = rects[i];
-                if (rx >= r.x * iW && rx < (r.x + r.w) * iW &&
-                    ry >= r.y * iH && ry < (r.y + r.h) * iH) {
-                    return `mondrian:${i}`;
-                }
-            }
-            return null;
-        }
-
         const stepVpx = (geo.cellW + geo.slatV) * lastBaseScale;
         const stepHpx = (geo.cellH + geo.slatH) * lastBaseScale;
         const col = Math.floor(relX / stepVpx);
@@ -1942,16 +1715,6 @@ async function draw() {
     function paintFaceCell(cx, cy, isErase) {
         const key = hitTestCell(cx, cy);
         if (!key) return;
-
-        // Mondrian 모드: 렉트 색상 직접 변경
-        if (key.startsWith('mondrian:')) {
-            const idx = parseInt(key.slice(9), 10);
-            if (!mondrianLayout?.rects[idx]) return;
-            mondrianLayout.rects[idx].color = isErase ? null : faceColorUI.getCurrentHex();
-            _mondrianVersion++;
-            draw();
-            return;
-        }
 
         if (isErase) {
             if (faceColorMap) {
@@ -1980,203 +1743,6 @@ async function draw() {
             const coord = screenToCtxCoord(e.clientX, e.clientY);
             paintFaceCell(coord.x, coord.y, true);
         }
-    });
-
-    // ── 몬드리안(랜덤 생성) 분할선 드래그 이동 ──────────────
-    // 선 하나를 옮기면, 그 선에 맞닿은 칸들의 경계와 그 선에서 끝나는 수직선들의
-    // 끝점을 같이 옮겨서 빈틈·겹침 없이 리사이즈되게 한다 (rects는 전부 리프라 이 두
-    // 케이스만 처리하면 더 깊은 단계까지 연쇄로 손볼 필요가 없다).
-    function hitTestMondrianLine(cx, cy) {
-        if (!mondrianLayout) return null;
-        let bestIdx = null, bestAxis = null, bestDist = Infinity;
-        const threshold = Math.max(lastSlatPx * 3, 8);
-        for (const [key, seg] of lastSegMap) {
-            const m = /^\d+:mo:(\d+)$/.exec(key);
-            if (!m) continue;
-            const dist = distToSeg(cx, cy, seg);
-            if (dist < bestDist) {
-                bestDist = dist;
-                bestIdx  = parseInt(m[1], 10);
-                bestAxis = seg.normAngle < 0.05 ? 'h' : 'v';
-            }
-        }
-        return (bestIdx !== null && bestDist < threshold) ? { idx: bestIdx, axis: bestAxis } : null;
-    }
-
-    function clampMondrianLinePos(idx, desiredPos) {
-        const ln = mondrianLayout.lines[idx];
-        const EPS = 0.002, MIN_SIZE = 0.04; // 최소 칸 크기(비율) 이하로는 못 좁히게
-        let lo = 0, hi = 1;
-        mondrianLayout.rects.forEach(r => {
-            if (ln.axis === 'v') {
-                if (r.y >= ln.to - EPS || r.y + r.h <= ln.from + EPS) return;
-                if (Math.abs(r.x + r.w - ln.pos) < EPS) lo = Math.max(lo, r.x + MIN_SIZE);
-                if (Math.abs(r.x - ln.pos) < EPS)        hi = Math.min(hi, r.x + r.w - MIN_SIZE);
-            } else {
-                if (r.x >= ln.to - EPS || r.x + r.w <= ln.from + EPS) return;
-                if (Math.abs(r.y + r.h - ln.pos) < EPS) lo = Math.max(lo, r.y + MIN_SIZE);
-                if (Math.abs(r.y - ln.pos) < EPS)        hi = Math.min(hi, r.y + r.h - MIN_SIZE);
-            }
-        });
-        if (lo > hi) return ln.pos;
-        return Math.min(hi, Math.max(lo, desiredPos));
-    }
-
-    function moveMondrianLine(idx, newPos) {
-        const ln = mondrianLayout.lines[idx];
-        const oldPos = ln.pos;
-        const EPS = 0.002;
-        mondrianLayout.rects.forEach(r => {
-            if (ln.axis === 'v') {
-                if (r.y >= ln.to - EPS || r.y + r.h <= ln.from + EPS) return;
-                if (Math.abs(r.x + r.w - oldPos) < EPS) { r.w = newPos - r.x; }
-                else if (Math.abs(r.x - oldPos) < EPS)  { r.w = r.x + r.w - newPos; r.x = newPos; }
-            } else {
-                if (r.x >= ln.to - EPS || r.x + r.w <= ln.from + EPS) return;
-                if (Math.abs(r.y + r.h - oldPos) < EPS) { r.h = newPos - r.y; }
-                else if (Math.abs(r.y - oldPos) < EPS)  { r.h = r.y + r.h - newPos; r.y = newPos; }
-            }
-        });
-        // 이 선에서 끝나는(T자로 맞닿는) 수직 선들의 끝점도 같이 이동
-        mondrianLayout.lines.forEach(other => {
-            if (other === ln || other.axis === ln.axis) return;
-            if (other.pos > ln.to + EPS || other.pos < ln.from - EPS) return;
-            if (Math.abs(other.from - oldPos) < EPS) other.from = newPos;
-            if (Math.abs(other.to   - oldPos) < EPS) other.to   = newPos;
-        });
-        // 사용자가 그린 선(자르기)의 끝점이 이 선 위에 붙어있으면 같이 따라오게
-        addedLines.forEach(a => {
-            if (typeof a.nx1 !== 'number') return; // 정자살(격자 인덱스) 포맷은 몬드리안에서 안 씀
-            if (ln.axis === 'v') {
-                if (Math.abs(a.nx1 - oldPos) < EPS && a.ny1 >= ln.from - EPS && a.ny1 <= ln.to + EPS) a.nx1 = newPos;
-                if (Math.abs(a.nx2 - oldPos) < EPS && a.ny2 >= ln.from - EPS && a.ny2 <= ln.to + EPS) a.nx2 = newPos;
-            } else {
-                if (Math.abs(a.ny1 - oldPos) < EPS && a.nx1 >= ln.from - EPS && a.nx1 <= ln.to + EPS) a.ny1 = newPos;
-                if (Math.abs(a.ny2 - oldPos) < EPS && a.nx2 >= ln.from - EPS && a.nx2 <= ln.to + EPS) a.ny2 = newPos;
-            }
-        });
-        ln.pos = newPos;
-    }
-
-    // 사용자가 그린 선(자르기)도 드래그로 옮길 수 있게 — 클릭하면 선 전체를 평행 이동한다
-    // (끝점만 따로 잡는 건 혼동이 있어서 뺌. 단순하게 통째로 이동만 지원).
-    // lastSegMap을 거치지 않고 addedLines에서 직접 화면 좌표를 계산 — 등록 타이밍 등에
-    // 영향을 안 받게 독립적으로 동작.
-    function hitTestAddedLine(cx, cy) {
-        if (!addedLines.length || !lastBaseScale) return null;
-        let bestIdx = null, bestDist = Infinity;
-        addedLines.forEach((ln, idx) => {
-            if (ln.xi1 !== undefined) return; // 격자 인덱스 포맷(정자살)은 드래그 미지원
-            const p1 = normToCtx(ln.nx1, ln.ny1);
-            const p2 = normToCtx(ln.nx2, ln.ny2);
-            const dist = distToSeg(cx, cy, { cx: p1.x, cy: p1.y, ex: p2.x, ey: p2.y });
-            if (dist < bestDist) { bestDist = dist; bestIdx = idx; }
-        });
-        const threshold = Math.max(lastSlatPx * 3, 8);
-        if (bestIdx === null || bestDist > threshold) return null;
-        const bln = addedLines[bestIdx];
-        const axis = Math.abs(bln.nx1 - bln.nx2) < 0.001 ? 'v' : 'h';
-        return { idx: bestIdx, axis };
-    }
-
-    let mondrianDrag = null;
-
-    canvas.addEventListener('mousedown', e => {
-        if (e.button !== 0 || !mondrianLayout || lineEditMode || facePaintMode || panMode || placementMode) return;
-        const coord = screenToCtxCoord(e.clientX, e.clientY);
-        const addedHit = hitTestAddedLine(coord.x, coord.y);
-        if (addedHit) {
-            const ln = addedLines[addedHit.idx];
-            // 랜덤 생성된 살(분할선)과 같은 방식으로 수직/수평 축 고정 이동 — 세로선은
-            // 좌우로만, 가로선은 상하로만 움직인다.
-            // 이 선 위(끝점뿐 아니라 임의의 점 스냅으로 중간에 붙은 경우도)에 맞닿아 있는
-            // 다른 그려진 선들도 같이 따라오게 — 시작 시점에 한 번 찾아서 기록해두고,
-            // 드래그 내내 같은 델타를 같이 적용한다 (평행이동이라 어디에 붙어있었든
-            // 델타만 똑같이 더하면 계속 선 위에 붙어있는 채로 따라온다).
-            const EPS = 0.004;
-            const onDraggedLine = (nx, ny) => {
-                const dx = ln.nx2 - ln.nx1, dy = ln.ny2 - ln.ny1;
-                const lenSq = dx * dx + dy * dy;
-                if (lenSq === 0) return Math.hypot(nx - ln.nx1, ny - ln.ny1) < EPS;
-                const t = Math.max(0, Math.min(1, ((nx - ln.nx1) * dx + (ny - ln.ny1) * dy) / lenSq));
-                const px = ln.nx1 + t * dx, py = ln.ny1 + t * dy;
-                return Math.hypot(nx - px, ny - py) < EPS;
-            };
-            const connected = [];
-            addedLines.forEach((other, oi) => {
-                if (oi === addedHit.idx || other.xi1 !== undefined) return;
-                if (onDraggedLine(other.nx1, other.ny1)) connected.push({ idx: oi, which: 1, nx: other.nx1, ny: other.ny1 });
-                if (onDraggedLine(other.nx2, other.ny2)) connected.push({ idx: oi, which: 2, nx: other.nx2, ny: other.ny2 });
-            });
-            mondrianDrag = {
-                type: 'added', idx: addedHit.idx, axis: addedHit.axis, connected,
-                start: { nx1: ln.nx1, ny1: ln.ny1, nx2: ln.nx2, ny2: ln.ny2, cx: coord.x, cy: coord.y },
-            };
-            canvas.style.cursor = addedHit.axis === 'v' ? 'col-resize' : 'row-resize';
-            e.preventDefault();
-            return;
-        }
-        const hit = hitTestMondrianLine(coord.x, coord.y);
-        if (!hit) return;
-        mondrianDrag = { type: 'bsp', ...hit };
-        canvas.style.cursor = hit.axis === 'v' ? 'col-resize' : 'row-resize';
-        e.preventDefault();
-    });
-
-    window.addEventListener('mousemove', e => {
-        if (mondrianDrag) {
-            const coord = screenToCtxCoord(e.clientX, e.clientY);
-            if (mondrianDrag.type === 'added') {
-                const ln = addedLines[mondrianDrag.idx];
-                if (!ln) { mondrianDrag = null; return; }
-                // 세로선은 좌우(dnx)로만, 가로선은 상하(dny)로만 — 랜덤 생성된 살과 동일하게
-                let dnx = mondrianDrag.axis === 'v' ? (coord.x - mondrianDrag.start.cx) / lastIW : 0;
-                let dny = mondrianDrag.axis === 'h' ? (coord.y - mondrianDrag.start.cy) / lastIH : 0;
-                // 울거미(내경 0~1 범위) 밖으로 못 나가게 — 분할선(clampMondrianLinePos)과 동일 조건
-                if (mondrianDrag.axis === 'v') {
-                    dnx = Math.max(0 - mondrianDrag.start.nx1, Math.min(1 - mondrianDrag.start.nx1, dnx));
-                } else {
-                    dny = Math.max(0 - mondrianDrag.start.ny1, Math.min(1 - mondrianDrag.start.ny1, dny));
-                }
-                ln.nx1 = mondrianDrag.start.nx1 + dnx; ln.ny1 = mondrianDrag.start.ny1 + dny;
-                ln.nx2 = mondrianDrag.start.nx2 + dnx; ln.ny2 = mondrianDrag.start.ny2 + dny;
-                // 이 선 끝점에 맞닿아 있던 다른 그려진 선들도 같은 델타로 같이 이동
-                mondrianDrag.connected.forEach(c => {
-                    const other = addedLines[c.idx];
-                    if (!other) return;
-                    other[`nx${c.which}`] = c.nx + dnx;
-                    other[`ny${c.which}`] = c.ny + dny;
-                });
-                // Konva 패턴 캐시 키가 addedLines.length만 보고 내용(좌표) 변화는 못 봐서,
-                // 이게 없으면 데이터는 바뀌어도 화면(Konva)엔 반영이 안 된다.
-                _mondrianVersion++;
-                draw();
-                return;
-            }
-            const desiredPos = mondrianDrag.axis === 'v'
-                ? (coord.x - lastILeft) / lastIW
-                : (coord.y - lastITop)  / lastIH;
-            moveMondrianLine(mondrianDrag.idx, clampMondrianLinePos(mondrianDrag.idx, desiredPos));
-            _mondrianVersion++;
-            draw();
-            return;
-        }
-        if (mondrianLayout && !lineEditMode && !facePaintMode && !panMode && !placementMode) {
-            const coord = screenToCtxCoord(e.clientX, e.clientY);
-            const addedHit = hitTestAddedLine(coord.x, coord.y);
-            if (addedHit) {
-                canvas.style.cursor = addedHit.axis === 'v' ? 'col-resize' : 'row-resize';
-                return;
-            }
-            const hit = hitTestMondrianLine(coord.x, coord.y);
-            canvas.style.cursor = hit ? (hit.axis === 'v' ? 'col-resize' : 'row-resize') : 'default';
-        }
-    });
-
-    window.addEventListener('mouseup', () => {
-        if (!mondrianDrag) return;
-        mondrianDrag = null;
-        canvas.style.cursor = panMode ? 'grab' : 'default';
     });
 
     document.getElementById('btnOrder')?.addEventListener('click', () => {
@@ -2236,38 +1802,22 @@ async function draw() {
             const snapped = snapToNode(coord.x, coord.y);
             if (!snapped) return;
             // 균등 격자(정자살) 노드는 xi/yi가 있어 인덱스로 기억 — 문 크기가 바뀌어도 그
-            // 교점의 최신 위치를 다시 찾아 정확히 붙는다. 몬드리안 노드는 xi/yi가 없어
-            // 기존처럼 비율(nx,ny)로 기억한다.
-            const start = snapped.xi !== undefined
-                ? { xi: snapped.xi, yi: snapped.yi }
-                : ctxToNorm(snapped.cx, snapped.cy);
+            // 교점의 최신 위치를 다시 찾아 정확히 붙는다.
+            const start = { xi: snapped.xi, yi: snapped.yi };
             if (!addLineStart) {
                 addLineStart = start;
                 draw();
             } else {
-                const same = start.xi !== undefined
-                    ? (start.xi === addLineStart.xi && start.yi === addLineStart.yi)
-                    : (Math.abs(start.nx - addLineStart.nx) < 0.001 && Math.abs(start.ny - addLineStart.ny) < 0.001);
+                const same = start.xi === addLineStart.xi && start.yi === addLineStart.yi;
                 if (same) return;
                 // 라인은 수직/수평으로만 그어지게 — 시작점에서 더 많이 벌어진 축만 반영하고
                 // 반대 축은 시작점 값 그대로 고정한다 (대각선 방지).
-                const startPt = addLineStart.xi !== undefined
-                    ? nodeIdxToCtx(addLineStart.xi, addLineStart.yi)
-                    : normToCtx(addLineStart.nx, addLineStart.ny);
+                const startPt = nodeIdxToCtx(addLineStart.xi, addLineStart.yi);
                 const horizontal = Math.abs(coord.x - startPt.x) >= Math.abs(coord.y - startPt.y);
-                // mondrianLayout 여부는 draw() 한 프레임 안에서 고정이라 두 끝점이 항상 같은
-                // 체계(둘 다 격자 인덱스 또는 둘 다 비율)로 잡힌다.
-                if (start.xi !== undefined) {
-                    const xi2 = horizontal ? start.xi : addLineStart.xi;
-                    const yi2 = horizontal ? addLineStart.yi : start.yi;
-                    if (xi2 === addLineStart.xi && yi2 === addLineStart.yi) return; // 축 고정 후 길이 0이면 무시
-                    addedLines.push({ xi1: addLineStart.xi, yi1: addLineStart.yi, xi2, yi2 });
-                } else {
-                    const nx2 = horizontal ? start.nx : addLineStart.nx;
-                    const ny2 = horizontal ? addLineStart.ny : start.ny;
-                    if (Math.abs(nx2 - addLineStart.nx) < 0.001 && Math.abs(ny2 - addLineStart.ny) < 0.001) return;
-                    addedLines.push({ nx1: addLineStart.nx, ny1: addLineStart.ny, nx2, ny2 });
-                }
+                const xi2 = horizontal ? start.xi : addLineStart.xi;
+                const yi2 = horizontal ? addLineStart.yi : start.yi;
+                if (xi2 === addLineStart.xi && yi2 === addLineStart.yi) return; // 축 고정 후 길이 0이면 무시
+                addedLines.push({ xi1: addLineStart.xi, yi1: addLineStart.yi, xi2, yi2 });
                 addLineStart = null;
                 draw();
             }
@@ -2284,10 +1834,6 @@ async function draw() {
             addLineStart = null;
             faceColorMap = null;
             faceColorUI.updateClearBtn(false);
-            if (mondrianLayout) {
-                mondrianLayout.rects.forEach(r => { r.color = null; });
-                _mondrianVersion++;
-            }
             draw();
         });
     });
@@ -2638,7 +2184,6 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
             placementMode,
             doorCornerPositions: doorCornerPositions ? { ...doorCornerPositions } : null,
             placementNaturalSize: placementNaturalSize ? { ...placementNaturalSize } : null,
-            mondrianLayout: mondrianLayout ? JSON.parse(JSON.stringify(mondrianLayout)) : null,
             deletedSegs: [...deletedSegs],
             addedLines,
             svgInserts: [],   // Konva.Image로 대체 — konvaShapes에 포함됨
@@ -2679,12 +2224,6 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
         faceColorMap = p.faceColorMap || null;
         faceColorUI.restoreColor(p.faceBrushColor || null);
         faceColorUI.updateClearBtn(!!faceColorMap);
-        mondrianLayout = p.mondrianLayout || null;
-        // 구버전 저장본은 rects/lines가 절대 좌표(px)였음 — 비율(0~1) 형식이 아니면 호환되지 않으므로 무시
-        if (mondrianLayout && mondrianLayout.rects.some(r => r.w > 2 || r.h > 2)) {
-            mondrianLayout = null;
-        }
-        _updateMondrianBtn();
         deletedSegs  = new Set(p.deletedSegs || []);
         addedLines   = p.addedLines || [];
         addLineStart = null;
@@ -3104,77 +2643,6 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
     document.getElementById('dmRenameInput').addEventListener('keydown', (e) => {
         if (e.key === 'Enter')  document.getElementById('dmRenameOk').click();
         if (e.key === 'Escape') document.getElementById('dmRenameCancel').click();
-    });
-
-    // ── 몬드리안 랜덤 생성 ────────────────────────────
-    function _updateMondrianBtn() {
-        const btnClear = document.getElementById('btnMondrianClear');
-        if (btnClear) btnClear.style.display = mondrianLayout ? '' : 'none';
-    }
-
-    function generateMondrian() {
-        if (!geo || !geo.innerW || !geo.innerH) return;
-        const W = geo.innerW, H = geo.innerH;
-
-        const rects = [];
-        const lines = []; // {axis:'v'|'h', pos, from, to}
-        const stopProb = [0.05, 0.15, 0.38, 0.62, 0.85];
-
-        function bsp(x, y, w, h, depth) {
-            const minW = W * 0.14, minH = H * 0.11;
-            const canV = w > minW * 2;
-            const canH = h > minH * 2;
-
-            if (!canV && !canH) { rects.push({ x, y, w, h, color: null }); return; }
-            if (depth >= stopProb.length || Math.random() < stopProb[depth]) {
-                rects.push({ x, y, w, h, color: null }); return;
-            }
-
-            // 긴 축 우선, 약간의 편향으로 자연스러운 비대칭 유지
-            const ar = w / h;
-            const pV = canV && (!canH || (ar > 1.3 ? 0.72 : ar < 0.77 ? 0.28 : 0.50));
-            const doV = typeof pV === 'boolean' ? pV : Math.random() < pV;
-
-            if (doV) {
-                const pos = x + minW + Math.random() * (w - minW * 2);
-                lines.push({ axis: 'v', pos, from: y, to: y + h });
-                bsp(x, y, pos - x, h, depth + 1);
-                bsp(pos, y, x + w - pos, h, depth + 1);
-            } else {
-                const pos = y + minH + Math.random() * (h - minH * 2);
-                lines.push({ axis: 'h', pos, from: x, to: x + w });
-                bsp(x, y, w, pos - y, depth + 1);
-                bsp(x, pos, w, y + h - pos, depth + 1);
-            }
-        }
-
-        bsp(0, 0, W, H, 0);
-
-        const moColors = ['#c8102e', '#1c3f94', '#f0c130'];
-        const colorCount = Math.max(1, Math.round(rects.length * (0.18 + Math.random() * 0.22)));
-        const shuffled = [...rects].sort(() => Math.random() - 0.5);
-        const palette = [...moColors].sort(() => Math.random() - 0.5);
-        shuffled.slice(0, colorCount).forEach((rect, i) => {
-            rect.color = palette[i % palette.length];
-        });
-
-        mondrianLayout = {
-            rects: rects.map(r => ({ x: r.x / W, y: r.y / H, w: r.w / W, h: r.h / H, color: r.color })),
-            lines: lines.map(l => l.axis === 'v'
-                ? { axis: 'v', pos: l.pos / W, from: l.from / H, to: l.to / H }
-                : { axis: 'h', pos: l.pos / H, from: l.from / W, to: l.to / W }),
-        };
-        _mondrianVersion++;
-        _updateMondrianBtn();
-        draw();
-    }
-
-    document.getElementById('btnMondrian').addEventListener('click', generateMondrian);
-    document.getElementById('btnMondrianClear').addEventListener('click', () => {
-        mondrianLayout = null;
-        _mondrianVersion++;
-        _updateMondrianBtn();
-        draw();
     });
 
     loadVersions().then(r => { if (r !== 'wp') restoreThumbs(); });

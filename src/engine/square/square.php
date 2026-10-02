@@ -255,16 +255,6 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                     </div>
 
                     <hr class="sb-divider">
-
-                    <div class="ctrl" style="margin-top:6px;">
-                        <div class="ctrl-header"><span class="ctrl-label"><?= te('랜덤 패턴') ?></span></div>
-                        <div style="display:flex;gap:6px;width:100%;">
-                            <button id="btnMondrian" type="button" class="hbtn" style="flex:1;justify-content:center;"><?= te('랜덤 생성') ?></button>
-                            <button id="btnMondrianClear" type="button" class="hbtn" style="display:none;flex:1;justify-content:center;"><?= te('초기화') ?></button>
-                        </div>
-                    </div>
-
-                    <hr class="sb-divider">
                     <div class="toggle-row" id="shrinkHRow" style="display:<?= $cfg['rowsManual'] === '1' ? 'none' : 'flex' ?>;">
                         <span class="toggle-label"><?= te('세로 자동 맞춤') ?></span>
                         <label class="toggle-switch">
