@@ -127,7 +127,7 @@ return [
     // src/company/index.php
     'company_hero_label'       => 'About 워크그룹 평목',
     'company_hero_title'       => '나무로 만드는<br>빛과 바람의 길,<em>평목</em>',
-    'company_hero_desc'        => '워크그룹 평목(平木)은 전통창호의 아름다움을 현대 공간에 담아내는 창호 설계·제작 공방입니다. <br>수백 년을 이어온 문살 기법을 디지털 도구로 재해석하여, 누구나 자신만의 창호를 <br>직접 설계하고 제작까지 연결할 수 있는 환경을 만들어갑니다.',
+    'company_hero_desc'        => '워크그룹 평목(平木)은 옛 창호의 아름다움을 현대 공간에 담아내는 전통창호 설계·제작 공방입니다. <br>수백 년을 이어온 문살 기법을 디지털 도구로 재해석하여, 누구나 자신만의 창호를 <br>직접 설계하고 제작까지 연결할 수 있는 환경을 만들어갑니다.',
 
     'company_phil_label'       => 'Philosophy',
     'company_phil_title'       => '평목(平木)',
