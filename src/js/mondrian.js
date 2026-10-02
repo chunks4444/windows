@@ -475,24 +475,7 @@ async function draw() {
         }
     }
 
-    // 세로 자동 맞춤: 마지막 격자 행이 하부 울거미에 닿도록 outerH 조정
-    // (가로살 개수 직접 지정 모드에서는 세로 칸수가 항상 정확히 맞아떨어지므로 불필요)
-    const chkShrinkH = document.getElementById('chkShrinkH');
-    if (chkShrinkH?.checked && !chkRowsManual.checked) {
-        const pungpanOn = document.getElementById('chkPungpan').checked;
-        const pungpanInput = parseInt(document.getElementById('txtPungpan').value) || 0;
-        const effectivePungpan = pungpanOn ? pungpanInput : 0;
-        const rawTarget = Math.round(geo.frameH * 2 + geo.innerH) + effectivePungpan;
-        // 유효한 값이고 슬라이더 범위 안에 있을 때만 조정
-        if (Number.isFinite(rawTarget) && rawTarget >= 400 && rawTarget <= 3000) {
-            const currentH = parseInt(txtH.value);
-            if (rawTarget !== currentH) {
-                setSlider('txtH', 'numH', rawTarget);
-                draw();
-                return;
-            }
-        }
-    }
+    // (몬드리안: 자유 형태라 "세로 자동 맞춤" 로직 자체를 제거함 — 정자살 전용 기능)
 
     window.__pmokApplyPrice?.(data.price, data.costBreakdown);
 
@@ -2308,7 +2291,6 @@ async function draw() {
 
 document.getElementById('chkDimension').addEventListener('change', e => { showDimensions = e.target.checked; draw(); });
 document.getElementById('chkMuntol')?.addEventListener('change', e => { showMuntol = e.target.checked; draw(); });
-        document.getElementById('chkShrinkH').addEventListener('change', draw);
     // ── 슬라이더 ↔ 인풋창 양방향 동기화 ──────────────────
 
     const syncPairs = [
@@ -2327,7 +2309,6 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
         const manual = chkRowsManual.checked;
         document.getElementById('rowsCtrl').style.display   = manual ? 'block' : 'none';
         document.getElementById('ratioCtrl').style.display  = manual ? 'none'  : 'block';
-        document.getElementById('shrinkHRow').style.display = manual ? 'none'  : 'flex';
     }
     chkRowsManual.addEventListener('change', () => { updateRowsManualUI(); draw(); });
     updateRowsManualUI();
@@ -2623,7 +2604,6 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
             doorCount: parseInt(txtDoorCount.value),
             pungpanOn: document.getElementById('chkPungpan').checked,
             pungpan:   parseInt(document.getElementById('txtPungpan').value) || 0,
-            shrinkH:   document.getElementById('chkShrinkH').checked,
             wood:      document.getElementById('txtWood').value,
             finish:    document.getElementById('txtFinish').value,
             hardware:  document.getElementById('txtHardware')?.value ?? '',
@@ -2664,7 +2644,6 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
         txtDoorCount.value = p.doorCount;
         document.getElementById('chkPungpan').checked = p.pungpanOn;
         setSlider('txtPungpan', 'numPungpan', p.pungpan);
-        document.getElementById('chkShrinkH').checked = p.shrinkH || false;
         document.getElementById('txtWood').value    = p.wood || '소나무';
         const _fEl = document.getElementById('txtFinish');
         if (_fEl) { _fEl.value = p.finish ?? ''; if (_fEl.selectedIndex < 0) _fEl.selectedIndex = 0; } window.applyFinishColorPicker?.(false);

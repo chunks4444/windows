@@ -265,14 +265,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                         </div>
                     </div>
 
-                    <hr class="sb-divider">
-                    <div class="toggle-row" id="shrinkHRow" style="display:<?= $cfg['rowsManual'] === '1' ? 'none' : 'flex' ?>;">
-                        <span class="toggle-label"><?= te('세로 자동 맞춤') ?></span>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="chkShrinkH" <?= $cfg['shrinkH'] === '1' ? 'checked' : '' ?>>
-                            <span class="toggle-track"></span>
-                        </label>
-                    </div>
+                    <!-- 몬드리안: "세로 자동 맞춤"은 정자살 전용 기능이라 로직까지 제거함 -->
 
                     <hr class="sb-divider">
                     <div class="toggle-row">
