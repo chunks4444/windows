@@ -61,12 +61,13 @@ function engine_icon_svg(string $key): string {
                 . '<line x1="388" y1="340" x2="388" y2="532" stroke="#1a1a1a" stroke-width="18"/>'
                 . '</svg>';
         case 'hexagon':
+            // 다른 아이콘들과 같은 148~532 범위에 맞춰 크기 통일 (원래 210~470/190~490로 더 작았음)
             return '<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg" fill="none">'
-                . '<polyline class="wk-icon-stroke s1" points="210,265 340,190 470,265"/>'
-                . '<line class="wk-icon-stroke s2" x1="210" y1="265" x2="210" y2="415"/>'
-                . '<line class="wk-icon-stroke s3" x1="470" y1="265" x2="470" y2="415"/>'
-                . '<line class="wk-icon-stroke s4" x1="210" y1="415" x2="340" y2="490"/>'
-                . '<line class="wk-icon-stroke s5" x1="470" y1="415" x2="340" y2="490"/>'
+                . '<polyline class="wk-icon-stroke s1" points="174,244 340,148 506,244"/>'
+                . '<line class="wk-icon-stroke s2" x1="174" y1="244" x2="174" y2="436"/>'
+                . '<line class="wk-icon-stroke s3" x1="506" y1="244" x2="506" y2="436"/>'
+                . '<line class="wk-icon-stroke s4" x1="174" y1="436" x2="340" y2="532"/>'
+                . '<line class="wk-icon-stroke s5" x1="506" y1="436" x2="340" y2="532"/>'
                 . '</svg>';
         default:
             return '';

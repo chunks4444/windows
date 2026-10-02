@@ -122,16 +122,19 @@ $navStudioIcons = [
             <g transform="rotate(120 340 340)"><rect fill="currentColor" x="317" y="148" width="46" height="384" rx="23"/></g>
         </svg>',
     'hexagon' => '<svg width="27" height="27" viewBox="0 0 680 680" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <polyline points="210,265 340,190 470,265" stroke="currentColor" stroke-width="32" stroke-linejoin="round" stroke-linecap="round"/>
-            <line x1="210" y1="265" x2="210" y2="415" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
-            <line x1="470" y1="265" x2="470" y2="415" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
-            <line x1="210" y1="415" x2="340" y2="490" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
-            <line x1="470" y1="415" x2="340" y2="490" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
+            <polyline points="174,244 340,148 506,244" stroke="currentColor" stroke-width="32" stroke-linejoin="round" stroke-linecap="round"/>
+            <line x1="174" y1="244" x2="174" y2="436" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
+            <line x1="506" y1="244" x2="506" y2="436" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
+            <line x1="174" y1="436" x2="340" y2="532" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
+            <line x1="506" y1="436" x2="340" y2="532" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
         </svg>',
     'mondrian' => '<svg width="27" height="27" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
-            <rect fill="none" stroke="currentColor" stroke-width="40" x="168" y="168" width="344" height="344"/>
-            <line x1="308" y1="148" x2="308" y2="532" stroke="currentColor" stroke-width="18"/>
-            <line x1="148" y1="340" x2="532" y2="340" stroke="currentColor" stroke-width="18"/>
+            <rect fill="currentColor" x="148" y="148" width="384" height="46" rx="23"/>
+            <rect fill="currentColor" x="148" y="486" width="384" height="46" rx="23"/>
+            <rect fill="currentColor" x="148" y="148" width="46" height="384" rx="23"/>
+            <rect fill="currentColor" x="486" y="148" width="46" height="384" rx="23"/>
+            <rect fill="currentColor" x="308" y="148" width="46" height="384" rx="23"/>
+            <rect fill="currentColor" x="148" y="340" width="384" height="46" rx="23"/>
         </svg>',
 ];
 ?>
