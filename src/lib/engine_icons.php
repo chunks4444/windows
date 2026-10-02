@@ -49,9 +49,11 @@ function engine_icon_svg(string $key): string {
             break;
         case 'mondrian':
             // 다른 엔진 아이콘과 달리 색이 고정이라 wk-icon-bar(단색 accent)를 안 쓰고 직접 채움.
-            // 다른 아이콘들과 같은 148~532 범위(680 기준)에 맞춰 크기를 통일.
+            // 다른 아이콘들과 같은 148~532 범위(680 기준)에 맞춰 크기를 통일 — 바깥 테두리는
+            // stroke라 두께(40)의 절반만큼 안쪽으로 당겨서(168~512) 실제 보이는 바깥 경계가
+            // 148~532가 되게 함.
             return '<svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">'
-                . '<rect x="148" y="148" width="384" height="384" fill="none" stroke="#1a1a1a" stroke-width="40"/>'
+                . '<rect x="168" y="168" width="344" height="344" fill="none" stroke="#1a1a1a" stroke-width="40"/>'
                 . '<rect x="148" y="148" width="160" height="192" fill="#d1232a"/>'
                 . '<rect x="388" y="340" width="144" height="80" fill="#1c3f94"/>'
                 . '<line x1="308" y1="148" x2="308" y2="532" stroke="#1a1a1a" stroke-width="18"/>'

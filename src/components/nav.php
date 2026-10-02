@@ -129,7 +129,7 @@ $navStudioIcons = [
             <line x1="470" y1="415" x2="340" y2="490" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
         </svg>',
     'mondrian' => '<svg width="27" height="27" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
-            <rect fill="none" stroke="currentColor" stroke-width="40" x="148" y="148" width="384" height="384"/>
+            <rect fill="none" stroke="currentColor" stroke-width="40" x="168" y="168" width="344" height="344"/>
             <line x1="308" y1="148" x2="308" y2="532" stroke="currentColor" stroke-width="18"/>
             <line x1="148" y1="340" x2="532" y2="340" stroke="currentColor" stroke-width="18"/>
         </svg>',
