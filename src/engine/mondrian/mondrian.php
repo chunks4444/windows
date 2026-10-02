@@ -193,8 +193,9 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                         </div>
                     </div>
 
-                    <hr class="sb-divider">
-                    <div class="ctrl">
+                    <!-- 몬드리안은 자유 형태라 격자 칸수/행 직접 지정이 의미 없어 숨김
+                         (JS가 값을 계속 읽으므로 input은 DOM에 남겨두고 화면에서만 숨김) -->
+                    <div class="ctrl" style="display:none;">
                         <div class="ctrl-header"><span class="ctrl-label"><?= te('세로 칸수') ?></span></div>
                         <div class="slider-row">
                             <input type="range" id="txtCols" min="2" max="30" step="1" value="<?= htmlspecialchars($cfg['cols']) ?>">
@@ -202,14 +203,14 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                         </div>
                     </div>
 
-                    <div class="toggle-row">
+                    <div class="toggle-row" style="display:none;">
                         <span class="toggle-label"><?= te('가로살 개수 직접 지정') ?></span>
                         <label class="toggle-switch">
                             <input type="checkbox" id="chkRowsManual" <?= $cfg['rowsManual'] === '1' ? 'checked' : '' ?>>
                             <span class="toggle-track"></span>
                         </label>
                     </div>
-                    <div class="ctrl" id="rowsCtrl" style="display:<?= $cfg['rowsManual'] === '1' ? 'block' : 'none' ?>;">
+                    <div class="ctrl" id="rowsCtrl" style="display:none;">
                         <div class="ctrl-header"><span class="ctrl-label"><?= te('가로살 개수') ?></span></div>
                         <div class="slider-row">
                             <input type="range" id="txtRows" min="1" max="60" step="1" value="<?= htmlspecialchars($cfg['rows']) ?>">
