@@ -153,7 +153,7 @@ return [
     'company_studio_label'     => 'Studio',
     'company_studio_title'     => 'Try designing it yourself.',
     'company_studio_body'      => 'Workgroup Pyeongmok\'s studio is a <strong>changho design tool</strong> you can use right in your browser. <br>Adjust the frame size, slat spacing, and pattern to complete a changho of your own. Your finished design is built at Workgroup Pyeongmok, using traditional changho-making technique exactly as drawn.',
-    'company_features_title'   => 'What all six engines have in common',
+    'company_features_title'   => 'What all seven engines have in common',
     'company_feature1'         => 'Choose hinged or sliding, and the number of panels',
     'company_feature2'         => 'Frame dimensions, left/right and top/bottom stile thickness, slat thickness',
     'company_feature3'         => 'Transom panel, dimension labels, frame outline',

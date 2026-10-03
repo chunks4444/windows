@@ -198,6 +198,8 @@ body {
     color: inherit;
 }
 .ab-tool-icon { flex-shrink: 0; opacity: 0.7; }
+/* 엔진 수가 홀수(현재 7개)면 2열 그리드에서 마지막 카드가 왼쪽에 혼자 남으므로 가로 전체로 늘린다 */
+.ab-tool-card:last-child:nth-child(odd) { grid-column: 1 / -1; }
 .ab-tool-card:hover .ab-tool-icon { opacity: 1; }
 .ab-tool-name {
     font-family: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
