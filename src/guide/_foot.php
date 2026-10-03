@@ -1,7 +1,18 @@
 <?php
 // $guide_prev : ['href' => 'file.php', 'title' => '...'] | null
 // $guide_next : ['href' => 'file.php', 'title' => '...'] | null
+// $current_engine : _head.php가 채움. 엔진 가이드일 때만 하단에 엔진 바로가기 버튼을 그린다.
 ?>
+
+<?php if (!empty($current_engine)): ?>
+<div class="guide-engine-cta">
+    <span class="guide-engine-cta-icon"><?= $guideEngineIcons[$current_engine['key']] ?? '' ?></span>
+    <p class="guide-engine-cta-text"><?= htmlspecialchars(sprintf(t('guide_engine_cta_text'), $current_engine['title'])) ?></p>
+    <a href="<?= lang_href('/src/engine/' . $current_engine['key'] . '/' . $current_engine['key'] . '.php') ?>" class="guide-engine-cta-btn">
+        <?= htmlspecialchars(sprintf(t('guide_engine_cta_btn'), $current_engine['title'])) ?> <i class="bi bi-arrow-right"></i>
+    </a>
+</div>
+<?php endif; ?>
 
 <div class="guide-pager">
     <?php if (!empty($guide_prev)): ?>

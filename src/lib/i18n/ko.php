@@ -182,6 +182,8 @@ return [
     'guide_breadcrumb_root'    => '가이드',
     'guide_pager_prev'         => '이전',
     'guide_pager_next'         => '다음',
+    'guide_engine_cta_text'    => '%s 스튜디오에서 직접 설계해 보세요.',
+    'guide_engine_cta_btn'     => '%s 엔진 사용하기',
 
     'guide_sec_about'          => '워크그룹 평목 소개',
     'guide_sec_drawing'        => '도면 관리',

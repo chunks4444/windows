@@ -182,6 +182,8 @@ return [
     'guide_breadcrumb_root'    => 'Guide',
     'guide_pager_prev'         => 'Previous',
     'guide_pager_next'         => 'Next',
+    'guide_engine_cta_text'    => 'Try designing it yourself in the %s studio.',
+    'guide_engine_cta_btn'     => 'Open the %s engine',
 
     'guide_sec_about'          => 'About Workgroup Pyeongmok',
     'guide_sec_drawing'        => 'Managing Drawings',

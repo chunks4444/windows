@@ -137,12 +137,15 @@ $guideEngineIcons = [
         </svg>',
 ];
 
-// 현재 섹션 찾기
-$current_cat = '';
+// 현재 섹션 찾기. 엔진 가이드(studio-*.php)면 엔진 키·이름도 기억해 두었다가
+// _foot.php가 본문 하단에 "○○ 엔진 사용하기" 버튼을 그린다.
+$current_cat    = '';
+$current_engine = null; // ['key' => 'square', 'title' => '정자살']
 foreach ($guide_nav as $sec) {
     foreach ($sec['articles'] as $art) {
         if ($art['file'] === ($guide_current ?? '')) {
             $current_cat = $sec['title'];
+            if (!empty($art['engine'])) $current_engine = ['key' => $art['engine'], 'title' => $art['title']];
             break 2;
         }
     }
