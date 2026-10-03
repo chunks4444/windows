@@ -17,7 +17,7 @@ if (!$payload) {
 }
 $userId = (int) $payload['sub'];
 
-$validEngines = ['square', 'classic', 'cross', 'diamond', 'triangle', 'hexagon'];
+$validEngines = ['square', 'classic', 'cross', 'diamond', 'triangle', 'hexagon', 'mondrian'];
 
 $body         = json_decode(file_get_contents('php://input'), true) ?? [];
 $engine       = $body['engine'] ?? '';

@@ -78,7 +78,7 @@ if ($action === 'save') {
     $panel_bg    = preg_match('/^#[0-9a-fA-F]{3,6}$/', $body['panel_bg']    ?? '') ? $body['panel_bg']    : '#111111';
     $title_color = preg_match('/^#[0-9a-fA-F]{3,6}$/', $body['title_color'] ?? '') ? $body['title_color'] : '#ffffff';
     $desc_color  = preg_match('/^#[0-9a-fA-F]{3,6}$/', $body['desc_color']  ?? '') ? $body['desc_color']  : '#888888';
-    $validEngines = ['classic', 'square', 'cross', 'diamond', 'triangle', 'hexagon'];
+    $validEngines = ['classic', 'square', 'cross', 'diamond', 'triangle', 'hexagon', 'mondrian'];
     $engine_key   = in_array($body['engine_key'] ?? '', $validEngines, true) ? $body['engine_key'] : null;
 
     // 카드에 사진 대신 표시할 커스텀 아이콘 SVG — 그대로 페이지에 심어지므로(inline) 반드시 살균

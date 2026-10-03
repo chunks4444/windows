@@ -13,6 +13,7 @@ try {
         ['engine_key'=>'diamond',  'title'=>'Diamond Lattice'],
         ['engine_key'=>'triangle', 'title'=>'Triangle Lattice'],
         ['engine_key'=>'hexagon',  'title'=>'Hexagon Lattice'],
+        ['engine_key'=>'mondrian', 'title'=>'Mondrian'],
     ];
 }
 ?>

@@ -123,8 +123,8 @@ $check('관리자 주문 목록 조회 (/src/api/admin/orders.php)', function ()
     return [$r['code'] === 200 && isset($r['json']['orders']), "HTTP {$r['code']}"];
 });
 
-// ── 7. 6엔진 페이지 로드 ──
-foreach (['classic', 'square', 'cross', 'diamond', 'triangle', 'hexagon'] as $engine) {
+// ── 7. 7엔진 페이지 로드 ──
+foreach (['classic', 'square', 'cross', 'diamond', 'triangle', 'hexagon', 'mondrian'] as $engine) {
     $check("엔진 페이지 로드: $engine", function () use ($base, $engine) {
         $r = http_call('GET', "$base/src/engine/$engine/$engine.php");
         return [$r['code'] === 200, "HTTP {$r['code']}"];

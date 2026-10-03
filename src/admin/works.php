@@ -124,6 +124,7 @@ require_admin_role('s');
                     <option value="diamond">격자빗살</option>
                     <option value="triangle">세모솟을살</option>
                     <option value="hexagon">육모솟을살</option>
+                    <option value="mondrian">몬드리안</option>
                 </select>
             </div>
             <div class="adm-mfield">

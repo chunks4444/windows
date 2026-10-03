@@ -15,6 +15,7 @@ $editorMap = [
     'cross'    => '/src/engine/cross/cross.php',
     'triangle' => '/src/engine/triangle/triangle.php',
     'hexagon'  => '/src/engine/hexagon/hexagon.php',
+    'mondrian' => '/src/engine/mondrian/mondrian.php',
 ];
 
 $pattern = null;

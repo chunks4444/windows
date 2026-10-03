@@ -21,6 +21,7 @@ $engineEditorMap = [
     'cross'    => '/src/engine/cross/cross.php',
     'triangle' => '/src/engine/triangle/triangle.php',
     'hexagon'  => '/src/engine/hexagon/hexagon.php',
+    'mondrian' => '/src/engine/mondrian/mondrian.php',
 ];
 $ssrQuery = trim($_GET['q'] ?? '');
 $ssrHasExplicitFilter = $ssrQuery !== '' || ($_GET['category'] ?? '') !== '' || ($_GET['group'] ?? '') !== '';

@@ -31,6 +31,7 @@ $editorMap = [
     'cross'    => '/src/engine/cross/cross.php',
     'triangle' => '/src/engine/triangle/triangle.php',
     'hexagon'  => '/src/engine/hexagon/hexagon.php',
+    'mondrian' => '/src/engine/mondrian/mondrian.php',
 ];
 
 // WHERE 조건 — 검색어/모양(계열)/우리살·새살·일본살/좋아요는 서로 결합하지 않고 각각 개별 검색으로 동작.

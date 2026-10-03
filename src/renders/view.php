@@ -11,6 +11,7 @@ $engineLabels = [
     'triangle' => '세모솟을살',
     'diamond'  => '격자빗살',
     'hexagon'  => '육모솟을살',
+    'mondrian' => '몬드리안',
 ];
 
 // URL엔 실제 저장 경로(/uploads/renders/{userId}/…) 대신, 파일명에 이미 박혀있는

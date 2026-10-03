@@ -138,7 +138,7 @@
     // ── 공통 모달 유틸리티 ─────────────────────────
     let _pmModalEl = null;
     // ── 렌더링 결과 저장 ───────────────────────────
-    const RENDERS_KEY = 'pmok_square_renders';
+    const RENDERS_KEY = 'pmok_mondrian_renders';
     const MAX_RENDERS = 9;
     let savedRenders = [];
 
@@ -2351,13 +2351,13 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
     updateDoorCountOptions();
 
     // 작성일 / 수정일
-    const CREATED_KEY       = 'pmok_square_created';
-    const MODIFIED_KEY      = 'pmok_square_modified';
-    const VERSIONS_KEY      = 'pmok_square_versions';
-    const BG_IMAGE_KEY      = 'pmok_square_bg';
+    const CREATED_KEY       = 'pmok_mondrian_created';
+    const MODIFIED_KEY      = 'pmok_mondrian_modified';
+    const VERSIONS_KEY      = 'pmok_mondrian_versions';
+    const BG_IMAGE_KEY      = 'pmok_mondrian_bg';
     const WALLPAPER_ENGINE  = 'mondrian';
-    const CURRENT_TITLE_KEY = 'pmok_square_current_title';
-    const NAME_KEY          = 'pmok_square_name';
+    const CURRENT_TITLE_KEY = 'pmok_mondrian_current_title';
+    const NAME_KEY          = 'pmok_mondrian_name';
     const MAX_VERSIONS      = 20;
 
     let workAccum = 0;

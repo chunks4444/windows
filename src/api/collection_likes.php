@@ -36,6 +36,7 @@ if ($method === 'GET') {
             'cross'    => '/src/engine/cross/cross.php',
             'triangle' => '/src/engine/triangle/triangle.php',
             'hexagon'  => '/src/engine/hexagon/hexagon.php',
+            'mondrian' => '/src/engine/mondrian/mondrian.php',
         ];
 
         $placeholders = implode(',', array_fill(0, count($ids), '?'));

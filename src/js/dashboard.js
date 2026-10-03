@@ -74,6 +74,20 @@ const TYPE_CONFIG = {
                </svg>`,
         newUrl: '/src/engine/hexagon/hexagon.php',
     },
+    'mondrian': {
+        label: 'Mondrian',
+        editorUrl: '/src/engine/mondrian/mondrian.php',
+        titleKey: 'pmok_mondrian_current_title',
+        icon: `<svg class="db-section-icon" viewBox="0 0 680 680" fill="none" xmlns="http://www.w3.org/2000/svg">
+                 <rect fill="currentColor" x="148" y="148" width="384" height="46" rx="23"/>
+                 <rect fill="currentColor" x="148" y="486" width="384" height="46" rx="23"/>
+                 <rect fill="currentColor" x="148" y="148" width="46" height="384" rx="23"/>
+                 <rect fill="currentColor" x="486" y="148" width="46" height="384" rx="23"/>
+                 <rect fill="currentColor" x="308" y="148" width="46" height="384" rx="23"/>
+                 <rect fill="currentColor" x="148" y="340" width="384" height="46" rx="23"/>
+               </svg>`,
+        newUrl: '/src/engine/mondrian/mondrian.php',
+    },
 };
 
 function fmtDate(ts) {

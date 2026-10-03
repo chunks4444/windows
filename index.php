@@ -67,6 +67,7 @@ try {
         'cross'    => '/src/engine/cross/cross.php',
         'triangle' => '/src/engine/triangle/triangle.php',
         'hexagon'  => '/src/engine/hexagon/hexagon.php',
+        'mondrian' => '/src/engine/mondrian/mondrian.php',
     ];
     $collectionCards = $pdo ? $pdo->query(
         "SELECT p.slug, p.name_ko, p.image_path, p.drawing_id, d.type AS engine
@@ -553,6 +554,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
             triangle: '<?= lang_href('/src/engine/triangle/triangle.php') ?>',
             diamond:  '<?= lang_href('/src/engine/diamond/diamond.php') ?>',
             hexagon:  '<?= lang_href('/src/engine/hexagon/hexagon.php') ?>',
+            mondrian: '<?= lang_href('/src/engine/mondrian/mondrian.php') ?>',
         };
         const DEFAULT_ENGINE = 'classic';
         // JS에서 쓰는 문구도 PHP 사전에서 주입 (en 모드에서 버튼·상태 메시지가 한글로 남지 않도록)
