@@ -2048,7 +2048,10 @@ function drawSvgInserts() {
             [...Object.keys(wonFieldKeys), 'spCraftTime', 'spFinishCost'].forEach(id => set(id, '–'));
         } else {
             for (const [id, key] of Object.entries(wonFieldKeys)) set(id, won(breakdown[key] ?? 0) + _t('원'));
-            set('spCraftTime', breakdown.craftTime ?? '');
+            // craftTime은 서버가 "8시간 30분" 한글로 만든다(주문 원가내역에도 그대로 저장되므로 서버는 그대로 둠) — 영문 화면에서만 표시용으로 바꾼다
+            let craftTime = breakdown.craftTime ?? '';
+            if (window.PMOK_LANG === 'en') craftTime = craftTime.replace(/(\d+)시간/, '$1h').replace(/(\d+)분/, '$1m');
+            set('spCraftTime', craftTime);
             set('spFinishCost', breakdown.finish > 0 ? won(breakdown.finish) + _t('원') : '–');
         }
     }

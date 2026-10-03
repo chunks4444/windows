@@ -39,6 +39,9 @@ function engine_setting_defaults(string $engine): array {
             return $common + ['cols' => '4', 'shrinkH' => '0', 'rotate' => '1', 'min_days' => '4', 'min_work_hours' => '8'];
         case 'hexagon':
             return $common + ['cols' => '3', 'shrinkH' => '0', 'rotate' => '1', 'min_days' => '5', 'min_work_hours' => '10'];
+        case 'mondrian':
+            // 정자살(square.js)을 복사해 만든 엔진이라 사이드바가 같은 키(세로 비율 등)를 읽는다 — 빠지면 입력칸이 비고 Notice가 난다
+            return $common + ['cols' => '6', 'ratio' => '1.0', 'shrinkH' => '0', 'rowsManual' => '0', 'rows' => '6', 'min_days' => '3', 'min_work_hours' => '4'];
         default:
             return $common + ['min_days' => '3', 'min_work_hours' => '4'];
     }
