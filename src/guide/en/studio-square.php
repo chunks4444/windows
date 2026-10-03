@@ -16,6 +16,10 @@ include __DIR__ . '/../_head.php';
     finish, background, export), but uses a <strong>single-ratio even grid</strong> instead of three
     top/middle/bottom zones.</p>
 
+<div class="guide-screenshot">
+    <img src="/src/img/guide/studio-square-en.png" alt="Jeongja-sal studio layout — design sidebar on the left, canvas in the center, estimate, finish and rendering sidebar on the right" loading="lazy">
+</div>
+
 <h2>How It Differs from Se-sal</h2>
 <table class="guide-table">
     <thead><tr><th></th><th>Jeongja-sal</th><th>Se-sal</th></tr></thead>

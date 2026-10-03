@@ -14,6 +14,10 @@ include __DIR__ . '/_head.php';
     세살과 사이드바 구조(문 설정 · 문 치수 · 창살 설정 · 마감 · 배경 · 내보내기)를 대부분 공유하지만,
     상/중/하 3단 구획 대신 <strong>단일 비율의 균등 격자</strong>를 사용합니다.") ?></p>
 
+<div class="guide-screenshot">
+    <img src="/src/img/guide/studio-square.png" alt="정자살 스튜디오 화면 구성 — 왼쪽 설계 사이드바, 중앙 캔버스, 오른쪽 예상가격·마감·렌더링 사이드바" loading="lazy">
+</div>
+
 <h2>세살과의 차이점</h2>
 <table class="guide-table">
     <thead><tr><th></th><th>정자살</th><th>세살</th></tr></thead>

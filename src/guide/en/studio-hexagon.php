@@ -16,6 +16,10 @@ include __DIR__ . '/../_head.php';
     The honeycomb hexagons the slats form are closer to a circle than a square, so — even with the same
     weaving technique — the result feels round and generous rather than taut like the triangular pattern.</p>
 
+<div class="guide-screenshot">
+    <img src="/src/img/guide/studio-hexagon-en.png" alt="Yukmo-sotgeul-sal studio layout — design sidebar on the left, canvas in the center, estimate, finish and rendering sidebar on the right" loading="lazy">
+</div>
+
 <h2>How It Differs from Semo-sotgeul-sal</h2>
 <table class="guide-table">
     <thead><tr><th></th><th>Semo-sotgeul-sal</th><th>Yukmo-sotgeul-sal</th></tr></thead>

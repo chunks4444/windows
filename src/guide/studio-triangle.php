@@ -13,6 +13,10 @@ include __DIR__ . '/_head.php';
     살들이 교차하며 정삼각형이 화면 가득 반복되어, 육모의 둥글고 넉넉한 인상과 달리 팽팽하고 긴장감 있는 느낌을 줍니다.
     모든 셀이 정삼각형이 되도록 세로 칸수가 자동으로 계산되며, 세로 칸수를 직접 지정할 수는 없습니다.") ?></p>
 
+<div class="guide-screenshot">
+    <img src="/src/img/guide/studio-triangle.png" alt="세모솟을살 스튜디오 화면 구성 — 왼쪽 설계 사이드바, 중앙 캔버스, 오른쪽 예상가격·마감·렌더링 사이드바" loading="lazy">
+</div>
+
 <h2>살 구성</h2>
 <table class="guide-table">
     <thead><tr><th>살 방향</th><th>각도</th></tr></thead>

@@ -13,6 +13,10 @@ include __DIR__ . '/_head.php';
     '솟을'은 살이 교차점에서 겹치며 위로 솟아오르는 데서 온 이름으로, 짜임에 입체감이 살아 있습니다.
     살이 만드는 벌집 모양의 여섯 각은 사각보다 원에 가까워, 같은 짜임인데도 세모의 팽팽함 대신 둥글고 넉넉한 인상을 줍니다.") ?></p>
 
+<div class="guide-screenshot">
+    <img src="/src/img/guide/studio-hexagon.png" alt="육모솟을살 스튜디오 화면 구성 — 왼쪽 설계 사이드바, 중앙 캔버스, 오른쪽 예상가격·마감·렌더링 사이드바" loading="lazy">
+</div>
+
 <h2>세모솟을살과의 차이</h2>
 <table class="guide-table">
     <thead><tr><th></th><th>세모솟을살</th><th>육모솟을살</th></tr></thead>

@@ -11,6 +11,10 @@ include __DIR__ . '/_head.php';
 <p class="guide-lead"><?= studio_card_description('mondrian', "정자살 격자를 무작위로 분할해 만든 자유 패턴 엔진입니다.
     버튼 한 번으로 새 구성을 만들고, 선을 직접 그리거나 옮겨 다듬을 수 있습니다.") ?></p>
 
+<div class="guide-screenshot">
+    <img src="/src/img/guide/studio-mondrian.png" alt="몬드리안 스튜디오 화면 구성 — 왼쪽 설계 사이드바, 중앙 캔버스, 오른쪽 예상가격·마감·렌더링 사이드바" loading="lazy">
+</div>
+
 <p>
     가로·세로 직선 살만 쓴다는 점은 정자살과 같지만, 칸이 고르게 반복되지 않고
     <strong>크고 작은 직사각형이 비대칭으로 나뉘는</strong> 것이 특징입니다.

@@ -14,6 +14,10 @@ include __DIR__ . '/../_head.php';
     As in the Bit-sal engine, cells are always fixed as squares, with vertical, horizontal and diagonal
     slats all drawn over them.</p>
 
+<div class="guide-screenshot">
+    <img src="/src/img/guide/studio-diamond-en.png" alt="Gyeokja-bit-sal studio layout — design sidebar on the left, canvas in the center, estimate, finish and rendering sidebar on the right" loading="lazy">
+</div>
+
 <h2>Slat Composition</h2>
 <table class="guide-table">
     <thead><tr><th>Slat direction</th><th>Angle</th><th>Role</th></tr></thead>

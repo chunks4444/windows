@@ -11,6 +11,10 @@ include __DIR__ . '/../_head.php';
 <p class="guide-lead">A free-form engine that randomly subdivides the Jeongja-sal grid.
     Generate a new layout with one click, then draw or drag lines to refine it.</p>
 
+<div class="guide-screenshot">
+    <img src="/src/img/guide/studio-mondrian-en.png" alt="Mondrian studio layout — design sidebar on the left, canvas in the center, estimate, finish and rendering sidebar on the right" loading="lazy">
+</div>
+
 <p>
     Like Jeongja-sal, it uses only straight horizontal and vertical slats — but instead of repeating even cells,
     the space is split into <strong>rectangles of different sizes, arranged asymmetrically</strong>.

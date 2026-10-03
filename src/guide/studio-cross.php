@@ -13,6 +13,10 @@ include __DIR__ . '/_head.php';
     가로 칸수만 지정하면 셀이 항상 정사각형이 되도록 세로 칸수가 자동으로 계산되며,
     각도를 조절하는 설정 항목은 따로 없습니다.") ?></p>
 
+<div class="guide-screenshot">
+    <img src="/src/img/guide/studio-cross.png" alt="빗살 스튜디오 화면 구성 — 왼쪽 설계 사이드바, 중앙 캔버스, 오른쪽 예상가격·마감·렌더링 사이드바" loading="lazy">
+</div>
+
 <h2>특징</h2>
 <ul>
     <li>셀은 항상 정사각형으로 고정되며, 그 대각선을 따라 살이 배치되어 45° 사선 무늬가 만들어집니다.</li>

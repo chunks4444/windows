@@ -23,7 +23,7 @@ include __DIR__ . '/../_head.php';
 
 <!-- UI 스크린샷 -->
 <div class="guide-screenshot">
-    <img src="/src/img/guide/studio-classic.png" alt="Se-sal studio layout — design sidebar on the left, canvas in the center, estimate, finish and rendering sidebar on the right" loading="lazy">
+    <img src="/src/img/guide/studio-classic-en.png" alt="Se-sal studio layout — design sidebar on the left, canvas in the center, estimate, finish and rendering sidebar on the right" loading="lazy">
 </div>
 
 <h2>① Left Sidebar — Design Parameters</h2>

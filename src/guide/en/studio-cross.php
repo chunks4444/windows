@@ -14,6 +14,10 @@ include __DIR__ . '/../_head.php';
     You set only the horizontal cell count; the vertical count is calculated automatically so the cells
     stay perfectly square, and there is no separate setting for the angle.</p>
 
+<div class="guide-screenshot">
+    <img src="/src/img/guide/studio-cross-en.png" alt="Bit-sal studio layout — design sidebar on the left, canvas in the center, estimate, finish and rendering sidebar on the right" loading="lazy">
+</div>
+
 <h2>Characteristics</h2>
 <ul>
     <li>Cells are always fixed as squares, with slats laid along their diagonals to create the 45° pattern.</li>
