@@ -24,6 +24,7 @@ $guide_nav = [
             ['file' => 'studio-diamond.php',  'title' => t('guide_art_diamond'),  'engine' => 'diamond'],
             ['file' => 'studio-triangle.php', 'title' => t('guide_art_triangle'), 'engine' => 'triangle'],
             ['file' => 'studio-hexagon.php',  'title' => t('guide_art_hexagon'),  'engine' => 'hexagon'],
+            ['file' => 'studio-mondrian.php', 'title' => t('guide_art_mondrian'), 'engine' => 'mondrian'],
         ],
     ],
     [
@@ -125,6 +126,14 @@ $guideEngineIcons = [
             <line x1="470" y1="265" x2="470" y2="415" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
             <line x1="210" y1="415" x2="340" y2="490" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
             <line x1="470" y1="415" x2="340" y2="490" stroke="currentColor" stroke-width="32" stroke-linecap="round"/>
+        </svg>',
+    'mondrian' => '<svg width="14" height="14" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+            <rect fill="currentColor" x="148" y="148" width="384" height="46" rx="23"/>
+            <rect fill="currentColor" x="148" y="486" width="384" height="46" rx="23"/>
+            <rect fill="currentColor" x="148" y="148" width="46" height="384" rx="23"/>
+            <rect fill="currentColor" x="486" y="148" width="46" height="384" rx="23"/>
+            <rect fill="currentColor" x="308" y="148" width="46" height="384" rx="23"/>
+            <rect fill="currentColor" x="148" y="340" width="384" height="46" rx="23"/>
         </svg>',
 ];
 

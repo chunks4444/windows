@@ -3,7 +3,7 @@ require_once __DIR__ . '/../lib/studio_card_content.php';
 $guide_current = 'studio-hexagon.php';
 $guide_title   = '육모솟을살';
 $guide_prev    = ['href' => 'studio-triangle.php', 'title' => '세모솟을살'];
-$guide_next    = ['href' => 'canvas-toolbar.php', 'title' => '캔버스 툴바'];
+$guide_next    = ['href' => 'studio-mondrian.php', 'title' => '몬드리안'];
 include __DIR__ . '/_head.php';
 ?>
 

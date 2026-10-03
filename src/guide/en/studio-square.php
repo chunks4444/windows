@@ -14,7 +14,7 @@ include __DIR__ . '/../_head.php';
     it was the second most common form after Se-sal.
     It shares most of its sidebar structure with Se-sal (door settings, dimensions, lattice settings,
     finish, background, export), but uses a <strong>single-ratio even grid</strong> instead of three
-    top/middle/bottom zones, and adds a <strong>random pattern</strong> feature that reshuffles the grid.</p>
+    top/middle/bottom zones.</p>
 
 <h2>How It Differs from Se-sal</h2>
 <table class="guide-table">
@@ -22,7 +22,6 @@ include __DIR__ . '/../_head.php';
     <tbody>
         <tr><td>Zoning</td><td>One cell ratio applied across the whole grid</td><td>Split into top/middle/bottom, each with its own cell count and ratio</td></tr>
         <tr><td>Vertical ratio range</td><td>1.0 – 3.0</td><td>1.0 – 5.0</td></tr>
-        <tr><td>Random pattern</td><td>Yes (Mondrian-style random division)</td><td>No</td></tr>
         <tr><td>Auto-fit height</td><td>Yes</td><td>No</td></tr>
     </tbody>
 </table>
@@ -48,21 +47,9 @@ include __DIR__ . '/../_head.php';
     <span>Combining the horizontal cell count with the vertical ratio lets you tune the grid freely — from perfectly square cells to tall, narrow ones.</span>
 </div>
 
-<h2>Random Pattern</h2>
-<p>
-    Unique to the Jeongja-sal engine, this re-divides the even grid at random, Mondrian style.
-</p>
-<table class="guide-table">
-    <thead><tr><th>Button</th><th>Function</th></tr></thead>
-    <tbody>
-        <tr><td><span class="guide-ui">Generate random</span></td><td>Randomly merges and splits cells from the current grid to create an irregular pattern</td></tr>
-        <tr><td><span class="guide-ui">Reset</span></td><td>Clears the random pattern and restores the original even grid</td></tr>
-    </tbody>
-</table>
-
 <div class="guide-note">
     <i class="bi bi-info-circle-fill"></i>
-    <span>Each click produces a different result. Save as soon as you get one you like — previous results are not kept, and reset discards the current one.</span>
+    <span>The random pattern, which divides the grid at random, has moved to its own <a href="<?= lang_href('/guide/studio-mondrian') ?>">Mondrian</a> engine.</span>
 </div>
 
 <h2>Production Specification &amp; Parts List</h2>
@@ -79,7 +66,6 @@ include __DIR__ . '/../_head.php';
 <ul>
     <li>Sliding changho in contemporary hanok</li>
     <li>Partition changho for cafés and commercial spaces</li>
-    <li>Irregular changho designs made with the random pattern</li>
 </ul>
 
 <?php include __DIR__ . '/../_foot.php'; ?>

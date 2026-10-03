@@ -3,7 +3,7 @@
 $guide_current = 'studio-hexagon.php';
 $guide_title   = 'Yukmo-sotgeul-sal';
 $guide_prev    = ['href' => 'studio-triangle.php', 'title' => 'Semo-sotgeul-sal'];
-$guide_next    = ['href' => 'canvas-toolbar.php', 'title' => 'Canvas Toolbar'];
+$guide_next    = ['href' => 'studio-mondrian.php', 'title' => 'Mondrian'];
 include __DIR__ . '/../_head.php';
 ?>
 

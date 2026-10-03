@@ -53,7 +53,7 @@ require_once __DIR__ . '/../lib/i18n.php';
             </div>
             <div class="guide-cat-title"><?= htmlspecialchars(t("guide_card_studio_title")) ?></div>
             <div class="guide-cat-desc"><?= htmlspecialchars(t("guide_card_studio_desc")) ?></div>
-            <div class="guide-cat-count"><?= htmlspecialchars(sprintf(t("guide_article_count"), 6)) ?></div>
+            <div class="guide-cat-count"><?= htmlspecialchars(sprintf(t("guide_article_count"), 7)) ?></div>
         </a>
 
         <a href="<?= lang_href("/guide/drawing") ?>" class="guide-cat-card">

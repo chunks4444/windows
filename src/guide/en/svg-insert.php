@@ -54,7 +54,7 @@ include __DIR__ . '/../_head.php';
 
 <div class="guide-tip">
     <i class="bi bi-lightbulb-fill"></i>
-    <span>Motif insertion is a shared feature, available identically in all six engines (Se-sal, Jeongja-sal, Bit-sal, Gyeokja-bit-sal, Semo-sotgeul-sal and Yukmo-sotgeul-sal).</span>
+    <span>Motif insertion is a shared feature, available identically in all seven engines (Se-sal, Jeongja-sal, Bit-sal, Gyeokja-bit-sal, Semo-sotgeul-sal, Yukmo-sotgeul-sal and Mondrian).</span>
 </div>
 
 <?php include __DIR__ . '/../_foot.php'; ?>

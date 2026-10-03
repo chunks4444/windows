@@ -11,7 +11,7 @@ include __DIR__ . '/../_head.php';
 <p class="guide-lead">
     Pyeongmok (平木) is an online studio for designing and exporting <strong>changho</strong> — the
     windows, doors, and lattice screens of a traditional Korean hanok — in real time, right in your
-    browser. Six lattice pattern engines and AI rendering are available with nothing to install.
+    browser. Seven lattice pattern engines and AI rendering are available with nothing to install.
 </p>
 
 <h2>Key Features</h2>
@@ -22,7 +22,7 @@ include __DIR__ . '/../_head.php';
         <tr><th>Feature</th><th>Description</th></tr>
     </thead>
     <tbody>
-        <tr><td><strong>Six studios</strong></td><td>Lattice pattern engines for Se-sal, Jeongja-sal, Bit-sal, Gyeokja-bit-sal, Semo-sotgeul-sal and Yukmo-sotgeul-sal</td></tr>
+        <tr><td><strong>Seven studios</strong></td><td>Lattice pattern engines for Se-sal, Jeongja-sal, Bit-sal, Gyeokja-bit-sal, Semo-sotgeul-sal, Yukmo-sotgeul-sal and Mondrian</td></tr>
         <tr><td><strong>Real-time rendering</strong></td><td>Every parameter change is reflected on the canvas instantly</td></tr>
         <tr><td><strong>Drawing storage</strong></td><td>Drawings and versions are saved to the cloud, so you can pick up where you left off anywhere</td></tr>
         <tr><td><strong>PDF / PNG / DXF export</strong></td><td>Output files for printing, delivery, or CAD work</td></tr>
@@ -32,8 +32,8 @@ include __DIR__ . '/../_head.php';
     </tbody>
 </table>
 
-<h2>The Six Lattice Pattern Engines</h2>
-<p>The studio is divided into six engines according to how the lattice slats are arranged.</p>
+<h2>The Seven Lattice Pattern Engines</h2>
+<p>The studio is divided into seven engines according to how the lattice slats are arranged.</p>
 
 <ul>
     <li><strong>Se-sal</strong> — The traditional quarter-lap structure. The classic changho pattern of crossing vertical and horizontal slats</li>
@@ -42,6 +42,7 @@ include __DIR__ . '/../_head.php';
     <li><strong>Gyeokja-bit-sal</strong> — A composite diamond pattern. An advanced pattern combining vertical, horizontal and diagonal slats</li>
     <li><strong>Semo-sotgeul-sal</strong> — A triangular grid, built from slats running in three directions at 0°, 60° and 120°</li>
     <li><strong>Yukmo-sotgeul-sal</strong> — A hexagonal grid, the triangular pattern with one direction removed</li>
+    <li><strong>Mondrian</strong> — A free-division grid. An irregular pattern of large and small cells split at random by vertical and horizontal slats</li>
 </ul>
 
 <div class="guide-tip">

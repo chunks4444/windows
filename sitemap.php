@@ -25,7 +25,7 @@ $staticUrls = [
 // 가이드 개별 아티클 (src/guide/_head.php의 $guide_nav와 동일한 파일 목록 — 새 아티클 추가 시 여기도 같이 추가)
 foreach ([
     'intro', 'getting-started', 'canvas-toolbar',
-    'studio-classic', 'studio-square', 'studio-cross', 'studio-diamond', 'studio-triangle', 'studio-hexagon',
+    'studio-classic', 'studio-square', 'studio-cross', 'studio-diamond', 'studio-triangle', 'studio-hexagon', 'studio-mondrian',
     'drawing', 'export', 'render', 'collection', 'account', 'order', 'delivery', 'faq',
 ] as $guideFile) {
     $staticUrls[] = ['loc' => "/guide/$guideFile", 'priority' => '0.5', 'meta_path' => "/src/guide/$guideFile.php"];

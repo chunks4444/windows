@@ -97,7 +97,7 @@ include __DIR__ . '/../_head.php';
 <p>
     The bottom of the canvas gathers the view controls — zoom and pan — along with the slat
     delete/add editing modes, motif placement and shape drawing buttons.
-    These are shared across all six engines; see the
+    These are shared across all seven engines; see the
     <a href="<?= lang_href('/guide/canvas-toolbar') ?>">Canvas Toolbar</a> page for the full list and how to use them.
 </p>
 

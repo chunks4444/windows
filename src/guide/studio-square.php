@@ -12,8 +12,7 @@ include __DIR__ . '/_head.php';
     '정(井)'은 살이 짜이는 모양이 우물 정 자를 닮은 데서 온 이름으로, 빈틈없이 고른 격자가 이 창의 얼굴입니다.
     만살(滿箭)이라고도 부르며, 세살 다음으로 많이 쓰인 형식입니다.
     세살과 사이드바 구조(문 설정 · 문 치수 · 창살 설정 · 마감 · 배경 · 내보내기)를 대부분 공유하지만,
-    상/중/하 3단 구획 대신 <strong>단일 비율의 균등 격자</strong>를 사용하고, 격자를 무작위로 재구성하는
-    <strong>랜덤 패턴</strong> 기능이 추가로 있습니다.") ?></p>
+    상/중/하 3단 구획 대신 <strong>단일 비율의 균등 격자</strong>를 사용합니다.") ?></p>
 
 <h2>세살과의 차이점</h2>
 <table class="guide-table">
@@ -21,7 +20,6 @@ include __DIR__ . '/_head.php';
     <tbody>
         <tr><td>구획 방식</td><td>전체 격자에 동일한 셀 비율 적용</td><td>상/중/하 3단으로 나눠 각 구역 칸수·비율을 독립 지정</td></tr>
         <tr><td>세로 비율 범위</td><td>1.0 ~ 3.0</td><td>1.0 ~ 5.0</td></tr>
-        <tr><td>랜덤 패턴</td><td>있음 (몬드리안풍 무작위 분할)</td><td>없음</td></tr>
         <tr><td>세로 자동 맞춤</td><td>있음</td><td>없음</td></tr>
     </tbody>
 </table>
@@ -47,21 +45,9 @@ include __DIR__ . '/_head.php';
     <span>가로 칸수와 세로 비율을 조합하면 완전한 정방형(正方形) 격자부터 세로로 긴 격자까지 자유롭게 조정할 수 있습니다.</span>
 </div>
 
-<h2>랜덤 패턴</h2>
-<p>
-    정자살 엔진에만 있는 기능으로, 균질 격자를 몬드리안풍으로 무작위 재분할합니다.
-</p>
-<table class="guide-table">
-    <thead><tr><th>버튼</th><th>기능</th></tr></thead>
-    <tbody>
-        <tr><td><span class="guide-ui">랜덤 생성</span></td><td>현재 격자를 기준으로 셀을 무작위로 병합·분할해 비정형 패턴을 생성</td></tr>
-        <tr><td><span class="guide-ui">초기화</span></td><td>랜덤 패턴을 걷어내고 원래의 균등 격자로 복원</td></tr>
-    </tbody>
-</table>
-
 <div class="guide-note">
     <i class="bi bi-info-circle-fill"></i>
-    <span>랜덤 생성은 클릭할 때마다 다른 결과를 만듭니다. 마음에 드는 결과가 나오면 바로 저장하세요. 초기화 전에는 이전 결과가 남아있지 않습니다.</span>
+    <span>격자를 무작위로 나누는 랜덤 패턴은 별도의 <a href="/guide/studio-mondrian">몬드리안</a> 엔진으로 옮겨졌습니다.</span>
 </div>
 
 <h2>제작 시방서 & 부재 목록</h2>
@@ -78,7 +64,6 @@ include __DIR__ . '/_head.php';
 <ul>
     <li>현대 한옥의 미서기 창문</li>
     <li>카페·상업 공간의 파티션 창호</li>
-    <li>랜덤 패턴을 활용한 비정형 디자인 창호</li>
 </ul>
 
 <?php include __DIR__ . '/_foot.php'; ?>

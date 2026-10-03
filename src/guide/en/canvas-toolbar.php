@@ -2,7 +2,7 @@
 // 영문 본문. 한글 원문은 ../canvas-toolbar.php
 $guide_current = 'canvas-toolbar.php';
 $guide_title   = 'Canvas Toolbar';
-$guide_prev    = ['href' => 'studio-hexagon.php', 'title' => 'Yukmo-sotgeul-sal'];
+$guide_prev    = ['href' => 'studio-mondrian.php', 'title' => 'Mondrian'];
 $guide_next    = ['href' => 'svg-insert.php', 'title' => 'Inserting Motifs & Uploading SVGs'];
 include __DIR__ . '/../_head.php';
 ?>
@@ -11,8 +11,8 @@ include __DIR__ . '/../_head.php';
 <p class="guide-lead">
     At the bottom of the canvas sits a <strong>toolbar</strong> gathering the view controls, slat editing,
     motif placement and shape drawing buttons.
-    These are shared features, available identically in all six engines (Se-sal, Jeongja-sal, Bit-sal,
-    Gyeokja-bit-sal, Semo-sotgeul-sal and Yukmo-sotgeul-sal).
+    These are shared features, available identically in all seven engines (Se-sal, Jeongja-sal, Bit-sal,
+    Gyeokja-bit-sal, Semo-sotgeul-sal, Yukmo-sotgeul-sal and Mondrian).
 </p>
 
 <h2>View Controls</h2>
