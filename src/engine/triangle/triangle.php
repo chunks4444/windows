@@ -734,6 +734,16 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                         <hr class="sb-divider">
                         <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">
                             <div class="color-row-stack">
+                                <span class="color-label"><?= te('문틀 컬러') ?></span>
+                                <div class="color-picker-wrap">
+                                    <button class="color-preview-btn" id="muntolPreviewBtn">
+                                        <span class="color-preview-dot" id="muntolPreviewDot"></span>
+                                        <span id="muntolPreviewName">—</span>
+                                    </button>
+                                    <div class="color-popup" id="muntolPopup"></div>
+                                </div>
+                            </div>
+                            <div class="color-row-stack">
                                 <span class="color-label"><?= te('울거미 컬러') ?></span>
                                 <div class="color-picker-wrap">
                                     <button class="color-preview-btn" id="framePreviewBtn">
@@ -751,16 +761,6 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                                         <span id="slatPreviewName">—</span>
                                     </button>
                                     <div class="color-popup" id="slatPopup"></div>
-                                </div>
-                            </div>
-                            <div class="color-row-stack">
-                                <span class="color-label"><?= te('문틀 컬러') ?></span>
-                                <div class="color-picker-wrap">
-                                    <button class="color-preview-btn" id="muntolPreviewBtn">
-                                        <span class="color-preview-dot" id="muntolPreviewDot"></span>
-                                        <span id="muntolPreviewName">—</span>
-                                    </button>
-                                    <div class="color-popup" id="muntolPopup"></div>
                                 </div>
                             </div>
                         </div>

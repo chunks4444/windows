@@ -391,6 +391,9 @@
         // (도면 불러오기 fromUser=false에선 저장된 색 유지)
         if (fromUser && !sel.value) {
             pickers.forEach(p => p.resetToDefault());
+            // 칠해 둔 면 색도 지운다 — 면컬러 '초기화' 버튼과 같은 동작(버튼이 보일 때만 = 칠한 면이 있을 때)
+            const faceClearBtn = document.getElementById('btnFaceClear');
+            if (faceClearBtn && faceClearBtn.style.display !== 'none') faceClearBtn.click();
             window.draw?.();
         }
         if (!show) {
