@@ -19,6 +19,9 @@ function page_meta(): array {
 
     require_once __DIR__ . '/db.php';
     $path = $_SERVER['PHP_SELF'] ?? '/';
+    // 영문 가이드는 본문만 src/guide/en/{name}.php로 따로 있고 메타(title_en 등)는 한글 경로 행에 함께 있다 —
+    // en 파일 경로 그대로 찾으면 행이 없어 사이트 기본 제목으로 떨어지므로 한글 경로로 바꿔 찾는다.
+    $path = preg_replace('#^/src/guide/en/#', '/src/guide/', $path);
     $row = null;
     try {
         $stmt = db()->prepare('SELECT title, title_en, description, description_en, keywords, keywords_en, og_image FROM page_meta WHERE path=? LIMIT 1');
