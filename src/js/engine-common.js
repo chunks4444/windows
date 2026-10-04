@@ -389,37 +389,41 @@
         const sel   = document.getElementById('txtFinish');
         const block = document.getElementById('finishColorBlock');
         if (!sel || !block) return;
+        const pickers = window.__pmokColorPickers || [];
         const m   = /AURO\s*(\d{3})/i.exec(sel.value || '');
         const key = m ? 'AURO ' + m[1] : null;
-        let pred = key ? (g => String(g.key || g.label).toUpperCase().startsWith(key)) : null;
-        // AURO 126처럼 제품 팔레트가 없는 오일 마감은 천연오일 팔레트로
-        const oil = (!pred || !colorGroups.some(pred)) && isOilFinish(sel.value);
-        if (oil) pred = g => String(g.key || g.label).startsWith(OIL_GROUP_KEY);
-        const show = !!pred && colorGroups.some(pred);
+        const pred = key ? (g => String(g.key || g.label).toUpperCase().startsWith(key)) : null;
+        // 제품 팔레트가 없는 오일 마감(들기름·오일마감 AURO 126 등)은 팔레트 없이 한 가지 색으로만 표시
+        const oil  = (!pred || !colorGroups.some(pred)) && isOilFinish(sel.value);
+        const show = !oil && !!pred && colorGroups.some(pred);
         block.hidden = !show;
-        const pickers = window.__pmokColorPickers || [];
-        // 사용자가 '마감 없음'을 고르면 색을 칠할 마감재가 없으므로 도면 색을 엔진 기본색으로 되돌린다
-        // (도면 불러오기 fromUser=false에선 저장된 색 유지)
-        if (fromUser && !sel.value) {
+        if (!show) block.querySelectorAll('.color-popup.open').forEach(p => p.classList.remove('open'));
+
+        // 아래는 사용자가 마감을 직접 바꿀 때만 — 도면 불러오기(fromUser=false)에선 저장된 색 유지
+        if (!fromUser) { if (show) pickers.forEach(p => p.setGroupFilter(pred)); return; }
+
+        // 마감 없음·오일 마감은 컬러 영역(면 칠하기 포함)이 숨겨지므로 칠해 둔 면 색도 지운다 — 면컬러 '초기화' 버튼과 같은 동작
+        const clearFaces = () => {
+            const btn = document.getElementById('btnFaceClear');
+            if (btn && btn.style.display !== 'none') btn.click();
+        };
+        if (!sel.value) {
+            // 마감 없음: 칠할 마감재가 없으므로 엔진 기본색으로
             pickers.forEach(p => p.resetToDefault());
-            // 칠해 둔 면 색도 지운다 — 면컬러 '초기화' 버튼과 같은 동작(버튼이 보일 때만 = 칠한 면이 있을 때)
-            const faceClearBtn = document.getElementById('btnFaceClear');
-            if (faceClearBtn && faceClearBtn.style.display !== 'none') faceClearBtn.click();
-            window.draw?.();
-        }
-        if (!show) {
-            block.querySelectorAll('.color-popup.open').forEach(p => p.classList.remove('open'));
-            return;
-        }
-        pickers.forEach(p => p.setGroupFilter(pred));
-        if (fromUser && oil) {
+            clearFaces();
+        } else if (oil) {
+            // 오일: 마감 전용 색(들기름 NO-10)이 있으면 그 색, 없으면(AURO 126) 수종 색 — 문틀·울거미·살 한 가지 색
+            const colors = colorGroups.filter(g => String(g.key || g.label).startsWith(OIL_GROUP_KEY)).flatMap(g => g.colors);
             const wood   = document.getElementById('txtWood')?.value || '';
-            const colors = colorGroups.filter(pred).flatMap(g => g.colors);
             const want   = OIL_FINISH_COLOR_CODE[sel.value] || OIL_WOOD_COLOR_CODE[wood] || 'NO-01';
-            const hit = colors.find(c => c.code === want) || colors.find(c => c.code === 'NO-01') || colors[0];
+            const hit    = colors.find(c => c.code === want) || colors.find(c => c.code === 'NO-01') || colors[0];
             if (hit) pickers.filter(p => ['framePopup', 'slatPopup', 'muntolPopup'].includes(p.id)).forEach(p => p.selectColor(hit.hex));
+            clearFaces();
+        } else if (show) {
+            // 스테인: 그 제품 팔레트로 좁히고, 지금 색이 팔레트에 없으면 가장 가까운 색으로
+            pickers.forEach(p => { p.setGroupFilter(pred); p.snapToFilter(); });
         }
-        if (fromUser) { pickers.forEach(p => p.snapToFilter()); window.draw?.(); }
+        window.draw?.();
     };
     document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('txtFinish')?.addEventListener('change', () => window.applyFinishColorPicker(true));
