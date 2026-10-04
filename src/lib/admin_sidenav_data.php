@@ -18,13 +18,13 @@ return [
         ['hero_slides.php',      'bi-images',          '슬라이드 관리'],
         ['space_cards.php',      'bi-grid',            '메인 큐레이션 관리'],
         ['studio_cards.php',     'bi-grid-1x2',        '스튜디오 카드 관리'],
-        ['colors.php',           'bi-palette',         '컬러 팔레트 관리'],
     ]],
     ['title' => '주문 관리', 'items' => [
         ['orders.php',           'bi-receipt',         '주문 관리'],
     ]],
     ['title' => '설정값 관리', 'items' => [
         ['cost_table.php',       'bi-calculator',      '원가 테이블'],
+        ['colors.php',           'bi-palette',         '컬러 팔레트 관리'],
         ['meta.php',             'bi-search',          'SEO 메타 관리'],
         ['oauth.php',            'bi-key',             'SNS 로그인 설정'],
         ['mail_settings.php',    'bi-envelope',        '메일 발송 설정'],
