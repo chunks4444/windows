@@ -381,7 +381,9 @@
     // 오일은 나무결이 그대로 드러나므로, 사용자가 오일 마감을 고르거나 오일 상태에서 수종을 바꾸면
     // 문틀·울거미·살 색을 수종에 맞는 오일색으로 자동 지정한다(이후 팔레트에서 다른 오일색으로 바꿀 수 있음).
     const OIL_GROUP_KEY = '천연오일';
-    const OIL_WOOD_COLOR_NAME = { '소나무': '소나무' }; // 수종 → 천연오일 색 이름. 없으면 '자연'(홍송 등)
+    // 천연오일 색은 코드로 고른다(영문 화면은 색 이름이 term()으로 바뀌므로). 마감 전용 색이 있으면 수종보다 우선.
+    const OIL_FINISH_COLOR_CODE = { '들기름': 'NO-10' };   // 마감 → 색 코드
+    const OIL_WOOD_COLOR_CODE   = { '소나무': 'NO-02' };   // 수종 → 색 코드. 없으면 NO-01 자연(홍송 등)
     const isOilFinish = v => /오일|기름|유$/.test(String(v || ''));
     window.applyFinishColorPicker = function (fromUser) {
         const sel   = document.getElementById('txtFinish');
@@ -413,18 +415,18 @@
         if (fromUser && oil) {
             const wood   = document.getElementById('txtWood')?.value || '';
             const colors = colorGroups.filter(pred).flatMap(g => g.colors);
-            const want   = OIL_WOOD_COLOR_NAME[wood] || '자연';
-            // 영문 페이지는 색 이름이 term()으로 바뀌어 있을 수 있어 코드(NO-02 등) 순서로도 찾는다
-            const hit = colors.find(c => c.name === want) || colors[want === '자연' ? 0 : 1] || colors[0];
+            const want   = OIL_FINISH_COLOR_CODE[sel.value] || OIL_WOOD_COLOR_CODE[wood] || 'NO-01';
+            const hit = colors.find(c => c.code === want) || colors.find(c => c.code === 'NO-01') || colors[0];
             if (hit) pickers.filter(p => ['framePopup', 'slatPopup', 'muntolPopup'].includes(p.id)).forEach(p => p.selectColor(hit.hex));
         }
         if (fromUser) { pickers.forEach(p => p.snapToFilter()); window.draw?.(); }
     };
     document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('txtFinish')?.addEventListener('change', () => window.applyFinishColorPicker(true));
-        // 오일 마감 상태에서 수종을 바꾸면 그 수종의 오일색으로 다시 맞춘다
+        // 오일 마감 상태에서 수종을 바꾸면 그 수종의 오일색으로 다시 맞춘다(들기름처럼 마감 전용 색이 있으면 그대로)
         document.getElementById('txtWood')?.addEventListener('change', () => {
-            if (isOilFinish(document.getElementById('txtFinish')?.value)) window.applyFinishColorPicker(true);
+            const fin = document.getElementById('txtFinish')?.value;
+            if (isOilFinish(fin) && !OIL_FINISH_COLOR_CODE[fin]) window.applyFinishColorPicker(true);
         });
         window.applyFinishColorPicker(false);
     });
