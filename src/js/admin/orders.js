@@ -128,6 +128,7 @@ function renderPriceBreakdown(breakdownJson) {
         <table class="ord-price-table">
             ${rows.map(([label, val]) => `<tr><td>${label}</td><td>${won(val)}</td></tr>`).join('')}
             <tr class="ord-price-total"><td>합계</td><td>${won(b.total)}</td></tr>
+            <tr><td>계산 공식</td><td>${b.formulaVersion ? 'v' + esc(b.formulaVersion) : 'v1.0 (버전 기록 전)'}</td></tr>
         </table>
     `;
 }

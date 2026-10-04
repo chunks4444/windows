@@ -3,6 +3,7 @@ header('Content-Type: text/html; charset=UTF-8');
 require_once __DIR__ . '/../lib/admin_guard.php';
 require_admin_role('s');
 require_once __DIR__ . '/../lib/db.php';
+require_once __DIR__ . '/../lib/engine_settings.php';
 try {
     $studioCards = db()->query('SELECT engine_key, title FROM studio_cards WHERE is_active=1 ORDER BY sort_order, id')->fetchAll(PDO::FETCH_ASSOC);
 } catch (Throwable $e) {
@@ -137,6 +138,15 @@ try {
          공통식 src/lib/engine_settings.php compute_price_estimate(), 엔진별 부재·짜임 수 src/engine/{엔진}/api/geometry.php -->
     <div id="wtMethodPanel" style="display:none;">
         <div class="wt-method-grid">
+            <div class="wt-card wt-method-wide">
+                <div class="wt-card-title">공식 버전 — 현재 v<?= htmlspecialchars(COST_FORMULA_VERSION) ?></div>
+                <p class="wt-method-note">견적 요청마다 계산에 쓰인 공식 버전이 함께 저장됩니다(주문 상세의 '계산 공식'). 공식을 바꾸면 src/lib/engine_settings.php의 버전과 이력을 함께 올립니다.</p>
+                <table class="wt-method-table"><tbody>
+                    <?php foreach (COST_FORMULA_HISTORY as [$ver, $date, $desc]): ?>
+                    <tr><th>v<?= htmlspecialchars($ver) ?></th><td><span style="color:var(--text-muted);"><?= htmlspecialchars($date) ?></span> · <?= htmlspecialchars($desc) ?></td></tr>
+                    <?php endforeach; ?>
+                </tbody></table>
+            </div>
             <div class="wt-card wt-method-wide">
                 <div class="wt-card-title">공통 계산 순서 (7개 엔진 동일)</div>
                 <ol class="wt-method-list">

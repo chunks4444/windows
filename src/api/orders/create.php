@@ -9,6 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 require_once __DIR__ . '/../../lib/jwt.php';
 require_once __DIR__ . '/../../lib/db.php';
+require_once __DIR__ . '/../../lib/engine_settings.php';
 require_once __DIR__ . '/../../lib/mailer.php';
 
 $payload = jwt_from_request();
@@ -34,6 +35,12 @@ $shipAddr2    = trim($body['ship_address_detail'] ?? '');
 $shipPhone    = trim($body['ship_phone'] ?? '');
 $estimatedPrice = isset($body['estimated_price']) && is_numeric($body['estimated_price']) ? (float) $body['estimated_price'] : null;
 $priceBreakdown = $body['price_breakdown'] ?? null;
+// 어떤 버전의 공식으로 계산된 예상가인지 기록 — 화면에서 계산될 때 서버가 넣어준 값을 우선 쓰고(계산 시점 기준),
+// 배포 직전에 열어둔 페이지처럼 값이 없으면 현재 버전으로 채운다.
+if (is_array($priceBreakdown)) {
+    $fv = (string)($priceBreakdown['formulaVersion'] ?? '');
+    $priceBreakdown['formulaVersion'] = preg_match('/^\d+\.\d+$/', $fv) ? $fv : COST_FORMULA_VERSION;
+}
 
 if (!in_array($engine, $validEngines, true)) {
     http_response_code(422); echo json_encode(['error' => '엔진 종류가 올바르지 않습니다.']); exit;

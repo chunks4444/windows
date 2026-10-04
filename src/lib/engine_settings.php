@@ -209,6 +209,16 @@ function get_cost_table_item(string $category, string $name): ?array {
 // src/js/engine-common.js의 updateWoodCost()와 1:1 대응되는 공식 — 두 코드를 수정할 땐 반드시 함께 맞출 것.
 // $parts = geometry.php가 계산한 부재목록 배열, $selection = 사용자가 고른 목재/철물/마감/문틀/문짝수,
 // $cfg = get_engine_settings($engine), $costCfg = get_cost_config($engine).
+// 예상원가 공식 버전 — compute_price_estimate() 또는 엔진별 geometry.php의 부재·짜임 수 산정을 바꾸면
+// 버전을 올리고 COST_FORMULA_HISTORY 맨 위에 한 줄 추가할 것. 견적 요청(orders.price_breakdown.formulaVersion)에
+// 이 버전이 함께 저장되어, 나중에 옛 견적 금액이 왜 다른지 추적할 수 있다. 관리자 원가 테이블 '계산 방법' 탭에 표시.
+// (orders.price_formula_version 컬럼은 관리자가 확정가를 수기 입력했는지('manual') 표시하는 별개 용도)
+const COST_FORMULA_VERSION = '1.1';
+const COST_FORMULA_HISTORY = [
+    ['1.1', '2026-10-04', '짜임 작업시간에 문짝 수 반영(7엔진 공통 — 이전엔 2짝 이상도 짜임 작업이 1짝 분량만 잡힘). 몬드리안은 실제 살 개수·길이로 살 목재를, 짜임 수는 살 개수×2로 계산.'],
+    ['1.0', '2026-07-08', '목재·제작·부자재·마감·간접비 5종 대분류 원가 구조. 버전 기록 도입 전 공식으로, 이 시기 견적에는 버전이 저장돼 있지 않음.'],
+];
+
 function compute_price_estimate(array $parts, array $selection, array $cfg, array $costCfg): array {
     $leadDays = (int)($cfg['min_days'] ?? 0);
 
@@ -276,7 +286,7 @@ function compute_price_estimate(array $parts, array $selection, array $cfg, arra
 
     $breakdown = [
         'door' => $doorCost, 'muntol' => $muntolCost, 'wood' => $woodCost,
-        'craft' => $craftCost, 'craftTime' => $craftTimeStr,
+        'craft' => $craftCost, 'craftTime' => $craftTimeStr, 'formulaVersion' => COST_FORMULA_VERSION,
         'hardware' => $hardwareCost, 'finish' => $finishCost,
         'overhead' => $overheadCost, 'profit' => $profitCost, 'total' => $totalCost,
     ];
