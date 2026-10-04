@@ -368,7 +368,7 @@
 
         // 엔진이 피커를 만들 때 넘긴 기본색(울거미·살·문틀 #272726 등)으로 되돌린다 — '마감 없음' 선택 시 사용
         const resetToDefault = () => selectColor(defaultHex);
-        const api = { selectColor, setGroupFilter, snapToFilter, resetToDefault };
+        const api = { id: popupId, selectColor, setGroupFilter, snapToFilter, resetToDefault };
         (window.__pmokColorPickers = window.__pmokColorPickers || []).push(api);
         return api;
     }
@@ -377,13 +377,22 @@
     // 마감 이름에 "AURO 560"처럼 제품번호가 있고, 같은 번호의 팔레트 그룹(color_swatches.group_name)이 있을 때만 표시.
     // 들기름·오일마감(AURO 126)처럼 팔레트 그룹이 없는 마감은 숨김 — 나중에 126 색을 어드민에 추가하면 자동으로 보인다.
     // fromUser=true(사용자가 직접 바꿈)일 때만 색을 새 팔레트로 맞추고, 도면 불러오기에선 저장된 색을 그대로 둔다.
+    // 오일 마감(들기름·오동유·아마인유·오일마감 AURO 126)은 제품 팔레트 대신 '천연오일' 그룹을 쓴다.
+    // 오일은 나무결이 그대로 드러나므로, 사용자가 오일 마감을 고르거나 오일 상태에서 수종을 바꾸면
+    // 문틀·울거미·살 색을 수종에 맞는 오일색으로 자동 지정한다(이후 팔레트에서 다른 오일색으로 바꿀 수 있음).
+    const OIL_GROUP_KEY = '천연오일';
+    const OIL_WOOD_COLOR_NAME = { '소나무': '소나무' }; // 수종 → 천연오일 색 이름. 없으면 '자연'(홍송 등)
+    const isOilFinish = v => /오일|기름|유$/.test(String(v || ''));
     window.applyFinishColorPicker = function (fromUser) {
         const sel   = document.getElementById('txtFinish');
         const block = document.getElementById('finishColorBlock');
         if (!sel || !block) return;
         const m   = /AURO\s*(\d{3})/i.exec(sel.value || '');
         const key = m ? 'AURO ' + m[1] : null;
-        const pred = key ? (g => String(g.key || g.label).toUpperCase().startsWith(key)) : null;
+        let pred = key ? (g => String(g.key || g.label).toUpperCase().startsWith(key)) : null;
+        // AURO 126처럼 제품 팔레트가 없는 오일 마감은 천연오일 팔레트로
+        const oil = (!pred || !colorGroups.some(pred)) && isOilFinish(sel.value);
+        if (oil) pred = g => String(g.key || g.label).startsWith(OIL_GROUP_KEY);
         const show = !!pred && colorGroups.some(pred);
         block.hidden = !show;
         const pickers = window.__pmokColorPickers || [];
@@ -401,10 +410,22 @@
             return;
         }
         pickers.forEach(p => p.setGroupFilter(pred));
+        if (fromUser && oil) {
+            const wood   = document.getElementById('txtWood')?.value || '';
+            const colors = colorGroups.filter(pred).flatMap(g => g.colors);
+            const want   = OIL_WOOD_COLOR_NAME[wood] || '자연';
+            // 영문 페이지는 색 이름이 term()으로 바뀌어 있을 수 있어 코드(NO-02 등) 순서로도 찾는다
+            const hit = colors.find(c => c.name === want) || colors[want === '자연' ? 0 : 1] || colors[0];
+            if (hit) pickers.filter(p => ['framePopup', 'slatPopup', 'muntolPopup'].includes(p.id)).forEach(p => p.selectColor(hit.hex));
+        }
         if (fromUser) { pickers.forEach(p => p.snapToFilter()); window.draw?.(); }
     };
     document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('txtFinish')?.addEventListener('change', () => window.applyFinishColorPicker(true));
+        // 오일 마감 상태에서 수종을 바꾸면 그 수종의 오일색으로 다시 맞춘다
+        document.getElementById('txtWood')?.addEventListener('change', () => {
+            if (isOilFinish(document.getElementById('txtFinish')?.value)) window.applyFinishColorPicker(true);
+        });
         window.applyFinishColorPicker(false);
     });
 
