@@ -5,13 +5,47 @@ async function loadColors() {
     const res  = await fetch('/src/api/admin/colors.php', { headers: hdr() });
     const data = await res.json();
     if (!res.ok) { alert(data.error || '불러오기 실패'); return; }
-    renderTable(data.colors || []);
+    allColors = data.colors || [];
+    renderFilters();
+    renderTable(filteredColors());
     document.getElementById('colorPage').style.display = '';
+}
+
+// ── 필터: 그룹 탭('' = 전체) + 검색어(코드·이름·헥스·브랜드). 선택한 그룹은 새로고침해도 유지 ──
+let allColors   = [];
+let activeGroup = (() => { try { return sessionStorage.getItem('pmok_color_group') || ''; } catch (e) { return ''; } })();
+let searchText  = '';
+
+function filteredColors() {
+    const q = searchText.trim().toLowerCase();
+    return allColors.filter(c =>
+        (!activeGroup || c.group_name === activeGroup) &&
+        (!q || [c.code, c.name, c.hex, c.brand].some(v => String(v || '').toLowerCase().includes(q))));
+}
+
+function renderFilters() {
+    const groups = [...new Set(allColors.map(c => c.group_name))];
+    if (activeGroup && !groups.includes(activeGroup)) activeGroup = '';
+    const count = g => allColors.filter(c => !g || c.group_name === g).length;
+    const tabs  = document.getElementById('colorGroupTabs');
+    tabs.innerHTML = ['', ...groups].map(g =>
+        `<button type="button" class="adm-tab-btn${g === activeGroup ? ' active' : ''}" data-group="${esc(g)}">${g ? esc(g) : '전체'} <span class="color-tab-count">${count(g)}</span></button>`
+    ).join('');
+    tabs.querySelectorAll('.adm-tab-btn').forEach(btn => btn.addEventListener('click', () => {
+        activeGroup = btn.dataset.group;
+        try { sessionStorage.setItem('pmok_color_group', activeGroup); } catch (e) {}
+        renderFilters();
+        renderTable(filteredColors());
+    }));
 }
 
 function renderTable(colors) {
     const tbody = document.getElementById('colorBody');
     tbody.innerHTML = '';
+    if (!colors.length) {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--text-muted);">조건에 맞는 색상이 없습니다.</td></tr>';
+        return;
+    }
     let lastGroup = null;
     colors.forEach(c => {
         if (c.group_name !== lastGroup) {
@@ -43,7 +77,7 @@ function renderTable(colors) {
 
 function openAddModal() {
     document.getElementById('editId').value    = '';
-    document.getElementById('editGroup').value = '';
+    document.getElementById('editGroup').value = activeGroup; // 그룹 탭을 고른 상태면 그 그룹으로 미리 채움
     document.getElementById('editBrand').value = '';
     document.getElementById('editOrder').value = 0;
     document.getElementById('editCode').value  = '';
@@ -111,6 +145,10 @@ async function deleteColor(id) {
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('colorSearch').addEventListener('input', e => {
+        searchText = e.target.value;
+        renderTable(filteredColors());
+    });
     if (token()) loadColors();
 });
 window.addEventListener('pmokAuthChanged', loadColors);

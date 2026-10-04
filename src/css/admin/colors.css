@@ -2,3 +2,9 @@
         .adm-table-wrap table td { vertical-align:middle; }
         .group-header td { background:var(--bg-2,var(--bg));font-weight:700;font-size: var(--fs-13);color:var(--text-muted);letter-spacing:.05em; }
         input[type=color] { width:36px;height:28px;padding:2px;border:1px solid var(--border);border-radius:4px;cursor:pointer; }
+
+/* 그룹 탭 + 검색 */
+.color-filter-bar { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+.color-filter-bar .adm-tab-bar { flex: 1 1 auto; flex-wrap: wrap; }
+.color-filter-bar #colorSearch { width: 220px; flex: 0 0 auto; }
+.color-tab-count { font-size: 11px; color: var(--text-muted); font-weight: 400; margin-left: 2px; }

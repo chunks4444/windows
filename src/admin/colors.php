@@ -30,6 +30,11 @@ require_admin_role('s');
             <i class="bi bi-plus-lg"></i> 색상 추가
         </button>
     </div>
+    <!-- 그룹 탭 + 검색 (colors.js가 그룹 목록으로 탭을 채운다) -->
+    <div class="color-filter-bar">
+        <div class="adm-tab-bar" id="colorGroupTabs"></div>
+        <input type="search" id="colorSearch" class="form-control form-control-sm" placeholder="코드·이름·헥스 검색" autocomplete="off">
+    </div>
     <div class="adm-table-wrap">
         <table id="colorTable">
             <thead>
