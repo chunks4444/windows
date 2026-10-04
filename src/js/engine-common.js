@@ -366,7 +366,9 @@
             selectColor(best.hex);
         }
 
-        const api = { selectColor, setGroupFilter, snapToFilter };
+        // 엔진이 피커를 만들 때 넘긴 기본색(울거미·살·문틀 #272726 등)으로 되돌린다 — '마감 없음' 선택 시 사용
+        const resetToDefault = () => selectColor(defaultHex);
+        const api = { selectColor, setGroupFilter, snapToFilter, resetToDefault };
         (window.__pmokColorPickers = window.__pmokColorPickers || []).push(api);
         return api;
     }
@@ -385,6 +387,12 @@
         const show = !!pred && colorGroups.some(pred);
         block.hidden = !show;
         const pickers = window.__pmokColorPickers || [];
+        // 사용자가 '마감 없음'을 고르면 색을 칠할 마감재가 없으므로 도면 색을 엔진 기본색으로 되돌린다
+        // (도면 불러오기 fromUser=false에선 저장된 색 유지)
+        if (fromUser && !sel.value) {
+            pickers.forEach(p => p.resetToDefault());
+            window.draw?.();
+        }
         if (!show) {
             block.querySelectorAll('.color-popup.open').forEach(p => p.classList.remove('open'));
             return;
