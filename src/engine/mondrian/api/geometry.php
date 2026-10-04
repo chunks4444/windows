@@ -144,6 +144,19 @@ $ppPanelH = $pungpanVisible ? ($effectivePungpanH - $frameH) : 0;
 $hSlatCnt = max(0, $rows - 1);
 $vSlatCnt = max(0, $cols - 1);
 
+// 몬드리안 패턴 실측값 — 브라우저(mondrian.js mondrianCostParams)가 실제 살 개수와 길이 합을 보내면
+// 위의 격자 가정(숨겨진 칸수 기준 가로·세로살 전폭) 대신 이 값으로 목재량·짜임 수를 계산한다.
+// 길이는 내경 대비 비율: 가로살은 innerW, 세로살은 몬드리안 내경 높이(상하 울거미를 frameH로 고정하고
+// 남는 높이를 패턴에 흡수 — mondrian.js effInnerH와 같은 식) 기준.
+$_moOn = isset($_POST['moHCnt'], $_POST['moVCnt'], $_POST['moHLen'], $_POST['moVLen']);
+if ($_moOn) {
+    $_moHCnt   = max(0, (int)$_POST['moHCnt']);
+    $_moVCnt   = max(0, (int)$_POST['moVCnt']);
+    $_moInnerH = $innerH + ($frameHTop - $frameH) * 2;
+    $_moHLenMm = max(0, (float)$_POST['moHLen']) * $innerW;
+    $_moVLenMm = max(0, (float)$_POST['moVLen']) * $_moInnerH;
+}
+
 // 목재 재수 계산 (1재 = 33×33×3600mm³, 부재별 실제 단면 사용)
 $_es  = get_engine_settings('mondrian');
 $_JAE = 33 * 33 * 3600;
@@ -155,8 +168,10 @@ $_wMt = (int)$_es['muntolW'];
 
 $_volDoor   = round($outerH + 2*$slatT) * (2*$doorCount)                * $frameW * $_wU
             + round($outerW + 2*$slatT) * (($pungpanOn?3:2)*$doorCount) * $frameH * $_wU
-            + round($innerW + 2*$tenonDepth) * ($hSlatCnt*$doorCount)   * $slatT  * $_wS
-            + round($innerH + 2*$tenonDepth) * ($vSlatCnt*$doorCount)   * $slatT  * $_wS
+            + ($_moOn
+                ? ($_moHLenMm + 2*$tenonDepth*$_moHCnt + $_moVLenMm + 2*$tenonDepth*$_moVCnt) * $doorCount * $slatT * $_wS
+                : round($innerW + 2*$tenonDepth) * ($hSlatCnt*$doorCount) * $slatT * $_wS
+                + round($innerH + 2*$tenonDepth) * ($vSlatCnt*$doorCount) * $slatT * $_wS)
             + ($pungpanVisible ? (int)round($innerW) * (int)round($ppPanelH) * $_pT : 0);
 $_volMuntol = $frameOpeningH * 2 * $_tMt * $_wMt
             + $frameOpeningW * 2 * $_tMt * $_wMt;
@@ -188,7 +203,8 @@ $parts = [
     'woodJae'        => round($_woodJae, 2),
     'woodJae_door'   => round($_volDoor / $_JAE, 2),
     'woodJae_muntol' => round($_volMuntol / $_JAE, 2),
-    'joints'         => $cols * $rows,
+    // 몬드리안 살은 교차하지 않고 양 끝이 다른 살·울거미에 맞물리므로 짜임 수 = 살 개수 × 2 (다른 엔진처럼 1짝 기준)
+    'joints'         => $_moOn ? ($_moHCnt + $_moVCnt) * 2 : $cols * $rows,
 ];
 
 $selection = [

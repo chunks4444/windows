@@ -388,6 +388,12 @@ async function fetchGeometry() {
         finish:    document.getElementById('txtFinish')?.value ?? '',
         muntolOn:  document.getElementById('chkMuntol')?.checked === false ? '0' : '1',
     });
+    if (mondrianLayout) {
+        let dragging = false;
+        try { dragging = !!mondrianDrag; } catch (e) { /* mondrianDrag 선언 전(초기 로드) */ }
+        if (!dragging || !_moCostParams) _moCostParams = mondrianCostParams();
+        for (const [k, v] of Object.entries(_moCostParams)) body.set(k, String(v));
+    }
     // ⚠️ 건드리지 말 것: 줌/팬/스케일은 이 캐시 덕분에 서버 호출이 없음.
     // 캐시를 빼거나 채우는 코드를 빠뜨리면 매 프레임 geometry.php 호출로 회귀함 (운영서버 줌/드래그 무거움 버그 원인이었음).
     const sig = body.toString();
@@ -416,6 +422,28 @@ let _geoCache = null;
 let _kvKey  = null; // Konva 패턴 노드를 마지막으로 빌드한 시점의 파라미터 키
 let _kvCornerMode = null; // 마지막 빌드 시점의 doorCornerPositions 모드
 let _mondrianVersion = 0; // generateMondrian() 호출마다 증가 → Konva 캐시 무효화
+// 원가용 몬드리안 살 집계(개수·길이 합). 드래그 중엔 이전 값을 그대로 써서 geometry.php 캐시가 깨지지 않게 한다
+// (프레임마다 길이가 바뀌어 서버를 계속 부르게 됨) — 드래그를 놓을 때 mouseup의 draw()가 최신 값으로 다시 계산한다.
+let _moCostParams = null;
+
+// 서버(geometry.php)는 몬드리안 패턴을 모르고 숨겨진 칸수로 격자를 가정하므로, 실제 살 개수와
+// 길이 합(가로살은 내경 폭, 세로살은 내경 높이 대비 비율)을 보내 원가·부재 개수에 반영한다.
+// 삭제는 모든 문짝에 똑같이 적용되므로 0번 문짝 키로 판단, 직접 그은 선(addedLines)도 포함.
+function mondrianCostParams() {
+    let hCnt = 0, vCnt = 0, hLen = 0, vLen = 0;
+    mondrianLayout.lines.forEach((ln, idx) => {
+        if (deletedSegs.has(`0:mo:${idx}`)) return;
+        if (ln.axis === 'h') { hCnt++; hLen += ln.to - ln.from; }
+        else                 { vCnt++; vLen += ln.to - ln.from; }
+    });
+    addedLines.forEach(ln => {
+        if (ln.xi1 !== undefined) return; // 균등 격자용 노드 인덱스 선 — 몬드리안 레이아웃에는 없음
+        const dx = Math.abs(ln.nx2 - ln.nx1), dy = Math.abs(ln.ny2 - ln.ny1);
+        if (dy < 0.001) { hCnt++; hLen += dx; }
+        else            { vCnt++; vLen += dy; }
+    });
+    return { moHCnt: hCnt, moVCnt: vCnt, moHLen: hLen.toFixed(4), moVLen: vLen.toFixed(4) };
+}
 function drawPan() {
     if (_panRaf) return;
     _panRaf = requestAnimationFrame(() => { _panRaf = null; draw(); });
@@ -1169,6 +1197,11 @@ async function draw() {
 
         // 몬드리안(랜덤 생성)은 살마다 길이가 제각각이라 격자 기준 단일 길이값이
         // 의미가 없다 — 평균 등으로 대충 값을 보여주는 대신 "가변"으로 명시한다.
+        if (mondrianLayout && _moCostParams) {
+            const doors = parseInt(txtDoorCount.value) || 1;
+            if (hCntEl) hCntEl.textContent = (_moCostParams.moHCnt * doors) + _t('개');
+            if (vCntEl) vCntEl.textContent = (_moCostParams.moVCnt * doors) + _t('개');
+        }
         if (mondrianLayout) {
             const hLenEl = document.getElementById('spHSlatLen');
             if (hLenEl) hLenEl.textContent = `${p.slatW}×${geo.slatT}×${_t('가변')}`;
@@ -2160,6 +2193,7 @@ async function draw() {
         if (!mondrianDrag) return;
         mondrianDrag = null;
         canvas.style.cursor = panMode ? 'grab' : 'default';
+        draw(); // 드래그 중 고정해둔 원가 집계(_moCostParams)를 놓은 위치 기준으로 다시 계산
     });
 
     document.getElementById('btnOrder')?.addEventListener('click', () => {

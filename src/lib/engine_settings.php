@@ -231,7 +231,9 @@ function compute_price_estimate(array $parts, array $selection, array $cfg, arra
     $joints      = (float)($parts['joints'] ?? 0);
     $doorCount   = max(1, (int)($selection['doorCount'] ?? 1));
     $muntolTime  = $showMuntol ? (float)($costCfg['muntol_time'] ?? 60) : 0.0;
-    $totalMin    = $joints * $craftTime + $doorCount * ($ulgeomiTime + $trimTime) + $muntolTime;
+    // 각 엔진 geometry.php의 $parts['joints']는 문짝 1짝 기준 짜임 수다. 예전엔 여기서 문짝 수를 곱하지 않아
+    // 2짝 이상이면 짜임 작업이 1짝 분량만 잡혀 제작비가 크게 낮게 나왔다(울거미·다듬기 시간만 문짝 수 반영) — 7엔진 공통 수정.
+    $totalMin    = $joints * $doorCount * $craftTime + $doorCount * ($ulgeomiTime + $trimTime) + $muntolTime;
     $craftCost   = (int)round($totalMin / 60 * $hourlyRate);
 
     $hw     = get_cost_table_item('hardware', $selection['hardware'] ?? '');
