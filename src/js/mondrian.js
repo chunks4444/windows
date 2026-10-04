@@ -85,8 +85,15 @@
         hex => { selectedSlatColor  = hex; }, selectedSlatColor);
     const muntolColorPicker = buildColorPopup('muntolPopup', 'muntolPreviewDot', 'muntolPreviewName', 'muntolPreviewBtn',
         hex => { selectedMuntolColor = hex; }, selectedMuntolColor);
+    // 몬드리안 칸 색은 faceColorMap이 아니라 mondrianLayout.rects[].color에 있다(랜덤 생성 색 + 면 칠하기 색).
+    // 면컬러 '초기화' 버튼(및 '마감 없음' 선택)이 이 칸 색까지 지우도록 함께 처리하고, 칠한 칸이 있으면 버튼을 보인다.
+    const _moHasColor = () => !!mondrianLayout?.rects?.some(r => r.color);
     const faceColorUI = buildFaceColorUI(
-        () => { faceColorMap = null; draw(); }
+        () => {
+            faceColorMap = null;
+            if (mondrianLayout) { mondrianLayout.rects.forEach(r => { r.color = null; }); _mondrianVersion++; }
+            draw();
+        }
     );
     const canvas = document.getElementById('doorCanvas');
     const rulerCanvas = document.getElementById('rulerCanvas');
@@ -1965,6 +1972,7 @@ async function draw() {
             if (!mondrianLayout?.rects[idx]) return;
             mondrianLayout.rects[idx].color = isErase ? null : faceColorUI.getCurrentHex();
             _mondrianVersion++;
+            faceColorUI.updateClearBtn(!!faceColorMap || _moHasColor());
             draw();
             return;
         }
@@ -1978,7 +1986,7 @@ async function draw() {
             if (!faceColorMap) faceColorMap = {};
             faceColorMap[key] = faceColorUI.getCurrentHex();
         }
-        faceColorUI.updateClearBtn(!!faceColorMap);
+        faceColorUI.updateClearBtn(!!faceColorMap || _moHasColor());
         draw();
     }
 
@@ -3127,6 +3135,7 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
     function _updateMondrianBtn() {
         const btnClear = document.getElementById('btnMondrianClear');
         if (btnClear) btnClear.style.display = mondrianLayout ? '' : 'none';
+        faceColorUI.updateClearBtn(!!faceColorMap || _moHasColor()); // 랜덤 생성 색면이 생기거나 레이아웃을 걷어낼 때 면 초기화 버튼 표시 갱신
     }
 
     function generateMondrian() {
