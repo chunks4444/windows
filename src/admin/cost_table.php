@@ -283,6 +283,6 @@ try {
 <script>
 window.__pmokEngineLabels = <?= json_encode(array_column($studioCards, 'title', 'engine_key'), JSON_UNESCAPED_UNICODE) ?>;
 </script>
-<script src="/src/js/admin/cost_table.js"></script>
+<script src="/src/js/admin/cost_table.js?v=<?= md5_file(__DIR__ . '/../js/admin/cost_table.js') ?>"></script>
 </body>
 </html>

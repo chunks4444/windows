@@ -53,6 +53,6 @@ try {
 window.__pmokEngineLabels = <?= json_encode(array_column($studioCards, 'title', 'engine_key'), JSON_UNESCAPED_UNICODE) ?>;
 window.__pmokEngineKeys   = <?= json_encode(array_column($studioCards, 'engine_key'), JSON_UNESCAPED_UNICODE) ?>;
 </script>
-<script src="/src/js/admin/engine_settings.js"></script>
+<script src="/src/js/admin/engine_settings.js?v=<?= md5_file(__DIR__ . '/../js/admin/engine_settings.js') ?>"></script>
 </body>
 </html>

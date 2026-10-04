@@ -166,7 +166,7 @@ require_admin_role('s');
     </div>
 </div>
 
-<script src="/src/js/admin/works.js"></script>
+<script src="/src/js/admin/works.js?v=<?= md5_file(__DIR__ . '/../js/admin/works.js') ?>"></script>
 <script src="/src/js/color-hex-input.js"></script>
 
 <!-- 태그 편집 모달 -->

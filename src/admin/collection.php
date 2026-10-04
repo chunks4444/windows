@@ -191,6 +191,6 @@ foreach ($libPatternCats as $c) {
 </div>
 
 <script>const PYM_CATEGORY_ID = <?= (int)$pymCategoryId ?>;</script>
-<script src="/src/js/admin/collection.js"></script>
+<script src="/src/js/admin/collection.js?v=<?= md5_file(__DIR__ . '/../js/admin/collection.js') ?>"></script>
 </body>
 </html>

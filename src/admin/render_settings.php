@@ -143,6 +143,6 @@ document.getElementById('rsTabs').addEventListener('click', e => {
 });
 </script>
 
-<script src="/src/js/admin/render_settings.js"></script>
+<script src="/src/js/admin/render_settings.js?v=<?= md5_file(__DIR__ . '/../js/admin/render_settings.js') ?>"></script>
 </body>
 </html>

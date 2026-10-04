@@ -103,6 +103,6 @@ require_admin_role('s');
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
-<script src="/src/js/admin/faq.js"></script>
+<script src="/src/js/admin/faq.js?v=<?= md5_file(__DIR__ . '/../js/admin/faq.js') ?>"></script>
 </body>
 </html>

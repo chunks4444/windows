@@ -101,6 +101,6 @@ require_admin_role('s');
     </div>
 </div>
 
-<script src="/src/js/admin/svg_motifs.js"></script>
+<script src="/src/js/admin/svg_motifs.js?v=<?= md5_file(__DIR__ . '/../js/admin/svg_motifs.js') ?>"></script>
 </body>
 </html>

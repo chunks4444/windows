@@ -91,6 +91,6 @@ require_admin_role('s');
     </div>
 </div>
 
-<script src="/src/js/admin/space_cards.js"></script>
+<script src="/src/js/admin/space_cards.js?v=<?= md5_file(__DIR__ . '/../js/admin/space_cards.js') ?>"></script>
 </body>
 </html>

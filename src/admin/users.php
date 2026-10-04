@@ -228,6 +228,6 @@ require_admin_role('s');
     </div>
 </div>
 
-<script src="/src/js/admin/users.js"></script>
+<script src="/src/js/admin/users.js?v=<?= md5_file(__DIR__ . '/../js/admin/users.js') ?>"></script>
 </body>
 </html>

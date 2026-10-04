@@ -69,6 +69,6 @@ require_admin_role('s');
     </div>
 </div>
 
-<script src="/src/js/admin/mail_settings.js"></script>
+<script src="/src/js/admin/mail_settings.js?v=<?= md5_file(__DIR__ . '/../js/admin/mail_settings.js') ?>"></script>
 </body>
 </html>
