@@ -35,3 +35,13 @@
         @media (max-width:480px) {
             .wt-price-row { flex-direction:column; gap:0; }
         }
+
+/* 계산 방법 탭 (읽기 전용 안내) */
+.wt-method-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+.wt-method-wide { grid-column: 1 / -1; }
+.wt-method-list { margin: 0 0 12px; padding-left: 20px; font-size: 13px; line-height: 1.8; color: var(--text); }
+.wt-method-note { font-size: 12px; line-height: 1.7; color: var(--text); margin: 0 0 6px; }
+.wt-method-table { width: 100%; font-size: 13px; border-collapse: collapse; }
+.wt-method-table th { width: 72px; text-align: left; vertical-align: top; padding: 6px 8px 6px 0; color: var(--text-muted); font-weight: 600; white-space: nowrap; }
+.wt-method-table td { padding: 6px 0; line-height: 1.6; color: var(--text); }
+.wt-method-table tr + tr th, .wt-method-table tr + tr td { border-top: 1px solid var(--border); }

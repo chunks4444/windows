@@ -20,6 +20,7 @@ const TABS = {
     hardware: { label: '철물',   cats: ['hardware'],           cols: 'default'         },
     labor:    { label: '인건비', cats: ['labor'],              cols: 'labor_inline'    },
     overhead: { label: '간접비', cats: ['overhead'],           cols: 'overhead_inline' },
+    method:   { label: '계산 방법', cats: [],                  cols: 'method_inline'   },
 };
 
 const LABOR_COMMON_FIELDS = [
@@ -199,11 +200,14 @@ function render() {
     const tab     = TABS[activeTab];
     const isLaborInline    = tab.cols === 'labor_inline';
     const isOverheadInline = tab.cols === 'overhead_inline';
+    const isMethod         = tab.cols === 'method_inline';
 
     document.querySelectorAll('#wtTabs .adm-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === activeTab));
     document.getElementById('wtLaborPanel').style.display    = isLaborInline    ? '' : 'none';
     document.getElementById('wtOverheadPanel').style.display = isOverheadInline ? '' : 'none';
-    document.getElementById('wtTableWrap').style.display     = (isLaborInline || isOverheadInline) ? 'none' : '';
+    document.getElementById('wtMethodPanel').style.display   = isMethod         ? '' : 'none';
+    document.getElementById('wtTableWrap').style.display     = (isLaborInline || isOverheadInline || isMethod) ? 'none' : '';
+    if (isMethod) return; // 읽기 전용 안내 탭 — 그릴 데이터 없음
 
     if (isLaborInline)    { renderLabor();    return; }
     if (isOverheadInline) { renderOverhead(); return; }

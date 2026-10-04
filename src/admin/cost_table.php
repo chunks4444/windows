@@ -55,6 +55,7 @@ try {
         <button class="adm-tab-btn" data-tab="hardware">철물</button>
         <button class="adm-tab-btn" data-tab="labor">인건비</button>
         <button class="adm-tab-btn" data-tab="overhead">간접비</button>
+        <button class="adm-tab-btn" data-tab="method">계산 방법</button>
     </div>
 
     <!-- 인건비 탭 — 인라인 편집 -->
@@ -88,7 +89,7 @@ try {
             <div class="wt-card">
                 <div class="wt-card-title">엔진별 작업 시간</div>
                 <p style="font-size:12px;color: var(--text);margin:0 0 12px;line-height:1.6;">
-                    제작비 = (교차점 × 교차점당 시간<br>
+                    제작비 = (교차점 × 짝 × 교차점당 시간<br>
                     + 짝 × (울거미 + 다듬기) + 문틀) ÷ 60 × 시간당 공임
                 </p>
                 <div class="adm-table-wrap">
@@ -128,6 +129,76 @@ try {
                     </thead>
                     <tbody id="wtOverheadBody"></tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 계산 방법 탭 — 읽기 전용 안내. 공식이 바뀌면 이 내용도 함께 고칠 것:
+         공통식 src/lib/engine_settings.php compute_price_estimate(), 엔진별 부재·짜임 수 src/engine/{엔진}/api/geometry.php -->
+    <div id="wtMethodPanel" style="display:none;">
+        <div class="wt-method-grid">
+            <div class="wt-card wt-method-wide">
+                <div class="wt-card-title">공통 계산 순서 (7개 엔진 동일)</div>
+                <ol class="wt-method-list">
+                    <li><b>목재비</b> = (문 목재 재수 + 문틀 목재 재수) × 수종 무게 계수 × 수종 1재 단가. 1재 = 33×33×3600mm 부피로 환산하고, 문 목재는 문짝 수만큼 곱합니다.</li>
+                    <li><b>제작비</b> = (짜임 수 × 짝 × 짜임당 시간 + 짝 × (울거미 + 다듬기 시간) + 문틀 시간) ÷ 60 × 시간당 공임. 시간은 인건비 탭의 엔진별 값을 씁니다. 화면에 보이는 작업 시간과 납기에는 엔진별 최소 작업 시간이 하한으로 적용됩니다.</li>
+                    <li><b>부자재</b> = 짝 × 선택한 철물 단가</li>
+                    <li><b>마감</b> = 도장 면적(살 길이를 면적으로 환산) × 도포 횟수 × 마감재 ㎡ 단가 + 마감 작업 시간 × 마감 공임</li>
+                    <li><b>판매가</b> = (목재비 + 제작비 + 부자재 + 마감) × (1 + 간접비율 + 이익률)</li>
+                </ol>
+                <p class="wt-method-note">울거미: 세로 2개 × (외경 높이 + 살 두께×2), 가로 2개(풍판 사용 시 3개) × (외경 폭 + 살 두께×2) — 모든 엔진 동일. 살 길이에는 양 끝 장부(살 두께만큼)가 더해집니다.</p>
+                <p class="wt-method-note"><b>예상원가에 반영하지 않는 것:</b> 캔버스에서 선 추가·삭제로 편집한 내용(몬드리안 제외)은 예상원가에 들어가지 않습니다. 견적 요청을 검토할 때 도면을 보고 사람이 판단합니다.</p>
+            </div>
+
+            <div class="wt-card">
+                <div class="wt-card-title">세살 (classic)</div>
+                <table class="wt-method-table"><tbody>
+                    <tr><th>살</th><td>가로살 (상 + 중 + 하 가로살 개수)개 × 내경 폭, 세로살 (가로 칸수 − 1)개 × 내경 높이</td></tr>
+                    <tr><th>짜임 수</th><td>가로 칸수 × (가로살로 나뉜 세로 구간 수)</td></tr>
+                </tbody></table>
+            </div>
+            <div class="wt-card">
+                <div class="wt-card-title">정자살 (square)</div>
+                <table class="wt-method-table"><tbody>
+                    <tr><th>살</th><td>가로살 (세로 칸수 − 1)개 × 내경 폭, 세로살 (가로 칸수 − 1)개 × 내경 높이</td></tr>
+                    <tr><th>짜임 수</th><td>가로 칸수 × 세로 칸수 (칸 수)</td></tr>
+                </tbody></table>
+            </div>
+            <div class="wt-card">
+                <div class="wt-card-title">빗살 (cross)</div>
+                <table class="wt-method-table"><tbody>
+                    <tr><th>살</th><td>45° 사선살만 사용. 방향별(↘·↗)로 사선마다 지나가는 칸 수 × 칸 대각선 길이 + 장부로 길이를 구해, 길이별 개수를 합산</td></tr>
+                    <tr><th>짜임 수</th><td>가로 칸수 × 세로 칸수 (칸 수)</td></tr>
+                </tbody></table>
+            </div>
+            <div class="wt-card">
+                <div class="wt-card-title">격자빗살 (diamond)</div>
+                <table class="wt-method-table"><tbody>
+                    <tr><th>살</th><td>정자살과 같은 가로살·세로살 + 45° 사선살(길이별 개수 합산)</td></tr>
+                    <tr><th>짜임 수</th><td>가로 칸수 × 세로 칸수 (칸 수)</td></tr>
+                </tbody></table>
+            </div>
+            <div class="wt-card">
+                <div class="wt-card-title">세모솟을살 (triangle)</div>
+                <table class="wt-method-table"><tbody>
+                    <tr><th>살</th><td>기준 방향 살(패턴 세로 방향이면 세로살 (가로 칸수 − 1)개 × 내경 높이, 아니면 가로살 (세로 칸수 − 1)개 × 내경 폭) + 60°·120° 사선살(길이별 개수 합산)</td></tr>
+                    <tr><th>짜임 수</th><td>가로 칸수 × 세로 칸수</td></tr>
+                </tbody></table>
+            </div>
+            <div class="wt-card">
+                <div class="wt-card-title">육모솟을살 (hexagon)</div>
+                <table class="wt-method-table"><tbody>
+                    <tr><th>살</th><td>세로살 (가로 칸수 − 1)개 × 내경 높이 + 사선살(길이별 개수 합산)</td></tr>
+                    <tr><th>짜임 수</th><td>가로 칸수 × 세로 칸수</td></tr>
+                </tbody></table>
+            </div>
+            <div class="wt-card">
+                <div class="wt-card-title">몬드리안 (mondrian)</div>
+                <table class="wt-method-table"><tbody>
+                    <tr><th>살</th><td>캔버스에 실제로 그려진 살(랜덤 생성 + 직접 그은 선 − 삭제한 선)의 개수와 길이 합 + 살마다 양 끝 장부</td></tr>
+                    <tr><th>짜임 수</th><td>살 개수 × 2. 살이 서로 교차하지 않고 양 끝이 다른 살이나 울거미에 맞물리기 때문</td></tr>
+                    <tr><th>비고</th><td>선 편집이 예상원가에 바로 반영되는 유일한 엔진. 선을 드래그하는 동안에는 계산을 멈추고 놓을 때 다시 계산합니다.</td></tr>
+                </tbody></table>
             </div>
         </div>
     </div>
