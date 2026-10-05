@@ -223,4 +223,12 @@ return [
     '삭제에 실패했습니다.'                           => 'Could not delete it.',
     '이 문양을 넣어 둔 도면에서도 문양이 보이지 않게 됩니다.' => 'It will also disappear from any drawing that uses it.',
     '패널 접기/펴기'                                 => 'Collapse/expand the panel',
+    '색칠할 부위'                                    => 'Part to colour',
+    '나무 그대로'                                    => 'Natural wood',
+    '천연오일'                                       => 'Natural oil',
+    '%s색'                                           => '%s colours',
+    '수종'                                           => 'Wood',
+    '부자재'                                         => 'Hardware',
+    '오일 마감은 나무결 그대로 한 가지 색으로 칠해집니다.' => 'Oil finishes keep the grain and use a single colour.',
+    '나무 본래 색 그대로입니다. 아래에서 색을 고르면 그 마감이 함께 선택됩니다.' => 'The wood keeps its natural colour. Picking a colour below also selects its finish.',
 ];

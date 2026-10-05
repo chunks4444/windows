@@ -2040,17 +2040,6 @@ body.pm-generator .color-code-box .pmok-hex-input::placeholder { color: rgba(var
 .tile-act:hover { background: #111; color: #fff; }
 .tile-act-del:hover { background: var(--danger); color: #fff; }
 
-/* 마감 컬러 (Canva식) — 부위 칩 2×2 + 고른 부위의 팔레트를 패널 안에 펼쳐서 표시 */
-.color-targets { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
-.color-target .color-preview-btn { width: 100%; border-width: 2px; }
-.color-target.is-current .color-preview-btn { border-color: var(--bg); background: rgba(var(--bg-rgb), 0.1); }
-.color-swatch-host { margin-top: 12px; }
-.color-swatch-host .color-popup { display: none; position: static; box-shadow: none; border: none; padding: 0; background: transparent; max-height: none; overflow: visible; grid-template-columns: repeat(auto-fill, minmax(30px, 1fr)); gap: 6px; }
-.color-swatch-host .color-popup.is-current { display: grid; }
-.color-swatch-host .color-swatch { width: auto; aspect-ratio: 1; height: auto; border-radius: 50%; }
-.color-swatch-host .color-popup-info { position: sticky; bottom: 0; margin: 6px 0 0; padding: 8px 0; }
-.rail-pane[data-pane="finish"] #btnFacePaint { height: 34px; }
-
 /* 내보내기 큰 버튼 */
 .export-list { display: flex; flex-direction: column; gap: 8px; }
 .export-big {
@@ -2250,7 +2239,6 @@ body.pm-generator .color-code-box .pmok-hex-input::placeholder { color: rgba(var
 .pm-light .rail-pane .file-row #btnSave:hover { background: #333333; border-color: #333333; opacity: 1; }
 .pm-light .ver-chip.active { background: #111111; color: #FFFFFF; border-color: #111111; }
 .pm-light .ver-chip.active small { color: rgba(255, 255, 255, 0.65); }
-.pm-light .color-target.is-current .color-preview-btn { border-color: #111111; background: #F4F5F7; }
 .pm-light .color-swatch.selected { box-shadow: 0 0 0 1px #fff, 0 0 0 3px #111111; border-color: transparent; }
 .pm-light .pane-search { background: #F4F5F7; border-color: #E4E6EB; }
 .pm-light .pane-search:focus { border-color: #111111; background: #fff; }
@@ -2399,3 +2387,54 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
 .pm-light .rail-pane .render-saved-item:hover img { filter: brightness(0.86); }
 .pm-light .rail-pane .rp-thumb-item img,
 .pm-light .rail-pane .render-saved-item img { transition: filter 0.15s; }
+
+/* ── 마감 탭 (컬러 먼저 고르기) ───────────────────────────── */
+.rail-pane #finishColorBlock { display: none !important; }        /* 원래 피커는 상태 보관용으로만 남김 */
+.rail-pane .ctrl:has(#txtFinish) { display: none; }
+.fin-basics { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.fin-basics .ctrl { margin-bottom: 0 !important; }
+.fin-basics .cs-trigger { background: #F4F5F7; border-radius: 8px; height: 36px; }
+.fin-label { font-size: 11px; font-weight: 600; color: #6B7280; margin-bottom: 6px; letter-spacing: -0.1px; }
+.fin-ui { display: flex; flex-direction: column; }
+.fin-dot { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12); }
+.fin-dot-none { background: repeating-linear-gradient(45deg, #fff 0 3px, #E4E6EB 3px 5px); }
+
+.fin-parts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; padding: 3px; background: #F1F2F4; border-radius: 10px; }
+.fin-parts.is-off { opacity: 0.45; pointer-events: none; }
+.fin-part {
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+    height: 32px; padding: 0 4px; border: none; border-radius: 8px;
+    background: transparent; color: #4B5160; font-size: 12px; font-weight: 500; cursor: pointer; white-space: nowrap;
+}
+.fin-part .fin-dot { width: 10px; height: 10px; }
+.fin-part.active { background: #FFFFFF; color: #111; font-weight: 700; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); }
+
+.fin-current { display: flex; align-items: center; gap: 8px; margin: 12px 0 4px; font-size: 13px; font-weight: 600; color: #111; min-height: 20px; }
+.fin-current .fin-dot { width: 18px; height: 18px; }
+.fin-current span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fin-hint { margin: 0 0 4px; font-size: 11.5px; line-height: 1.5; color: #8A909A; }
+
+.fin-group { margin-top: 18px; }
+.fin-group-head { display: flex; align-items: baseline; gap: 6px; margin-bottom: 8px; font-size: 12px; font-weight: 700; color: #3C4049; }
+.fin-group-head small { font-size: 11px; font-weight: 500; color: #9097A1; }
+.fin-group.is-on .fin-group-head::after { content: '✓'; font-size: 11px; color: #111; }
+
+.fin-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.fin-chip {
+    display: inline-flex; align-items: center; gap: 7px;
+    height: 32px; padding: 0 12px 0 9px; border-radius: 999px;
+    border: 1px solid #E4E6EB; background: #FFFFFF; color: #3C4049; font-size: 12px; cursor: pointer;
+}
+.fin-chip:hover { background: #F4F5F7; }
+.fin-chip.active { border-color: #111; color: #111; font-weight: 700; box-shadow: inset 0 0 0 1px #111; }
+
+.fin-swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(24px, 1fr)); gap: 6px; }
+.fin-sw {
+    aspect-ratio: 1; width: 100%; padding: 0; border: none; border-radius: 50%; cursor: pointer;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12);
+    transition: transform 0.1s;
+}
+.fin-sw:hover { transform: scale(1.12); }
+.fin-sw.active { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #111; }
+.fin-ui > div:has(#btnFacePaint) { margin-top: 18px; }
+.fin-ui #btnFacePaint { height: 36px; border-radius: 8px; }

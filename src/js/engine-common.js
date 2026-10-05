@@ -2539,37 +2539,135 @@ function drawSvgInserts() {
         document.addEventListener('pmok:svg-uploaded', loadMine);
     }
 
-    // ── 마감 컬러 (Canva식): 문틀·울거미·살·면 칩을 고르면 그 색 팔레트가 패널 안에 펼쳐진 채로 보인다 ─────
-    // 엔진 JS가 만든 팝업(buildColorPopup)을 그대로 쓰고, 위치만 칩 아래 공용 영역으로 옮긴다.
-    // 팝업 안 색 클릭 → 선택·도면 반영은 기존 로직 그대로, 표시만 .open 대신 .is-current로 한다.
+    // ── 마감 (컬러 먼저 고르기, Canva '색상' 패널식) ─────────────────────────────
+    // 마감 셀렉트 대신 [마감 없음] · 천연오일 마감 칩 · 제품별 팔레트(AURO 560/930)를 한 화면에 펼친다.
+    // 팔레트의 색을 누르면 그 색이 속한 마감이 자동 선택된다 — txtFinish 값을 바꾸고 change를 보내므로
+    // 팔레트 제한·오일 자동색(applyFinishColorPicker)·견적 재계산은 기존 로직 그대로 돈다.
+    // 색 적용은 엔진 JS가 만든 피커(buildColorPopup)의 selectColor를 그대로 쓰고, 원래 피커 UI(#finishColorBlock)는 숨겨 둔다.
     function initFinishColors() {
-        const block = document.getElementById('finishColorBlock');
-        if (!block || !block.closest('.rail-pane')) return;
-        const stacks = [...block.querySelectorAll('.color-row-stack')].filter(s => s.querySelector('.color-popup'));
-        if (!stacks.length) return;
-        const targets = document.createElement('div');
-        targets.className = 'color-targets';
-        const host = document.createElement('div');
-        host.className = 'color-swatch-host';
-        stacks[0].parentElement.before(targets);
-        targets.after(host);
-        stacks.forEach(s => {
-            s.classList.add('color-target');
-            s.style.marginTop = '';
-            targets.appendChild(s);
-            host.appendChild(s.querySelector('.color-popup'));
-        });
-        block.querySelectorAll('hr.sb-divider').forEach(hr => hr.remove());
-        // 원래 칩들을 감싸던 빈 div 정리
-        [...block.children].forEach(el => { if (el.tagName === 'DIV' && !el.children.length && !el.textContent.trim()) el.remove(); });
+        const block  = document.getElementById('finishColorBlock');
+        const finSel = document.getElementById('txtFinish');
+        if (!block || !finSel || !block.closest('.rail-pane')) return;
+        const pickers = () => window.__pmokColorPickers || [];
+        const groups  = window.__pmokColorGroups || [];
+        const toRgb   = h => { const m = /^#?([0-9a-f]{6})$/i.exec(String(h || '').trim()); return m ? [0, 2, 4].map(k => parseInt(m[1].substr(k, 2), 16)).join(',') : ''; };
+        const dotRgb  = el => ((el && getComputedStyle(el).backgroundColor) || '').replace(/[^\d,]/g, '').split(',').slice(0, 3).join(',');
 
-        function select(stack) {
-            const popupId = stack.querySelector('.color-preview-btn')?.id.replace('PreviewBtn', 'Popup');
-            stacks.forEach(s => s.classList.toggle('is-current', s === stack));
-            host.querySelectorAll('.color-popup').forEach(p => p.classList.toggle('is-current', p.id === popupId));
+        // 부위: 원래 피커 칸(.color-row-stack)마다 하나 — 라벨은 그 칸의 글자(번역 포함)를 그대로
+        const parts = [...block.querySelectorAll('.color-row-stack')].map(st => {
+            const btn = st.querySelector('.color-preview-btn');
+            const key = btn?.id.replace('PreviewBtn', '');
+            return key && { key, label: (st.querySelector('.color-label')?.textContent || '').replace(/\s*(컬러|colou?r)\s*$/i, '').trim(),
+                            dot: document.getElementById(key + 'PreviewDot'), name: document.getElementById(key + 'PreviewName') };
+        }).filter(Boolean);
+        if (!parts.length) return;
+        let target = parts[0].key;
+
+        const finishOpts = [...finSel.options].map(o => o.value);
+        const finishLabel = v => [...finSel.options].find(o => o.value === v)?.textContent.trim() || v;
+        const productOf = v => (/AURO\s*(\d{3})/i.exec(v || '') || [])[1] || null;
+        const stainGroups = groups.map(g => {
+            const code = productOf(g.key || g.label);
+            const fin  = code && finishOpts.find(v => productOf(v) === code && !isOilFinish(v));
+            return fin ? { g, fin } : null;
+        }).filter(Boolean);
+        const oilFinishes = finishOpts.filter(v => v && isOilFinish(v));
+        const oilColors   = groups.filter(g => String(g.key || g.label).startsWith(OIL_GROUP_KEY)).flatMap(g => g.colors);
+        const oilHexFor   = v => {
+            const want = OIL_FINISH_COLOR_CODE[v] || OIL_WOOD_COLOR_CODE[document.getElementById('txtWood')?.value || ''] || 'NO-01';
+            return (oilColors.find(c => c.code === want) || oilColors[0] || {}).hex || '#c8b48a';
+        };
+
+        // 수종·부자재는 라벨을 붙여 맨 위 두 칸으로, 마감 셀렉트는 아래 팔레트가 대신하므로 숨긴다(CSS)
+        const basics = document.createElement('div');
+        basics.className = 'fin-basics';
+        [['txtWood', _t('수종')], ['txtHardware', _t('부자재')]].forEach(([id, lbl]) => {
+            const ctrl = document.getElementById(id)?.closest('.ctrl');
+            if (!ctrl) return;
+            const cell = document.createElement('div');
+            cell.innerHTML = `<div class="fin-label">${lbl}</div>`;
+            cell.appendChild(ctrl);
+            basics.appendChild(cell);
+        });
+        finSel.closest('.ctrl')?.before(basics);
+
+        const root = document.createElement('div');
+        root.className = 'fin-ui';
+        block.before(root);
+        // 면 칠하기 버튼은 새 화면 맨 아래로 옮긴다(리스너는 그대로)
+        const paintRow = document.getElementById('btnFacePaint')?.parentElement;
+
+        function setFinish(v) {
+            if (finSel.value === v) return;
+            finSel.value = v;
+            finSel.dispatchEvent(new Event('change', { bubbles: true }));
         }
-        stacks.forEach(s => s.querySelector('.color-preview-btn')?.addEventListener('click', () => select(s)));
-        select(stacks[0]);
+        function pickColor(groupFin, hex) {
+            setFinish(groupFin);
+            pickers().find(p => p.id === target + 'Popup')?.selectColor(hex);
+            window.draw?.();
+            render();
+        }
+
+        function render() {
+            const fin   = finSel.value;
+            const stain = stainGroups.some(sg => sg.fin === fin);
+            const cur   = parts.find(p => p.key === target);
+            const curRgb = dotRgb(cur?.dot);
+            const esc2 = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+            let h = '';
+            // 부위 고르기 — 스테인일 때만 부위별로 색이 다르다 (마감 없음·오일은 한 가지 색)
+            h += `<div class="fin-label">${_t('색칠할 부위')}</div><div class="fin-parts${stain ? '' : ' is-off'}">`;
+            parts.forEach(p => {
+                h += `<button type="button" class="fin-part${p.key === target ? ' active' : ''}" data-part="${p.key}">`
+                   + `<span class="fin-dot" style="background:${esc2(p.dot?.style.background || '')}"></span>${esc2(p.label)}</button>`;
+            });
+            h += '</div>';
+            h += `<div class="fin-current">` + (fin ? `<span class="fin-dot" style="background:${esc2(cur?.dot?.style.background || '')}"></span>` : '<span class="fin-dot fin-dot-none"></span>')
+               + `<span>${esc2(stain ? (cur?.name?.textContent || '') : (fin ? finishLabel(fin) : _t('마감 없음')))}</span></div>`;
+            if (!stain) h += `<p class="fin-hint">${fin ? _t('오일 마감은 나무결 그대로 한 가지 색으로 칠해집니다.') : _t('나무 본래 색 그대로입니다. 아래에서 색을 고르면 그 마감이 함께 선택됩니다.')}</p>`;
+
+            // 나무 그대로
+            h += `<div class="fin-group${fin === '' ? ' is-on' : ''}"><div class="fin-group-head">${_t('나무 그대로')}</div>`
+               + `<div class="fin-chips"><button type="button" class="fin-chip${fin === '' ? ' active' : ''}" data-fin=""><span class="fin-dot fin-dot-none"></span>${_t('마감 없음')}</button></div></div>`;
+            // 천연오일
+            if (oilFinishes.length) {
+                h += `<div class="fin-group${oilFinishes.includes(fin) ? ' is-on' : ''}"><div class="fin-group-head">${_t('천연오일')}</div><div class="fin-chips">`;
+                oilFinishes.forEach(v => {
+                    h += `<button type="button" class="fin-chip${fin === v ? ' active' : ''}" data-fin="${esc2(v)}"><span class="fin-dot" style="background:${esc2(oilHexFor(v))}"></span>${esc2(finishLabel(v))}</button>`;
+                });
+                h += '</div></div>';
+            }
+            // 제품별 팔레트
+            stainGroups.forEach(({ g, fin: gf }) => {
+                h += `<div class="fin-group${fin === gf ? ' is-on' : ''}"><div class="fin-group-head">${esc2(finishLabel(gf))}<small>${_t('%s색', g.colors.length)}</small></div><div class="fin-swatches">`;
+                g.colors.forEach(c => {
+                    const on = fin === gf && toRgb(c.hex) === curRgb;
+                    const tip = [c.brand, c.code, c.name].filter(Boolean).join(' ');
+                    h += `<button type="button" class="fin-sw${on ? ' active' : ''}" style="background:${esc2(c.hex)}" title="${esc2(tip)}" data-fin="${esc2(gf)}" data-hex="${esc2(c.hex)}"></button>`;
+                });
+                h += '</div></div>';
+            });
+            root.innerHTML = h;
+            if (paintRow) { root.appendChild(paintRow); paintRow.hidden = !(stain && target === 'face'); }
+        }
+
+        root.addEventListener('click', e => {
+            const part = e.target.closest('.fin-part');
+            if (part) { target = part.dataset.part; render(); return; }
+            const sw = e.target.closest('.fin-sw');
+            if (sw) { pickColor(sw.dataset.fin, sw.dataset.hex); return; }
+            const chip = e.target.closest('.fin-chip');
+            if (chip) { setFinish(chip.dataset.fin); render(); }
+        });
+        // 도면 불러오기·수종 변경·오일 자동색 등 다른 곳에서 바뀌어도 화면을 맞춘다
+        finSel.addEventListener('change', () => setTimeout(render, 0));
+        document.getElementById('txtWood')?.addEventListener('change', () => setTimeout(render, 0));
+        let t;
+        const mo = new MutationObserver(() => { clearTimeout(t); t = setTimeout(render, 30); });
+        parts.forEach(p => p.dot && mo.observe(p.dot, { attributes: true, attributeFilter: ['style'] }));
+        render();
     }
 })();
 
