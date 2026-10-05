@@ -243,9 +243,8 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                         </div>
                 </div>
                 <div class="pane-subtitle"><?= te('현재 도면 버전') ?></div>
-                <div class="ver-chips" id="mineVersions"></div>
-                <!-- 기존 버전 드롭다운은 숨겨 두고 위 버전 칩이 그 항목을 대신 눌러 준다 -->
-                <div class="ver-wrap" hidden>
+                <!-- 버전은 드롭다운(엔진 JS의 #verBtn·#verDropdown 그대로 — 항목 클릭=그 버전 열기, ×=버전 삭제) -->
+                <div class="ver-wrap file-ver">
                     <button class="title-group-btn" id="verBtn">
                             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                 <circle cx="12" cy="12" r="9" />
@@ -256,6 +255,11 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                         <div class="ver-dropdown" id="verDropdown">
                             <div id="verList"></div>
                         </div>
+                </div>
+                <div class="ver-chips" id="mineVersions" hidden></div>
+                <!-- 도면 목록 모달 버튼은 숨겨 둔다(내 도면 그리드가 대신함) -->
+                <div class="ver-wrap" hidden>
+                    
                     <button class="title-group-btn" id="dmBtn" title="<?= te('도면 목록') ?>">
                             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>

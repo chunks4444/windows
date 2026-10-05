@@ -2396,6 +2396,12 @@ function drawSvgInserts() {
 
         function renderChips() {
             const vs = typeof versions !== 'undefined' ? versions : [];
+            // 버전 드롭다운 버튼에 현재 버전의 저장 시각도 함께 (예: v5 · 2026.07.11 10:34)
+            const lbl = document.getElementById('verLabel');
+            const cur0 = typeof currentVerIdx !== 'undefined' ? currentVerIdx : -1;
+            let dateEl = document.getElementById('verBtnDate');
+            if (lbl && !dateEl) { dateEl = document.createElement('small'); dateEl.id = 'verBtnDate'; lbl.after(dateEl); }
+            if (dateEl) dateEl.textContent = vs[cur0] ? fmtDate(vs[cur0].savedAt) : _t('저장된 버전이 없습니다');
             if (!vs.length) { chips.innerHTML = `<span class="pane-hint">${_t('저장된 버전이 없습니다')}</span>`; return; }
             const cur = typeof currentVerIdx !== 'undefined' ? currentVerIdx : -1;
             chips.innerHTML = '';
