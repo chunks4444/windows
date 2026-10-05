@@ -2465,3 +2465,14 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
 .fin-tip::after { content: ''; position: absolute; left: 50%; bottom: -5px; margin-left: -5px; border: 5px solid transparent; border-bottom: 0; border-top-color: #FFFFFF; filter: drop-shadow(0 1px 0 #E4E6EB); }
 .fin-tip.show { opacity: 1; transform: translate(-50%, calc(-100% - 10px)); }
 .fin-label small { margin-left: 6px; font-size: 10.5px; font-weight: 400; color: #9097A1; }
+/* 기본 마감(마감 없음·천연오일) — 팔레트와 같은 동그라미 + 아래 작은 이름, 선택은 같은 블랙 링 */
+.fin-group.is-on .fin-group-head::after { content: none; }
+.fin-bases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.fin-base { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 0; border: none; background: none; cursor: pointer; min-width: 0; }
+.fin-base-dot { width: 36px; height: 36px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12); transition: transform 0.1s; }
+.fin-base:hover .fin-base-dot { transform: scale(1.08); }
+.fin-base.active .fin-base-dot { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #111; }
+.fin-base-name { font-size: 11px; color: #6B7280; text-align: center; line-height: 1.3; word-break: keep-all; }
+.fin-base.active .fin-base-name { color: #111; }
+/* 선택 링을 얇게 — 흰 간격 2px + 블랙 1px */
+.fin-base.active .fin-base-dot, .fin-sw.active { box-shadow: 0 0 0 2px #fff, 0 0 0 3px #111; }

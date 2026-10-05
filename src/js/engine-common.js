@@ -2653,17 +2653,15 @@ function drawSvgInserts() {
                 + `<span>${esc2(!target ? _t('부위를 고른 뒤 아래에서 색을 누르세요.') : stain ? (cur?.name?.textContent || '') : (fin ? finishLabel(fin) : _t('마감 없음')))}</span></div>`;
             if (!stain && target) h += `<p class="fin-hint">${fin ? _t('오일 마감은 나무결 그대로 한 가지 색으로 칠해집니다.') : _t('나무 본래 색 그대로입니다. 아래에서 색을 고르면 그 마감이 함께 선택됩니다.')}</p>`;
 
-            // 나무 그대로
-            h += `<div class="fin-group${fin === '' ? ' is-on' : ''}"><div class="fin-group-head">${_t('나무 그대로')}</div>`
-               + `<div class="fin-chips"><button type="button" class="fin-chip${fin === '' ? ' active' : ''}" data-fin=""><span class="fin-dot fin-dot-none"></span>${_t('마감 없음')}</button></div></div>`;
-            // 천연오일
-            if (oilFinishes.length) {
-                h += `<div class="fin-group${oilFinishes.includes(fin) ? ' is-on' : ''}"><div class="fin-group-head">${_t('천연오일')}</div><div class="fin-chips">`;
-                oilFinishes.forEach(v => {
-                    h += `<button type="button" class="fin-chip${fin === v ? ' active' : ''}" data-fin="${esc2(v)}"><span class="fin-dot" style="background:${esc2(oilHexFor(v))}"></span>${esc2(finishLabel(v))}</button>`;
-                });
-                h += '</div></div>';
-            }
+            // 기본 마감 — 마감 없음 + 천연오일을 팔레트와 같은 동그라미(아래 작은 이름)로
+            const base = [{ v: '', label: _t('마감 없음'), bg: '' }].concat(oilFinishes.map(v => ({ v, label: finishLabel(v), bg: oilHexFor(v) })));
+            h += `<div class="fin-group"><div class="fin-group-head">${_t('기본')}</div><div class="fin-bases">`;
+            base.forEach(b => {
+                h += `<button type="button" class="fin-base${fin === b.v ? ' active' : ''}" data-fin="${esc2(b.v)}">`
+                   + `<span class="fin-base-dot${b.v ? '' : ' fin-dot-none'}"${b.bg ? ` style="background:${esc2(b.bg)}"` : ''}></span>`
+                   + `<span class="fin-base-name">${esc2(b.label)}</span></button>`;
+            });
+            h += '</div></div>';
             // 제품별 팔레트
             stainGroups.forEach(({ g, fin: gf }) => {
                 h += `<div class="fin-group${fin === gf ? ' is-on' : ''}"><div class="fin-group-head">${esc2(finishLabel(gf))}<small>${_t('%s색', g.colors.length)}</small></div><div class="fin-swatches">`;
@@ -2683,7 +2681,7 @@ function drawSvgInserts() {
             if (part) { target = part.dataset.part; needPart = false; render(); return; }
             const sw = e.target.closest('.fin-sw');
             if (sw) { pickColor(sw.dataset.fin, sw.dataset.hex, sw); return; }
-            const chip = e.target.closest('.fin-chip');
+            const chip = e.target.closest('.fin-base');
             if (chip) { setFinish(chip.dataset.fin); render(); }
         });
         // 도면 불러오기·수종 변경·오일 자동색 등 다른 곳에서 바뀌어도 화면을 맞춘다
