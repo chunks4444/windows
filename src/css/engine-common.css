@@ -2594,3 +2594,29 @@ body.pm-light:has(.controls.collapsed) .pm-engine-story-link { left: calc(68px +
 /* AI 렌더링 버튼 — 입력 칸과 같은 연회색 바탕·테두리, 검은 글씨 */
 .rp-pane .rp-ai-btn { background: #F4F5F7; color: #111; border: 1px solid #E4E6EB; }
 .rp-pane .rp-ai-btn:hover { background: #E9EBEF; }
+
+/* ── 패널 보조 버튼 통일 — 입력 칸과 같은 연회색 바탕·연한 테두리·검은 글씨·8px 모서리.
+   블랙 주요 버튼(저장·SVG 업로드)과 견적요청(빨강)은 제외. 선택 상태는 검정 테두리로만 */
+.pm-light .rail-pane .hbtn:not(.hbtn-primary):not(#btnOrder),
+.pm-light .rail-pane .file-row .title-group-btn:not(#btnSave),
+.pm-light .rail-pane .file-row select.title-group-btn,
+.pm-light .rail-pane .rp-mini,
+.pm-light .rail-pane .ver-chip,
+.pm-light .rail-pane .export-big,
+.pm-light .rail-pane .pane-login-btn {
+    background-color: #F4F5F7;
+    border: 1px solid #E4E6EB;
+    color: #111;
+    border-radius: 8px;
+}
+.pm-light .rail-pane .hbtn:not(.hbtn-primary):not(#btnOrder):hover,
+.pm-light .rail-pane .file-row .title-group-btn:not(#btnSave):hover,
+.pm-light .rail-pane .rp-mini:hover,
+.pm-light .rail-pane .ver-chip:hover,
+.pm-light .rail-pane .export-big:hover { background-color: #E9EBEF; color: #111; }
+.pm-light .rail-pane .rp-mini.active,
+.pm-light .rail-pane .ver-chip.active { background-color: #F4F5F7; border-color: #111; color: #111; }
+.pm-light .rail-pane .ver-chip small { color: #8A909A; }
+.pm-light .rail-pane .ver-chip.active small { color: #4B5160; }
+.pm-light .rail-pane .export-big small { color: #8A909A; }
+.pm-light .rail-pane .file-row .title-group-btn:disabled { opacity: 0.45; }
