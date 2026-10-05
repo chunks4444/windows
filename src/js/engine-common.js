@@ -2607,11 +2607,16 @@ function drawSvgInserts() {
         let tipEl, tipTimer;
         // rect는 render()로 칩이 새로 그려지기 전에 잰 값을 받는다 (다시 그린 뒤엔 누른 칩이 DOM에서 빠져 0,0이 된다)
         // 말풍선은 다른 곳을 누르거나 패널을 스크롤하면 닫는다 (터치 기기는 mouseout이 없어서 남아 있을 수 있음)
-        const hideTip = () => { clearTimeout(tipTimer); tipEl?.classList.remove('show'); };
+        const hideTip = () => { clearTimeout(tipTimer); tipLockUntil = 0; tipEl?.classList.remove('show'); };
         document.addEventListener('pointerdown', e => { if (tipEl?.classList.contains('show') && !e.target.closest('.fin-sw, .fin-base')) hideTip(); }, true);
         document.getElementById('sidebar')?.addEventListener('scroll', hideTip, { passive: true });
 
+        // 안내 말풍선(부위를 고르세요)은 2초 동안 색 코드 오버 말풍선이 덮어쓰지 못하게 잠근다 —
+        // 색을 누르면 패널을 다시 그리므로 커서 아래 새 칩에서 mouseover가 곧바로 다시 발생한다
+        let tipLockUntil = 0;
         function tipAbove(r, msg, sticky) {
+            if (sticky && Date.now() < tipLockUntil) return;
+            if (!sticky) tipLockUntil = Date.now() + 2000;
             if (!tipEl) { tipEl = document.createElement('div'); tipEl.className = 'fin-tip'; document.body.appendChild(tipEl); }
             tipEl.textContent = msg;
             tipEl.style.left = (r.left + r.width / 2) + 'px';
@@ -2695,7 +2700,7 @@ function drawSvgInserts() {
         });
         root.addEventListener('mouseout', e => {
             const b = e.target.closest('[data-tip]');
-            if (b && !b.contains(e.relatedTarget)) tipEl?.classList.remove('show');
+            if (b && !b.contains(e.relatedTarget) && Date.now() >= tipLockUntil) tipEl?.classList.remove('show');
         });
 
         root.addEventListener('click', e => {
