@@ -229,7 +229,7 @@ return [
     '문양'                    => 'Motifs',
     '견적'                    => 'Estimate',
     '시방서'                  => 'Specs',
-    '예산 견적'               => 'Estimate',
+    '예상 견적'               => 'Estimate',
     '컬렉션 검색'             => 'Search the collection',
     '더 보기'                 => 'Load more',
     '전체 컬렉션 보기'        => 'View the full collection',

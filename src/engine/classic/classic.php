@@ -557,7 +557,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                 </div>
             </section>
             <section class="rail-pane" data-pane="estimate" hidden>
-                <div class="rail-pane-head"><?= te('예산 견적') ?></div>
+                <div class="rail-pane-head"><?= te('예상 견적') ?></div>
                 <div class="sb-section">
                     <div class="sb-price-box">
                         <?php if ($perms['price']): ?>

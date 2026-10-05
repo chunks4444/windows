@@ -2622,3 +2622,16 @@ body.pm-light:has(.controls.collapsed) .pm-engine-story-link { left: calc(68px +
 .pm-light .rail-pane .file-row .title-group-btn:disabled { opacity: 0.45; }
 .pm-light .rail-pane .file-head .hdr-title-badge { background: #F4F5F7; border-color: #E4E6EB; border-radius: 8px; }
 .pm-light .rail-pane .file-head .hdr-title-badge:focus-within { background: #fff; border-color: #111; }
+
+/* ── 견적 탭 (밝은 테마) — 노란 강조(--select)는 흰 바탕에서 안 보여 검정·진회색으로, 예상가격 금액은 라벨 오른쪽 끝 */
+.pm-light .rail-pane .sb-price-box { display: grid; grid-template-columns: 1fr auto; align-items: baseline; column-gap: 12px; }
+.pm-light .rail-pane .sb-price-box > :not(.sb-price-label):not(.sb-price-amount) { grid-column: 1 / -1; }
+.pm-light .rail-pane .sb-price-label { font-size: 13px; color: #111; margin: 0; }
+.pm-light .rail-pane .sb-price-amount { color: #111; text-align: right; }
+.pm-light .rail-pane .sb-price-start { font-size: 22px; }
+.pm-light .rail-pane .sb-break-row { color: #4B5160; }
+.pm-light .rail-pane .sb-break-key span:last-child,
+.pm-light .rail-pane .sb-break-total span { color: #111; }
+.pm-light .rail-pane .sb-lead-time strong { color: #111; }
+.pm-light .rail-pane .sb-price-note,
+.pm-light .rail-pane .sb-price-disclaimer { color: #9097A1; }
