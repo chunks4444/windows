@@ -2290,6 +2290,15 @@ function drawSvgInserts() {
             syncActive();
         }));
 
+        // 패널 오른쪽 가장자리 가운데의 접기 탭(Canva의 ‹ 버튼) — 패널 밖(.main)에 두어야 패널 스크롤에 안 딸려간다
+        const fold = document.createElement('button');
+        fold.type = 'button';
+        fold.className = 'panel-fold';
+        fold.title = _t('패널 접기/펴기');
+        fold.innerHTML = '<i class="bi bi-chevron-left"></i>';
+        panel.after(fold);
+        fold.addEventListener('click', () => { toggleSidebar(); syncActive(); });
+
         // 다른 곳(도면 목록 버튼 등)에서 특정 탭을 열 때 쓰는 진입점
         window.pmokOpenRailPane = key => {
             show(key);

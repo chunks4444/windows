@@ -222,4 +222,5 @@ return [
     '"%s" 문양을 삭제하시겠습니까?'                 => 'Delete the motif "%s"?',
     '삭제에 실패했습니다.'                           => 'Could not delete it.',
     '이 문양을 넣어 둔 도면에서도 문양이 보이지 않게 됩니다.' => 'It will also disappear from any drawing that uses it.',
+    '패널 접기/펴기'                                 => 'Collapse/expand the panel',
 ];
