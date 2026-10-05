@@ -2483,3 +2483,9 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
 .rail-pane[data-pane="finish"] .fin-part.active,
 .rail-pane[data-pane="finish"] .fin-current,
 .rail-pane[data-pane="finish"] .fin-need { font-weight: 400; }
+/* 기본 마감 동그라미를 팔레트 칩과 같은 크기(24px)로, 이름은 오른쪽에 붙여 한 줄로 */
+.fin-bases { display: flex; flex-wrap: wrap; gap: 8px 16px; }
+.fin-base { flex-direction: row; gap: 7px; }
+.fin-base-dot { width: 24px; height: 24px; flex-shrink: 0; }
+.fin-base:hover .fin-base-dot { transform: scale(1.12); }
+.fin-base-name { font-size: 11.5px; white-space: nowrap; }
