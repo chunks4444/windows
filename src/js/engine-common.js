@@ -2566,28 +2566,38 @@ function drawSvgInserts() {
         const bgHead = label(_t('공간 사진'), _t('도면을 넣을 실내·실외 사진'));
         const noneTile = document.createElement('button');
         noneTile.type = 'button';
-        noneTile.className = 'rp-tile rp-tile-none';
-        noneTile.innerHTML = `<span class="fin-dot-none"></span><small>${_t('배경 없음')}</small>`;
+        noneTile.className = 'rp-mini';
+        noneTile.title = _t('배경 없음');
+        noneTile.innerHTML = `<i class="bi bi-slash-circle"></i><span>${_t('배경 없음')}</span>`;
         noneTile.addEventListener('click', () => document.getElementById('btnClearBg')?.click());
         const addTile = document.createElement('button');
         addTile.type = 'button';
-        addTile.className = 'rp-tile rp-tile-add';
-        addTile.innerHTML = `<i class="bi bi-plus-lg"></i><small>${_t('사진 올리기')}</small>`;
+        addTile.className = 'rp-mini';
+        addTile.title = _t('사진 올리기');
+        addTile.innerHTML = `<i class="bi bi-upload"></i><span>${_t('사진 올리기')}</span>`;
         addTile.addEventListener('click', () => document.getElementById('btnAddThumb')?.click());
         // 두 칸은 #thumbList 밖(같은 그리드)에 둔다 — 엔진이 도면을 열 때 thumbList.innerHTML=''로 비우기 때문
         const bgGrid = document.createElement('div');
         bgGrid.className = 'rp-bg-grid';
         thumbs.before(bgGrid);
-        bgGrid.append(noneTile, addTile, thumbs);
+        bgGrid.append(thumbs);
+        // 배경 없음·사진 올리기는 사진과 구분되게 제목 줄 오른쪽의 작은 버튼으로
+        const acts = document.createElement('div');
+        acts.className = 'rp-mini-row';
+        acts.append(noneTile, addTile);
+        bgHead.classList.add('rp-label-row');
+        bgHead.appendChild(acts);
         // 사진이 추가·삭제·선택될 때마다: '배경 없음' 선택 표시 + 사진 아래 제목(파일명, 확장자 뺌)
         const syncNone = () => {
             noneTile.classList.toggle('active', !thumbs.querySelector('.rp-thumb-item.active'));
-            thumbs.querySelectorAll('.rp-thumb-item').forEach(it => {
+            thumbs.querySelectorAll('.rp-thumb-item').forEach((it, n) => {
                 if (it.querySelector('.rp-thumb-name')) return;
-                const name = (it.querySelector('img')?.alt || '').replace(/\.[a-z0-9]+$/i, '');
+                // 해시·'-' 같은 의미 없는 파일명은 '배경 N'으로
+                let name = (it.querySelector('img')?.alt || '').replace(/\.[a-z0-9]+$/i, '').trim();
+                if (!name || name.length < 2 || /^[-_\s]+$/.test(name) || /^[0-9a-f_-]{12,}$/i.test(name)) name = '';
                 const cap = document.createElement('span');
                 cap.className = 'rp-thumb-name';
-                cap.textContent = name || _t('배경');
+                cap.textContent = name || _t('배경') + ' ' + (n + 1);
                 cap.title = name;
                 it.appendChild(cap);
             });

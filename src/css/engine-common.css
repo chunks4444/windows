@@ -2573,3 +2573,14 @@ body.pm-light:has(.controls.collapsed) .pm-engine-story-link { left: calc(68px +
 @media (max-width: 768px) { body.pm-light:has(.tool-rail) .pm-engine-story-link { left: calc(58px + 12px); } }
 .rp-pane .rp-thumb-item img { width: 100%; object-fit: cover; }
 .rp-bg-grid .rp-tile { aspect-ratio: 1; height: auto; }
+/* 배경 없음·사진 올리기 — 제목 줄 오른쪽 작은 버튼 */
+.rp-label-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.rp-mini-row { margin-left: auto; display: flex; gap: 4px; }
+.rp-mini {
+    display: inline-flex; align-items: center; gap: 4px; height: 26px; padding: 0 9px; border-radius: 999px;
+    border: 1px solid #E4E6EB; background: #fff; color: #4B5160; font-size: 11px; cursor: pointer; white-space: nowrap;
+}
+.rp-mini i { font-size: 12px; }
+.rp-mini:hover { background: #F4F5F7; }
+.rp-mini.active { background: #111; border-color: #111; color: #fff; }
+.rp-bg-grid:not(:has(.rp-thumb-item)) { display: none; }
