@@ -103,7 +103,8 @@ function pmShowSaveToast(msg = '저장을 완료했습니다.', sticky = false) 
         el = document.createElement('div');
         el.id = 'pmSaveToast';
         el.className = 'pm-save-toast';
-        const anchor = document.querySelector('.canvas-title-bar') || document.body;
+        // 레일 구조 엔진은 제목 바가 왼쪽 '파일' 탭으로 옮겨져 캔버스 위에 없으므로 캔버스 영역에 띄운다
+        const anchor = document.querySelector('.canvas-title-bar') || document.querySelector('.canvas-area') || document.body;
         anchor.appendChild(el);
     }
     el.textContent = msg;

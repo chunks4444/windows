@@ -15,6 +15,7 @@ $page     = max(1, (int)($_input['page'] ?? 1));
 $category = trim($_input['category'] ?? '');   // 패턴 카테고리 ID ('') = 전체
 $group    = trim($_input['group'] ?? '');      // 우리살/새살/일본살 최상위 분류: '' | kr | new | jp | jp-shoji | jp-kumiko
 $liked    = !empty($_input['liked']);          // 좋아요 필터 (로그인 필요)
+$engine   = trim($_input['engine'] ?? '');     // 엔진 패널(왼쪽 '컬렉션' 탭)이 자기 엔진 도면만 볼 때 — 다른 필터와 함께 적용(범위 제한)
 $limit    = 20;
 $offset   = ($page - 1) * $limit;
 $pdo      = db();
@@ -79,6 +80,12 @@ if ($category !== '') {
     $params[':uid'] = $uid;
 } elseif ($likedNoAuth) {
     $baseWhere .= ' AND 0';   // 로그인 안 한 사용자의 좋아요 필터 — 전체 노출 대신 결과 없음
+}
+
+// 엔진 범위 제한은 위의 '하나만 적용' 필터와 별개 — 컬렉션 탭 안에서 검색해도 그 엔진 도면만 나와야 한다
+if ($engine !== '' && isset($editorMap[$engine])) {
+    $baseWhere .= ' AND d.type = :engine';
+    $params[':engine'] = $engine;
 }
 
 // 필터 버튼용 전체 키워드 (page 1에서만)

@@ -1420,10 +1420,13 @@ async function draw() {
         rCtx.save();
         rCtx.setTransform(rDpr, 0, 0, rDpr, 0, 0);
 
-        const BG_IN  = 'rgba(168,175,183,0.95)';
-        const BG_OUT = 'rgba(138,145,153,0.95)';
-        const LINE   = 'rgba(255,255,255,0.7)';
-        const LBL    = '#ffffff';
+        // 밝은 테마(pm-light)에선 눈금자 바탕을 캔버스 바탕(#F3F4F7)과 같게 하고 눈금·숫자를 어둡게
+        const LIGHT  = document.body.classList.contains('pm-light');
+        const BG_IN  = LIGHT ? '#E2E5EA' : 'rgba(168,175,183,0.95)';   // 문 범위 표시 띠
+        const BG_OUT = LIGHT ? '#F3F4F7' : 'rgba(138,145,153,0.95)';
+        const LINE   = LIGHT ? 'rgba(31,35,40,0.35)' : 'rgba(255,255,255,0.7)';
+        const LBL    = LIGHT ? '#6B7280' : '#ffffff';
+        const EDGE   = LIGHT ? '#DDE0E5' : '#ccc';
 
         // 문 범위 (스크린 좌표) — 배치 모드는 실제 코너 기준
         let doorL, doorR, doorT, doorB;
@@ -1445,7 +1448,7 @@ async function draw() {
         rCtx.fillRect(R, 0, logW - R, R);
         const hL = Math.max(R, doorL), hR = Math.min(logW, doorR);
         if (hR > hL) { rCtx.fillStyle = BG_IN; rCtx.fillRect(hL, R - 8, hR - hL, 8); }
-        rCtx.strokeStyle = '#ccc'; rCtx.lineWidth = 0.5;
+        rCtx.strokeStyle = EDGE; rCtx.lineWidth = 0.5;
         rCtx.beginPath(); rCtx.moveTo(R, R); rCtx.lineTo(logW, R); rCtx.stroke();
 
         const xS = Math.ceil((R - ox) / mmPx / step) * step;
@@ -1468,7 +1471,7 @@ async function draw() {
         rCtx.fillRect(0, R, R, logH - R);
         const vT = Math.max(R, doorT), vB = Math.min(logH, doorB);
         if (vB > vT) { rCtx.fillStyle = BG_IN; rCtx.fillRect(R - 8, vT, 8, vB - vT); }
-        rCtx.strokeStyle = '#ccc'; rCtx.lineWidth = 0.5;
+        rCtx.strokeStyle = EDGE; rCtx.lineWidth = 0.5;
         rCtx.beginPath(); rCtx.moveTo(R, R); rCtx.lineTo(R, logH); rCtx.stroke();
 
         const yS = Math.ceil((R - oy) / mmPx / step) * step;
@@ -1493,7 +1496,7 @@ async function draw() {
         // 코너 블록
         rCtx.fillStyle = BG_OUT;
         rCtx.fillRect(0, 0, R, R);
-        rCtx.strokeStyle = '#ddd'; rCtx.lineWidth = 0.5;
+        rCtx.strokeStyle = EDGE; rCtx.lineWidth = 0.5;
         rCtx.beginPath();
         rCtx.moveTo(R, 0); rCtx.lineTo(R, R); rCtx.lineTo(0, R);
         rCtx.stroke();
@@ -1660,7 +1663,7 @@ async function draw() {
 
     const btnSidebarTab = document.getElementById('btnSidebarTab');
 
-    btnSidebarTab.addEventListener('click', toggleSidebar);
+    btnSidebarTab?.addEventListener('click', toggleSidebar);
 
 
     // Section collapse
@@ -2807,9 +2810,9 @@ async function draw() {
     window.addEventListener('resize', resizeCanvasDebounced);
     if (window.innerWidth < 768) {
         sidebar.classList.add('collapsed');
-        btnSidebarTab.classList.add('collapsed');
-        rightSidebar.classList.add('collapsed');
-        btnRightSidebarTab.classList.add('collapsed');
+        btnSidebarTab?.classList.add('collapsed');
+        rightSidebar?.classList.add('collapsed');
+        btnRightSidebarTab?.classList.add('collapsed');
         animatePanelResize();
     } else {
         resizeCanvas(true);

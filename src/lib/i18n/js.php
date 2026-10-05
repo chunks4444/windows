@@ -209,4 +209,17 @@ return [
     '네트워크 오류가 발생했습니다.' => 'A network error occurred.',
     '서버 오류'                   => 'Server error',
     '오류: '                      => 'Error: ',
+
+    // src/js/engine-common.js — 툴 레일 패널
+    '이 컬렉션 도면을 여시겠습니까?'                 => 'Open this collection drawing?',
+    '저장하지 않은 작업은 사라집니다.'               => 'Any unsaved work will be lost.',
+    '로그인하면 저장한 도면을 여기서 볼 수 있습니다.' => 'Log in to see your saved drawings here.',
+    '로그인'                                         => 'Log in',
+    'SVG 다운로드'                                   => 'Download SVG',
+    '로그인하면 올린 문양이 여기에 모입니다.'        => 'Log in to keep your uploaded motifs here.',
+    '아직 올린 문양이 없습니다.'                     => 'You have not uploaded any motifs yet.',
+    '내 문양'                                        => 'My motif',
+    '"%s" 문양을 삭제하시겠습니까?'                 => 'Delete the motif "%s"?',
+    '삭제에 실패했습니다.'                           => 'Could not delete it.',
+    '이 문양을 넣어 둔 도면에서도 문양이 보이지 않게 됩니다.' => 'It will also disappear from any drawing that uses it.',
 ];

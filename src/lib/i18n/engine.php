@@ -219,4 +219,28 @@ return [
         => 'Reset edits&#10;Clears every deleted and added line',
     '편집 초기화 모든 삭제·추가 선 초기화'
         => 'Reset edits — clears every deleted and added line',
+
+    // ── 툴 레일(왼쪽 아이콘 탭) · 패널 ─────────────────
+    '컬렉션'                  => 'Collection',
+    '파일'                    => 'File',
+    '파일명'                  => 'File name',
+    '내 도면'                 => 'My drawings',
+    '문설정'                  => 'Door',
+    '문양'                    => 'Motifs',
+    '견적'                    => 'Estimate',
+    '시방서'                  => 'Specs',
+    '예산 견적'               => 'Estimate',
+    '컬렉션 검색'             => 'Search the collection',
+    '더 보기'                 => 'Load more',
+    '전체 컬렉션 보기'        => 'View the full collection',
+    '현재 도면 버전'          => 'Versions of this drawing',
+    '관리'                    => 'Manage',
+    'SVG 업로드'              => 'Upload SVG',
+    '내가 올린 문양'          => 'My uploaded motifs',
+    '문양 라이브러리'         => 'Motif library',
+    '클릭하면 도면에 넣고, 아이콘으로 SVG 파일을 내려받을 수 있습니다.'
+        => 'Click to place it on the drawing, or use the icon to download the SVG file.',
+    '인쇄·공방 전달용 도면'   => 'Drawing for printing and the workshop',
+    '이미지 공유용'           => 'Image for sharing',
+    'CAD 편집용'              => 'For editing in CAD',
 ];

@@ -131,7 +131,8 @@
     const btnClearBg         = document.getElementById('btnClearBg');
     const aiFileUploader     = document.getElementById('aiFileUploader');
 
-    btnRightSidebarTab.addEventListener('click', () => {
+    // 레일 구조(왼쪽 아이콘 탭) 엔진엔 오른쪽 사이드바가 없다 — 아래 show/hide도 그때는 아무것도 안 한다
+    btnRightSidebarTab?.addEventListener('click', () => {
         if (rightSidebar.classList.contains('collapsed')) showRightSidebar();
         else hideRightSidebar();
     });
@@ -547,6 +548,7 @@
     }
 
     function hideRightSidebar() {
+        if (!rightSidebar) return;
         rightSidebar.classList.add('collapsed');
         btnRightSidebarTab.classList.add('collapsed');
         animatePanelResize();
@@ -813,6 +815,7 @@
     }
 
     function showRightSidebar() {
+        if (!rightSidebar) return;
         rightSidebar.classList.remove('collapsed');
         btnRightSidebarTab.classList.remove('collapsed');
         animatePanelResize();
@@ -820,7 +823,7 @@
 
     function toggleSidebar() {
         sidebar.classList.toggle('collapsed');
-        btnSidebarTab.classList.toggle('collapsed');
+        btnSidebarTab?.classList.toggle('collapsed');
         animatePanelResize();
     }
 
@@ -2026,6 +2029,7 @@ function drawSvgInserts() {
                 const data = await res.json();
                 input.value = '';
                 if (!data.ok) { alert(data.error || _t('업로드 실패')); return; }
+                document.dispatchEvent(new CustomEvent('pmok:svg-uploaded', { detail: { url: data.url } }));   // 문양 탭 "내가 올린 문양" 새로고침
                 const img = new Image();
                 img.onload = () => addSvgInsert(data.url, img.naturalWidth, img.naturalHeight);
                 img.onerror = () => addSvgInsert(data.url, 100, 100);
@@ -2238,5 +2242,418 @@ function drawSvgInserts() {
         } else if (!openDetails.contains(e.target)) {
             openDetails.removeAttribute('open');
         }
+    });
+})();
+
+// ── 툴 레일 (Canva식 왼쪽 아이콘 탭 + 패널) ─────────────────────────────
+// 엔진 페이지에 <nav class="tool-rail">가 있을 때만 동작한다 (아직 옛 좌/우 사이드바 구조인 엔진은 그대로).
+// 패널(#sidebar)은 탭마다 <section class="rail-pane" data-pane="...">를 하나씩 갖고, 고른 탭 하나만 보인다.
+// 같은 탭을 다시 누르면 패널이 접힌다(toggleSidebar → 캔버스가 넓어지며 다시 맞춰짐).
+// 컬렉션·내 도면·문양 탭은 처음 열 때 서버에서 목록을 불러온다.
+(function () {
+    const PANE_KEY = 'pmok_rail_pane';
+    const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const lh  = p => (typeof window._lh === 'function' ? window._lh(p) : p);
+    const token = () => { try { return localStorage.getItem('pmok_auth_token'); } catch { return null; } };
+    const authHeaders = () => ({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token() });
+    const emptyMsg = (msg, btn) => `<div class="pane-empty">${msg}${btn ? `<button type="button" class="hbtn pane-login-btn">${btn}</button>` : ''}</div>`;
+    const loaders = {};
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const rail  = document.getElementById('toolRail');
+        const panel = document.getElementById('sidebar');
+        if (!rail || !panel) return;
+        const buttons = [...rail.querySelectorAll('.rail-btn')];
+        const panes   = [...panel.querySelectorAll('.rail-pane')];
+        let current   = 'door';
+
+        function syncActive() {
+            const open = !panel.classList.contains('collapsed');
+            buttons.forEach(b => b.classList.toggle('active', open && b.dataset.pane === current));
+        }
+
+        function show(key) {
+            if (!panes.some(p => p.dataset.pane === key)) key = 'door';
+            current = key;
+            panes.forEach(p => { p.hidden = p.dataset.pane !== key; });
+            panel.scrollTop = 0;
+            try { localStorage.setItem(PANE_KEY, key); } catch {}
+            loaders[key]?.();
+            syncActive();
+        }
+
+        buttons.forEach(btn => btn.addEventListener('click', () => {
+            const collapsed = panel.classList.contains('collapsed');
+            if (btn.dataset.pane === current && !collapsed) { toggleSidebar(); syncActive(); return; }
+            show(btn.dataset.pane);
+            if (collapsed) toggleSidebar();
+            syncActive();
+        }));
+
+        // 다른 곳(도면 목록 버튼 등)에서 특정 탭을 열 때 쓰는 진입점
+        window.pmokOpenRailPane = key => {
+            show(key);
+            if (panel.classList.contains('collapsed')) toggleSidebar();
+            syncActive();
+        };
+
+        // 주소 끝 #pane=finish 처럼 특정 탭을 바로 열 수 있다 (가이드 링크 등). 없으면 마지막에 열었던 탭
+        let saved = (/#pane=(\w+)/.exec(location.hash) || [])[1] || null;
+        if (!saved) try { saved = localStorage.getItem(PANE_KEY); } catch {}
+        // 탭별 로더(loaders.*)를 먼저 등록해야 처음 열리는 탭도 목록을 불러온다
+        initCollectionPane();
+        initMinePane();
+        initMotifPane();
+        initFinishColors();
+
+        show(saved || 'door');
+        // 좁은 화면에선 패널이 처음부터 접혀 있으므로(모바일 초기화) 그 상태를 레일 강조에 반영
+        requestAnimationFrame(syncActive);
+    });
+
+    // ── 컬렉션: 이 엔진으로 만든 컬렉션 도면 썸네일 ─────────────
+    function initCollectionPane() {
+        const grid = document.getElementById('collectionGrid');
+        if (!grid) return;
+        const search = document.getElementById('collectionSearch');
+        const more   = document.getElementById('collectionMore');
+        document.querySelectorAll('.pane-link[data-lh]').forEach(a => a.setAttribute('href', lh(a.getAttribute('href'))));
+        let page = 1, q = '', loaded = false, busy = false;
+
+        async function load(reset) {
+            if (busy) return;
+            busy = true;
+            if (reset) { page = 1; grid.innerHTML = emptyMsg(_t('불러오는 중…')); }
+            try {
+                const res  = await fetch('/src/api/collection.php', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ engine: _engineName(), q, page }),
+                });
+                const data = await res.json();
+                if (reset) grid.innerHTML = '';
+                const items = data.patterns || [];
+                if (reset && !items.length) grid.innerHTML = emptyMsg(_t('검색 결과가 없습니다.'));
+                items.forEach(p => {
+                    if (!p.drawing_id || !p.editor_url) return;
+                    const name = p.display_name || p.name_ko || '';
+                    const card = document.createElement('button');
+                    card.type = 'button';
+                    card.className = 'thumb-card';
+                    card.title = name;
+                    card.innerHTML = (p.image_path ? `<img src="${esc(p.image_path)}" alt="" loading="lazy">` : '<div class="thumb-ph"><i class="bi bi-image"></i></div>')
+                        + `<span class="thumb-name">${esc(name)}</span>`;
+                    card.addEventListener('click', () => {
+                        const url = lh(p.editor_url) + '?drawing_id=' + encodeURIComponent(p.drawing_id);
+                        pmConfirm(_t('이 컬렉션 도면을 여시겠습니까?'), () => { location.href = url; },
+                            { sub: _t('저장하지 않은 작업은 사라집니다.'), type: 'primary', confirmText: _t('열기') });
+                    });
+                    grid.appendChild(card);
+                });
+                more.hidden = !data.has_more;
+                page++;
+            } catch {
+                if (reset) grid.innerHTML = emptyMsg(_t('불러오기 실패'));
+            } finally { busy = false; }
+        }
+
+        loaders.collection = () => { if (!loaded) { loaded = true; load(true); } };
+        more?.addEventListener('click', () => load(false));
+        let t;
+        search?.addEventListener('input', () => {
+            clearTimeout(t);
+            t = setTimeout(() => { q = search.value.trim(); load(true); }, 300);
+        });
+    }
+
+    // ── 파일: 도면 툴바(이름·분류·저장·새 도면·공유) + 현재 도면 버전 칩 + 내 도면 썸네일 ─────────
+    // 도면 열기·버전 전환·저장은 각 엔진 JS의 기존 함수/버튼을 그대로 쓴다 (openDrawingByTitle, #verList, #btnSave)
+    function initMinePane() {
+        const grid = document.getElementById('mineGrid');
+        const chips = document.getElementById('mineVersions');
+        if (!grid || !chips) return;
+        const pane = grid.closest('.rail-pane');
+        const click = id => document.getElementById(id)?.click();
+        document.getElementById('btnNewDrawing')?.addEventListener('click', () => setTimeout(refreshList, 0));
+
+        function renderChips() {
+            const vs = typeof versions !== 'undefined' ? versions : [];
+            if (!vs.length) { chips.innerHTML = `<span class="pane-hint">${_t('저장된 버전이 없습니다')}</span>`; return; }
+            const cur = typeof currentVerIdx !== 'undefined' ? currentVerIdx : -1;
+            chips.innerHTML = '';
+            [...vs.keys()].reverse().forEach(i => {
+                const chip = document.createElement('button');
+                chip.type = 'button';
+                chip.className = 'ver-chip' + (i === cur ? ' active' : '');
+                chip.innerHTML = `<b>v${i + 1}</b><small>${esc(fmtDate(vs[i].savedAt))}</small>`;
+                // #verList는 최신 버전이 맨 위(역순)이므로 DOM 순서로 바꿔서 기존 클릭 동작을 그대로 쓴다
+                chip.addEventListener('click', () => document.querySelectorAll('#verList .ver-item')[vs.length - 1 - i]?.click());
+                chips.appendChild(chip);
+            });
+        }
+
+        let listTimer;
+        async function refreshList() {
+            if (!token()) {
+                grid.innerHTML = emptyMsg(_t('로그인하면 저장한 도면을 여기서 볼 수 있습니다.'), _t('로그인'));
+                grid.querySelector('.pane-login-btn')?.addEventListener('click', () => pmokRequireAuth(refreshList));
+                return;
+            }
+            if (!grid.children.length) grid.innerHTML = emptyMsg(_t('불러오는 중…'));
+            const drawings = await window.DrawingSync.list(_engineName());
+            if (!drawings.length) { grid.innerHTML = emptyMsg(_t('저장된 도면이 없습니다')); return; }
+            const curTitle = (document.getElementById('drawingName')?.value || '').trim();
+            grid.innerHTML = '';
+            const cards = {};
+            drawings.forEach(d => {
+                // 카드 안에 삭제 버튼(<button>)이 들어가므로 카드 자체는 div — 버튼 안에 버튼은 넣을 수 없다
+                const card = document.createElement('div');
+                card.className = 'thumb-card' + (d.title === curTitle ? ' active' : '');
+                card.title = d.title;
+                card.tabIndex = 0;
+                card.setAttribute('role', 'button');
+                card.innerHTML = '<div class="thumb-ph"><i class="bi bi-image"></i></div>'
+                    + `<span class="thumb-name">${d.locked_at ? '<i class="bi bi-lock-fill"></i> ' : ''}${esc(d.title)}</span>`
+                    + `<span class="thumb-date">${esc(fmtDate(new Date(d.updated_at).getTime()))}</span>`
+                    + `<button type="button" class="thumb-del" title="${esc(_t('삭제'))}"><i class="bi bi-trash3"></i></button>`;
+                card.addEventListener('click', async e => {
+                    if (e.target.closest('.thumb-del')) return;
+                    if (d.title === (document.getElementById('drawingName')?.value || '').trim()) return;
+                    await openDrawingByTitle(d.title);
+                    refreshList();
+                });
+                // 삭제 — 도면 목록 모달(refreshDrawingList)의 삭제와 같은 규칙: 견적요청 중이면 불가, 지금 연 도면이면 새 도면으로
+                card.querySelector('.thumb-del').addEventListener('click', e => {
+                    e.stopPropagation();
+                    if (d.locked_at) { pmAlert(_t('이 도면은 견적요청 중이라 삭제할 수 없습니다.'), { type: 'danger' }); return; }
+                    pmConfirm(_t('"%s" 도면을 삭제하시겠습니까?', d.title), async () => {
+                        await window.DrawingSync.delete(_engineName(), d.title);
+                        if (d.title === (document.getElementById('drawingName')?.value || '').trim()) click('btnNewDrawing');
+                        refreshList();
+                    }, { sub: _t('모든 버전이 함께 삭제됩니다.') });
+                });
+                cards[d.id] = card;
+                grid.appendChild(card);
+            });
+            // 썸네일은 목록 API에 없어서 따로 한 번에 받아온다 (대시보드와 같은 방식)
+            try {
+                const res = await fetch('/src/api/drawings/thumbnails.php', {
+                    method: 'POST', headers: authHeaders(), body: JSON.stringify({ ids: drawings.map(d => d.id) }),
+                });
+                const thumbs = await res.json();
+                Object.entries(thumbs || {}).forEach(([id, src]) => {
+                    const ph = src && cards[id]?.querySelector('.thumb-ph');
+                    if (ph) ph.outerHTML = `<img src="${esc(src)}" alt="" loading="lazy">`;
+                });
+            } catch {}
+        }
+
+        loaders.file = () => { renderChips(); refreshList(); };
+        // 저장·버전 전환·도면 열기 때마다 엔진이 renderVerList()로 #verList를 다시 그리므로, 그걸 신호로 칩·목록을 갱신
+        const verList = document.getElementById('verList');
+        if (verList) new MutationObserver(() => {
+            renderChips();
+            if (pane && !pane.hidden) { clearTimeout(listTimer); listTimer = setTimeout(refreshList, 400); }
+        }).observe(verList, { childList: true });
+    }
+
+    // ── 문양 라이브러리: 내가 올린 문양 + 관리자 라이브러리, 클릭=삽입 / 아이콘=SVG 다운로드 ─────
+    function initMotifPane() {
+        const libGrid  = document.getElementById('motifLibGrid');
+        const mineGrid = document.getElementById('motifMineGrid');
+        if (!libGrid || !mineGrid) return;
+        let libLoaded = false;
+
+        function insert(url) {
+            const img = new Image();
+            img.onload  = () => addSvgInsert(url, img.naturalWidth, img.naturalHeight);
+            img.onerror = () => addSvgInsert(url, 100, 100);
+            img.src = url;
+        }
+
+        // 카드 오른쪽 위 버튼 묶음(다운로드·삭제) — 파일 탭 내 도면 카드의 삭제 버튼과 같은 모양·규칙(마우스를 올리면 표시)
+        function tile(url, name, onDelete) {
+            const el = document.createElement('div');
+            el.className = 'motif-tile';
+            el.innerHTML = `<img src="${esc(url)}" alt="" loading="lazy"><span>${esc(name)}</span>`
+                + '<div class="tile-acts">'
+                + `<a class="tile-act" href="${esc(url)}" download="${esc(name.replace(/\.svg$/i, ''))}.svg" title="${esc(_t('SVG 다운로드'))}"><i class="bi bi-download"></i></a>`
+                + (onDelete ? `<button type="button" class="tile-act tile-act-del" title="${esc(_t('삭제'))}"><i class="bi bi-trash3"></i></button>` : '')
+                + '</div>';
+            el.addEventListener('click', e => { if (!e.target.closest('.tile-acts')) insert(url); });
+            el.querySelector('.tile-act-del')?.addEventListener('click', e => { e.stopPropagation(); onDelete(); });
+            return el;
+        }
+
+        // 내가 올린 문양 삭제 — 파일만 지우므로, 이미 도면에 넣어 둔 같은 문양은 그 도면에서 안 보이게 된다
+        function deleteMine(it, label) {
+            pmConfirm(_t('"%s" 문양을 삭제하시겠습니까?', label), async () => {
+                try {
+                    const res  = await fetch('/src/api/uploads/svg_insert_delete.php', {
+                        method: 'POST', headers: authHeaders(), body: JSON.stringify({ name: it.name }),
+                    });
+                    const data = await res.json();
+                    if (!data.ok) { pmAlert(data.error || _t('삭제에 실패했습니다.'), { type: 'danger' }); return; }
+                } catch { pmAlert(_t('삭제에 실패했습니다.'), { type: 'danger' }); return; }
+                loadMine();
+            }, { sub: _t('이 문양을 넣어 둔 도면에서도 문양이 보이지 않게 됩니다.') });
+        }
+
+        async function loadLib() {
+            libGrid.innerHTML = emptyMsg(_t('불러오는 중…'));
+            try {
+                const data = await (await fetch('/src/api/svg_motifs.php')).json();
+                const motifs = data.motifs || [];
+                libGrid.innerHTML = motifs.length ? '' : emptyMsg(_t('등록된 문양이 없습니다.'));
+                motifs.forEach(m => libGrid.appendChild(tile(m.svg_url, m.name)));
+            } catch { libGrid.innerHTML = emptyMsg(_t('불러오기 실패')); }
+        }
+
+        async function loadMine() {
+            if (!token()) {
+                mineGrid.innerHTML = emptyMsg(_t('로그인하면 올린 문양이 여기에 모입니다.'), _t('로그인'));
+                mineGrid.querySelector('.pane-login-btn')?.addEventListener('click', () => pmokRequireAuth(loadMine));
+                return;
+            }
+            try {
+                const res  = await fetch('/src/api/uploads/svg_insert_list.php', { headers: authHeaders() });
+                const data = await res.json();
+                const items = data.items || [];
+                mineGrid.innerHTML = items.length ? '' : emptyMsg(_t('아직 올린 문양이 없습니다.'));
+                items.forEach((it, i) => {
+                    const label = _t('내 문양') + ' ' + (items.length - i);
+                    mineGrid.appendChild(tile(it.url, label, () => deleteMine(it, label)));
+                });
+            } catch { mineGrid.innerHTML = emptyMsg(_t('불러오기 실패')); }
+        }
+
+        loaders.motif = () => { if (!libLoaded) { libLoaded = true; loadLib(); } loadMine(); };
+        document.addEventListener('pmok:svg-uploaded', loadMine);
+    }
+
+    // ── 마감 컬러 (Canva식): 문틀·울거미·살·면 칩을 고르면 그 색 팔레트가 패널 안에 펼쳐진 채로 보인다 ─────
+    // 엔진 JS가 만든 팝업(buildColorPopup)을 그대로 쓰고, 위치만 칩 아래 공용 영역으로 옮긴다.
+    // 팝업 안 색 클릭 → 선택·도면 반영은 기존 로직 그대로, 표시만 .open 대신 .is-current로 한다.
+    function initFinishColors() {
+        const block = document.getElementById('finishColorBlock');
+        if (!block || !block.closest('.rail-pane')) return;
+        const stacks = [...block.querySelectorAll('.color-row-stack')].filter(s => s.querySelector('.color-popup'));
+        if (!stacks.length) return;
+        const targets = document.createElement('div');
+        targets.className = 'color-targets';
+        const host = document.createElement('div');
+        host.className = 'color-swatch-host';
+        stacks[0].parentElement.before(targets);
+        targets.after(host);
+        stacks.forEach(s => {
+            s.classList.add('color-target');
+            s.style.marginTop = '';
+            targets.appendChild(s);
+            host.appendChild(s.querySelector('.color-popup'));
+        });
+        block.querySelectorAll('hr.sb-divider').forEach(hr => hr.remove());
+        // 원래 칩들을 감싸던 빈 div 정리
+        [...block.children].forEach(el => { if (el.tagName === 'DIV' && !el.children.length && !el.textContent.trim()) el.remove(); });
+
+        function select(stack) {
+            const popupId = stack.querySelector('.color-preview-btn')?.id.replace('PreviewBtn', 'Popup');
+            stacks.forEach(s => s.classList.toggle('is-current', s === stack));
+            host.querySelectorAll('.color-popup').forEach(p => p.classList.toggle('is-current', p.id === popupId));
+        }
+        stacks.forEach(s => s.querySelector('.color-preview-btn')?.addEventListener('click', () => select(s)));
+        select(stacks[0]);
+    }
+})();
+
+// ── 하단 툴바 (Canva식 단순화) ─────────────────────────────
+// 레일 구조 엔진에서만: 기존 버튼 14개(id·클릭 동작·cv-btn-active 표시 모두 그대로)를 옮겨서
+//   가운데 큰 버튼 5개 [선택·이동·선 편집▾·도형▾·배치] + 오른쪽 줌 [− 100% + 화면맞춤] 로 다시 묶는다.
+// 선 편집/도형은 누르면 위로 작은 메뉴가 펼쳐지고, 안의 버튼이 켜져 있으면 묶음 버튼도 켜진 것으로 보인다.
+(function () {
+    const LABELS = {
+        btnShapeSelect: '선택', btnPan: '이동', btnScale: '배치', btnResetPlacement: '배치 초기화',
+        btnEditDelete: '선 삭제', btnEditAdd: '선 추가', btnEditClear: '편집 초기화',
+        btnShapeCircle: '원', btnShapeLine: '선', btnShapeRect: '사각형', btnShapeText: '텍스트', btnShapeClear: '모두 삭제',
+        btnResetView: '화면 맞춤',
+    };
+    const GROUPS = [
+        { label: '선 편집', icon: 'btnEditDelete', items: ['btnEditDelete', 'btnEditAdd', 'btnEditClear'] },
+        { label: '도형', icon: null, items: ['btnShapeCircle', 'btnShapeLine', 'btnShapeRect', 'btnShapeText', 'btnShapeClear'] },
+    ];
+    const SHAPE_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="5"/><rect x="11" y="11" width="10" height="10" rx="1.5"/></svg>';
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const bar = document.querySelector('.canvas-controls');
+        if (!bar || !document.getElementById('toolRail')) return;
+        const $ = id => document.getElementById(id);
+
+        function labeled(btn) {
+            if (!btn) return null;
+            const text = LABELS[btn.id];
+            if (text && !btn.querySelector('.cv-label')) btn.insertAdjacentHTML('beforeend', `<span class="cv-label">${_t(text)}</span>`);
+            btn.dataset.tip = btn.title;   // 큰 버튼은 글자가 붙어 있으므로 hover 말풍선(::before의 title)은 끈다
+            btn.removeAttribute('title');
+            btn.title = '';
+            return btn;
+        }
+
+        const tools = document.createElement('div');
+        tools.className = 'cv-tools';
+        const zoom = document.createElement('div');
+        zoom.className = 'cv-zoom';
+
+        ['btnShapeSelect', 'btnPan'].forEach(id => { const b = labeled($(id)); if (b) tools.appendChild(b); });
+
+        const groups = GROUPS.map(g => {
+            const wrap = document.createElement('div');
+            wrap.className = 'cv-group';
+            const trigger = document.createElement('button');
+            trigger.type = 'button';
+            trigger.className = 'cv-btn cv-group-btn';
+            const iconSrc = g.icon && $(g.icon)?.querySelector('svg');
+            trigger.innerHTML = (iconSrc ? iconSrc.outerHTML : SHAPE_ICON) + `<span class="cv-label">${_t(g.label)} <i class="bi bi-chevron-up"></i></span>`;
+            const fly = document.createElement('div');
+            fly.className = 'cv-flyout';
+            const items = g.items.map($).filter(Boolean);
+            items.forEach(b => fly.appendChild(labeled(b)));
+            wrap.append(fly, trigger);
+            tools.appendChild(wrap);
+            trigger.addEventListener('click', e => {
+                e.stopPropagation();
+                const open = !wrap.classList.contains('open');
+                document.querySelectorAll('.cv-group.open').forEach(w => w.classList.remove('open'));
+                wrap.classList.toggle('open', open);
+            });
+            // 메뉴 안 버튼을 고르면 메뉴는 닫는다 (기능 실행은 버튼 자체 리스너가 함)
+            fly.addEventListener('click', () => setTimeout(() => wrap.classList.remove('open'), 0));
+            const sync = () => trigger.classList.toggle('cv-btn-active', items.some(b => b.classList.contains('cv-btn-active')));
+            items.forEach(b => new MutationObserver(sync).observe(b, { attributes: true, attributeFilter: ['class'] }));
+            sync();
+            return wrap;
+        });
+        document.addEventListener('click', e => { if (!e.target.closest('.cv-group')) groups.forEach(w => w.classList.remove('open')); });
+
+        ['btnScale', 'btnResetPlacement'].forEach(id => { const b = labeled($(id)); if (b) tools.appendChild(b); });
+
+        // 줌: − [100%] + 화면맞춤
+        const pct = document.createElement('button');
+        pct.type = 'button';
+        pct.className = 'cv-zoom-pct';
+        pct.textContent = '100%';
+        pct.addEventListener('click', () => $('btnResetView')?.click());
+        [$('btnZoomOut'), pct, $('btnZoomIn'), labeled($('btnResetView'))].forEach(el => el && zoom.appendChild(el));
+        $('btnZoomOut')?.classList.add('cv-icon-only');
+        $('btnZoomIn')?.classList.add('cv-icon-only');
+        // scaleFactor는 엔진 JS의 전역 변수 — 휠·핀치·버튼 등 바뀌는 곳이 많아 주기적으로 읽어서 표시만 갱신
+        let last = null;
+        setInterval(() => {
+            const v = typeof scaleFactor === 'number' ? Math.round(scaleFactor * 100) : null;
+            if (v !== null && v !== last) { last = v; pct.textContent = v + '%'; }
+        }, 200);
+
+        // 남는 버튼(혹시 엔진별로 추가된 것)도 잃지 않도록 tools 끝에 붙인다
+        bar.querySelectorAll(':scope > .cv-btn').forEach(b => tools.appendChild(b));
+        bar.innerHTML = '';
+        bar.classList.add('cv-dock');
+        bar.append(tools, zoom);
     });
 })();
