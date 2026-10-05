@@ -229,6 +229,7 @@ return [
     '문양'                    => 'Motifs',
     '견적'                    => 'Estimate',
     '시방서'                  => 'Specs',
+    '치수·먹줄·홈폭'          => 'sizes, marking lines, grooves',
     '예상 견적'               => 'Estimate',
     '컬렉션 검색'             => 'Search the collection',
     '더 보기'                 => 'Load more',

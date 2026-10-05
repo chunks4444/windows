@@ -611,6 +611,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                 <!-- ── 제작 시방서 ────────────────── -->
                 <?php if ($perms['spec']): ?>
                 <div class="sb-section">
+                    <div class="sb-section-title"><?= te('시방서') ?> <small><?= te('치수·먹줄·홈폭') ?></small></div>
                     <div class="spec-grid">
                         <div class="spec-card">
                             <div class="spec-lbl"><?= te('문틀 가로') ?></div>

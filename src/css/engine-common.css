@@ -2635,3 +2635,14 @@ body.pm-light:has(.controls.collapsed) .pm-engine-story-link { left: calc(68px +
 .pm-light .rail-pane .sb-lead-time strong { color: #111; }
 .pm-light .rail-pane .sb-price-note,
 .pm-light .rail-pane .sb-price-disclaimer { color: #9097A1; }
+
+/* 시방서 탭 — '부재 목록'을 위 간격을 크게 두고 패널 제목급으로 강조 */
+.pm-light .rail-pane[data-pane="spec"] > .sb-section + .sb-section { margin-top: 28px; }
+.pm-light .rail-pane[data-pane="spec"] .sb-section-title {
+    font-size: 15px; font-weight: 700; color: #111; letter-spacing: -0.3px; text-transform: none;
+    justify-content: flex-start; gap: 8px; margin-bottom: 12px; padding-bottom: 0; border: none;
+}
+.pm-light .rail-pane[data-pane="spec"] .sb-section-title small { font-size: 11px; font-weight: 400; color: #9097A1; letter-spacing: 0; }
+.pm-light .rail-pane[data-pane="spec"] .sb-section-title .sb-chevron { margin-left: auto; color: #9097A1; }
+.pm-light .rail-pane[data-pane="spec"] .slat-group-title,
+.pm-light .rail-pane[data-pane="spec"] .slat-group > :first-child { color: #111; }
