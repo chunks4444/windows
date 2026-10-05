@@ -251,4 +251,5 @@ return [
     '렌더링 결과'                                    => 'Rendered images',
     '배경'                                           => 'Background',
     '추천 프롬프트'                                  => 'Suggested prompts',
+    '문짝 %s × %smm'                                 => 'Door %s × %smm',
 ];

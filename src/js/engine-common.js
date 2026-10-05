@@ -2930,8 +2930,15 @@ function drawSvgInserts() {
             if (v !== null && v !== last) { last = v; pct.textContent = v + '%'; }
         }, 200);
 
+        // 문짝 치수 — 엔진의 눈금자 그리기(drawRulers)가 #cvDims가 있으면 캔버스 대신 여기에 글자로 넣는다
+        const dims = document.createElement('span');
+        dims.id = 'cvDims';
+        dims.className = 'cv-dims';
+        dims.hidden = true;
+        tools.appendChild(dims);
+
         // 남는 버튼(혹시 엔진별로 추가된 것)도 잃지 않도록 tools 끝에 붙인다
-        bar.querySelectorAll(':scope > .cv-btn').forEach(b => tools.appendChild(b));
+        bar.querySelectorAll(':scope > .cv-btn').forEach(b => tools.insertBefore(b, dims));
         bar.innerHTML = '';
         bar.classList.add('cv-dock');
         bar.append(tools, zoom);

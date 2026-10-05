@@ -2671,3 +2671,21 @@ body.pm-light:has(.controls.collapsed) .pm-engine-story-link { left: calc(68px +
 .pm-light .rail-pane .file-ver .ver-item.active .ver-date { color: #111; }
 .pm-light .rail-pane .file-ver .ver-item.active .ver-date::after { content: '  ✓'; color: #111; }
 .pm-light .rail-pane .file-ver .ver-empty { padding: 10px 12px; font-size: 12px; color: #9097A1; }
+
+/* ── 툴바를 캔버스 위쪽으로: 도구 박스는 왼쪽 위, 줌 박스는 오른쪽 위 (눈금자 22px 아래). 메뉴는 아래로 펼침 */
+.pm-light .canvas-controls.cv-dock { top: 34px; bottom: auto; left: 34px; right: 16px; align-items: start; grid-template-columns: auto 1fr auto; }
+.pm-light .cv-dock .cv-tools { grid-column: 1; }
+.pm-light .cv-dock .cv-zoom { grid-column: 3; }
+.pm-light .cv-flyout { top: calc(100% + 10px); bottom: auto; transform: translateX(-50%) translateY(-4px); }
+.pm-light .cv-group.open .cv-flyout { transform: translateX(-50%) translateY(0); }
+.pm-light .cv-group-btn .bi-chevron-up { transform: rotate(180deg); display: inline-block; }
+.pm-light .cv-group.open .cv-group-btn .bi-chevron-up { transform: rotate(0deg); }
+/* 문짝 치수 — 도구 박스 오른쪽 끝, 세로 구분선 뒤 */
+.cv-dims { display: flex; align-items: center; height: 52px; padding: 0 12px 0 14px; margin-left: 4px; border-left: 1px solid #E4E6EB; font-size: 12px; color: #3C4049; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.cv-dims[hidden] { display: none; }
+/* 저장 알림은 툴바와 겹치지 않게 캔버스 왼쪽 아래로 */
+.pm-light .canvas-area > .pm-save-toast { top: auto; bottom: 16px; left: 34px; }
+@media (max-width: 768px) {
+    .pm-light .canvas-controls.cv-dock { top: 30px; left: 30px; right: 8px; }
+    .cv-dims { display: none; }
+}

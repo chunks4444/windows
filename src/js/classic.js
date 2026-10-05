@@ -1501,7 +1501,12 @@ async function draw() {
         rCtx.moveTo(R, 0); rCtx.lineTo(R, R); rCtx.lineTo(0, R);
         rCtx.stroke();
 
-        if (showDimensions && geo.outerW) {
+        // 레일 구조(밝은 테마)에선 문짝 치수를 캔버스에 그리지 않고 상단 도구 박스(#cvDims)에 글자로 넣는다
+        const dimsEl = document.getElementById('cvDims');
+        if (dimsEl) {
+            dimsEl.textContent = (showDimensions && geo.outerW) ? _t('문짝 %s × %smm', Math.round(geo.outerW), Math.round(geo.outerH)) : '';
+            dimsEl.hidden = !dimsEl.textContent;
+        } else if (showDimensions && geo.outerW) {
             rCtx.fillStyle = '#000';
             rCtx.font = '12px -apple-system, sans-serif';
             rCtx.textAlign = 'left';
