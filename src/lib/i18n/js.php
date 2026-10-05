@@ -235,4 +235,6 @@ return [
     '부위를 고른 뒤 아래에서 색을 누르세요.'          => 'Choose a part, then pick a colour below.',
     '기본'                                           => 'Basic',
     '원목 그대로'                                    => 'Bare wood',
+    '도면에서 칠할 면을 클릭하세요. 오른쪽 클릭은 지우기입니다.' => 'Click a panel on the drawing to paint it. Right-click to erase.',
+    '아래에서 색을 고르면 도면에서 면을 칠할 수 있습니다.' => 'Pick a colour below, then paint panels on the drawing.',
 ];

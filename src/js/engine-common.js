@@ -2639,6 +2639,7 @@ function drawSvgInserts() {
             }
             setFinish(groupFin);
             pickers().find(p => p.id === target + 'Popup')?.selectColor(hex);
+            if (target === 'face') setPaint(true);   // 면 색을 고르면 바로 칠하기 — 도면 위에선 커서가 페인트 버킷
             window.draw?.();
             render();
         }
@@ -2688,7 +2689,12 @@ function drawSvgInserts() {
                 h += '</div></div>';
             });
             root.innerHTML = h;
-            if (paintRow) { root.appendChild(paintRow); paintRow.hidden = !(stain && target === 'face'); }
+            if (paintRow) { root.appendChild(paintRow); paintRow.hidden = target !== 'face'; }
+            if (target === 'face') {
+                const on = typeof facePaintMode !== 'undefined' && facePaintMode;
+                root.querySelector('.fin-current')?.insertAdjacentHTML('afterend',
+                    `<p class="fin-hint">${on ? _t('도면에서 칠할 면을 클릭하세요. 오른쪽 클릭은 지우기입니다.') : _t('아래에서 색을 고르면 도면에서 면을 칠할 수 있습니다.')}</p>`);
+            }
         }
 
         // 모든 색(기본 마감·팔레트 칩)에 마우스를 올리면 그 동그라미 위에 제품명·색 이름 말풍선 (브라우저 title 툴팁 대신)
@@ -2703,9 +2709,28 @@ function drawSvgInserts() {
             if (b && !b.contains(e.relatedTarget) && Date.now() >= tipLockUntil) tipEl?.classList.remove('show');
         });
 
+        // 면 칠하기 모드 — 엔진 JS의 기존 토글(#btnFacePaint)을 그대로 눌러 facePaintMode를 바꾸고,
+        // 켜져 있는 동안 캔버스 영역에 .pm-face-painting을 달아 커서를 페인트 버킷으로 바꾼다(CSS)
+        const facePaintBtn = document.getElementById('btnFacePaint');
+        const canvasArea   = document.getElementById('canvasContainer');
+        function setPaint(on) {
+            const cur = typeof facePaintMode !== 'undefined' && facePaintMode;
+            if (cur !== on) facePaintBtn?.click();
+        }
+        // 다른 곳(선 칠하기 등)에서 꺼져도 커서가 따라가도록 버튼 상태를 기준으로 클래스를 맞춘다
+        if (facePaintBtn) new MutationObserver(() => {
+            canvasArea?.classList.toggle('pm-face-painting', facePaintBtn.classList.contains('cv-btn-active'));
+            render();
+        }).observe(facePaintBtn, { attributes: true, attributeFilter: ['class'] });
+        // 마감 탭을 떠나면(다른 탭·패널 접기) 칠하기를 끈다
+        const finPane = block.closest('.rail-pane');
+        new MutationObserver(() => { if (finPane.hidden) setPaint(false); }).observe(finPane, { attributes: true, attributeFilter: ['hidden'] });
+        new MutationObserver(() => { if (document.getElementById('sidebar')?.classList.contains('collapsed')) setPaint(false); })
+            .observe(document.getElementById('sidebar'), { attributes: true, attributeFilter: ['class'] });
+
         root.addEventListener('click', e => {
             const part = e.target.closest('.fin-part');
-            if (part) { target = part.dataset.part; needPart = false; render(); return; }
+            if (part) { target = part.dataset.part; needPart = false; if (target !== 'face') setPaint(false); render(); return; }
             const sw = e.target.closest('.fin-sw');
             if (sw) { pickColor(sw.dataset.fin, sw.dataset.hex, sw); return; }
             const chip = e.target.closest('.fin-base');
