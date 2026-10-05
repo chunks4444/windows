@@ -2606,14 +2606,14 @@ function drawSvgInserts() {
         // 누른 색 칩 바로 위에 잠깐 뜨는 말풍선 (마우스 근처에서 바로 보이도록)
         let tipEl, tipTimer;
         // rect는 render()로 칩이 새로 그려지기 전에 잰 값을 받는다 (다시 그린 뒤엔 누른 칩이 DOM에서 빠져 0,0이 된다)
-        function tipAbove(r, msg) {
+        function tipAbove(r, msg, sticky) {
             if (!tipEl) { tipEl = document.createElement('div'); tipEl.className = 'fin-tip'; document.body.appendChild(tipEl); }
             tipEl.textContent = msg;
             tipEl.style.left = (r.left + r.width / 2) + 'px';
             tipEl.style.top  = r.top + 'px';
             tipEl.classList.remove('show'); void tipEl.offsetWidth; tipEl.classList.add('show');
             clearTimeout(tipTimer);
-            tipTimer = setTimeout(() => tipEl.classList.remove('show'), 2000);
+            if (!sticky) tipTimer = setTimeout(() => tipEl.classList.remove('show'), 2000);   // sticky=마우스 오버 동안 유지
         }
 
         function pickColor(groupFin, hex, el) {
@@ -2654,10 +2654,15 @@ function drawSvgInserts() {
             if (!stain && target) h += `<p class="fin-hint">${fin ? _t('오일 마감은 나무결 그대로 한 가지 색으로 칠해집니다.') : _t('나무 본래 색 그대로입니다. 아래에서 색을 고르면 그 마감이 함께 선택됩니다.')}</p>`;
 
             // 기본 마감 — 마감 없음 + 천연오일을 팔레트와 같은 동그라미(아래 작은 이름)로
-            const base = [{ v: '', label: _t('마감 없음'), bg: '' }].concat(oilFinishes.map(v => ({ v, label: finishLabel(v), bg: oilHexFor(v) })));
+            // 이름의 괄호 안(제품명, 예: 'AURO 126')은 떼어 두고 마우스를 올리면 말풍선으로 보여준다
+            const splitName = n => { const m = /^(.*?)\s*\(([^)]+)\)\s*$/.exec(n); return m ? [m[1], m[2]] : [n, '']; };
+            const base = [{ v: '', label: _t('마감 없음'), bg: '', product: _t('원목 그대로') }].concat(oilFinishes.map(v => {
+                const [label, product] = splitName(finishLabel(v));
+                return { v, label, product, bg: oilHexFor(v) };
+            }));
             h += `<div class="fin-group"><div class="fin-group-head">${_t('기본')}</div><div class="fin-bases">`;
             base.forEach(b => {
-                h += `<button type="button" class="fin-base${fin === b.v ? ' active' : ''}" data-fin="${esc2(b.v)}">`
+                h += `<button type="button" class="fin-base${fin === b.v ? ' active' : ''}" data-fin="${esc2(b.v)}" data-tip="${esc2(b.product || b.label)}">`
                    + `<span class="fin-base-dot${b.v ? '' : ' fin-dot-none'}"${b.bg ? ` style="background:${esc2(b.bg)}"` : ''}></span>`
                    + `<span class="fin-base-name">${esc2(b.label)}</span></button>`;
             });
@@ -2668,13 +2673,25 @@ function drawSvgInserts() {
                 g.colors.forEach(c => {
                     const on = fin === gf && toRgb(c.hex) === curRgb;
                     const tip = [c.brand, c.code, c.name].filter(Boolean).join(' ');
-                    h += `<button type="button" class="fin-sw${on ? ' active' : ''}" style="background:${esc2(c.hex)}" title="${esc2(tip)}" data-fin="${esc2(gf)}" data-hex="${esc2(c.hex)}"></button>`;
+                    h += `<button type="button" class="fin-sw${on ? ' active' : ''}" style="background:${esc2(c.hex)}" data-tip="${esc2(tip)}" data-fin="${esc2(gf)}" data-hex="${esc2(c.hex)}"></button>`;
                 });
                 h += '</div></div>';
             });
             root.innerHTML = h;
             if (paintRow) { root.appendChild(paintRow); paintRow.hidden = !(stain && target === 'face'); }
         }
+
+        // 모든 색(기본 마감·팔레트 칩)에 마우스를 올리면 그 동그라미 위에 제품명·색 이름 말풍선 (브라우저 title 툴팁 대신)
+        root.addEventListener('mouseover', e => {
+            const b = e.target.closest('[data-tip]');
+            if (!b || b.contains(e.relatedTarget)) return;
+            clearTimeout(tipTimer);
+            tipAbove((b.querySelector('.fin-base-dot') || b).getBoundingClientRect(), b.dataset.tip, true);
+        });
+        root.addEventListener('mouseout', e => {
+            const b = e.target.closest('[data-tip]');
+            if (b && !b.contains(e.relatedTarget)) tipEl?.classList.remove('show');
+        });
 
         root.addEventListener('click', e => {
             const part = e.target.closest('.fin-part');

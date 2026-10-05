@@ -234,4 +234,5 @@ return [
     '먼저 색칠할 부위를 고르세요.'                   => 'Choose a part to colour first.',
     '부위를 고른 뒤 아래에서 색을 누르세요.'          => 'Choose a part, then pick a colour below.',
     '기본'                                           => 'Basic',
+    '원목 그대로'                                    => 'Bare wood',
 ];
