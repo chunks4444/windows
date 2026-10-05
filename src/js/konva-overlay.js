@@ -134,6 +134,8 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
 
     // ── 모드 설정 ─────────────────────────────────────────
     function setMode(mode) {
+        // 도형 선택·그리기를 켜면 이동·선 편집·배치 모드는 끈다 (두 모드가 동시에 켜지면 드래그를 서로 가로챔)
+        if (mode) window.__pmokExitCanvasModes?.();
         if (mode && _slatSelectMode) {
             _slatSelectMode  = false;
             _selectedLineKey = null;
@@ -601,6 +603,8 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
     }
 
     function onDeactivate() {
+        // 이동·선 편집·배치를 켤 때 불린다 — 도형 선택·그리기 모드도 함께 끈다
+        if (konvaShapeMode) setMode(null);
         _slatSelectMode  = false;
         _selectedLineKey = null;
         updatePatternHighlight();

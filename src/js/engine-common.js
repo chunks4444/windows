@@ -490,6 +490,19 @@
         img.src = src;
     }
 
+    // 캔버스 모드(이동·선 편집·배치)만 끈다 — 도형 모드(konva-overlay)가 켜질 때 부른다(서로 동시에 켜지지 않게)
+    window.__pmokExitCanvasModes = () => {
+        panMode = false;
+        document.getElementById('btnPan')?.classList.remove('cv-btn-active');
+        lineEditMode = null;
+        addLineStart = null;
+        document.getElementById('btnEditDelete')?.classList.remove('cv-btn-active');
+        document.getElementById('btnEditAdd')?.classList.remove('cv-btn-active');
+        placementMode = false;
+        handlesVisible = false;
+        document.getElementById('btnScale')?.classList.remove('cv-btn-active');
+    };
+
     function deactivateAllModes() {
         panMode = false;
         document.getElementById('btnPan').classList.remove('cv-btn-active');
