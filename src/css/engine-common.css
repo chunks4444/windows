@@ -2476,3 +2476,10 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
 .fin-base.active .fin-base-name { color: #111; }
 /* 선택 링을 얇게 — 흰 간격 2px + 블랙 1px */
 .fin-base.active .fin-base-dot, .fin-sw.active { box-shadow: 0 0 0 2px #fff, 0 0 0 3px #111; }
+/* 마감 탭은 볼드 없이 */
+.rail-pane[data-pane="finish"] .fin-label,
+.rail-pane[data-pane="finish"] .fin-group-head,
+.rail-pane[data-pane="finish"] .fin-part,
+.rail-pane[data-pane="finish"] .fin-part.active,
+.rail-pane[data-pane="finish"] .fin-current,
+.rail-pane[data-pane="finish"] .fin-need { font-weight: 400; }
