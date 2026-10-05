@@ -1504,8 +1504,14 @@ async function draw() {
         // 레일 구조(밝은 테마)에선 문짝 치수를 캔버스에 그리지 않고 상단 도구 박스(#cvDims)에 글자로 넣는다
         const dimsEl = document.getElementById('cvDims');
         if (dimsEl) {
-            dimsEl.textContent = (showDimensions && geo.outerW) ? _t('문짝 %s × %smm', Math.round(geo.outerW), Math.round(geo.outerH)) : '';
-            dimsEl.hidden = !dimsEl.textContent;
+            // 두 줄: 문짝 크기 / 도면에 치수선으로 보이는 문틀 크기(문설정의 '문틀 가로·세로')
+            const fw = Math.round(+document.getElementById('numW')?.value || 0), fh = Math.round(+document.getElementById('numH')?.value || 0);
+            const on = showDimensions && geo.outerW;
+            dimsEl.innerHTML = on
+                ? `<span><small>${_t('문짝')}</small><b>${Math.round(geo.outerW)} × ${Math.round(geo.outerH)}mm</b></span>`
+                  + (fw && fh ? `<span><small>${_t('문틀')}</small><b>${fw} × ${fh}mm</b></span>` : '')
+                : '';
+            dimsEl.hidden = !on;
         } else if (showDimensions && geo.outerW) {
             rCtx.fillStyle = '#000';
             rCtx.font = '12px -apple-system, sans-serif';

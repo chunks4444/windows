@@ -252,4 +252,7 @@ return [
     '배경'                                           => 'Background',
     '추천 프롬프트'                                  => 'Suggested prompts',
     '문짝 %s × %smm'                                 => 'Door %s × %smm',
+    '문틀 크기'                                      => 'Frame size',
+    '문짝'                                           => 'Door',
+    '문틀'                                           => 'Frame',
 ];

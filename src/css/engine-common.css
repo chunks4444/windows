@@ -2689,3 +2689,8 @@ body.pm-light:has(.controls.collapsed) .pm-engine-story-link { left: calc(68px +
     .pm-light .canvas-controls.cv-dock { top: 30px; left: 30px; right: 8px; }
     .cv-dims { display: none; }
 }
+.cv-dims { flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px; }
+.cv-dims small { font-size: 10.5px; color: #8A909A; line-height: 1; }
+.cv-dims b { font-size: 12.5px; font-weight: 500; color: #111; line-height: 1.2; }
+.cv-dims > span { display: flex; align-items: baseline; gap: 6px; }
+.cv-dims > span small { min-width: 22px; }
