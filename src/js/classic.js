@@ -2531,11 +2531,13 @@ async function draw() {
         } catch { return false; }
     }
 
+    let defaultParams = null;
     async function loadVersions() {
         scaleFactor = 1.0; panX = 0; panY = 0;
         const _woodEl = document.getElementById('txtWood');     if (_woodEl) _woodEl.value = '소나무';
         const _finishEl = document.getElementById('txtFinish'); if (_finishEl) _finishEl.value = ''; window.applyFinishColorPicker?.(false);
         const _hwEl = document.getElementById('txtHardware');  if (_hwEl) _hwEl.value = '';
+        if (!defaultParams) defaultParams = getParams();
 
         // 로그인 없이 편집하다 저장을 눌러 로그인 왕복 중이던 상태가 있으면 복원 후 이어서 저장
         const resumed = await tryResumePendingSave();
@@ -2743,6 +2745,7 @@ async function draw() {
         updateShareButtonUI();
         isDrawingLocked = false;
         updateLockBanner(false);
+        if (defaultParams) applyParams(JSON.parse(JSON.stringify(defaultParams)));
         document.getElementById('drawingName').value    = '';
         document.getElementById('verLabel').textContent = '—';
         const now = Date.now();
