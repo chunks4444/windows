@@ -2388,3 +2388,14 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
     .panel-fold { left: calc(58px + min(300px, 100vw - 58px)); z-index: 51; }
     .controls.collapsed ~ .panel-fold { left: 58px; }
 }
+
+/* 사이드바 패널 안 모든 카드 테두리 없음 (평소·오버·선택 모두) — 구분은 연회색 바탕과 오버 시 어두운 오버레이로만 */
+.pm-light .rail-pane .thumb-card img,
+.pm-light .rail-pane .thumb-card .thumb-ph,
+.pm-light .rail-pane .motif-tile img,
+.pm-light .rail-pane .rp-thumb-item,
+.pm-light .rail-pane .render-saved-item { border-color: transparent !important; }
+.pm-light .rail-pane .rp-thumb-item:hover img,
+.pm-light .rail-pane .render-saved-item:hover img { filter: brightness(0.86); }
+.pm-light .rail-pane .rp-thumb-item img,
+.pm-light .rail-pane .render-saved-item img { transition: filter 0.15s; }
