@@ -470,32 +470,32 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
     align-items: center;
     gap: 2px;
     background: #FFFFFF;
-    border-radius: 14px;
-    padding: 5px;
+    border-radius: 12px;
+    padding: 4px;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.04);
 }
 .cv-dock .cv-tools { grid-column: 1; }
 .cv-dock .cv-zoom { grid-column: 3; }
-.cv-dock .cv-btn { width: auto; min-width: 58px; height: 52px; padding: 0 8px; border-radius: 10px; flex-direction: column; gap: 4px; color: #3C4049; }
-.cv-dock .cv-btn svg { width: 20px; height: 20px; color: currentColor; }
+.cv-dock .cv-btn { width: auto; min-width: 46px; height: 40px; padding: 0 6px; border-radius: 8px; flex-direction: column; gap: 3px; color: #3C4049; }
+.cv-dock .cv-btn svg { width: 17px; height: 17px; color: currentColor; }
 .cv-dock .cv-btn::before, .cv-dock .cv-btn::after { display: none; }      /* 글자가 붙어 있으므로 말풍선 툴팁 끔 */
 .cv-dock .cv-btn:hover { background: #F1F2F4; color: #1F2328; }
 .cv-dock .cv-btn-active { background: #111111 !important; color: #FFFFFF !important; }
-.cv-label { font-size: 11px; font-weight: 500; letter-spacing: -0.2px; white-space: nowrap; line-height: 1; }
+.cv-label { font-size: 10px; font-weight: 500; letter-spacing: -0.2px; white-space: nowrap; line-height: 1; }
 .cv-label .bi { font-size: 8px; margin-left: 1px; vertical-align: 1px; display: inline-block; transform: rotate(180deg); }   /* 메뉴가 아래로 펼치므로 ∨ */
 .cv-group.open .cv-label .bi { transform: rotate(0deg); }
-.cv-dock .cv-zoom .cv-btn { min-width: 44px; height: 44px; }
-.cv-dock .cv-zoom .cv-btn.cv-icon-only { min-width: 38px; }
+.cv-dock .cv-zoom .cv-btn { min-width: 38px; height: 40px; }
+.cv-dock .cv-zoom .cv-btn.cv-icon-only { min-width: 32px; }
 .cv-zoom-pct {
-    min-width: 54px; height: 44px; border: none; background: none; color: #1F2328;
-    font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; cursor: pointer; border-radius: 8px;
+    min-width: 46px; height: 40px; border: none; background: none; color: #1F2328;
+    font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; cursor: pointer; border-radius: 8px;
 }
 .cv-zoom-pct:hover { background: #F1F2F4; }
 /* 선 편집·도형 묶음 — 아래로 펼쳐지는 작은 메뉴 */
 .cv-group { position: relative; display: flex; }
 .cv-flyout {
     position: absolute;
-    top: calc(100% + 10px);
+    top: calc(100% + 8px);
     left: 50%;
     transform: translateX(-50%) translateY(-4px);
     display: flex;
@@ -509,19 +509,19 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
     transition: opacity 0.15s, transform 0.15s;
 }
 .cv-group.open .cv-flyout { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
-.cv-flyout .cv-btn { min-width: 56px; height: 48px; }
+.cv-flyout .cv-btn { min-width: 46px; height: 40px; }
 .cv-dock #btnEditClear, .cv-dock #btnShapeClear { color: #8A909A; }
 /* 치수(문짝·문틀) — 도구 박스 오른쪽 끝, 세로 구분선 뒤 두 줄 */
 .cv-dims {
     /* 라벨(문짝/문틀·Door/Frame) 칸 폭을 맞춰 값이 같은 위치에서 시작하도록 2열 그리드 */
     display: grid; grid-template-columns: auto auto; align-content: center; column-gap: 8px; row-gap: 2px;
-    height: 52px; padding: 0 12px 0 14px; margin-left: 4px; border-left: 1px solid #E4E6EB;
+    height: 40px; padding: 0 10px 0 12px; margin-left: 4px; border-left: 1px solid #E4E6EB;
     white-space: nowrap; font-variant-numeric: tabular-nums;
 }
 .cv-dims[hidden] { display: none; }
 .cv-dims > span { display: contents; }
-.cv-dims small { align-self: center; font-size: 10.5px; color: #8A909A; line-height: 1; }
-.cv-dims b { font-size: 12.5px; font-weight: 500; color: #111; line-height: 1.2; }
+.cv-dims small { align-self: center; font-size: 9.5px; color: #8A909A; line-height: 1; }
+.cv-dims b { font-size: 11.5px; font-weight: 500; color: #111; line-height: 1.2; }
 
 /* ── 10. 좁은 화면 ─────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
