@@ -46,7 +46,7 @@ include __DIR__ . '/../_head.php';
 
 <!-- UI 스크린샷 -->
 <div class="guide-screenshot">
-    <img src="/src/img/guide/render-en.png" alt="Rendering tab open in the Semo-sotgeul-sal studio — Room photo, Suggested prompts, Describe it, the AI rendering button and Rendered images in the panel, with the drawing on the canvas" loading="lazy">
+    <img src="/src/img/guide/render-en.png" alt="Rendering tab open in the Se-sal studio — Room photo, Suggested prompts, Describe it, the AI rendering button and Rendered images in the panel, with the drawing fitted into the room photo in Place mode on the canvas" loading="lazy">
 </div>
 
 <div class="guide-callout-grid">

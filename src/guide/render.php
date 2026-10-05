@@ -45,7 +45,7 @@ include __DIR__ . '/_head.php';
 
 <!-- UI 스크린샷 -->
 <div class="guide-screenshot">
-    <img src="/src/img/guide/render.png" alt="세살 스튜디오에서 렌더링 탭을 연 화면 — 패널의 공간 사진(배경 없음·사진 올리기)·추천 프롬프트·직접 입력·AI 렌더링 버튼·렌더링 결과 썸네일, 캔버스에는 도면" loading="lazy">
+    <img src="/src/img/guide/render.png" alt="세살 스튜디오에서 렌더링 탭을 연 화면 — 패널의 공간 사진·추천 프롬프트·직접 입력·AI 렌더링 버튼·렌더링 결과, 캔버스에는 공간 사진 위에 배치 모드로 문틀 자리에 맞춰 넣은 도면" loading="lazy">
 </div>
 
 <div class="guide-callout-grid">
