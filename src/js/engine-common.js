@@ -584,7 +584,8 @@
         fetch('/src/api/renders/list.php?engine=' + encodeURIComponent(_engineName()), { headers: _wpHeaders() })
             .then(r => r.json())
             .then(data => {
-                savedRenders = (data.renders || []).slice(0, MAX_RENDERS)
+                // 레일 구조(렌더링 탭 갤러리)에선 저장된 렌더 전부(서버 최대 300장, 이미지는 lazy), 옛 구조는 최근 MAX_RENDERS장
+                savedRenders = (data.renders || []).slice(0, document.getElementById('toolRail') ? Infinity : MAX_RENDERS)
                     .map(r => ({ id: r.id, src: r.filepath, savedAt: new Date(r.created_at).getTime() }));
                 renderSavedThumbList();
             })
@@ -753,10 +754,18 @@
         const list = document.getElementById('renderSavedList');
         if (!list) return;
         list.innerHTML = '';
+        const rail = !!document.getElementById('toolRail');
+        document.getElementById('renderSavedCount')?.replaceChildren(savedRenders.length ? _t('%s장', savedRenders.length) : '');
+        if (rail && !savedRenders.length) list.innerHTML = `<div class="pane-empty">${_t('아직 렌더링한 이미지가 없습니다.')}</div>`;
         savedRenders.forEach((r) => {
             const item = document.createElement('div');
             item.className = 'render-saved-item';
-            item.innerHTML = `<img src="${r.src}"><span class="render-saved-del" title="${_t('삭제')}"><i class="bi bi-x"></i></span>`;
+            // 레일 구조: 문양 카드와 같은 오른쪽 위 버튼 묶음(다운로드·삭제), 이미지는 보일 때 불러오기
+            item.innerHTML = rail
+                ? `<img src="${r.src}" loading="lazy" alt=""><div class="tile-acts"><a class="tile-act" href="${r.src}" download title="${_t('다운로드')}"><i class="bi bi-download"></i></a>`
+                  + `<button type="button" class="tile-act tile-act-del render-saved-del" title="${_t('삭제')}"><i class="bi bi-trash3"></i></button></div>`
+                : `<img src="${r.src}"><span class="render-saved-del" title="${_t('삭제')}"><i class="bi bi-x"></i></span>`;
+            item.querySelector('.tile-act:not(.tile-act-del)')?.addEventListener('click', e => e.stopPropagation());
             item.querySelector('img').addEventListener('click', () => {
                 showRenderResult(r.src);
             });
@@ -2314,6 +2323,7 @@ function drawSvgInserts() {
         initMinePane();
         initMotifPane();
         initFinishColors();
+        initRenderPane();
 
         show(saved || 'door');
         // 좁은 화면에선 패널이 처음부터 접혀 있으므로(모바일 초기화) 그 상태를 레일 강조에 반영
@@ -2537,6 +2547,77 @@ function drawSvgInserts() {
 
         loaders.motif = () => { if (!libLoaded) { libLoaded = true; loadLib(); } loadMine(); };
         document.addEventListener('pmok:svg-uploaded', loadMine);
+    }
+
+    // ── 렌더링: 공간 사진 그리드 · 분위기 칩 · 직접 입력 · AI 렌더링 버튼 · 결과 갤러리 ─────────────
+    // 원래 요소(id)·동작은 그대로 두고 배치와 표시만 바꾼다 — 배경 업로드/지우기 버튼은 그리드 칸이 대신 눌러 준다
+    function initRenderPane() {
+        const pane = document.querySelector('.rail-pane[data-pane="render"]');
+        const thumbs = document.getElementById('thumbList');
+        const preset = document.getElementById('aiPromptPreset');
+        const prompt = document.getElementById('aiPrompt');
+        const saved  = document.getElementById('renderSavedList');
+        const runBtn = pane?.querySelector('.rp-ai-btn');
+        if (!pane || !thumbs || !preset || !prompt || !saved || !runBtn) return;
+        const wrap = thumbs.parentElement;     // 원래 세로로 쌓여 있던 렌더링 칸
+        const label = (txt, hint) => { const d = document.createElement('div'); d.className = 'fin-label rp-label'; d.innerHTML = txt + (hint ? `<small>${hint}</small>` : ''); return d; };
+
+        // 1) 공간 사진 — [배경 없음] [+ 업로드] [사진들…] 3열 그리드
+        const bgHead = label(_t('공간 사진'), _t('도면을 넣을 실내·실외 사진'));
+        const noneTile = document.createElement('button');
+        noneTile.type = 'button';
+        noneTile.className = 'rp-tile rp-tile-none';
+        noneTile.innerHTML = `<span class="fin-dot-none"></span><small>${_t('배경 없음')}</small>`;
+        noneTile.addEventListener('click', () => document.getElementById('btnClearBg')?.click());
+        const addTile = document.createElement('button');
+        addTile.type = 'button';
+        addTile.className = 'rp-tile rp-tile-add';
+        addTile.innerHTML = `<i class="bi bi-plus-lg"></i><small>${_t('사진 올리기')}</small>`;
+        addTile.addEventListener('click', () => document.getElementById('btnAddThumb')?.click());
+        thumbs.prepend(noneTile, addTile);
+        // 사진이 추가·삭제·선택될 때마다 '배경 없음' 칸의 선택 표시를 맞춘다
+        const syncNone = () => noneTile.classList.toggle('active', !thumbs.querySelector('.rp-thumb-item.active'));
+        new MutationObserver(syncNone).observe(thumbs, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] });
+        syncNone();
+
+        // 2) 분위기 — 프리셋 select를 칩으로 (고르면 아래 입력칸에 문장이 채워진다: select의 기존 onchange)
+        const moodHead = label(_t('분위기'), _t('고르면 아래 문장이 채워집니다'));
+        const chips = document.createElement('div');
+        chips.className = 'rp-moods';
+        [...preset.options].filter(o => o.value).forEach(o => {
+            const c = document.createElement('button');
+            c.type = 'button';
+            c.className = 'rp-mood';
+            c.textContent = o.textContent.trim();
+            c.dataset.v = o.value;
+            c.addEventListener('click', () => {
+                preset.value = o.value;
+                preset.dispatchEvent(new Event('change', { bubbles: true }));
+                prompt.value = o.value;
+                syncMood();
+            });
+            chips.appendChild(c);
+        });
+        const syncMood = () => chips.querySelectorAll('.rp-mood').forEach(c => c.classList.toggle('active', c.dataset.v === prompt.value.trim()));
+        prompt.addEventListener('input', syncMood);
+        preset.closest('.cs-wrap')?.classList.add('rp-hidden');
+        preset.classList.add('rp-hidden');
+
+        // 3) 직접 입력 · 4) 실행 버튼 · 5) 결과
+        const promptHead = label(_t('직접 입력'));
+        runBtn.innerHTML = `<i class="bi bi-stars"></i> ${_t('AI 렌더링')}`;
+        const resHead = label(_t('렌더링 결과'), '');
+        resHead.querySelector('small')?.remove();
+        resHead.insertAdjacentHTML('beforeend', '<small id="renderSavedCount"></small>');
+
+        document.getElementById('btnAddThumb')?.parentElement?.classList.add('rp-hidden');
+        wrap.classList.add('rp-pane');
+        wrap.prepend(bgHead);
+        thumbs.after(moodHead, chips, promptHead);
+        // prompt(textarea)·실행 버튼은 원래 자리(promptHead 뒤)에 그대로 오도록 옮긴다
+        promptHead.after(prompt, runBtn, resHead, saved);
+        syncMood();
+        if (typeof renderSavedThumbList === 'function') renderSavedThumbList();
     }
 
     // ── 마감 (컬러 먼저 고르기, Canva '색상' 패널식) ─────────────────────────────
