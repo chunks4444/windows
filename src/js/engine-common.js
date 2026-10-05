@@ -2561,7 +2561,8 @@ function drawSvgInserts() {
                             dot: document.getElementById(key + 'PreviewDot'), name: document.getElementById(key + 'PreviewName') };
         }).filter(Boolean);
         if (!parts.length) return;
-        let target = parts[0].key;
+        let target = null;      // 처음엔 부위 미선택 — 부위를 안 고르고 색을 누르면 안내를 띄운다
+        let needPart = false;
 
         const finishOpts = [...finSel.options].map(o => o.value);
         const finishLabel = v => [...finSel.options].find(o => o.value === v)?.textContent.trim() || v;
@@ -2603,6 +2604,14 @@ function drawSvgInserts() {
             finSel.dispatchEvent(new Event('change', { bubbles: true }));
         }
         function pickColor(groupFin, hex) {
+            if (!target) {
+                needPart = true;
+                render();
+                const row = root.querySelector('.fin-parts');
+                row?.classList.remove('shake'); void row?.offsetWidth; row?.classList.add('shake');
+                row?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                return;
+            }
             setFinish(groupFin);
             pickers().find(p => p.id === target + 'Popup')?.selectColor(hex);
             window.draw?.();
@@ -2618,15 +2627,16 @@ function drawSvgInserts() {
 
             let h = '';
             // 부위 고르기 — 스테인일 때만 부위별로 색이 다르다 (마감 없음·오일은 한 가지 색)
-            h += `<div class="fin-label">${_t('색칠할 부위')}</div><div class="fin-parts${stain ? '' : ' is-off'}">`;
+            h += `<div class="fin-label">${_t('색칠할 부위')}</div><div class="fin-parts${needPart ? ' is-need' : ''}">`;
             parts.forEach(p => {
                 h += `<button type="button" class="fin-part${p.key === target ? ' active' : ''}" data-part="${p.key}">`
                    + `<span class="fin-dot" style="background:${esc2(p.dot?.style.background || '')}"></span>${esc2(p.label)}</button>`;
             });
             h += '</div>';
-            h += `<div class="fin-current">` + (fin ? `<span class="fin-dot" style="background:${esc2(cur?.dot?.style.background || '')}"></span>` : '<span class="fin-dot fin-dot-none"></span>')
-               + `<span>${esc2(stain ? (cur?.name?.textContent || '') : (fin ? finishLabel(fin) : _t('마감 없음')))}</span></div>`;
-            if (!stain) h += `<p class="fin-hint">${fin ? _t('오일 마감은 나무결 그대로 한 가지 색으로 칠해집니다.') : _t('나무 본래 색 그대로입니다. 아래에서 색을 고르면 그 마감이 함께 선택됩니다.')}</p>`;
+            if (needPart) h += `<p class="fin-need"><i class="bi bi-exclamation-circle"></i> ${_t('먼저 색칠할 부위를 고르세요.')}</p>`;
+            h += `<div class="fin-current">` + (!target ? '' : fin ? `<span class="fin-dot" style="background:${esc2(cur?.dot?.style.background || '')}"></span>` : '<span class="fin-dot fin-dot-none"></span>')
+               + `<span>${esc2(!target ? _t('부위를 고른 뒤 아래에서 색을 누르세요.') : stain ? (cur?.name?.textContent || '') : (fin ? finishLabel(fin) : _t('마감 없음')))}</span></div>`;
+            if (!stain && target) h += `<p class="fin-hint">${fin ? _t('오일 마감은 나무결 그대로 한 가지 색으로 칠해집니다.') : _t('나무 본래 색 그대로입니다. 아래에서 색을 고르면 그 마감이 함께 선택됩니다.')}</p>`;
 
             // 나무 그대로
             h += `<div class="fin-group${fin === '' ? ' is-on' : ''}"><div class="fin-group-head">${_t('나무 그대로')}</div>`
@@ -2655,7 +2665,7 @@ function drawSvgInserts() {
 
         root.addEventListener('click', e => {
             const part = e.target.closest('.fin-part');
-            if (part) { target = part.dataset.part; render(); return; }
+            if (part) { target = part.dataset.part; needPart = false; render(); return; }
             const sw = e.target.closest('.fin-sw');
             if (sw) { pickColor(sw.dataset.fin, sw.dataset.hex); return; }
             const chip = e.target.closest('.fin-chip');

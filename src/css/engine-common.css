@@ -2438,3 +2438,7 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
 .fin-sw.active { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #111; }
 .fin-ui > div:has(#btnFacePaint) { margin-top: 18px; }
 .fin-ui #btnFacePaint { height: 36px; border-radius: 8px; }
+.fin-parts.is-need { box-shadow: 0 0 0 2px var(--danger); }
+.fin-parts.shake { animation: titleShake .35s ease; }
+.fin-need { display: flex; align-items: center; gap: 6px; margin: 8px 0 0; font-size: 12px; font-weight: 600; color: var(--danger); }
+.fin-current span:only-child, .fin-current:not(:has(.fin-dot)) { font-weight: 500; color: #8A909A; font-size: 12px; }
