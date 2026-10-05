@@ -2610,6 +2610,7 @@ function drawSvgInserts() {
                 const row = root.querySelector('.fin-parts');
                 row?.classList.remove('shake'); void row?.offsetWidth; row?.classList.add('shake');
                 row?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                window.pmShowSaveToast?.(_t('먼저 색칠할 부위를 고르세요.'));   // 캔버스 위 토스트(저장 알림과 같은 것)
                 return;
             }
             setFinish(groupFin);

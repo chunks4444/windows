@@ -2443,3 +2443,4 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
 .fin-need { display: flex; align-items: center; gap: 6px; margin: 8px 0 0; font-size: 12px; font-weight: 500; color: #3C4049; }
 .fin-need i { color: #8A909A; }
 .fin-current span:only-child, .fin-current:not(:has(.fin-dot)) { font-weight: 500; color: #8A909A; font-size: 12px; }
+.pm-light .pm-save-toast { background: #111111; color: #FFFFFF; }   /* 저장·안내 토스트도 블랙 강조 */
