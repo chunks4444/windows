@@ -15,7 +15,7 @@ include __DIR__ . '/../_head.php';
     slats all drawn over them.</p>
 
 <div class="guide-screenshot">
-    <img src="/src/img/guide/studio-diamond-en.png" alt="Gyeokja-bit-sal studio layout — design sidebar on the left, canvas in the center, estimate, finish and rendering sidebar on the right" loading="lazy">
+    <img src="/src/img/guide/studio-diamond-en.png" alt="Gyeokja-bit-sal studio layout — menu tabs on the left with the door settings panel open, canvas in the center, toolbar above the canvas" loading="lazy">
 </div>
 
 <h2>Slat Composition</h2>

@@ -17,7 +17,7 @@ include __DIR__ . '/../_head.php';
     and cannot be set manually.</p>
 
 <div class="guide-screenshot">
-    <img src="/src/img/guide/studio-triangle-en.png" alt="Semo-sotgeul-sal studio layout — design sidebar on the left, canvas in the center, estimate, finish and rendering sidebar on the right" loading="lazy">
+    <img src="/src/img/guide/studio-triangle-en.png" alt="Semo-sotgeul-sal studio layout — menu tabs on the left with the door settings panel open, canvas in the center, toolbar above the canvas" loading="lazy">
 </div>
 
 <h2>Slat Composition</h2>

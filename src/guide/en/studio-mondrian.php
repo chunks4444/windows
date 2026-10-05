@@ -12,7 +12,7 @@ include __DIR__ . '/../_head.php';
     Generate a new layout with one click, then draw or drag lines to refine it.</p>
 
 <div class="guide-screenshot">
-    <img src="/src/img/guide/studio-mondrian-en.png" alt="Mondrian studio layout — design sidebar on the left, canvas in the center, estimate, finish and rendering sidebar on the right" loading="lazy">
+    <img src="/src/img/guide/studio-mondrian-en.png" alt="Mondrian studio layout — menu tabs on the left with the door settings panel open, canvas in the center, toolbar above the canvas" loading="lazy">
 </div>
 
 <p>

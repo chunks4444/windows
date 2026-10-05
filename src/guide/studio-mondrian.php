@@ -12,7 +12,7 @@ include __DIR__ . '/_head.php';
     버튼 한 번으로 새 구성을 만들고, 선을 직접 그리거나 옮겨 다듬을 수 있습니다.") ?></p>
 
 <div class="guide-screenshot">
-    <img src="/src/img/guide/studio-mondrian.png" alt="몬드리안 스튜디오 화면 구성 — 왼쪽 설계 사이드바, 중앙 캔버스, 오른쪽 예상가격·마감·렌더링 사이드바" loading="lazy">
+    <img src="/src/img/guide/studio-mondrian.png" alt="몬드리안 스튜디오 화면 구성 — 왼쪽 메뉴 탭과 펼친 문 설정 패널, 중앙 캔버스, 캔버스 위 도구 막대" loading="lazy">
 </div>
 
 <p>

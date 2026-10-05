@@ -14,7 +14,7 @@ include __DIR__ . '/_head.php';
     각도를 조절하는 설정 항목은 따로 없습니다.") ?></p>
 
 <div class="guide-screenshot">
-    <img src="/src/img/guide/studio-cross.png" alt="빗살 스튜디오 화면 구성 — 왼쪽 설계 사이드바, 중앙 캔버스, 오른쪽 예상가격·마감·렌더링 사이드바" loading="lazy">
+    <img src="/src/img/guide/studio-cross.png" alt="빗살 스튜디오 화면 구성 — 왼쪽 메뉴 탭과 펼친 문 설정 패널, 중앙 캔버스, 캔버스 위 도구 막대" loading="lazy">
 </div>
 
 <h2>특징</h2>

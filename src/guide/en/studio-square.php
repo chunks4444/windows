@@ -17,7 +17,7 @@ include __DIR__ . '/../_head.php';
     top/middle/bottom zones.</p>
 
 <div class="guide-screenshot">
-    <img src="/src/img/guide/studio-square-en.png" alt="Jeongja-sal studio layout — design sidebar on the left, canvas in the center, estimate, finish and rendering sidebar on the right" loading="lazy">
+    <img src="/src/img/guide/studio-square-en.png" alt="Jeongja-sal studio layout — menu tabs on the left with the door settings panel open, canvas in the center, toolbar above the canvas" loading="lazy">
 </div>
 
 <h2>How It Differs from Se-sal</h2>

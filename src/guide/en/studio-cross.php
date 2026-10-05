@@ -15,7 +15,7 @@ include __DIR__ . '/../_head.php';
     stay perfectly square, and there is no separate setting for the angle.</p>
 
 <div class="guide-screenshot">
-    <img src="/src/img/guide/studio-cross-en.png" alt="Bit-sal studio layout — design sidebar on the left, canvas in the center, estimate, finish and rendering sidebar on the right" loading="lazy">
+    <img src="/src/img/guide/studio-cross-en.png" alt="Bit-sal studio layout — menu tabs on the left with the door settings panel open, canvas in the center, toolbar above the canvas" loading="lazy">
 </div>
 
 <h2>Characteristics</h2>

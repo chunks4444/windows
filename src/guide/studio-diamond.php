@@ -13,7 +13,7 @@ include __DIR__ . '/_head.php';
     빗살 엔진과 마찬가지로 셀은 항상 정사각형으로 고정되며, 그 위에 가로살·세로살과 사선살이 모두 그려집니다.") ?></p>
 
 <div class="guide-screenshot">
-    <img src="/src/img/guide/studio-diamond.png" alt="격자빗살 스튜디오 화면 구성 — 왼쪽 설계 사이드바, 중앙 캔버스, 오른쪽 예상가격·마감·렌더링 사이드바" loading="lazy">
+    <img src="/src/img/guide/studio-diamond.png" alt="격자빗살 스튜디오 화면 구성 — 왼쪽 메뉴 탭과 펼친 문 설정 패널, 중앙 캔버스, 캔버스 위 도구 막대" loading="lazy">
 </div>
 
 <h2>살 구성</h2>

@@ -18,7 +18,7 @@ include __DIR__ . '/_head.php';
 
 <!-- UI 스크린샷 -->
 <div class="guide-screenshot">
-    <img src="/src/img/guide/studio-classic.png" alt="세살 스튜디오 화면 구성 — 왼쪽 설계 사이드바, 중앙 캔버스, 오른쪽 예상가격·마감·렌더링 사이드바" loading="lazy">
+    <img src="/src/img/guide/studio-classic.png" alt="세살 스튜디오 화면 구성 — 왼쪽 메뉴 탭과 펼친 문 설정 패널, 중앙 캔버스, 캔버스 위 도구 막대" loading="lazy">
 </div>
 
 <h2>① 왼쪽 사이드바 — 설계 파라미터</h2>
