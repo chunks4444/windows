@@ -2464,3 +2464,4 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
 }
 .fin-tip::after { content: ''; position: absolute; left: 50%; bottom: -5px; margin-left: -5px; border: 5px solid transparent; border-bottom: 0; border-top-color: #FFFFFF; filter: drop-shadow(0 1px 0 #E4E6EB); }
 .fin-tip.show { opacity: 1; transform: translate(-50%, calc(-100% - 10px)); }
+.fin-label small { margin-left: 6px; font-size: 10.5px; font-weight: 400; color: #9097A1; }
