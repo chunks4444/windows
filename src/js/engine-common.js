@@ -2603,14 +2603,27 @@ function drawSvgInserts() {
             finSel.value = v;
             finSel.dispatchEvent(new Event('change', { bubbles: true }));
         }
-        function pickColor(groupFin, hex) {
+        // 누른 색 칩 바로 위에 잠깐 뜨는 말풍선 (마우스 근처에서 바로 보이도록)
+        let tipEl, tipTimer;
+        function tipAbove(el, msg) {
+            if (!tipEl) { tipEl = document.createElement('div'); tipEl.className = 'fin-tip'; document.body.appendChild(tipEl); }
+            tipEl.textContent = msg;
+            const r = el.getBoundingClientRect();
+            tipEl.style.left = (r.left + r.width / 2) + 'px';
+            tipEl.style.top  = r.top + 'px';
+            tipEl.classList.remove('show'); void tipEl.offsetWidth; tipEl.classList.add('show');
+            clearTimeout(tipTimer);
+            tipTimer = setTimeout(() => tipEl.classList.remove('show'), 2000);
+        }
+
+        function pickColor(groupFin, hex, el) {
             if (!target) {
                 needPart = true;
                 render();
                 const row = root.querySelector('.fin-parts');
                 row?.classList.remove('shake'); void row?.offsetWidth; row?.classList.add('shake');
                 row?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-                window.pmShowSaveToast?.(_t('먼저 색칠할 부위를 고르세요.'));   // 캔버스 위 토스트(저장 알림과 같은 것)
+                if (el) tipAbove(el, _t('먼저 색칠할 부위를 고르세요.'));
                 return;
             }
             setFinish(groupFin);
@@ -2668,7 +2681,7 @@ function drawSvgInserts() {
             const part = e.target.closest('.fin-part');
             if (part) { target = part.dataset.part; needPart = false; render(); return; }
             const sw = e.target.closest('.fin-sw');
-            if (sw) { pickColor(sw.dataset.fin, sw.dataset.hex); return; }
+            if (sw) { pickColor(sw.dataset.fin, sw.dataset.hex, sw); return; }
             const chip = e.target.closest('.fin-chip');
             if (chip) { setFinish(chip.dataset.fin); render(); }
         });
