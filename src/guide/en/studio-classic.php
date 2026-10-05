@@ -121,6 +121,7 @@ include __DIR__ . '/../_head.php';
     <i class="bi bi-lightbulb-fill"></i>
     <span>Pick <strong>Face</strong>, choose a color, then click cells in the drawing to paint just those cells. Right-click erases. Paint mode switches off automatically when you leave the Finish tab.</span>
 </div>
+<p>See <a href="<?= lang_href('/guide/finish') ?>">Finishes &amp; Colour Samples</a> for every colour swatch and finish type.</p>
 
 <h2>Rendering Tab — Room Photos &amp; AI Rendering</h2>
 <p>

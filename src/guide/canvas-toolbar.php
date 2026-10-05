@@ -1,7 +1,7 @@
 <?php
 $guide_current = 'canvas-toolbar.php';
 $guide_title   = '캔버스 툴바';
-$guide_prev    = ['href' => 'studio-mondrian.php', 'title' => '몬드리안'];
+$guide_prev    = ['href' => 'finish.php', 'title' => '마감 & 컬러 샘플'];
 $guide_next    = ['href' => 'svg-insert.php', 'title' => '문양 삽입 & SVG 업로드'];
 include __DIR__ . '/_head.php';
 ?>

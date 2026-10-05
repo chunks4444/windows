@@ -28,6 +28,13 @@ $guide_nav = [
         ],
     ],
     [
+        'title' => t('nav_guide_finish'), 'icon' => 'bi-palette',
+        'bg' => 'var(--accent-tint)', 'color' => 'var(--text)',
+        'articles' => [
+            ['file' => 'finish.php', 'title' => t('guide_art_finish')],
+        ],
+    ],
+    [
         'title' => t('guide_sec_drawing'), 'icon' => 'bi-folder2-open',
         'bg' => 'var(--accent-tint)', 'color' => 'var(--text)',
         'articles' => [

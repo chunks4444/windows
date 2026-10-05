@@ -56,6 +56,15 @@ require_once __DIR__ . '/../lib/i18n.php';
             <div class="guide-cat-count"><?= htmlspecialchars(sprintf(t("guide_article_count"), 7)) ?></div>
         </a>
 
+        <a href="<?= lang_href("/guide/finish") ?>" class="guide-cat-card">
+            <div class="guide-cat-icon" style="background:var(--accent-tint);color:#000;">
+                <i class="bi bi-palette-fill"></i>
+            </div>
+            <div class="guide-cat-title"><?= htmlspecialchars(t("nav_guide_finish")) ?></div>
+            <div class="guide-cat-desc"><?= htmlspecialchars(t("guide_card_finish_desc")) ?></div>
+            <div class="guide-cat-count"><?= htmlspecialchars(sprintf(t("guide_article_count"), 1)) ?></div>
+        </a>
+
         <a href="<?= lang_href("/guide/drawing") ?>" class="guide-cat-card">
             <div class="guide-cat-icon" style="background:var(--accent-tint);color:#000;">
                 <i class="bi bi-folder2-open"></i>

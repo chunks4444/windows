@@ -199,6 +199,7 @@ $navStudioIcons = [
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="<?= lang_href('/guide/intro') ?>"><i class="bi bi-info-circle me-2"></i><?= htmlspecialchars(t('nav_guide_intro')) ?></a></li>
                     <li><a class="dropdown-item" href="<?= lang_href('/guide/studio-classic') ?>"><i class="bi bi-pencil-square me-2"></i><?= htmlspecialchars(t('nav_guide_studio_usage')) ?></a></li>
+                    <li><a class="dropdown-item" href="<?= lang_href('/guide/finish') ?>"><i class="bi bi-palette me-2"></i><?= htmlspecialchars(t('nav_guide_finish')) ?></a></li>
                     <li><a class="dropdown-item" href="<?= lang_href('/guide/drawing') ?>"><i class="bi bi-folder2-open me-2"></i><?= htmlspecialchars(t('nav_drawing_manage')) ?></a></li>
                     <li><a class="dropdown-item" href="<?= lang_href('/guide/render') ?>"><i class="bi bi-stars me-2"></i><?= htmlspecialchars(t('nav_guide_render')) ?></a></li>
                     <li><a class="dropdown-item" href="<?= lang_href('/guide/collection') ?>"><i class="bi bi-collection-fill me-2"></i><?= htmlspecialchars(t('nav_collection')) ?></a></li>
@@ -303,6 +304,7 @@ $navStudioIcons = [
                 <a class="pm-dw-link" href="<?= lang_href('/guide/') ?>"><i class="bi bi-book"></i><span><?= htmlspecialchars(t('nav_guide_home')) ?></span></a>
                 <a class="pm-dw-link" href="<?= lang_href('/guide/intro') ?>"><i class="bi bi-info-circle"></i><span><?= htmlspecialchars(t('nav_guide_intro')) ?></span></a>
                 <a class="pm-dw-link" href="<?= lang_href('/guide/studio-classic') ?>"><i class="bi bi-pencil-square"></i><span><?= htmlspecialchars(t('nav_guide_studio_usage')) ?></span></a>
+                <a class="pm-dw-link" href="<?= lang_href('/guide/finish') ?>"><i class="bi bi-palette"></i><span><?= htmlspecialchars(t('nav_guide_finish')) ?></span></a>
                 <a class="pm-dw-link" href="<?= lang_href('/guide/drawing') ?>"><i class="bi bi-folder2-open"></i><span><?= htmlspecialchars(t('nav_drawing_manage')) ?></span></a>
                 <a class="pm-dw-link" href="<?= lang_href('/guide/render') ?>"><i class="bi bi-stars"></i><span><?= htmlspecialchars(t('nav_guide_render')) ?></span></a>
                 <a class="pm-dw-link" href="<?= lang_href('/guide/faq') ?>"><i class="bi bi-question-circle"></i><span><?= htmlspecialchars(t('nav_guide_faq')) ?></span></a>

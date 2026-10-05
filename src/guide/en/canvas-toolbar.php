@@ -2,7 +2,7 @@
 // 영문 본문. 한글 원문은 ../canvas-toolbar.php
 $guide_current = 'canvas-toolbar.php';
 $guide_title   = 'Canvas Toolbar';
-$guide_prev    = ['href' => 'studio-mondrian.php', 'title' => 'Mondrian'];
+$guide_prev    = ['href' => 'finish.php', 'title' => 'Finishes & Colour Samples'];
 $guide_next    = ['href' => 'svg-insert.php', 'title' => 'Inserting Motifs & Uploading SVGs'];
 include __DIR__ . '/../_head.php';
 ?>

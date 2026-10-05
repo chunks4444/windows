@@ -105,7 +105,7 @@ include __DIR__ . '/_head.php';
 <h2>마감 탭 — 수종 · 색</h2>
 
 <div class="guide-screenshot">
-    <img src="/src/img/guide/finish.png" alt="세살 스튜디오에서 마감 탭을 연 화면 — 수종·부자재 선택, 색칠할 부위(문틀·울거미·살·면), 기본 마감(마감 없음·들기름·오일마감), 수성스테인(AURO 560)·유성스테인(AURO 930) 색 견본" loading="lazy">
+    <img src="/src/img/guide/finish.png" alt="마감 탭을 연 화면 — 수종·부자재, 색칠할 부위(문틀·울거미·살·면), 기본 마감(마감 없음·들기름·오일마감), 수성스테인(AURO 560)·유성스테인(AURO 930) 색 견본" loading="lazy">
 </div>
 <table class="guide-table">
     <thead><tr><th>항목</th><th>설명</th></tr></thead>
@@ -121,6 +121,7 @@ include __DIR__ . '/_head.php';
     <i class="bi bi-lightbulb-fill"></i>
     <span><strong>면</strong>을 고르고 색을 누른 뒤 도면의 칸을 클릭하면 그 칸만 색이 칠해집니다. 오른쪽 클릭은 지우기입니다. 마감 탭을 벗어나면 칠하기 모드는 자동으로 꺼집니다.</span>
 </div>
+<p>전체 색 견본과 마감 종류는 <a href="/guide/finish">마감 &amp; 컬러 샘플</a>에서 볼 수 있습니다.</p>
 
 <h2>렌더링 탭 — 공간 사진 & AI 렌더링</h2>
 <p>

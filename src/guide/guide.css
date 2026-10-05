@@ -411,3 +411,16 @@ body:has(.guide-wrap) {
 @media (max-width: 480px) {
     .guide-categories { grid-template-columns: 1fr; gap: 12px; }
 }
+
+/* 마감 가이드(finish.php) 컬러 샘플 — _swatches.php가 DB 팔레트로 그린다 */
+.sw-count { font-size: 12px; font-weight: 400; color: var(--text-muted); margin-left: 4px; }
+.sw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px 14px; margin-bottom: 28px; }
+.sw-item { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.sw-dot { flex: none; width: 32px; height: 32px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12); }
+.sw-none { background: repeating-linear-gradient(135deg, #fff 0 4px, #E4E6EB 4px 6px); }
+.sw-text { display: flex; flex-direction: column; min-width: 0; line-height: 1.3; }
+.sw-text b { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sw-text small, .sw-chip small { font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.sw-basic { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-bottom: 28px; }
+.sw-chip { display: flex; align-items: center; gap: 8px; }
+.sw-chip b { font-size: 13px; font-weight: 500; color: var(--text); }
