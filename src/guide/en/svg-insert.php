@@ -9,21 +9,22 @@ include __DIR__ . '/../_head.php';
 
 <h1>Inserting Motifs &amp; Uploading SVGs</h1>
 <p class="guide-lead">
-    From the <strong>Insert motif</strong> section of the sidebar you can pick a pre-registered motif, or
+    From the <strong>Motifs</strong> tab in the left-hand menu you can pick a pre-registered motif, or
     upload an SVG file of your own, and place it freely on the canvas.
 </p>
 
 <h2>Choosing from the Library</h2>
 <ol class="guide-steps">
-    <li>Click the <span class="guide-ui">Library</span> button in the sidebar's <span class="guide-ui">Insert motif</span> section.</li>
-    <li>Click any motif in the list and it is inserted at the center of the canvas right away.</li>
+    <li>Open the <span class="guide-ui"><i class="bi bi-flower1"></i> Motifs</span> tab in the left-hand menu.</li>
+    <li>Click any motif in the <strong>Motif library</strong> and it is inserted at the center of the canvas right away.</li>
+    <li>You can also download a motif as an SVG file with the <i class="bi bi-download"></i> button at its top right.</li>
 </ol>
 
 <h2>Uploading Your Own SVG</h2>
 <ol class="guide-steps">
-    <li>Click the <span class="guide-ui">Upload</span> button in the sidebar's <span class="guide-ui">Insert motif</span> section.</li>
+    <li>Click the <span class="guide-ui"><i class="bi bi-upload"></i> Upload SVG</span> button at the top of the Motifs tab.</li>
     <li>Choose a <code>.svg</code> file from your computer.</li>
-    <li>Once the upload finishes, it is inserted at the center of the canvas automatically.</li>
+    <li>Once the upload finishes, it is inserted at the center of the canvas automatically and added to <strong>My uploaded motifs</strong>, so you can click it there to reuse it later.</li>
 </ol>
 
 <div class="guide-note">
@@ -33,22 +34,22 @@ include __DIR__ . '/../_head.php';
 
 <div class="guide-warn">
     <i class="bi bi-exclamation-triangle-fill"></i>
-    <span>SVG files containing scripts, or files in an invalid format, are rejected.</span>
+    <span>SVG files containing scripts, or files in an invalid format, are rejected. If you delete one of your uploaded motifs with <i class="bi bi-trash3"></i>, it also disappears from any drawing it was placed in.</span>
 </div>
 
 <h2>Adjusting After Insertion</h2>
 <p>
-    Inserting a motif automatically switches to <strong>scale / move / transform</strong> mode, and the
-    sidebar shows size and rotation sliders along with duplicate and delete buttons.
+    A newly inserted motif is selected right away, with handles around its edge. To adjust it again later, turn on
+    <span class="guide-ui"><i class="bi bi-cursor"></i> Select</span> in the toolbar above the canvas and click the motif.
 </p>
 <table class="guide-table">
     <thead><tr><th>Action</th><th>How</th></tr></thead>
     <tbody>
-        <tr><td>Move</td><td>Drag the motif on the canvas</td></tr>
-        <tr><td>Resize / rotate</td><td>Drag the corner handles, or use the sidebar sliders</td></tr>
-        <tr><td>Select several</td><td>Shift + click to add or remove motifs from the selection and move or adjust them together</td></tr>
-        <tr><td>Duplicate</td><td>The <span class="guide-ui">Duplicate</span> button in the sidebar</td></tr>
-        <tr><td>Delete</td><td>The <span class="guide-ui">Delete</span> button in the sidebar</td></tr>
+        <tr><td>Move</td><td>Drag the motif</td></tr>
+        <tr><td>Resize</td><td>Drag a corner or side handle</td></tr>
+        <tr><td>Rotate</td><td>Drag the rotation handle above the frame</td></tr>
+        <tr><td>Delete</td><td>Select the motif and press <kbd>Delete</kbd> or <kbd>Backspace</kbd></td></tr>
+        <tr><td>Remove everything</td><td>Toolbar <span class="guide-ui">Shapes ▾</span> → <span class="guide-ui">Clear all</span> (shapes and text are removed too)</td></tr>
     </tbody>
 </table>
 

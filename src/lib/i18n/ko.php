@@ -6,7 +6,7 @@ return [
     'nav_drawer_close'         => '닫기',
     'nav_engine_prompt_ph'     => '예: 완자살 미서기문 3짝, 가로 1800 세로 1200으로 바꿔줘',
     'nav_studio'               => '스튜디오',
-    'nav_drawing_manage'       => '도면 관리',
+    'nav_drawing_manage'       => '도면관리',
     'nav_collection'           => '컬렉션',
     'nav_portfolio'            => '포트폴리오',
     'nav_guide'                => '가이드',
@@ -87,7 +87,7 @@ return [
     'home_step2_hint1'         => '도면 저장 후 내 도면에서 관리',
     'home_step2_hint2'         => '컬렉션에서 다양한 패턴 탐색',
     'home_step2_hint3'         => '보드에 마음에 드는 패턴 모으기',
-    'home_step2_link'          => '도면 관리 가이드 보기',
+    'home_step2_link'          => '도면관리 가이드 보기',
 
     'home_step3_title'         => '렌더링 & 내보내기',
     'home_step3_desc'          => '완성된 도면을 PNG·PDF·DXF로 내보내거나 AI 렌더링으로 실제 공간에 배치해 검토하세요.',
@@ -186,7 +186,7 @@ return [
     'guide_engine_cta_btn'     => '%s 엔진 사용하기',
 
     'guide_sec_about'          => '워크그룹 평목 소개',
-    'guide_sec_drawing'        => '도면 관리',
+    'guide_sec_drawing'        => '도면관리',
     'guide_sec_export'         => '도면 내보내기',
 
     // 사이드바 문서 제목 (엔진 이름은 영문에서 로마자 표기로 짧게 — 본문 제목은 용어집 전체 표기 사용)

@@ -222,8 +222,7 @@ return [
 
     // ── 툴 레일(왼쪽 아이콘 탭) · 패널 ─────────────────
     '컬렉션'                  => 'Collection',
-    '파일'                    => 'File',
-    '파일명'                  => 'File name',
+    '도면 이름'               => 'Drawing name',
     '내 도면'                 => 'My drawings',
     '문설정'                  => 'Door',
     '문양'                    => 'Motifs',

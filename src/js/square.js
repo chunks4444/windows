@@ -2621,6 +2621,8 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
     }
 
     let _renameTarget = '';
+    // 도면 탭의 내 도면 썸네일(engine-rail.js)에서도 이 이름 변경 창을 연다
+    window.pmokShowRename = title => showRenameModal(title);
     function showRenameModal(title) {
         _renameTarget = title;
         const input = document.getElementById('dmRenameInput');
@@ -2650,6 +2652,7 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
             }
             document.getElementById('dmRenameBackdrop').classList.remove('pm-active');
             refreshDrawingList();
+            document.dispatchEvent(new CustomEvent('pmok:drawing-renamed'));
         } else {
             pmAlert(_t('이름 변경에 실패했습니다.'), { sub: _t('이미 같은 제목의 도면이 있을 수 있습니다.') });
         }

@@ -9,63 +9,75 @@ include __DIR__ . '/../_head.php';
 
 <h1>Canvas Toolbar</h1>
 <p class="guide-lead">
-    At the bottom of the canvas sits a <strong>toolbar</strong> gathering the view controls, slat editing,
-    motif placement and shape drawing buttons.
-    These are shared features, available identically in all seven engines (Se-sal, Jeongja-sal, Bit-sal,
-    Gyeokja-bit-sal, Semo-sotgeul-sal, Yukmo-sotgeul-sal and Mondrian).
+    Two groups of buttons float above the canvas.
+    The <strong>top left</strong> holds Select, Pan, Edit lines, Shapes and Place, together with the current door and frame sizes;
+    the <strong>top right</strong> holds zoom out, zoom in and Fit.
+    All seven engines (Se-sal, Jeongja-sal, Bit-sal, Gyeokja-bit-sal, Semo-sotgeul-sal, Yukmo-sotgeul-sal and Mondrian) share the same toolbar.
 </p>
 
-<h2>View Controls</h2>
+<h2>Top Left — Tools</h2>
+<p>
+    Each button has its name under the icon, and the mode that is on is shown in <strong>black</strong>.
+    Only one mode is on at a time — pressing another button switches the previous one off. Press an active button again to turn it off.
+</p>
 <table class="guide-table">
-    <thead><tr><th>Icon</th><th>Function</th><th>Description</th></tr></thead>
+    <thead><tr><th>Button</th><th>Function</th><th>How to use</th></tr></thead>
     <tbody>
-        <tr><td><i class="bi bi-zoom-in"></i> Zoom in</td><td>Zooms the canvas in</td><td>Scrolling the wheel up does the same.</td></tr>
-        <tr><td><i class="bi bi-zoom-out"></i> Zoom out</td><td>Zooms the canvas out</td><td>Scrolling the wheel down does the same.</td></tr>
-        <tr><td><i class="bi bi-hand-index"></i> Pan</td><td>Moves the canvas by dragging</td><td>Click and drag the drawing to move the view.</td></tr>
-        <tr><td><i class="bi bi-arrow-counterclockwise"></i> Reset view</td><td>Resets zoom and pan to their defaults</td><td>Returns the view to how it looked when you first opened the canvas.</td></tr>
+        <tr><td><i class="bi bi-cursor"></i> Select</td><td>Pick slats, shapes and motifs to edit</td><td>Click a slat and a small bar appears above the canvas to recolor or delete just that slat. Click a shape or motif to get handles for moving, resizing and rotating. The <kbd>Delete</kbd> key also removes what you picked.</td></tr>
+        <tr><td><i class="bi bi-hand-index"></i> Pan</td><td>Pan the view</td><td>While on, drag the canvas to move the view.</td></tr>
+        <tr><td><i class="bi bi-scissors"></i> Edit lines <i class="bi bi-chevron-down"></i></td><td>Menu for removing or adding slats</td><td>Opens a menu with <strong>Delete line · Add line · Reset edits</strong>. See <a href="#line-edit">Edit lines</a> below.</td></tr>
+        <tr><td><i class="bi bi-bounding-box"></i> Shapes <i class="bi bi-chevron-down"></i></td><td>Menu for adding note shapes and text</td><td>Opens a menu with <strong>Circle · Line · Rectangle · Text · Clear all</strong>. See <a href="#shapes">Shapes</a> below.</td></tr>
+        <tr><td><i class="bi bi-aspect-ratio"></i> Place</td><td>Fit the door into a background photo</td><td>Handles appear on the door's four corners. Drag each corner onto the door opening in the photo and the door is warped to match the perspective. Using it before AI rendering makes the result far more natural.</td></tr>
+        <tr><td><i class="bi bi-arrow-counterclockwise"></i> Reset placement</td><td>Return the corners to where they started</td><td>Appears only after you have moved corners with Place.</td></tr>
     </tbody>
 </table>
+<p>
+    At the right end of the tool group, the <strong>Door</strong> (actual door size) and <strong>Frame</strong> (wall opening) dimensions are shown on two lines,
+    so you can check them every time you change a value.
+</p>
 
-<h2>Slat Editing</h2>
+<h2 id="line-edit">Edit Lines</h2>
 <table class="guide-table">
-    <thead><tr><th>Icon</th><th>Function</th><th>How to use</th></tr></thead>
+    <thead><tr><th>Menu item</th><th>Function</th><th>How to use</th></tr></thead>
     <tbody>
-        <tr><td><i class="bi bi-scissors"></i> Delete slat</td><td>Editing mode for removing slats the algorithm generated</td><td>Click a slat to delete it. Clicking a deleted slat again restores it.</td></tr>
-        <tr><td><i class="bi bi-pencil"></i> Add slat</td><td>Editing mode for drawing in new slats that aren't part of the grid</td><td>① Click the starting intersection, ② click the ending intersection, and a slat is created between them.</td></tr>
-        <tr><td><i class="bi bi-arrow-clockwise"></i> Reset edits</td><td>Reverts everything changed by deleting and adding slats</td><td>Resets to the default grid the algorithm generated.</td></tr>
+        <tr><td>Delete line</td><td>Mode for removing automatically drawn slats</td><td>Click a slat to delete it. Click the same spot again to restore it.</td></tr>
+        <tr><td>Add line</td><td>Mode for drawing a new slat that isn't in the grid</td><td>① Click a start intersection → ② click an end intersection, and a slat is created between them.</td></tr>
+        <tr><td>Reset edits</td><td>Undo all line deletions and additions</td><td>Returns to the grid exactly as it was first drawn.</td></tr>
     </tbody>
 </table>
+<p>While Delete line or Add line is on, the <strong>Edit lines</strong> button itself also turns black, so you can tell which mode you're in even with the menu closed.</p>
 
 <div class="guide-tip">
     <i class="bi bi-lightbulb-fill"></i>
-    <span>Combining the <strong>delete and add slat modes</strong> lets you remove specific slats from the generated grid and add slats wherever you want — giving you completely free patterns.</span>
+    <span>Combine Delete line and Add line to take out particular slats from the generated grid or add slats wherever you like, building a pattern of your own. Edited slats are not reflected in the estimate automatically — after you request a quote, our staff review them to set the final price.</span>
 </div>
 
-<h2>Motif Placement</h2>
+<h2 id="shapes">Shapes</h2>
 <table class="guide-table">
-    <thead><tr><th>Icon</th><th>Function</th><th>Description</th></tr></thead>
+    <thead><tr><th>Menu item</th><th>Function</th><th>How to use</th></tr></thead>
     <tbody>
-        <tr><td><i class="bi bi-arrows-move"></i> Scale / move / transform</td><td>Mode for adjusting the position, size and rotation of inserted SVG motifs and images</td><td>This mode activates automatically right after you insert a motif; drag the corner handles to change size and rotation.</td></tr>
-        <tr><td><i class="bi bi-arrow-repeat"></i> Reset placement</td><td>Returns the motif's position, size and rotation to their initial values</td><td>Only appears when a motif has been inserted.</td></tr>
+        <tr><td>Circle</td><td>Add a circle</td><td>Click where you want it.</td></tr>
+        <tr><td>Line</td><td>Add a straight line</td><td>Click a start point, then an end point.</td></tr>
+        <tr><td>Rectangle</td><td>Add a rectangle</td><td>Click where you want it.</td></tr>
+        <tr><td>Text</td><td>Add text</td><td>Click where you want it and a text box appears. Double-click the text later to edit it.</td></tr>
+        <tr><td>Clear all</td><td>Remove all shapes, text and inserted motifs at once</td><td>Slat edits are not affected.</td></tr>
     </tbody>
 </table>
-
-<h2>Shape Drawing</h2>
-<table class="guide-table">
-    <thead><tr><th>Icon</th><th>Function</th><th>How to use</th></tr></thead>
-    <tbody>
-        <tr><td><i class="bi bi-cursor"></i> Select</td><td>The default mode for selecting and editing slats and shapes</td><td>Click a slat to change its color or delete it; click a shape to move, resize or rotate it.</td></tr>
-        <tr><td><i class="bi bi-circle"></i> Draw circle</td><td>Adds a circle to the canvas</td><td>Click where you want it and the circle is placed.</td></tr>
-        <tr><td><i class="bi bi-slash-lg"></i> Draw line</td><td>Adds a straight line to the canvas</td><td>Click the start point, then the end point, and the line is drawn.</td></tr>
-        <tr><td><i class="bi bi-square"></i> Draw rectangle</td><td>Adds a rectangle to the canvas</td><td>Click where you want it and the rectangle is placed.</td></tr>
-        <tr><td><i class="bi bi-fonts"></i> Add text</td><td>Adds a text label to the canvas</td><td>Click where you want it and a text input appears.</td></tr>
-        <tr><td><i class="bi bi-slash-circle"></i> Delete all shapes</td><td>Removes every circle, line, rectangle and text you added</td><td>Does not affect your lattice slat edits.</td></tr>
-    </tbody>
-</table>
+<p>When a shape is selected, a bar appears above the canvas for changing its <strong>stroke color, fill color, thickness and opacity</strong>.</p>
 
 <div class="guide-note">
     <i class="bi bi-info-circle-fill"></i>
-    <span>Shapes are drawn on an overlay layer, separate from the lattice itself. They are meant for <strong>annotations and notes</strong> — they are not included in production specification calculations such as dimension labels or the parts list.</span>
+    <span>Shapes are drawn on a layer separate from the lattice and are meant for <strong>notes and annotations</strong>. They are not included in the estimate or the production specification.</span>
 </div>
+
+<h2>Top Right — Zoom</h2>
+<table class="guide-table">
+    <thead><tr><th>Button</th><th>Function</th></tr></thead>
+    <tbody>
+        <tr><td><i class="bi bi-dash-lg"></i> / <i class="bi bi-plus-lg"></i></td><td>Zoom out / zoom in. The mouse wheel and a two-finger pinch on a trackpad or touch screen work too.</td></tr>
+        <tr><td><strong>100%</strong></td><td>Shows the current zoom level. Clicking it does the same as Fit.</td></tr>
+        <tr><td><i class="bi bi-arrow-repeat"></i> Fit</td><td>Returns a zoomed or panned view to the starting view with the whole drawing visible.</td></tr>
+    </tbody>
+</table>
 
 <?php include __DIR__ . '/../_foot.php'; ?>

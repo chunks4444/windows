@@ -30,16 +30,16 @@ include __DIR__ . '/../_head.php';
     </tbody>
 </table>
 
-<h2>Main Parameters</h2>
+<h2>Door Tab — Main Parameters</h2>
 <table class="guide-table">
     <thead><tr><th>Item</th><th>Description</th></tr></thead>
     <tbody>
-        <tr><td><strong>Door type / panels</strong></td><td>Hinged or sliding, 1–4 panels</td></tr>
-        <tr><td><strong>Frame width / height</strong></td><td>Wall opening dimensions (400–3,000mm). The outer panel size is calculated with the frame thickness removed.</td></tr>
+        <tr><td><strong>Hinged · Sliding / panels</strong></td><td>Hinged 1–2 panels, sliding 1–4 or 6 panels</td></tr>
+        <tr><td><strong>Frame width / height</strong></td><td>Wall opening dimensions (width 100–10,000mm, height 400–3,000mm). The outer panel size is calculated with the frame thickness removed.</td></tr>
         <tr><td><strong>Horizontal cells</strong></td><td>2–30, adjustable in <strong>even steps only</strong> (default 4). This and the slat thickness set the triangle size, and the vertical count is derived automatically.</td></tr>
-        <tr><td><strong>Vertical pattern orientation</strong></td><td>On by default. Rotates the entire triangular grid 90°. The directional part names in the parts list change depending on whether this is on or off.</td></tr>
-        <tr><td><strong>Auto-fit height</strong></td><td>When checked, the frame height is adjusted so the last row meets the bottom rail exactly</td></tr>
-        <tr><td><strong>Stile / rail thickness</strong></td><td>Outer frame thickness (mm)</td></tr>
+        <tr><td><strong>Pattern vertical direction</strong></td><td>On by default. Rotates the entire triangular grid 90°. The directional part names in the member list change depending on whether this is on or off.</td></tr>
+        <tr><td><strong>Auto-fit vertically</strong></td><td>When checked, the frame height is adjusted so the last row meets the bottom rail exactly</td></tr>
+        <tr><td><strong>Left/right stile · top/bottom rail thickness</strong></td><td>Outer frame thickness (mm)</td></tr>
         <tr><td><strong>Slat thickness</strong></td><td>Width of each slat (mm). It also determines the equilateral triangle cell size.</td></tr>
         <tr><td><strong>Use transom panel</strong></td><td>Adds a transom panel zone at the top when checked</td></tr>
     </tbody>
@@ -50,22 +50,22 @@ include __DIR__ . '/../_head.php';
     <span>There are no separate settings for vertical cell count or vertical ratio. To change the triangle size, adjust the horizontal cell count or the slat thickness.</span>
 </div>
 
-<h2>Production Specification</h2>
+<h2>Specs Tab — Production Specification</h2>
 <table class="guide-table">
     <thead><tr><th>Item</th><th>Description</th></tr></thead>
     <tbody>
         <tr><td>Frame / outer / inner width and height</td><td>Automatically calculated measured dimensions</td></tr>
-        <tr><td>Vertical layout line</td><td>Spacing between triangle intersections</td></tr>
+        <tr><td>Vertical ink lines</td><td>Spacing between triangle intersections</td></tr>
         <tr><td>Half-lap width</td><td>Width of the half-lap joint where slats cross</td></tr>
-        <tr><td>Vertical / horizontal stile groove width</td><td>Width of the groove the slats cut into the frame</td></tr>
+        <tr><td>Vertical stile groove width / Horizontal stile groove width</td><td>Width of the groove the slats cut into the frame</td></tr>
     </tbody>
 </table>
 
-<h2>Parts List</h2>
-<p>Ordered as frame members → <strong>horizontal members</strong> (whose name changes with the vertical pattern orientation setting) → <strong>diagonal slats</strong> (the 60° and 120° directions) → transom panel (if used) → door frame.</p>
+<h2>Member List</h2>
+<p>Ordered as frame members → <strong>horizontal members</strong> (whose name changes with the Pattern vertical direction setting) → <strong>diagonal slats</strong> (the 60° and 120° directions) → transom panel (if used) → door frame.</p>
 
-<h2>Finish &amp; Color</h2>
-<p>Wood, finish, hardware and the frame and slat colors are the same as Se-sal. <strong>Panel fill is currently disabled.</strong></p>
+<h2>Finish Tab</h2>
+<p>Choosing the wood, hardware and colors per <strong>part to colour</strong> (frame, stile &amp; rail, slat, face) works the same as Se-sal. Pick <strong>Face</strong> as the part and you can click cells in the drawing to fill just those cells (Paint face color).</p>
 
 <div class="guide-tip">
     <i class="bi bi-lightbulb-fill"></i>

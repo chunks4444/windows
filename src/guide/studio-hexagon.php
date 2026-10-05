@@ -28,22 +28,22 @@ include __DIR__ . '/_head.php';
     </tbody>
 </table>
 
-<h2>주요 파라미터</h2>
+<h2>문설정 탭 — 주요 파라미터</h2>
 <table class="guide-table">
     <thead><tr><th>항목</th><th>설명</th></tr></thead>
     <tbody>
-        <tr><td><strong>문 종류 / 문 짝수</strong></td><td>여닫이·미서기, 1~4짝</td></tr>
-        <tr><td><strong>문틀 가로 / 문틀 세로</strong></td><td>벽 개구부 치수 (400~3,000mm). 문틀 두께를 제외한 값이 문짝 외경으로 자동 계산됩니다.</td></tr>
-        <tr><td><strong>가로 칸수</strong></td><td>1~29, <strong>홀수 단위</strong>로만 조절됩니다(기본값 3). 이 값과 창살 두께로 육각형 크기가 정해집니다.</td></tr>
+        <tr><td><strong>여닫이·미서기 / 짝수</strong></td><td>여닫이 1~2짝, 미서기 1~4짝 또는 6짝</td></tr>
+        <tr><td><strong>문틀 가로 / 문틀 세로</strong></td><td>벽 개구부 치수 (가로 100~10,000mm, 세로 400~3,000mm). 문틀 두께를 제외한 값이 문짝 외경으로 자동 계산됩니다.</td></tr>
+        <tr><td><strong>가로 칸수</strong></td><td>1~29, <strong>홀수 단위</strong>로만 조절됩니다(기본값 3). 이 값과 살 두께로 육각형 크기가 정해집니다.</td></tr>
         <tr><td><strong>패턴 세로 방향</strong></td><td>기본 켜짐. 켜짐(세로형·pointy-top)/꺼짐(가로형·flat-top)으로 육각형 방향이 바뀝니다.</td></tr>
         <tr><td><strong>세로 자동 맞춤</strong></td><td>체크 시 마지막 행이 하단 울거미에 딱 맞도록 문틀 세로 값을 자동 재조정</td></tr>
         <tr><td><strong>좌우 / 상하 울거미 두께</strong></td><td>외곽 프레임 두께 (mm)</td></tr>
-        <tr><td><strong>창살 두께</strong></td><td>각 살의 폭 (mm)</td></tr>
+        <tr><td><strong>살 두께</strong></td><td>각 살의 폭 (mm)</td></tr>
         <tr><td><strong>풍판 사용</strong></td><td>체크 시 상단 풍판 구역 추가</td></tr>
     </tbody>
 </table>
 
-<h2>제작 시방서</h2>
+<h2>시방서 탭 — 제작 시방서</h2>
 <table class="guide-table">
     <thead><tr><th>항목</th><th>설명</th></tr></thead>
     <tbody>
@@ -51,7 +51,7 @@ include __DIR__ . '/_head.php';
         <tr><td>변 간격</td><td>육각형 한 변 사이의 간격</td></tr>
         <tr><td>사선 먹줄</td><td>사선살의 기준 간격</td></tr>
         <tr><td>세로울거미홈간격</td><td>세로 울거미에 파이는 홈들 사이의 간격</td></tr>
-        <tr><td>반턱 너비 / 세로·가로 울거미홈폭</td><td>세모솟을살과 동일한 방식으로 계산</td></tr>
+        <tr><td>반턱 너비 / 세로울거미홈폭 / 가로울거미홈폭</td><td>세모솟을살과 동일한 방식으로 계산</td></tr>
     </tbody>
 </table>
 
@@ -63,8 +63,8 @@ include __DIR__ . '/_head.php';
 <h2>부재 목록</h2>
 <p>세모솟을살과 동일한 구조입니다 — 울거미 → 방향별 부재(패턴 세로 방향에 따라 명칭 가변) → 사선살(두 방향) → (풍판 사용 시) 풍판 → 문틀.</p>
 
-<h2>마감 · 색상</h2>
-<p>목재·마감·부자재, 울거미·살 컬러는 세살과 동일합니다. <strong>면 컬러 칠하기 기능은 현재 비활성화</strong>되어 있습니다.</p>
+<h2>마감 탭</h2>
+<p>수종·부자재와 <strong>색칠할 부위</strong>(문틀·울거미·살·면)별 색 고르기는 세살과 같습니다. 부위에서 <strong>면</strong>을 고르면 도면의 칸을 클릭해 원하는 칸만 색을 채울 수 있습니다(면컬러 칠하기).</p>
 
 <h2>활용 예시</h2>
 <ul>

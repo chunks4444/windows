@@ -64,7 +64,7 @@ include __DIR__ . '/_head.php';
 
 <h2>견적요청하기</h2>
 <ol class="guide-steps">
-    <li>스튜디오 상단 툴바의 <span class="guide-ui"><i class="bi bi-cart-check me-1"></i>견적요청</span> 버튼을 클릭합니다.</li>
+    <li>스튜디오 왼쪽 메뉴의 <span class="guide-ui"><i class="bi bi-receipt me-1"></i>견적</span> 탭을 열고, 예상 가격 아래 <span class="guide-ui">견적요청</span> 버튼을 클릭합니다.</li>
     <li>요청 정보를 확인하고 입력합니다.
         <table class="guide-table" style="margin-top:12px">
             <thead><tr><th>항목</th><th>설명</th></tr></thead>
@@ -101,7 +101,7 @@ include __DIR__ . '/_head.php';
     이는 요청 접수 이후 사양이 변경되어 발생할 수 있는 혼선을 방지하기 위한 조치입니다.
 </p>
 <p>
-    도면 목록에서 잠긴 도면에는 <strong><i class="bi bi-lock-fill"></i></strong> 배지가 현재 주문 상태 이름(예: <em>제작중</em>)으로 표시됩니다.
+    도면관리 페이지에서 잠긴 도면 카드에는 <strong><i class="bi bi-lock-fill"></i></strong> 배지가 현재 주문 상태 이름(예: <em>제작중</em>)으로 표시됩니다.
     잠금이 걸리는 상태는 <strong>견적검토 · 승인 · 견적확정 · 입금완료 · 제작중 · 제작완료 · 발송</strong>입니다.
 </p>
 
@@ -123,8 +123,8 @@ include __DIR__ . '/_head.php';
 
 <h2>주문 상태 확인</h2>
 <p>
-    견적요청 접수 시 <strong>"주문번호 #N"</strong>이 발급되며, 이후 진행 상황은 상단 내비게이션
-    <span class="guide-ui">마이페이지</span> → <span class="guide-ui">도면관리</span> →
+    견적요청 접수 시 <strong>"주문번호 #N"</strong>이 발급되며, 이후 진행 상황은 상단 내비게이션 사용자 메뉴의
+    <span class="guide-ui">주문내역</span>, 또는 <span class="guide-ui">도면관리</span> 페이지의
     <span class="guide-ui">주문내역</span> 탭에서 확인할 수 있습니다.
 </p>
 <p>각 주문은 아래 순서로 상태가 변경됩니다.</p>

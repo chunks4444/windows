@@ -25,15 +25,15 @@ include __DIR__ . '/../_head.php';
     <li>Clipping keeps the slats from protruding outside the frame.</li>
 </ul>
 
-<h2>Main Parameters</h2>
+<h2>Door Tab — Main Parameters</h2>
 <table class="guide-table">
     <thead><tr><th>Item</th><th>Description</th></tr></thead>
     <tbody>
-        <tr><td><strong>Door type / panels</strong></td><td>Hinged or sliding, 1–4 panels</td></tr>
-        <tr><td><strong>Frame width / height</strong></td><td>Wall opening dimensions (400–3,000mm). The outer panel size is calculated with the frame thickness removed.</td></tr>
+        <tr><td><strong>Hinged · Sliding / panels</strong></td><td>Hinged 1–2 panels, sliding 1–4 or 6 panels</td></tr>
+        <tr><td><strong>Frame width / height</strong></td><td>Wall opening dimensions (width 100–10,000mm, height 400–3,000mm). The outer panel size is calculated with the frame thickness removed.</td></tr>
         <tr><td><strong>Horizontal cells</strong></td><td>2–30. The number of square cells across — this and the slat thickness set the cell size, and the vertical count follows automatically.</td></tr>
-        <tr><td><strong>Auto-fit height</strong></td><td>When checked, the frame height is adjusted so the last row meets the bottom rail exactly</td></tr>
-        <tr><td><strong>Stile / rail thickness</strong></td><td>Outer frame thickness (mm)</td></tr>
+        <tr><td><strong>Auto-fit vertically</strong></td><td>When checked, the frame height is adjusted so the last row meets the bottom rail exactly</td></tr>
+        <tr><td><strong>Left/right stile · top/bottom rail thickness</strong></td><td>Outer frame thickness (mm)</td></tr>
         <tr><td><strong>Slat thickness</strong></td><td>Width of each slat (mm). It also determines the cell size (one side of the square).</td></tr>
         <tr><td><strong>Use transom panel</strong></td><td>Adds a transom panel zone at the top when checked</td></tr>
     </tbody>
@@ -44,23 +44,23 @@ include __DIR__ . '/../_head.php';
     <span>Bit-sal has no zoning settings like the "vertical ratio" or "top/middle/bottom layout" found in Jeongja-sal and Se-sal. To change the grid density, adjust the horizontal cell count or the slat thickness.</span>
 </div>
 
-<h2>Production Specification</h2>
+<h2>Specs Tab — Production Specification</h2>
 <table class="guide-table">
     <thead><tr><th>Item</th><th>Description</th></tr></thead>
     <tbody>
         <tr><td>Frame / outer / inner width and height</td><td>Automatically calculated measured dimensions</td></tr>
-        <tr><td>Horizontal / vertical layout lines</td><td>Spacing of the square cells, horizontally and vertically</td></tr>
-        <tr><td>Slat layout line</td><td>Distance between diagonal intersections</td></tr>
+        <tr><td>Horizontal / vertical ink lines</td><td>Spacing of the square cells, horizontally and vertically</td></tr>
+        <tr><td>Slat ink lines</td><td>Distance between diagonal intersections</td></tr>
         <tr><td>Half-lap width</td><td>Calculated equal to the slat thickness</td></tr>
-        <tr><td>Stile groove width</td><td>Slat thickness × (1 + √2) — the width of the groove the 45° diagonal slats cut into the frame</td></tr>
+        <tr><td>Vertical stile groove width / Horizontal stile groove width</td><td>Slat thickness × (1 + √2) — the width of the groove the 45° diagonal slats cut into the frame</td></tr>
     </tbody>
 </table>
 
-<h2>Parts List</h2>
+<h2>Member List</h2>
 <p>Instead of horizontal and vertical slat groups, parts are listed as a <strong>diagonal slat</strong> group. Slats of equal length are bundled by each diagonal direction (↘ and ↗) and listed as length × quantity. Frame members, the transom panel (if used) and the door frame follow below.</p>
 
-<h2>Finish &amp; Color</h2>
-<p>Wood, finish, hardware and the frame and slat colors are the same as Se-sal. Note that <strong>panel fill is currently disabled</strong>, so individual cells cannot be filled with color.</p>
+<h2>Finish Tab</h2>
+<p>Choosing the wood, hardware and colors per <strong>part to colour</strong> (frame, stile &amp; rail, slat, face) works the same as Se-sal. Pick <strong>Face</strong> as the part and you can click cells in the drawing to fill just those cells (Paint face color).</p>
 
 <div class="guide-tip">
     <i class="bi bi-lightbulb-fill"></i>

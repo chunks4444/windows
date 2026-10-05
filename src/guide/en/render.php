@@ -7,96 +7,89 @@ $guide_next    = ['href' => 'collection.php', 'title' => 'Collection & My Boards
 include __DIR__ . '/../_head.php';
 ?>
 
-<h1>AI Rendering — Compositing a Background Photo with Your Drawing</h1>
+<h1>AI Rendering — Compositing a Room Photo with Your Drawing</h1>
 <p class="guide-lead">
-    This feature layers your changho drawing over a photo of the site and has AI composite the two into a
-    realistic installed view. It follows the flow
-    <strong>background image + lattice drawing = AI rendering</strong>, and the whole process happens in the
-    <strong>right sidebar</strong> of the Se-sal studio.
+    This feature overlays your changho drawing on a site photo (the background) and has AI composite it into a realistic installed look.
+    It works as <strong>room photo + lattice drawing = AI rendering result</strong>,
+    and everything happens in the <strong>Rendering</strong> tab of the studio's left-hand menu. All seven engines work the same way.
 </p>
 
 <!-- 합성 원리 흐름도 -->
 <div class="guide-flow">
     <div class="guide-flow-step">
         <span class="step-icon">🖼️</span>
-        <div class="step-title">Upload a background photo</div>
-        <div class="step-desc">Set a photo of the site or space as the canvas background</div>
+        <div class="step-title">Upload a room photo</div>
+        <div class="step-desc">Set a site or interior photo as the canvas background</div>
     </div>
     <div class="guide-flow-arrow">＋</div>
     <div class="guide-flow-step">
         <span class="step-icon">🪟</span>
-        <div class="step-title">Design the drawing</div>
-        <div class="step-desc">Adjust the lattice parameters in the left sidebar</div>
+        <div class="step-title">Place the drawing</div>
+        <div class="step-desc">Design in the Door tab, then use Place to fit it into the photo</div>
     </div>
     <div class="guide-flow-arrow">→</div>
     <div class="guide-flow-step" style="border-color:var(--accent);background:var(--accent-tint);">
         <span class="step-icon">✨</span>
-        <div class="step-title">AI composite</div>
-        <div class="step-desc">AI blends the background and drawing naturally</div>
+        <div class="step-title">AI compositing</div>
+        <div class="step-desc">AI blends the photo and drawing naturally</div>
     </div>
     <div class="guide-flow-arrow">→</div>
     <div class="guide-flow-step">
         <span class="step-icon">💾</span>
-        <div class="step-title">Save the result</div>
-        <div class="step-desc">Download as PNG or keep it in your history</div>
+        <div class="step-title">Keep the result</div>
+        <div class="step-desc">Saved to Rendered images automatically, downloadable anytime</div>
     </div>
 </div>
 
-<h2>Studio Layout</h2>
-<p>The Se-sal studio has <strong>three panels</strong>. AI rendering takes place in the <strong>right sidebar</strong>.</p>
+<h2>The Rendering Tab</h2>
+<p>Click <span class="guide-ui"><i class="bi bi-stars"></i> Rendering</span> in the left-hand menu to open the panel. Work through it from top to bottom.</p>
 
 <!-- UI 스크린샷 -->
 <div class="guide-screenshot">
-    <img src="/src/img/guide/render.png" alt="AI rendering layout — the canvas with the drawing composited over a background photo, and the right panel for background upload, material and lighting choices, and rendering" loading="lazy">
+    <img src="/src/img/guide/render-en.png" alt="Rendering tab open in the Semo-sotgeul-sal studio — Room photo, Suggested prompts, Describe it, the AI rendering button and Rendered images in the panel, with the drawing on the canvas" loading="lazy">
 </div>
 
 <div class="guide-callout-grid">
-    <div class="guid-label-callout"><div class="num">①</div><div><strong>Left sidebar</strong> — lattice parameters. Changes appear on the canvas instantly.</div></div>
-    <div class="guid-label-callout"><div class="num">②</div><div><strong>Canvas</strong> — your drawing overlaid live on the background photo.</div></div>
-    <div class="guid-label-callout"><div class="num">③</div><div><strong>Background photo panel</strong> — upload photos, pick a thumbnail, enter the AI prompt, run the render.</div></div>
-    <div class="guid-label-callout"><div class="num">④</div><div><strong>Render history</strong> — keeps up to 9 recent results. Click one to view it again.</div></div>
+    <div class="guid-label-callout"><div class="num">①</div><div><strong>Room photo</strong> — the photos you've uploaded. The <span class="guide-ui">No background</span> and <span class="guide-ui">Upload photo</span> buttons sit at the right of its heading.</div></div>
+    <div class="guid-label-callout"><div class="num">②</div><div><strong>Suggested prompts</strong> — pick a material and lighting mood and the text box below is filled in for you.</div></div>
+    <div class="guid-label-callout"><div class="num">③</div><div><strong>Describe it</strong> — write the mood you want, or edit a suggested one. Run it with the <span class="guide-ui">AI rendering</span> button right below.</div></div>
+    <div class="guid-label-callout"><div class="num">④</div><div><strong>Rendered images</strong> — every result you've made, with the count shown beside the heading.</div></div>
 </div>
 
-<h2>Step-by-Step</h2>
+<h2>Step by Step</h2>
 
-<h3>① Upload a background photo</h3>
+<h3>① Upload a room photo</h3>
 <ol class="guide-steps">
+    <li>Click the <span class="guide-ui">Rendering</span> tab in the left-hand menu.</li>
     <li>
-        If the <strong>right sidebar</strong> is closed, click the
-        <span class="guide-ui">&rsaquo;</span> tab at the right edge of the canvas to open it.
-    </li>
-    <li>
-        Click the <span class="guide-ui">↑ Add photo</span> button and choose an image file.<br>
+        Click <span class="guide-ui"><i class="bi bi-upload"></i> Upload photo</span> on the <strong>Room photo</strong> heading and choose an image file.<br>
         You can upload several at once.
     </li>
     <li>
-        Uploaded photos appear in the <strong>thumbnail list</strong> below.
-        Clicking a thumbnail <strong>applies it as the canvas background immediately</strong>.
-        The selected thumbnail is outlined in green.
+        Uploaded photos appear in the list. Click one and it is <strong>applied as the canvas background right away</strong>; the selected photo gets a border.
     </li>
 </ol>
 
 <div class="guide-tip">
     <i class="bi bi-lightbulb-fill"></i>
-    <span>Once a background photo is selected, the drawing (the lattice) is displayed over it on the canvas. That combined view is the composite image sent to the AI.</span>
+    <span>Once a photo is selected, the drawing (lattice) is shown on top of it. Exactly what you see is the composite image sent to the AI.</span>
 </div>
 
-<h3>② Adjust the drawing parameters</h3>
+<h3>② Fit the drawing to the photo</h3>
 <p>
-    Adjust the changho's dimensions and lattice settings in the left sidebar.
-    Because the drawing is composited over the background photo live, you can judge the proportions and
-    pattern against the real space on the spot.
+    Set the dimensions and lattice in the <span class="guide-ui">Door</span> tab and the colors in the <span class="guide-ui">Finish</span> tab.
+    The drawing previews live on top of the photo, so you can judge on the spot which proportions and pattern suit the space.
 </p>
-<ul>
-    <li><strong>Width / height</strong> — match the actual installation space</li>
-    <li><strong>Horizontal slat layout (top/middle/bottom)</strong> — set each zone's cell ratio independently</li>
-    <li><strong>Frame and slat colors</strong> — set in the finish section of the right sidebar</li>
-</ul>
-
-<h3>③ Write the AI rendering prompt</h3>
 <p>
-    Type the mood you want as a single line in the text field at the bottom of the right sidebar.
-    The AI uses this text as a reference for the texture, lighting and atmosphere of the composite.
+    Then turn on <span class="guide-ui">Place</span> in the toolbar above the canvas and drag the door's four corner handles onto the door opening in the photo.
+    The door is warped to match the perspective, so you get a natural result even from a photo taken at an angle.
+    See <a href="<?= lang_href('/guide/canvas-toolbar') ?>">Canvas Toolbar</a> for details.
+</p>
+
+<h3>③ Write a prompt</h3>
+<p>
+    Pick a mood from <strong>Suggested prompts</strong>, or write the mood you want in a line or two under <strong>Describe it</strong>.
+    The AI uses this text to composite texture, lighting and atmosphere.
 </p>
 
 <table class="guide-table">
@@ -104,8 +97,8 @@ include __DIR__ . '/../_head.php';
     <tbody>
         <tr><td>Aged oak grain, lacquer finish, white hanji paper</td><td>Emphasizes wood texture and a hanji backdrop</td></tr>
         <tr><td>Hanok café interior, warm daylight</td><td>A bright, warm sense of space</td></tr>
+        <tr><td>Apartment living room entry door, light wood floor, afternoon sun</td><td>A mood that suits a modern home</td></tr>
         <tr><td>Night, soft indirect lighting, atmospheric restaurant</td><td>An evening mood</td></tr>
-        <tr><td>Traditional temple, serene natural surroundings, natural light</td><td>A still, quiet traditional feel</td></tr>
         <tr><td>Modern minimal, white tones, large windows, city view</td><td>A clean, contemporary atmosphere</td></tr>
     </tbody>
 </table>
@@ -119,56 +112,68 @@ include __DIR__ . '/../_head.php';
 <h3>④ Run the render</h3>
 <ol class="guide-steps">
     <li>
-        Click the <span class="guide-ui" style="background:var(--accent);color:var(--bg);border:none;">✨ Rendering</span> button.
+        Click the <span class="guide-ui" style="background:var(--accent);color:var(--bg);border:none;"><i class="bi bi-stars"></i> AI rendering</span> button. (You need to be logged in.)
     </li>
     <li>
-        An <strong>"AI rendering…"</strong> loading overlay appears on the canvas.
-        Processing usually takes <strong>30–90 seconds</strong>.
+        <strong>"AI rendering…"</strong> appears over the canvas.
+        It usually takes <strong>30–90 seconds</strong>.
     </li>
     <li>
-        When it finishes, the result popup opens automatically.
-        Save the PNG with <span class="guide-ui">Download</span>, or close the popup.
+        When it finishes, the result window opens automatically. Save it with <span class="guide-ui">Download</span> or close the window.
     </li>
     <li>
-        Results are saved to your <strong>render history</strong> automatically.
-        Click a thumbnail to view it again anytime.
+        The result is added to <strong>Rendered images</strong> at the bottom of the panel automatically.
     </li>
 </ol>
 
 <div class="guide-warn">
     <i class="bi bi-exclamation-triangle-fill"></i>
-    <span>Make sure a background photo is selected before running a render. Without one, a notice appears and rendering does not start.</span>
+    <span>If no room photo is selected or the prompt is empty, a notice appears and rendering does not start.</span>
 </div>
 
-<h2>Render History</h2>
+<h2>Managing Rendered Images</h2>
 <p>
-    Up to <strong>9</strong> recent results are kept automatically in the <strong>render history</strong> at
-    the bottom of the right sidebar. Click a thumbnail to review or download it from the result popup.
-    You can also remove an entry with its <i class="bi bi-x"></i> button.
+    <strong>Rendered images</strong> shows every result you've made.
+    Click an image to view it large in the result window; use the <i class="bi bi-download"></i> button at its top right to download it,
+    or <i class="bi bi-trash3"></i> to delete it.
 </p>
 
 <div class="guide-note">
     <i class="bi bi-info-circle-fill"></i>
     <div>
-        <p style="margin:0 0 4px;">Renders are stored on the server, so they appear the same on any device or browser as long as you're signed in to the same account.</p>
-        <p style="margin:0;">Note that each account can keep at most <strong>300</strong> renders. Beyond that limit, new renders are refused with a notice — so clear out old ones with the <i class="bi bi-x"></i> button in the right sidebar's history, or back up the ones you need with <span class="guide-ui">Download</span>.</p>
+        <p style="margin:0 0 4px;">Rendered images are stored on the server, so they look the same from any device or browser signed in to the same account.</p>
+        <p style="margin:0;">Note that each account can keep at most <strong>300</strong> renders. Beyond that limit, new renders are refused with a notice — so clear out old ones with <i class="bi bi-trash3"></i>, or download the ones you need with <i class="bi bi-download"></i> beforehand.</p>
     </div>
 </div>
 
-<h2>Managing Background Photos</h2>
+<h2>The Renders Tab in My Drawings</h2>
+<p>
+    The <strong>Renders</strong> tab of the <span class="guide-ui">My Drawings</span> page in the top navigation gathers the rendering results from every engine.
+    The top shows <strong>stored count / 300</strong>, and a notice appears when it's full.
+</p>
 <table class="guide-table">
     <thead><tr><th>Action</th><th>How</th></tr></thead>
     <tbody>
-        <tr><td>Add a background photo</td><td>The <span class="guide-ui">↑ Add photo</span> button in the right sidebar, or drag &amp; drop</td></tr>
-        <tr><td>Switch background photo</td><td>Click a thumbnail — the canvas background changes to that photo immediately</td></tr>
-        <tr><td>Remove a background photo</td><td>Click the <span class="guide-ui"><i class="bi bi-x-lg"></i></span> button beside the thumbnail</td></tr>
-        <tr><td>View the drawing without a background</td><td>Click the active thumbnail again to deactivate it</td></tr>
+        <tr><td>View large · download</td><td>Click an image to open the detail window, then use <span class="guide-ui">Download</span>.</td></tr>
+        <tr><td>Share</td><td>The <span class="guide-ui"><i class="bi bi-share-fill"></i></span> button on the image → copy the link or share to KakaoTalk, Facebook or X</td></tr>
+        <tr><td>Delete</td><td>The <span class="guide-ui"><i class="bi bi-x"></i></span> button on the image, or <span class="guide-ui">Delete</span> in the detail window</td></tr>
+    </tbody>
+</table>
+
+<h2>Managing Room Photos</h2>
+<table class="guide-table">
+    <thead><tr><th>Action</th><th>How</th></tr></thead>
+    <tbody>
+        <tr><td>Add a photo</td><td><span class="guide-ui"><i class="bi bi-upload"></i> Upload photo</span> on the Room photo heading</td></tr>
+        <tr><td>Switch photos</td><td>Click another photo in the list — the canvas background changes right away.</td></tr>
+        <tr><td>View the drawing without a background</td><td>Click <span class="guide-ui"><i class="bi bi-slash-circle"></i> No background</span> on the heading</td></tr>
+        <tr><td>Delete a photo</td><td>Click the <span class="guide-ui"><i class="bi bi-x-lg"></i></span> button on the photo</td></tr>
     </tbody>
 </table>
 
 <div class="guide-tip">
     <i class="bi bi-lightbulb-fill"></i>
-    <span>Background photos are stored on the server, so reopening the same drawing restores the photos you uploaded earlier along with it.</span>
+    <span>Room photos are stored on the server, so when you reopen the same drawing, the photos you uploaded earlier come back too.</span>
 </div>
 
 <?php include __DIR__ . '/../_foot.php'; ?>

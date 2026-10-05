@@ -27,42 +27,42 @@ include __DIR__ . '/_head.php';
     </tbody>
 </table>
 
-<h2>주요 파라미터</h2>
+<h2>문설정 탭 — 주요 파라미터</h2>
 <table class="guide-table">
     <thead><tr><th>항목</th><th>설명</th></tr></thead>
     <tbody>
-        <tr><td><strong>문 종류 / 문 짝수</strong></td><td>여닫이·미서기, 1~4짝</td></tr>
-        <tr><td><strong>문틀 가로 / 문틀 세로</strong></td><td>벽 개구부 치수 (400~3,000mm). 문틀 두께를 제외한 값이 문짝 외경으로 자동 계산됩니다.</td></tr>
-        <tr><td><strong>가로 칸수</strong></td><td>2~30, <strong>짝수 단위</strong>로만 조절됩니다(기본값 4). 이 값과 창살 두께로 정삼각형 크기가 정해지고, 세로 칸수는 자동 산출됩니다.</td></tr>
+        <tr><td><strong>여닫이·미서기 / 짝수</strong></td><td>여닫이 1~2짝, 미서기 1~4짝 또는 6짝</td></tr>
+        <tr><td><strong>문틀 가로 / 문틀 세로</strong></td><td>벽 개구부 치수 (가로 100~10,000mm, 세로 400~3,000mm). 문틀 두께를 제외한 값이 문짝 외경으로 자동 계산됩니다.</td></tr>
+        <tr><td><strong>가로 칸수</strong></td><td>2~30, <strong>짝수 단위</strong>로만 조절됩니다(기본값 4). 이 값과 살 두께로 정삼각형 크기가 정해지고, 세로 칸수는 자동 산출됩니다.</td></tr>
         <tr><td><strong>패턴 세로 방향</strong></td><td>기본 켜짐. 삼각 격자 전체를 90° 회전합니다. 켜짐/꺼짐 여부에 따라 부재 목록의 방향별 부재 명칭이 바뀝니다.</td></tr>
         <tr><td><strong>세로 자동 맞춤</strong></td><td>체크 시 마지막 행이 하단 울거미에 딱 맞도록 문틀 세로 값을 자동 재조정</td></tr>
         <tr><td><strong>좌우 / 상하 울거미 두께</strong></td><td>외곽 프레임 두께 (mm)</td></tr>
-        <tr><td><strong>창살 두께</strong></td><td>각 살의 폭 (mm). 정삼각형 셀 크기를 함께 결정합니다.</td></tr>
+        <tr><td><strong>살 두께</strong></td><td>각 살의 폭 (mm). 정삼각형 셀 크기를 함께 결정합니다.</td></tr>
         <tr><td><strong>풍판 사용</strong></td><td>체크 시 상단 풍판 구역 추가</td></tr>
     </tbody>
 </table>
 
 <div class="guide-note">
     <i class="bi bi-info-circle-fill"></i>
-    <span>세로 칸수, 세로 비율 같은 별도 설정 항목은 없습니다. 삼각형 크기를 바꾸려면 가로 칸수 또는 창살 두께를 조정하세요.</span>
+    <span>세로 칸수, 세로 비율 같은 별도 설정 항목은 없습니다. 삼각형 크기를 바꾸려면 가로 칸수 또는 살 두께를 조정하세요.</span>
 </div>
 
-<h2>제작 시방서</h2>
+<h2>시방서 탭 — 제작 시방서</h2>
 <table class="guide-table">
     <thead><tr><th>항목</th><th>설명</th></tr></thead>
     <tbody>
         <tr><td>문틀 / 외경 / 내경 가로·세로</td><td>자동 계산된 실측 치수</td></tr>
         <tr><td>세로 먹줄</td><td>삼각형 교차점 간 간격</td></tr>
         <tr><td>반턱 너비</td><td>살이 교차하는 반턱의 너비</td></tr>
-        <tr><td>세로 / 가로 울거미홈폭</td><td>울거미에 살이 파고드는 홈의 폭</td></tr>
+        <tr><td>세로울거미홈폭 / 가로울거미홈폭</td><td>울거미에 살이 파고드는 홈의 폭</td></tr>
     </tbody>
 </table>
 
 <h2>부재 목록</h2>
 <p>울거미 → <strong>가로부재</strong>(패턴 세로 방향 설정에 따라 명칭이 바뀜) → <strong>사선살</strong>(60°·120° 두 방향) → (풍판 사용 시) 풍판 → 문틀 순으로 구성됩니다.</p>
 
-<h2>마감 · 색상</h2>
-<p>목재·마감·부자재, 울거미·살 컬러는 세살과 동일합니다. <strong>면 컬러 칠하기 기능은 현재 비활성화</strong>되어 있습니다.</p>
+<h2>마감 탭</h2>
+<p>수종·부자재와 <strong>색칠할 부위</strong>(문틀·울거미·살·면)별 색 고르기는 세살과 같습니다. 부위에서 <strong>면</strong>을 고르면 도면의 칸을 클릭해 원하는 칸만 색을 채울 수 있습니다(면컬러 칠하기).</p>
 
 <div class="guide-tip">
     <i class="bi bi-lightbulb-fill"></i>

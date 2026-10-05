@@ -29,7 +29,7 @@ include __DIR__ . '/_head.php';
     <li>상단 내비게이션에서 <span class="guide-ui">스튜디오</span>를 클릭합니다.</li>
     <li>드롭다운 메뉴에서 원하는 격자 패턴 엔진을 선택합니다.<br>
         처음이라면 <strong>세살</strong>을 권장합니다.</li>
-    <li>스튜디오 화면이 열리면 왼쪽 사이드바에서 파라미터를 조정합니다.</li>
+    <li>스튜디오 화면이 열리면 왼쪽 메뉴의 <span class="guide-ui">문설정</span> 탭을 눌러 패널을 열고 파라미터를 조정합니다.</li>
     <li>가운데 캔버스에 실시간으로 도면이 그려집니다.</li>
 </ol>
 
@@ -40,9 +40,9 @@ include __DIR__ . '/_head.php';
 
 <h2>3단계 — 첫 도면 저장</h2>
 <ol class="guide-steps">
-    <li>캔버스 상단 바의 <span class="guide-ui">도면 이름</span> 입력란에 이름을 입력합니다.</li>
-    <li><span class="guide-ui">저장</span> 버튼을 클릭합니다.</li>
-    <li>저장된 도면은 <span class="guide-ui">도면 관리</span> 페이지에서 언제든 불러올 수 있습니다.</li>
+    <li>왼쪽 메뉴의 <span class="guide-ui">도면</span> 탭을 엽니다.</li>
+    <li><span class="guide-ui">도면 이름</span> 칸에 도면 이름을 입력하고 <span class="guide-ui">저장</span> 버튼을 클릭합니다.</li>
+    <li>저장된 도면은 도면 탭 아래 <strong>내 도면</strong> 목록이나 <span class="guide-ui">도면관리</span> 페이지에서 언제든 다시 열 수 있습니다.</li>
 </ol>
 
 <div class="guide-note">
@@ -56,10 +56,10 @@ include __DIR__ . '/_head.php';
 <table class="guide-table">
     <thead><tr><th>영역</th><th>위치</th><th>역할</th></tr></thead>
     <tbody>
-        <tr><td><strong>왼쪽 사이드바</strong></td><td>왼쪽</td><td>문 종류, 치수, 격자 살 설정 등 설계 파라미터 입력</td></tr>
-        <tr><td><strong>캔버스 상단 바</strong></td><td>캔버스 위</td><td>도면 이름, 새 도면·도면 목록·버전 관리, 저장·공유 버튼</td></tr>
-        <tr><td><strong>캔버스</strong></td><td>중앙</td><td>도면 실시간 미리보기, 휠/드래그로 확대·이동, 선 삭제·추가 편집</td></tr>
-        <tr><td><strong>오른쪽 사이드바</strong></td><td>오른쪽</td><td>마감·색상, 배경 사진·AI 렌더링, PNG/PDF 내보내기, 견적요청</td></tr>
+        <tr><td><strong>메뉴 탭</strong></td><td>맨 왼쪽 세로줄</td><td>컬렉션 · 도면 · 문설정 · 문양 · 마감 · 렌더링 · 견적 · 시방서 · 내보내기. 누르면 옆에 해당 패널이 열립니다.</td></tr>
+        <tr><td><strong>탭 패널</strong></td><td>메뉴 탭 옆</td><td>고른 탭의 설정. 같은 탭을 다시 누르거나 가장자리의 <i class="bi bi-chevron-left"></i> 버튼으로 접고 펼 수 있습니다.</td></tr>
+        <tr><td><strong>캔버스</strong></td><td>가운데</td><td>도면 실시간 미리보기. 휠·드래그로 확대·이동</td></tr>
+        <tr><td><strong>캔버스 툴바</strong></td><td>캔버스 위</td><td>왼쪽: 선택·이동·선 편집·도형·배치와 문짝·문틀 치수 / 오른쪽: 확대·축소·화면 맞춤 (<a href="/guide/canvas-toolbar">자세히</a>)</td></tr>
     </tbody>
 </table>
 

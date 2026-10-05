@@ -235,7 +235,7 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
 /* 카드 오른쪽 위 작은 버튼(다운로드·삭제) — 오버 시 표시, 터치 기기는 항상 */
 .tile-acts { position: absolute; top: 6px; right: 6px; display: flex; gap: 4px; opacity: 0; transition: opacity 0.12s; }
 .motif-tile:hover .tile-acts, .motif-tile:focus-within .tile-acts { opacity: 1; }
-.tile-act, .thumb-del {
+.tile-act {
     width: 26px;
     height: 26px;
     border: none;
@@ -251,10 +251,9 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
     text-decoration: none;
 }
 .tile-act:hover { background: #111; color: #fff; }
-.tile-act-del:hover, .thumb-del:hover { background: var(--danger); color: #fff; }
-.thumb-del { position: absolute; top: 6px; right: 6px; opacity: 0; transition: opacity 0.12s; }
-.thumb-card:hover .thumb-del, .thumb-card:focus-within .thumb-del { opacity: 1; }
-@media (hover: none) { .tile-acts, .thumb-del { opacity: 0.9; } }
+.tile-act-del:hover { background: var(--danger); color: #fff; }
+.thumb-card:hover .tile-acts, .thumb-card:focus-within .tile-acts { opacity: 1; }
+@media (hover: none) { .tile-acts { opacity: 0.9; } }
 
 /* ── 5. 파일 탭 (도면 툴바 · 버전 드롭다운 · 내 도면) ─────────────────────── */
 .rail-pane .title-btn-group.file-head { display: block; background: none; border: none; border-radius: 0; margin-bottom: 10px; }

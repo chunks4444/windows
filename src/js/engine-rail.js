@@ -190,12 +190,19 @@
                 card.innerHTML = '<div class="thumb-ph"><i class="bi bi-image"></i></div>'
                     + `<span class="thumb-name">${d.locked_at ? '<i class="bi bi-lock-fill"></i> ' : ''}${esc(d.title)}</span>`
                     + `<span class="thumb-date">${esc(fmtDate(new Date(d.updated_at).getTime()))}</span>`
-                    + `<button type="button" class="thumb-del" title="${esc(_t('삭제'))}"><i class="bi bi-trash3"></i></button>`;
+                    + `<div class="tile-acts"><button type="button" class="tile-act thumb-ren" title="${esc(_t('이름 변경'))}"><i class="bi bi-pencil"></i></button>`
+                    + `<button type="button" class="tile-act tile-act-del thumb-del" title="${esc(_t('삭제'))}"><i class="bi bi-trash3"></i></button></div>`;
                 card.addEventListener('click', async e => {
-                    if (e.target.closest('.thumb-del')) return;
+                    if (e.target.closest('.tile-acts')) return;
                     if (d.title === (document.getElementById('drawingName')?.value || '').trim()) return;
                     await openDrawingByTitle(d.title);
                     refreshList();
+                });
+                // 이름 변경 — 엔진 JS의 이름 변경 창(showRenameModal)을 그대로 연다. 견적요청 중인 도면은 삭제와 같이 막는다
+                card.querySelector('.thumb-ren').addEventListener('click', e => {
+                    e.stopPropagation();
+                    if (d.locked_at) { pmAlert(_t('이 도면은 견적요청 중이라 이름을 바꿀 수 없습니다.'), { type: 'danger' }); return; }
+                    window.pmokShowRename?.(d.title);
                 });
                 // 삭제 — 도면 목록 모달(refreshDrawingList)의 삭제와 같은 규칙: 견적요청 중이면 불가, 지금 연 도면이면 새 도면으로
                 card.querySelector('.thumb-del').addEventListener('click', e => {
@@ -224,6 +231,7 @@
         }
 
         loaders.file = () => { renderVerDate(); refreshList(); };
+        document.addEventListener('pmok:drawing-renamed', refreshList);
         // 저장·버전 전환·도면 열기 때마다 엔진이 renderVerList()로 #verList를 다시 그리므로, 그걸 신호로 칩·목록을 갱신
         const verList = document.getElementById('verList');
         if (verList) new MutationObserver(() => {

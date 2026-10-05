@@ -31,30 +31,30 @@ include __DIR__ . '/../_head.php';
     </tbody>
 </table>
 
-<h2>Main Parameters</h2>
+<h2>Door Tab — Main Parameters</h2>
 <table class="guide-table">
     <thead><tr><th>Item</th><th>Description</th></tr></thead>
     <tbody>
-        <tr><td><strong>Door type / panels</strong></td><td>Hinged or sliding, 1–4 panels</td></tr>
-        <tr><td><strong>Frame width / height</strong></td><td>Wall opening dimensions (400–3,000mm). The outer panel size is calculated with the frame thickness removed.</td></tr>
+        <tr><td><strong>Hinged · Sliding / panels</strong></td><td>Hinged 1–2 panels, sliding 1–4 or 6 panels</td></tr>
+        <tr><td><strong>Frame width / height</strong></td><td>Wall opening dimensions (width 100–10,000mm, height 400–3,000mm). The outer panel size is calculated with the frame thickness removed.</td></tr>
         <tr><td><strong>Horizontal cells</strong></td><td>1–29, adjustable in <strong>odd steps only</strong> (default 3). This and the slat thickness set the hexagon size.</td></tr>
-        <tr><td><strong>Vertical pattern orientation</strong></td><td>On by default. On gives pointy-top hexagons, off gives flat-top ones.</td></tr>
-        <tr><td><strong>Auto-fit height</strong></td><td>When checked, the frame height is adjusted so the last row meets the bottom rail exactly</td></tr>
-        <tr><td><strong>Stile / rail thickness</strong></td><td>Outer frame thickness (mm)</td></tr>
+        <tr><td><strong>Pattern vertical direction</strong></td><td>On by default. On gives pointy-top hexagons, off gives flat-top ones.</td></tr>
+        <tr><td><strong>Auto-fit vertically</strong></td><td>When checked, the frame height is adjusted so the last row meets the bottom rail exactly</td></tr>
+        <tr><td><strong>Left/right stile · top/bottom rail thickness</strong></td><td>Outer frame thickness (mm)</td></tr>
         <tr><td><strong>Slat thickness</strong></td><td>Width of each slat (mm)</td></tr>
         <tr><td><strong>Use transom panel</strong></td><td>Adds a transom panel zone at the top when checked</td></tr>
     </tbody>
 </table>
 
-<h2>Production Specification</h2>
+<h2>Specs Tab — Production Specification</h2>
 <table class="guide-table">
     <thead><tr><th>Item</th><th>Description</th></tr></thead>
     <tbody>
         <tr><td>Frame / outer / inner width and height</td><td>Automatically calculated measured dimensions</td></tr>
-        <tr><td>Edge spacing</td><td>Spacing between the hexagons' edges</td></tr>
-        <tr><td>Diagonal layout line</td><td>Reference spacing for the diagonal slats</td></tr>
+        <tr><td>Side spacing</td><td>Spacing between the hexagons' edges</td></tr>
+        <tr><td>Diagonal ink lines</td><td>Reference spacing for the diagonal slats</td></tr>
         <tr><td>Vertical stile groove spacing</td><td>Spacing between the grooves cut into the vertical frame members</td></tr>
-        <tr><td>Half-lap width / vertical and horizontal groove width</td><td>Calculated the same way as Semo-sotgeul-sal</td></tr>
+        <tr><td>Half-lap width / Vertical stile groove width / Horizontal stile groove width</td><td>Calculated the same way as Semo-sotgeul-sal</td></tr>
     </tbody>
 </table>
 
@@ -63,11 +63,11 @@ include __DIR__ . '/../_head.php';
     <span>The other five engines show a "total door width" card in the production specification, but Yukmo-sotgeul-sal does not. If you need the overall width, use the outer width value.</span>
 </div>
 
-<h2>Parts List</h2>
-<p>The same structure as Semo-sotgeul-sal — frame members → directional members (names vary with the vertical pattern orientation) → diagonal slats (two directions) → transom panel (if used) → door frame.</p>
+<h2>Member List</h2>
+<p>The same structure as Semo-sotgeul-sal — frame members → directional members (names vary with the Pattern vertical direction) → diagonal slats (two directions) → transom panel (if used) → door frame.</p>
 
-<h2>Finish &amp; Color</h2>
-<p>Wood, finish, hardware and the frame and slat colors are the same as Se-sal. <strong>Panel fill is currently disabled.</strong></p>
+<h2>Finish Tab</h2>
+<p>Choosing the wood, hardware and colors per <strong>part to colour</strong> (frame, stile &amp; rail, slat, face) works the same as Se-sal. Pick <strong>Face</strong> as the part and you can click cells in the drawing to fill just those cells (Paint face color).</p>
 
 <h2>Example Uses</h2>
 <ul>

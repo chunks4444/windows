@@ -26,7 +26,7 @@ include __DIR__ . '/../_head.php';
         <tr><td><strong>Real-time rendering</strong></td><td>Every parameter change is reflected on the canvas instantly</td></tr>
         <tr><td><strong>Drawing storage</strong></td><td>Drawings and versions are saved to the cloud, so you can pick up where you left off anywhere</td></tr>
         <tr><td><strong>PDF / PNG / DXF export</strong></td><td>Output files for printing, delivery, or CAD work</td></tr>
-        <tr><td><strong>AI rendering</strong></td><td>Composite your drawing over a background photo to visualize the space with AI</td></tr>
+        <tr><td><strong>AI rendering</strong></td><td>Composite your drawing over a room photo to visualize the space with AI</td></tr>
         <tr><td><strong>Collection</strong></td><td>Browse the public pattern library and save patterns to your boards</td></tr>
         <tr><td><strong>AI chat design</strong></td><td>Describe the specs you want in the prompt box at the top and the parameters are applied automatically</td></tr>
     </tbody>

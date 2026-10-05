@@ -27,15 +27,15 @@ include __DIR__ . '/../_head.php';
     </tbody>
 </table>
 
-<h2>Main Parameters</h2>
+<h2>Door Tab — Main Parameters</h2>
 <table class="guide-table">
     <thead><tr><th>Item</th><th>Description</th></tr></thead>
     <tbody>
-        <tr><td><strong>Door type / panels</strong></td><td>Hinged or sliding, 1–4 panels</td></tr>
-        <tr><td><strong>Frame width / height</strong></td><td>Wall opening dimensions (400–3,000mm). The outer panel size is calculated with the frame thickness removed.</td></tr>
+        <tr><td><strong>Hinged · Sliding / panels</strong></td><td>Hinged 1–2 panels, sliding 1–4 or 6 panels</td></tr>
+        <tr><td><strong>Frame width / height</strong></td><td>Wall opening dimensions (width 100–10,000mm, height 400–3,000mm). The outer panel size is calculated with the frame thickness removed.</td></tr>
         <tr><td><strong>Horizontal cells</strong></td><td>2–30. As with Bit-sal, this sets the number of square cells across; the vertical count is derived automatically.</td></tr>
-        <tr><td><strong>Auto-fit height</strong></td><td>When checked, the frame height is adjusted so the last row meets the bottom rail exactly</td></tr>
-        <tr><td><strong>Stile / rail thickness</strong></td><td>Outer frame thickness (mm)</td></tr>
+        <tr><td><strong>Auto-fit vertically</strong></td><td>When checked, the frame height is adjusted so the last row meets the bottom rail exactly</td></tr>
+        <tr><td><strong>Left/right stile · top/bottom rail thickness</strong></td><td>Outer frame thickness (mm)</td></tr>
         <tr><td><strong>Slat thickness</strong></td><td>Base thickness for all slats, orthogonal and diagonal alike (mm)</td></tr>
         <tr><td><strong>Use transom panel</strong></td><td>Adds a transom panel zone at the top when checked</td></tr>
     </tbody>
@@ -46,22 +46,22 @@ include __DIR__ . '/../_head.php';
     <span>Gyeokja-bit-sal has no zoning settings like Jeongja-sal's "vertical ratio" or Se-sal's "top/middle/bottom layout." Diagonal density is not a separate setting — it follows from the horizontal cell count and slat thickness.</span>
 </div>
 
-<h2>Production Specification</h2>
+<h2>Specs Tab — Production Specification</h2>
 <table class="guide-table">
     <thead><tr><th>Item</th><th>Description</th></tr></thead>
     <tbody>
         <tr><td>Frame / outer / inner width and height</td><td>Automatically calculated measured dimensions</td></tr>
         <tr><td>Diagonal spacing</td><td>Spacing between the diagonal slats</td></tr>
-        <tr><td>Slat layout line</td><td>Distance between orthogonal and diagonal slat intersections</td></tr>
+        <tr><td>Slat ink lines</td><td>Distance between orthogonal and diagonal slat intersections</td></tr>
         <tr><td>Stile groove width</td><td>Groove width, calculated as a single value rather than separately for sides and top/bottom</td></tr>
     </tbody>
 </table>
 
-<h2>Parts List</h2>
+<h2>Member List</h2>
 <p>Ordered as frame members → <strong>horizontal and vertical slats</strong> → <strong>diagonal slats</strong> → transom panel (if used) → door frame. That is one group more than Bit-sal, since orthogonal and diagonal slats are each tallied separately.</p>
 
-<h2>Finish &amp; Color</h2>
-<p>Wood, finish, hardware and the frame and slat colors are the same as Se-sal. <strong>Panel fill is currently disabled.</strong></p>
+<h2>Finish Tab</h2>
+<p>Choosing the wood, hardware and colors per <strong>part to colour</strong> (frame, stile &amp; rail, slat, face) works the same as Se-sal. Pick <strong>Face</strong> as the part and you can click cells in the drawing to fill just those cells (Paint face color).</p>
 
 <div class="guide-warn">
     <i class="bi bi-exclamation-triangle-fill"></i>

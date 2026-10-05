@@ -9,28 +9,28 @@ include __DIR__ . '/../_head.php';
 
 <h1>PDF / PNG / DXF Export</h1>
 <p class="guide-lead">
-    Export your finished drawing as a PDF or PNG file for delivery, printing or collaboration.
-    Output is high resolution, exactly as it appears on the canvas.
+    Export your finished drawing as a PDF, PNG or DXF file for printing, sending to the workshop or CAD work.
+    All exports are done from the <span class="guide-ui"><i class="bi bi-box-arrow-down"></i> Export</span> tab in the left-hand menu, and require you to be logged in.
 </p>
 
-<h2>PNG Export</h2>
-<ol class="guide-steps">
-    <li>Click the <span class="guide-ui">Save PNG</span> button at the right of the toolbar.</li>
-    <li>A PNG of the current canvas view downloads immediately.</li>
-    <li>The filename is generated automatically as <em>drawingname_date.png</em>.</li>
-</ol>
-
-<div class="guide-tip">
-    <i class="bi bi-lightbulb-fill"></i>
-    <span>PNG supports transparent backgrounds, which makes it convenient for compositing and editing in other tools.</span>
+<div class="guide-note">
+    <i class="bi bi-info-circle-fill"></i>
+    <span>Files are named automatically as <em>drawingname_version.extension</em> (e.g. <em>Cheongdam_front_v3.pdf</em>). A drawing that hasn't been saved is exported as <em>changho-drawing</em>.</span>
 </div>
 
 <h2>PDF Export</h2>
 <ol class="guide-steps">
-    <li>Click the <span class="guide-ui">Save PDF</span> button on the toolbar.</li>
-    <li>Choose the orientation (landscape or portrait) and paper size (A4, A3, etc.).</li>
-    <li>Click <span class="guide-ui">Generate PDF</span> and the file downloads.</li>
+    <li>Click the <span class="guide-ui">PDF</span> button in the Export tab.</li>
+    <li>A PDF with the drawing fitted to an A4 landscape page downloads immediately.</li>
 </ol>
+<p>Handy for printing or sending the drawing to the workshop.</p>
+
+<h2>PNG Export</h2>
+<ol class="guide-steps">
+    <li>Click the <span class="guide-ui">PNG</span> button in the Export tab.</li>
+    <li>A high-resolution drawing image on a white background downloads immediately.</li>
+</ol>
+<p>Convenient for sharing the drawing by messenger or email, or sending it for review.</p>
 
 <h2>DXF Export</h2>
 <p>
@@ -38,8 +38,7 @@ include __DIR__ . '/../_head.php';
     Coordinates are saved in real millimeters, so you can check dimensions in CAD without rescaling.
 </p>
 <ol class="guide-steps">
-    <li>Click the <span class="guide-ui">Export</span> button on the toolbar.</li>
-    <li>Choose <span class="guide-ui">DXF</span> from the menu.</li>
+    <li>Click the <span class="guide-ui">DXF</span> button in the Export tab.</li>
     <li>The DXF file downloads immediately.</li>
 </ol>
 
@@ -48,26 +47,20 @@ include __DIR__ . '/../_head.php';
     <span>Lattice intersections and the outer frame are exported as rectangular polylines at each member's actual width. Tenon projections and the transom panel's inner fill board are not included yet, and slat intersections are represented as simple overlaps without groove geometry — this is a first version, intended as a shape reference.</span>
 </div>
 
-<h2>Export Setting Tips</h2>
+<h2>Which Format to Use</h2>
 <table class="guide-table">
-    <thead><tr><th>Purpose</th><th>Recommended format</th><th>Settings</th></tr></thead>
+    <thead><tr><th>Purpose</th><th>Recommended format</th></tr></thead>
     <tbody>
-        <tr><td>Delivery and printing</td><td>PDF</td><td>A3 or larger, landscape</td></tr>
-        <tr><td>Digital sharing and review</td><td>PNG</td><td>Default resolution</td></tr>
-        <tr><td>AI rendering composites</td><td>PNG</td><td>Keep the background transparent</td></tr>
-        <tr><td>Presentations</td><td>PDF</td><td>A4, portrait</td></tr>
-        <tr><td>CAD work and precise dimensions</td><td>DXF</td><td>Real millimeter coordinates</td></tr>
+        <tr><td>Printing, sending to the workshop</td><td>PDF</td></tr>
+        <tr><td>Sharing by messenger or email, review</td><td>PNG</td></tr>
+        <tr><td>CAD work and precise dimensions</td><td>DXF</td></tr>
+        <tr><td>Seeing it in a real space</td><td><a href="<?= lang_href('/guide/render') ?>">AI rendering</a></td></tr>
     </tbody>
 </table>
 
-<div class="guide-note">
-    <i class="bi bi-info-circle-fill"></i>
-    <span>PDF export uses the jsPDF library in your browser. Large drawings may take several seconds to generate.</span>
-</div>
-
 <div class="guide-warn">
     <i class="bi bi-exclamation-triangle-fill"></i>
-    <span>The background image (the photo used for AI rendering) is not included in PDF export. Only the lattice layer is output.</span>
+    <span>Room photos uploaded in the Rendering tab are not included in exported files. Only the drawing is output.</span>
 </div>
 
 <?php include __DIR__ . '/../_foot.php'; ?>

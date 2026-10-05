@@ -38,12 +38,12 @@ include __DIR__ . '/_head.php';
     <span>몬드리안 도면은 정자살과 별도로 저장됩니다. 정자살에서 만든 도면은 몬드리안 도면 목록에 나오지 않고, 반대도 마찬가지입니다.</span>
 </div>
 
-<h2>주요 파라미터</h2>
+<h2>문설정 탭 — 주요 파라미터</h2>
 <table class="guide-table">
     <thead><tr><th>항목</th><th>설명</th></tr></thead>
     <tbody>
-        <tr><td><strong>문 종류 / 문 짝수</strong></td><td>여닫이·미서기, 1~4짝 또는 6짝. 문틀 두께·틈새가 자동 반영되어 실제 문짝 치수가 계산됩니다.</td></tr>
-        <tr><td><strong>문틀 가로 / 문틀 세로</strong></td><td>벽 개구부 치수 (mm). 문틀 두께를 제외한 값이 문짝 외경으로 자동 계산됩니다.</td></tr>
+        <tr><td><strong>여닫이·미서기 / 짝수</strong></td><td>여닫이 1~2짝, 미서기 1~4짝 또는 6짝. 문틀 두께·틈새가 자동 반영되어 실제 문짝 치수가 계산됩니다.</td></tr>
+        <tr><td><strong>문틀 가로 / 문틀 세로</strong></td><td>벽 개구부 치수 (가로 100~10,000mm, 세로 400~3,000mm). 문틀 두께를 제외한 값이 문짝 외경으로 자동 계산됩니다.</td></tr>
         <tr><td><strong>좌우 / 상하 울거미 두께</strong></td><td>외곽 프레임 두께 (mm)</td></tr>
         <tr><td><strong>살 두께</strong></td><td>살 단면 두께 (mm)</td></tr>
         <tr><td><strong>세로 비율</strong></td><td>1.0~3.0. 랜덤 생성이 칸을 나눌 때 기준으로 삼는 칸의 가로:세로 비율입니다. 값이 클수록 세로로 긴 칸이 많아집니다.</td></tr>
@@ -72,36 +72,33 @@ include __DIR__ . '/_head.php';
     <thead><tr><th>동작</th><th>방법</th></tr></thead>
     <tbody>
         <tr><td><strong>분할선 옮기기</strong></td><td>캔버스에서 살을 잡고 끌면 그 선이 수직 또는 수평으로만 움직입니다. 맞닿은 칸들의 크기가 함께 바뀌어 빈틈이나 겹침이 생기지 않습니다.</td></tr>
-        <tr><td><strong>선 추가</strong></td><td>툴바의 <span class="guide-ui">선 추가</span>를 누른 뒤 시작점과 끝점을 차례로 클릭합니다. 교점뿐 아니라 살이나 울거미 위 아무 지점에서나 시작할 수 있고, 선은 수직·수평으로만 그어집니다.</td></tr>
+        <tr><td><strong>선 추가</strong></td><td>툴바 <span class="guide-ui">선 편집 ▾</span> → <span class="guide-ui">선 추가</span>를 누른 뒤 시작점과 끝점을 차례로 클릭합니다. 교점뿐 아니라 살이나 울거미 위 아무 지점에서나 시작할 수 있고, 선은 수직·수평으로만 그어집니다.</td></tr>
         <tr><td><strong>그린 선 옮기기</strong></td><td>직접 그은 선도 잡고 끌어 옮길 수 있습니다. 그 선에 붙어 있는 다른 그린 선들도 같이 따라오며, 울거미 안쪽 범위를 벗어나지 않습니다.</td></tr>
-        <tr><td><strong>선 삭제</strong></td><td>툴바의 <span class="guide-ui">선 삭제</span>를 누른 뒤 지울 살을 클릭합니다. 한 번 더 클릭하면 복구됩니다.</td></tr>
-        <tr><td><strong>편집 초기화</strong></td><td>툴바의 <span class="guide-ui">편집 초기화</span>로 추가·삭제한 선과 칠한 면색을 모두 되돌립니다.</td></tr>
+        <tr><td><strong>선 삭제</strong></td><td>툴바 <span class="guide-ui">선 편집 ▾</span> → <span class="guide-ui">선 삭제</span>를 누른 뒤 지울 살을 클릭합니다. 한 번 더 클릭하면 복구됩니다.</td></tr>
+        <tr><td><strong>편집 초기화</strong></td><td>툴바 <span class="guide-ui">선 편집 ▾</span> → <span class="guide-ui">편집 초기화</span>로 추가·삭제한 선과 칠한 면색을 모두 되돌립니다.</td></tr>
     </tbody>
 </table>
 
 <div class="guide-tip">
     <i class="bi bi-lightbulb-fill"></i>
-    <span>분할선 드래그는 선 추가·선 삭제·이동(손바닥)·면 칠하기 모드가 모두 꺼져 있을 때 동작합니다. 선이 안 잡히면 툴바에서 켜져 있는 모드가 없는지 확인하세요. 툴바 버튼은 <a href="/guide/canvas-toolbar">캔버스 툴바</a>에서 자세히 설명합니다.</span>
+    <span>분할선 드래그는 선 추가·선 삭제·이동·면컬러 칠하기 모드가 모두 꺼져 있을 때 동작합니다. 선이 안 잡히면 툴바에서 켜져 있는 모드가 없는지 확인하세요. 툴바 버튼은 <a href="/guide/canvas-toolbar">캔버스 툴바</a>에서 자세히 설명합니다.</span>
 </div>
 
-<h2>제작 시방서 &amp; 부재 목록</h2>
+<h2>시방서 탭 — 제작 시방서 &amp; 부재 목록</h2>
 <p>
     문틀 가로/세로, 외경·내경 가로/세로, 상/하 울거미, 풍판 높이, 전체 문폭(미서기는 겹침 포함)은 다른 엔진과 같이 자동 계산됩니다.
     다만 칸 크기가 제각각이라 <strong>가로·세로 칸수, 먹줄, 반턱 너비, 울거미홈폭처럼 균등 격자를 전제로 한 항목은 랜덤 패턴이 있을 때 표시되지 않습니다.</strong>
     부재 목록의 가로살·세로살 길이도 살마다 달라 하나의 값 대신 "가변"으로 표시됩니다.
 </p>
 
-<h2>마감 · 색상</h2>
-<p>
-    목재·마감·부자재 선택, 울거미·살 컬러는 정자살과 같습니다.
-    <strong>면 컬러 칠하기</strong>도 쓸 수 있어, 칸을 클릭해 원하는 칸만 색을 채울 수 있습니다.
-</p>
+<h2>마감 탭</h2>
+<p>수종·부자재와 <strong>색칠할 부위</strong>(문틀·울거미·살·면)별 색 고르기는 세살과 같습니다. 부위에서 <strong>면</strong>을 고르면 도면의 칸을 클릭해 원하는 칸만 색을 채울 수 있습니다(면컬러 칠하기).</p>
 
 <h2>활용 예시</h2>
 <ul>
     <li>거실·카페의 포인트 파티션 창호</li>
     <li>아파트 중문처럼 현대 공간에 들이는 비정형 창호</li>
-    <li>면 칠하기와 함께 쓰는 색면 구성 창호</li>
+    <li>면컬러 칠하기와 함께 쓰는 색면 구성 창호</li>
 </ul>
 
 <?php include __DIR__ . '/_foot.php'; ?>

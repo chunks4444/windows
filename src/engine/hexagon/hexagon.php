@@ -150,7 +150,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
         <!-- TOOL RAIL — Canva식 아이콘 탭. 누르면 오른쪽 패널(#sidebar)에 그 탭 내용만 보이고, 같은 탭을 다시 누르면 패널이 접힌다 (engine-common.js initToolRail) -->
         <nav class="tool-rail" id="toolRail">
             <button type="button" class="rail-btn" data-pane="collection"><i class="bi bi-grid-3x3-gap"></i><span><?= te('컬렉션') ?></span></button>
-            <button type="button" class="rail-btn" data-pane="file"><i class="bi bi-file-earmark"></i><span><?= te('파일') ?></span></button>
+            <button type="button" class="rail-btn" data-pane="file"><i class="bi bi-file-earmark"></i><span><?= te('도면') ?></span></button>
             <div class="rail-sep"></div>
             <button type="button" class="rail-btn active" data-pane="door"><i class="bi bi-door-closed"></i><span><?= te('문설정') ?></span></button>
             <button type="button" class="rail-btn" data-pane="motif"><i class="bi bi-flower1"></i><span><?= te('문양') ?></span></button>
@@ -175,11 +175,11 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                 <a class="pane-link" href="/collection" data-lh><?= te('전체 컬렉션 보기') ?> <i class="bi bi-arrow-right"></i></a>
             </section>
             <section class="rail-pane" data-pane="file" hidden>
-                <div class="rail-pane-head"><?= te('파일') ?></div>
+                <div class="rail-pane-head"><?= te('도면') ?></div>
                 <!-- 도면 툴바(이름·새 도면·버전·분류·저장·공유)를 캔버스 위에서 이 탭으로 옮겼다. id는 그대로라 엔진 JS 동작은 같다.
                      .title-btn-group은 견적요청 잠금 배지(updateLockBanner)가 들어가는 자리라 클래스 유지 -->
                 <div class="title-btn-group file-head">
-                    <div class="pane-subtitle" style="margin-top:0;"><?= te('파일명') ?></div>
+                    <div class="pane-subtitle" style="margin-top:0;"><?= te('도면 이름') ?></div>
                     <label class="hdr-title-badge" for="drawingName">
                         <div class="badge-dot"></div>
                         <input type="text" class="drawing-name-input" id="drawingName" placeholder="<?= te('도면 이름 입력…') ?>" maxlength="40">

@@ -30,7 +30,7 @@ include __DIR__ . '/../_head.php';
     <li>Click <span class="guide-ui">Studio</span> in the top navigation.</li>
     <li>Pick a lattice pattern engine from the dropdown.<br>
         If this is your first time, we recommend <strong>Se-sal</strong>.</li>
-    <li>When the studio opens, adjust the parameters in the left sidebar.</li>
+    <li>When the studio opens, click the <span class="guide-ui">Door</span> tab in the menu on the left to open its panel, and adjust the parameters there.</li>
     <li>The drawing is rendered on the canvas in the center as you go.</li>
 </ol>
 
@@ -41,9 +41,9 @@ include __DIR__ . '/../_head.php';
 
 <h2>Step 3 — Save your first drawing</h2>
 <ol class="guide-steps">
-    <li>Enter a name in the <span class="guide-ui">drawing name</span> field on the canvas top bar.</li>
-    <li>Click <span class="guide-ui">Save</span>.</li>
-    <li>Saved drawings can be reopened anytime from the <span class="guide-ui">My Drawings</span> page.</li>
+    <li>Open the <span class="guide-ui">Drawing</span> tab in the menu on the left.</li>
+    <li>Enter a name in the <span class="guide-ui">Drawing name</span> field and click <span class="guide-ui">Save</span>.</li>
+    <li>Saved drawings can be reopened anytime from the <strong>My drawings</strong> list at the bottom of the Drawing tab, or from the <span class="guide-ui">My Drawings</span> page.</li>
 </ol>
 
 <div class="guide-note">
@@ -57,10 +57,10 @@ include __DIR__ . '/../_head.php';
 <table class="guide-table">
     <thead><tr><th>Area</th><th>Location</th><th>Role</th></tr></thead>
     <tbody>
-        <tr><td><strong>Left sidebar</strong></td><td>Left</td><td>Design parameters — door type, dimensions, lattice settings</td></tr>
-        <tr><td><strong>Canvas top bar</strong></td><td>Above the canvas</td><td>Drawing name, new drawing, drawing list, version management, save and share buttons</td></tr>
-        <tr><td><strong>Canvas</strong></td><td>Center</td><td>Live preview; zoom and pan with the wheel or by dragging; add and delete individual slats</td></tr>
-        <tr><td><strong>Right sidebar</strong></td><td>Right</td><td>Finish and color, background photo and AI rendering, PNG/PDF export, quote requests</td></tr>
+        <tr><td><strong>Menu tabs</strong></td><td>Narrow column on the far left</td><td>Collection · Drawing · Door · Motifs · Finish · Rendering · Estimate · Specs · Export. Click one to open its panel beside it.</td></tr>
+        <tr><td><strong>Tab panel</strong></td><td>Next to the menu tabs</td><td>Settings for the selected tab. Click the same tab again, or the <i class="bi bi-chevron-left"></i> button on the panel's edge, to collapse or expand it.</td></tr>
+        <tr><td><strong>Canvas</strong></td><td>Center</td><td>Live preview of the drawing; zoom and pan with the wheel or by dragging</td></tr>
+        <tr><td><strong>Canvas toolbar</strong></td><td>Above the canvas</td><td>Left: Select, Pan, Edit lines, Shapes, Place, plus the door and frame sizes / Right: zoom out, zoom in, Fit (<a href="<?= lang_href('/guide/canvas-toolbar') ?>">details</a>)</td></tr>
     </tbody>
 </table>
 

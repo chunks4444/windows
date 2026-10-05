@@ -65,7 +65,7 @@ include __DIR__ . '/../_head.php';
 
 <h2>Requesting a Quote</h2>
 <ol class="guide-steps">
-    <li>Click the <span class="guide-ui"><i class="bi bi-cart-check me-1"></i>Request quote</span> button on the studio's top toolbar.</li>
+    <li>Open the <span class="guide-ui"><i class="bi bi-receipt me-1"></i>Estimate</span> tab in the studio's left-hand menu and click the <span class="guide-ui">Request quote</span> button below the estimated price.</li>
     <li>Review and fill in the request details.
         <table class="guide-table" style="margin-top:12px">
             <thead><tr><th>Field</th><th>Description</th></tr></thead>
@@ -103,7 +103,7 @@ include __DIR__ . '/../_head.php';
     This prevents confusion that could arise if specifications changed after the request was received.
 </p>
 <p>
-    In the drawing list, a locked drawing shows a <strong><i class="bi bi-lock-fill"></i></strong> badge
+    On the My Drawings page, a locked drawing card shows a <strong><i class="bi bi-lock-fill"></i></strong> badge
     labeled with the current order status (for example, <em>In production</em>).
     The statuses that lock a drawing are
     <strong>Quote review · Approved · Quote confirmed · Payment received · In production · Production complete · Shipped</strong>.
@@ -128,9 +128,8 @@ include __DIR__ . '/../_head.php';
 <h2>Checking Order Status</h2>
 <p>
     An <strong>"Order #N"</strong> is issued when your quote request is received, and you can follow its
-    progress from the top navigation under
-    <span class="guide-ui">My Page</span> → <span class="guide-ui">My Drawings</span> →
-    the <span class="guide-ui">Order History</span> tab.
+    progress from <span class="guide-ui">Order History</span> in the user menu of the top navigation,
+    or on the <span class="guide-ui">Orders</span> tab of the <span class="guide-ui">My Drawings</span> page.
 </p>
 <p>Each order moves through these statuses in order.</p>
 <table class="guide-table">

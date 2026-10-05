@@ -161,6 +161,7 @@ return [
     '견적요청 중 · 편집 불가'     => 'Quote requested · editing locked',
     '이 도면은 견적요청 중이라 편집할 수 없습니다.' => 'This drawing is locked for editing while a quote is being prepared.',
     '이 도면은 견적요청 중이라 삭제할 수 없습니다.' => 'This drawing cannot be deleted while a quote is being prepared.',
+    '이 도면은 견적요청 중이라 이름을 바꿀 수 없습니다.' => 'This drawing cannot be renamed while a quote is being prepared.',
     '견적요청이 접수되었습니다.'  => 'Your quote request has been received.',
     '견적요청 접수에 실패했습니다.' => 'Could not submit your quote request.',
     '주문번호 #%s · 담당자가 확인 후 연락드립니다.' => 'Order #%s · We will review it and get back to you.',

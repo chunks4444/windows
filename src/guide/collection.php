@@ -79,7 +79,7 @@ include __DIR__ . '/_head.php';
 <ol class="guide-steps">
     <li>컬렉션 <strong>카드</strong>의 <span class="guide-ui"><i class="bi bi-collection"></i></span> 보드 아이콘을 클릭합니다. (상세 페이지에는 이 버튼이 없으므로, 목록 화면에서 저장해야 합니다.)</li>
     <li>저장할 보드를 선택하거나 <span class="guide-ui">+ 새 보드</span>로 보드를 생성합니다.</li>
-    <li>내 보드는 상단 내비게이션 사용자 메뉴의 <strong>내 보드</strong> 섹션과, 도면 관리 페이지의 <strong>Boards</strong> 탭에서 확인할 수 있습니다.</li>
+    <li>내 보드는 상단 내비게이션 사용자 메뉴의 <strong>내 보드</strong> 섹션과, 도면관리 페이지의 <strong>내 보드</strong> 탭에서 확인할 수 있습니다.</li>
 </ol>
 
 <?php include __DIR__ . '/_foot.php'; ?>
