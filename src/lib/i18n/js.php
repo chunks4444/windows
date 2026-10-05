@@ -249,4 +249,6 @@ return [
     '직접 입력'                                      => 'Describe it',
     'AI 렌더링'                                      => 'AI rendering',
     '렌더링 결과'                                    => 'Rendered images',
+    '배경'                                           => 'Background',
+    '추천 프롬프트'                                  => 'Suggested prompts',
 ];

@@ -2574,34 +2574,29 @@ function drawSvgInserts() {
         addTile.className = 'rp-tile rp-tile-add';
         addTile.innerHTML = `<i class="bi bi-plus-lg"></i><small>${_t('사진 올리기')}</small>`;
         addTile.addEventListener('click', () => document.getElementById('btnAddThumb')?.click());
-        thumbs.prepend(noneTile, addTile);
-        // 사진이 추가·삭제·선택될 때마다 '배경 없음' 칸의 선택 표시를 맞춘다
-        const syncNone = () => noneTile.classList.toggle('active', !thumbs.querySelector('.rp-thumb-item.active'));
+        // 두 칸은 #thumbList 밖(같은 그리드)에 둔다 — 엔진이 도면을 열 때 thumbList.innerHTML=''로 비우기 때문
+        const bgGrid = document.createElement('div');
+        bgGrid.className = 'rp-bg-grid';
+        thumbs.before(bgGrid);
+        bgGrid.append(noneTile, addTile, thumbs);
+        // 사진이 추가·삭제·선택될 때마다: '배경 없음' 선택 표시 + 사진 아래 제목(파일명, 확장자 뺌)
+        const syncNone = () => {
+            noneTile.classList.toggle('active', !thumbs.querySelector('.rp-thumb-item.active'));
+            thumbs.querySelectorAll('.rp-thumb-item').forEach(it => {
+                if (it.querySelector('.rp-thumb-name')) return;
+                const name = (it.querySelector('img')?.alt || '').replace(/\.[a-z0-9]+$/i, '');
+                const cap = document.createElement('span');
+                cap.className = 'rp-thumb-name';
+                cap.textContent = name || _t('배경');
+                cap.title = name;
+                it.appendChild(cap);
+            });
+        };
         new MutationObserver(syncNone).observe(thumbs, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] });
         syncNone();
 
-        // 2) 분위기 — 프리셋 select를 칩으로 (고르면 아래 입력칸에 문장이 채워진다: select의 기존 onchange)
-        const moodHead = label(_t('분위기'), _t('고르면 아래 문장이 채워집니다'));
-        const chips = document.createElement('div');
-        chips.className = 'rp-moods';
-        [...preset.options].filter(o => o.value).forEach(o => {
-            const c = document.createElement('button');
-            c.type = 'button';
-            c.className = 'rp-mood';
-            c.textContent = o.textContent.trim();
-            c.dataset.v = o.value;
-            c.addEventListener('click', () => {
-                preset.value = o.value;
-                preset.dispatchEvent(new Event('change', { bubbles: true }));
-                prompt.value = o.value;
-                syncMood();
-            });
-            chips.appendChild(c);
-        });
-        const syncMood = () => chips.querySelectorAll('.rp-mood').forEach(c => c.classList.toggle('active', c.dataset.v === prompt.value.trim()));
-        prompt.addEventListener('input', syncMood);
-        preset.closest('.cs-wrap')?.classList.add('rp-hidden');
-        preset.classList.add('rp-hidden');
+        // 2) 추천 프롬프트 — 원래 프리셋 드롭다운을 그대로 쓰고 제목만 붙인다 (고르면 아래 입력칸이 채워짐: select의 기존 onchange)
+        const moodHead = label(_t('추천 프롬프트'));
 
         // 3) 직접 입력 · 4) 실행 버튼 · 5) 결과
         const promptHead = label(_t('직접 입력'));
@@ -2613,10 +2608,12 @@ function drawSvgInserts() {
         document.getElementById('btnAddThumb')?.parentElement?.classList.add('rp-hidden');
         wrap.classList.add('rp-pane');
         wrap.prepend(bgHead);
-        thumbs.after(moodHead, chips, promptHead);
+        // 커스텀 셀렉트는 껍데기(.cs-wrap)를 select '바로 앞 형제'로 끼운다 — 이미 끼워졌으면 둘을 같이, 아직이면 select만
+        // 옮긴다(나중에 옮긴 자리 앞에 끼워짐)
+        const csWrap = preset.previousElementSibling?.classList.contains('cs-wrap') ? preset.previousElementSibling : null;
+        bgGrid.after(moodHead, ...(csWrap ? [csWrap, preset] : [preset]), promptHead);
         // prompt(textarea)·실행 버튼은 원래 자리(promptHead 뒤)에 그대로 오도록 옮긴다
         promptHead.after(prompt, runBtn, resHead, saved);
-        syncMood();
         if (typeof renderSavedThumbList === 'function') renderSavedThumbList();
     }
 

@@ -2530,15 +2530,6 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
 .rp-tile .fin-dot-none { width: 22px; height: 22px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12); }
 .rp-tile.active { box-shadow: 0 0 0 2px #fff, 0 0 0 3px #111; color: #111; }
 
-/* 분위기 칩 */
-.rp-moods { display: flex; flex-wrap: wrap; gap: 6px; }
-.rp-mood {
-    height: 30px; padding: 0 11px; border-radius: 999px; border: 1px solid #E4E6EB; background: #fff;
-    color: #3C4049; font-size: 11.5px; cursor: pointer; white-space: nowrap;
-}
-.rp-mood:hover { background: #F4F5F7; }
-.rp-mood.active { background: #111; border-color: #111; color: #fff; }
-
 /* 직접 입력 · 실행 버튼 */
 .rp-pane .rp-prompt {
     width: 100%; min-height: 72px; padding: 10px 12px; border-radius: 10px; resize: vertical;
@@ -2558,3 +2549,27 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
 .rp-pane .render-saved-item:hover img { filter: brightness(0.86); }
 .rp-pane .render-saved-item:hover .tile-acts, .rp-pane .render-saved-item:focus-within .tile-acts { opacity: 1; }
 .rp-pane .render-saved-item .render-saved-del { position: static; opacity: 1; width: 26px; height: 26px; border-radius: 6px; font-size: 12px; }
+
+/* 렌더링 탭 보완 — [배경 없음][사진 올리기]+사진들을 한 그리드에(thumbList는 display:contents), 사진 아래 제목 */
+.rp-bg-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 8px; align-items: start; }   /* minmax(0) — 사진 원본 폭에 칸이 늘어나지 않게 */
+.rp-pane .rp-bg-grid .rp-thumb-list { display: contents; }
+.rp-pane .rp-thumb-item { aspect-ratio: auto; overflow: visible; background: none; display: flex; flex-direction: column; gap: 5px; border-radius: 0; }
+.rp-pane .rp-thumb-item img { aspect-ratio: 1; height: auto; border-radius: 8px; background: #F4F5F7; transition: filter 0.15s; }
+.rp-pane .rp-thumb-item:hover img { filter: brightness(0.86); }
+.rp-pane .rp-thumb-item.active { box-shadow: none; }
+.rp-pane .rp-thumb-item.active img { box-shadow: 0 0 0 2px #fff, 0 0 0 3px #111; }
+.rp-thumb-name { font-size: 11px; color: #6B7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rp-pane .rp-thumb-item.active .rp-thumb-name { color: #111; }
+.rp-bg-grid .rp-tile { width: 100%; }
+/* 칸 높이를 사진(정사각형+제목 줄)과 맞추기 위해 타일 아래에도 제목 줄 높이만큼 여백 */
+.rp-bg-grid .rp-tile { margin-bottom: 21px; }
+
+/* 추천 프롬프트 드롭다운 — 다른 셀렉트(수종 등)와 같은 연회색 칸 */
+.rail-pane[data-pane="render"] .cs-wrap .cs-trigger { background: #F4F5F7; border-radius: 8px; height: 38px; }
+
+/* '이 살의 이야기' 링크가 패널 아래 내용을 가리지 않도록 캔버스 쪽 왼쪽 아래로 */
+body.pm-light:has(.tool-rail) .pm-engine-story-link { left: calc(68px + 300px + 16px); transition: left 0.22s cubic-bezier(.4, 0, .2, 1); }
+body.pm-light:has(.controls.collapsed) .pm-engine-story-link { left: calc(68px + 16px); }
+@media (max-width: 768px) { body.pm-light:has(.tool-rail) .pm-engine-story-link { left: calc(58px + 12px); } }
+.rp-pane .rp-thumb-item img { width: 100%; object-fit: cover; }
+.rp-bg-grid .rp-tile { aspect-ratio: 1; height: auto; }
