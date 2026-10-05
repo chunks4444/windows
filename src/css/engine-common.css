@@ -2588,3 +2588,6 @@ body.pm-light:has(.controls.collapsed) .pm-engine-story-link { left: calc(68px +
 .rp-label-row .rp-mini-row { margin-left: 0; width: 100%; margin-top: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .rp-mini { justify-content: center; height: 32px; border-radius: 8px; color: #6B7280; }
 .rp-mini.active { background: #fff; border-color: #111; color: #111; }
+/* 배경 사진·렌더링 결과가 많으면 그 칸 안에서만 스크롤 (배경 2줄, 결과 3줄 높이) */
+.rp-bg-grid { max-height: 248px; overflow-y: auto; padding: 4px; margin: -4px; scrollbar-width: thin; }
+.rp-pane .render-saved-list { max-height: 330px; overflow-y: auto; padding: 4px; margin: -4px; scrollbar-width: thin; }

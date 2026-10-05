@@ -2590,6 +2590,10 @@ function drawSvgInserts() {
         // 사진이 추가·삭제·선택될 때마다: '배경 없음' 선택 표시 + 사진 아래 제목(파일명, 확장자 뺌)
         const syncNone = () => {
             noneTile.classList.toggle('active', !thumbs.querySelector('.rp-thumb-item.active'));
+            // 제목 옆 장수 — 사진이 있으면 안내 문구 대신 'N장'
+            const cnt = thumbs.querySelectorAll('.rp-thumb-item').length;
+            const sm = bgHead.querySelector('small');
+            if (sm) sm.textContent = cnt ? _t('%s장', cnt) : _t('도면을 넣을 실내·실외 사진');
             thumbs.querySelectorAll('.rp-thumb-item').forEach((it, n) => {
                 if (it.querySelector('.rp-thumb-name')) return;
                 // 해시·'-' 같은 의미 없는 파일명은 '배경 N'으로
