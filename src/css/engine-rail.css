@@ -513,13 +513,14 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
 .cv-dock #btnEditClear, .cv-dock #btnShapeClear { color: #8A909A; }
 /* 치수(문짝·문틀) — 도구 박스 오른쪽 끝, 세로 구분선 뒤 두 줄 */
 .cv-dims {
-    display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px;
+    /* 라벨(문짝/문틀·Door/Frame) 칸 폭을 맞춰 값이 같은 위치에서 시작하도록 2열 그리드 */
+    display: grid; grid-template-columns: auto auto; align-content: center; column-gap: 8px; row-gap: 2px;
     height: 52px; padding: 0 12px 0 14px; margin-left: 4px; border-left: 1px solid #E4E6EB;
     white-space: nowrap; font-variant-numeric: tabular-nums;
 }
 .cv-dims[hidden] { display: none; }
-.cv-dims > span { display: flex; align-items: baseline; gap: 6px; }
-.cv-dims small { min-width: 22px; font-size: 10.5px; color: #8A909A; line-height: 1; }
+.cv-dims > span { display: contents; }
+.cv-dims small { align-self: center; font-size: 10.5px; color: #8A909A; line-height: 1; }
 .cv-dims b { font-size: 12.5px; font-weight: 500; color: #111; line-height: 1.2; }
 
 /* ── 10. 좁은 화면 ─────────────────────────────────────────────────────── */

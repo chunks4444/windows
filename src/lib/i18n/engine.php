@@ -172,7 +172,7 @@ return [
     '축소'                    => 'Zoom out',
     '스케일/이동/변형'        => 'Scale / move / transform',
     '1개'                     => '×1',
-    '2개'                     => '×2',
+    '2개'                     => '2 pcs',
 
     // ── 엔진 좌하단 블로그 링크 (src/components/blog_engine_link.php) ──
     '이 살의 이야기'          => 'The story of this lattice',

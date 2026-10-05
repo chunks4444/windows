@@ -431,9 +431,9 @@ async function draw() {
     const p = data.parts;
     if (p && document.getElementById('spFrVLen')) {
         document.getElementById('spFrVLen').textContent = `${geo.frameW}×${p.frT}×${p.frVLen}mm`;
-        document.getElementById('spFrVCnt').textContent = p.frVCnt;
+        document.getElementById('spFrVCnt').textContent = String(p.frVCnt).replace(/개$/, _t('개'));   // 서버 문자열 '2개'의 '개'만 번역
         document.getElementById('spFrHLen').textContent = `${geo.frameH}×${p.frT}×${p.frHLen}mm`;
-        document.getElementById('spFrHCnt').textContent = p.frHCnt;
+        document.getElementById('spFrHCnt').textContent = String(p.frHCnt).replace(/개$/, _t('개'));   // 서버 문자열 '2개'의 '개'만 번역
 
         const ppGroup = document.getElementById('pungpanMaterialGroup');
         if (p.pungpanVisible) {

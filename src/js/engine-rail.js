@@ -603,7 +603,8 @@
     const LABELS = {
         btnShapeSelect: '선택', btnPan: '이동', btnScale: '배치', btnResetPlacement: '배치 초기화',
         btnEditDelete: '선 삭제', btnEditAdd: '선 추가', btnEditClear: '편집 초기화',
-        btnShapeCircle: '원', btnShapeLine: '선', btnShapeRect: '사각형', btnShapeText: '텍스트', btnShapeClear: '모두 삭제',
+        // 원은 '원형' — '원'은 번역 사전에서 통화(KRW)로 쓰여 겹친다
+        btnShapeCircle: '원형', btnShapeLine: '선', btnShapeRect: '사각형', btnShapeText: '텍스트', btnShapeClear: '모두 삭제',
         btnResetView: '화면 맞춤',
     };
     const GROUPS = [
