@@ -138,6 +138,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
     <?php meta_tags($shareMeta); ?>
     <link rel="stylesheet" href="/src/css/tokens.css?v=<?= md5_file(__DIR__ . '/../../css/tokens.css') ?>">
     <link rel="stylesheet" href="/src/css/engine-common.css?v=<?= md5_file(__DIR__ . '/../../css/engine-common.css') ?>">
+    <link rel="stylesheet" href="/src/css/engine-rail.css?v=<?= md5_file(__DIR__ . '/../../css/engine-rail.css') ?>">
 
 </head>
 
@@ -255,7 +256,6 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                             <div id="verList"></div>
                         </div>
                 </div>
-                <div class="ver-chips" id="mineVersions" hidden></div>
                 <!-- 도면 목록 모달 버튼은 숨겨 둔다(내 도면 그리드가 대신함) -->
                 <div class="ver-wrap" hidden>
                     
@@ -984,6 +984,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
     <script src="/src/js/drawing-sync.js?v=<?= md5_file(__DIR__ . '/../../js/drawing-sync.js') ?>"></script>
     <script src="/src/js/order-status-labels.js?v=<?= md5_file(__DIR__ . '/../../js/order-status-labels.js') ?>"></script>
     <script src="/src/js/engine-common.js?v=<?= md5_file(__DIR__ . '/../../js/engine-common.js') ?>"></script>
+    <script src="/src/js/engine-rail.js?v=<?= md5_file(__DIR__ . '/../../js/engine-rail.js') ?>"></script>
     <script src="/src/js/color-hex-input.js?v=<?= md5_file(__DIR__ . '/../../js/color-hex-input.js') ?>"></script>
     <script src="/src/js/classic.js?v=<?= md5_file(__DIR__ . '/../../js/classic.js') ?>"></script>
 </body>

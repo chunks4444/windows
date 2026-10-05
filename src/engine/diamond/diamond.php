@@ -138,12 +138,12 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
     <?php meta_tags($shareMeta); ?>
     <link rel="stylesheet" href="/src/css/tokens.css?v=<?= md5_file(__DIR__ . '/../../css/tokens.css') ?>">
     <link rel="stylesheet" href="/src/css/engine-common.css?v=<?= md5_file(__DIR__ . '/../../css/engine-common.css') ?>">
+    <link rel="stylesheet" href="/src/css/engine-rail.css?v=<?= md5_file(__DIR__ . '/../../css/engine-rail.css') ?>">
 
 </head>
 
-<body class="pm-generator">
+<body class="pm-generator pm-light">
     <?php include __DIR__ . '/../../components/engine-nav.php'; ?>
-    <?php $blogEngineKey = 'diamond'; include __DIR__ . '/../../components/blog_engine_link.php'; ?>
 
     <input type="file" id="aiFileUploader" accept="image/*" multiple style="display: none;">
 
@@ -151,12 +151,129 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
     <div class="main">
 
         <!-- SIDEBAR -->
+        <!-- TOOL RAIL — Canva식 아이콘 탭. 누르면 오른쪽 패널(#sidebar)에 그 탭 내용만 보이고, 같은 탭을 다시 누르면 패널이 접힌다 (engine-common.js initToolRail) -->
+        <nav class="tool-rail" id="toolRail">
+            <button type="button" class="rail-btn" data-pane="collection"><i class="bi bi-grid-3x3-gap"></i><span><?= te('컬렉션') ?></span></button>
+            <button type="button" class="rail-btn" data-pane="file"><i class="bi bi-file-earmark"></i><span><?= te('파일') ?></span></button>
+            <div class="rail-sep"></div>
+            <button type="button" class="rail-btn active" data-pane="door"><i class="bi bi-door-closed"></i><span><?= te('문설정') ?></span></button>
+            <button type="button" class="rail-btn" data-pane="motif"><i class="bi bi-flower1"></i><span><?= te('문양') ?></span></button>
+            <button type="button" class="rail-btn" data-pane="finish"><i class="bi bi-palette"></i><span><?= te('마감') ?></span></button>
+            <button type="button" class="rail-btn" data-pane="render"><i class="bi bi-stars"></i><span><?= te('렌더링') ?></span></button>
+            <div class="rail-sep"></div>
+            <button type="button" class="rail-btn" data-pane="estimate"><i class="bi bi-receipt"></i><span><?= te('견적') ?></span></button>
+            <?php if ($perms['spec'] || $perms['parts']): ?>
+            <button type="button" class="rail-btn" data-pane="spec"><i class="bi bi-rulers"></i><span><?= te('시방서') ?></span></button>
+            <?php endif; ?>
+            <button type="button" class="rail-btn" data-pane="export"><i class="bi bi-box-arrow-down"></i><span><?= te('내보내기') ?></span></button>
+        </nav>
+
+        <!-- PANEL — 레일에서 고른 탭 하나만 보인다. 기존 사이드바 요소 id는 그대로라 엔진 JS는 바뀌지 않는다 -->
         <div class="controls" id="sidebar">
             <div class="sb-inner">
+            <section class="rail-pane" data-pane="collection" hidden>
+                <div class="rail-pane-head"><?= te('컬렉션') ?></div>
+                <input type="search" class="pane-search" id="collectionSearch" placeholder="<?= te('컬렉션 검색') ?>">
+                <div class="thumb-grid" id="collectionGrid"></div>
+                <button type="button" class="hbtn pane-more" id="collectionMore" hidden><?= te('더 보기') ?></button>
+                <a class="pane-link" href="/collection" data-lh><?= te('전체 컬렉션 보기') ?> <i class="bi bi-arrow-right"></i></a>
+            </section>
+            <section class="rail-pane" data-pane="file" hidden>
+                <div class="rail-pane-head"><?= te('파일') ?></div>
+                <!-- 도면 툴바(이름·새 도면·버전·분류·저장·공유)를 캔버스 위에서 이 탭으로 옮겼다. id는 그대로라 엔진 JS 동작은 같다.
+                     .title-btn-group은 견적요청 잠금 배지(updateLockBanner)가 들어가는 자리라 클래스 유지 -->
+                <div class="title-btn-group file-head">
+                    <div class="pane-subtitle" style="margin-top:0;"><?= te('파일명') ?></div>
+                    <label class="hdr-title-badge" for="drawingName">
+                        <div class="badge-dot"></div>
+                        <input type="text" class="drawing-name-input" id="drawingName" placeholder="<?= te('도면 이름 입력…') ?>" maxlength="40">
+                    </label>
+                </div>
+                <div class="file-row">
+                    <select id="patternCategory" class="title-group-btn" title="<?= te('패턴 분류') ?>">
+                        <option value=""><?= te('분류 없음') ?></option>
+                        <?php foreach ($patternCategories as $pc): ?>
+                        <option value="<?= (int)$pc['id'] ?>"><?= htmlspecialchars(term_short($pc['name'])) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="file-row">
+                    <button class="title-group-btn save-btn" id="btnSave" title="<?= te('저장') ?>">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 4H17L20 7V20H5V4Z"/><path d="M8 4V9H15V4"/><path d="M9 15H15"/>
+                        </svg>
+                        <span><?= te('저장') ?></span>
+                    </button>
+                    <button class="title-group-btn" id="btnNewDrawing" title="<?= te('새 도면') ?>">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        <span><?= te('새 도면') ?></span>
+                    </button>
+                </div>
+                <div class="file-row ver-wrap">
+                    <button class="title-group-btn" id="btnShare" title="<?= te('먼저 저장해주세요') ?>" disabled>
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                                <line x1="8.6" y1="10.5" x2="15.4" y2="6.5"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/>
+                            </svg>
+                            <span><?= te('공유') ?></span>
+                        </button>
+                        <div class="ver-dropdown share-dropdown" id="shareDropdown">
+                            <div class="share-dd-id" id="shareDdId"><?= te('도면 #—') ?></div>
+                            <div class="share-dd-linkrow">
+                                <input type="text" id="shareDdLink" readonly>
+                                <button type="button" id="shareDdCopy"><?= te('복사') ?></button>
+                            </div>
+                            <div class="share-dd-channels">
+                                <button type="button" id="shareDdKakao" title="<?= te('카카오톡 공유') ?>">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.8 5.3 4.6 6.7-.2.7-.7 2.6-.8 3-.1.5.2.5.4.4.2-.1 2.6-1.8 3.6-2.5.7.1 1.4.2 2.2.2 5.5 0 10-3.6 10-8 0-4.4-4.5-7.8-10-7.8z"/></svg>
+                                    <span><?= te('카카오') ?></span>
+                                </button>
+                                <button type="button" id="shareDdFb" title="<?= te('페이스북 공유') ?>">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7.9h2.7l.4-3.1h-3.1V8.1c0-.9.3-1.5 1.6-1.5h1.7V3.8C15.9 3.7 14.8 3.6 13.6 3.6c-2.5 0-4.2 1.5-4.2 4.3v2.1H6.7v3.1h2.7V21h4.1z"/></svg>
+                                    <span>FB</span>
+                                </button>
+                                <button type="button" id="shareDdX" title="<?= te('X(트위터) 공유') ?>">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 3H22l-7.5 8.6L23 21h-6.9l-5.4-6.6L4.4 21H1.3l8-9.2L1 3h7l4.9 6.1L18.9 3zm-1.2 16h1.9L7.4 4.9H5.4L17.7 19z"/></svg>
+                                    <span>X</span>
+                                </button>
+                            </div>
+                            <button type="button" id="shareDdOff" class="share-dd-off"><?= te('공유 끄기') ?></button>
+                        </div>
+                </div>
+                <div class="pane-subtitle"><?= te('현재 도면 버전') ?></div>
+                <!-- 버전은 드롭다운(엔진 JS의 #verBtn·#verDropdown 그대로 — 항목 클릭=그 버전 열기, ×=버전 삭제) -->
+                <div class="ver-wrap file-ver">
+                    <button class="title-group-btn" id="verBtn">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="9" />
+                                <polyline points="12 7 12 12 15 15" />
+                            </svg>
+                            <span id="verLabel">—</span>
+                        </button>
+                        <div class="ver-dropdown" id="verDropdown">
+                            <div id="verList"></div>
+                        </div>
+                </div>
+                <!-- 도면 목록 모달 버튼은 숨겨 둔다(내 도면 그리드가 대신함) -->
+                <div class="ver-wrap" hidden>
+                    
+                    <button class="title-group-btn" id="dmBtn" title="<?= te('도면 목록') ?>">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                            </svg>
+                            <span><?= te('도면') ?></span>
+                        </button>
+                </div>
+                <div class="pane-subtitle"><?= te('내 도면') ?></div>
+                <div class="thumb-grid" id="mineGrid"></div>
+            </section>
+            <section class="rail-pane" data-pane="door">
+                <div class="rail-pane-head"><?= te('문 설정') ?></div>
 
                 <!-- ── 문 설정 그룹 ─────────────── -->
                 <div class="sb-section">
-                    <div class="sb-section-title"><?= te('문 설정') ?></div>
 
                     <div class="door-row">
                         <div class="ctrl">
@@ -269,10 +386,198 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                     </div>
                 </div>
 
+            </section>
+            <section class="rail-pane" data-pane="motif" hidden>
+                <div class="rail-pane-head"><?= te('문양 라이브러리') ?></div>
+                <div class="pane-actions">
+                    <button type="button" class="hbtn hbtn-primary" onclick="document.getElementById('svgFileInput').click()"><i class="bi bi-upload"></i> <?= te('SVG 업로드') ?></button>
+                </div>
+                <input type="file" id="svgFileInput" accept="image/svg+xml,.svg" style="display:none;" onchange="handleSvgFileUpload(this)">
+                <!-- 크기·회전·복사·삭제는 Konva Transformer로 대체 -->
+                <div id="svgInsertControls" style="display:none;"></div>
+                <div class="pane-subtitle"><?= te('내가 올린 문양') ?></div>
+                <div class="motif-grid" id="motifMineGrid"></div>
+                <div class="pane-subtitle"><?= te('문양 라이브러리') ?></div>
+                <div class="motif-grid" id="motifLibGrid"></div>
+                <p class="pane-hint"><?= te('클릭하면 도면에 넣고, 아이콘으로 SVG 파일을 내려받을 수 있습니다.') ?></p>
+            </section>
+            <section class="rail-pane" data-pane="finish" hidden>
+                <div class="rail-pane-head"><?= te('마감') ?></div>
+                <div class="sb-section">
+                    <div class="ctrl">
+                        <select id="txtWood" class="sb-select">
+                            <?php foreach (get_wood_options() as $w): ?>
+                            <option value="<?= htmlspecialchars($w['name'], ENT_QUOTES) ?>">
+                                <?= htmlspecialchars(term($w['name']), ENT_QUOTES) ?>
+                            </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="ctrl">
+                        <select id="txtFinish" class="sb-select">
+                            <option value=""><?= te('마감 없음') ?></option>
+                            <?php foreach (get_finish_options() as $f): ?>
+                            <option value="<?= htmlspecialchars($f['name'], ENT_QUOTES) ?>">
+                                <?= htmlspecialchars(term($f['name']), ENT_QUOTES) ?>
+                            </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="ctrl">
+                        <select id="txtHardware" class="sb-select">
+                            <option value=""><?= te('부자재 없음') ?></option>
+                            <?php foreach (get_hardware_options() as $h): ?>
+                            <option value="<?= htmlspecialchars($h['name'], ENT_QUOTES) ?>">
+                                <?= htmlspecialchars(term($h['name']), ENT_QUOTES) ?>
+                            </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <!-- 컬러 피커는 AURO 스테인 마감(이름에 "AURO 560"처럼 제품번호가 있고 같은 번호의 팔레트 그룹이 있는 것)을
+                         골랐을 때만 보인다 — engine-common.js applyFinishColorPicker() -->
+                    <div id="finishColorBlock" hidden>
+                        <hr class="sb-divider">
+                        <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">
+                            <div class="color-row-stack">
+                                <span class="color-label"><?= te('문틀 컬러') ?></span>
+                                <div class="color-picker-wrap">
+                                    <button class="color-preview-btn" id="muntolPreviewBtn">
+                                        <span class="color-preview-dot" id="muntolPreviewDot"></span>
+                                        <span id="muntolPreviewName">—</span>
+                                    </button>
+                                    <div class="color-popup" id="muntolPopup"></div>
+                                </div>
+                            </div>
+                            <div class="color-row-stack">
+                                <span class="color-label"><?= te('울거미 컬러') ?></span>
+                                <div class="color-picker-wrap">
+                                    <button class="color-preview-btn" id="framePreviewBtn">
+                                        <span class="color-preview-dot" id="framePreviewDot"></span>
+                                        <span id="framePreviewName">—</span>
+                                    </button>
+                                    <div class="color-popup" id="framePopup"></div>
+                                </div>
+                            </div>
+                            <div class="color-row-stack">
+                                <span class="color-label"><?= te('살 컬러') ?></span>
+                                <div class="color-picker-wrap">
+                                    <button class="color-preview-btn" id="slatPreviewBtn">
+                                        <span class="color-preview-dot" id="slatPreviewDot"></span>
+                                        <span id="slatPreviewName">—</span>
+                                    </button>
+                                    <div class="color-popup" id="slatPopup"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <?php /* 면칠하기 임시 비활성화 (복구: display:none 제거) */ ?>
+                        <div class="color-row-stack" style="margin-top:6px;display:none;">
+                            <span class="color-label"><?= te('면 컬러') ?></span>
+                            <div class="color-picker-wrap">
+                                <button class="color-preview-btn" id="facePreviewBtn">
+                                    <span class="color-preview-dot" id="facePreviewDot"></span>
+                                    <span id="facePreviewName">—</span>
+                                </button>
+                                <div class="color-popup" id="facePopup"></div>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:6px;margin-top:6px;display:none;">
+                            <button id="btnFacePaint" type="button" class="hbtn" style="flex:1;justify-content:center;font-size:11px;display:none;"><?= te('면컬러 칠하기') ?></button>
+                            <button id="btnFaceClear" type="button" class="hbtn" style="flex-shrink:0;padding:0 8px;font-size:11px;display:none;width:auto;justify-content:center;"><?= te('초기화') ?></button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="rail-pane" data-pane="render" hidden>
+                <div class="rail-pane-head"><?= te('렌더링') ?></div>
+                <div class="sb-section">
+                    <div style="display:flex;flex-direction:column;gap:8px;">
+                        <div style="display:flex;gap:6px;width:100%;">
+                        <button class="rp-add-btn" id="btnAddThumb" style="flex:1;">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="17 8 12 3 7 8" />
+                                <line x1="12" y1="3" x2="12" y2="15" />
+                            </svg>
+                            <?= te('배경 업로드') ?>
+                        </button>
+                        <button id="btnClearBg" style="display:none;flex-shrink:0;width:28px;height:28px;border:none;background:none;padding:0;cursor:pointer;color:var(--danger);align-items:center;justify-content:center;align-self:center;" title="<?= te('배경 지우기') ?>">
+                            <i class="bi bi-x-lg" style="font-size:13px;"></i>
+                        </button>
+                        </div>
+                        <div class="rp-thumb-list" id="thumbList"></div>
+                        <select id="aiPromptPreset" class="sb-select rp-prompt-select" onchange="if(this.value) document.getElementById('aiPrompt').value = this.value;">
+                            <option value=""><?= te('재질/조명 선택…') ?></option>
+                            <?php foreach ($renderPresets as $rp): ?>
+                            <option value="<?= htmlspecialchars($rp['prompt_text']) ?>"><?= htmlspecialchars(term($rp['label'])) ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <textarea id="aiPrompt" class="rp-prompt" placeholder="<?= te('프리셋을 선택하거나 직접 입력하세요') ?>" rows="3"></textarea>
+                        <button class="rp-ai-btn" onclick="startAISynthesis()">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                            </svg>
+                            Rendering
+                        </button>
+                        <div id="renderSavedList" class="render-saved-list"></div>
+                    </div>
+                </div>
+            </section>
+            <section class="rail-pane" data-pane="estimate" hidden>
+                <div class="rail-pane-head"><?= te('예상 견적') ?></div>
+                <div class="sb-section">
+                    <div class="sb-price-box">
+                        <?php if ($perms['price']): ?>
+                        <div class="sb-price-label"><?= te('예상가격') ?></div>
+                        <div class="sb-price-amount"><span class="sb-price-start">–</span><span class="sb-price-end"></span></div>
+                        <?php endif; ?>
+                        <div class="sb-price-breakdown">
+                            <?php if ($perms['cost']): ?>
+                            <div class="sb-cost-breakdown">
+                            <div class="sb-break-row"><span><?= te('문(창호) 목재') ?></span><span id="spCostDoor">–</span></div>
+                            <div class="sb-break-row"><span><?= te('문틀 목재') ?></span><span id="spCostMuntol">–</span></div>
+                            <div class="sb-break-row sb-break-key"><span><?= te('목재비') ?></span><span id="spWoodCost">–</span></div>
+                            <div class="sb-break-divider"></div>
+                            <div class="sb-break-row sb-break-key"><span><?= te('제작비') ?> <small id="spCraftTime"></small></span><span id="spCraftCost">–</span></div>
+                            <div class="sb-break-row sb-break-key"><span><?= te('부자재') ?></span><span id="spHardwareCost">–</span></div>
+                            <div class="sb-break-row sb-break-key"><span><?= te('마감') ?></span><span id="spFinishCost">–</span></div>
+                            <div class="sb-break-divider"></div>
+                            <div class="sb-break-row sb-break-key"><span><?= te('간접비') ?></span><span id="spOverheadCost">–</span></div>
+                            <div class="sb-break-row sb-break-key"><span><?= te('이익') ?></span><span id="spProfitCost">–</span></div>
+                            <div class="sb-break-divider"></div>
+                            <div class="sb-break-row sb-break-total sb-break-key"><span><?= te('판매가') ?></span><span id="spTotalCost">–</span></div>
+                            </div>
+                            <?php endif; ?>
+                            <?php if ($perms['leadtime']): ?>
+                            <div class="sb-lead-time sb-break-row" data-min-days="<?= (int)$cfg['min_days'] ?>"><span><?= te('최소 납기') ?></span><span><strong><?= (int)$cfg['min_days'] ?></strong><?= te('일') ?></span></div>
+                            <?php endif; ?>
+                            <?php if ($perms['shipping']): ?>
+                            <div class="sb-price-note"><?= te('※ 배송비·시공비 제외') ?></div>
+                            <?php endif; ?>
+                            <?php if ($perms['desc']): ?>
+                            <div class="sb-price-disclaimer"><?= te('※ 본 금액은 예상 견적입니다. 사용자 편집 내용을 검토한 후 최종 견적이 확정됩니다.') ?></div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:6px;width:100%;">
+                        <button class="hbtn hbtn-primary" id="btnOrder" style="flex:1;justify-content:center;width:100%;">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                                <path d="M7 3H14L19 8V20H7V3Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+                                <path d="M14 3V8H19" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
+                                <path d="M10 12L11.8 13.8L15 10.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M10 17H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                            </svg>
+                            <?= te('견적요청') ?>
+                        </button>
+                    </div>
+                </div>
+            </section>
+            <?php if ($perms['spec'] || $perms['parts']): ?>
+            <section class="rail-pane" data-pane="spec" hidden>
+                <div class="rail-pane-head"><?= te('제작 시방서') ?></div>
                 <!-- ── 제작 시방서 ────────────────── -->
                 <?php if ($perms['spec']): ?>
                 <div class="sb-section">
-                    <div class="sb-section-title"><?= te('제작 시방서') ?></div>
+                    <div class="sb-section-title"><?= te('시방서') ?> <small><?= te('치수·먹줄·홈폭') ?></small></div>
                     <div class="spec-grid">
                         <div class="spec-card">
                             <div class="spec-lbl"><?= te('문틀 가로') ?></div>
@@ -348,7 +653,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
 
                 <!-- ── 부재 목록 ──────────────────── -->
                 <?php if ($perms['parts']): ?>
-                <div class="sb-section sb-collapsed">
+                <div class="sb-section">
                     <div class="sb-section-title"><?= te('부재 목록') ?> <small><?= te('폭×두께×길이') ?></small></div>
 
                     <div class="slat-group">
@@ -406,18 +711,20 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                     </div>
                 </div>
                 <?php endif; ?>
+            </section>
+            <?php endif; ?>
+            <section class="rail-pane" data-pane="export" hidden>
+                <div class="rail-pane-head"><?= te('내보내기') ?></div>
+                <div class="export-list">
+                    <button class="export-big" id="btnSavePDF" type="button"><i class="bi bi-file-earmark-pdf"></i><span><b>PDF</b><small><?= te('인쇄·공방 전달용 도면') ?></small></span></button>
+                    <button class="export-big" id="btnSavePNG" type="button"><i class="bi bi-file-earmark-image"></i><span><b>PNG</b><small><?= te('이미지 공유용') ?></small></span></button>
+                    <button class="export-big" id="btnSaveDXF" type="button"><i class="bi bi-file-earmark-binary"></i><span><b>DXF</b><small><?= te('CAD 편집용') ?></small></span></button>
+                </div>
+            </section>
             </div>
         </div>
 
         <!-- CANVAS -->
-        <div class="sidebar-col">
-            <button class="sidebar-tab" id="btnSidebarTab" title="<?= te('치수창 열기/닫기') ?>">
-                <svg width="6" height="10" viewBox="0 0 6 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="5,1 1,5 5,9" />
-                </svg>
-            </button>
-        </div>
-
         <div class="canvas-area" id="canvasContainer">
 
             <!-- 캔버스 컨트롤 버튼 -->
@@ -529,85 +836,6 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                 </button>
             </div>
 
-            <!-- 캔버스 상단 제목 오버레이 -->
-            <div class="canvas-title-bar">
-                <div class="title-btn-group">
-                    <label class="hdr-title-badge" for="drawingName">
-                        <div class="badge-dot"></div>
-                        <input type="text" class="drawing-name-input" id="drawingName" placeholder="<?= te('도면 이름 입력…') ?>" maxlength="40">
-                    </label>
-                    <button class="title-group-btn" id="btnNewDrawing" title="<?= te('새 도면') ?>">
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-                        </svg>
-                        <span><?= te('새 도면') ?></span>
-                    </button>
-                    <div class="ver-wrap" style="margin:0;">
-                        <button class="title-group-btn" id="dmBtn" title="<?= te('도면 목록') ?>">
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
-                            </svg>
-                            <span><?= te('도면') ?></span>
-                        </button>
-                    </div>
-                    <div class="ver-wrap" style="margin:0;">
-                        <button class="title-group-btn" id="verBtn">
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="9" />
-                                <polyline points="12 7 12 12 15 15" />
-                            </svg>
-                            <span id="verLabel">—</span>
-                        </button>
-                        <div class="ver-dropdown" id="verDropdown">
-                            <div id="verList"></div>
-                        </div>
-                    </div>
-                    <select id="patternCategory" class="title-group-btn" title="<?= te('패턴 분류') ?>" style="padding:0 6px;font-size:var(--fs-12);cursor:pointer;border:none;background:var(--sidebar-bg);color:rgba(255,255,255,0.75);font-weight:600;height:28px;border-radius:14px;">
-                        <option value=""><?= te('분류 없음') ?></option>
-                        <?php foreach ($patternCategories as $pc): ?>
-                        <option value="<?= (int)$pc['id'] ?>"><?= htmlspecialchars(term_short($pc['name'])) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                    <button class="title-group-btn save-btn" id="btnSave" title="<?= te('저장') ?>">
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M5 4H17L20 7V20H5V4Z"/><path d="M8 4V9H15V4"/><path d="M9 15H15"/>
-                        </svg>
-                        <span><?= te('저장') ?></span>
-                    </button>
-                    <div class="ver-wrap" style="margin:0;">
-                        <button class="title-group-btn" id="btnShare" title="<?= te('먼저 저장해주세요') ?>" disabled>
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-                                <line x1="8.6" y1="10.5" x2="15.4" y2="6.5"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/>
-                            </svg>
-                            <span><?= te('공유') ?></span>
-                        </button>
-                        <div class="ver-dropdown share-dropdown" id="shareDropdown">
-                            <div class="share-dd-id" id="shareDdId"><?= te('도면 #—') ?></div>
-                            <div class="share-dd-linkrow">
-                                <input type="text" id="shareDdLink" readonly>
-                                <button type="button" id="shareDdCopy"><?= te('복사') ?></button>
-                            </div>
-                            <div class="share-dd-channels">
-                                <button type="button" id="shareDdKakao" title="<?= te('카카오톡 공유') ?>">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.8 5.3 4.6 6.7-.2.7-.7 2.6-.8 3-.1.5.2.5.4.4.2-.1 2.6-1.8 3.6-2.5.7.1 1.4.2 2.2.2 5.5 0 10-3.6 10-8 0-4.4-4.5-7.8-10-7.8z"/></svg>
-                                    <span><?= te('카카오') ?></span>
-                                </button>
-                                <button type="button" id="shareDdFb" title="<?= te('페이스북 공유') ?>">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7.9h2.7l.4-3.1h-3.1V8.1c0-.9.3-1.5 1.6-1.5h1.7V3.8C15.9 3.7 14.8 3.6 13.6 3.6c-2.5 0-4.2 1.5-4.2 4.3v2.1H6.7v3.1h2.7V21h4.1z"/></svg>
-                                    <span>FB</span>
-                                </button>
-                                <button type="button" id="shareDdX" title="<?= te('X(트위터) 공유') ?>">
-                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 3H22l-7.5 8.6L23 21h-6.9l-5.4-6.6L4.4 21H1.3l8-9.2L1 3h7l4.9 6.1L18.9 3zm-1.2 16h1.9L7.4 4.9H5.4L17.7 19z"/></svg>
-                                    <span>X</span>
-                                </button>
-                            </div>
-                            <button type="button" id="shareDdOff" class="share-dd-off"><?= te('공유 끄기') ?></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             <canvas id="doorCanvas"></canvas>
             <div id="konvaStageContainer" style="position:absolute;top:0;left:0;pointer-events:none;"></div>
             <canvas id="rulerCanvas" style="position:absolute;top:0;left:0;pointer-events:none;z-index:1;"></canvas>
@@ -646,224 +874,6 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
             <div class="render-overlay" id="renderOverlay" style="display:none;">
                 <div class="render-spinner"></div>
                 <div class="render-overlay-msg"><?= te('AI 렌더링 중…') ?></div>
-            </div>
-        </div>
-
-        <!-- RIGHT SIDEBAR TAB -->
-        <div class="sidebar-col">
-            <button class="sidebar-tab sidebar-tab-right" id="btnRightSidebarTab" title="<?= te('배경사진 패널 열기/닫기') ?>">
-                <svg width="6" height="10" viewBox="0 0 6 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="1,1 5,5 1,9" />
-                </svg>
-            </button>
-        </div>
-
-        <!-- RIGHT SIDEBAR -->
-        <div class="controls-right" id="rightSidebar">
-            <div class="sb-inner-right">
-                <div class="sb-section">
-                    <div class="sb-price-box">
-                        <?php if ($perms['price']): ?>
-                        <div class="sb-price-label"><?= te('예상가격') ?></div>
-                        <div class="sb-price-amount"><span class="sb-price-start">–</span><span class="sb-price-end"></span></div>
-                        <?php endif; ?>
-                        <div class="sb-price-breakdown">
-                            <?php if ($perms['cost']): ?>
-                            <div class="sb-cost-breakdown">
-                            <div class="sb-break-row"><span><?= te('문(창호) 목재') ?></span><span id="spCostDoor">–</span></div>
-                            <div class="sb-break-row"><span><?= te('문틀 목재') ?></span><span id="spCostMuntol">–</span></div>
-                            <div class="sb-break-row sb-break-key"><span><?= te('목재비') ?></span><span id="spWoodCost">–</span></div>
-                            <div class="sb-break-divider"></div>
-                            <div class="sb-break-row sb-break-key"><span><?= te('제작비') ?> <small id="spCraftTime"></small></span><span id="spCraftCost">–</span></div>
-                            <div class="sb-break-row sb-break-key"><span><?= te('부자재') ?></span><span id="spHardwareCost">–</span></div>
-                            <div class="sb-break-row sb-break-key"><span><?= te('마감') ?></span><span id="spFinishCost">–</span></div>
-                            <div class="sb-break-divider"></div>
-                            <div class="sb-break-row sb-break-key"><span><?= te('간접비') ?></span><span id="spOverheadCost">–</span></div>
-                            <div class="sb-break-row sb-break-key"><span><?= te('이익') ?></span><span id="spProfitCost">–</span></div>
-                            <div class="sb-break-divider"></div>
-                            <div class="sb-break-row sb-break-total sb-break-key"><span><?= te('판매가') ?></span><span id="spTotalCost">–</span></div>
-                            </div>
-                            <?php endif; ?>
-                            <?php if ($perms['leadtime']): ?>
-                            <div class="sb-lead-time sb-break-row" data-min-days="<?= (int)$cfg['min_days'] ?>"><span><?= te('최소 납기') ?></span><span><strong><?= (int)$cfg['min_days'] ?></strong><?= te('일') ?></span></div>
-                            <?php endif; ?>
-                            <?php if ($perms['shipping']): ?>
-                            <div class="sb-price-note"><?= te('※ 배송비·시공비 제외') ?></div>
-                            <?php endif; ?>
-                            <?php if ($perms['desc']): ?>
-                            <div class="sb-price-disclaimer"><?= te('※ 본 금액은 예상 견적입니다. 사용자 편집 내용을 검토한 후 최종 견적이 확정됩니다.') ?></div>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                    <div style="display:flex;gap:6px;width:100%;">
-                        <button class="hbtn hbtn-primary" id="btnOrder" style="flex:1;justify-content:center;width:100%;">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
-                                <path d="M7 3H14L19 8V20H7V3Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
-                                <path d="M14 3V8H19" stroke="currentColor" stroke-width="2" stroke-linejoin="round" />
-                                <path d="M10 12L11.8 13.8L15 10.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                <path d="M10 17H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                            </svg>
-                            <?= te('견적요청') ?>
-                        </button>
-                    </div>
-                </div>
-                <div class="sb-section">
-                    <div class="sb-section-title" style="cursor:default;"><?= te('마감') ?></div>
-                    <div class="ctrl">
-                        <select id="txtWood" class="sb-select">
-                            <?php foreach (get_wood_options() as $w): ?>
-                            <option value="<?= htmlspecialchars($w['name'], ENT_QUOTES) ?>">
-                                <?= htmlspecialchars(term($w['name']), ENT_QUOTES) ?>
-                            </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="ctrl">
-                        <select id="txtFinish" class="sb-select">
-                            <option value=""><?= te('마감 없음') ?></option>
-                            <?php foreach (get_finish_options() as $f): ?>
-                            <option value="<?= htmlspecialchars($f['name'], ENT_QUOTES) ?>">
-                                <?= htmlspecialchars(term($f['name']), ENT_QUOTES) ?>
-                            </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="ctrl">
-                        <select id="txtHardware" class="sb-select">
-                            <option value=""><?= te('부자재 없음') ?></option>
-                            <?php foreach (get_hardware_options() as $h): ?>
-                            <option value="<?= htmlspecialchars($h['name'], ENT_QUOTES) ?>">
-                                <?= htmlspecialchars(term($h['name']), ENT_QUOTES) ?>
-                            </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <!-- 컬러 피커는 AURO 스테인 마감(이름에 "AURO 560"처럼 제품번호가 있고 같은 번호의 팔레트 그룹이 있는 것)을
-                         골랐을 때만 보인다 — engine-common.js applyFinishColorPicker() -->
-                    <div id="finishColorBlock" hidden>
-                        <hr class="sb-divider">
-                        <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">
-                            <div class="color-row-stack">
-                                <span class="color-label"><?= te('문틀 컬러') ?></span>
-                                <div class="color-picker-wrap">
-                                    <button class="color-preview-btn" id="muntolPreviewBtn">
-                                        <span class="color-preview-dot" id="muntolPreviewDot"></span>
-                                        <span id="muntolPreviewName">—</span>
-                                    </button>
-                                    <div class="color-popup" id="muntolPopup"></div>
-                                </div>
-                            </div>
-                            <div class="color-row-stack">
-                                <span class="color-label"><?= te('울거미 컬러') ?></span>
-                                <div class="color-picker-wrap">
-                                    <button class="color-preview-btn" id="framePreviewBtn">
-                                        <span class="color-preview-dot" id="framePreviewDot"></span>
-                                        <span id="framePreviewName">—</span>
-                                    </button>
-                                    <div class="color-popup" id="framePopup"></div>
-                                </div>
-                            </div>
-                            <div class="color-row-stack">
-                                <span class="color-label"><?= te('살 컬러') ?></span>
-                                <div class="color-picker-wrap">
-                                    <button class="color-preview-btn" id="slatPreviewBtn">
-                                        <span class="color-preview-dot" id="slatPreviewDot"></span>
-                                        <span id="slatPreviewName">—</span>
-                                    </button>
-                                    <div class="color-popup" id="slatPopup"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <?php /* 면칠하기 임시 비활성화 (복구: display:none 제거) */ ?>
-                        <div class="color-row-stack" style="margin-top:6px;display:none;">
-                            <span class="color-label"><?= te('면 컬러') ?></span>
-                            <div class="color-picker-wrap">
-                                <button class="color-preview-btn" id="facePreviewBtn">
-                                    <span class="color-preview-dot" id="facePreviewDot"></span>
-                                    <span id="facePreviewName">—</span>
-                                </button>
-                                <div class="color-popup" id="facePopup"></div>
-                            </div>
-                        </div>
-                        <div style="display:flex;gap:6px;margin-top:6px;display:none;">
-                            <button id="btnFacePaint" type="button" class="hbtn" style="flex:1;justify-content:center;font-size:11px;display:none;"><?= te('면컬러 칠하기') ?></button>
-                            <button id="btnFaceClear" type="button" class="hbtn" style="flex-shrink:0;padding:0 8px;font-size:11px;display:none;width:auto;justify-content:center;"><?= te('초기화') ?></button>
-                        </div>
-                    </div>
-                </div>
-                <div class="sb-section">
-                    <div class="sb-section-title" style="cursor:default;"><?= te('렌더링') ?></div>
-                    <div style="display:flex;flex-direction:column;gap:8px;">
-                        <div style="display:flex;gap:6px;width:100%;">
-                        <button class="rp-add-btn" id="btnAddThumb" style="flex:1;">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                <polyline points="17 8 12 3 7 8" />
-                                <line x1="12" y1="3" x2="12" y2="15" />
-                            </svg>
-                            <?= te('배경 업로드') ?>
-                        </button>
-                        <button id="btnClearBg" style="display:none;flex-shrink:0;width:28px;height:28px;border:none;background:none;padding:0;cursor:pointer;color:var(--danger);align-items:center;justify-content:center;align-self:center;" title="<?= te('배경 지우기') ?>">
-                            <i class="bi bi-x-lg" style="font-size:13px;"></i>
-                        </button>
-                        </div>
-                        <div class="rp-thumb-list" id="thumbList"></div>
-                        <select id="aiPromptPreset" class="sb-select rp-prompt-select" onchange="if(this.value) document.getElementById('aiPrompt').value = this.value;">
-                            <option value=""><?= te('재질/조명 선택…') ?></option>
-                            <?php foreach ($renderPresets as $rp): ?>
-                            <option value="<?= htmlspecialchars($rp['prompt_text']) ?>"><?= htmlspecialchars(term($rp['label'])) ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                        <textarea id="aiPrompt" class="rp-prompt" placeholder="<?= te('프리셋을 선택하거나 직접 입력하세요') ?>" rows="3"></textarea>
-                        <button class="rp-ai-btn" onclick="startAISynthesis()">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                            </svg>
-                            Rendering
-                        </button>
-                        <div id="renderSavedList" class="render-saved-list"></div>
-                    </div>
-                </div>
-                <div class="sb-section">
-                    <div class="sb-section-title" style="cursor:default;"><?= te('문양 삽입') ?></div>
-                    <div class="svg-insert-actions">
-                        <button class="hbtn" onclick="openSvgLibraryPicker()">
-                            <i class="bi bi-flower1"></i> <?= te('라이브러리') ?>
-                        </button>
-                        <button class="hbtn" onclick="document.getElementById('svgFileInput').click()">
-                            <i class="bi bi-upload"></i> <?= te('업로드') ?>
-                        </button>
-                        <input type="file" id="svgFileInput" accept="image/svg+xml,.svg" style="display:none;" onchange="handleSvgFileUpload(this)">
-                    </div>
-                    <div id="svgInsertControls" style="display:none;">
-                        <div class="svg-insert-row">
-                            <label><?= te('크기') ?></label>
-                            <input type="range" id="svgInsertScale" min="10" max="300" step="1" value="100">
-                        </div>
-                        <div class="svg-insert-row">
-                            <label><?= te('회전') ?></label>
-                            <input type="range" id="svgInsertRotation" min="0" max="360" step="1" value="0">
-                        </div>
-                        <div class="svg-insert-actions" style="margin-top:6px;">
-                            <button type="button" class="hbtn" id="btnSvgInsertDuplicate"><i class="bi bi-copy"></i> <?= te('복사') ?></button>
-                            <button type="button" class="svg-insert-delete" id="btnSvgInsertDelete"><?= te('삭제') ?></button>
-                        </div>
-                    </div>
-                </div>
-                <div class="sb-section">
-                    <details class="export-select">
-                        <summary class="hbtn" style="width:100%;justify-content:center;">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13M7 11l5 5 5-5"/><path d="M5 20h14"/></svg>
-                            <?= te('내보내기') ?>
-                            <svg class="export-select-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
-                        </summary>
-                        <div class="export-select-menu">
-                            <button class="export-select-item" id="btnSavePDF" type="button">PDF</button>
-                            <button class="export-select-item" id="btnSavePNG" type="button">PNG</button>
-                            <button class="export-select-item" id="btnSaveDXF" type="button">DXF</button>
-                        </div>
-                    </details>
-                </div>
             </div>
         </div>
 
@@ -928,6 +938,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
     <script src="/src/js/drawing-sync.js?v=<?= md5_file(__DIR__ . '/../../js/drawing-sync.js') ?>"></script>
     <script src="/src/js/order-status-labels.js?v=<?= md5_file(__DIR__ . '/../../js/order-status-labels.js') ?>"></script>
     <script src="/src/js/engine-common.js?v=<?= md5_file(__DIR__ . '/../../js/engine-common.js') ?>"></script>
+    <script src="/src/js/engine-rail.js?v=<?= md5_file(__DIR__ . '/../../js/engine-rail.js') ?>"></script>
     <script src="/src/js/color-hex-input.js?v=<?= md5_file(__DIR__ . '/../../js/color-hex-input.js') ?>"></script>
     <script src="/src/js/diamond.js?v=<?= md5_file(__DIR__ . '/../../js/diamond.js') ?>"></script>
 </body>

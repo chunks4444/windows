@@ -1562,10 +1562,13 @@ async function draw() {
         rCtx.save();
         rCtx.setTransform(rDpr, 0, 0, rDpr, 0, 0);
 
-        const BG_IN  = 'rgba(168,175,183,0.95)';
-        const BG_OUT = 'rgba(138,145,153,0.95)';
-        const LINE   = 'rgba(255,255,255,0.7)';
-        const LBL    = '#ffffff';
+        // 밝은 테마(pm-light)에선 눈금자 바탕을 캔버스 바탕(#F3F4F7)과 같게 하고 눈금·숫자를 어둡게
+        const LIGHT  = document.body.classList.contains('pm-light');
+        const BG_IN  = LIGHT ? '#E2E5EA' : 'rgba(168,175,183,0.95)';   // 문 범위 표시 띠
+        const BG_OUT = LIGHT ? '#F3F4F7' : 'rgba(138,145,153,0.95)';
+        const LINE   = LIGHT ? 'rgba(31,35,40,0.35)' : 'rgba(255,255,255,0.7)';
+        const LBL    = LIGHT ? '#6B7280' : '#ffffff';
+        const EDGE   = LIGHT ? '#DDE0E5' : '#ccc';
 
         const doorL = ox;
         const doorR = ox + lastDoorWpx * scaleFactor;
@@ -1577,7 +1580,7 @@ async function draw() {
         rCtx.fillRect(R, 0, logW - R, R);
         const hL = Math.max(R, doorL), hR = Math.min(logW, doorR);
         if (hR > hL) { rCtx.fillStyle = BG_IN; rCtx.fillRect(hL, R - 8, hR - hL, 8); }
-        rCtx.strokeStyle = '#ccc'; rCtx.lineWidth = 0.5;
+        rCtx.strokeStyle = EDGE; rCtx.lineWidth = 0.5;
         rCtx.beginPath(); rCtx.moveTo(R, R); rCtx.lineTo(logW, R); rCtx.stroke();
 
         const xS = Math.ceil((R - ox) / mmPx / step) * step;
@@ -1600,7 +1603,7 @@ async function draw() {
         rCtx.fillRect(0, R, R, logH);
         const vT = Math.max(R, doorT), vB = Math.min(logH, doorB);
         if (vB > vT) { rCtx.fillStyle = BG_IN; rCtx.fillRect(R - 8, vT, 8, vB - vT); }
-        rCtx.strokeStyle = '#ddd'; rCtx.lineWidth = 0.5;
+        rCtx.strokeStyle = EDGE; rCtx.lineWidth = 0.5;
         rCtx.beginPath(); rCtx.moveTo(R, R); rCtx.lineTo(R, logH); rCtx.stroke();
 
         const yS = Math.ceil((R - oy) / mmPx / step) * step;
@@ -1630,7 +1633,18 @@ async function draw() {
         rCtx.moveTo(R, 0); rCtx.lineTo(R, R); rCtx.lineTo(0, R);
         rCtx.stroke();
 
-        if (showDimensions && geo.outerW) {
+        // 레일 구조(밝은 테마)에선 문짝 치수를 캔버스에 그리지 않고 상단 도구 박스(#cvDims)에 글자로 넣는다
+        const dimsEl = document.getElementById('cvDims');
+        if (dimsEl) {
+            // 두 줄: 문짝 크기 / 도면에 치수선으로 보이는 문틀 크기(문설정의 '문틀 가로·세로')
+            const fw = Math.round(+document.getElementById('numW')?.value || 0), fh = Math.round(+document.getElementById('numH')?.value || 0);
+            const on = showDimensions && geo.outerW;
+            dimsEl.innerHTML = on
+                ? `<span><small>${_t('문짝')}</small><b>${Math.round(geo.outerW)} × ${Math.round(geo.outerH)}mm</b></span>`
+                  + (fw && fh ? `<span><small>${_t('문틀')}</small><b>${fw} × ${fh}mm</b></span>` : '')
+                : '';
+            dimsEl.hidden = !on;
+        } else if (showDimensions && geo.outerW) {
             rCtx.fillStyle = '#000';
             rCtx.font = '12px -apple-system, sans-serif';
             rCtx.textAlign = 'left';
@@ -1860,7 +1874,7 @@ async function draw() {
 
     const btnSidebarTab = document.getElementById('btnSidebarTab');
 
-    btnSidebarTab.addEventListener('click', toggleSidebar);
+    btnSidebarTab?.addEventListener('click', toggleSidebar);
 
     // Section collapse
     document.querySelectorAll('.sb-section-title').forEach(title => {
@@ -2859,9 +2873,9 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
     window.addEventListener('resize', resizeCanvasDebounced);
     if (window.innerWidth < 768) {
         sidebar.classList.add('collapsed');
-        btnSidebarTab.classList.add('collapsed');
-        rightSidebar.classList.add('collapsed');
-        btnRightSidebarTab.classList.add('collapsed');
+        btnSidebarTab?.classList.add('collapsed');
+        rightSidebar?.classList.add('collapsed');
+        btnRightSidebarTab?.classList.add('collapsed');
         animatePanelResize();
     } else {
         resizeCanvas(true);
