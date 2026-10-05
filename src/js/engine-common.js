@@ -2606,6 +2606,11 @@ function drawSvgInserts() {
         // 누른 색 칩 바로 위에 잠깐 뜨는 말풍선 (마우스 근처에서 바로 보이도록)
         let tipEl, tipTimer;
         // rect는 render()로 칩이 새로 그려지기 전에 잰 값을 받는다 (다시 그린 뒤엔 누른 칩이 DOM에서 빠져 0,0이 된다)
+        // 말풍선은 다른 곳을 누르거나 패널을 스크롤하면 닫는다 (터치 기기는 mouseout이 없어서 남아 있을 수 있음)
+        const hideTip = () => { clearTimeout(tipTimer); tipEl?.classList.remove('show'); };
+        document.addEventListener('pointerdown', e => { if (tipEl?.classList.contains('show') && !e.target.closest('.fin-sw, .fin-base')) hideTip(); }, true);
+        document.getElementById('sidebar')?.addEventListener('scroll', hideTip, { passive: true });
+
         function tipAbove(r, msg, sticky) {
             if (!tipEl) { tipEl = document.createElement('div'); tipEl.className = 'fin-tip'; document.body.appendChild(tipEl); }
             tipEl.textContent = msg;
