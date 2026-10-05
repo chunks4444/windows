@@ -2620,3 +2620,5 @@ body.pm-light:has(.controls.collapsed) .pm-engine-story-link { left: calc(68px +
 .pm-light .rail-pane .ver-chip.active small { color: #4B5160; }
 .pm-light .rail-pane .export-big small { color: #8A909A; }
 .pm-light .rail-pane .file-row .title-group-btn:disabled { opacity: 0.45; }
+.pm-light .rail-pane .file-head .hdr-title-badge { background: #F4F5F7; border-color: #E4E6EB; border-radius: 8px; }
+.pm-light .rail-pane .file-head .hdr-title-badge:focus-within { background: #fff; border-color: #111; }
