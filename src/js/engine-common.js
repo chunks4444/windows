@@ -2605,10 +2605,10 @@ function drawSvgInserts() {
         }
         // 누른 색 칩 바로 위에 잠깐 뜨는 말풍선 (마우스 근처에서 바로 보이도록)
         let tipEl, tipTimer;
-        function tipAbove(el, msg) {
+        // rect는 render()로 칩이 새로 그려지기 전에 잰 값을 받는다 (다시 그린 뒤엔 누른 칩이 DOM에서 빠져 0,0이 된다)
+        function tipAbove(r, msg) {
             if (!tipEl) { tipEl = document.createElement('div'); tipEl.className = 'fin-tip'; document.body.appendChild(tipEl); }
             tipEl.textContent = msg;
-            const r = el.getBoundingClientRect();
             tipEl.style.left = (r.left + r.width / 2) + 'px';
             tipEl.style.top  = r.top + 'px';
             tipEl.classList.remove('show'); void tipEl.offsetWidth; tipEl.classList.add('show');
@@ -2618,12 +2618,13 @@ function drawSvgInserts() {
 
         function pickColor(groupFin, hex, el) {
             if (!target) {
+                const rect = el?.getBoundingClientRect();
                 needPart = true;
                 render();
                 const row = root.querySelector('.fin-parts');
                 row?.classList.remove('shake'); void row?.offsetWidth; row?.classList.add('shake');
                 row?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-                if (el) tipAbove(el, _t('먼저 색칠할 부위를 고르세요.'));
+                if (rect) tipAbove(rect, _t('먼저 색칠할 부위를 고르세요.'));
                 return;
             }
             setFinish(groupFin);
