@@ -1,6 +1,11 @@
 User-agent: *
 Disallow: /src/admin/
 Disallow: /src/api/
+# 컬렉션 페이지는 카드 목록을 이 공개 API로 다시 불러온다. /src/api/ 전체를 막아두면 구글봇이
+# 페이지를 렌더링할 때 호출이 실패해 빈 목록으로 보고 Soft 404로 분류한다(2026-10-07).
+# Allow가 더 긴 경로라 Disallow보다 우선 적용된다.
+Allow: /src/api/collection.php
+Allow: /src/api/drawings/categories.php
 Disallow: /src/mypage/
 Disallow: /mypage/
 Disallow: /logs/

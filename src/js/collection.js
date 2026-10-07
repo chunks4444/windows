@@ -23,11 +23,11 @@ async function fetchPage(q, page, category, group) {
             body: JSON.stringify({ q, page, category: category || '', group: group || '', liked: likedActive }),
         });
         const data = await res.json();
-        if (data.error) { console.error('collection API:', data.error); return { patterns: [], has_more: false }; }
+        if (data.error) { console.error('collection API:', data.error); return { patterns: [], has_more: false, failed: true }; }
         return data;
     } catch(e) {
         console.error('collection fetch error:', e);
-        return { patterns: [], has_more: false };
+        return { patterns: [], has_more: false, failed: true };
     }
 }
 
@@ -37,7 +37,9 @@ function resetAndLoad(q) {
     currentPage    = 1;
     hasMore        = true;
     loadedPatterns = [];
-    document.getElementById('libMasonry').innerHTML = '';
+    // 그리드는 여기서 비우지 않고 첫 페이지 응답이 온 뒤 교체한다(loadNextPage). 미리 비우면
+    // API 호출이 실패했을 때 서버가 렌더링해 둔 카드까지 사라지고 '검색 결과가 없습니다.'만 남는데,
+    // 구글봇이 바로 이 상태를 보고 컬렉션 페이지를 Soft 404로 분류했다(2026-10-07).
     setLoadMore(false);
     setupObserver();
     loadNextPage();
@@ -52,6 +54,14 @@ async function loadNextPage() {
     const data     = await fetchPage(currentQ, currentPage, activeCategory, activeGroup);
     const patterns = data.patterns || [];
 
+    // 첫 페이지 호출이 실패하면 기존 카드(서버 렌더링분 등)를 그대로 둔다
+    if (data.failed && currentPage === 1) {
+        hasMore   = false;
+        isLoading = false;
+        setLoadMore(false, false);
+        return;
+    }
+
     if (currentPage === 1 && typeof data.total === 'number') {
         const countEl = document.getElementById('libResultCount');
         if (countEl) countEl.innerHTML = _t('<strong>%s</strong>개 패턴', data.total);
@@ -62,6 +72,7 @@ async function loadNextPage() {
     currentPage++;
 
     const masonry = document.getElementById('libMasonry');
+    if (currentPage === 2) masonry.innerHTML = '';
     if (!patterns.length && currentPage === 2) {
         masonry.innerHTML = '<p style="color:var(--text-3);font-size:13px;grid-column:1/-1;padding:40px 0;text-align:center;">' + _t('검색 결과가 없습니다.') + '</p>';
     } else {
