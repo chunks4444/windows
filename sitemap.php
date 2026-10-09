@@ -24,7 +24,7 @@ $staticUrls = [
 
 // 가이드 개별 아티클 (src/guide/_head.php의 $guide_nav와 동일한 파일 목록 — 새 아티클 추가 시 여기도 같이 추가)
 foreach ([
-    'intro', 'getting-started', 'canvas-toolbar',
+    'intro', 'getting-started', 'canvas-toolbar', 'svg-insert',
     'studio-classic', 'studio-square', 'studio-cross', 'studio-diamond', 'studio-triangle', 'studio-hexagon', 'studio-mondrian', 'finish',
     'drawing', 'export', 'render', 'collection', 'account', 'order', 'delivery', 'faq',
 ] as $guideFile) {
@@ -48,13 +48,22 @@ try {
         }
     }
 
-    $posts = $pdo->query("SELECT slug, created_at FROM blog_posts WHERE is_active=1")->fetchAll();
+    $posts = $pdo->query("SELECT slug, created_at, (content_en IS NOT NULL AND content_en != '') AS has_en FROM blog_posts WHERE is_active=1")->fetchAll();
     foreach ($posts as $p) {
         $urls[] = [
             'loc'     => '/blog/' . rawurlencode($p['slug']),
             'lastmod' => date('Y-m-d', strtotime($p['created_at'])),
             'priority'=> '0.6',
         ];
+        // 영문 본문이 있는 글만 /en/ 주소도 올림 — 번역 전 글의 /en/ 페이지는 한글 본문 그대로라
+        // 한글 페이지와 중복 콘텐츠로 보일 수 있다. 번역을 넣으면 다음 크롤 때 자동으로 포함됨
+        if ($p['has_en']) {
+            $urls[] = [
+                'loc'     => '/en/blog/' . rawurlencode($p['slug']),
+                'lastmod' => date('Y-m-d', strtotime($p['created_at'])),
+                'priority'=> '0.5',
+            ];
+        }
     }
 
     $works = $pdo->query("SELECT slug, created_at FROM works WHERE is_active=1")->fetchAll();
@@ -76,6 +85,17 @@ try {
     }
 } catch (Throwable $e) {
     // DB 연결 실패 시 이미 채워둔 정적 URL(lastmod 없이)만 출력
+}
+
+// 정적 페이지(홈·회사소개·가이드·엔진 등)의 영문판 /en/ 주소. 이 페이지들은 화면 문구·가이드 본문이
+// 전부 영문화돼 있어서 짝을 그대로 올린다. 페이지마다 hreflang 태그도 있지만, 사이트맵에 넣어 두면
+// 구글이 영문 페이지를 더 빨리·빠짐없이 수집한다 (2026-10-09).
+// 포트폴리오·컬렉션 개별 페이지는 본문이 DB 한글 원문이라(영문 컬럼 없음) 넣지 않음
+foreach (array_keys($staticUrls) as $i) {
+    $en = $urls[$i];
+    $en['loc'] = '/en' . $en['loc'];
+    $en['priority'] = number_format(max(0.1, (float)$en['priority'] - 0.1), 1);
+    $urls[] = $en;
 }
 
 echo '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
