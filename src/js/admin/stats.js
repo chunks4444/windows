@@ -153,10 +153,11 @@ function renderTopUsers(users) {
             <td class="st-num">${total.toLocaleString()}</td>
             <td style="font-size:11px;white-space:nowrap;">${device}</td>
             <td style="color:var(--text-3);font-size:11px;">${u.last_visit ? u.last_visit.slice(11,19) : '—'}</td>
-            <td style="color:var(--text-3);font-size:11px;font-family:monospace;cursor:pointer;text-decoration:underline;" onclick="openUserVisits(${u.id},'${esc(u.email)}')">${u.last_ip ? esc(u.last_ip) : '—'}</td>
+            <td style="color:var(--text-3);font-size:11px;font-family:monospace;cursor:pointer;text-decoration:underline;" onclick="openUserVisits(${u.id},'${esc(u.email)}')">${u.last_ip ? esc(u.last_ip) + '<span class="ip-geo" data-ip="${esc(u.last_ip)}" style="color:var(--text-3);font-size:10px;margin-left:4px;"></span>' : '—'}</td>
         </tr>
     `;
     }).join('') || '<tr><td colspan="6" style="padding:20px;text-align:center;color:var(--text-3);">데이터 없음</td></tr>';
+    fillIpGeo(document.getElementById('topUsersTbody'));
 }
 
 function renderAnonVisits(visits) {
@@ -170,7 +171,7 @@ function renderAnonVisits(visits) {
         return `
         <tr>
             <td style="color:var(--text-3);font-size:11px;">${v.last_visit ? v.last_visit.slice(0,10) : '—'}</td>
-            <td style="font-size:12px;font-family:monospace;cursor:pointer;text-decoration:underline;" onclick="openIpVisits('${ipEsc}')">${ipEsc}${blocked ? ' <span style="color:#e05218;font-size:10px;">차단됨</span>' : ''}</td>
+            <td style="font-size:12px;font-family:monospace;cursor:pointer;text-decoration:underline;" onclick="openIpVisits('${ipEsc}')">${ipEsc}<span class="ip-geo" data-ip="${ipEsc}" style="color:var(--text-3);font-size:10px;margin-left:4px;"></span>${blocked ? ' <span style="color:#e05218;font-size:10px;">차단됨</span>' : ''}</td>
             <td class="st-num">${total.toLocaleString()}</td>
             <td style="font-size:11px;white-space:nowrap;">${device}</td>
             <td style="color:var(--text-3);font-size:11px;">${v.last_visit ? v.last_visit.slice(11,19) : '—'}</td>
@@ -180,6 +181,28 @@ function renderAnonVisits(visits) {
         </tr>
     `;
     }).join('') || '<tr><td colspan="6" style="padding:20px;text-align:center;color:var(--text-3);">데이터 없음</td></tr>';
+    fillIpGeo(document.getElementById('anonVisitsTbody'));
+}
+
+// IP 옆 빈칸(.ip-geo)에 국가·도시를 채운다. 화면에 보이는 IP만 서버에 물어보고
+// (서버가 DB에 없는 IP만 외부 조회 후 저장), 실패하면 그냥 빈칸으로 둔다.
+async function fillIpGeo(container) {
+    const spans = [...container.querySelectorAll('.ip-geo[data-ip]')];
+    const ips = [...new Set(spans.map(s => s.dataset.ip))];
+    if (!ips.length) return;
+    try {
+        const res = await fetch('/src/api/admin/ip_geo.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token() },
+            body: JSON.stringify({ ips }),
+        });
+        if (!res.ok) return;
+        const geo = (await res.json()).geo || {};
+        spans.forEach(s => {
+            const g = geo[s.dataset.ip];
+            if (g) s.textContent = '(' + [g.country, g.city].filter(Boolean).join(' · ') + ')';
+        });
+    } catch (e) {}
 }
 
 async function toggleBlockIp(ip, block) {
@@ -295,13 +318,14 @@ function renderUserVisits(visits) {
                 <div style="display:flex;gap:10px;padding:4px 0;border-bottom:1px solid var(--border);">
                     <span style="color:var(--text-3);white-space:nowrap;">${esc(v.visited_at.slice(0, 10))}</span>
                     <span style="color:var(--text-3);white-space:nowrap;">${v.visited_at.slice(11, 19)}</span>
-                    <span style="font-family:monospace;white-space:nowrap;">${esc(v.ip)}</span>
+                    <span style="font-family:monospace;white-space:nowrap;">${esc(v.ip)}<span class="ip-geo" data-ip="${esc(v.ip)}" style="color:var(--text-3);font-size:10px;margin-left:4px;"></span></span>
                     <span style="color:var(--text-3);">${v.is_mobile ? 'Mobile' : 'PC'}</span>
                     <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(v.page)}</span>
                 </div>
             `).join('')}
         </div>
     `).join('');
+    fillIpGeo(body);
 }
 
 function closeUserVisits() {

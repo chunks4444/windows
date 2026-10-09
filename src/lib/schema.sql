@@ -68,6 +68,17 @@ CREATE TABLE IF NOT EXISTS page_views (
 -- ALTER TABLE page_views ADD COLUMN ua_hash CHAR(8) NULL COMMENT 'User-Agent MD5 앞 8자 (동일 IP 내 UA 로테이션 위장 크롤러 탐지용)' AFTER ip;
 -- ALTER TABLE page_views ADD INDEX idx_pv_ip_hash_time (ip_hash, visited_at);
 
+-- 접속통계 화면용 IP 위치 (2026-10-09)
+-- 관리자가 접속통계 화면을 열 때 보이는 IP만 ip-api.com(무료)으로 조회해 여기에 저장한다.
+-- 한 번 저장된 IP는 다시 외부에 묻지 않음. src/api/admin/ip_geo.php가 처음 호출될 때 자동 생성됨.
+CREATE TABLE IF NOT EXISTS ip_geo (
+    ip           VARCHAR(45)  NOT NULL COMMENT '방문자 IP',
+    country      VARCHAR(80)  NOT NULL DEFAULT '' COMMENT '국가 (영문, ip-api.com 기준)',
+    city         VARCHAR(80)  NOT NULL DEFAULT '' COMMENT '도시 (영문, 대략적 위치 — 통신사 장비 위치일 수 있음)',
+    looked_up_at DATETIME     NOT NULL DEFAULT NOW() COMMENT '조회한 시각',
+    PRIMARY KEY (ip)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='접속통계 화면용 IP 위치 — 한 번 조회한 IP는 다시 외부에 묻지 않음';
+
 -- 사용자 테이블
 CREATE TABLE IF NOT EXISTS users (
     id          INT UNSIGNED    NOT NULL AUTO_INCREMENT COMMENT '사용자 고유 ID',
