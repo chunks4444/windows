@@ -4,7 +4,7 @@
    - 엔진 페이지가 <body class="pm-generator pm-light">이고 <nav class="tool-rail">가 있을 때만 쓴다.
      engine-common.css 다음에 불러온다 (같은 우선순위면 이 파일이 이긴다).
    - 동작은 src/js/engine-rail.js. 패널(#sidebar) 안 탭마다 <section class="rail-pane" data-pane="...">.
-   - 색: 강조는 블랙(#111), 칸 바탕 #F4F5F7, 테두리 #E4E6EB, 보조 글자 #6B7280·#9097A1, 캔버스 #F3F4F7.
+   - 색: 강조는 블랙(#111), 칸 바탕 #F4F5F7, 테두리 #E4E6EB, 보조 글자 #6B7280·#9097A1, 패널 설명문 #4B5160, 캔버스 #F3F4F7.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* ── 1. 밝은 테마 기반 ─────────────────────────────────────────────────────
@@ -68,7 +68,7 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
     border: none;
     border-radius: 10px;
     background: transparent;
-    color: #9097A1;
+    color: #4B5160;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -143,6 +143,9 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
 .rail-pane .sb-section-body > :last-child { margin-bottom: 0; }
 .rail-pane .sb-section > .toggle-row:last-child { margin-bottom: 0 !important; }
 .rail-pane .ctrl-header { margin-bottom: 6px; }
+/* 선택칸은 탭 상관없이 모두 연회색 칸(문설정 여닫이·짝수도 마감·렌더링과 같게) */
+.rail-pane .cs-trigger { background: #F4F5F7; border-radius: 8px; height: 36px; }
+.rail-pane .cs-trigger:hover { background: #E9EBEF; }
 .rail-pane #ratioCtrl .cs-trigger { justify-content: center; gap: 10px; padding: 0 8px; }   /* 가로살 상·중·하 값을 머리글 아래 가운데로 */
 
 .pane-search {
@@ -168,18 +171,19 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
     margin-top: 14px;
     margin-bottom: 8px;
     font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.4px;
-    color: #6B7280;
+    font-weight: 400;
+    letter-spacing: -0.1px;
+    color: var(--text-1);   /* 문설정·마감·렌더링 라벨과 같은 글씨 */
 }
-.pane-hint { font-size: 11px; color: #9097A1; line-height: 1.5; margin-top: 10px; }
-.pane-empty { grid-column: 1 / -1; padding: 18px 4px; font-size: 12px; color: #8A909A; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.pane-hint { font-size: 11px; color: #4B5160; line-height: 1.5; margin-top: 10px; }
+.pane-empty { grid-column: 1 / -1; padding: 18px 4px; font-size: 12px; color: #4B5160; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.pane-empty .pane-login-btn { height: 36px; padding: 0 20px; font-size: 12px; font-weight: 400; letter-spacing: -0.1px; }   /* 도면 탭 공유·저장 버튼과 같은 글씨 */
 .pane-more { width: calc(100% - 32px); justify-content: center; margin-top: 10px; }
 .pane-link { display: block; margin-top: 14px; font-size: 12px; color: #4B5160; text-decoration: none; }
 .pane-link:hover { color: #111; }
 /* 작은 라벨(마감·렌더링 탭) — 옆 small은 보조 설명/개수 */
-.fin-label { font-size: 11px; font-weight: 400; color: #6B7280; margin-bottom: 6px; letter-spacing: -0.1px; }
-.fin-label small { margin-left: 6px; font-size: 10.5px; font-weight: 400; color: #9097A1; }
+.fin-label { font-size: 11px; font-weight: 400; color: var(--text-1); margin-bottom: 6px; letter-spacing: -0.1px; }
+.fin-label small { margin-left: 6px; font-size: 10.5px; font-weight: 400; color: #4B5160; }
 
 /* 보조 버튼 통일 — 연회색 바탕·연한 테두리·검은 글씨·8px (블랙 주요 버튼·견적요청 제외, 선택은 검정 테두리) */
 .pm-light .rail-pane .hbtn:not(.hbtn-primary):not(#btnOrder),
@@ -265,7 +269,9 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
 .file-row { display: flex; gap: 6px; margin-bottom: 8px; }
 .rail-pane .file-row .title-group-btn { flex: 1; justify-content: center; height: 36px; font-size: 12px; }
 .rail-pane .file-row .title-group-btn svg { width: 13px; height: 13px; }
-.rail-pane .file-row .title-group-btn:disabled { opacity: 0.45; }
+.rail-pane .file-row .title-group-btn:disabled,
+.pm-light .rail-pane .file-row #btnShare:disabled,
+.pm-light .rail-pane .file-row #btnShare:disabled:hover { opacity: 1; color: #4B5160; background-color: #F4F5F7; cursor: not-allowed; pointer-events: auto; }   /* 저장 전 공유 — 반투명이면 글씨가 흐려 보여 진회색으로만 구분 */
 .rail-pane .file-row #btnSave { background: #111; color: #fff; border: 1px solid #111; border-radius: 8px; font-weight: 600; }
 .rail-pane .file-row #btnSave:hover { background: #333; border-color: #333; }
 .rail-pane .file-row #btnShare { border-radius: 8px; }
@@ -290,7 +296,7 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
 }
 .rail-pane .file-ver #verBtn:hover { background-color: #E9EBEF; }
 .rail-pane .file-ver #verBtn svg { display: none; }
-.rail-pane .file-ver #verBtnDate { font-size: 11px; color: #8A909A; }
+.rail-pane .file-ver #verBtnDate { font-size: 11px; color: #4B5160; }
 .rail-pane .file-ver .ver-dropdown {
     top: calc(100% + 4px); bottom: auto; left: 0; right: 0; margin: 0; min-width: 0;
     background: #fff; border: 1px solid #E4E6EB; border-radius: 10px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
@@ -331,18 +337,18 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
 .fin-current { display: flex; align-items: center; gap: 8px; margin: 12px 0 4px; font-size: 13px; color: #111; min-height: 20px; }
 .fin-current .fin-dot { width: 18px; height: 18px; }
 .fin-current span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.fin-hint { margin: 0 0 4px; font-size: 11.5px; line-height: 1.5; color: #8A909A; }
+.fin-hint { margin: 0 0 4px; font-size: 11.5px; line-height: 1.5; color: #4B5160; }
 
 .fin-group { margin-top: 18px; }
 .fin-group-head { display: flex; align-items: baseline; gap: 6px; margin-bottom: 8px; font-size: 12px; color: #3C4049; }
-.fin-group-head small { font-size: 11px; color: #9097A1; }
+.fin-group-head small { font-size: 11px; color: #4B5160; }
 /* 기본 마감(마감 없음·천연오일) — 팔레트 칩과 같은 24px 동그라미 + 옆 이름 */
 .fin-bases { display: flex; flex-wrap: wrap; gap: 8px 16px; }
 .fin-base { display: flex; align-items: center; gap: 7px; padding: 0; border: none; background: none; cursor: pointer; min-width: 0; }
 .fin-base-dot { width: 24px; height: 24px; flex-shrink: 0; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12); transition: transform 0.1s; }
 .fin-base-dot.fin-dot-none { width: 20px; height: 20px; margin: 2px; }
 .fin-base:hover .fin-base-dot { transform: scale(1.12); }
-.fin-base-name { font-size: 11.5px; color: #6B7280; white-space: nowrap; }
+.fin-base-name { font-size: 11.5px; color: #4B5160; white-space: nowrap; }
 .fin-base.active .fin-base-name { color: #111; }
 /* 제품 팔레트 */
 .fin-swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(24px, 1fr)); gap: 6px; }
@@ -386,9 +392,9 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
 /* 공간 사진 — 제목 아래 [배경 없음][사진 올리기] 반반, 그 아래 사진 3열(넘치면 2줄 높이에서 스크롤) */
 .rp-label-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .rp-mini-row { width: 100%; margin-top: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.rp-mini { display: inline-flex; align-items: center; justify-content: center; gap: 4px; height: 32px; padding: 0 9px; font-size: 11px; cursor: pointer; white-space: nowrap; }
-.rp-mini i { font-size: 12px; }
-.pm-light .rail-pane .rp-mini { color: #6B7280; }
+.rp-mini { display: inline-flex; align-items: center; justify-content: center; gap: 4px; height: 36px; padding: 0 9px; font-size: 12px; font-weight: 400; letter-spacing: -0.1px; cursor: pointer; white-space: nowrap; }
+.rp-mini i { font-size: 13px; }
+.pm-light .rail-pane .rp-mini { color: #111; }   /* 선택은 검정 테두리로만 구분, 글씨는 도면 탭 버튼과 같게 */
 .pm-light .rail-pane .rp-mini.active { border-color: #111; color: #111; }
 .rp-bg-grid {
     display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 8px; align-items: start;
@@ -408,7 +414,7 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
 .rp-thumb-name { font-size: 11px; color: #6B7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .rp-pane .rp-thumb-item.active .rp-thumb-name { color: #111; }
 /* 추천 프롬프트 · 직접 입력 · AI 렌더링 */
-.rail-pane[data-pane="render"] .cs-wrap .cs-trigger { background: #F4F5F7; border-radius: 8px; height: 38px; }
+.rail-pane[data-pane="render"] .cs-wrap .cs-trigger { background: #F4F5F7; border-radius: 8px; height: 36px; }
 .rp-pane .rp-prompt {
     width: 100%; min-height: 72px; padding: 10px 12px; border-radius: 10px; resize: vertical;
     border: 1px solid #E4E6EB; background: #F4F5F7; color: #111; font-size: 12.5px; line-height: 1.5;
@@ -439,14 +445,14 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
 .rail-pane .sb-break-total span,
 .rail-pane .sb-lead-time strong { color: #111; }
 .rail-pane .sb-price-note,
-.rail-pane .sb-price-disclaimer { color: #9097A1; }
+.rail-pane .sb-price-disclaimer { color: #4B5160; }
 /* 시방서 — '시방서'·'부재 목록' 제목을 패널 제목급으로, 사이 간격 크게 */
 .rail-pane[data-pane="spec"] > .sb-section + .sb-section { margin-top: 28px; }
 .rail-pane[data-pane="spec"] .sb-section-title {
     font-size: 15px; font-weight: 700; color: #111; letter-spacing: -0.3px; text-transform: none;
     justify-content: flex-start; gap: 8px; margin-bottom: 12px; padding-bottom: 0; border: none;
 }
-.rail-pane[data-pane="spec"] .sb-section-title small { font-size: 11px; font-weight: 400; color: #9097A1; letter-spacing: 0; }
+.rail-pane[data-pane="spec"] .sb-section-title small { font-size: 11px; font-weight: 400; color: #4B5160; letter-spacing: 0; }
 .rail-pane[data-pane="spec"] .sb-section-title .sb-chevron { margin-left: auto; color: #9097A1; }
 .rail-pane[data-pane="spec"] .slat-group-title { color: #111; }
 /* 내보내기 — 큰 버튼 */
@@ -455,7 +461,7 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
 .export-big i { font-size: 22px; }
 .export-big span { display: flex; flex-direction: column; gap: 1px; }
 .export-big b { font-size: 13px; }
-.export-big small { font-size: 11px; color: #8A909A; }
+.export-big small { font-size: 11px; color: #4B5160; }
 
 /* ── 9. 상단 툴바 (도구 박스=왼쪽 위, 줌 박스=오른쪽 위, 눈금자 22px 아래) ─────── */
 .canvas-controls.cv-dock {
