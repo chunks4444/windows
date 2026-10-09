@@ -455,6 +455,14 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
 .rail-pane[data-pane="spec"] .sb-section-title small { font-size: 11px; font-weight: 400; color: #4B5160; letter-spacing: 0; }
 .rail-pane[data-pane="spec"] .sb-section-title .sb-chevron { margin-left: auto; color: #9097A1; }
 .rail-pane[data-pane="spec"] .slat-group-title { color: #111; }
+/* 항목 이름은 진회색, 치수·개수 값은 검정 (공용 CSS의 55% 투명 회색은 흰 바탕에서 흐림) */
+.rail-pane[data-pane="spec"] .spec-lbl { color: #4B5160; }
+.rail-pane[data-pane="spec"] .spec-val,
+.rail-pane[data-pane="spec"] .spec-card .spec-val,
+.rail-pane[data-pane="spec"] .spec-unit,
+.rail-pane[data-pane="spec"] .slat-len,
+.rail-pane[data-pane="spec"] .slat-cnt,
+.rail-pane[data-pane="spec"] .slat-count-badge { color: #111; }
 /* 내보내기 — 큰 버튼 */
 .export-list { display: flex; flex-direction: column; gap: 8px; }
 .export-big { display: flex; align-items: center; gap: 12px; padding: 12px 14px; cursor: pointer; text-align: left; }
