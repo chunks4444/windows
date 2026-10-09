@@ -91,7 +91,7 @@
     const faceColorUI = buildFaceColorUI(
         () => {
             faceColorMap = null;
-            if (mondrianLayout) { mondrianLayout.rects.forEach(r => { r.color = null; }); _mondrianVersion++; }
+            if (mondrianLayout) { mondrianLayout.rects.forEach(r => { r.color = null; }); _persistMondrianLayout(); _mondrianVersion++; }
             draw();
         }
     );
@@ -1985,6 +1985,7 @@ async function draw() {
             const idx = parseInt(key.slice(9), 10);
             if (!mondrianLayout?.rects[idx]) return;
             mondrianLayout.rects[idx].color = isErase ? null : faceColorUI.getCurrentHex();
+            _persistMondrianLayout();
             _mondrianVersion++;
             faceColorUI.updateClearBtn(!!faceColorMap || _moHasColor());
             draw();
@@ -2215,6 +2216,7 @@ async function draw() {
         if (!mondrianDrag) return;
         mondrianDrag = null;
         canvas.style.cursor = panMode ? 'grab' : 'default';
+        _persistMondrianLayout();
         draw(); // 드래그 중 고정해둔 원가 집계(_moCostParams)를 놓은 위치 기준으로 다시 계산
     });
 
@@ -2325,6 +2327,7 @@ async function draw() {
             faceColorUI.updateClearBtn(false);
             if (mondrianLayout) {
                 mondrianLayout.rects.forEach(r => { r.color = null; });
+                _persistMondrianLayout();
                 _mondrianVersion++;
             }
             draw();
@@ -2414,6 +2417,7 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
     const WALLPAPER_ENGINE  = 'mondrian';
     const CURRENT_TITLE_KEY = 'pmok_mondrian_current_title';
     const NAME_KEY          = 'pmok_mondrian_name';
+    const MONDRIAN_KEY      = 'pmok_mondrian_layout';
     const MAX_VERSIONS      = 20;
 
     let workAccum = 0;
@@ -2919,7 +2923,22 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
         // 새 도면으로 처음 들어왔을 때(불러온 기존 패턴이 없을 때)는 빈 격자 대신
         // 바로 몬드리안 패턴이 보이게 자동 생성 — geo가 채워진 뒤(draw 완료 후)라야
         // generateMondrian()의 innerW/innerH 가드를 통과한다.
-        if (!mondrianLayout) generateMondrian();
+        // 단, 저장 안 한 상태로 새로고침/재방문한 경우라면 직전에 보던 랜덤 패턴을
+        // 그대로 기억해서 보여주고, 완전히 새로 생성하지는 않는다.
+        if (!mondrianLayout) {
+            let restored = false;
+            try {
+                const saved = localStorage.getItem(MONDRIAN_KEY);
+                if (saved) {
+                    mondrianLayout = JSON.parse(saved);
+                    _mondrianVersion++;
+                    _updateMondrianBtn();
+                    draw();
+                    restored = true;
+                }
+            } catch { mondrianLayout = null; }
+            if (!restored) generateMondrian();
+        }
     }
 
     async function saveVersion() {
@@ -3211,14 +3230,24 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
                 ? { axis: 'v', pos: l.pos / W, from: l.from / H, to: l.to / H }
                 : { axis: 'h', pos: l.pos / H, from: l.from / W, to: l.to / W }),
         };
+        _persistMondrianLayout();
         _mondrianVersion++;
         _updateMondrianBtn();
         draw();
     }
 
+    // 저장 안 한 상태로 새로고침해도 방금 보던 랜덤 패턴을 다시 볼 수 있도록 기억해둠
+    function _persistMondrianLayout() {
+        try {
+            if (mondrianLayout) localStorage.setItem(MONDRIAN_KEY, JSON.stringify(mondrianLayout));
+            else localStorage.removeItem(MONDRIAN_KEY);
+        } catch { /* 저장 공간 꽉 찬 경우 등 — 무시해도 기능엔 지장 없음 */ }
+    }
+
     document.getElementById('btnMondrian').addEventListener('click', generateMondrian);
     document.getElementById('btnMondrianClear').addEventListener('click', () => {
         mondrianLayout = null;
+        _persistMondrianLayout();
         _mondrianVersion++;
         _updateMondrianBtn();
         draw();
