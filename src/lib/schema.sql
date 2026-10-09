@@ -968,3 +968,9 @@ ON DUPLICATE KEY UPDATE english = VALUES(english);
 -- ALTER TABLE page_meta   ADD COLUMN title_en       VARCHAR(255) NOT NULL DEFAULT '' AFTER title;
 -- ALTER TABLE page_meta   ADD COLUMN description_en VARCHAR(500) NOT NULL DEFAULT '' AFTER description;
 -- ALTER TABLE page_meta   ADD COLUMN keywords_en    VARCHAR(500) NOT NULL DEFAULT '' AFTER keywords;
+
+-- 2026-10-09 블로그 글 수정일. 사이트맵 lastmod가 작성일(created_at)만 써서 글을 고치거나 영문 번역을
+-- 넣어도 구글이 바뀐 줄 몰랐다 → 수정일 칸 추가. ON UPDATE CURRENT_TIMESTAMP는 쓰지 않는다:
+-- 조회수(view_count)·정렬·별표 토글도 같은 행을 UPDATE하므로 글을 볼 때마다 수정일이 바뀌어 버린다.
+-- 대신 src/api/admin/blog.php 저장 시 제목·요약·본문 등(한·영) 내용이 실제로 달라졌을 때만 NOW()로 갱신.
+-- ALTER TABLE blog_posts ADD COLUMN updated_at DATETIME NULL DEFAULT NULL COMMENT '본문 마지막 수정 시각 (관리자 저장 시 내용이 실제로 바뀐 경우만 갱신, 조회수 증가·정렬·별표로는 안 바뀜). 사이트맵 lastmod용, NULL이면 created_at 사용' AFTER created_at;

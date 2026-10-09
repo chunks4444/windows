@@ -97,6 +97,22 @@ if ($action === 'save') {
     }
 
     if ($id) {
+        // 수정일(updated_at)은 화면에 보이는 글 내용이 실제로 바뀐 경우에만 갱신 — 저장 버튼만 눌러도
+        // 매번 바뀌면 사이트맵 lastmod가 의미를 잃어 구글이 안 바뀐 글까지 다시 긁어간다
+        $old = $pdo->prepare('SELECT title, summary, cta_text, source_text, content, thumbnail_url, question,
+                title_en, summary_en, cta_text_en, source_text_en, content_en, question_en FROM blog_posts WHERE id=?');
+        $old->execute([$id]);
+        $old = $old->fetch(PDO::FETCH_ASSOC) ?: [];
+        $new = compact('title', 'summary', 'cta_text', 'source_text', 'content', 'thumbnail_url', 'question',
+                'title_en', 'summary_en', 'cta_text_en', 'source_text_en', 'content_en', 'question_en');
+        $contentChanged = false;
+        foreach ($new as $k => $v) {
+            if ((string)($old[$k] ?? '') !== (string)$v) { $contentChanged = true; break; }
+        }
+        if ($contentChanged) {
+            $pdo->prepare('UPDATE blog_posts SET updated_at = NOW() WHERE id=?')->execute([$id]);
+        }
+
         // is_featured는 목록의 별표 토글(action=toggle_featured) 전용 — 일반 저장에서는 건드리지 않는다
         $pdo->prepare('UPDATE blog_posts SET title=?, summary=?, cta_text=?, source_text=?, content=?, thumbnail_url=?,
                 series_id=?, series_order=?, related_engine=?, related_drawing_id=?, question=?, author_id=?,

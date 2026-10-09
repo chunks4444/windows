@@ -48,11 +48,13 @@ try {
         }
     }
 
-    $posts = $pdo->query("SELECT slug, created_at, (content_en IS NOT NULL AND content_en != '') AS has_en FROM blog_posts WHERE is_active=1")->fetchAll();
+    // lastmod는 본문 수정일(updated_at, 관리자 저장 시 내용이 바뀐 경우만 갱신) — 없으면 작성일.
+    // 정확한 수정일을 줘야 구글이 바뀐 글만 골라 다시 가져간다 (전체를 몰아서 재크롤하는 일이 줄어듦)
+    $posts = $pdo->query("SELECT slug, COALESCE(updated_at, created_at) AS modified_at, (content_en IS NOT NULL AND content_en != '') AS has_en FROM blog_posts WHERE is_active=1")->fetchAll();
     foreach ($posts as $p) {
         $urls[] = [
             'loc'     => '/blog/' . rawurlencode($p['slug']),
-            'lastmod' => date('Y-m-d', strtotime($p['created_at'])),
+            'lastmod' => date('Y-m-d', strtotime($p['modified_at'])),
             'priority'=> '0.6',
         ];
         // 영문 본문이 있는 글만 /en/ 주소도 올림 — 번역 전 글의 /en/ 페이지는 한글 본문 그대로라
@@ -60,7 +62,7 @@ try {
         if ($p['has_en']) {
             $urls[] = [
                 'loc'     => '/en/blog/' . rawurlencode($p['slug']),
-                'lastmod' => date('Y-m-d', strtotime($p['created_at'])),
+                'lastmod' => date('Y-m-d', strtotime($p['modified_at'])),
                 'priority'=> '0.5',
             ];
         }
