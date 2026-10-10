@@ -285,6 +285,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                                 <option value="3" <?= $cfg['doorCount'] === '3' ? 'selected' : '' ?>><?= te('3짝') ?></option>
                                 <option value="4" <?= $cfg['doorCount'] === '4' ? 'selected' : '' ?>><?= te('4짝') ?></option>
                                 <option value="6" <?= $cfg['doorCount'] === '6' ? 'selected' : '' ?>><?= te('6짝') ?></option>
+                                <option value="8" <?= $cfg['doorCount'] === '8' ? 'selected' : '' ?>><?= te('8짝') ?></option>
                             </select>
                         </div>
                     </div>

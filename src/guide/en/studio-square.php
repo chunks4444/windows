@@ -34,7 +34,7 @@ include __DIR__ . '/../_head.php';
 <table class="guide-table">
     <thead><tr><th>Item</th><th>Description</th></tr></thead>
     <tbody>
-        <tr><td><strong>Hinged · Sliding / panels</strong></td><td>Hinged 1–2 panels, sliding 1–4 or 6 panels. As with Se-sal, frame thickness and clearance are applied automatically to calculate the real panel dimensions.</td></tr>
+        <tr><td><strong>Hinged · Sliding / panels</strong></td><td>Hinged 1–2 panels, sliding 1–4, 6 or 8 panels. As with Se-sal, frame thickness and clearance are applied automatically to calculate the real panel dimensions.</td></tr>
         <tr><td><strong>Frame width / height</strong></td><td>Wall opening dimensions (width 100–10,000mm, height 400–3,000mm). The outer panel size is calculated with the frame thickness removed.</td></tr>
         <tr><td><strong>Vertical cells</strong></td><td>2–30. The number of cells (columns) dividing the panel width — the vertical slat count is cells − 1</td></tr>
         <tr><td><strong>Set horizontal slat count manually</strong></td><td>When checked, you set the horizontal slats directly with <strong>Horizontal slat count</strong> (1–60), and Vertical ratio and Auto-fit vertically are hidden.</td></tr>

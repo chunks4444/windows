@@ -16,7 +16,7 @@ $frameH    = max(15,  (int)($_POST['frameH']    ?? 60));
 $slatT     = max(8,   (int)($_POST['slatT']     ?? 12));
 $vRatio    = max(1.0, min(3.0, (float)($_POST['vRatio'] ?? 1.0)));
 $doorType  = in_array($_POST['doorType'] ?? '', ['swing','slide']) ? $_POST['doorType'] : 'swing';
-$doorCount = max(1, min(6, (int)($_POST['doorCount'] ?? 1)));
+$doorCount = max(1, min(8, (int)($_POST['doorCount'] ?? 1)));
 if ($doorType === 'swing' && $doorCount > 2) $doorCount = 2;
 if ($doorCount === 5) $doorCount = 4; // 5짝은 지원하지 않음(짝 구성 미정)
 
@@ -71,7 +71,8 @@ if ($doorType === 'slide') {
     elseif  ($doorCount === 2) $totalDoorWidth = ($outerW * 2) - $overlap;
     elseif  ($doorCount === 3) $totalDoorWidth = ($outerW * 3) - ($overlap * 2);
     elseif  ($doorCount === 4) $totalDoorWidth = ($outerW * 4) - ($overlap * 2);
-    else                       $totalDoorWidth = ($outerW * 6) - ($overlap * 4);
+    elseif  ($doorCount === 6) $totalDoorWidth = ($outerW * 6) - ($overlap * 4);
+    else                       $totalDoorWidth = ($outerW * 8) - ($overlap * 6);
 } else {
     $totalDoorWidth = $outerW * $doorCount;
 }

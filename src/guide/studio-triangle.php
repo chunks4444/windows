@@ -31,7 +31,7 @@ include __DIR__ . '/_head.php';
 <table class="guide-table">
     <thead><tr><th>항목</th><th>설명</th></tr></thead>
     <tbody>
-        <tr><td><strong>여닫이·미서기 / 짝수</strong></td><td>여닫이 1~2짝, 미서기 1~4짝 또는 6짝</td></tr>
+        <tr><td><strong>여닫이·미서기 / 짝수</strong></td><td>여닫이 1~2짝, 미서기 1~4·6·8짝</td></tr>
         <tr><td><strong>문틀 가로 / 문틀 세로</strong></td><td>벽 개구부 치수 (가로 100~10,000mm, 세로 400~3,000mm). 문틀 두께를 제외한 값이 문짝 외경으로 자동 계산됩니다.</td></tr>
         <tr><td><strong>가로 칸수</strong></td><td>2~30, <strong>짝수 단위</strong>로만 조절됩니다(기본값 4). 이 값과 살 두께로 정삼각형 크기가 정해지고, 세로 칸수는 자동 산출됩니다.</td></tr>
         <tr><td><strong>패턴 세로 방향</strong></td><td>기본 켜짐. 삼각 격자 전체를 90° 회전합니다. 켜짐/꺼짐 여부에 따라 부재 목록의 방향별 부재 명칭이 바뀝니다.</td></tr>

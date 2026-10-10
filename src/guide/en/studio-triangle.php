@@ -34,7 +34,7 @@ include __DIR__ . '/../_head.php';
 <table class="guide-table">
     <thead><tr><th>Item</th><th>Description</th></tr></thead>
     <tbody>
-        <tr><td><strong>Hinged · Sliding / panels</strong></td><td>Hinged 1–2 panels, sliding 1–4 or 6 panels</td></tr>
+        <tr><td><strong>Hinged · Sliding / panels</strong></td><td>Hinged 1–2 panels, sliding 1–4, 6 or 8 panels</td></tr>
         <tr><td><strong>Frame width / height</strong></td><td>Wall opening dimensions (width 100–10,000mm, height 400–3,000mm). The outer panel size is calculated with the frame thickness removed.</td></tr>
         <tr><td><strong>Horizontal cells</strong></td><td>2–30, adjustable in <strong>even steps only</strong> (default 4). This and the slat thickness set the triangle size, and the vertical count is derived automatically.</td></tr>
         <tr><td><strong>Pattern vertical direction</strong></td><td>On by default. Rotates the entire triangular grid 90°. The directional part names in the member list change depending on whether this is on or off.</td></tr>

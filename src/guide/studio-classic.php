@@ -48,7 +48,7 @@ include __DIR__ . '/_head.php';
     <thead><tr><th>항목</th><th>옵션</th><th>설명</th></tr></thead>
     <tbody>
         <tr><td>문 종류</td><td>여닫이 / 미서기</td><td>여닫이: 경첩 구조, 미서기: 슬라이딩 레일 구조</td></tr>
-        <tr><td>짝수</td><td>여닫이 1~2짝 · 미서기 1~4·6짝</td><td>짝이 늘수록 전체 폭을 균등 분할</td></tr>
+        <tr><td>짝수</td><td>여닫이 1~2짝 · 미서기 1~4·6·8짝</td><td>짝이 늘수록 전체 폭을 균등 분할</td></tr>
     </tbody>
 </table>
 

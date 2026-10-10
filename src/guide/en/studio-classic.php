@@ -52,7 +52,7 @@ include __DIR__ . '/../_head.php';
     <thead><tr><th>Item</th><th>Options</th><th>Description</th></tr></thead>
     <tbody>
         <tr><td>Door type</td><td>Hinged / Sliding</td><td>Hinged: hinge construction. Sliding: sliding rail construction</td></tr>
-        <tr><td>Number of panels</td><td>Hinged 1–2 · Sliding 1–4 or 6</td><td>The total width is divided evenly as you add panels</td></tr>
+        <tr><td>Number of panels</td><td>Hinged 1–2 · Sliding 1–4, 6 or 8</td><td>The total width is divided evenly as you add panels</td></tr>
     </tbody>
 </table>
 
