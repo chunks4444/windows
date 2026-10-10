@@ -174,23 +174,25 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
             <section class="rail-pane" data-pane="collection" hidden>
                 <div class="rail-pane-head"><?= te('컬렉션') ?></div>
                 <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;">
-                    <select id="collectionKrSelect" class="sb-select" style="flex:1 1 80px;">
+                    <select id="collectionKrSelect" class="sb-select" style="flex:0 0 30%;">
                         <option value="" disabled selected hidden><?= htmlspecialchars(t('col_group_kr')) ?></option>
                         <option value="kr"><?= htmlspecialchars(t('col_group_kr')) ?></option>
                     </select>
-                    <select id="collectionNewSelect" class="sb-select" style="flex:1 1 80px;">
+                    <select id="collectionNewSelect" class="sb-select" style="flex:0 0 30%;">
                         <option value="" disabled selected hidden><?= htmlspecialchars(t('col_group_new')) ?></option>
                         <option value="new"><?= htmlspecialchars(t('col_group_new')) ?></option>
                     </select>
-                    <select id="collectionJpSelect" class="sb-select" style="flex:1 1 80px;">
+                    <select id="collectionJpSelect" class="sb-select" style="flex:0 0 30%;">
                         <option value="" disabled selected hidden><?= htmlspecialchars(t('col_group_jp')) ?></option>
                         <option value="jp"><?= htmlspecialchars(t('col_group_jp')) ?></option>
                         <option value="jp-shoji"><?= htmlspecialchars(t('col_group_shoji')) ?></option>
                         <option value="jp-kumiko"><?= htmlspecialchars(t('col_group_kumiko')) ?></option>
                     </select>
+                </div>
+                <div style="display:flex;gap:6px;margin-bottom:6px;">
+                    <input type="search" class="pane-search" id="collectionSearch" placeholder="<?= te('컬렉션 검색') ?>" style="flex:1 1 auto;width:auto;margin-bottom:0;">
                     <button type="button" id="collectionLikeBtn" class="hbtn" style="flex:0 0 auto;"><i class="bi bi-heart"></i> <?= htmlspecialchars(t('col_like')) ?></button>
                 </div>
-                <input type="search" class="pane-search" id="collectionSearch" placeholder="<?= te('컬렉션 검색') ?>">
                 <div class="thumb-grid" id="collectionGrid"></div>
                 <button type="button" class="hbtn pane-more" id="collectionMore" hidden><?= te('더 보기') ?></button>
                 <a class="pane-link" href="/collection" data-lh><?= te('전체 컬렉션 보기') ?> <i class="bi bi-arrow-right"></i></a>
