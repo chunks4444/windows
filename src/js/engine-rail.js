@@ -229,10 +229,6 @@
                 load(true);
             }
         });
-        // 네이티브 <button> 대신 role="button" div라 엔터/스페이스 키 활성화를 직접 붙여준다
-        likeBtn?.addEventListener('keydown', e => {
-            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); likeBtn.click(); }
-        });
 
         loaders.collection = () => { if (!loaded) { loaded = true; load(true); } };
         more?.addEventListener('click', () => load(false));

@@ -187,7 +187,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                 </div>
                 <div id="collectionSearchRow" style="display:grid;grid-template-columns:1fr auto;gap:6px;margin-bottom:6px;align-items:center;">
                     <input type="search" class="pane-search" id="collectionSearch" placeholder="<?= te('컬렉션 검색') ?>" style="width:auto;margin-bottom:0;">
-                    <div id="collectionLikeBtn" class="hbtn" role="button" tabindex="0"><i class="bi bi-heart"></i> <?= htmlspecialchars(t('col_like')) ?></div>
+                    <button type="button" id="collectionLikeBtn" class="hbtn"><i class="bi bi-heart"></i> <?= htmlspecialchars(t('col_like')) ?></button>
                 </div>
                 <div class="thumb-grid" id="collectionGrid"></div>
                 <button type="button" class="hbtn pane-more" id="collectionMore" hidden><?= te('더 보기') ?></button>
