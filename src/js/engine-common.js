@@ -864,8 +864,16 @@
     }
     function bindCommonDefaultPersist() {
         Object.entries(COMMON_DEFAULT_IDS).forEach(([id, key]) => {
-            const el = document.getElementById(id);
-            el?.addEventListener('change', () => persistCommonDefault(key, el.value));
+            const el    = document.getElementById(id);
+            const numEl = document.getElementById('num' + key.charAt(0).toUpperCase() + key.slice(1));
+            // 가로·세로 같은 값은 슬라이더를 끌기보다 숫자칸에 직접 입력하는 경우가 많아,
+            // 슬라이더(el)뿐 아니라 숫자칸(numEl)에서도 바뀔 때 같이 기억해야 한다.
+            const persist = () => persistCommonDefault(key, (el || numEl)?.value);
+            el?.addEventListener('input', persist);
+            el?.addEventListener('change', persist);
+            numEl?.addEventListener('input', persist);
+            numEl?.addEventListener('change', persist);
+            numEl?.addEventListener('blur', persist);
         });
     }
     function applyCommonDefaults() {
