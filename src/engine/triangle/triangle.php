@@ -185,7 +185,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                         <option value="jp-kumiko"><?= htmlspecialchars(t('col_group_kumiko')) ?></option>
                     </select>
                 </div>
-                <div style="display:flex;gap:6px;margin-bottom:6px;">
+                <div id="collectionSearchRow" style="display:flex;gap:6px;margin-bottom:6px;">
                     <input type="search" class="pane-search" id="collectionSearch" placeholder="<?= te('컬렉션 검색') ?>" style="flex:1 1 auto;width:auto;margin-bottom:0;">
                     <button type="button" id="collectionLikeBtn" class="hbtn" style="flex:0 0 auto;"><i class="bi bi-heart"></i> <?= htmlspecialchars(t('col_like')) ?></button>
                 </div>
