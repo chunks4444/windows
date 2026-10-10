@@ -169,6 +169,23 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
             <div class="sb-inner">
             <section class="rail-pane" data-pane="collection" hidden>
                 <div class="rail-pane-head"><?= te('컬렉션') ?></div>
+                <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;">
+                    <select id="collectionKrSelect" class="sb-select" style="flex:1 1 80px;">
+                        <option value="" disabled selected hidden><?= htmlspecialchars(t('col_group_kr')) ?></option>
+                        <option value="kr"><?= htmlspecialchars(t('col_group_kr')) ?></option>
+                    </select>
+                    <select id="collectionNewSelect" class="sb-select" style="flex:1 1 80px;">
+                        <option value="" disabled selected hidden><?= htmlspecialchars(t('col_group_new')) ?></option>
+                        <option value="new"><?= htmlspecialchars(t('col_group_new')) ?></option>
+                    </select>
+                    <select id="collectionJpSelect" class="sb-select" style="flex:1 1 80px;">
+                        <option value="" disabled selected hidden><?= htmlspecialchars(t('col_group_jp')) ?></option>
+                        <option value="jp"><?= htmlspecialchars(t('col_group_jp')) ?></option>
+                        <option value="jp-shoji"><?= htmlspecialchars(t('col_group_shoji')) ?></option>
+                        <option value="jp-kumiko"><?= htmlspecialchars(t('col_group_kumiko')) ?></option>
+                    </select>
+                    <button type="button" id="collectionLikeBtn" class="hbtn" style="flex:0 0 auto;"><i class="bi bi-heart"></i> <?= htmlspecialchars(t('col_like')) ?></button>
+                </div>
                 <input type="search" class="pane-search" id="collectionSearch" placeholder="<?= te('컬렉션 검색') ?>">
                 <div class="thumb-grid" id="collectionGrid"></div>
                 <button type="button" class="hbtn pane-more" id="collectionMore" hidden><?= te('더 보기') ?></button>

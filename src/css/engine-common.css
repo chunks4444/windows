@@ -289,6 +289,8 @@ body.pm-generator .pm-navbar .dropdown-menu { background: var(--sidebar-bg) !imp
 .hbtn-primary:hover { background: var(--accent-active); border-color: var(--accent-active); color: var(--bg); }
 #btnOrder { background: var(--danger); border-color: var(--danger); }
 #btnOrder:hover { background: var(--danger-hover); border-color: var(--danger-hover); }
+#collectionLikeBtn.active { background: var(--danger); border-color: var(--danger); color: #fff; }
+#collectionLikeBtn.active:hover { background: var(--danger-hover); border-color: var(--danger-hover); }
 .hbtn svg { flex-shrink: 0; }
 .hbtn.save-ok  { background: var(--accent); border-color: var(--accent); color: var(--bg); transition: background .15s, color .15s; }
 .hbtn.save-err { background: var(--danger);  border-color: var(--danger);  color: var(--bg); transition: background .15s, color .15s; }

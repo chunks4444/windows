@@ -101,10 +101,24 @@
     function initCollectionPane() {
         const grid = document.getElementById('collectionGrid');
         if (!grid) return;
-        const search = document.getElementById('collectionSearch');
-        const more   = document.getElementById('collectionMore');
+        const search   = document.getElementById('collectionSearch');
+        const more     = document.getElementById('collectionMore');
+        const krSel    = document.getElementById('collectionKrSelect');
+        const newSel   = document.getElementById('collectionNewSelect');
+        const jpSel    = document.getElementById('collectionJpSelect');
+        const likeBtn  = document.getElementById('collectionLikeBtn');
         document.querySelectorAll('.pane-link[data-lh]').forEach(a => a.setAttribute('href', lh(a.getAttribute('href'))));
-        let page = 1, q = '', loaded = false, busy = false;
+        let page = 1, q = '', category = '', group = '', liked = false, loaded = false, busy = false;
+
+        // 검색/계열(우리살·새살·일본살)/좋아요는 서로 결합하지 않는 개별 필터 — 하나를 켜면 나머지는 비움
+        function clearOtherFilters({ keepFilter, keepSearch, keepLiked } = {}) {
+            if (!keepFilter) {
+                category = ''; group = '';
+                [krSel, newSel, jpSel].forEach(el => { if (el) el.value = ''; });
+            }
+            if (!keepSearch && search) search.value = '';
+            if (!keepLiked) { liked = false; likeBtn?.classList.remove('active'); }
+        }
 
         async function load(reset) {
             if (busy) return;
@@ -113,7 +127,7 @@
             try {
                 const res  = await fetch('/src/api/collection.php', {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ engine: _engineName(), q, page }),
+                    body: JSON.stringify({ engine: _engineName(), q, category, group, liked, page }),
                 });
                 const data = await res.json();
                 if (reset) grid.innerHTML = '';
@@ -142,12 +156,76 @@
             } finally { busy = false; }
         }
 
+        // 우리살/새살/일본살 셀렉트 3개는 서로 배타적 — 하나를 고르면 나머지 둘은 placeholder로 되돌린다
+        function setGroupState(newCategory, newGroup) {
+            category = newCategory || '';
+            group    = newGroup    || '';
+            if (krSel)  krSel.value  = category ? category : (group === 'kr' ? 'kr' : '');
+            if (newSel) newSel.value = group === 'new' ? 'new' : '';
+            if (jpSel)  jpSel.value  = ['jp', 'jp-shoji', 'jp-kumiko'].includes(group) ? group : '';
+        }
+
+        // 우리살 셀렉트 — 전체 계열 11종을 /src/api/drawings/categories.php에서 받아와 채운다
+        async function initGroupFilter() {
+            if (!krSel) return;
+            try {
+                const res  = await fetch('/src/api/drawings/categories.php', { headers: { 'X-Pmok-Lang': window.PMOK_LANG || 'ko' } });
+                const cats = (await res.json()).categories || [];
+                cats.filter(c => c.code !== 'PYM' && c.code !== 'ETC').forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value       = c.id;
+                    opt.textContent = (c.name || '').replace(/\s*\([^)]*\)\s*$/, '');
+                    krSel.appendChild(opt);
+                });
+            } catch {}
+            krSel.addEventListener('change', () => {
+                if (krSel.value === 'kr') setGroupState('', 'kr'); else setGroupState(krSel.value, '');
+                clearOtherFilters({ keepFilter: true });
+                load(true);
+            });
+            newSel?.addEventListener('change', () => {
+                setGroupState('', newSel.value);
+                clearOtherFilters({ keepFilter: true });
+                load(true);
+            });
+            jpSel?.addEventListener('change', () => {
+                setGroupState('', jpSel.value);
+                clearOtherFilters({ keepFilter: true });
+                load(true);
+            });
+        }
+        initGroupFilter();
+
+        const likeIcon = likeBtn?.querySelector('i');
+        likeBtn?.addEventListener('click', () => {
+            const activating = !likeBtn.classList.contains('active');
+            const activate = () => {
+                liked = true;
+                likeBtn.classList.add('active');
+                likeIcon?.classList.replace('bi-heart', 'bi-heart-fill');
+                clearOtherFilters({ keepLiked: true });
+                load(true);
+            };
+            if (activating && !token()) { pmokRequireAuth(activate); return; }
+            if (activating) activate();
+            else {
+                liked = false;
+                likeBtn.classList.remove('active');
+                likeIcon?.classList.replace('bi-heart-fill', 'bi-heart');
+                load(true);
+            }
+        });
+
         loaders.collection = () => { if (!loaded) { loaded = true; load(true); } };
         more?.addEventListener('click', () => load(false));
         let t;
         search?.addEventListener('input', () => {
             clearTimeout(t);
-            t = setTimeout(() => { q = search.value.trim(); load(true); }, 300);
+            t = setTimeout(() => {
+                q = search.value.trim();
+                if (q) clearOtherFilters({ keepSearch: true });
+                load(true);
+            }, 300);
         });
     }
 
