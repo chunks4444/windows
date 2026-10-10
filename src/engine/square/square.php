@@ -173,7 +173,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
             <div class="sb-inner">
             <section class="rail-pane" data-pane="collection" hidden>
                 <div class="rail-pane-head"><?= te('컬렉션') ?></div>
-                <div id="collectionGroupFilters" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;">
+                <div id="collectionGroupFilters" style="display:grid;grid-template-columns:repeat(3, 1fr);gap:6px;margin-bottom:6px;">
                     <select id="collectionKrSelect" class="sb-select">
                         <option value="" disabled selected hidden><?= htmlspecialchars(t('col_group_kr')) ?></option>
                         <option value="kr"><?= htmlspecialchars(t('col_group_kr')) ?></option>
@@ -189,9 +189,9 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                         <option value="jp-kumiko"><?= htmlspecialchars(t('col_group_kumiko')) ?></option>
                     </select>
                 </div>
-                <div id="collectionSearchRow" style="display:flex;gap:6px;margin-bottom:6px;">
-                    <input type="search" class="pane-search" id="collectionSearch" placeholder="<?= te('컬렉션 검색') ?>" style="flex:1 1 auto;width:auto;margin-bottom:0;">
-                    <button type="button" id="collectionLikeBtn" class="hbtn" style="flex:0 0 auto;"><i class="bi bi-heart"></i> <?= htmlspecialchars(t('col_like')) ?></button>
+                <div id="collectionSearchRow" style="display:grid;grid-template-columns:1fr auto;gap:6px;margin-bottom:6px;align-items:center;">
+                    <input type="search" class="pane-search" id="collectionSearch" placeholder="<?= te('컬렉션 검색') ?>" style="width:auto;margin-bottom:0;">
+                    <button type="button" id="collectionLikeBtn" class="hbtn"><i class="bi bi-heart"></i> <?= htmlspecialchars(t('col_like')) ?></button>
                 </div>
                 <div class="thumb-grid" id="collectionGrid"></div>
                 <button type="button" class="hbtn pane-more" id="collectionMore" hidden><?= te('더 보기') ?></button>
