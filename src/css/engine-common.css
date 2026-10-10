@@ -1438,8 +1438,10 @@ select.sb-select { display: none; }
    값이 있으면(JS가 .cs-wrap에 active를 건다) 테두리로 선택 상태를 표시 */
 .cs-wrap.active .cs-trigger { border: 1.5px solid #111; }
 /* 컬렉션 패널 우리살/새살/일본살 셀렉트 — 커스텀 드롭다운(.cs-wrap)이 width:100%라 셋이 한 줄에
-   안 들어가고 세로로 쌓였음. 숨겨진 원래 <select>가 아니라 보이는 wrap에 너비를 줘야 한다. */
-#collectionGroupFilters .cs-wrap { flex: 0 0 30%; width: auto; }
+   안 들어가고 세로로 쌓였음. 숨겨진 원래 <select>가 아니라 보이는 wrap에 너비를 줘야 한다.
+   30% 고정폭 3개는 합쳐도 90%+gap이라 오른쪽에 빈 여백이 남아 아래 검색창·썸네일과 우측이
+   안 맞았음 — 1 1 0으로 셋이 남는 폭을 똑같이 나눠 가져 우측 끝이 맞게 한다. */
+#collectionGroupFilters .cs-wrap { flex: 1 1 0; min-width: 0; width: auto; }
 /* 옆에 나란히 놓이는 검색창(.pane-search, 38px)과 높이를 맞추고, 내용보다 넓게 늘어지지 않게 폭을 좁힘 */
 #collectionLikeBtn { height: 38px; flex: 0 0 auto; padding: 0 10px; white-space: nowrap; }
 .cs-trigger svg { flex-shrink: 0; }
