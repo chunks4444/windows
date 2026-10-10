@@ -49,6 +49,8 @@ return [
     '패턴 세로 방향'          => 'Pattern vertical direction',
     '랜덤 패턴'               => 'Random pattern',
     '랜덤 생성'               => 'Generate random',
+    '지나간 패턴'             => 'Previous pattern',
+    '다음 패턴'               => 'Next pattern',
     '가변'                    => 'variable',
     '풍판'                    => 'Transom panel',
     '풍판 사용'               => 'Use transom panel',

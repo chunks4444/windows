@@ -21,6 +21,8 @@
     // ── 라인 편집 상태 ──────────────────────────────
     let deletedSegs  = new Set();
     let mondrianLayout = null; // rects/lines는 innerW·innerH 대비 0~1 비율로 저장 (가로/세로폭이 바뀌어도 형태 유지)
+    let mondrianHistory    = []; // '랜덤 생성'·'초기화' 할 때마다 쌓이는 기록 — 저장(DB) 아니고 브라우저에만 임시로 남는 기억
+    let mondrianHistoryIdx = -1;
     function mondrianRectPx(r, iw, ih) {
         return { x: r.x * iw, y: r.y * ih, w: r.w * iw, h: r.h * ih, color: r.color };
     }
@@ -2417,7 +2419,8 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
     const WALLPAPER_ENGINE  = 'mondrian';
     const CURRENT_TITLE_KEY = 'pmok_mondrian_current_title';
     const NAME_KEY          = 'pmok_mondrian_name';
-    const MONDRIAN_KEY      = 'pmok_mondrian_layout';
+    const MONDRIAN_HISTORY_KEY = 'pmok_mondrian_history';
+    const MONDRIAN_HISTORY_MAX = 20;
     const MAX_VERSIONS      = 20;
 
     let workAccum = 0;
@@ -2723,7 +2726,12 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
         if (mondrianLayout && mondrianLayout.rects.some(r => r.w > 2 || r.h > 2)) {
             mondrianLayout = null;
         }
+        // 도면을 불러온 시점이므로 그 전까지 쌓여있던 '지나간 랜덤 패턴' 기록은 지금 패턴 하나로 새로 시작
+        mondrianHistory    = [mondrianLayout ? JSON.parse(JSON.stringify(mondrianLayout)) : null];
+        mondrianHistoryIdx = 0;
+        _saveMondrianHistory();
         _updateMondrianBtn();
+        _updateMondrianHistoryButtons();
         deletedSegs  = new Set(p.deletedSegs || []);
         addedLines   = p.addedLines || [];
         addLineStart = null;
@@ -2923,20 +2931,27 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
         // 새 도면으로 처음 들어왔을 때(불러온 기존 패턴이 없을 때)는 빈 격자 대신
         // 바로 몬드리안 패턴이 보이게 자동 생성 — geo가 채워진 뒤(draw 완료 후)라야
         // generateMondrian()의 innerW/innerH 가드를 통과한다.
-        // 단, 저장 안 한 상태로 새로고침/재방문한 경우라면 직전에 보던 랜덤 패턴을
-        // 그대로 기억해서 보여주고, 완전히 새로 생성하지는 않는다.
+        // 단, 저장 안 한 상태로 새로고침/재방문한 경우라면 직전에 보고 있던(또는 뒤로
+        // 돌려보던) 랜덤 패턴과 그 기록을 그대로 복원 — 완전히 새로 생성하지는 않는다.
         if (!mondrianLayout) {
             let restored = false;
             try {
-                const saved = localStorage.getItem(MONDRIAN_KEY);
+                const saved = localStorage.getItem(MONDRIAN_HISTORY_KEY);
                 if (saved) {
-                    mondrianLayout = JSON.parse(saved);
-                    _mondrianVersion++;
-                    _updateMondrianBtn();
-                    draw();
-                    restored = true;
+                    const parsed = JSON.parse(saved);
+                    if (Array.isArray(parsed.h) && parsed.h.length) {
+                        mondrianHistory    = parsed.h;
+                        mondrianHistoryIdx = Math.min(Math.max(parsed.i ?? parsed.h.length - 1, 0), parsed.h.length - 1);
+                        const snap = mondrianHistory[mondrianHistoryIdx];
+                        mondrianLayout = snap ? JSON.parse(JSON.stringify(snap)) : null;
+                        _mondrianVersion++;
+                        _updateMondrianBtn();
+                        _updateMondrianHistoryButtons();
+                        draw();
+                        restored = true;
+                    }
                 }
-            } catch { mondrianLayout = null; }
+            } catch { mondrianHistory = []; mondrianHistoryIdx = -1; }
             if (!restored) generateMondrian();
         }
     }
@@ -3125,6 +3140,7 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
         scaleFactor = 1.0; panX = 0; panY = 0;
         clearThumbnails();
         renderVerList(); closeDrawingManager();
+        mondrianHistory = []; mondrianHistoryIdx = -1; // 새 도면은 이전 패턴 기록과 섞이지 않게 기록도 새로 시작
         await draw();
         if (!mondrianLayout) generateMondrian();
     }
@@ -3230,24 +3246,66 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
                 ? { axis: 'v', pos: l.pos / W, from: l.from / H, to: l.to / H }
                 : { axis: 'h', pos: l.pos / H, from: l.from / W, to: l.to / W }),
         };
-        _persistMondrianLayout();
+        _pushMondrianHistory();
         _mondrianVersion++;
         _updateMondrianBtn();
         draw();
     }
 
-    // 저장 안 한 상태로 새로고침해도 방금 보던 랜덤 패턴을 다시 볼 수 있도록 기억해둠
+    // '랜덤 생성'·'초기화'처럼 아예 다른 패턴으로 바뀌는 시점에 기록을 한 칸 쌓는다.
+    // 저장 버튼을 안 눌러도 ◀▶로 지나간 패턴을 다시 불러볼 수 있게 — DB 저장이 아니라
+    // 브라우저에만 남는 임시 기억이라, 뒤로 돌아간 상태에서 새로 생성하면 그 뒤 기록은 버려진다.
+    function _pushMondrianHistory() {
+        mondrianHistory = mondrianHistory.slice(0, mondrianHistoryIdx + 1);
+        mondrianHistory.push(mondrianLayout ? JSON.parse(JSON.stringify(mondrianLayout)) : null);
+        if (mondrianHistory.length > MONDRIAN_HISTORY_MAX) {
+            mondrianHistory = mondrianHistory.slice(mondrianHistory.length - MONDRIAN_HISTORY_MAX);
+        }
+        mondrianHistoryIdx = mondrianHistory.length - 1;
+        _saveMondrianHistory();
+        _updateMondrianHistoryButtons();
+    }
+
+    // 색칠·선 드래그처럼 "지금 보는 패턴"을 다듬는 수정 — 기록을 새로 쌓지 않고 현재 칸만 갱신
     function _persistMondrianLayout() {
+        if (mondrianHistoryIdx >= 0 && mondrianHistoryIdx < mondrianHistory.length) {
+            mondrianHistory[mondrianHistoryIdx] = mondrianLayout ? JSON.parse(JSON.stringify(mondrianLayout)) : null;
+        }
+        _saveMondrianHistory();
+    }
+
+    function _saveMondrianHistory() {
         try {
-            if (mondrianLayout) localStorage.setItem(MONDRIAN_KEY, JSON.stringify(mondrianLayout));
-            else localStorage.removeItem(MONDRIAN_KEY);
+            localStorage.setItem(MONDRIAN_HISTORY_KEY, JSON.stringify({ h: mondrianHistory, i: mondrianHistoryIdx }));
         } catch { /* 저장 공간 꽉 찬 경우 등 — 무시해도 기능엔 지장 없음 */ }
     }
 
+    function _updateMondrianHistoryButtons() {
+        const prevBtn = document.getElementById('btnMondrianPrev');
+        const nextBtn = document.getElementById('btnMondrianNext');
+        if (prevBtn) prevBtn.disabled = mondrianHistoryIdx <= 0;
+        if (nextBtn) nextBtn.disabled = mondrianHistoryIdx < 0 || mondrianHistoryIdx >= mondrianHistory.length - 1;
+    }
+
+    function goMondrianHistory(delta) {
+        const ni = mondrianHistoryIdx + delta;
+        if (ni < 0 || ni >= mondrianHistory.length) return;
+        mondrianHistoryIdx = ni;
+        const snap = mondrianHistory[ni];
+        mondrianLayout = snap ? JSON.parse(JSON.stringify(snap)) : null;
+        _saveMondrianHistory();
+        _mondrianVersion++;
+        _updateMondrianBtn();
+        _updateMondrianHistoryButtons();
+        draw();
+    }
+
     document.getElementById('btnMondrian').addEventListener('click', generateMondrian);
+    document.getElementById('btnMondrianPrev')?.addEventListener('click', () => goMondrianHistory(-1));
+    document.getElementById('btnMondrianNext')?.addEventListener('click', () => goMondrianHistory(1));
     document.getElementById('btnMondrianClear').addEventListener('click', () => {
         mondrianLayout = null;
-        _persistMondrianLayout();
+        _pushMondrianHistory();
         _mondrianVersion++;
         _updateMondrianBtn();
         draw();

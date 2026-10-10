@@ -377,7 +377,9 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                     <div class="ctrl" style="margin-top:6px;">
                         <div class="ctrl-header"><span class="ctrl-label"><?= te('랜덤 패턴') ?></span></div>
                         <div style="display:flex;gap:6px;width:100%;">
+                            <button id="btnMondrianPrev" type="button" class="hbtn" style="flex:0 0 auto;padding:0 10px;" title="<?= te('지나간 패턴') ?>" disabled><i class="bi bi-chevron-left"></i></button>
                             <button id="btnMondrian" type="button" class="hbtn" style="flex:1;justify-content:center;"><?= te('랜덤 생성') ?></button>
+                            <button id="btnMondrianNext" type="button" class="hbtn" style="flex:0 0 auto;padding:0 10px;" title="<?= te('다음 패턴') ?>" disabled><i class="bi bi-chevron-right"></i></button>
                             <button id="btnMondrianClear" type="button" class="hbtn" style="display:none;flex:1;justify-content:center;"><?= te('초기화') ?></button>
                         </div>
                     </div>
