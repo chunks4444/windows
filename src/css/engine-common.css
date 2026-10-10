@@ -1454,6 +1454,10 @@ select.sb-select { display: none; }
     white-space: nowrap;
     flex-shrink: 0;
 }
+/* Grid 아이템은 기본이 min-width:auto라, 옆의 좋아요(104px 고정)가 검색창을 밀어내도
+   검색창이 그 이하로는 안 줄어들어 줄 전체가 우측 여백(16px) 밖으로 넘쳐 패널 끝에
+   붙어 보였음 — 자유롭게 줄어들 수 있게 0으로 풀어준다. */
+#collectionSearchRow .pane-search { min-width: 0; }
 .cs-trigger svg { flex-shrink: 0; }
 .cs-dropdown {
     display: none;
