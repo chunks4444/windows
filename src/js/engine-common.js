@@ -852,6 +852,33 @@
         animatePanelResize();
     }
 
+    // 문틀 가로/세로, 울거미 두께, 칸수, 문짝종류·짝수 — 7개 엔진에 전부 같은 의미로 있는 값들이라
+    // 엔진을 바꿔도(= 새 페이지 로드) 마지막으로 쓰던 값을 그대로 이어서 보여준다.
+    // 저장된 도면을 불러오거나 "새 도면"으로 초기화할 때는 적용하지 않는다 — 처음 들어왔을 때만.
+    const COMMON_DEFAULT_IDS = { txtW: 'W', txtH: 'H', txtFrame: 'frame', txtFrameH: 'frameH', txtCols: 'cols', txtDoorType: 'doorType', txtDoorCount: 'doorCount' };
+    function persistCommonDefault(key, value) {
+        try { localStorage.setItem('pmok_common_' + key, value); } catch {}
+    }
+    function readCommonDefault(key) {
+        try { return localStorage.getItem('pmok_common_' + key); } catch { return null; }
+    }
+    function bindCommonDefaultPersist() {
+        Object.entries(COMMON_DEFAULT_IDS).forEach(([id, key]) => {
+            const el = document.getElementById(id);
+            el?.addEventListener('change', () => persistCommonDefault(key, el.value));
+        });
+    }
+    function applyCommonDefaults() {
+        Object.entries(COMMON_DEFAULT_IDS).forEach(([id, key]) => {
+            const el = document.getElementById(id);
+            const saved = readCommonDefault(key);
+            if (!el || saved === null) return;
+            el.value = saved;
+            const numEl = document.getElementById('num' + key.charAt(0).toUpperCase() + key.slice(1));
+            if (numEl) numEl.value = saved;
+        });
+    }
+
     function updateDoorCountOptions() {
         const isSwing = txtDoorType.value === 'swing';
         Array.from(txtDoorCount.options).forEach(opt => {

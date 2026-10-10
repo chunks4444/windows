@@ -2409,6 +2409,7 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
         cloneDoorPatternToNewDoors(lastDrawnDoorCount, parseInt(txtDoorCount.value));
         draw();
     });
+    bindCommonDefaultPersist();
     updateDoorCountOptions();
 
     // 작성일 / 수정일
@@ -2926,6 +2927,8 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
         localStorage.removeItem(NAME_KEY);
         document.getElementById('drawingName').value = '';
         document.getElementById('verLabel').textContent = '—';
+        applyCommonDefaults();
+        updateDoorCountOptions();
         renderVerList();
         await draw();
         // 새 도면으로 처음 들어왔을 때(불러온 기존 패턴이 없을 때)는 빈 격자 대신

@@ -2032,6 +2032,7 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
         cloneDoorPatternToNewDoors(lastDrawnDoorCount, parseInt(txtDoorCount.value));
         draw();
     });
+    bindCommonDefaultPersist();
     document.getElementById('chkRotate').addEventListener('change', e => {
         rotateOn = e.target.checked;
         draw();
@@ -2523,6 +2524,10 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
         localStorage.removeItem(NAME_KEY);
         document.getElementById('drawingName').value = '';
         document.getElementById('verLabel').textContent = '—';
+        applyCommonDefaults();
+        // 다른 엔진에서 넘어온 칸수는 짝수일 수 있는데, 육모는 홀수여야 해서 다시 맞춰준다
+        setSlider('txtCols', 'numCols', toOdd(Math.max(1, parseInt(txtCols.value) || 3)));
+        updateDoorCountOptions();
         renderVerList();
         draw();
     }

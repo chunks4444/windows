@@ -1973,6 +1973,7 @@ async function draw() {
         cloneDoorPatternToNewDoors(lastDrawnDoorCount, parseInt(txtDoorCount.value));
         draw();
     });
+    bindCommonDefaultPersist();
     document.getElementById('chkRotate').addEventListener('change', e => {
         rotateOn = e.target.checked;
         draw();
@@ -2470,6 +2471,8 @@ async function draw() {
         localStorage.removeItem(NAME_KEY);
         document.getElementById('drawingName').value = '';
         document.getElementById('verLabel').textContent = '—';
+        applyCommonDefaults();
+        updateDoorCountOptions();
         renderVerList();
         draw();
     }

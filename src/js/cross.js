@@ -1952,6 +1952,7 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
         cloneDoorPatternToNewDoors(lastDrawnDoorCount, parseInt(txtDoorCount.value));
         draw();
     });
+    bindCommonDefaultPersist();
     updateDoorCountOptions();
 
     // 작성일 / 수정일
@@ -2450,6 +2451,8 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
         localStorage.removeItem(NAME_KEY);
         document.getElementById('drawingName').value = '';
         document.getElementById('verLabel').textContent = '—';
+        applyCommonDefaults();
+        updateDoorCountOptions();
         renderVerList();
         draw();
     }
