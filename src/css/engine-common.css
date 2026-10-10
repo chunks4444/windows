@@ -1442,8 +1442,8 @@ select.sb-select { display: none; }
    30% 고정폭 3개는 합쳐도 90%+gap이라 오른쪽에 빈 여백이 남아 아래 검색창·썸네일과 우측이
    안 맞았음 — 1 1 0으로 셋이 남는 폭을 똑같이 나눠 가져 우측 끝이 맞게 한다. */
 #collectionGroupFilters .cs-wrap { flex: 1 1 0; min-width: 0; width: auto; }
-/* 옆에 나란히 놓이는 검색창(.pane-search, 38px)과 높이를 맞춤 */
-#collectionLikeBtn { height: 38px; flex: 0 0 auto; padding: 0 16px; white-space: nowrap; }
+/* 옆에 나란히 놓이는 검색창(.pane-search, 38px)과 높이를 맞추고, 패널 우측 끝과의 여백을 넉넉히 둠 */
+#collectionLikeBtn { height: 38px; flex: 0 0 auto; padding: 0 16px; margin-right: 8px; white-space: nowrap; }
 .cs-trigger svg { flex-shrink: 0; }
 .cs-dropdown {
     display: none;
