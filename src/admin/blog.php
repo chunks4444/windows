@@ -194,7 +194,7 @@ foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
                     </div>
                     <div class="adm-mfield">
                         <label>출처 <span style="font-size:11px;color: var(--text);font-weight:400;">(이 글이 참고한 출처, 비워두면 본문에 노출 안 됨. 여러 개면 줄바꿈으로 구분 — 리스트로 노출됩니다)</span></label>
-                        <textarea id="postSourceText" class="blog-textarea" rows="3" maxlength="500" placeholder="예: OOO 홈페이지&#10;OOO(2024), 저자명 등"></textarea>
+                        <textarea id="postSourceText" class="blog-textarea" rows="3" maxlength="2000" placeholder="예: OOO 홈페이지&#10;OOO(2024), 저자명 등"></textarea>
                     </div>
                 </div>
             </div>
@@ -269,7 +269,7 @@ foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
                     </div>
                     <div class="adm-mfield">
                         <label>출처 (영문)</label>
-                        <textarea id="postSourceTextEn" class="blog-textarea" rows="3" maxlength="1000"></textarea>
+                        <textarea id="postSourceTextEn" class="blog-textarea" rows="3" maxlength="4000"></textarea>
                     </div>
                     <div class="adm-mfield">
                         <label>질문형 인덱스용 한 줄 질문 (영문)</label>
