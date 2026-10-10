@@ -57,13 +57,14 @@ include __DIR__ . '/_head.php';
     <thead><tr><th>버튼</th><th>기능</th></tr></thead>
     <tbody>
         <tr><td><span class="guide-ui">랜덤 생성</span></td><td>내경 전체를 무작위로 나눠 새 패턴을 만듭니다. 누를 때마다 다른 구성이 나옵니다.</td></tr>
-        <tr><td><span class="guide-ui">초기화</span></td><td>랜덤 패턴을 걷어내고 균등 격자로 되돌립니다. 랜덤 패턴이 있을 때만 보입니다.</td></tr>
+        <tr><td><span class="guide-ui">◀ / ▶</span></td><td>지나간 패턴과 다음 패턴을 다시 불러봅니다. 저장 버튼을 누르지 않아도 방금까지 보던 패턴들을 오가며 "이게 좋다 저게 좋다" 비교할 수 있습니다.</td></tr>
+        <tr><td><span class="guide-ui">초기화</span></td><td>랜덤 패턴을 걷어내고 균등 격자로 되돌립니다. 랜덤 패턴이 있을 때만 보이고, 이 역시 ◀로 되돌릴 수 있습니다.</td></tr>
     </tbody>
 </table>
 
 <div class="guide-note">
     <i class="bi bi-info-circle-fill"></i>
-    <span>랜덤 생성을 다시 누르거나 초기화하면 지금 패턴은 사라집니다. 마음에 드는 결과가 나오면 먼저 저장하세요.</span>
+    <span>◀ ▶ 로 오가는 기록은 이 브라우저에만 임시로 남는 것이라 저장은 아닙니다 — 다른 기기·브라우저로 열면 보이지 않고, 새 도면을 시작하면 기록도 새로 시작됩니다. 마음에 드는 패턴을 찾으면 저장하세요.</span>
 </div>
 
 <h2>선 다듬기</h2>

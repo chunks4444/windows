@@ -57,13 +57,14 @@ include __DIR__ . '/../_head.php';
     <thead><tr><th>Button</th><th>Function</th></tr></thead>
     <tbody>
         <tr><td><span class="guide-ui">Generate random</span></td><td>Divides the whole inner area at random to make a new pattern. Each click gives a different layout.</td></tr>
-        <tr><td><span class="guide-ui">Reset</span></td><td>Clears the random pattern and returns to an even grid. Only shown while a random pattern exists.</td></tr>
+        <tr><td><span class="guide-ui">◀ / ▶</span></td><td>Step back through previous patterns, or forward again, without saving — compare the ones you've just seen.</td></tr>
+        <tr><td><span class="guide-ui">Reset</span></td><td>Clears the random pattern and returns to an even grid. Only shown while a random pattern exists, and this too can be undone with ◀.</td></tr>
     </tbody>
 </table>
 
 <div class="guide-note">
     <i class="bi bi-info-circle-fill"></i>
-    <span>Generating again or resetting discards the current pattern. Save as soon as you get one you like.</span>
+    <span>The ◀ ▶ history is kept only in this browser, temporarily — it's not a save. It won't appear on another device or browser, and starting a new drawing resets it. Save once you find a pattern you like.</span>
 </div>
 
 <h2>Refining Lines</h2>
