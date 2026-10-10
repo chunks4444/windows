@@ -1870,14 +1870,9 @@ async function draw() {
             } else {
                 const same = start.xi === addLineStart.xi && start.yi === addLineStart.yi;
                 if (same) return;
-                // 라인은 수직/수평으로만 그어지게 — 시작점에서 더 많이 벌어진 축만 반영하고
-                // 반대 축은 시작점 값 그대로 고정한다 (대각선 방지).
-                const startPt = nodeIdxToCtx(addLineStart.xi, addLineStart.yi);
-                const horizontal = Math.abs(coord.x - startPt.x) >= Math.abs(coord.y - startPt.y);
-                const xi2 = horizontal ? start.xi : addLineStart.xi;
-                const yi2 = horizontal ? addLineStart.yi : start.yi;
-                if (xi2 === addLineStart.xi && yi2 === addLineStart.yi) return; // 축 고정 후 길이 0이면 무시
-                addedLines.push({ xi1: addLineStart.xi, yi1: addLineStart.yi, xi2, yi2 });
+                // 정자살은 대각선 포함 임의의 두 교점을 그대로 잇는다 (몬드리안 등
+                // 다른 엔진과 달리 수직/수평 제한 없음).
+                addedLines.push({ xi1: addLineStart.xi, yi1: addLineStart.yi, xi2: start.xi, yi2: start.yi });
                 addLineStart = null;
                 draw();
             }
