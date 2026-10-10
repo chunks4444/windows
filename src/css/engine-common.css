@@ -1434,6 +1434,9 @@ select.sb-select { display: none; }
     transition: background 0.12s;
 }
 .cs-trigger:hover { background: rgba(var(--bg-rgb), 0.06); }
+/* 컬렉션 계열 필터처럼 "placeholder와 '전체' 옵션 글자가 같아 선택했는지 안 보이는" 셀렉트용 —
+   값이 있으면(JS가 .cs-wrap에 active를 건다) 테두리로 선택 상태를 표시 */
+.cs-wrap.active .cs-trigger { border: 1.5px solid var(--accent); }
 .cs-trigger svg { flex-shrink: 0; }
 .cs-dropdown {
     display: none;

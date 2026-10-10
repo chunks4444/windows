@@ -110,11 +110,19 @@
         document.querySelectorAll('.pane-link[data-lh]').forEach(a => a.setAttribute('href', lh(a.getAttribute('href'))));
         let page = 1, q = '', category = '', group = '', liked = false, loaded = false, busy = false;
 
+        // 네이티브 <select class="sb-select">는 engine-common.js가 커스텀 드롭다운(.cs-wrap)으로
+        // 감싸고 화면에서 숨긴다 — 실제로 보이는 건 그 wrap이라, active 표시도 거기 걸어야 보인다.
+        function setSelectActive(sel, isActive) {
+            if (!sel) return;
+            (sel.previousElementSibling?.classList.contains('cs-wrap') ? sel.previousElementSibling : sel)
+                .classList.toggle('active', isActive);
+        }
+
         // 검색/계열(우리살·새살·일본살)/좋아요는 서로 결합하지 않는 개별 필터 — 하나를 켜면 나머지는 비움
         function clearOtherFilters({ keepFilter, keepSearch, keepLiked } = {}) {
             if (!keepFilter) {
                 category = ''; group = '';
-                [krSel, newSel, jpSel].forEach(el => { if (el) el.value = ''; });
+                [krSel, newSel, jpSel].forEach(el => { if (el) { el.value = ''; setSelectActive(el, false); } });
             }
             if (!keepSearch && search) search.value = '';
             if (!keepLiked) { liked = false; likeBtn?.classList.remove('active'); }
@@ -156,13 +164,17 @@
             } finally { busy = false; }
         }
 
-        // 우리살/새살/일본살 셀렉트 3개는 서로 배타적 — 하나를 고르면 나머지 둘은 placeholder로 되돌린다
+        // 우리살/새살/일본살 셀렉트 3개는 서로 배타적 — 하나를 고르면 나머지 둘은 placeholder로 되돌린다.
+        // 지금 뭘 골랐는지 셀렉트 글자만 봐서는 잘 안 보여서, 고른 셀렉트에 active 클래스로 테두리를 강조한다.
         function setGroupState(newCategory, newGroup) {
             category = newCategory || '';
             group    = newGroup    || '';
-            if (krSel)  krSel.value  = category ? category : (group === 'kr' ? 'kr' : '');
-            if (newSel) newSel.value = group === 'new' ? 'new' : '';
-            if (jpSel)  jpSel.value  = ['jp', 'jp-shoji', 'jp-kumiko'].includes(group) ? group : '';
+            const krVal = category ? category : (group === 'kr' ? 'kr' : '');
+            const newVal = group === 'new' ? 'new' : '';
+            const jpVal  = ['jp', 'jp-shoji', 'jp-kumiko'].includes(group) ? group : '';
+            if (krSel)  { krSel.value  = krVal;  setSelectActive(krSel, !!krVal); }
+            if (newSel) { newSel.value = newVal; setSelectActive(newSel, !!newVal); }
+            if (jpSel)  { jpSel.value  = jpVal;  setSelectActive(jpSel, !!jpVal); }
         }
 
         // 우리살 셀렉트 — 전체 계열 11종을 /src/api/drawings/categories.php에서 받아와 채운다
