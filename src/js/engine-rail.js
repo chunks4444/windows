@@ -133,9 +133,11 @@
             busy = true;
             if (reset) { page = 1; grid.innerHTML = emptyMsg(_t('불러오는 중…')); }
             try {
+                // 메인 /collection 페이지와 같은 결과(숫자)가 나오도록 엔진으로 범위를 제한하지 않는다 —
+                // 클릭하면 어차피 각 도면이 속한 엔진으로 이동하므로 여기서 미리 좁힐 필요가 없다.
                 const res  = await fetch('/src/api/collection.php', {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ engine: _engineName(), q, category, group, liked, page }),
+                    body: JSON.stringify({ q, category, group, liked, page }),
                 });
                 const data = await res.json();
                 if (reset) grid.innerHTML = '';
