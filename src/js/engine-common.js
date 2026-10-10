@@ -846,6 +846,9 @@
     function toggleSidebar() {
         sidebar.classList.toggle('collapsed');
         btnSidebarTab?.classList.toggle('collapsed');
+        // 사용자가 직접 연 상태라면, 다른 엔진으로 넘어가거나 컬렉션에서 도면을 열어도
+        // (즉 새 페이지 로드에서도) 그 상태를 유지하도록 기억해둔다. 기본값은 닫힘 그대로.
+        try { localStorage.setItem('pmok_rail_open', sidebar.classList.contains('collapsed') ? '0' : '1'); } catch {}
         animatePanelResize();
     }
 
@@ -1531,11 +1534,15 @@
 (function () {
     document.addEventListener('DOMContentLoaded', () => {
         if (!window.matchMedia('(max-width: 1200px)').matches) return;
+        // 좌측 패널(레일)은 사용자가 직접 열어뒀던 상태라면 엔진을 바꾸거나 컬렉션에서
+        // 도면을 열어도(=새 페이지 로드) 접지 않고 유지한다 — 기본값(한 번도 안 건드렸으면)은 접힘.
+        let railWantOpen = false;
+        try { railWantOpen = localStorage.getItem('pmok_rail_open') === '1'; } catch {}
         // 초기 접힘은 CSS transition 없이 즉시 처리해야 resizeCanvas가 정확한 폭을 읽음
         const noAnim = document.createElement('style');
         noAnim.textContent = '.controls,.controls-right{transition:none!important}';
         document.head.appendChild(noAnim);
-        if (sidebar && !sidebar.classList.contains('collapsed')) {
+        if (!railWantOpen && sidebar && !sidebar.classList.contains('collapsed')) {
             sidebar.classList.add('collapsed');
             if (btnSidebarTab) btnSidebarTab.classList.add('collapsed');
         }

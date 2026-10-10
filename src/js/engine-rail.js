@@ -82,9 +82,12 @@
         initRenderPane();
 
         show(saved || 'door');
-        // 처음 열 때는 패널을 접어 캔버스를 넓게 — 주소에 #pane=으로 탭을 지정해 들어온 경우만 펼친 채로.
+        // 처음 열 때는 패널을 접어 캔버스를 넓게 — 주소에 #pane=으로 탭을 지정해 들어왔거나,
+        // 사용자가 다른 엔진/컬렉션에서 직접 펼쳐뒀던 상태라면 그대로 펼친 채로 둔다.
         // 애니메이션 없이 즉시 접어야 첫 resizeCanvas가 넓어진 폭을 읽는다(모바일 초기화와 같은 방식)
-        if (!/#pane=\w+/.test(location.hash) && !panel.classList.contains('collapsed')) {
+        let railWantOpen = false;
+        try { railWantOpen = localStorage.getItem('pmok_rail_open') === '1'; } catch {}
+        if (!/#pane=\w+/.test(location.hash) && !railWantOpen && !panel.classList.contains('collapsed')) {
             const noAnim = document.createElement('style');
             noAnim.textContent = '.controls,.panel-fold,.panel-fold i,.pm-engine-story-link{transition:none!important}';
             document.head.appendChild(noAnim);
