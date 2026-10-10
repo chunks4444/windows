@@ -852,10 +852,10 @@
         animatePanelResize();
     }
 
-    // 문틀 가로/세로, 울거미 두께, 칸수, 문짝종류·짝수 — 7개 엔진에 전부 같은 의미로 있는 값들이라
+    // 문틀 가로/세로, 울거미 두께, 살두께, 칸수, 문짝종류·짝수 — 7개 엔진에 전부 같은 의미로 있는 값들이라
     // 엔진을 바꿔도(= 새 페이지 로드) 마지막으로 쓰던 값을 그대로 이어서 보여준다.
     // 저장된 도면을 불러오거나 "새 도면"으로 초기화할 때는 적용하지 않는다 — 처음 들어왔을 때만.
-    const COMMON_DEFAULT_IDS = { txtW: 'W', txtH: 'H', txtFrame: 'frame', txtFrameH: 'frameH', txtCols: 'cols', txtDoorType: 'doorType', txtDoorCount: 'doorCount' };
+    const COMMON_DEFAULT_IDS = { txtW: 'W', txtH: 'H', txtFrame: 'frame', txtFrameH: 'frameH', txtSlat: 'slat', txtCols: 'cols', txtDoorType: 'doorType', txtDoorCount: 'doorCount' };
     function persistCommonDefault(key, value) {
         try { localStorage.setItem('pmok_common_' + key, value); } catch {}
     }
