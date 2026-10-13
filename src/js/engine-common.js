@@ -1487,7 +1487,10 @@
             facePaintIsDown = true;
             const coord = screenToCtxCoord(e.clientX, e.clientY);
             paintFaceCell(coord.x, coord.y, false);
-            gesture = { type: 'paint', pointerId: e.pointerId };
+            // startX/Y: 드래그로 칠하기가 이어지는 동안 손떨림(클릭 순간의 미세한 마우스 이동)으로
+            // onPointerMove가 한 번 더 불려서 칸 경계에 걸친 클릭(예: 십자살의 중심/모서리 다이아몬드
+            // 양쪽 다 가능한 위치)이 인접한 두 칸에 겹쳐 칠해지는 걸 막는다 — PAINT_MOVE_THRESHOLD 참고.
+            gesture = { type: 'paint', pointerId: e.pointerId, startX: e.clientX, startY: e.clientY };
             return;
         }
         if (typeof framePaintMode !== 'undefined' && framePaintMode) {
@@ -1554,6 +1557,11 @@
         if (e.pointerType !== 'mouse') e.preventDefault();
 
         if (gesture.type === 'paint' && facePaintIsDown && facePaintMode) {
+            // 클릭 순간의 손떨림(1~2px)으로 생기는 pointermove까지 다시 칠하면, 두 칸의 경계에
+            // 걸친 클릭(예: 십자살 중심/모서리 다이아몬드처럼 애매한 위치)이 인접한 칸까지 같이
+            // 칠해질 수 있다 — 실제로 드래그로 번진 경우만 다시 칠하도록 최소 이동거리를 둔다.
+            const PAINT_MOVE_THRESHOLD = 4; // px
+            if (Math.hypot(e.clientX - (gesture.startX ?? e.clientX), e.clientY - (gesture.startY ?? e.clientY)) < PAINT_MOVE_THRESHOLD) return;
             const coord = screenToCtxCoord(e.clientX, e.clientY);
             paintFaceCell(coord.x, coord.y, false);
         } else if (gesture.type === 'framePaint' && typeof framePaintMode !== 'undefined' && framePaintMode) {
