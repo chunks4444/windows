@@ -485,8 +485,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                                 </div>
                             </div>
                         </div>
-                        <?php /* 면칠하기 임시 비활성화 (복구: display:none 제거) */ ?>
-                        <div class="color-row-stack" style="margin-top:6px;display:none;">
+                        <div class="color-row-stack" style="margin-top:6px;">
                             <span class="color-label"><?= te('면 컬러') ?></span>
                             <div class="color-picker-wrap">
                                 <button class="color-preview-btn" id="facePreviewBtn">
@@ -496,8 +495,8 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                                 <div class="color-popup" id="facePopup"></div>
                             </div>
                         </div>
-                        <div style="display:flex;gap:6px;margin-top:6px;display:none;">
-                            <button id="btnFacePaint" type="button" class="hbtn" style="flex:1;justify-content:center;font-size:11px;display:none;"><?= te('면컬러 칠하기') ?></button>
+                        <div style="display:flex;gap:6px;margin-top:6px;">
+                            <button id="btnFacePaint" type="button" class="hbtn" style="flex:1;justify-content:center;font-size:11px;"><?= te('면컬러 칠하기') ?></button>
                             <button id="btnFaceClear" type="button" class="hbtn" style="flex-shrink:0;padding:0 8px;font-size:11px;display:none;width:auto;justify-content:center;"><?= te('초기화') ?></button>
                         </div>
                     </div>
