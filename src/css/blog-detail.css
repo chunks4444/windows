@@ -262,6 +262,8 @@ html[lang="en"] .bd-body {
 }
 .bd-source-list li { margin-bottom: .1rem; }
 .bd-source-license { margin-bottom: 0; }
+.bd-feedback { margin-top: .3rem; }
+.bd-feedback a { color: inherit; text-decoration: underline; }
 
 /* ── 하단 CTA ───────────────────────────────────────────── */
 .bd-cta {

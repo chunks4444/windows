@@ -387,6 +387,7 @@ return [
     'bd_source_prefix'        => '출처: %s',
     'bd_glossary_title'       => '용어 풀이',
     'bd_license'              => '워크그룹 평목 블로그의 글과 기록은 출처(pyeongmok.com)를 밝히고 자유롭게 인용 및 발췌하실 수 있습니다.',
+    'bd_feedback'             => '글에 잘못된 내용이 있거나 의견이 있으시면 이메일(%s)로 알려주세요.',
     'bd_engine_box_title'     => '이 살의 이야기, 직접 만들어보세요',
     'bd_engine_box_desc'      => '글에서 다룬 %s 패턴을 스튜디오에서 바로 조작해볼 수 있습니다.',
     'bd_open_in_studio'       => '스튜디오에서 열기',
