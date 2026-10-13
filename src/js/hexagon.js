@@ -14,6 +14,8 @@
     let showMuntol          = true;
     let selectedSlatColor  = '#272726';
     let faceColorMap       = null;
+    let faceMaterialMap    = null;
+    let pendingFaceMaterial = null; // 면칠하기 브러시에 물려 있는 재질(한지/유리) — null이면 색만 칠함
     let facePaintMode      = false;
     let facePaintIsDown    = false;
 
@@ -50,8 +52,15 @@
     const muntolColorPicker = buildColorPopup('muntolPopup', 'muntolPreviewDot', 'muntolPreviewName', 'muntolPreviewBtn',
         hex => { selectedMuntolColor = hex; }, selectedMuntolColor);
     const faceColorUI = buildFaceColorUI(
-        () => { faceColorMap = null; draw(); }
+        () => { faceColorMap = null; faceMaterialMap = null; draw(); }
     );
+    // 면 재질(한지/유리) 선택 UI는 engine-rail.js의 마감 피커(initFinishColors)가 "면" 부위를 고르면
+    // 그 안에서 함께 그려준다 — 여기선 그 화면이 고른 재질을 받아 브러시에 반영만 한다.
+    window.__pmokSetFaceMaterial = mat => {
+        pendingFaceMaterial = mat;
+        if (mat?.hex) faceColorUI.restoreColor(mat.hex);
+    };
+    window.__pmokGetFaceMaterial = () => pendingFaceMaterial;
     const canvas = document.getElementById('doorCanvas');
     const rulerCanvas = document.getElementById('rulerCanvas');
     const ctx = canvas.getContext('2d');
@@ -1801,10 +1810,21 @@ async function draw() {
                 for (let w = 0; w < 6; w++) delete faceColorMap[`${cellBase}:${w}`];
                 if (!Object.keys(faceColorMap).length) faceColorMap = null;
             }
+            if (faceMaterialMap) {
+                for (let w = 0; w < 6; w++) delete faceMaterialMap[`${cellBase}:${w}`];
+                if (!Object.keys(faceMaterialMap).length) faceMaterialMap = null;
+            }
         } else {
             if (!faceColorMap) faceColorMap = {};
             const color = faceColorUI.getCurrentHex();
             for (let w = 0; w < 6; w++) faceColorMap[`${cellBase}:${w}`] = color;
+            if (pendingFaceMaterial) {
+                if (!faceMaterialMap) faceMaterialMap = {};
+                for (let w = 0; w < 6; w++) faceMaterialMap[`${cellBase}:${w}`] = { ...pendingFaceMaterial };
+            } else if (faceMaterialMap) {
+                for (let w = 0; w < 6; w++) delete faceMaterialMap[`${cellBase}:${w}`];
+                if (!Object.keys(faceMaterialMap).length) faceMaterialMap = null;
+            }
         }
         faceColorUI.updateClearBtn(!!faceColorMap);
         draw();
@@ -2375,6 +2395,7 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
             slatColor:  selectedSlatColor,
             faceBrushColor: faceColorUI.getCurrentHex(),
             faceColorMap:   faceColorMap ? { ...faceColorMap } : null,
+            faceMaterialMap: faceMaterialMap ? { ...faceMaterialMap } : null,
             muntolColor:    selectedMuntolColor,
             showMuntol:     showMuntol,
             panX, panY, scaleFactor,
@@ -2425,6 +2446,8 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
         frameColorPicker.selectColor(p.frameColor);
         slatColorPicker.selectColor(p.slatColor);
         faceColorMap = p.faceColorMap || null;
+        faceMaterialMap = p.faceMaterialMap || null;
+        pendingFaceMaterial = null;
         faceColorUI.restoreColor(p.faceBrushColor || null);
         faceColorUI.updateClearBtn(!!faceColorMap);
         updateDoorCountOptions();
