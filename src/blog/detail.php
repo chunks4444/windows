@@ -311,7 +311,7 @@ $metaKeywords = trim($metaKeywords . ', ' . t('meta_brand_keywords'), ', ');
                 <a href="<?= htmlspecialchars('/blog/' . rawurlencode($post['slug'])) ?>">Read the original</a>
             </p>
             <p style="margin:0;"><?= htmlspecialchars(t('bd_license')) ?></p>
-            <p style="margin:6px 0 0;"><?= sprintf(htmlspecialchars(t('bd_feedback')), '<span class="bd-feedback-email"></span>') ?></p>
+            <p style="margin:6px 0 0;"><?= sprintf(htmlspecialchars(t('bd_feedback')), '<button type="button" class="bd-feedback-email" data-bs-toggle="modal" data-bs-target="#contactModal">pyeongmok@gmail.com</button>') ?></p>
         </div>
         <?php endif; ?>
 
@@ -355,7 +355,7 @@ $metaKeywords = trim($metaKeywords . ', ' . t('meta_brand_keywords'), ', ');
             <?php endif; ?>
             <?php if (!(is_en() && !empty($post['content_en']))): ?>
             <p class="bd-source-license"><?= htmlspecialchars(t('bd_license')) ?></p>
-            <p class="bd-source-license bd-feedback"><?= sprintf(htmlspecialchars(t('bd_feedback')), '<span class="bd-feedback-email"></span>') ?></p>
+            <p class="bd-source-license bd-feedback"><?= sprintf(htmlspecialchars(t('bd_feedback')), '<button type="button" class="bd-feedback-email" data-bs-toggle="modal" data-bs-target="#contactModal">pyeongmok@gmail.com</button>') ?></p>
             <?php endif; ?>
         </div>
 
@@ -507,17 +507,6 @@ $metaKeywords = trim($metaKeywords . ', ' . t('meta_brand_keywords'), ', ');
 <script src="/src/js/collection-share.js?v=<?= md5_file(__DIR__ . '/../js/collection-share.js') ?>"></script>
 
 <?php include __DIR__ . '/../components/footer.php'; ?>
-<script>
-// 이메일 주소는 스팸 수집 봇에 노출되지 않도록 JS로 조립 (legal/privacy.php와 같은 방식)
-(function () {
-    var e = 'pyeongmok' + '@' + 'gmail.com';
-    document.querySelectorAll('.bd-feedback-email').forEach(function (el) {
-        var a = document.createElement('a');
-        a.href = 'mailto:' + e;
-        a.textContent = e;
-        el.appendChild(a);
-    });
-})();
-</script>
+<?php include __DIR__ . '/../components/contact_modal.php'; ?>
 </body>
 </html>

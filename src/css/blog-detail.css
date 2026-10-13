@@ -263,7 +263,11 @@ html[lang="en"] .bd-body {
 .bd-source-list li { margin-bottom: .1rem; }
 .bd-source-license { margin-bottom: 0; }
 .bd-feedback { margin-top: .3rem; }
-.bd-feedback a { color: inherit; text-decoration: underline; }
+.bd-feedback-email {
+    background: none; border: none; padding: 0; margin: 0;
+    font: inherit; color: inherit; text-decoration: underline; cursor: pointer;
+}
+.bd-feedback-email:hover { color: var(--accent); }
 
 /* ── 하단 CTA ───────────────────────────────────────────── */
 .bd-cta {
@@ -344,4 +348,62 @@ html[lang="en"] .bd-body {
 
 @media (max-width: 600px) {
     .bd-page { padding: 1.75rem 1rem 3rem; }
+}
+
+/* ── 문의 모달 (src/components/contact_modal.php, company.css와 동일) ── */
+#contactModal .modal-content {
+    border: none; border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(var(--text-rgb), 0.12);
+}
+#contactModal .modal-header {
+    border-bottom: 1px solid var(--border);
+    padding: 20px 24px 16px;
+}
+#contactModal .modal-title {
+    font-family: 'Pretendard', 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    font-size: var(--fs-16); font-weight: 700;
+}
+#contactModal .modal-body { padding: 24px; }
+.ct-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; min-width: 0; }
+.ct-field label { font-size: var(--fs-12); font-weight: 700; color: var(--text-muted); letter-spacing: .03em; white-space: normal; overflow-wrap: break-word; }
+.ct-field input, .ct-field textarea {
+    border: 1px solid var(--border); border-radius: 4px;
+    padding: 9px 12px; font-size: var(--fs-14);
+    font-family: inherit; outline: none;
+    transition: border-color .15s; resize: none;
+}
+.ct-field input:focus, .ct-field textarea:focus { border-color: var(--text); }
+.ct-file-input { display: none; }
+.ct-file { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.ct-file-btn {
+    flex-shrink: 0; padding: 7px 14px;
+    border: 1px solid var(--border); border-radius: 4px; background: var(--bg); color: var(--text);
+    font-size: var(--fs-13); font-family: inherit; cursor: pointer; transition: border-color .15s;
+}
+.ct-file-btn:hover, .ct-file-btn:focus-visible { border-color: var(--text); outline: none; }
+.ct-file-name { font-size: var(--fs-13); color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.ct-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.ct-submit {
+    width: 100%; height: 40px; margin-top: 4px;
+    background: var(--text); color: var(--bg); border: none;
+    border-radius: 4px; font-family: inherit;
+    font-size: var(--fs-14); font-weight: 600; cursor: pointer;
+    transition: opacity .15s;
+}
+.ct-submit:hover { opacity: .85; }
+.ct-submit:disabled { background: var(--text-muted); cursor: not-allowed; }
+.ct-error {
+    background: var(--accent-tint); border-left: 3px solid var(--accent);
+    padding: 9px 12px; font-size: var(--fs-13); color: var(--accent);
+    margin-bottom: 14px; border-radius: 2px;
+}
+.ct-success {
+    text-align: center; padding: 32px 0 16px;
+    font-size: var(--fs-16); color: var(--text); line-height: 1.8;
+}
+.ct-success strong { display: block; font-size: var(--fs-16); color: var(--text); margin-bottom: 8px; }
+
+@media (max-width: 768px) {
+    .ct-row-2 { grid-template-columns: 1fr; }
+    #contactModal .modal-body { padding: 16px; }
 }
