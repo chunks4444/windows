@@ -159,6 +159,9 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
             <button type="button" class="rail-btn active" data-pane="door"><i class="bi bi-door-closed"></i><span><?= te('문설정') ?></span></button>
             <button type="button" class="rail-btn" data-pane="motif"><i class="bi bi-flower1"></i><span><?= te('문양') ?></span></button>
             <button type="button" class="rail-btn" data-pane="finish"><i class="bi bi-palette"></i><span><?= te('마감') ?></span></button>
+            <?php if (is_admin_role()): // 임시 — 아직 다듬는 중이라 어드민에게만 노출 ?>
+            <button type="button" class="rail-btn" data-pane="hardware"><i class="bi bi-nut"></i><span><?= te('부자재') ?></span></button>
+            <?php endif; ?>
             <button type="button" class="rail-btn" data-pane="render"><i class="bi bi-stars"></i><span><?= te('렌더링') ?></span></button>
             <div class="rail-sep"></div>
             <button type="button" class="rail-btn" data-pane="estimate"><i class="bi bi-receipt"></i><span><?= te('견적') ?></span></button>
@@ -470,16 +473,6 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                             <?php endforeach; ?>
                         </select>
                     </div>
-                    <div class="ctrl">
-                        <select id="txtHardware" class="sb-select">
-                            <option value=""><?= te('부자재 없음') ?></option>
-                            <?php foreach (get_hardware_options() as $h): ?>
-                            <option value="<?= htmlspecialchars($h['name'], ENT_QUOTES) ?>">
-                                <?= htmlspecialchars(term($h['name']), ENT_QUOTES) ?>
-                            </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
                     <!-- 컬러 피커는 AURO 스테인 마감(이름에 "AURO 560"처럼 제품번호가 있고 같은 번호의 팔레트 그룹이 있는 것)을
                          골랐을 때만 보인다 — engine-common.js applyFinishColorPicker() -->
                     <div id="finishColorBlock" hidden>
@@ -515,15 +508,15 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                                     <div class="color-popup" id="slatPopup"></div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="color-row-stack" style="margin-top:6px;">
-                            <span class="color-label"><?= te('면 컬러') ?></span>
-                            <div class="color-picker-wrap">
-                                <button class="color-preview-btn" id="facePreviewBtn">
-                                    <span class="color-preview-dot" id="facePreviewDot"></span>
-                                    <span id="facePreviewName">—</span>
-                                </button>
-                                <div class="color-popup" id="facePopup"></div>
+                            <div class="color-row-stack" style="margin-top:6px;">
+                                <span class="color-label"><?= te('면 컬러') ?></span>
+                                <div class="color-picker-wrap">
+                                    <button class="color-preview-btn" id="facePreviewBtn">
+                                        <span class="color-preview-dot" id="facePreviewDot"></span>
+                                        <span id="facePreviewName">—</span>
+                                    </button>
+                                    <div class="color-popup" id="facePopup"></div>
+                                </div>
                             </div>
                         </div>
                         <div style="display:flex;gap:6px;margin-top:6px;">
@@ -533,6 +526,23 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                     </div>
                 </div>
             </section>
+            <?php if (is_admin_role()): // 임시 — 아직 다듬는 중이라 어드민에게만 노출 ?>
+            <section class="rail-pane" data-pane="hardware" hidden>
+                <div class="rail-pane-head"><?= te('부자재') ?></div>
+                <div class="sb-section">
+                    <div class="ctrl">
+                        <select id="txtHardware" class="sb-select">
+                            <option value=""><?= te('부자재 없음') ?></option>
+                            <?php foreach (get_hardware_options() as $h): ?>
+                            <option value="<?= htmlspecialchars($h['name'], ENT_QUOTES) ?>">
+                                <?= htmlspecialchars(term($h['name']), ENT_QUOTES) ?>
+                            </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+            </section>
+            <?php endif; ?>
             <section class="rail-pane" data-pane="render" hidden>
                 <div class="rail-pane-head"><?= te('렌더링') ?></div>
                 <div class="sb-section">

@@ -34,3 +34,9 @@ function get_content_permissions(): array {
     }
     return $perms;
 }
+
+// 어드민(슈퍼/관리자) 여부 — 아직 다듬는 중인 기능을 임시로 어드민에게만 보일 때 씀 (예: 부자재 탭)
+function is_admin_role(): bool {
+    $payload = jwt_from_request();
+    return in_array($payload['role'] ?? null, ['s', 'm'], true);
+}

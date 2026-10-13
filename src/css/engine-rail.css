@@ -315,7 +315,7 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
 /* ── 6. 마감 탭 (컬러 먼저 고르기) — 볼드 없이 ─────────────────────────── */
 .rail-pane #finishColorBlock { display: none !important; }   /* 원래 피커는 상태 보관용 */
 .rail-pane .ctrl:has(#txtFinish) { display: none; }          /* 아래 팔레트가 마감 선택을 대신함 */
-.fin-basics { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.fin-basics { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 20px; }
 .fin-basics .ctrl { margin-bottom: 0 !important; }
 .fin-basics .cs-trigger { background: #F4F5F7; border-radius: 8px; height: 36px; }
 .fin-ui { display: flex; flex-direction: column; }

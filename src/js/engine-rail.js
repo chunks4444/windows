@@ -513,8 +513,11 @@
                             dot: document.getElementById(key + 'PreviewDot'), name: document.getElementById(key + 'PreviewName') };
         }).filter(Boolean);
         if (!parts.length) return;
-        let target = null;      // 처음엔 부위 미선택 — 부위를 안 고르고 색을 누르면 안내를 띄운다
+        let target = 'muntol';  // 기본 선택 부위 — 문틀
         let needPart = false;
+        // "면" 부위는 울거미/살/문틀과 달리 나무 마감이 아니라 재질(한지/유리)을 고른다 — 임시 구조,
+        // 세부종류·색상 목록은 플레이스홀더(engine-common.js의 FACE_MATERIAL_* 참고)
+        let faceMaterial = window.__pmokGetFaceMaterial?.() || null; // { material, sub, hex } | null
 
         const finishOpts = [...finSel.options].map(o => o.value);
         const finishLabel = v => [...finSel.options].find(o => o.value === v)?.textContent.trim() || v;
@@ -526,15 +529,18 @@
         }).filter(Boolean);
         const oilFinishes = finishOpts.filter(v => v && isOilFinish(v));
         const oilColors   = groups.filter(g => String(g.key || g.label).startsWith(OIL_GROUP_KEY)).flatMap(g => g.colors);
+        // 색한지/칼라유리 임시 색상 — 전용 색상 목록이 정해지기 전까지 기존 AURO 팔레트(제품 하나 전체)를 빌려 쓴다
+        const faceMaterialColors = stainGroups[0]?.g.colors || groups[0]?.colors || [];
         const oilHexFor   = v => {
             const want = OIL_FINISH_COLOR_CODE[v] || OIL_WOOD_COLOR_CODE[document.getElementById('txtWood')?.value || ''] || 'NO-01';
             return (oilColors.find(c => c.code === want) || oilColors[0] || {}).hex || '#c8b48a';
         };
 
-        // 수종·부자재는 라벨을 붙여 맨 위 두 칸으로, 마감 셀렉트는 아래 팔레트가 대신하므로 숨긴다(CSS)
+        // 수종은 라벨을 붙여 맨 위 칸으로, 마감 셀렉트는 아래 팔레트가 대신하므로 숨긴다(CSS).
+        // 부자재는 별도 탭으로 분리돼 있어 여기선 건드리지 않는다.
         const basics = document.createElement('div');
         basics.className = 'fin-basics';
-        [['txtWood', _t('수종')], ['txtHardware', _t('부자재')]].forEach(([id, lbl]) => {
+        [['txtWood', _t('수종')]].forEach(([id, lbl]) => {
             const ctrl = document.getElementById(id)?.closest('.ctrl');
             if (!ctrl) return;
             const cell = document.createElement('div');
@@ -554,6 +560,30 @@
             if (finSel.value === v) return;
             finSel.value = v;
             finSel.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
+        // 면 재질(한지/유리) 선택 — material이 falsy면 "없음"으로 해제.
+        // 색한지·칼라유리처럼 AURO 팔레트에서 색을 고른 경우 colorMeta(code/brand/name)도 같이 저장해서
+        // 나중에 그 칸에 정확히 어떤 색코드를 칠했는지 추적할 수 있게 한다(시방서·주문 내역용).
+        function pickFaceMaterial(material, sub, hex, colorMeta) {
+            if (!material) {
+                faceMaterial = null;
+                window.__pmokSetFaceMaterial?.(null);
+                render();
+                return;
+            }
+            const subs   = FACE_MATERIAL_SUBS[material] || [];
+            const subDef = subs.find(s => s.value === sub) || subs[0];
+            const resolvedHex = hex
+                || (subDef?.hasColor ? (faceMaterial?.material === material && faceMaterial?.hex) || faceMaterialColors[0]?.hex : FACE_MATERIAL_BASE_HEX[material]);
+            const meta = colorMeta || (subDef?.hasColor ? faceMaterialColors.find(c => c.hex.toLowerCase() === resolvedHex.toLowerCase()) : null);
+            faceMaterial = {
+                material, sub: subDef?.value || '', hex: resolvedHex,
+                code: meta?.code || '', brand: meta?.brand || '', name: meta?.name || '',
+            };
+            window.__pmokSetFaceMaterial?.(faceMaterial);
+            setPaint(true);
+            render();
         }
         // 누른 색 칩 바로 위에 잠깐 뜨는 말풍선 (마우스 근처에서 바로 보이도록)
         let tipEl, tipTimer;
@@ -602,6 +632,8 @@
             const cur   = parts.find(p => p.key === target);
             const curRgb = dotRgb(cur?.dot);
             const esc2 = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+            const faceMode = target === 'face';
+            if (faceMode) faceMaterial = window.__pmokGetFaceMaterial?.() ?? faceMaterial;
 
             let h = '';
             // 부위 고르기 — 스테인일 때만 부위별로 색이 다르다 (마감 없음·오일은 한 가지 색)
@@ -612,34 +644,87 @@
             });
             h += '</div>';
             if (needPart) h += `<p class="fin-need"><i class="bi bi-exclamation-circle"></i> ${_t('먼저 색칠할 부위를 고르세요.')}</p>`;
-            if (target) h += `<div class="fin-current">` + (!target ? '' : fin ? `<span class="fin-dot" style="background:${esc2(cur?.dot?.style.background || '')}"></span>` : '<span class="fin-dot fin-dot-none"></span>')
-                + `<span>${esc2(!target ? _t('부위를 고른 뒤 아래에서 색을 누르세요.') : stain ? (cur?.name?.textContent || '') : (fin ? finishLabel(fin) : _t('마감 없음')))}</span></div>`;
-            if (!stain && target) h += `<p class="fin-hint">${fin ? _t('오일 마감은 나무결 그대로 한 가지 색으로 칠해집니다.') : _t('나무 본래 색 그대로입니다. 아래에서 색을 고르면 그 마감이 함께 선택됩니다.')}</p>`;
 
-            // 기본 마감 — 마감 없음 + 천연오일을 팔레트와 같은 동그라미(아래 작은 이름)로
-            // 이름의 괄호 안(제품명, 예: 'AURO 126')은 떼어 두고 마우스를 올리면 말풍선으로 보여준다
-            const splitName = n => { const m = /^(.*?)\s*\(([^)]+)\)\s*$/.exec(n); return m ? [m[1], m[2]] : [n, '']; };
-            const base = [{ v: '', label: _t('마감 없음'), bg: '', product: _t('원목 그대로') }].concat(oilFinishes.map(v => {
-                const [label, product] = splitName(finishLabel(v));
-                return { v, label, product, bg: oilHexFor(v) };
-            }));
-            h += `<div class="fin-group"><div class="fin-group-head">${_t('기본')}</div><div class="fin-bases">`;
-            base.forEach(b => {
-                h += `<button type="button" class="fin-base${fin === b.v ? ' active' : ''}" data-fin="${esc2(b.v)}" data-tip="${esc2(b.product || b.label)}">`
-                   + `<span class="fin-base-dot${b.v ? '' : ' fin-dot-none'}"${b.bg ? ` style="background:${esc2(b.bg)}"` : ''}></span>`
-                   + `<span class="fin-base-name">${esc2(b.label)}</span></button>`;
-            });
-            h += '</div></div>';
-            // 제품별 팔레트
-            stainGroups.forEach(({ g, fin: gf }) => {
-                h += `<div class="fin-group${fin === gf ? ' is-on' : ''}"><div class="fin-group-head">${esc2(finishLabel(gf))}<small>${_t('%s색', g.colors.length)}</small></div><div class="fin-swatches">`;
-                g.colors.forEach(c => {
-                    const on = fin === gf && toRgb(c.hex) === curRgb;
-                    const tip = [c.brand, c.code, c.name].filter(Boolean).join(' ');
-                    h += `<button type="button" class="fin-sw${on ? ' active' : ''}" style="background:${esc2(c.hex)}" data-tip="${esc2(tip)}" data-fin="${esc2(gf)}" data-hex="${esc2(c.hex)}"></button>`;
+            if (target && faceMode) {
+                // 면: 나무 마감이 아니라 재질(한지/유리)을 고른다
+                let curLabelRaw = '없음';
+                if (faceMaterial?.material) {
+                    const subDef = (FACE_MATERIAL_SUBS[faceMaterial.material] || []).find(s => s.value === faceMaterial.sub);
+                    curLabelRaw = subDef?.label || (faceMaterial.material === 'hanji' ? '한지' : '유리');
+                }
+                h += `<div class="fin-current"><span class="fin-dot${faceMaterial ? '' : ' fin-dot-none'}"${faceMaterial ? ` style="background:${esc2(faceMaterial.hex)}"` : ''}></span>`
+                   + `<span>${esc2(_t(curLabelRaw))}</span></div>`;
+            } else if (target) {
+                h += `<div class="fin-current">` + (!target ? '' : fin ? `<span class="fin-dot" style="background:${esc2(cur?.dot?.style.background || '')}"></span>` : '<span class="fin-dot fin-dot-none"></span>')
+                    + `<span>${esc2(!target ? _t('부위를 고른 뒤 아래에서 색을 누르세요.') : stain ? (cur?.name?.textContent || '') : (fin ? finishLabel(fin) : _t('마감 없음')))}</span></div>`;
+                if (!stain) h += `<p class="fin-hint">${fin ? _t('오일 마감은 나무결 그대로 한 가지 색으로 칠해집니다.') : _t('나무 본래 색 그대로입니다. 아래에서 색을 고르면 그 마감이 함께 선택됩니다.')}</p>`;
+            }
+
+            if (target && faceMode) {
+                // 면 재질 — 한지/유리/없음 (임시 구조, FACE_MATERIAL_* 플레이스홀더)
+                h += `<div class="fin-group"><div class="fin-group-head">${_t('기본')}</div><div class="fin-bases">`;
+                [
+                    { v: 'hanji', label: _t('한지'), bg: FACE_MATERIAL_BASE_HEX.hanji },
+                    { v: 'glass', label: _t('유리'), bg: FACE_MATERIAL_BASE_HEX.glass },
+                    { v: '',      label: _t('없음'), bg: '' },
+                ].forEach(b => {
+                    const on = b.v ? faceMaterial?.material === b.v : !faceMaterial;
+                    h += `<button type="button" class="fin-base${on ? ' active' : ''}" data-mat="${esc2(b.v)}">`
+                       + `<span class="fin-base-dot${b.v ? '' : ' fin-dot-none'}"${b.bg ? ` style="background:${esc2(b.bg)}"` : ''}></span>`
+                       + `<span class="fin-base-name">${esc2(b.label)}</span></button>`;
                 });
                 h += '</div></div>';
-            });
+
+                const subs = faceMaterial?.material ? (FACE_MATERIAL_SUBS[faceMaterial.material] || []) : [];
+                if (subs.length) {
+                    h += `<div class="fin-group"><div class="fin-group-head">${_t('세부 종류')}</div><div class="fin-bases">`;
+                    subs.forEach(s => {
+                        const on = faceMaterial?.sub === s.value;
+                        const bg = s.hasColor ? (on ? faceMaterial.hex : faceMaterialColors[0]?.hex) : FACE_MATERIAL_BASE_HEX[faceMaterial.material];
+                        h += `<button type="button" class="fin-base${on ? ' active' : ''}" data-matsub="${esc2(s.value)}">`
+                           + `<span class="fin-base-dot" style="background:${esc2(bg)}"></span>`
+                           + `<span class="fin-base-name">${esc2(_t(s.label))}</span></button>`;
+                    });
+                    h += '</div></div>';
+
+                    const curSubDef = subs.find(s => s.value === faceMaterial?.sub);
+                    if (curSubDef?.hasColor) {
+                        // 전용 색상 목록이 정해지기 전까지 기존 AURO 팔레트 색을 임시로 빌려 쓴다 (faceMaterialColors)
+                        h += `<div class="fin-group"><div class="fin-group-head">${_t('색상')}<small>${_t('임시')}</small></div><div class="fin-swatches">`;
+                        faceMaterialColors.forEach(c => {
+                            const on = faceMaterial?.hex?.toLowerCase() === c.hex.toLowerCase();
+                            const tip = [c.brand, c.code, c.name].filter(Boolean).join(' ');
+                            h += `<button type="button" class="fin-sw${on ? ' active' : ''}" style="background:${esc2(c.hex)}" data-tip="${esc2(tip)}" data-mathex="${esc2(c.hex)}"></button>`;
+                        });
+                        h += '</div></div>';
+                    }
+                }
+            } else if (target) {
+                // 기본 마감 — 마감 없음 + 천연오일을 팔레트와 같은 동그라미(아래 작은 이름)로
+                // 이름의 괄호 안(제품명, 예: 'AURO 126')은 떼어 두고 마우스를 올리면 말풍선으로 보여준다
+                const splitName = n => { const m = /^(.*?)\s*\(([^)]+)\)\s*$/.exec(n); return m ? [m[1], m[2]] : [n, '']; };
+                const base = [{ v: '', label: _t('마감 없음'), bg: '', product: _t('원목 그대로') }].concat(oilFinishes.map(v => {
+                    const [label, product] = splitName(finishLabel(v));
+                    return { v, label, product, bg: oilHexFor(v) };
+                }));
+                h += `<div class="fin-group"><div class="fin-group-head">${_t('기본')}</div><div class="fin-bases">`;
+                base.forEach(b => {
+                    h += `<button type="button" class="fin-base${fin === b.v ? ' active' : ''}" data-fin="${esc2(b.v)}" data-tip="${esc2(b.product || b.label)}">`
+                       + `<span class="fin-base-dot${b.v ? '' : ' fin-dot-none'}"${b.bg ? ` style="background:${esc2(b.bg)}"` : ''}></span>`
+                       + `<span class="fin-base-name">${esc2(b.label)}</span></button>`;
+                });
+                h += '</div></div>';
+                // 제품별 팔레트
+                stainGroups.forEach(({ g, fin: gf }) => {
+                    h += `<div class="fin-group${fin === gf ? ' is-on' : ''}"><div class="fin-group-head">${esc2(finishLabel(gf))}<small>${_t('%s색', g.colors.length)}</small></div><div class="fin-swatches">`;
+                    g.colors.forEach(c => {
+                        const on = fin === gf && toRgb(c.hex) === curRgb;
+                        const tip = [c.brand, c.code, c.name].filter(Boolean).join(' ');
+                        h += `<button type="button" class="fin-sw${on ? ' active' : ''}" style="background:${esc2(c.hex)}" data-tip="${esc2(tip)}" data-fin="${esc2(gf)}" data-hex="${esc2(c.hex)}"></button>`;
+                    });
+                    h += '</div></div>';
+                });
+            }
             root.innerHTML = h;
             if (paintRow) { root.appendChild(paintRow); paintRow.hidden = target !== 'face'; }
             if (target === 'face') {
@@ -683,6 +768,12 @@
         root.addEventListener('click', e => {
             const part = e.target.closest('.fin-part');
             if (part) { target = part.dataset.part; needPart = false; if (target !== 'face') setPaint(false); render(); return; }
+            const matHex = e.target.closest('[data-mathex]');
+            if (matHex) { pickFaceMaterial(faceMaterial?.material, faceMaterial?.sub, matHex.dataset.mathex); return; }
+            const matSub = e.target.closest('[data-matsub]');
+            if (matSub) { pickFaceMaterial(faceMaterial?.material, matSub.dataset.matsub, null); return; }
+            const matBase = e.target.closest('[data-mat]');
+            if (matBase) { pickFaceMaterial(matBase.dataset.mat || null, null, null); return; }
             const sw = e.target.closest('.fin-sw');
             if (sw) { pickColor(sw.dataset.fin, sw.dataset.hex, sw); return; }
             const chip = e.target.closest('.fin-base');

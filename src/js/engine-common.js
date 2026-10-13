@@ -491,6 +491,21 @@
         return { getCurrentHex, updateClearBtn, restoreColor };
     }
 
+    // 면 재질(한지/유리) 데이터 — 임시 구조. 세부종류·색상 목록은 플레이스홀더이며 추후 실제 값으로 교체 예정.
+    // 실제 선택 UI는 engine-rail.js의 initFinishColors()가 "면" 부위를 고르면 그 화면 안에 그려준다.
+    const FACE_MATERIAL_SUBS = {
+        hanji: [
+            { value: 'saek',    label: '색한지',          hasColor: true  },
+            { value: 'baejeop', label: '배접지',          hasColor: false },
+            { value: 'ilban',   label: '일반한지(백지)',   hasColor: false },
+        ],
+        glass: [
+            { value: 'plain', label: '일반유리', hasColor: false },
+            { value: 'color', label: '칼라유리', hasColor: true  },
+        ],
+    };
+    const FACE_MATERIAL_BASE_HEX = { hanji: '#e8dcc0', glass: '#bcd2d8' };
+
     function closeDrawingManager() {
         document.getElementById('dmBackdrop').classList.remove('pm-active');
     }
