@@ -911,8 +911,10 @@ async function draw() {
                         for (let i = 0; i < 6; i++) {
                             const _fc = faceColorMap[`tri:${rIdx2}:${cIdx2}:${i}`] ?? null;
                             if (_fc) {
+                                // 칠해지는 삼각형은 교차점 하나에서 뻗어나가는 작은 쐐기(변=size)가 아니라,
+                                // 눈에 보이는 실제 흰 칸 — 서로 붙어있는 세 교차점이 만드는 큰 삼각형(변=width)
                                 const a1 = i * Math.PI / 3, a2 = (i + 1) * Math.PI / 3;
-                                kv.addPatternPolygon([cx2, cy2, cx2 + size * Math.cos(a1), cy2 + size * Math.sin(a1), cx2 + size * Math.cos(a2), cy2 + size * Math.sin(a2)], _fc, 'facepaint');
+                                kv.addPatternPolygon([cx2, cy2, cx2 + width * Math.cos(a1), cy2 + width * Math.sin(a1), cx2 + width * Math.cos(a2), cy2 + width * Math.sin(a2)], _fc, 'facepaint');
                             }
                         }
                     }
@@ -925,10 +927,11 @@ async function draw() {
                     for (let i = 0; i < 6; i++) {
                         const _fc = faceColorMap ? (faceColorMap[`tri:${rIdx}:${cIdx}:${i}`] ?? null) : null;
                         if (_fc && !buildKonvaPattern) {
+                            // 칠해지는 삼각형은 작은 쐐기(변=size)가 아니라 실제 흰 칸(변=width)
                             const a1 = i * Math.PI / 3, a2 = (i + 1) * Math.PI / 3;
                             ctx.beginPath(); ctx.moveTo(cx, cy);
-                            ctx.lineTo(cx + size * Math.cos(a1), cy + size * Math.sin(a1));
-                            ctx.lineTo(cx + size * Math.cos(a2), cy + size * Math.sin(a2));
+                            ctx.lineTo(cx + width * Math.cos(a1), cy + width * Math.sin(a1));
+                            ctx.lineTo(cx + width * Math.cos(a2), cy + width * Math.sin(a2));
                             ctx.closePath(); ctx.fillStyle = _fc; ctx.fill();
                         }
                         const angle = i * Math.PI / 3;
@@ -979,8 +982,9 @@ async function draw() {
                         for (let i = 0; i < 6; i++) {
                             const _fc = faceColorMap[`tri:${cIdx2}:${rowIdx2}:${i}`] ?? null;
                             if (_fc) {
+                                // 작은 쐐기(변=size) 대신 실제 흰 칸(변=width)을 채운다
                                 const a1 = i * Math.PI / 3 + Math.PI / 2, a2 = (i + 1) * Math.PI / 3 + Math.PI / 2;
-                                kv.addPatternPolygon([cx2, cy2, cx2 + size * Math.cos(a1), cy2 + size * Math.sin(a1), cx2 + size * Math.cos(a2), cy2 + size * Math.sin(a2)], _fc, 'facepaint');
+                                kv.addPatternPolygon([cx2, cy2, cx2 + width * Math.cos(a1), cy2 + width * Math.sin(a1), cx2 + width * Math.cos(a2), cy2 + width * Math.sin(a2)], _fc, 'facepaint');
                             }
                         }
                     }
@@ -993,10 +997,11 @@ async function draw() {
                     for (let i = 0; i < 6; i++) {
                         const _fc = faceColorMap ? (faceColorMap[`tri:${cIdx}:${rowIdx}:${i}`] ?? null) : null;
                         if (_fc && !buildKonvaPattern) {
+                            // 작은 쐐기(변=size) 대신 실제 흰 칸(변=width)을 채운다
                             const a1 = i * Math.PI / 3 + Math.PI / 2, a2 = (i + 1) * Math.PI / 3 + Math.PI / 2;
                             ctx.beginPath(); ctx.moveTo(cx, cy);
-                            ctx.lineTo(cx + size * Math.cos(a1), cy + size * Math.sin(a1));
-                            ctx.lineTo(cx + size * Math.cos(a2), cy + size * Math.sin(a2));
+                            ctx.lineTo(cx + width * Math.cos(a1), cy + width * Math.sin(a1));
+                            ctx.lineTo(cx + width * Math.cos(a2), cy + width * Math.sin(a2));
                             ctx.closePath(); ctx.fillStyle = _fc; ctx.fill();
                         }
                         const angle = i * Math.PI / 3 + Math.PI / 2;
@@ -1714,7 +1719,8 @@ async function draw() {
             const cIdx    = Math.round((px - (iLeft - width) - offX) / width);
             const hcy     = startY - rowStep + rIdx * rowStep;
             const hcx     = iLeft - width + cIdx * width + offX;
-            if (Math.hypot(px - hcx, py - hcy) > size) return null;
+            // 칠해지는 삼각형(실제 흰 칸)의 반경은 size가 아니라 width(이웃 교차점까지 거리)
+            if (Math.hypot(px - hcx, py - hcy) > width) return null;
             const angle   = ((Math.atan2(py - hcy, px - hcx) % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
             const wedge   = Math.floor(angle / (Math.PI / 3)) % 6;
             return `tri:${rIdx}:${cIdx}:${wedge}`;
@@ -1728,7 +1734,8 @@ async function draw() {
             const rowIdx  = Math.round((py - (iTop - width) - offY) / width);
             const hcx     = startX - colStep + cIdx * colStep;
             const hcy     = iTop - width + rowIdx * width + offY;
-            if (Math.hypot(px - hcx, py - hcy) > size) return null;
+            // 칠해지는 삼각형(실제 흰 칸)의 반경은 size가 아니라 width(이웃 교차점까지 거리)
+            if (Math.hypot(px - hcx, py - hcy) > width) return null;
             const angle   = ((Math.atan2(py - hcy, px - hcx) - Math.PI / 2 + 2 * Math.PI) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
             const wedge   = Math.floor(angle / (Math.PI / 3)) % 6;
             return `tri:${cIdx}:${rowIdx}:${wedge}`;
