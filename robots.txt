@@ -8,6 +8,12 @@ Allow: /src/api/collection.php
 Allow: /src/api/drawings/categories.php
 Disallow: /src/mypage/
 Disallow: /mypage/
+# 영문 주소(/en/ 접두사)와 마이페이지 전용 JS도 함께 차단 (2026-10-13)
+Disallow: /en/mypage/
+Disallow: /en/src/mypage/
+Disallow: /src/js/profile.js
+Disallow: /src/js/dashboard.js
+Disallow: /src/js/company.js
 Disallow: /logs/
 
 # 설계 엔진: 페이지·API·엔진 전용 JS/CSS 전부 모든 크롤러에게 차단 (2026-10-13).
