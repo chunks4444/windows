@@ -14,12 +14,8 @@ $staticUrls = [
     ['loc' => '/collection/',                        'priority' => '0.8', 'meta_path' => '/src/collection/index.php'],
     ['loc' => '/blog/',                              'priority' => '0.8', 'meta_path' => '/src/blog/index.php'],
     ['loc' => '/guide/',                             'priority' => '0.6', 'meta_path' => '/src/guide/index.php'],
-    ['loc' => '/src/engine/classic/classic.php',     'priority' => '0.9', 'meta_path' => '/src/engine/classic/classic.php'],
-    ['loc' => '/src/engine/square/square.php',       'priority' => '0.9', 'meta_path' => '/src/engine/square/square.php'],
-    ['loc' => '/src/engine/cross/cross.php',         'priority' => '0.9', 'meta_path' => '/src/engine/cross/cross.php'],
-    ['loc' => '/src/engine/diamond/diamond.php',     'priority' => '0.9', 'meta_path' => '/src/engine/diamond/diamond.php'],
-    ['loc' => '/src/engine/triangle/triangle.php',   'priority' => '0.9', 'meta_path' => '/src/engine/triangle/triangle.php'],
-    ['loc' => '/src/engine/hexagon/hexagon.php',     'priority' => '0.9', 'meta_path' => '/src/engine/hexagon/hexagon.php'],
+    // 설계 엔진 페이지는 robots.txt로 모든 크롤러 차단(2026-10-13) — 차단된 URL을 사이트맵에 두면
+    // Search Console에서 '제출된 URL이 robots.txt에 의해 차단됨' 경고가 나므로 여기서도 뺌
 ];
 
 // 가이드 개별 아티클 (src/guide/_head.php의 $guide_nav와 동일한 파일 목록 — 새 아티클 추가 시 여기도 같이 추가)

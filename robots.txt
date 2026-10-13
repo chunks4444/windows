@@ -10,6 +10,28 @@ Disallow: /src/mypage/
 Disallow: /mypage/
 Disallow: /logs/
 
+# 설계 엔진: 페이지·API·엔진 전용 JS/CSS 전부 모든 크롤러에게 차단 (2026-10-13).
+# robots.txt는 크롤러에만 적용되고 사람(브라우저) 접속에는 영향이 없다. 엔진 페이지는 sitemap.php에서도 뺐음.
+# /src/js/ 전체를 막으면 안 됨 — collection.js·collection-share.js·visitor-log.js는 컬렉션/홈/블로그
+# 페이지가 쓰는 파일이라, 막으면 구글봇 렌더링이 깨져 Soft 404가 다시 생긴다.
+# /en/ 접두사 주소도 같은 파일로 재작성되므로 함께 막는다.
+Disallow: /src/engine/
+Disallow: /en/src/engine/
+Disallow: /src/css/engine-common.css
+Disallow: /src/css/engine-rail.css
+Disallow: /src/js/engine-common.js
+Disallow: /src/js/engine-rail.js
+Disallow: /src/js/konva-overlay.js
+Disallow: /src/js/drawing-sync.js
+Disallow: /src/js/color-hex-input.js
+Disallow: /src/js/classic.js
+Disallow: /src/js/square.js
+Disallow: /src/js/cross.js
+Disallow: /src/js/diamond.js
+Disallow: /src/js/triangle.js
+Disallow: /src/js/hexagon.js
+Disallow: /src/js/mondrian.js
+
 # 예전 워드프레스(Avada+우커머스) 시절 URL(/product/ 등)을 여기서 막았던 적이 있는데,
 # 그러면 구글이 재크롤링을 못 해서 410을 못 보고 옛 스니펫이 그대로 인덱스에 남는다
 # (robots.txt 차단은 색인 삭제가 아니라 동결). 그래서 크롤은 열어두고, 실제 제거는
