@@ -52,6 +52,7 @@
     let lastNodeXs   = [], lastNodeYs = []; // 균등 격자(정자살) 노드의 실좌표(mm) 배열 — addedLines를 노드 인덱스로 다시 찾을 때 씀 (몬드리안 레이아웃은 해당 없음)
     let lastMondrianNodes = []; // 몬드리안 레이아웃 노드의 실좌표(mm) 목록 — [ [x,y], ... ]
     let lastILeft = 0, lastITop = 0, lastIW = 1, lastIH = 1, lastSlatPx = 1, lastCellSize = 1;
+    let lastEffInnerH = 1; // hitTestCell에서 쓰는 effInnerH(mm) — draw() 지역변수라 draw() 밖(클릭 판정)에서 못 읽어서 따로 저장해둠
     let lastBaseScale = 1, lastOLeft = 0, lastOTop = 0, lastDoorWpx = 0, lastDoorHpx = 0;
     let showDimensions = true;
     let _exportCanvas = null;
@@ -875,6 +876,7 @@ async function draw() {
             lastITop     = toCanvasY(effFrameHTop);
             lastIW       = geo.innerW * baseScale;
             lastIH       = effInnerH * baseScale;
+            lastEffInnerH = effInnerH;
             lastSlatPx   = geo.slatT  * baseScale;
             lastCellSize = geo.cellW  * baseScale;
             lastOLeft     = toCanvasX(0);
@@ -2014,7 +2016,7 @@ async function draw() {
         if (mondrianLayout) {
             const rx = relX / lastBaseScale; // mm, inner frame origin 기준
             const ry = relY / lastBaseScale;
-            const iW = geo.innerW, iH = effInnerH;
+            const iW = geo.innerW, iH = lastEffInnerH;
             const rects = mondrianLayout.rects;
             for (let i = 0; i < rects.length; i++) {
                 const r = rects[i];
