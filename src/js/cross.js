@@ -1806,6 +1806,10 @@ async function draw() {
         const ry = relY / lastBaseScale;
         const stepV  = geo.cellW + geo.slatV;
         const stepH_ = geo.cellH + geo.slatH;
+        const hW = stepV / 2, hH = stepH_ / 2;
+        // 다이아몬드(마름모) 안에 실제로 점이 있는지 — 변의 기울기를 따라야 해서 원형(유클리드) 거리로는
+        // 판정이 안 맞는다. |dx|/반폭 + |dy|/반높이 <= 1 이 마름모 경계 방정식.
+        const inDiamond = (px, py, dcx, dcy) => Math.abs(px - dcx) / hW + Math.abs(py - dcy) / hH <= 1;
 
         // 코너 다이아몬드 후보 (4셀 사이)
         const cornerOffX = geo.cellW + geo.slatV / 2;
@@ -1823,11 +1827,15 @@ async function draw() {
         const cxCenter = centerOffX + col_m * stepV;
         const cyCenter = centerOffY + row_m * stepH_;
 
-        // 클릭 위치에 더 가까운 쪽 반환
-        const dCorner = Math.hypot(rx - cxCorner, ry - cyCorner);
-        const dCenter = Math.hypot(rx - cxCenter, ry - cyCenter);
-        if (dCenter < dCorner) return `center:${col_m}:${row_m}`;
-        return `corner:${col_c}:${row_c}`;
+        // 두 후보 중 클릭 지점을 실제로 담고 있는 쪽을 고른다
+        const centerHit = inDiamond(rx, ry, cxCenter, cyCenter);
+        const cornerHit = inDiamond(rx, ry, cxCorner, cyCorner);
+        if (centerHit && !cornerHit) return `center:${col_m}:${row_m}`;
+        if (cornerHit && !centerHit) return `corner:${col_c}:${row_c}`;
+        // 둘 다 아니거나(반올림으로 후보 자체가 어긋난 경우) 둘 다(경계선)면, 마름모 기준 정규화 거리로 보정
+        const nDist = (px, py, dcx, dcy) => Math.abs(px - dcx) / hW + Math.abs(py - dcy) / hH;
+        return nDist(rx, ry, cxCenter, cyCenter) <= nDist(rx, ry, cxCorner, cyCorner)
+            ? `center:${col_m}:${row_m}` : `corner:${col_c}:${row_c}`;
     }
 
     function getAllCellKeys() {
