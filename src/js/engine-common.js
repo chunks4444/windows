@@ -1,3 +1,26 @@
+    // 엔진 페이지 개발자도구·소스보기 단축키와 우클릭 메뉴 차단 (2026-10-13).
+    // 억지 장치일 뿐 보안이 아님 — 브라우저 메뉴(더보기 > 개발자 도구), view-source: 주소, JS 끄기로
+    // 얼마든지 열 수 있다. 가볍게 들여다보는 것만 막는 용도.
+    // 6엔진 js와 전역 스코프를 공유하므로(IIFE 없음) 이름 충돌이 없도록 즉시실행 함수 안에 둔다.
+    (function () {
+        document.addEventListener('keydown', e => {
+            const k = (e.key || '').toLowerCase();
+            const ctrlOrCmd = e.ctrlKey || e.metaKey;
+            const block =
+                e.key === 'F12' ||
+                (ctrlOrCmd && e.shiftKey && ['i', 'j', 'c', 'k'].includes(k)) ||   // Win/Linux 개발자도구·콘솔·요소선택
+                (e.metaKey && e.altKey && ['i', 'j', 'c', 'u'].includes(k)) ||     // macOS 개발자도구·콘솔·요소선택·소스보기
+                (e.ctrlKey && !e.shiftKey && k === 'u');                           // Win/Linux 소스보기
+            if (block) { e.preventDefault(); e.stopPropagation(); }
+        }, true);
+        // 우클릭 기본 메뉴(검사·소스보기 항목)만 막는다. 입력칸은 붙여넣기 때문에 허용.
+        // 캔버스 우클릭 면칠 지우기는 각 엔진 js의 canvas contextmenu 핸들러가 그대로 받는다(preventDefault는 전파를 막지 않음).
+        document.addEventListener('contextmenu', e => {
+            if (e.target.closest('input, textarea, [contenteditable="true"]')) return;
+            e.preventDefault();
+        });
+    })();
+
     function _currentVersionSavedAt() {
         const ver = versions[currentVerIdx];
         return ver ? Math.floor(ver.savedAt / 1000) : null;
