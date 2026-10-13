@@ -1,6 +1,15 @@
 RewriteEngine On
 RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
+# 스크립트·명령줄 도구의 기본 User-Agent는 사이트 전체에서 403 (2026-10-13).
+# robots.txt는 규칙을 지키는 크롤러에만 통하고 curl 등은 아예 읽지 않으므로 여기서 막는다.
+# 한계: `curl -A "Mozilla/..."`처럼 UA를 바꾸면 통과함 — 설정 없이 긁어가는 시도만 거르는 1차 필터.
+# 빈 UA도 차단하므로, 서버 안에서 자기 사이트를 부르는 PHP curl은 반드시 CURLOPT_USERAGENT를
+# 지정해야 함(PHP curl은 기본적으로 UA를 안 보냄 — src/api/admin/smoke_test.php 참고).
+RewriteCond %{HTTP_USER_AGENT} ^$ [OR]
+RewriteCond %{HTTP_USER_AGENT} ^(curl|Wget|python-requests|Python-urllib|python-httpx|aiohttp|Go-http-client|libwww-perl|Java/|okhttp|axios|node-fetch|undici|GuzzleHttp|Scrapy|HTTrack|PostmanRuntime|httpie) [NC]
+RewriteRule .* - [F,L]
+
 # 다국어(영문) 지원: /en/ 접두사가 붙은 요청은 접두사만 떼고 이어서 아래의 기존 라우팅 규칙을
 # 그대로 탄다. 언어 판별은 PHP에서 $_SERVER['REQUEST_URI'](재작성 뒤에도 원본 그대로 남음)의
 # /en/ 접두사로 직접 하므로(src/lib/i18n.php current_lang()), 별도 env 플래그는 필요 없다.

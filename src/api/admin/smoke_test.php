@@ -25,6 +25,8 @@ function http_call(string $method, string $url, ?array $body = null, ?string $au
         CURLOPT_CUSTOMREQUEST  => $method,
         CURLOPT_HTTPHEADER     => $headers,
         CURLOPT_TIMEOUT        => 10,
+        // 빈 UA·curl UA는 .htaccess에서 403 처리되므로 전용 UA를 붙여야 내부 호출이 통과함
+        CURLOPT_USERAGENT      => 'PyeongmokSmokeTest/1.0',
         CURLOPT_SSL_VERIFYPEER => true,
     ]);
     if ($body !== null) curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body, JSON_UNESCAPED_UNICODE));
