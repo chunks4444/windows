@@ -873,18 +873,20 @@ async function draw() {
                     ctx.fill();
                 }
             };
-            for (let row = 0; row <= geo.rowsInt - 2; row++) {
+            // 가로로 붙은 두 칸(col,row)-(col+1,row)의 각 중심을 잇는 중간 지점 — 그 사이 흰 마름모 칸
+            for (let row = 0; row <= geo.rowsInt - 1; row++) {
                 for (let col = 0; col <= geo.cols - 2; col++) {
-                    const _fc = faceColorMap[`corner:${col}:${row}`] ?? null;
+                    const _fc = faceColorMap[`hedge:${col}:${row}`] ?? null;
                     if (_fc) drawDiamond(geo.frameW + col * stepV + geo.cellW + geo.slatV / 2,
-                                         geo.frameHTop + row * stepH_ + geo.cellH + geo.slatH / 2, _fc);
+                                         geo.frameHTop + row * stepH_ + geo.cellH / 2, _fc);
                 }
             }
-            for (let row = 0; row <= geo.rowsInt - 1; row++) {
+            // 세로로 붙은 두 칸(col,row)-(col,row+1) 사이 흰 마름모 칸
+            for (let row = 0; row <= geo.rowsInt - 2; row++) {
                 for (let col = 0; col <= geo.cols - 1; col++) {
-                    const _fc = faceColorMap[`center:${col}:${row}`] ?? null;
+                    const _fc = faceColorMap[`vedge:${col}:${row}`] ?? null;
                     if (_fc) drawDiamond(geo.frameW + col * stepV + geo.cellW / 2,
-                                         geo.frameHTop + row * stepH_ + geo.cellH / 2, _fc);
+                                         geo.frameHTop + row * stepH_ + geo.cellH + geo.slatH / 2, _fc);
                 }
             }
         }
@@ -1811,42 +1813,42 @@ async function draw() {
         // 판정이 안 맞는다. |dx|/반폭 + |dy|/반높이 <= 1 이 마름모 경계 방정식.
         const inDiamond = (px, py, dcx, dcy) => Math.abs(px - dcx) / hW + Math.abs(py - dcy) / hH <= 1;
 
-        // 코너 다이아몬드 후보 (4셀 사이)
-        const cornerOffX = geo.cellW + geo.slatV / 2;
-        const cornerOffY = geo.cellH + geo.slatH / 2;
-        const col_c = Math.max(0, Math.min(geo.cols - 2, Math.round((rx - cornerOffX) / stepV)));
-        const row_c = Math.max(0, Math.min(geo.rowsInt - 2, Math.round((ry - cornerOffY) / stepH_)));
-        const cxCorner = cornerOffX + col_c * stepV;
-        const cyCorner = cornerOffY + row_c * stepH_;
+        // 가로 이웃 칸(col,row)-(col+1,row) 사이 흰 마름모 후보
+        const hedgeOffX = geo.cellW + geo.slatV / 2;
+        const hedgeOffY = geo.cellH / 2;
+        const col_h = Math.max(0, Math.min(geo.cols - 2, Math.round((rx - hedgeOffX) / stepV)));
+        const row_h = Math.max(0, Math.min(geo.rowsInt - 1, Math.round((ry - hedgeOffY) / stepH_)));
+        const cxHedge = hedgeOffX + col_h * stepV;
+        const cyHedge = hedgeOffY + row_h * stepH_;
 
-        // 셀 중심 다이아몬드 후보 (각 X 교차점)
-        const centerOffX = geo.cellW / 2;
-        const centerOffY = geo.cellH / 2;
-        const col_m = Math.max(0, Math.min(geo.cols - 1, Math.round((rx - centerOffX) / stepV)));
-        const row_m = Math.max(0, Math.min(geo.rowsInt - 1, Math.round((ry - centerOffY) / stepH_)));
-        const cxCenter = centerOffX + col_m * stepV;
-        const cyCenter = centerOffY + row_m * stepH_;
+        // 세로 이웃 칸(col,row)-(col,row+1) 사이 흰 마름모 후보
+        const vedgeOffX = geo.cellW / 2;
+        const vedgeOffY = geo.cellH + geo.slatH / 2;
+        const col_v = Math.max(0, Math.min(geo.cols - 1, Math.round((rx - vedgeOffX) / stepV)));
+        const row_v = Math.max(0, Math.min(geo.rowsInt - 2, Math.round((ry - vedgeOffY) / stepH_)));
+        const cxVedge = vedgeOffX + col_v * stepV;
+        const cyVedge = vedgeOffY + row_v * stepH_;
 
         // 두 후보 중 클릭 지점을 실제로 담고 있는 쪽을 고른다
-        const centerHit = inDiamond(rx, ry, cxCenter, cyCenter);
-        const cornerHit = inDiamond(rx, ry, cxCorner, cyCorner);
-        if (centerHit && !cornerHit) return `center:${col_m}:${row_m}`;
-        if (cornerHit && !centerHit) return `corner:${col_c}:${row_c}`;
+        const hedgeHit = inDiamond(rx, ry, cxHedge, cyHedge);
+        const vedgeHit = inDiamond(rx, ry, cxVedge, cyVedge);
+        if (hedgeHit && !vedgeHit) return `hedge:${col_h}:${row_h}`;
+        if (vedgeHit && !hedgeHit) return `vedge:${col_v}:${row_v}`;
         // 둘 다 아니거나(반올림으로 후보 자체가 어긋난 경우) 둘 다(경계선)면, 마름모 기준 정규화 거리로 보정
         const nDist = (px, py, dcx, dcy) => Math.abs(px - dcx) / hW + Math.abs(py - dcy) / hH;
-        return nDist(rx, ry, cxCenter, cyCenter) <= nDist(rx, ry, cxCorner, cyCorner)
-            ? `center:${col_m}:${row_m}` : `corner:${col_c}:${row_c}`;
+        return nDist(rx, ry, cxHedge, cyHedge) <= nDist(rx, ry, cxVedge, cyVedge)
+            ? `hedge:${col_h}:${row_h}` : `vedge:${col_v}:${row_v}`;
     }
 
     function getAllCellKeys() {
         if (!geo || !geo.cols || !geo.rowsInt) return [];
         const keys = [];
-        for (let row = 0; row <= geo.rowsInt - 2; row++)
-            for (let col = 0; col <= geo.cols - 2; col++)
-                keys.push(`corner:${col}:${row}`);
         for (let row = 0; row <= geo.rowsInt - 1; row++)
+            for (let col = 0; col <= geo.cols - 2; col++)
+                keys.push(`hedge:${col}:${row}`);
+        for (let row = 0; row <= geo.rowsInt - 2; row++)
             for (let col = 0; col <= geo.cols - 1; col++)
-                keys.push(`center:${col}:${row}`);
+                keys.push(`vedge:${col}:${row}`);
         return keys;
     }
 
