@@ -569,6 +569,9 @@
             if (!material) {
                 faceMaterial = null;
                 window.__pmokSetFaceMaterial?.(null);
+                // "없음"은 브러시만 해제하는 게 아니라 이미 칠해둔 면도 전부 지운다 — 엔진별 초기화
+                // 로직(몬드리안 랜덤 칸 포함)을 그대로 타려고 숨은 초기화 버튼을 대신 눌러준다.
+                document.getElementById('btnFaceClear')?.click();
                 render();
                 return;
             }
