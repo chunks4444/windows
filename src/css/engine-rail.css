@@ -327,11 +327,11 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
 .fin-parts.shake { animation: titleShake .35s ease; }
 .fin-part {
     display: flex; align-items: center; justify-content: center; gap: 5px;
-    height: 32px; padding: 0 4px; border: none; border-radius: 8px;
+    height: 32px; padding: 0 4px; border: none; border-bottom: 2px solid transparent; border-radius: 0;
     background: transparent; color: #4B5160; font-size: 12px; cursor: pointer; white-space: nowrap;
 }
 .fin-part .fin-dot { width: 10px; height: 10px; }
-.fin-part.active { background: #FFFFFF; color: #111; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); }
+.fin-part.active { color: #111; border-bottom-color: #111; }
 .fin-need { display: flex; align-items: center; gap: 6px; margin: 8px 0 0; font-size: 12px; color: #3C4049; }
 .fin-need i { color: #8A909A; }
 .fin-current { display: flex; align-items: center; gap: 8px; margin: 12px 0 4px; font-size: 13px; color: #111; min-height: 20px; }
