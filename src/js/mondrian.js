@@ -2254,8 +2254,11 @@ async function draw() {
                 // 울거미(내경 0~1 범위) 밖으로 못 나가게 — 분할선(clampMondrianLinePos)과 동일 조건
                 if (mondrianDrag.axis === 'v') {
                     dnx = Math.max(0 - mondrianDrag.start.nx1, Math.min(1 - mondrianDrag.start.nx1, dnx));
+                    // mm 단위 스냅 — 비율(0~1)을 실제 mm로 바꿔 반올림한 뒤 다시 비율로 되돌린다
+                    if (geo.innerW > 0) dnx = Math.round((mondrianDrag.start.nx1 + dnx) * geo.innerW) / geo.innerW - mondrianDrag.start.nx1;
                 } else {
                     dny = Math.max(0 - mondrianDrag.start.ny1, Math.min(1 - mondrianDrag.start.ny1, dny));
+                    if (lastEffInnerH > 0) dny = Math.round((mondrianDrag.start.ny1 + dny) * lastEffInnerH) / lastEffInnerH - mondrianDrag.start.ny1;
                 }
                 ln.nx1 = mondrianDrag.start.nx1 + dnx; ln.ny1 = mondrianDrag.start.ny1 + dny;
                 ln.nx2 = mondrianDrag.start.nx2 + dnx; ln.ny2 = mondrianDrag.start.ny2 + dny;
@@ -2272,9 +2275,12 @@ async function draw() {
                 draw();
                 return;
             }
-            const desiredPos = mondrianDrag.axis === 'v'
+            let desiredPos = mondrianDrag.axis === 'v'
                 ? (coord.x - lastILeft) / lastIW
                 : (coord.y - lastITop)  / lastIH;
+            // mm 단위 스냅 — 비율을 실제 mm로 바꿔 반올림한 뒤 다시 비율로 되돌린다
+            const _snapDimMm = mondrianDrag.axis === 'v' ? geo.innerW : lastEffInnerH;
+            if (_snapDimMm > 0) desiredPos = Math.round(desiredPos * _snapDimMm) / _snapDimMm;
             moveMondrianLine(mondrianDrag.idx, clampMondrianLinePos(mondrianDrag.idx, desiredPos));
             _mondrianVersion++;
             draw();
