@@ -646,14 +646,9 @@
             if (needPart) h += `<p class="fin-need"><i class="bi bi-exclamation-circle"></i> ${_t('먼저 색칠할 부위를 고르세요.')}</p>`;
 
             if (target && faceMode) {
-                // 면: 나무 마감이 아니라 재질(한지/유리)을 고른다
-                let curLabelRaw = '없음';
-                if (faceMaterial?.material) {
-                    const subDef = (FACE_MATERIAL_SUBS[faceMaterial.material] || []).find(s => s.value === faceMaterial.sub);
-                    curLabelRaw = subDef?.label || (faceMaterial.material === 'hanji' ? '한지' : '유리');
-                }
-                h += `<div class="fin-current"><span class="fin-dot${faceMaterial ? '' : ' fin-dot-none'}"${faceMaterial ? ` style="background:${esc2(faceMaterial.hex)}"` : ''}></span>`
-                   + `<span>${esc2(_t(curLabelRaw))}</span></div>`;
+                // 면: 현재 선택 상태는 아래 "기본" 칩의 active 표시로 충분해서 별도 표시줄 없이 안내문만
+                const paintOn = typeof facePaintMode !== 'undefined' && facePaintMode;
+                h += `<p class="fin-hint">${paintOn ? _t('도면에서 칠할 면을 클릭하세요. 오른쪽 클릭은 지우기입니다.') : _t('아래에서 색을 고르면 도면에서 면을 칠할 수 있습니다.')}</p>`;
             } else if (target) {
                 h += `<div class="fin-current">` + (!target ? '' : fin ? `<span class="fin-dot" style="background:${esc2(cur?.dot?.style.background || '')}"></span>` : '<span class="fin-dot fin-dot-none"></span>')
                     + `<span>${esc2(!target ? _t('부위를 고른 뒤 아래에서 색을 누르세요.') : stain ? (cur?.name?.textContent || '') : (fin ? finishLabel(fin) : _t('마감 없음')))}</span></div>`;
@@ -726,11 +721,6 @@
             }
             root.innerHTML = h;
             if (paintRow) { root.appendChild(paintRow); paintRow.hidden = target !== 'face'; }
-            if (target === 'face') {
-                const on = typeof facePaintMode !== 'undefined' && facePaintMode;
-                root.querySelector('.fin-current')?.insertAdjacentHTML('afterend',
-                    `<p class="fin-hint">${on ? _t('도면에서 칠할 면을 클릭하세요. 오른쪽 클릭은 지우기입니다.') : _t('아래에서 색을 고르면 도면에서 면을 칠할 수 있습니다.')}</p>`);
-            }
         }
 
         // 모든 색(기본 마감·팔레트 칩)에 마우스를 올리면 그 동그라미 위에 제품명·색 이름 말풍선 (브라우저 title 툴팁 대신)
