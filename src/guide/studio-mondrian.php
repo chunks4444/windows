@@ -72,9 +72,9 @@ include __DIR__ . '/_head.php';
 <table class="guide-table">
     <thead><tr><th>동작</th><th>방법</th></tr></thead>
     <tbody>
-        <tr><td><strong>분할선 옮기기</strong></td><td>캔버스에서 살을 잡고 끌면 그 선이 수직 또는 수평으로만 움직입니다. 맞닿은 칸들의 크기가 함께 바뀌어 빈틈이나 겹침이 생기지 않습니다.</td></tr>
+        <tr><td><strong>분할선 옮기기</strong></td><td>캔버스에서 살을 잡고 끌면 그 선이 수직 또는 수평으로만 움직입니다. 맞닿은 칸들의 크기가 함께 바뀌어 빈틈이나 겹침이 생기지 않습니다. 이동한 위치는 1mm 단위로 맞춰집니다.</td></tr>
         <tr><td><strong>선 추가</strong></td><td>툴바 <span class="guide-ui">선 편집 ▾</span> → <span class="guide-ui">선 추가</span>를 누른 뒤 시작점과 끝점을 차례로 클릭합니다. 교점뿐 아니라 살이나 울거미 위 아무 지점에서나 시작할 수 있고, 선은 수직·수평으로만 그어집니다.</td></tr>
-        <tr><td><strong>그린 선 옮기기</strong></td><td>직접 그은 선도 잡고 끌어 옮길 수 있습니다. 그 선에 붙어 있는 다른 그린 선들도 같이 따라오며, 울거미 안쪽 범위를 벗어나지 않습니다.</td></tr>
+        <tr><td><strong>그린 선 옮기기</strong></td><td>직접 그은 선도 잡고 끌어 옮길 수 있습니다. 그 선에 붙어 있는 다른 그린 선들도 같이 따라오며, 울거미 안쪽 범위를 벗어나지 않습니다. 이동한 위치는 1mm 단위로 맞춰집니다.</td></tr>
         <tr><td><strong>선 삭제</strong></td><td>툴바 <span class="guide-ui">선 편집 ▾</span> → <span class="guide-ui">선 삭제</span>를 누른 뒤 지울 살을 클릭합니다. 한 번 더 클릭하면 복구됩니다.</td></tr>
         <tr><td><strong>편집 초기화</strong></td><td>툴바 <span class="guide-ui">선 편집 ▾</span> → <span class="guide-ui">편집 초기화</span>로 추가·삭제한 선과 칠한 면색을 모두 되돌립니다.</td></tr>
     </tbody>

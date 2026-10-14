@@ -72,9 +72,9 @@ include __DIR__ . '/../_head.php';
 <table class="guide-table">
     <thead><tr><th>Action</th><th>How</th></tr></thead>
     <tbody>
-        <tr><td><strong>Move a dividing line</strong></td><td>Grab a slat on the canvas and drag it; it moves only vertically or horizontally. The neighboring cells resize with it, so no gaps or overlaps appear.</td></tr>
+        <tr><td><strong>Move a dividing line</strong></td><td>Grab a slat on the canvas and drag it; it moves only vertically or horizontally. The neighboring cells resize with it, so no gaps or overlaps appear. The new position snaps to the nearest 1mm.</td></tr>
         <tr><td><strong>Add a line</strong></td><td>In the toolbar, choose <span class="guide-ui">Edit lines ▾</span> → <span class="guide-ui">Add line</span>, then click a start point and an end point. You can start from any point on a slat or the frame, not just intersections, and lines are drawn only vertically or horizontally.</td></tr>
-        <tr><td><strong>Move a drawn line</strong></td><td>Lines you drew can be dragged too. Other drawn lines attached to it follow along, and it stays inside the frame.</td></tr>
+        <tr><td><strong>Move a drawn line</strong></td><td>Lines you drew can be dragged too. Other drawn lines attached to it follow along, and it stays inside the frame. The new position snaps to the nearest 1mm.</td></tr>
         <tr><td><strong>Delete a line</strong></td><td>In the toolbar, choose <span class="guide-ui">Edit lines ▾</span> → <span class="guide-ui">Delete line</span>, then click the slat to remove. Click it again to restore it.</td></tr>
         <tr><td><strong>Reset edits</strong></td><td><span class="guide-ui">Edit lines ▾</span> → <span class="guide-ui">Reset edits</span> in the toolbar undoes all added and deleted lines and painted panel colors.</td></tr>
     </tbody>

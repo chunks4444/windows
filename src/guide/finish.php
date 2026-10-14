@@ -8,8 +8,9 @@ include __DIR__ . '/_head.php';
 
 <h1>마감 &amp; 컬러 샘플</h1>
 <p class="guide-lead">
-    스튜디오 왼쪽 메뉴의 <strong>마감</strong> 탭에서 수종과 부자재를 고르고, 문틀·울거미·살·면 부위마다 마감 색을 정합니다.
-    7개 엔진 모두 같은 방식이며, 고른 마감은 예상 견적에 바로 반영됩니다. 아래에서 고를 수 있는 모든 색 견본을 확인할 수 있습니다.
+    스튜디오 왼쪽 메뉴의 <strong>마감</strong> 탭에서 수종을 고르고, 문틀·울거미·살 부위마다 마감 색을 정합니다. 면(面)은
+    색이 아니라 한지·유리 중 어떤 재질로 채울지 고릅니다. 7개 엔진 모두 같은 방식이며, 고른 마감은 예상 견적에
+    바로 반영됩니다. 아래에서 고를 수 있는 모든 색 견본을 확인할 수 있습니다.
 </p>
 
 <div class="guide-screenshot">
@@ -19,15 +20,20 @@ include __DIR__ . '/_head.php';
 <h2>마감 탭 사용 순서</h2>
 <ol class="guide-steps">
     <li>왼쪽 메뉴의 <span class="guide-ui"><i class="bi bi-palette"></i> 마감</span> 탭을 엽니다.</li>
-    <li><strong>수종</strong>과 <strong>부자재</strong>를 고릅니다. 부자재가 필요 없으면 <span class="guide-ui">부자재 없음</span>을 고릅니다.</li>
-    <li><strong>색칠할 부위</strong>에서 <strong>문틀 · 울거미 · 살 · 면</strong> 중 하나를 누릅니다. 부위를 고르지 않고 색을 누르면 안내가 뜹니다.</li>
+    <li><strong>수종</strong>을 고릅니다.</li>
+    <li><strong>색칠할 부위</strong>에서 <strong>문틀 · 울거미 · 살</strong> 중 하나를 누릅니다. 부위를 고르지 않고 색을 누르면 안내가 뜹니다.</li>
     <li>아래 <strong>기본</strong> 마감이나 스테인 색 견본에서 색을 누르면 그 부위에 바로 칠해집니다. 색을 누르면 그 색이 속한 마감 종류도 함께 선택됩니다.</li>
     <li>부위를 바꿔 가며 나머지 부위도 같은 방법으로 칠합니다. 현재 고른 부위의 색 이름은 부위 버튼 바로 아래에 표시됩니다.</li>
 </ol>
 
 <div class="guide-tip">
     <i class="bi bi-lightbulb-fill"></i>
-    <span><strong>면</strong>을 고른 뒤 색을 누르면 <strong>면컬러 칠하기</strong>가 켜집니다. 도면의 칸을 클릭하면 그 칸만 칠해지고, 오른쪽 클릭은 지우기입니다. 마감 탭을 벗어나면 칠하기는 자동으로 꺼집니다.</span>
+    <span><strong>면</strong>을 고르면 색이 아니라 <strong>재질</strong>을 고릅니다 — <strong>한지</strong> 또는 <strong>유리</strong> 중 하나를 누르면 세부 종류(색한지·배접지·일반한지, 또는 일반유리·칼라유리)가 나오고, 색이 필요한 종류는 색상 견본도 함께 고릅니다. 재질을 고르면 도면에서 칠할 면을 클릭할 수 있고, 오른쪽 클릭은 지우기입니다. <strong>없음</strong>을 누르면 칠해둔 면이 전부 지워집니다. 마감 탭을 벗어나면 칠하기는 자동으로 꺼집니다.</span>
+</div>
+
+<div class="guide-note">
+    <i class="bi bi-info-circle-fill"></i>
+    <span>한지·유리 재질과 색상 견본은 아직 다듬는 중인 임시 구성입니다 — 실제 재질 이미지와 전용 색상은 나중에 추가될 예정입니다.</span>
 </div>
 
 <div class="guide-note">

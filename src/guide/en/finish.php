@@ -9,8 +9,9 @@ include __DIR__ . '/../_head.php';
 
 <h1>Finishes &amp; Colour Samples</h1>
 <p class="guide-lead">
-    In the <strong>Finish</strong> tab of the studio's left-hand menu you choose the wood and hardware, and set a finish colour for each part — frame, stiles &amp; rails, slats and faces.
-    It works the same in all seven engines, and the finish you choose is reflected in the estimate right away. Every colour you can pick is shown below.
+    In the <strong>Finish</strong> tab of the studio's left-hand menu you choose the wood and set a finish colour for the frame, stiles &amp; rails and slats.
+    The face isn't a colour — instead you choose which material fills it, hanji paper or glass. It works the same in all seven engines, and the finish
+    you choose is reflected in the estimate right away. Every colour you can pick is shown below.
 </p>
 
 <div class="guide-screenshot">
@@ -20,15 +21,20 @@ include __DIR__ . '/../_head.php';
 <h2>Using the Finish Tab</h2>
 <ol class="guide-steps">
     <li>Open the <span class="guide-ui"><i class="bi bi-palette"></i> Finish</span> tab in the left-hand menu.</li>
-    <li>Choose the <strong>Wood</strong> and <strong>Hardware</strong>. If you don't need hardware, choose <span class="guide-ui">No hardware</span>.</li>
-    <li>Under <strong>Part to colour</strong>, click one of <strong>Frame · Stile &amp; rail · Slat · Face</strong>. If you click a colour without picking a part first, a hint appears.</li>
+    <li>Choose the <strong>Wood</strong>.</li>
+    <li>Under <strong>Part to colour</strong>, click one of <strong>Frame · Stile &amp; rail · Slat</strong>. If you click a colour without picking a part first, a hint appears.</li>
     <li>Click a colour among the <strong>Basic</strong> finishes or the stain swatches and that part is painted right away. Clicking a colour also selects the finish it belongs to.</li>
     <li>Switch parts and paint the rest the same way. The name of the selected part's colour is shown just below the part buttons.</li>
 </ol>
 
 <div class="guide-tip">
     <i class="bi bi-lightbulb-fill"></i>
-    <span>Pick <strong>Face</strong> and click a colour to turn on <strong>Paint face color</strong>. Click cells in the drawing to paint just those cells; right-click erases. Painting switches off automatically when you leave the Finish tab.</span>
+    <span>Pick <strong>Face</strong> and you choose a <strong>material</strong> instead of a colour — click <strong>Hanji</strong> or <strong>Glass</strong> and a sub-type appears (colored hanji, backed hanji, plain hanji, or plain glass, colored glass); types that need a colour also show a swatch picker. Once a material is chosen you can click cells in the drawing to paint them; right-click erases. Click <strong>None</strong> to clear every painted face. Painting switches off automatically when you leave the Finish tab.</span>
+</div>
+
+<div class="guide-note">
+    <i class="bi bi-info-circle-fill"></i>
+    <span>The hanji/glass materials and colour swatches are still a work in progress — real material images and a dedicated colour list will be added later.</span>
 </div>
 
 <div class="guide-note">
