@@ -657,7 +657,6 @@
             } else if (target) {
                 h += `<div class="fin-current">` + (!target ? '' : fin ? `<span class="fin-dot" style="background:${esc2(cur?.dot?.style.background || '')}"></span>` : '<span class="fin-dot fin-dot-none"></span>')
                     + `<span>${esc2(!target ? _t('부위를 고른 뒤 아래에서 색을 누르세요.') : stain ? (cur?.name?.textContent || '') : (fin ? finishLabel(fin) : _t('마감 없음')))}</span></div>`;
-                if (!stain) h += `<p class="fin-hint">${fin ? _t('오일 마감은 나무결 그대로 한 가지 색으로 칠해집니다.') : _t('나무 본래 색 그대로입니다. 아래에서 색을 고르면 그 마감이 함께 선택됩니다.')}</p>`;
             }
 
             if (target && faceMode) {
