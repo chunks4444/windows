@@ -538,17 +538,16 @@
 
         // 수종은 라벨을 붙여 맨 위 칸으로, 마감 셀렉트는 아래 팔레트가 대신하므로 숨긴다(CSS).
         // 부자재는 별도 탭으로 분리돼 있어 여기선 건드리지 않는다.
-        const basics = document.createElement('div');
-        basics.className = 'fin-basics';
-        [['txtWood', _t('수종')]].forEach(([id, lbl]) => {
-            const ctrl = document.getElementById(id)?.closest('.ctrl');
-            if (!ctrl) return;
+        const woodCtrl = document.getElementById('txtWood')?.closest('.ctrl');
+        if (woodCtrl) {
+            const basics = document.createElement('div');
+            basics.className = 'fin-basics';
             const cell = document.createElement('div');
-            cell.innerHTML = `<div class="fin-label">${lbl}</div>`;
-            cell.appendChild(ctrl);
+            cell.innerHTML = `<div class="fin-label">${_t('수종')}</div>`;
+            cell.appendChild(woodCtrl);
             basics.appendChild(cell);
-        });
-        finSel.closest('.ctrl')?.before(basics);
+            finSel.closest('.ctrl')?.before(basics);
+        }
 
         const root = document.createElement('div');
         root.className = 'fin-ui';
@@ -624,7 +623,6 @@
             }
             setFinish(groupFin);
             pickers().find(p => p.id === target + 'Popup')?.selectColor(hex);
-            if (target === 'face') setPaint(true);   // 면 색을 고르면 바로 칠하기 — 도면 위에선 커서가 페인트 버킷
             window.draw?.();
             render();
         }

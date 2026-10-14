@@ -1487,9 +1487,8 @@
             facePaintIsDown = true;
             const coord = screenToCtxCoord(e.clientX, e.clientY);
             paintFaceCell(coord.x, coord.y, false);
-            // startX/Y: 드래그로 칠하기가 이어지는 동안 손떨림(클릭 순간의 미세한 마우스 이동)으로
-            // onPointerMove가 한 번 더 불려서 칸 경계에 걸친 클릭(예: 십자살의 중심/모서리 다이아몬드
-            // 양쪽 다 가능한 위치)이 인접한 두 칸에 겹쳐 칠해지는 걸 막는다 — PAINT_MOVE_THRESHOLD 참고.
+            // startX/Y: 클릭 순간의 미세한 마우스 이동으로 onPointerMove가 한 번 더 불려 칸 경계에
+            // 걸친 클릭이 인접 칸까지 같이 칠해지는 걸 막는다 — 아래 PAINT_MOVE_THRESHOLD 참고.
             gesture = { type: 'paint', pointerId: e.pointerId, startX: e.clientX, startY: e.clientY };
             return;
         }

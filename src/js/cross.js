@@ -1840,18 +1840,6 @@ async function draw() {
             ? `hedge:${col_h}:${row_h}` : `vedge:${col_v}:${row_v}`;
     }
 
-    function getAllCellKeys() {
-        if (!geo || !geo.cols || !geo.rowsInt) return [];
-        const keys = [];
-        for (let row = 0; row <= geo.rowsInt - 1; row++)
-            for (let col = 0; col <= geo.cols - 2; col++)
-                keys.push(`hedge:${col}:${row}`);
-        for (let row = 0; row <= geo.rowsInt - 2; row++)
-            for (let col = 0; col <= geo.cols - 1; col++)
-                keys.push(`vedge:${col}:${row}`);
-        return keys;
-    }
-
     function paintFaceCell(cx, cy, isErase) {
         const key = hitTestCell(cx, cy);
         if (!key) return;
