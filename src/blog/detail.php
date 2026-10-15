@@ -242,12 +242,18 @@ $metaKeywords = trim($metaKeywords . ', ' . t('meta_brand_keywords'), ', ');
     <link rel="icon" type="image/svg+xml" href="/src/assets/favicon.svg">
     <link rel="alternate icon" href="/src/assets/favicon.png">
     <link rel="apple-touch-icon" href="/src/assets/apple-touch-icon.png">
-    <link rel="canonical" href="<?= htmlspecialchars(SITE_URL . lang_href('/blog/' . rawurlencode($post['slug']))) ?>">
-    <?php hreflang_tags('/blog/' . rawurlencode($post['slug']), !empty($post['title_en'])); ?>
+    <?php
+    // 번역이 없는 글(title_en 미입력)은 /en/ 주소로 들어와도 한글 본문을 그대로 보여주므로(db_field 폴백),
+    // canonical도 영문 주소 자신이 아니라 한글 원본을 가리켜야 한다 — hreflang_tags()와 같은 기준.
+    $bdBlogPath = '/blog/' . rawurlencode($post['slug']);
+    $bdCanonPath = (is_en() && empty($post['title_en'])) ? $bdBlogPath : lang_href($bdBlogPath);
+    ?>
+    <link rel="canonical" href="<?= htmlspecialchars(SITE_URL . $bdCanonPath) ?>">
+    <?php hreflang_tags($bdBlogPath, !empty($post['title_en'])); ?>
     <meta property="og:title" content="<?= htmlspecialchars(db_field($post, 'title')) ?>">
     <meta property="og:description" content="<?= htmlspecialchars($metaDesc) ?>">
     <meta property="og:image" content="<?= htmlspecialchars($metaImage) ?>">
-    <?php article_jsonld($post, SITE_URL . lang_href('/blog/' . rawurlencode($post['slug'])), $metaImage, $metaDesc); ?>
+    <?php article_jsonld($post, SITE_URL . $bdCanonPath, $metaImage, $metaDesc); ?>
     <?php define('BOOTSTRAP_LOADED', true); ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <?php if ($kakaoJsKey = kakao_js_key()): ?>
