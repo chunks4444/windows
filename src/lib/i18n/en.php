@@ -135,7 +135,7 @@ return [
     'company_phil_title'       => '평목 (Pyeongmok)',
     'company_phil_p1'          => "The tool once used to level off grain measured by the \u{2018}doe\u{2019} or \u{2018}mal\u{2019}<br>is called a \u{2018}pyeongmire\u{2019} in Korean —<br>and \u{2018}평목 (平木)’ is the Hanja word for exactly that tool.",
     'company_phil_p2'          => "A pyeongmok's job is balance —<br>not letting things overflow,<br>not letting them fall short.",
-    'company_phil_p3'          => "The carpenters at Pyeongmok, who shape solid wood,<br>aim to make changho and furniture that don't wear down with time —<br>but gain character because of it.",
+    'company_phil_p3'          => "Pyeongmok's carpenters aim to make changho and furniture<br>that grow quieter and deeper as the years settle into them.",
     'company_phil_item1_title' => 'The joinery stays true to the original.',
     'company_phil_item1_desc'  => "Se-sal, Jeongja-sal, Bit-sal, Sotgeul-sal. We carried the exact joinery used in Joseon-era changho straight into the engine. <br>Only the slat spacing and proportions are adapted to fit today's spaces.",
     'company_phil_item2_title' => 'Real-Time Design',
