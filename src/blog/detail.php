@@ -312,12 +312,10 @@ $metaKeywords = trim($metaKeywords . ', ' . t('meta_brand_keywords'), ', ');
 
         <?php if (is_en() && !empty($post['content_en'])): ?>
         <div class="bd-ai-translation-notice" style="font-size:12px;color:var(--text-muted);margin:20px 0 28px;">
-            <p style="margin:0 0 6px;">
+            <p style="margin:0;">
                 Originally written in Korean and translated into English with the help of AI.
                 <a href="<?= htmlspecialchars('/blog/' . rawurlencode($post['slug'])) ?>">Read the original</a>
             </p>
-            <p style="margin:0;"><?= htmlspecialchars(t('bd_license')) ?></p>
-            <p style="margin:6px 0 0;"><?= sprintf(htmlspecialchars(t('bd_feedback')), '<button type="button" class="bd-feedback-email" data-bs-toggle="modal" data-bs-target="#contactModal">pyeongmok@gmail.com</button>') ?></p>
         </div>
         <?php endif; ?>
 
@@ -359,10 +357,8 @@ $metaKeywords = trim($metaKeywords . ', ' . t('meta_brand_keywords'), ', ');
             </ul>
             <hr class="bd-divider bd-divider-source">
             <?php endif; ?>
-            <?php if (!(is_en() && !empty($post['content_en']))): ?>
             <p class="bd-source-license"><?= htmlspecialchars(t('bd_license')) ?></p>
             <p class="bd-source-license bd-feedback"><?= sprintf(htmlspecialchars(t('bd_feedback')), '<button type="button" class="bd-feedback-email" data-bs-toggle="modal" data-bs-target="#contactModal">pyeongmok@gmail.com</button>') ?></p>
-            <?php endif; ?>
         </div>
 
         <?php
