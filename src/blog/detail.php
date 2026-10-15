@@ -313,7 +313,7 @@ $metaKeywords = trim($metaKeywords . ', ' . t('meta_brand_keywords'), ', ');
         <?php if (is_en() && !empty($post['content_en'])): ?>
         <div class="bd-ai-translation-notice" style="font-size:12px;color:var(--text-muted);margin:20px 0 28px;">
             <p style="margin:0 0 6px;">
-                Originally written in Korean by the author. Translated with the help of AI.
+                Originally written in Korean and translated into English with the help of AI.
                 <a href="<?= htmlspecialchars('/blog/' . rawurlencode($post['slug'])) ?>">Read the original</a>
             </p>
             <p style="margin:0;"><?= htmlspecialchars(t('bd_license')) ?></p>
