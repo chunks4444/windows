@@ -1786,16 +1786,16 @@ async function draw() {
         const fmtArea = m2  => m2.toFixed(2) + ' m²';
         const fmtKg   = kg  => kg == null ? '—' : kg.toFixed(2) + ' kg';
 
-        // 문(울거미+살, 문짝 수만큼 합산한 소계) → 문틀 → (유리) → 합계 순으로 보여준다.
-        // 문짝마다 따로 보여주면 전부 같은 값이 반복돼(서버가 아직 문짝별 살삭제를 반영 못 함) 소계 한 줄로 합친다.
-        const doorVol  = (ph.ulgeomi.volMm3  + ph.slat.volMm3)  * doorCount;
-        const doorArea = (ph.ulgeomi.areaM2  + ph.slat.areaM2)  * doorCount;
-        const doorKg   = ((ph.ulgeomi.weightKg || 0) + (ph.slat.weightKg || 0)) * doorCount;
-
-        const rows = [[_t('문'), doorVol, doorArea, doorKg]];
-        let totalVol = doorVol, totalArea = doorArea, totalKg = doorKg;
-        rows.push([_t('문틀'), ph.muntol.volMm3, ph.muntol.areaM2, ph.muntol.weightKg]);
-        totalVol += ph.muntol.volMm3; totalArea += ph.muntol.areaM2; totalKg += (ph.muntol.weightKg || 0);
+        // 울거미·살·문틀을 각각 따로 보여준다(문짝 수만큼 합산한 소계 — 문짝마다 반복하면 전부 같은
+        // 값이라 한 줄로 합침). 유리·한지는 아래에서 이어서 추가.
+        const rows = [
+            [_t('울거미'), ph.ulgeomi.volMm3 * doorCount, ph.ulgeomi.areaM2 * doorCount, (ph.ulgeomi.weightKg || 0) * doorCount],
+            [_t('살'),     ph.slat.volMm3    * doorCount, ph.slat.areaM2    * doorCount, (ph.slat.weightKg    || 0) * doorCount],
+            [_t('문틀'),   ph.muntol.volMm3,               ph.muntol.areaM2,               ph.muntol.weightKg],
+        ];
+        let totalVol  = rows[0][1] + rows[1][1] + rows[2][1];
+        let totalArea = rows[0][2] + rows[1][2] + rows[2][2];
+        let totalKg   = rows[0][3] + rows[1][3] + (rows[2][3] || 0);
 
         // 일반유리는 칸마다 칠하는 장식이 아니라 살 전체 뒤에 한 장 통유리를 끼우는 것 — 몇 칸을
         // 클릭했는지와 무관하게 내경 전체 면적(살 부분)으로 계산한다. 칼라유리는 반대로 칠한 칸만 센다.
