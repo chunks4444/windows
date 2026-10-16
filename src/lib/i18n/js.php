@@ -267,6 +267,7 @@ return [
     '문틀 크기'                                      => 'Frame size',
     '문짝'                                           => 'Door',
     '문틀'                                           => 'Frame',
+    '문'                                              => 'Door leaf',
     '울거미'                                         => 'Stiles & rails',
     '살'                                              => 'Slats',
     '합계'                                           => 'Total',
