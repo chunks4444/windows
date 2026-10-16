@@ -1790,19 +1790,27 @@ async function draw() {
         const fmtArea = m2  => m2.toFixed(2) + ' m²';
         const fmtKg   = kg  => kg == null ? '—' : kg.toFixed(2) + ' kg';
 
-        // 울거미·살·문틀을 각각 따로 보여준다(문짝 수만큼 합산한 소계 — 문짝마다 반복하면 전부 같은
-        // 값이라 한 줄로 합침). 수종을 아직 안 골라 비중이 없으면(ph.density null) 무게는 — 로 두고
-        // 체적·표면적은 그대로 보여준다 — 유리·한지 무게는 비중과 무관하므로 숨길 이유가 없다.
+        // 울거미·살은 문짝 1짝 기준 값과, 문짝이 2개 이상이면 전체 문짝 합산 소계를 같이 보여준다
+        // (한짝 값만 보면 전체 문짝 수와 헷갈려해서 둘 다 표시). 문틀은 문짝 수와 무관하게 한 줄.
+        // 수종을 아직 안 골라 비중이 없으면(ph.density null) 무게는 — 로 두고 체적·표면적은 그대로
+        // 보여준다 — 유리·한지 무게는 비중과 무관하므로 숨길 이유가 없다.
         const woodKg = k => ph.density ? k : null;
         const rows = [
-            [_t('울거미'), ph.ulgeomi.volMm3 * doorCount, ph.ulgeomi.areaM2 * doorCount, woodKg((ph.ulgeomi.weightKg || 0) * doorCount)],
-            [_t('살'),     ph.slat.volMm3    * doorCount, ph.slat.areaM2    * doorCount, woodKg((ph.slat.weightKg    || 0) * doorCount)],
-            [_t('문틀'),   ph.muntol.volMm3,               ph.muntol.areaM2,               woodKg(ph.muntol.weightKg)],
+            [`${_t('울거미')} × 1${_t('문짝')}`, ph.ulgeomi.volMm3, ph.ulgeomi.areaM2, woodKg(ph.ulgeomi.weightKg)],
+            [`${_t('살')} × 1${_t('문짝')}`,     ph.slat.volMm3,    ph.slat.areaM2,    woodKg(ph.slat.weightKg)],
         ];
+        if (doorCount > 1) {
+            rows.push([`${_t('울거미')} ${_t('소계')} × ${doorCount}${_t('문짝')}`, ph.ulgeomi.volMm3 * doorCount, ph.ulgeomi.areaM2 * doorCount, woodKg((ph.ulgeomi.weightKg || 0) * doorCount)]);
+            rows.push([`${_t('살')} ${_t('소계')} × ${doorCount}${_t('문짝')}`,     ph.slat.volMm3    * doorCount, ph.slat.areaM2    * doorCount, woodKg((ph.slat.weightKg    || 0) * doorCount)]);
+        }
+        rows.push([_t('문틀'), ph.muntol.volMm3, ph.muntol.areaM2, woodKg(ph.muntol.weightKg)]);
         section.style.display = '';
-        let totalVol  = rows[0][1] + rows[1][1] + rows[2][1];
-        let totalArea = rows[0][2] + rows[1][2] + rows[2][2];
-        let totalKg   = (rows[0][3] || 0) + (rows[1][3] || 0) + (rows[2][3] || 0);
+        // 합계는 (1짝 값이든 소계든 상관없이) 문짝 수만큼 합산한 실제 전체 물량 + 문틀 기준으로 계산한다
+        // — 화면에 1짝 줄과 소계 줄이 같이 떠 있어도 중복으로 더하면 안 되므로 rows 배열이 아니라
+        // ph(서버 원본, 1짝 기준)에서 다시 doorCount를 곱해 구한다.
+        let totalVol  = (ph.ulgeomi.volMm3 + ph.slat.volMm3) * doorCount + ph.muntol.volMm3;
+        let totalArea = (ph.ulgeomi.areaM2 + ph.slat.areaM2) * doorCount + ph.muntol.areaM2;
+        let totalKg   = ((ph.ulgeomi.weightKg || 0) + (ph.slat.weightKg || 0)) * doorCount + (ph.muntol.weightKg || 0);
 
         // 일반유리는 칸마다 칠하는 장식이 아니라 살 전체 뒤에 한 장 통유리를 끼우는 것이라, 칸을
         // 한 번도 안 눌러도 "면" 브러시에 일반유리가 물려 있기만 하면(선택된 상태) 내경 전체
