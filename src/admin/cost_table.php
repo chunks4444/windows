@@ -155,6 +155,7 @@ try {
                     <li><b>부자재</b> = 짝 × 선택한 철물 단가</li>
                     <li><b>마감</b> = 도장 면적(살 길이를 면적으로 환산) × 도포 횟수 × 마감재 ㎡ 단가 + 마감 작업 시간 × 마감 공임</li>
                     <li><b>판매가</b> = (목재비 + 제작비 + 부자재 + 마감) × (1 + 간접비율 + 이익률)</li>
+                    <li><b>표면적·무게·체적</b>(부재목록, 문짝 1짝당) = 울거미·살·문틀 각 부재 폭×두께×길이로 체적·표면적(긴 옆면 4면 근사) 계산, 무게 = 체적 × 수종 <b>비중</b>(목재 탭 — 가중치와는 별개 값). 면에 유리를 칠한 칸이 있으면 칸 수 × 셀 면적 × 유리 탭의 두께·비중으로 유리 무게를 더합니다.</li>
                 </ol>
                 <p class="wt-method-note">울거미: 세로 2개 × (외경 높이 + 살 두께×2), 가로 2개(풍판 사용 시 3개) × (외경 폭 + 살 두께×2) — 모든 엔진 동일. 살 길이에는 양 끝 장부(살 두께만큼)가 더해집니다.</p>
                 <p class="wt-method-note"><b>예상원가에 반영하지 않는 것:</b> 캔버스에서 선 추가·삭제로 편집한 내용(몬드리안 제외)은 예상원가에 들어가지 않습니다. 견적 요청을 검토할 때 도면을 보고 사람이 판단합니다.</p>
@@ -264,9 +265,19 @@ try {
                     </div>
                 </div>
             </div>
-            <div id="wtWeightRow" class="adm-mfield">
-                <label>가중치</label>
-                <input id="wtWeight" type="number" min="0" step="0.01" placeholder="1.00" class="num-input">
+            <div id="wtWeightRow" style="display:flex;gap:8px;margin-bottom:0;">
+                <div class="adm-mfield" style="flex:1;">
+                    <label>가중치 <small style="color: var(--text);font-weight:400;">(원가 계산용)</small></label>
+                    <input id="wtWeight" type="number" min="0" step="0.01" placeholder="1.00" class="num-input">
+                </div>
+                <div class="adm-mfield" id="wtDensityField" style="flex:1;display:none;">
+                    <label>비중 <small style="color: var(--text);font-weight:400;">(g/cm³, 무게 계산용)</small></label>
+                    <input id="wtDensity" type="number" min="0" step="0.001" placeholder="0.45" class="num-input">
+                </div>
+                <div class="adm-mfield" id="wtThicknessField" style="flex:1;display:none;">
+                    <label>두께 <small style="color: var(--text);font-weight:400;">(mm)</small></label>
+                    <input id="wtThicknessMm" type="number" min="0" step="1" placeholder="5" class="num-input">
+                </div>
             </div>
             <div class="adm-mfield" id="wtEngineField" style="display:none;">
                 <label>엔진 <small style="color: var(--text);font-weight:400;">(비우면 공통)</small></label>

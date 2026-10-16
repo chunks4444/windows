@@ -267,6 +267,10 @@ return [
     '문틀 크기'                                      => 'Frame size',
     '문짝'                                           => 'Door',
     '문틀'                                           => 'Frame',
+    '울거미'                                         => 'Stiles & rails',
+    '살'                                              => 'Slats',
+    '합계'                                           => 'Total',
+    '유리(면)'                                       => 'Glass (panel)',
     // src/js/engine-rail.js — 상단 툴바 라벨·마감
     '선택'                                           => 'Select',
     '이동'                                           => 'Pan',

@@ -196,7 +196,7 @@ function get_finish_options(): array {
 function get_cost_table_item(string $category, string $name): ?array {
     if ($name === '') return null;
     try {
-        $stmt = db()->prepare("SELECT unit_price, weight, work_time_min, coat_count FROM cost_table WHERE category=? AND name=? AND is_active=1 LIMIT 1");
+        $stmt = db()->prepare("SELECT unit_price, weight, density, thickness_mm, work_time_min, coat_count FROM cost_table WHERE category=? AND name=? AND is_active=1 LIMIT 1");
         $stmt->execute([$category, $name]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row ?: null;

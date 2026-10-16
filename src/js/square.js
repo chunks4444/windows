@@ -460,6 +460,7 @@ async function draw() {
         document.getElementById('spMtVLen').textContent   = `${p.mtFace}×${p.mtW}×${p.mtVLen}mm`;
         document.getElementById('spMtHLen').textContent   = `${p.mtFace}×${p.mtW}×${p.mtHLen}mm`;
     }
+    renderPhysTable(p, data.glassConfig);
 
     // draw() 안에서 ctx를 재할당 가능하도록 로컬 변수로 섀도잉
     let ctx = canvas.getContext('2d');
@@ -1767,6 +1768,50 @@ async function draw() {
         slatColorPicker.selectColor(DEFAULT_SLAT_COLOR);
         draw();
     });
+
+    // 부재 목록 — 표면적·무게·체적 표시. 울거미·살은 문짝 1짝 기준으로 받아 문짝 수만큼 행을 나눠 보여주고
+    // (문짝마다 살삭제가 달라도 서버는 아직 이론치만 계산하므로 모든 문짝이 같은 값으로 나온다),
+    // 문틀은 문짝 수와 무관하게 한 행. 유리(면)는 faceMaterialMap에서 재질이 glass인 칸 수 × 셀면적 ×
+    // 두께(cost_table 유리 항목) × 비중으로 전체 문짝 합산 1행만 보여준다.
+    function renderPhysTable(p, glassConfig) {
+        const body = document.getElementById('physBody');
+        const section = document.getElementById('physSection');
+        if (!body || !section) return;
+        const ph = p?.physical;
+        if (!ph || !ph.density) { section.style.display = 'none'; return; }
+        section.style.display = '';
+
+        const doorCount = ph.doorCount || 1;
+        const fmtVol  = mm3 => Math.round(mm3 / 1000).toLocaleString() + ' cm³';
+        const fmtArea = m2  => m2.toFixed(2) + ' m²';
+        const fmtKg   = kg  => kg == null ? '—' : kg.toFixed(2) + ' kg';
+
+        const rows = [];
+        let totalVol = 0, totalArea = 0, totalKg = 0;
+        for (let i = 1; i <= doorCount; i++) {
+            rows.push([`${_t('문짝')} ${i} · ${_t('울거미')}`, ph.ulgeomi.volMm3, ph.ulgeomi.areaM2, ph.ulgeomi.weightKg]);
+            rows.push([`${_t('문짝')} ${i} · ${_t('살')}`,     ph.slat.volMm3,    ph.slat.areaM2,    ph.slat.weightKg]);
+            totalVol  += ph.ulgeomi.volMm3 + ph.slat.volMm3;
+            totalArea += ph.ulgeomi.areaM2 + ph.slat.areaM2;
+            totalKg   += (ph.ulgeomi.weightKg || 0) + (ph.slat.weightKg || 0);
+        }
+        rows.push([_t('문틀'), ph.muntol.volMm3, ph.muntol.areaM2, ph.muntol.weightKg]);
+        totalVol += ph.muntol.volMm3; totalArea += ph.muntol.areaM2; totalKg += (ph.muntol.weightKg || 0);
+
+        let glassCells = 0;
+        if (faceMaterialMap) for (const k in faceMaterialMap) if (faceMaterialMap[k]?.material === 'glass') glassCells++;
+        if (glassCells > 0 && glassConfig?.density && glassConfig?.thicknessMm) {
+            const glassAreaMm2 = geo.cellW * geo.cellH * glassCells * doorCount;
+            const glassVolMm3  = glassAreaMm2 * glassConfig.thicknessMm;
+            const glassKg      = glassVolMm3 / 1_000_000 * glassConfig.density;
+            rows.push([_t('유리(면)'), glassVolMm3, glassAreaMm2 / 1_000_000, glassKg]);
+            totalVol += glassVolMm3; totalArea += glassAreaMm2 / 1_000_000; totalKg += glassKg;
+        }
+
+        body.innerHTML = rows.map(([label, vol, area, kg]) =>
+            `<tr><td>${label}</td><td>${fmtVol(vol)}</td><td>${fmtArea(area)}</td><td>${fmtKg(kg)}</td></tr>`
+        ).join('') + `<tr class="phys-total"><td>${_t('합계')}</td><td>${fmtVol(totalVol)}</td><td>${fmtArea(totalArea)}</td><td>${fmtKg(totalKg)}</td></tr>`;
+    }
 
     function hitTestCell(cx, cy) {
         if (!geo.cols || !lastBaseScale) return null;

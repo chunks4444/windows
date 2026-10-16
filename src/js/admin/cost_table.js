@@ -18,6 +18,7 @@ const TABS = {
     wood:     { label: '목재',   cats: ['wood', 'oil'],        cols: 'default'         },
     finish:   { label: '마감',   cats: ['finish', 'delivery'], cols: 'finish'          },
     hardware: { label: '철물',   cats: ['hardware'],           cols: 'default'         },
+    glass:    { label: '유리',   cats: ['glass'],              cols: 'default'         },
     labor:    { label: '인건비', cats: ['labor'],              cols: 'labor_inline'    },
     overhead: { label: '간접비', cats: ['overhead'],           cols: 'overhead_inline' },
     method:   { label: '계산 방법', cats: [],                  cols: 'method_inline'   },
@@ -36,7 +37,7 @@ const OVERHEAD_FIELDS = [
 
 
 const COL_HEADS = {
-    default: `<th style="width:32px;"></th><th>항목</th><th style="width:130px;text-align:right;">단가</th><th style="width:80px;">단위</th><th style="width:100px;">단위명</th><th style="width:90px;text-align:right;">가중치</th><th>메모</th><th style="width:72px;">상태</th><th style="width:160px;"></th>`,
+    default: `<th style="width:32px;"></th><th>항목</th><th style="width:130px;text-align:right;">단가</th><th style="width:80px;">단위</th><th style="width:100px;">단위명</th><th style="width:90px;text-align:right;">가중치</th><th style="width:80px;text-align:right;">비중</th><th style="width:80px;text-align:right;">두께(mm)</th><th>메모</th><th style="width:72px;">상태</th><th style="width:160px;"></th>`,
     finish:  `<th style="width:32px;"></th><th>항목</th><th style="width:160px;text-align:right;">단가 <small style="font-weight:400;color:var(--text-3);">(원/㎡)</small></th><th style="width:80px;">도포</th><th style="width:100px;">시간(분/㎡)</th><th style="width:90px;text-align:right;">가중치</th><th>메모</th><th style="width:72px;">상태</th><th style="width:160px;"></th>`,
     labor:   `<th style="width:32px;"></th><th>항목</th><th style="width:110px;">엔진</th><th style="width:130px;text-align:right;">값</th><th style="width:80px;">단위</th><th>메모</th><th style="width:72px;">상태</th><th style="width:160px;"></th>`,
 };
@@ -62,6 +63,8 @@ function dataCells(it, colType) {
         <td style="font-size:12px;color:var(--text-3);">${esc(it.unit) || '—'}</td>
         <td style="font-size:12px;color:var(--text-3);">${esc(it.unit_name) || '—'}</td>
         <td style="text-align:right;">${parseFloat(it.weight).toFixed(2)}</td>
+        <td style="text-align:right;">${it.density != null ? parseFloat(it.density).toFixed(3) : '—'}</td>
+        <td style="text-align:right;">${it.thickness_mm || '—'}</td>
         <td class="notes-cell" title="${esc(it.notes)}">${esc(it.notes) || '—'}</td>`;
 }
 
@@ -227,7 +230,7 @@ function render() {
                     <button class="adm-withdraw-btn" style="background:#c00;color:#fff;" onclick="del(${it.id},'${esc(it.name)}')">삭제</button>
                 </div>
             </td>
-        </tr>`).join('') || `<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--text-3);">항목이 없습니다.</td></tr>`;
+        </tr>`).join('') || `<tr><td colspan="11" style="text-align:center;padding:24px;color:var(--text-3);">항목이 없습니다.</td></tr>`;
 
     bindDrag();
 }
@@ -245,12 +248,18 @@ function openModal(id) {
     document.getElementById('wtUnit').value      = it?.unit ?? '';
     document.getElementById('wtUnitName').value  = it?.unit_name ?? '';
     document.getElementById('wtWeight').value    = it ? parseFloat(it.weight).toFixed(2) : '1.00';
+    document.getElementById('wtDensity').value     = it?.density != null ? parseFloat(it.density) : '';
+    document.getElementById('wtThicknessMm').value = it?.thickness_mm || '';
     document.getElementById('wtEngine').value    = it?.engine ?? '';
     document.getElementById('wtNotes').value     = it?.notes ?? '';
 
     const isFinish = tab.cats.includes('finish');
+    const isGlass  = tab.cats.includes('glass');
+    const isDensity = tab.cats.includes('wood') || isGlass;
     document.getElementById('wtEngineField').style.display = isLabor  ? '' : 'none';
     document.getElementById('wtWeightRow').style.display   = isLabor  ? 'none' : '';
+    document.getElementById('wtDensityField').style.display   = isDensity ? '' : 'none';
+    document.getElementById('wtThicknessField').style.display = isGlass   ? '' : 'none';
     document.getElementById('wtFinishRow').style.display   = isFinish ? '' : 'none';
     if (isFinish) {
         if (!it) document.getElementById('wtUnit').value = '원/㎡';
@@ -274,8 +283,9 @@ async function saveItem() {
         unit:         document.getElementById('wtUnit').value.trim(),
         unit_name:    document.getElementById('wtUnitName').value.trim(),
         weight:       parseFloat(document.getElementById('wtWeight').value) || 1,
+        density:      document.getElementById('wtDensity').value !== '' ? parseFloat(document.getElementById('wtDensity').value) : '',
         engine:        document.getElementById('wtEngine').value.trim(),
-        thickness_mm:  0, width_mm: 0,
+        thickness_mm:  parseInt(document.getElementById('wtThicknessMm').value) || 0, width_mm: 0,
         work_time_min: parseInt(document.getElementById('wtWorkTimeMin').value) || 0,
         coat_count:    parseInt(document.getElementById('wtCoatCount').value)    || 2,
         notes:         document.getElementById('wtNotes').value.trim(),

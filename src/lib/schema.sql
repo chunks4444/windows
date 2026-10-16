@@ -10,6 +10,11 @@
 -- ALTER TABLE cost_table ADD COLUMN engine       VARCHAR(20)       NULL                COMMENT '엔진명 (classic/square/…, NULL=공통)' AFTER category;
 -- ALTER TABLE cost_table ADD COLUMN thickness_mm SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '부재 두께 mm (문틀만 사용, 살=slatT·울거미=frameW/H)' AFTER weight;
 -- ALTER TABLE cost_table ADD COLUMN width_mm     SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '부재 폭 mm (울거미·살·문틀 공통)' AFTER thickness_mm;
+-- 2026-10-16 weight(가중치)는 원가 계산용 승수일 뿐 실제 비중이 아니라서(예: 소나무·홍송 모두 1.35),
+-- 무게(kg) 산출엔 못 쓴다 — 실제 비중(g/cm³) 저장용 컬럼을 별도로 추가. glass(유리) 카테고리도 여기서 density·thickness_mm로 관리.
+-- ALTER TABLE cost_table ADD COLUMN density DECIMAL(6,4) NULL COMMENT '실제 비중(g/cm³, kg/L) — 무게 산출용. weight(가중치)는 원가 계산용으로 별개' AFTER weight;
+-- INSERT INTO cost_table (category, engine, name, unit_price, unit, unit_name, weight, density, thickness_mm, width_mm, work_time_min, coat_count, notes, sort_order, is_active) VALUES
+--     ('glass', '', '유리', 0, '', '', 1, 2.5, 5, 0, 0, 1, '', 0, 1);
 -- 2026-07-08 hardware(철물) 카테고리 신설 — 기존 category 값(wood/oil/finish/delivery/labor/overhead)과 나란히 사용, 컬럼 추가 없음
 -- INSERT INTO cost_table (category, engine, name, unit_price, unit, unit_name, weight, thickness_mm, width_mm, work_time_min, coat_count, notes, sort_order, is_active) VALUES
 --     ('hardware', '', '여닫이 기본철물', 15000, '조', '', 1, 0, 0, 0, 1, '', 0, 1),
