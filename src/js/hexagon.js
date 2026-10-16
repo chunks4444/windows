@@ -16,6 +16,7 @@
     let faceColorMap       = null;
     let faceMaterialMap    = null;
     let pendingFaceMaterial = null; // 면칠하기 브러시에 물려 있는 재질(한지/유리) — null이면 색만 칠함
+    let _lastParts = null, _lastGlassConfig = null; // 부재목록 표면적·무게·체적 재계산용 — draw() 없이 재질 선택만 바뀌어도 갱신하려고 캐시
     let facePaintMode      = false;
     let facePaintIsDown    = false;
 
@@ -59,6 +60,7 @@
     window.__pmokSetFaceMaterial = mat => {
         pendingFaceMaterial = mat;
         if (mat?.hex) faceColorUI.restoreColor(mat.hex);
+        renderPhysTable(_lastParts, _lastGlassConfig);
     };
     window.__pmokGetFaceMaterial = () => pendingFaceMaterial;
     const canvas = document.getElementById('doorCanvas');
@@ -547,6 +549,8 @@ async function draw() {
         document.getElementById('spMtVLen').textContent = `${p.mtFace}×${p.mtW}×${p.mtVLen}mm`;
         document.getElementById('spMtHLen').textContent = `${p.mtFace}×${p.mtW}×${p.mtHLen}mm`;
     }
+    _lastParts = p; _lastGlassConfig = data.glassConfig;
+    renderPhysTable(p, data.glassConfig);
 
     // draw() 안에서 ctx를 재할당 가능하도록 로컬 변수로 섀도잉
     let ctx = canvas.getContext('2d');
@@ -1765,6 +1769,69 @@ async function draw() {
         return (best && bestDist < lastCellSize * 0.5) ? best : null;
     }
 
+    // 부재 목록 — 표면적·무게·체적 표시. 울거미·살은 문짝 1짝 기준으로 받아 1짝 값과(문짝 2개 이상이면)
+    // 전체 문짝 합산 소계를 같이 보여주고, 문틀은 문짝 수와 무관하게 한 행. 유리(면)는 faceMaterialMap에서
+    // 재질이 glass인 칸(육각 쐐기) 수 × 쐐기 한 칸 면적 × 두께(cost_table 유리 항목) × 비중으로 계산한다 —
+    // 육각살의 면 칸은 정육각형을 6등분한 정삼각형(변 길이 size)이라 면적 = (√3/4)×size², size는 hitTestCell과 같은 공식(mm 기준).
+    function renderPhysTable(p, glassConfig) {
+        const body = document.getElementById('physBody');
+        const section = document.getElementById('physSection');
+        if (!body || !section) return;
+        const ph = p?.physical;
+        if (!ph) { section.style.display = 'none'; return; }
+        section.style.display = '';
+
+        const doorCount = ph.doorCount || 1;
+        const fmtVol  = mm3 => Math.round(mm3 / 1000).toLocaleString() + ' cm³';
+        const fmtArea = m2  => m2.toFixed(2) + ' m²';
+        const fmtKg   = kg  => kg == null ? '—' : kg.toFixed(2) + ' kg';
+
+        let glassPlainUsed = pendingFaceMaterial?.material === 'glass' && pendingFaceMaterial?.sub === 'plain';
+        let glassColorCells = 0, hanjiCells = 0;
+        if (faceMaterialMap) for (const k in faceMaterialMap) {
+            const fm = faceMaterialMap[k];
+            if (fm?.material === 'glass') { if (fm.sub === 'plain') glassPlainUsed = true; else glassColorCells++; }
+            else if (fm?.material === 'hanji') hanjiCells++;
+        }
+        const S3mm = Math.sqrt(3);
+        const sizeMm = rotateOn
+            ? (geo.innerW - geo.slatT * (geo.cols - 1)) / geo.cols / S3mm
+            : geo.innerW / (geo.cols * S3mm);
+        const wedgeAreaMm2 = (S3mm / 4) * sizeMm * sizeMm;
+        let glassAreaMm2Door = 0;
+        if (glassPlainUsed) glassAreaMm2Door += geo.innerW * geo.innerH;
+        if (glassColorCells > 0) glassAreaMm2Door += wedgeAreaMm2 * glassColorCells;
+        let glassVolMm3Door = 0, glassKgDoor = null;
+        if (glassAreaMm2Door > 0 && glassConfig?.density && glassConfig?.thicknessMm) {
+            glassVolMm3Door = glassAreaMm2Door * glassConfig.thicknessMm;
+            glassKgDoor     = glassVolMm3Door / 1_000_000 * glassConfig.density;
+        }
+        const hanjiAreaM2Door = hanjiCells > 0 ? wedgeAreaMm2 * hanjiCells / 1_000_000 : 0;
+
+        const subVolDoor  = ph.ulgeomi.volMm3 + ph.slat.volMm3 + glassVolMm3Door;
+        const subAreaDoor = ph.ulgeomi.areaM2 + ph.slat.areaM2 + glassAreaMm2Door / 1_000_000 + hanjiAreaM2Door;
+        const hasAnyKg = ph.density != null || glassKgDoor != null;
+        const subKgDoor = hasAnyKg ? (ph.ulgeomi.weightKg || 0) + (ph.slat.weightKg || 0) + (glassKgDoor || 0) : null;
+
+        const rows = [];
+        const addRow = (group, label, vol, area, kg, cls) => rows.push({ group, label, vol, area, kg, cls: cls || '' });
+        addRow(_t('문'), _t('울거미'), ph.ulgeomi.volMm3, ph.ulgeomi.areaM2, ph.density ? ph.ulgeomi.weightKg : null);
+        addRow('', _t('살'), ph.slat.volMm3, ph.slat.areaM2, ph.density ? ph.slat.weightKg : null);
+        if (glassVolMm3Door > 0) addRow('', _t('유리'), glassVolMm3Door, glassAreaMm2Door / 1_000_000, glassKgDoor);
+        if (hanjiAreaM2Door > 0) addRow('', _t('한지'), null, hanjiAreaM2Door, null);
+        addRow('', _t('소계'), subVolDoor, subAreaDoor, subKgDoor, 'phys-subtotal');
+        addRow(`${doorCount}${_t('문짝')} ${_t('전체')}`, '', subVolDoor * doorCount, subAreaDoor * doorCount, subKgDoor == null ? null : subKgDoor * doorCount, 'phys-subtotal');
+        addRow(_t('문틀'), '', ph.muntol.volMm3, ph.muntol.areaM2, ph.density ? ph.muntol.weightKg : null);
+
+        const totalVol  = subVolDoor * doorCount + ph.muntol.volMm3;
+        const totalArea = subAreaDoor * doorCount + ph.muntol.areaM2;
+        const totalKg   = (subKgDoor == null ? 0 : subKgDoor * doorCount) + (ph.density ? (ph.muntol.weightKg || 0) : 0);
+
+        body.innerHTML = rows.map(r =>
+            `<tr class="${r.cls}"><td>${r.group}</td><td>${r.label}</td><td>${r.vol == null ? '—' : fmtVol(r.vol)}</td><td>${fmtArea(r.area)}</td><td>${fmtKg(r.kg)}</td></tr>`
+        ).join('') + `<tr class="phys-total"><td colspan="2">${_t('합계')}</td><td>${fmtVol(totalVol)}</td><td>${fmtArea(totalArea)}</td><td>${fmtKg(totalKg)}</td></tr>`;
+    }
+
     function hitTestCell(px, py) {
         if (!lastBaseScale || !geo.cols) return null;
         const iLeft = lastILeft, iTop = lastITop, iW = lastIW;
@@ -2396,6 +2463,7 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
             faceBrushColor: faceColorUI.getCurrentHex(),
             faceColorMap:   faceColorMap ? { ...faceColorMap } : null,
             faceMaterialMap: faceMaterialMap ? { ...faceMaterialMap } : null,
+            pendingFaceMaterial: pendingFaceMaterial ? { ...pendingFaceMaterial } : null,
             muntolColor:    selectedMuntolColor,
             showMuntol:     showMuntol,
             panX, panY, scaleFactor,
@@ -2447,7 +2515,7 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
         slatColorPicker.selectColor(p.slatColor);
         faceColorMap = p.faceColorMap || null;
         faceMaterialMap = p.faceMaterialMap || null;
-        pendingFaceMaterial = null;
+        pendingFaceMaterial = p.pendingFaceMaterial || null;
         faceColorUI.restoreColor(p.faceBrushColor || null);
         faceColorUI.updateClearBtn(!!faceColorMap);
         updateDoorCountOptions();
