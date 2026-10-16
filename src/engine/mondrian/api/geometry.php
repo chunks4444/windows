@@ -179,6 +179,47 @@ $_volMuntol = $frameOpeningH * 2 * $_tMt * $_wMt
 $_vol       = $_volDoor + $_volMuntol;
 $_woodJae   = $_vol / $_JAE;
 
+// 부재별 표면적·체적·무게 (문짝 1짝 기준 — 문틀은 문짝 수와 무관하게 1개) — 표면적은 각목 긴 옆면 4면
+// 근사(2×(폭+두께)×길이), 양끝 단면은 무시한다(도장 면적 계산과 같은 기준). 풍판은 울거미에 합산.
+// 살 = 몬드리안 랜덤 패턴이면 브라우저가 보내준 실측 길이, 아니면 정자살과 같은 가로·세로살 격자.
+$_ulV  = round($outerH + 2*$slatT) * 2                  * $frameW * $_wU;
+$_ulH  = round($outerW + 2*$slatT) * ($pungpanOn ? 3 : 2) * $frameH * $_wU;
+$_ulVA = 2 * ($frameW + $_wU) * round($outerH + 2*$slatT) * 2;
+$_ulHA = 2 * ($frameH + $_wU) * round($outerW + 2*$slatT) * ($pungpanOn ? 3 : 2);
+$_ppV  = $pungpanVisible ? (int)round($innerW) * (int)round($ppPanelH) * $_pT : 0;
+$_ppA  = $pungpanVisible ? 2 * (int)round($innerW) * (int)round($ppPanelH) : 0;
+if ($_moOn) {
+    $_slLenDoor = $_moHLenMm + 2*$tenonDepth*$_moHCnt + $_moVLenMm + 2*$tenonDepth*$_moVCnt;
+    $_slVolDoor  = $_slLenDoor * $slatT * $_wS;
+    $_slAreaDoor = 2 * ($_wS + $slatT) * $_slLenDoor;
+} else {
+    $_slH = round($innerW + 2*$tenonDepth) * $hSlatCnt * $slatT * $_wS;
+    $_slV = round($innerH + 2*$tenonDepth) * $vSlatCnt * $slatT * $_wS;
+    $_slVolDoor  = $_slH + $_slV;
+    $_slAreaDoor = 2 * ($_wS + $slatT) * round($innerW + 2*$tenonDepth) * $hSlatCnt
+                 + 2 * ($_wS + $slatT) * round($innerH + 2*$tenonDepth) * $vSlatCnt;
+}
+$_mtV  = $frameOpeningH * 2 * $_tMt * $_wMt;
+$_mtH  = $frameOpeningW * 2 * $_tMt * $_wMt;
+$_mtVA = 2 * ($_wMt + $_tMt) * $frameOpeningH * 2;
+$_mtHA = 2 * ($_wMt + $_tMt) * $frameOpeningW * 2;
+
+$_ulgeomiVolDoor  = $_ulV + $_ulH + $_ppV;
+$_ulgeomiAreaDoor = $_ulVA + $_ulHA + $_ppA;
+$_muntolVol       = $_mtV + $_mtH;
+$_muntolArea      = $_mtVA + $_mtHA;
+
+$_woodDensity = (float)(get_cost_table_item('wood', (string)($_POST['wood'] ?? ''))['density'] ?? 0);
+$_toKg = fn(float $mm3): ?float => $_woodDensity > 0 ? round($mm3 / 1_000_000 * $_woodDensity, 3) : null;
+
+$physical = [
+    'density'   => $_woodDensity ?: null,
+    'doorCount' => $doorCount,
+    'ulgeomi'   => ['volMm3' => round($_ulgeomiVolDoor), 'areaM2' => round($_ulgeomiAreaDoor / 1_000_000, 3), 'weightKg' => $_toKg($_ulgeomiVolDoor)],
+    'slat'      => ['volMm3' => round($_slVolDoor),      'areaM2' => round($_slAreaDoor / 1_000_000, 3),      'weightKg' => $_toKg($_slVolDoor)],
+    'muntol'    => ['volMm3' => round($_muntolVol),      'areaM2' => round($_muntolArea / 1_000_000, 3),      'weightKg' => $_toKg($_muntolVol)],
+];
+
 $parts = [
     'frVLen'         => (string)round($outerH + 2 * $slatT),
     'frVCnt'         => (2 * $doorCount) . '개',
@@ -206,6 +247,7 @@ $parts = [
     'woodJae_muntol' => round($_volMuntol / $_JAE, 2),
     // 몬드리안 살은 교차하지 않고 양 끝이 다른 살·울거미에 맞물리므로 짜임 수 = 살 개수 × 2 (다른 엔진처럼 1짝 기준)
     'joints'         => $_moOn ? ($_moHCnt + $_moVCnt) * 2 : $cols * $rows,
+    'physical'       => $physical,
 ];
 
 $selection = [
@@ -218,10 +260,14 @@ $selection = [
 $_costCfg = get_cost_config('mondrian');
 $price    = compute_price_estimate($parts, $selection, $_es, $_costCfg);
 
+// 면 재질(한지/유리) 무게 계산용 — 유리칸은 count × 셀면적 × 두께 × 비중으로 클라이언트가 계산한다
+$_glass = get_cost_table_item('glass', '유리');
+
 echo json_encode([
     'geo'   => $geo,
     'specs' => $perms['spec']  ? $specs : null,
     'parts' => $perms['parts'] ? $parts : null,
     'price' => ['total' => $perms['price'] ? $price['total'] : null, 'leadTimeDays' => $perms['leadtime'] ? $price['leadTimeDays'] : null],
     'costBreakdown' => $perms['cost'] ? $price['breakdown'] : null,
+    'glassConfig' => $perms['parts'] ? ['density' => $_glass['density'] ?? null, 'thicknessMm' => $_glass['thickness_mm'] ?? null] : null,
 ]);
