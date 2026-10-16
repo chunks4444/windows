@@ -3015,6 +3015,14 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
         document.getElementById('drawingName').value = '';
         document.getElementById('verLabel').textContent = '—';
         applyCommonDefaults();
+        // 칸수(cols)·가로살 개수(rows)는 몬드리안에선 사용자가 보는 값이 아니라 배경 격자
+        // 밀도를 정하는 내부값이라, 다른 엔진에서 넘어온 공통값(예: 20칸)을 그대로 받으면
+        // 지오메트리가 깨져 랜덤 패턴 생성(generateMondrian)이 실패하고 빈 정자살 격자만
+        // 남는다 — 몬드리안 자신의 기본값(HTML defaultValue)으로 되돌린다.
+        ['txtCols', 'numCols', 'txtRows', 'numRows'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = el.defaultValue;
+        });
         updateDoorCountOptions();
         renderVerList();
         await draw();
