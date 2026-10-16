@@ -17,7 +17,6 @@
     let faceColorMap       = null;
     let faceMaterialMap    = null;
     let pendingFaceMaterial = null; // 면칠하기 브러시에 물려 있는 재질(한지/유리) — null이면 색만 칠함
-    let _lastParts = null, _lastGlassConfig = null; // 부재목록 표면적·무게·체적 재계산용 — draw() 없이 재질 선택만 바뀌어도 갱신하려고 캐시
     let facePaintMode      = false;
     let facePaintIsDown    = false;
 
@@ -107,7 +106,7 @@
     window.__pmokSetFaceMaterial = mat => {
         pendingFaceMaterial = mat;
         if (mat?.hex) faceColorUI.restoreColor(mat.hex);
-        renderPhysTable(_lastParts, _lastGlassConfig);
+        draw(); // 재질 선택만으로도(칸을 안 칠해도) 부재목록 유리 무게가 바뀌므로, 최신 지오메트리로 다시 계산해 표를 갱신한다
     };
     window.__pmokGetFaceMaterial = () => pendingFaceMaterial;
     const canvas = document.getElementById('doorCanvas');
@@ -552,7 +551,6 @@ async function draw() {
         document.getElementById('spMtVLen').textContent   = `${p.mtFace}×${p.mtW}×${p.mtVLen}mm`;
         document.getElementById('spMtHLen').textContent   = `${p.mtFace}×${p.mtW}×${p.mtHLen}mm`;
     }
-    _lastParts = p; _lastGlassConfig = data.glassConfig;
     renderPhysTable(p, data.glassConfig);
 
     // draw() 안에서 ctx를 재할당 가능하도록 로컬 변수로 섀도잉
