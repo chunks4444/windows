@@ -1782,12 +1782,11 @@ async function draw() {
         if (!body || !section) return;
         const ph = p?.physical;
         if (!ph) { section.style.display = 'none'; return; }
-        section.style.display = '';
 
         const doorCount = ph.doorCount || 1;
-        const fmtVol  = mm3 => Math.round(mm3 / 1000).toLocaleString() + ' cm³';
-        const fmtArea = m2  => m2.toFixed(2) + ' m²';
-        const fmtKg   = kg  => kg == null ? '—' : kg.toFixed(2) + ' kg';
+        const fmtVol  = mm3 => Math.round(mm3 / 1000).toLocaleString();
+        const fmtArea = m2  => m2.toFixed(2);
+        const fmtKg   = kg  => kg == null ? '—' : kg.toFixed(2);
 
         // 유리·한지도 "문" 1짝 기준으로 묶는다 — 일반유리는 칸을 안 칠해도 "면" 브러시에 선택만
         // 돼 있으면 내경 전체(1짝)를, 칼라유리·한지는 실제로 칠한 칸 수(모든 문짝에 같은 패턴이
@@ -1809,11 +1808,16 @@ async function draw() {
         }
         const hanjiAreaM2Door = hanjiCells > 0 ? geo.cellW * geo.cellH * hanjiCells / 1_000_000 : 0;
 
+        // 목재·유리 어느 쪽으로도 무게를 구할 수 없으면(수종 비중 없음 + 유리도 없음) 전부 — 로만 찬
+        // 표가 보여봤자 의미가 없으므로, 탭(섹션) 자체를 숨긴다.
+        const hasAnyKg = ph.density != null || glassKgDoor != null;
+        if (!hasAnyKg) { section.style.display = 'none'; return; }
+        section.style.display = '';
+
         // 문(1짝) 소계 = 울거미+살+유리. 한지는 무게가 거의 없어 표면적에만 더한다.
         const subVolDoor  = ph.ulgeomi.volMm3 + ph.slat.volMm3 + glassVolMm3Door;
         const subAreaDoor = ph.ulgeomi.areaM2 + ph.slat.areaM2 + glassAreaMm2Door / 1_000_000 + hanjiAreaM2Door;
-        const hasAnyKg = ph.density != null || glassKgDoor != null;
-        const subKgDoor = hasAnyKg ? (ph.ulgeomi.weightKg || 0) + (ph.slat.weightKg || 0) + (glassKgDoor || 0) : null;
+        const subKgDoor = (ph.ulgeomi.weightKg || 0) + (ph.slat.weightKg || 0) + (glassKgDoor || 0);
 
         const rows = [];
         const addRow = (group, label, vol, area, kg, cls) => rows.push({ group, label, vol, area, kg, cls: cls || '' });
