@@ -98,6 +98,7 @@ return [
     '표면적'                  => 'Surface area',
     '무게'                    => 'Weight',
     '체적(cm³)'               => 'Volume (cm³)',
+    '재(才)'                  => 'Jae (才)',
     '표면적(cm²)'             => 'Surface area (cm²)',
     '무게(kg)'                => 'Weight (kg)',
 
