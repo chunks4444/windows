@@ -539,6 +539,10 @@
         placementMode = false;
         handlesVisible = false;
         document.getElementById('btnScale')?.classList.remove('cv-btn-active');
+        if (typeof facePaintMode !== 'undefined' && facePaintMode) {
+            facePaintMode = false;
+            document.getElementById('btnFacePaint')?.classList.remove('cv-btn-active');
+        }
     };
 
     function deactivateAllModes() {
@@ -551,6 +555,12 @@
         placementMode = false;
         handlesVisible = false;
         document.getElementById('btnScale').classList.remove('cv-btn-active');
+        // 면 칠하기 모드도 꺼야 한다 — 안 그러면 캔버스에 걸린 pm-face-painting 커서(!important)가
+        // 선편집 등 다른 모드로 바뀐 뒤에도 그대로 남아 가위 등 커서가 안 바뀌는 것처럼 보인다.
+        if (typeof facePaintMode !== 'undefined' && facePaintMode) {
+            facePaintMode = false;
+            document.getElementById('btnFacePaint')?.classList.remove('cv-btn-active');
+        }
         canvas.style.cursor = 'default';
         window.__pmokOnDeactivate?.();
     }
