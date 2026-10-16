@@ -92,7 +92,7 @@ return [
     '상/하 울거미'            => 'Top/bottom rails',
     '살'                      => 'Slats',
     '표면적·무게·체적'        => 'Surface area, weight & volume',
-    '목재 비중 기준, 문짝 전체 합산' => 'Based on wood density, summed across all door leaves',
+    '목재 비중 기준' => 'Based on wood density',
     '구분'                    => 'Item',
     '체적'                    => 'Volume',
     '표면적'                  => 'Surface area',

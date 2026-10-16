@@ -1540,8 +1540,11 @@ input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
 
 .phys-table { width: 100%; border-collapse: collapse; font-size: var(--fs-11); }
 .phys-table th, .phys-table td { padding: 3px 4px; text-align: right; color: rgba(var(--bg-rgb), 0.55); font-weight: 400; white-space: nowrap; }
-.phys-table th:first-child, .phys-table td:first-child { text-align: left; }
+.phys-table th:first-child, .phys-table td:first-child,
+.phys-table th:nth-child(2), .phys-table td:nth-child(2) { text-align: left; }
 .phys-table thead th { border-bottom: 1px solid var(--border); color: rgba(var(--bg-rgb), 0.7); }
+.phys-table tbody tr.phys-subtotal td { color: rgba(var(--bg-rgb), 0.75); font-weight: 500; }
+.phys-table tbody tr.phys-subtotal td:first-child { border-top: 1px dashed var(--border); }
 .phys-table tbody tr.phys-total td { border-top: 1px solid var(--border); font-weight: 600; color: var(--text-1); }
 
 /* ── 색상 드롭다운 ───────────────────────── */

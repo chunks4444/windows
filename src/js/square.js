@@ -1784,37 +1784,16 @@ async function draw() {
         if (!body || !section) return;
         const ph = p?.physical;
         if (!ph) { section.style.display = 'none'; return; }
+        section.style.display = '';
 
         const doorCount = ph.doorCount || 1;
         const fmtVol  = mm3 => Math.round(mm3 / 1000).toLocaleString() + ' cm³';
         const fmtArea = m2  => m2.toFixed(2) + ' m²';
         const fmtKg   = kg  => kg == null ? '—' : kg.toFixed(2) + ' kg';
 
-        // 울거미·살은 문짝 1짝 기준 값과, 문짝이 2개 이상이면 전체 문짝 합산 소계를 같이 보여준다
-        // (한짝 값만 보면 전체 문짝 수와 헷갈려해서 둘 다 표시). 문틀은 문짝 수와 무관하게 한 줄.
-        // 수종을 아직 안 골라 비중이 없으면(ph.density null) 무게는 — 로 두고 체적·표면적은 그대로
-        // 보여준다 — 유리·한지 무게는 비중과 무관하므로 숨길 이유가 없다.
-        const woodKg = k => ph.density ? k : null;
-        const rows = [
-            [`${_t('울거미')} × 1${_t('문짝')}`, ph.ulgeomi.volMm3, ph.ulgeomi.areaM2, woodKg(ph.ulgeomi.weightKg)],
-            [`${_t('살')} × 1${_t('문짝')}`,     ph.slat.volMm3,    ph.slat.areaM2,    woodKg(ph.slat.weightKg)],
-        ];
-        if (doorCount > 1) {
-            rows.push([`${_t('울거미')} ${_t('소계')} × ${doorCount}${_t('문짝')}`, ph.ulgeomi.volMm3 * doorCount, ph.ulgeomi.areaM2 * doorCount, woodKg((ph.ulgeomi.weightKg || 0) * doorCount)]);
-            rows.push([`${_t('살')} ${_t('소계')} × ${doorCount}${_t('문짝')}`,     ph.slat.volMm3    * doorCount, ph.slat.areaM2    * doorCount, woodKg((ph.slat.weightKg    || 0) * doorCount)]);
-        }
-        rows.push([_t('문틀'), ph.muntol.volMm3, ph.muntol.areaM2, woodKg(ph.muntol.weightKg)]);
-        section.style.display = '';
-        // 합계는 (1짝 값이든 소계든 상관없이) 문짝 수만큼 합산한 실제 전체 물량 + 문틀 기준으로 계산한다
-        // — 화면에 1짝 줄과 소계 줄이 같이 떠 있어도 중복으로 더하면 안 되므로 rows 배열이 아니라
-        // ph(서버 원본, 1짝 기준)에서 다시 doorCount를 곱해 구한다.
-        let totalVol  = (ph.ulgeomi.volMm3 + ph.slat.volMm3) * doorCount + ph.muntol.volMm3;
-        let totalArea = (ph.ulgeomi.areaM2 + ph.slat.areaM2) * doorCount + ph.muntol.areaM2;
-        let totalKg   = ((ph.ulgeomi.weightKg || 0) + (ph.slat.weightKg || 0)) * doorCount + (ph.muntol.weightKg || 0);
-
-        // 일반유리는 칸마다 칠하는 장식이 아니라 살 전체 뒤에 한 장 통유리를 끼우는 것이라, 칸을
-        // 한 번도 안 눌러도 "면" 브러시에 일반유리가 물려 있기만 하면(선택된 상태) 내경 전체
-        // 면적(살 부분)으로 계산한다. 칼라유리는 반대로 실제로 칠한 칸만 센다.
+        // 유리·한지도 "문" 1짝 기준으로 묶는다 — 일반유리는 칸을 안 칠해도 "면" 브러시에 선택만
+        // 돼 있으면 내경 전체(1짝)를, 칼라유리·한지는 실제로 칠한 칸 수(모든 문짝에 같은 패턴이
+        // 반복되므로 이미 1짝 기준)를 쓴다.
         let glassPlainUsed = pendingFaceMaterial?.material === 'glass' && pendingFaceMaterial?.sub === 'plain';
         let glassColorCells = 0, hanjiCells = 0;
         if (faceMaterialMap) for (const k in faceMaterialMap) {
@@ -1822,25 +1801,39 @@ async function draw() {
             if (fm?.material === 'glass') { if (fm.sub === 'plain') glassPlainUsed = true; else glassColorCells++; }
             else if (fm?.material === 'hanji') hanjiCells++;
         }
-        let glassAreaMm2 = 0;
-        if (glassPlainUsed) glassAreaMm2 += geo.innerW * geo.innerH * doorCount;
-        if (glassColorCells > 0) glassAreaMm2 += geo.cellW * geo.cellH * glassColorCells * doorCount;
-        if (glassAreaMm2 > 0 && glassConfig?.density && glassConfig?.thicknessMm) {
-            const glassVolMm3 = glassAreaMm2 * glassConfig.thicknessMm;
-            const glassKg     = glassVolMm3 / 1_000_000 * glassConfig.density;
-            rows.push([_t('유리(면)'), glassVolMm3, glassAreaMm2 / 1_000_000, glassKg]);
-            totalVol += glassVolMm3; totalArea += glassAreaMm2 / 1_000_000; totalKg += glassKg;
+        let glassAreaMm2Door = 0;
+        if (glassPlainUsed) glassAreaMm2Door += geo.innerW * geo.innerH;
+        if (glassColorCells > 0) glassAreaMm2Door += geo.cellW * geo.cellH * glassColorCells;
+        let glassVolMm3Door = 0, glassKgDoor = null;
+        if (glassAreaMm2Door > 0 && glassConfig?.density && glassConfig?.thicknessMm) {
+            glassVolMm3Door = glassAreaMm2Door * glassConfig.thicknessMm;
+            glassKgDoor     = glassVolMm3Door / 1_000_000 * glassConfig.density;
         }
-        // 한지는 종이라 무게가 거의 없어 표면적만 따로 보여준다(체적·무게는 표시 안 함)
-        if (hanjiCells > 0) {
-            const hanjiAreaM2 = geo.cellW * geo.cellH * hanjiCells * doorCount / 1_000_000;
-            rows.push([_t('한지(면)'), null, hanjiAreaM2, null]);
-            totalArea += hanjiAreaM2;
-        }
+        const hanjiAreaM2Door = hanjiCells > 0 ? geo.cellW * geo.cellH * hanjiCells / 1_000_000 : 0;
 
-        body.innerHTML = rows.map(([label, vol, area, kg]) =>
-            `<tr><td>${label}</td><td>${vol == null ? '—' : fmtVol(vol)}</td><td>${fmtArea(area)}</td><td>${fmtKg(kg)}</td></tr>`
-        ).join('') + `<tr class="phys-total"><td>${_t('합계')}</td><td>${fmtVol(totalVol)}</td><td>${fmtArea(totalArea)}</td><td>${fmtKg(totalKg)}</td></tr>`;
+        // 문(1짝) 소계 = 울거미+살+유리. 한지는 무게가 거의 없어 표면적에만 더한다.
+        const subVolDoor  = ph.ulgeomi.volMm3 + ph.slat.volMm3 + glassVolMm3Door;
+        const subAreaDoor = ph.ulgeomi.areaM2 + ph.slat.areaM2 + glassAreaMm2Door / 1_000_000 + hanjiAreaM2Door;
+        const hasAnyKg = ph.density != null || glassKgDoor != null;
+        const subKgDoor = hasAnyKg ? (ph.ulgeomi.weightKg || 0) + (ph.slat.weightKg || 0) + (glassKgDoor || 0) : null;
+
+        const rows = [];
+        const addRow = (group, label, vol, area, kg, cls) => rows.push({ group, label, vol, area, kg, cls: cls || '' });
+        addRow(_t('문'), _t('울거미'), ph.ulgeomi.volMm3, ph.ulgeomi.areaM2, ph.density ? ph.ulgeomi.weightKg : null);
+        addRow('', _t('살'), ph.slat.volMm3, ph.slat.areaM2, ph.density ? ph.slat.weightKg : null);
+        if (glassVolMm3Door > 0) addRow('', _t('유리'), glassVolMm3Door, glassAreaMm2Door / 1_000_000, glassKgDoor);
+        if (hanjiAreaM2Door > 0) addRow('', _t('한지'), null, hanjiAreaM2Door, null);
+        addRow('', _t('소계'), subVolDoor, subAreaDoor, subKgDoor, 'phys-subtotal');
+        addRow(`${doorCount}${_t('문짝')} ${_t('전체')}`, '', subVolDoor * doorCount, subAreaDoor * doorCount, subKgDoor == null ? null : subKgDoor * doorCount, 'phys-subtotal');
+        addRow(_t('문틀'), '', ph.muntol.volMm3, ph.muntol.areaM2, ph.density ? ph.muntol.weightKg : null);
+
+        const totalVol  = subVolDoor * doorCount + ph.muntol.volMm3;
+        const totalArea = subAreaDoor * doorCount + ph.muntol.areaM2;
+        const totalKg   = (subKgDoor == null ? 0 : subKgDoor * doorCount) + (ph.density ? (ph.muntol.weightKg || 0) : 0);
+
+        body.innerHTML = rows.map(r =>
+            `<tr class="${r.cls}"><td>${r.group}</td><td>${r.label}</td><td>${r.vol == null ? '—' : fmtVol(r.vol)}</td><td>${fmtArea(r.area)}</td><td>${fmtKg(r.kg)}</td></tr>`
+        ).join('') + `<tr class="phys-total"><td colspan="2">${_t('합계')}</td><td>${fmtVol(totalVol)}</td><td>${fmtArea(totalArea)}</td><td>${fmtKg(totalKg)}</td></tr>`;
     }
 
     function hitTestCell(cx, cy) {
