@@ -272,6 +272,7 @@ return [
     '살'                                              => 'Slats',
     '합계'                                           => 'Total',
     '유리(면)'                                       => 'Glass (panel)',
+    '한지(면)'                                       => 'Hanji (panel)',
     // src/js/engine-rail.js — 상단 툴바 라벨·마감
     '선택'                                           => 'Select',
     '이동'                                           => 'Pan',
