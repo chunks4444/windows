@@ -17,6 +17,7 @@
     let faceColorMap       = null;
     let faceMaterialMap    = null;
     let pendingFaceMaterial = null; // 면칠하기 브러시에 물려 있는 재질(한지/유리) — null이면 색만 칠함
+    let _lastParts = null, _lastGlassConfig = null; // 부재목록 표면적·무게·체적 재계산용 — draw() 없이 재질 선택만 바뀌어도 갱신하려고 캐시
     let facePaintMode      = false;
     let facePaintIsDown    = false;
 
@@ -85,6 +86,9 @@
     window.__pmokSetFaceMaterial = mat => {
         pendingFaceMaterial = mat;
         if (mat?.hex) faceColorUI.restoreColor(mat.hex);
+        // 일반유리는 칸을 안 칠해도 선택 자체로 무게 계산이 바뀌므로, 지오메트리를 다시 받는 draw() 없이
+        // 마지막으로 받아둔 부재 데이터로 부재목록 표(renderPhysTable)만 즉시 다시 그린다.
+        renderPhysTable(_lastParts, _lastGlassConfig);
     };
     window.__pmokGetFaceMaterial = () => pendingFaceMaterial;
     const canvas = document.getElementById('doorCanvas');
@@ -460,6 +464,7 @@ async function draw() {
         document.getElementById('spMtVLen').textContent   = `${p.mtFace}×${p.mtW}×${p.mtVLen}mm`;
         document.getElementById('spMtHLen').textContent   = `${p.mtFace}×${p.mtW}×${p.mtHLen}mm`;
     }
+    _lastParts = p; _lastGlassConfig = data.glassConfig;
     renderPhysTable(p, data.glassConfig);
 
     // draw() 안에서 ctx를 재할당 가능하도록 로컬 변수로 섀도잉
@@ -1799,9 +1804,11 @@ async function draw() {
         let totalArea = rows[0][2] + rows[1][2] + rows[2][2];
         let totalKg   = (rows[0][3] || 0) + (rows[1][3] || 0) + (rows[2][3] || 0);
 
-        // 일반유리는 칸마다 칠하는 장식이 아니라 살 전체 뒤에 한 장 통유리를 끼우는 것 — 몇 칸을
-        // 클릭했는지와 무관하게 내경 전체 면적(살 부분)으로 계산한다. 칼라유리는 반대로 칠한 칸만 센다.
-        let glassPlainUsed = false, glassColorCells = 0, hanjiCells = 0;
+        // 일반유리는 칸마다 칠하는 장식이 아니라 살 전체 뒤에 한 장 통유리를 끼우는 것이라, 칸을
+        // 한 번도 안 눌러도 "면" 브러시에 일반유리가 물려 있기만 하면(선택된 상태) 내경 전체
+        // 면적(살 부분)으로 계산한다. 칼라유리는 반대로 실제로 칠한 칸만 센다.
+        let glassPlainUsed = pendingFaceMaterial?.material === 'glass' && pendingFaceMaterial?.sub === 'plain';
+        let glassColorCells = 0, hanjiCells = 0;
         if (faceMaterialMap) for (const k in faceMaterialMap) {
             const fm = faceMaterialMap[k];
             if (fm?.material === 'glass') { if (fm.sub === 'plain') glassPlainUsed = true; else glassColorCells++; }
@@ -2314,6 +2321,9 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
             faceBrushColor: faceColorUI.getCurrentHex(),
             faceColorMap:   faceColorMap ? { ...faceColorMap } : null,
             faceMaterialMap: faceMaterialMap ? { ...faceMaterialMap } : null,
+            // 일반유리는 칸을 안 칠해도 "선택돼 있다"는 사실 자체가 전체 살 면적 유리 무게 계산의
+            // 기준이라(표면적·무게·체적 참고) 브러시 선택 상태도 저장해둔다.
+            pendingFaceMaterial: pendingFaceMaterial ? { ...pendingFaceMaterial } : null,
             muntolColor:    selectedMuntolColor,
             showMuntol:     showMuntol,
             panX, panY, scaleFactor,
@@ -2360,7 +2370,7 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
         slatColorPicker.selectColor(p.slatColor);
         faceColorMap = p.faceColorMap || null;
         faceMaterialMap = p.faceMaterialMap || null;
-        pendingFaceMaterial = null;
+        pendingFaceMaterial = p.pendingFaceMaterial || null;
         faceColorUI.restoreColor(p.faceBrushColor || null);
         faceColorUI.updateClearBtn(!!faceColorMap);
         deletedSegs  = new Set(p.deletedSegs || []);
