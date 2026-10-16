@@ -325,6 +325,7 @@ $parts['physical'] = [
     'slat'      => ['volMm3' => round($_slatVolDoor),    'areaM2' => round($_slatAreaDoor / 1_000_000, 3),    'weightKg' => $_toKg($_slatVolDoor)],
     'muntol'    => ['volMm3' => round($_muntolVol),      'areaM2' => round($_muntolArea / 1_000_000, 3),      'weightKg' => $_toKg($_muntolVol)],
 ];
+if (!$perms['physical']) $parts['physical'] = null;
 
 $selection = [
     'wood'      => (string)($_POST['wood']     ?? ''),
@@ -345,5 +346,5 @@ echo json_encode([
     'parts' => $perms['parts'] ? $parts : null,
     'price' => ['total' => $perms['price'] ? $price['total'] : null, 'leadTimeDays' => $perms['leadtime'] ? $price['leadTimeDays'] : null],
     'costBreakdown' => $perms['cost'] ? $price['breakdown'] : null,
-    'glassConfig' => $perms['parts'] ? ['density' => $_glass['density'] ?? null, 'thicknessMm' => $_glass['thickness_mm'] ?? null] : null,
+    'glassConfig' => $perms['physical'] ? ['density' => $_glass['density'] ?? null, 'thicknessMm' => $_glass['thickness_mm'] ?? null] : null,
 ]);

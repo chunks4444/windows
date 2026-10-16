@@ -15,6 +15,8 @@
 -- ALTER TABLE cost_table ADD COLUMN density DECIMAL(6,4) NULL COMMENT '실제 비중(g/cm³, kg/L) — 무게 산출용. weight(가중치)는 원가 계산용으로 별개' AFTER weight;
 -- INSERT INTO cost_table (category, engine, name, unit_price, unit, unit_name, weight, density, thickness_mm, width_mm, work_time_min, coat_count, notes, sort_order, is_active) VALUES
 --     ('glass', '', '유리', 0, '', '', 1, 2.5, 5, 0, 0, 1, '', 0, 1);
+-- 2026-10-16 표면적·무게·체적(부재목록 안) 열람 권한 — 기존 view_parts와 별개로 어드민에서 개별 승인
+-- ALTER TABLE users ADD COLUMN view_physical TINYINT(1) NOT NULL DEFAULT 0 COMMENT '표면적·무게·체적 열람 허용' AFTER view_desc;
 -- 2026-07-08 hardware(철물) 카테고리 신설 — 기존 category 값(wood/oil/finish/delivery/labor/overhead)과 나란히 사용, 컬럼 추가 없음
 -- INSERT INTO cost_table (category, engine, name, unit_price, unit, unit_name, weight, thickness_mm, width_mm, work_time_min, coat_count, notes, sort_order, is_active) VALUES
 --     ('hardware', '', '여닫이 기본철물', 15000, '조', '', 1, 0, 0, 0, 1, '', 0, 1),

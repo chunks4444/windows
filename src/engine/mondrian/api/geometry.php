@@ -247,7 +247,7 @@ $parts = [
     'woodJae_muntol' => round($_volMuntol / $_JAE, 2),
     // 몬드리안 살은 교차하지 않고 양 끝이 다른 살·울거미에 맞물리므로 짜임 수 = 살 개수 × 2 (다른 엔진처럼 1짝 기준)
     'joints'         => $_moOn ? ($_moHCnt + $_moVCnt) * 2 : $cols * $rows,
-    'physical'       => $physical,
+    'physical'       => $perms['physical'] ? $physical : null,
 ];
 
 $selection = [
@@ -269,5 +269,5 @@ echo json_encode([
     'parts' => $perms['parts'] ? $parts : null,
     'price' => ['total' => $perms['price'] ? $price['total'] : null, 'leadTimeDays' => $perms['leadtime'] ? $price['leadTimeDays'] : null],
     'costBreakdown' => $perms['cost'] ? $price['breakdown'] : null,
-    'glassConfig' => $perms['parts'] ? ['density' => $_glass['density'] ?? null, 'thicknessMm' => $_glass['thickness_mm'] ?? null] : null,
+    'glassConfig' => $perms['physical'] ? ['density' => $_glass['density'] ?? null, 'thicknessMm' => $_glass['thickness_mm'] ?? null] : null,
 ]);

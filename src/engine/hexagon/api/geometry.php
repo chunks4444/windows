@@ -338,7 +338,7 @@ $parts = [
     'woodJae_door'   => round($_volDoor / $_JAE, 2),
     'woodJae_muntol' => round($_volMuntol / $_JAE, 2),
     'joints'         => $cols * $rows,
-    'physical'       => $physical,
+    'physical'       => $perms['physical'] ? $physical : null,
 ];
 
 $selection = [
@@ -360,5 +360,5 @@ echo json_encode([
     'parts' => $perms['parts'] ? $parts : null,
     'price' => ['total' => $perms['price'] ? $price['total'] : null, 'leadTimeDays' => $perms['leadtime'] ? $price['leadTimeDays'] : null],
     'costBreakdown' => $perms['cost'] ? $price['breakdown'] : null,
-    'glassConfig' => $perms['parts'] ? ['density' => $_glass['density'] ?? null, 'thicknessMm' => $_glass['thickness_mm'] ?? null] : null,
+    'glassConfig' => $perms['physical'] ? ['density' => $_glass['density'] ?? null, 'thicknessMm' => $_glass['thickness_mm'] ?? null] : null,
 ]);

@@ -55,6 +55,7 @@ require_admin_role('s');
                 <option value="">전체 열람 권한</option>
                 <option value="view_spec">제작 시방서 허용된 회원</option>
                 <option value="view_parts">부재목록 허용된 회원</option>
+                <option value="view_physical">표면적·무게·체적 허용된 회원</option>
                 <option value="view_cost">예산견적 상세 허용된 회원</option>
                 <option value="view_price">예상가격 허용된 회원</option>
                 <option value="view_leadtime">최소 납기 허용된 회원</option>
@@ -186,6 +187,7 @@ require_admin_role('s');
                 <div style="display:flex;flex-direction:column;gap:6px;">
                     <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:400;color:var(--text);text-transform:none;letter-spacing:normal;"><input type="checkbox" id="admMViewSpec" style="width:auto;height:auto;"> 제작 시방서 열람 허용</label>
                     <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:400;color:var(--text);text-transform:none;letter-spacing:normal;"><input type="checkbox" id="admMViewParts" style="width:auto;height:auto;"> 부재목록 열람 허용</label>
+                    <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:400;color:var(--text);text-transform:none;letter-spacing:normal;"><input type="checkbox" id="admMViewPhysical" style="width:auto;height:auto;"> 표면적·무게·체적 열람 허용</label>
                     <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:400;color:var(--text);text-transform:none;letter-spacing:normal;"><input type="checkbox" id="admMViewCost" style="width:auto;height:auto;"> 예산견적 상세 열람 허용</label>
                     <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:400;color:var(--text);text-transform:none;letter-spacing:normal;"><input type="checkbox" id="admMViewPrice" style="width:auto;height:auto;"> 예상가격 열람 허용</label>
                     <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:400;color:var(--text);text-transform:none;letter-spacing:normal;"><input type="checkbox" id="admMViewLeadtime" style="width:auto;height:auto;"> 최소 납기 열람 허용</label>

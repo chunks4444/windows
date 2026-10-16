@@ -7,12 +7,13 @@ require_once __DIR__ . '/db.php';
 
 function get_content_permissions(): array {
     $payload = jwt_from_request();
-    if (!$payload) return ['spec' => false, 'parts' => false, 'cost' => false, 'price' => false, 'leadtime' => false, 'shipping' => false, 'desc' => false];
+    if (!$payload) return ['spec' => false, 'parts' => false, 'physical' => false, 'cost' => false, 'price' => false, 'leadtime' => false, 'shipping' => false, 'desc' => false];
 
     $role = $payload['role'] ?? null;
     $perms = [
         'spec'     => in_array($role, ['s', 'm'], true),
         'parts'    => in_array($role, ['s', 'm'], true),
+        'physical' => in_array($role, ['s', 'm'], true),
         'cost'     => $role === 's',
         'price'    => in_array($role, ['s', 'm'], true),
         'leadtime' => in_array($role, ['s', 'm'], true),
@@ -21,11 +22,12 @@ function get_content_permissions(): array {
     ];
     if (!in_array(false, $perms, true)) return $perms;
 
-    $stmt = db()->prepare('SELECT view_spec, view_parts, view_cost, view_price, view_leadtime, view_shipping, view_desc FROM users WHERE id = ?');
+    $stmt = db()->prepare('SELECT view_spec, view_parts, view_physical, view_cost, view_price, view_leadtime, view_shipping, view_desc FROM users WHERE id = ?');
     $stmt->execute([$payload['sub'] ?? null]);
     if ($row = $stmt->fetch()) {
         $perms['spec']     = $perms['spec']     || (bool)$row['view_spec'];
         $perms['parts']    = $perms['parts']    || (bool)$row['view_parts'];
+        $perms['physical'] = $perms['physical'] || (bool)$row['view_physical'];
         $perms['cost']     = $perms['cost']     || (bool)$row['view_cost'];
         $perms['price']    = $perms['price']    || (bool)$row['view_price'];
         $perms['leadtime'] = $perms['leadtime'] || (bool)$row['view_leadtime'];

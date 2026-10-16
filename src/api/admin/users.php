@@ -30,10 +30,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || (($_SERVER['REQUEST_METHOD'] === 'PO
     $offset = ($page - 1) * $limit;
     $q      = trim($_body['q'] ?? $_GET['q'] ?? '');
     $perm   = trim($_body['perm'] ?? $_GET['perm'] ?? '');
-    $permCols = ['view_spec', 'view_parts', 'view_cost', 'view_price', 'view_leadtime', 'view_shipping', 'view_desc'];
+    $permCols = ['view_spec', 'view_parts', 'view_physical', 'view_cost', 'view_price', 'view_leadtime', 'view_shipping', 'view_desc'];
 
     $cols = 'id, email, role, name, phone, company, created_at, last_login_at, last_login_ip, withdrawn_at,
-        view_spec, view_parts, view_cost, view_price, view_leadtime, view_shipping, view_desc,
+        view_spec, view_parts, view_physical, view_cost, view_price, view_leadtime, view_shipping, view_desc,
         company_name, company_biz_no, company_biz_type, company_biz_category, company_ceo, company_phone,
         company_zipcode, company_address, company_address_detail,
         (SELECT COUNT(*) FROM drawings WHERE user_id = users.id) AS drawing_count, (SELECT COUNT(*) FROM drawing_export_logs WHERE user_id = users.id) AS export_count';
@@ -73,6 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     $withdrawn = array_key_exists('withdrawn', $body) ? (bool)$body['withdrawn'] : null;
     $viewSpec     = array_key_exists('view_spec',     $body) ? (bool)$body['view_spec']     : null;
     $viewParts    = array_key_exists('view_parts',    $body) ? (bool)$body['view_parts']    : null;
+    $viewPhysical = array_key_exists('view_physical', $body) ? (bool)$body['view_physical'] : null;
     $viewCost     = array_key_exists('view_cost',     $body) ? (bool)$body['view_cost']     : null;
     $viewPrice    = array_key_exists('view_price',    $body) ? (bool)$body['view_price']    : null;
     $viewLeadtime = array_key_exists('view_leadtime', $body) ? (bool)$body['view_leadtime'] : null;
@@ -98,6 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     if ($withdrawn !== null) { $sets[] = 'withdrawn_at = ?';  $binds[] = $withdrawn ? date('Y-m-d H:i:s') : null; }
     if ($viewSpec     !== null) { $sets[] = 'view_spec = ?';     $binds[] = $viewSpec     ? 1 : 0; }
     if ($viewParts    !== null) { $sets[] = 'view_parts = ?';    $binds[] = $viewParts    ? 1 : 0; }
+    if ($viewPhysical !== null) { $sets[] = 'view_physical = ?'; $binds[] = $viewPhysical ? 1 : 0; }
     if ($viewCost     !== null) { $sets[] = 'view_cost = ?';     $binds[] = $viewCost     ? 1 : 0; }
     if ($viewPrice    !== null) { $sets[] = 'view_price = ?';    $binds[] = $viewPrice    ? 1 : 0; }
     if ($viewLeadtime !== null) { $sets[] = 'view_leadtime = ?'; $binds[] = $viewLeadtime ? 1 : 0; }

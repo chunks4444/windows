@@ -16,6 +16,7 @@ async function init() {
 const PERM_LABELS = {
     view_spec:     '제작 시방서',
     view_parts:    '부재목록',
+    view_physical: '표면적·무게·체적',
     view_cost:     '예산견적 상세',
     view_price:    '예상가격',
     view_leadtime: '최소 납기',
@@ -124,6 +125,7 @@ function openModal(id, u) {
     document.getElementById('admMWithdrawn').value = u.withdrawn_at ? '1' : '0';
     document.getElementById('admMViewSpec').checked     = Number(u.view_spec)     === 1;
     document.getElementById('admMViewParts').checked    = Number(u.view_parts)    === 1;
+    document.getElementById('admMViewPhysical').checked = Number(u.view_physical) === 1;
     document.getElementById('admMViewCost').checked     = Number(u.view_cost)     === 1;
     document.getElementById('admMViewPrice').checked    = Number(u.view_price)    === 1;
     document.getElementById('admMViewLeadtime').checked = Number(u.view_leadtime) === 1;
@@ -182,6 +184,7 @@ async function saveUser() {
                 withdrawn: document.getElementById('admMWithdrawn').value === '1',
                 view_spec:     document.getElementById('admMViewSpec').checked,
                 view_parts:    document.getElementById('admMViewParts').checked,
+                view_physical: document.getElementById('admMViewPhysical').checked,
                 view_cost:     document.getElementById('admMViewCost').checked,
                 view_price:    document.getElementById('admMViewPrice').checked,
                 view_leadtime: document.getElementById('admMViewLeadtime').checked,
