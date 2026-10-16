@@ -744,7 +744,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                     <div class="sb-section-title"><?= te('표면적·무게·체적') ?> <small><?= te('목재 비중 기준') ?></small></div>
                     <table class="phys-table" id="physTable">
                         <thead>
-                            <tr><th colspan="2"><?= te('구분') ?></th><th><?= te('체적(cm³)') ?></th><th><?= te('표면적(m²)') ?></th><th><?= te('무게(kg)') ?></th></tr>
+                            <tr><th colspan="2"><?= te('구분') ?></th><th><?= te('체적(cm³)') ?></th><th><?= te('표면적(cm²)') ?></th><th><?= te('무게(kg)') ?></th></tr>
                         </thead>
                         <tbody id="physBody"></tbody>
                     </table>

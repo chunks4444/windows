@@ -1785,7 +1785,7 @@ async function draw() {
 
         const doorCount = ph.doorCount || 1;
         const fmtVol  = mm3 => Math.round(mm3 / 1000).toLocaleString();
-        const fmtArea = m2  => m2.toFixed(2);
+        const fmtArea = m2  => Math.round(m2 * 10000).toLocaleString();
         const fmtKg   = kg  => kg == null ? '—' : kg.toFixed(2);
 
         // 유리·한지도 "문" 1짝 기준으로 묶는다 — 일반유리는 칸을 안 칠해도 "면" 브러시에 선택만

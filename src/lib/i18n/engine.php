@@ -98,7 +98,7 @@ return [
     '표면적'                  => 'Surface area',
     '무게'                    => 'Weight',
     '체적(cm³)'               => 'Volume (cm³)',
-    '표면적(m²)'              => 'Surface area (m²)',
+    '표면적(cm²)'             => 'Surface area (cm²)',
     '무게(kg)'                => 'Weight (kg)',
 
     // ── 원가·견적 ───────────────────────────────────
