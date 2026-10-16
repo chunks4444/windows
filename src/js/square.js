@@ -1797,16 +1797,20 @@ async function draw() {
         rows.push([_t('문틀'), ph.muntol.volMm3, ph.muntol.areaM2, ph.muntol.weightKg]);
         totalVol += ph.muntol.volMm3; totalArea += ph.muntol.areaM2; totalKg += (ph.muntol.weightKg || 0);
 
-        let glassCells = 0, hanjiCells = 0;
+        // 일반유리는 칸마다 칠하는 장식이 아니라 살 전체 뒤에 한 장 통유리를 끼우는 것 — 몇 칸을
+        // 클릭했는지와 무관하게 내경 전체 면적(살 부분)으로 계산한다. 칼라유리는 반대로 칠한 칸만 센다.
+        let glassPlainUsed = false, glassColorCells = 0, hanjiCells = 0;
         if (faceMaterialMap) for (const k in faceMaterialMap) {
-            const mat = faceMaterialMap[k]?.material;
-            if (mat === 'glass') glassCells++;
-            else if (mat === 'hanji') hanjiCells++;
+            const fm = faceMaterialMap[k];
+            if (fm?.material === 'glass') { if (fm.sub === 'plain') glassPlainUsed = true; else glassColorCells++; }
+            else if (fm?.material === 'hanji') hanjiCells++;
         }
-        if (glassCells > 0 && glassConfig?.density && glassConfig?.thicknessMm) {
-            const glassAreaMm2 = geo.cellW * geo.cellH * glassCells * doorCount;
-            const glassVolMm3  = glassAreaMm2 * glassConfig.thicknessMm;
-            const glassKg      = glassVolMm3 / 1_000_000 * glassConfig.density;
+        let glassAreaMm2 = 0;
+        if (glassPlainUsed) glassAreaMm2 += geo.innerW * geo.innerH * doorCount;
+        if (glassColorCells > 0) glassAreaMm2 += geo.cellW * geo.cellH * glassColorCells * doorCount;
+        if (glassAreaMm2 > 0 && glassConfig?.density && glassConfig?.thicknessMm) {
+            const glassVolMm3 = glassAreaMm2 * glassConfig.thicknessMm;
+            const glassKg     = glassVolMm3 / 1_000_000 * glassConfig.density;
             rows.push([_t('유리(면)'), glassVolMm3, glassAreaMm2 / 1_000_000, glassKg]);
             totalVol += glassVolMm3; totalArea += glassAreaMm2 / 1_000_000; totalKg += glassKg;
         }
