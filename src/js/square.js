@@ -1778,8 +1778,7 @@ async function draw() {
         const section = document.getElementById('physSection');
         if (!body || !section) return;
         const ph = p?.physical;
-        if (!ph || !ph.density) { section.style.display = 'none'; return; }
-        section.style.display = '';
+        if (!ph) { section.style.display = 'none'; return; }
 
         const doorCount = ph.doorCount || 1;
         const fmtVol  = mm3 => Math.round(mm3 / 1000).toLocaleString() + ' cm³';
@@ -1787,15 +1786,18 @@ async function draw() {
         const fmtKg   = kg  => kg == null ? '—' : kg.toFixed(2) + ' kg';
 
         // 울거미·살·문틀을 각각 따로 보여준다(문짝 수만큼 합산한 소계 — 문짝마다 반복하면 전부 같은
-        // 값이라 한 줄로 합침). 유리·한지는 아래에서 이어서 추가.
+        // 값이라 한 줄로 합침). 수종을 아직 안 골라 비중이 없으면(ph.density null) 무게는 — 로 두고
+        // 체적·표면적은 그대로 보여준다 — 유리·한지 무게는 비중과 무관하므로 숨길 이유가 없다.
+        const woodKg = k => ph.density ? k : null;
         const rows = [
-            [_t('울거미'), ph.ulgeomi.volMm3 * doorCount, ph.ulgeomi.areaM2 * doorCount, (ph.ulgeomi.weightKg || 0) * doorCount],
-            [_t('살'),     ph.slat.volMm3    * doorCount, ph.slat.areaM2    * doorCount, (ph.slat.weightKg    || 0) * doorCount],
-            [_t('문틀'),   ph.muntol.volMm3,               ph.muntol.areaM2,               ph.muntol.weightKg],
+            [_t('울거미'), ph.ulgeomi.volMm3 * doorCount, ph.ulgeomi.areaM2 * doorCount, woodKg((ph.ulgeomi.weightKg || 0) * doorCount)],
+            [_t('살'),     ph.slat.volMm3    * doorCount, ph.slat.areaM2    * doorCount, woodKg((ph.slat.weightKg    || 0) * doorCount)],
+            [_t('문틀'),   ph.muntol.volMm3,               ph.muntol.areaM2,               woodKg(ph.muntol.weightKg)],
         ];
+        section.style.display = '';
         let totalVol  = rows[0][1] + rows[1][1] + rows[2][1];
         let totalArea = rows[0][2] + rows[1][2] + rows[2][2];
-        let totalKg   = rows[0][3] + rows[1][3] + (rows[2][3] || 0);
+        let totalKg   = (rows[0][3] || 0) + (rows[1][3] || 0) + (rows[2][3] || 0);
 
         // 일반유리는 칸마다 칠하는 장식이 아니라 살 전체 뒤에 한 장 통유리를 끼우는 것 — 몇 칸을
         // 클릭했는지와 무관하게 내경 전체 면적(살 부분)으로 계산한다. 칼라유리는 반대로 칠한 칸만 센다.
