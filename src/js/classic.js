@@ -1915,6 +1915,7 @@ async function draw() {
         section.style.display = '';
 
         const subVolDoor  = ph.ulgeomi.volMm3 + ph.slat.volMm3 + glassVolMm3Door;
+        const subJaeDoor  = ph.ulgeomi.volMm3 + ph.slat.volMm3;
         const subAreaDoor = ph.ulgeomi.areaM2 + ph.slat.areaM2 + glassAreaMm2Door / 1_000_000 + hanjiAreaM2Door;
         const subKgDoor = (ph.ulgeomi.weightKg || 0) + (ph.slat.weightKg || 0) + (glassKgDoor || 0);
 
@@ -1925,17 +1926,18 @@ async function draw() {
         addRow('', _t('살'), ph.slat.volMm3, ph.slat.volMm3, ph.slat.areaM2, ph.density ? ph.slat.weightKg : null);
         if (glassVolMm3Door > 0) addRow('', _t('유리'), glassVolMm3Door, null, glassAreaMm2Door / 1_000_000, glassKgDoor);
         if (hanjiAreaM2Door > 0) addRow('', _t('한지'), null, null, hanjiAreaM2Door, null);
-        addRow('', _t('소계'), subVolDoor, null, subAreaDoor, subKgDoor, 'phys-subtotal');
-        addRow(_t('전체'), '', subVolDoor * doorCount, null, subAreaDoor * doorCount, subKgDoor == null ? null : subKgDoor * doorCount, 'phys-subtotal');
+        addRow('', _t('소계'), subVolDoor, subJaeDoor, subAreaDoor, subKgDoor, 'phys-subtotal');
+        addRow(_t('전체'), '', subVolDoor * doorCount, subJaeDoor * doorCount, subAreaDoor * doorCount, subKgDoor == null ? null : subKgDoor * doorCount, 'phys-subtotal');
         addRow(_t('문틀'), '', ph.muntol.volMm3, ph.muntol.volMm3, ph.muntol.areaM2, ph.density ? ph.muntol.weightKg : null);
 
         const totalVol  = subVolDoor * doorCount + ph.muntol.volMm3;
+        const totalJae  = subJaeDoor * doorCount + ph.muntol.volMm3;
         const totalArea = subAreaDoor * doorCount + ph.muntol.areaM2;
         const totalKg   = (subKgDoor == null ? 0 : subKgDoor * doorCount) + (ph.density ? (ph.muntol.weightKg || 0) : 0);
 
         body.innerHTML = rows.map(r =>
             `<tr class="${r.cls}"><td>${r.group}</td><td>${r.label}</td><td>${r.vol == null ? '—' : fmtVol(r.vol)}</td><td>${fmtJae(r.jae)}</td><td>${fmtArea(r.area)}</td><td>${fmtKg(r.kg)}</td></tr>`
-        ).join('') + `<tr class="phys-total"><td colspan="2">${_t('합계')}</td><td>${fmtVol(totalVol)}</td><td>—</td><td>${fmtArea(totalArea)}</td><td>${fmtKg(totalKg)}</td></tr>`;
+        ).join('') + `<tr class="phys-total"><td colspan="2">${_t('합계')}</td><td>${fmtVol(totalVol)}</td><td>${fmtJae(totalJae)}</td><td>${fmtArea(totalArea)}</td><td>${fmtKg(totalKg)}</td></tr>`;
     }
 
     function hitTestCell(cx, cy) {
