@@ -3111,7 +3111,6 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
         // 단, 저장 안 한 상태로 새로고침/재방문한 경우라면 직전에 보고 있던(또는 뒤로
         // 돌려보던) 랜덤 패턴과 그 기록을 그대로 복원 — 완전히 새로 생성하지는 않는다.
         if (!mondrianLayout) {
-            let restored = false;
             try {
                 const saved = localStorage.getItem(MONDRIAN_HISTORY_KEY);
                 if (saved) {
@@ -3125,11 +3124,13 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
                         _updateMondrianBtn();
                         _updateMondrianHistoryButtons();
                         draw();
-                        restored = true;
                     }
                 }
             } catch { mondrianHistory = []; mondrianHistoryIdx = -1; }
-            if (!restored) generateMondrian();
+            // 복원된 기록의 마지막 패턴이 '초기화(정자살)' 상태(null)였다면 그대로 두지 않고
+            // 새 랜덤 패턴을 생성한다 — 지난번에 리셋해두고 떠난 경우까지 그대로 이어받으면
+            // 새 도면을 열 때마다 계속 빈 격자만 보이게 된다.
+            if (!mondrianLayout) generateMondrian();
         }
     }
 
