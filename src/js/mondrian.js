@@ -544,10 +544,12 @@ async function draw() {
             ppGroup.style.display = 'none';
         }
 
-        document.getElementById('spHSlatLen').textContent = `${p.slatW}×${geo.slatT}×${p.hSlatLen}mm`;
-        document.getElementById('spHSlatCnt').textContent = p.hSlatCnt;
-        document.getElementById('spVSlatLen').textContent = `${p.slatW}×${geo.slatT}×${p.vSlatLen}mm`;
-        document.getElementById('spVSlatCnt').textContent = p.vSlatCnt;
+        // 몬드리안(랜덤 패턴)일 땐 아래쪽에서 #slatDiagList를 길이별 목록으로 통째로 다시
+        // 그리므로 이 id들이 없을 수 있다 — 격자 모드로 막 돌아온 시점엔 아직 복원 전이라 null.
+        const _hLenEl0 = document.getElementById('spHSlatLen'); if (_hLenEl0) _hLenEl0.textContent = `${p.slatW}×${geo.slatT}×${p.hSlatLen}mm`;
+        const _hCntEl0 = document.getElementById('spHSlatCnt'); if (_hCntEl0) _hCntEl0.textContent = p.hSlatCnt;
+        const _vLenEl0 = document.getElementById('spVSlatLen'); if (_vLenEl0) _vLenEl0.textContent = `${p.slatW}×${geo.slatT}×${p.vSlatLen}mm`;
+        const _vCntEl0 = document.getElementById('spVSlatCnt'); if (_vCntEl0) _vCntEl0.textContent = p.vSlatCnt;
         document.getElementById('spMtVLen').textContent   = `${p.mtFace}×${p.mtW}×${p.mtVLen}mm`;
         document.getElementById('spMtHLen').textContent   = `${p.mtFace}×${p.mtW}×${p.mtHLen}mm`;
     }
@@ -1257,23 +1259,56 @@ async function draw() {
             else adjVSlatCnt++;
         });
 
-        const hCntEl = document.getElementById('spHSlatCnt');
-        if (hCntEl) hCntEl.textContent = Math.max(0, adjHSlatCnt) + _t('개');
-        const vCntEl = document.getElementById('spVSlatCnt');
-        if (vCntEl) vCntEl.textContent = Math.max(0, adjVSlatCnt) + _t('개');
-
-        // 몬드리안(랜덤 생성)은 살마다 길이가 제각각이라 격자 기준 단일 길이값이
-        // 의미가 없다 — 평균 등으로 대충 값을 보여주는 대신 "가변"으로 명시한다.
-        if (mondrianLayout && _moCostParams) {
-            const doors = parseInt(txtDoorCount.value) || 1;
-            if (hCntEl) hCntEl.textContent = (_moCostParams.moHCnt * doors) + _t('개');
-            if (vCntEl) vCntEl.textContent = (_moCostParams.moVCnt * doors) + _t('개');
-        }
+        const slatDiagList = document.getElementById('slatDiagList');
         if (mondrianLayout) {
-            const hLenEl = document.getElementById('spHSlatLen');
-            if (hLenEl) hLenEl.textContent = `${p.slatW}×${geo.slatT}×${_t('가변')}`;
-            const vLenEl = document.getElementById('spVSlatLen');
-            if (vLenEl) vLenEl.textContent = `${p.slatW}×${geo.slatT}×${_t('가변')}`;
+            // 몬드리안(랜덤 생성)은 살마다 길이가 제각각이라 격자처럼 단일 길이값으로
+            // 뭉뚱그릴 수 없다 — 실제 길이(mm)별로 묶어서 개수와 함께 보여준다.
+            const groups = new Map(); // `${axis}:${lenMm}` → 개수
+            const addGroup = (axis, lenMm) => groups.set(`${axis}:${lenMm}`, (groups.get(`${axis}:${lenMm}`) || 0) + 1);
+            mondrianLayout.lines.forEach((ln, idx) => {
+                if (deletedSegs.has(`0:mo:${idx}`)) return;
+                const span = ln.to - ln.from;
+                const lenMm = Math.round(span * (ln.axis === 'h' ? geo.innerW : effInnerH) + 2 * geo.tenonDepth);
+                addGroup(ln.axis, lenMm);
+            });
+            addedLines.forEach(ln => {
+                if (ln.xi1 !== undefined) return; // 균등 격자용 노드 인덱스 선 — 몬드리안 레이아웃에는 없음
+                const dx = Math.abs(ln.nx2 - ln.nx1), dy = Math.abs(ln.ny2 - ln.ny1);
+                const isH = dy < 0.001;
+                const lenMm = Math.round((isH ? dx : dy) * (isH ? geo.innerW : effInnerH) + 2 * geo.tenonDepth);
+                addGroup(isH ? 'h' : 'v', lenMm);
+            });
+            const doors = parseInt(txtDoorCount.value) || 1;
+            if (slatDiagList) {
+                slatDiagList.innerHTML = '';
+                [...groups.entries()]
+                    .sort(([a], [b]) => {
+                        const axA = a.split(':')[0], axB = b.split(':')[0];
+                        if (axA !== axB) return axA === 'h' ? -1 : 1;
+                        return Number(b.split(':')[1]) - Number(a.split(':')[1]);
+                    })
+                    .forEach(([key, cnt]) => {
+                        const lenMm = key.split(':')[1];
+                        const row = document.createElement('div');
+                        row.className = 'slat-row';
+                        row.innerHTML = `<span class="slat-len">${p.slatW}×${geo.slatT}×${lenMm}mm</span><span class="slat-cnt">${cnt * doors}${_t('개')}</span>`;
+                        slatDiagList.appendChild(row);
+                    });
+            }
+        } else if (slatDiagList && !document.getElementById('spHSlatLen')) {
+            // 몬드리안 목록으로 바뀌었다가 '초기화'로 격자 모드로 돌아온 경우 — 고정 두 줄 복원
+            slatDiagList.innerHTML = `
+                <div class="slat-row"><span class="slat-len" id="spHSlatLen">—</span><span class="slat-cnt" id="spHSlatCnt">—</span></div>
+                <div class="slat-row"><span class="slat-len" id="spVSlatLen">—</span><span class="slat-cnt" id="spVSlatCnt">—</span></div>`;
+            document.getElementById('spHSlatLen').textContent = `${p.slatW}×${geo.slatT}×${p.hSlatLen}mm`;
+            document.getElementById('spVSlatLen').textContent = `${p.slatW}×${geo.slatT}×${p.vSlatLen}mm`;
+            document.getElementById('spHSlatCnt').textContent = Math.max(0, adjHSlatCnt) + _t('개');
+            document.getElementById('spVSlatCnt').textContent = Math.max(0, adjVSlatCnt) + _t('개');
+        } else {
+            const hCntEl = document.getElementById('spHSlatCnt');
+            if (hCntEl) hCntEl.textContent = Math.max(0, adjHSlatCnt) + _t('개');
+            const vCntEl = document.getElementById('spVSlatCnt');
+            if (vCntEl) vCntEl.textContent = Math.max(0, adjVSlatCnt) + _t('개');
         }
     }
 

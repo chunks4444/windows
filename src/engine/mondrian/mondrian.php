@@ -742,7 +742,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
 
                     <div class="slat-group">
                         <div class="slat-group-title"><?= te('가로살 · 세로살') ?></div>
-                        <div class="diag-list">
+                        <div class="diag-list" id="slatDiagList">
                             <div class="slat-row">
                                 <span class="slat-len" id="spHSlatLen">—</span>
                                 <span class="slat-cnt" id="spHSlatCnt">—</span>
