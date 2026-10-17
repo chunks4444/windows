@@ -58,7 +58,7 @@ include __DIR__ . '/../_head.php';
 </div>
 
 <h2>Specs Tab — Production Specification &amp; Member List</h2>
-<p>The same items as Se-sal are calculated and displayed automatically: frame width and height, outer width and height, inner width and height, horizontal and vertical cells, horizontal and vertical ink lines, half-lap width, and vertical and horizontal stile groove widths. The member list is ordered as horizontal and vertical slats, frame members, the transom panel (if used), and the door frame.</p>
+<p>The same items as Se-sal are calculated and displayed automatically: frame width and height, outer width and height, inner width and height, horizontal and vertical cells, horizontal and vertical ink lines, half-lap width, and vertical and horizontal stile groove widths. The member list is ordered as horizontal and vertical slats, frame members, the transom panel (if used), and the door frame. The <strong>surface area, weight &amp; volume</strong> table below it works the same way as Se-sal — see the <a href="/en/guide/studio-classic">Se-sal guide</a> for details.</p>
 
 <h2>Finish Tab</h2>
 <p>Choosing the wood, hardware and colors per <strong>part to colour</strong> (frame, stile &amp; rail, slat, face) works the same as Se-sal. Pick <strong>Face</strong> as the part and you can click cells in the drawing to fill just those cells (Paint face color).</p>

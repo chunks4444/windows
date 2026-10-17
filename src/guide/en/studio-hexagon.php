@@ -64,7 +64,7 @@ include __DIR__ . '/../_head.php';
 </div>
 
 <h2>Member List</h2>
-<p>The same structure as Semo-sotgeul-sal — frame members → directional members (names vary with the Pattern vertical direction) → diagonal slats (two directions) → transom panel (if used) → door frame.</p>
+<p>The same structure as Semo-sotgeul-sal — frame members → directional members (names vary with the Pattern vertical direction) → diagonal slats (two directions) → transom panel (if used) → door frame. The <strong>surface area, weight &amp; volume</strong> table further down works the same way as Se-sal — see the <a href="/en/guide/studio-classic">Se-sal guide</a> for details.</p>
 
 <h2>Finish Tab</h2>
 <p>Choosing the wood, hardware and colors per <strong>part to colour</strong> (frame, stile &amp; rail, slat, face) works the same as Se-sal. Pick <strong>Face</strong> as the part and you can click cells in the drawing to fill just those cells (Paint face color).</p>

@@ -58,7 +58,7 @@ include __DIR__ . '/../_head.php';
 </table>
 
 <h2>Member List</h2>
-<p>Ordered as frame members → <strong>horizontal and vertical slats</strong> → <strong>diagonal slats</strong> → transom panel (if used) → door frame. That is one group more than Bit-sal, since orthogonal and diagonal slats are each tallied separately.</p>
+<p>Ordered as frame members → <strong>horizontal and vertical slats</strong> → <strong>diagonal slats</strong> → transom panel (if used) → door frame. That is one group more than Bit-sal, since orthogonal and diagonal slats are each tallied separately. The <strong>surface area, weight &amp; volume</strong> table further down works the same way as Se-sal — see the <a href="/en/guide/studio-classic">Se-sal guide</a> for details.</p>
 
 <h2>Finish Tab</h2>
 <p>Choosing the wood, hardware and colors per <strong>part to colour</strong> (frame, stile &amp; rail, slat, face) works the same as Se-sal. Pick <strong>Face</strong> as the part and you can click cells in the drawing to fill just those cells (Paint face color).</p>

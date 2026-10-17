@@ -148,8 +148,10 @@ include __DIR__ . '/../_head.php';
         <tr><td>Horizontal / vertical ink lines</td><td>Spacing between slat centerlines</td></tr>
         <tr><td>Half-lap width · groove widths</td><td>Machining sizes for the slat half-laps and the grooves in the stiles and rails</td></tr>
         <tr><td>Member list</td><td>Width × thickness × length and count for each stile, rail, slat and frame member</td></tr>
+        <tr><td>Surface area, weight &amp; volume</td><td>Volume, jae (才), surface area and weight for the stiles/rails, slats and frame</td></tr>
     </tbody>
 </table>
+<p>Below the member list is a <strong>surface area, weight &amp; volume</strong> table. For the stiles/rails, slats and frame it shows volume (cm³), jae (才, the traditional Korean lumber unit — 1 jae = 33×33×3600mm³), surface area (cm²) and weight (kg), with a per-leaf subtotal and a total multiplied by the door count. Weight is only calculated once you pick a wood species on the Finish tab and an admin has entered that species' density (if no density is set, the table is hidden entirely). Painting glass onto a face adds its weight too — plain glass is counted as one continuous pane across the whole inner opening as soon as it's selected as the material (no need to click individual cells), while colored glass is counted only for the cells you actually paint. This table requires a separate viewing permission.</p>
 
 <h2>Export Tab</h2>
 <table class="guide-table">

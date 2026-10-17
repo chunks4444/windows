@@ -57,7 +57,7 @@ include __DIR__ . '/../_head.php';
 </table>
 
 <h2>Member List</h2>
-<p>Instead of horizontal and vertical slat groups, parts are listed as a <strong>diagonal slat</strong> group. Slats of equal length are bundled by each diagonal direction (↘ and ↗) and listed as length × quantity. Frame members, the transom panel (if used) and the door frame follow below.</p>
+<p>Instead of horizontal and vertical slat groups, parts are listed as a <strong>diagonal slat</strong> group. Slats of equal length are bundled by each diagonal direction (↘ and ↗) and listed as length × quantity. Frame members, the transom panel (if used) and the door frame follow below. The <strong>surface area, weight &amp; volume</strong> table further down works the same way as Se-sal — see the <a href="/en/guide/studio-classic">Se-sal guide</a> for details.</p>
 
 <h2>Finish Tab</h2>
 <p>Choosing the wood, hardware and colors per <strong>part to colour</strong> (frame, stile &amp; rail, slat, face) works the same as Se-sal. Pick <strong>Face</strong> as the part and you can click cells in the drawing to fill just those cells (Paint face color).</p>

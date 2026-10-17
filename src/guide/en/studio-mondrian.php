@@ -90,6 +90,7 @@ include __DIR__ . '/../_head.php';
     Frame width/height, outer and inner width/height, top/bottom rails, transom height and total door width (including overlap for sliding doors) are calculated automatically, as in the other engines.
     Because cell sizes vary, <strong>items that assume an even grid — cell counts, layout lines, half-lap width and stile groove width — are hidden while a random pattern is active.</strong>
     In the member list, horizontal and vertical slat lengths also differ per slat, so they are shown as "variable" rather than a single value.
+    The <strong>surface area, weight &amp; volume</strong> table below it works the same way as Se-sal (see the <a href="/en/guide/studio-classic">Se-sal guide</a> for details) — except that for a random pattern, cells vary in size, so any glass or hanji painted onto a cell is measured using that cell's actual size (its BSP rectangle ratio) instead of a uniform cell size.
 </p>
 
 <h2>Finish Tab</h2>
