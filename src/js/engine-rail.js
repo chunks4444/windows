@@ -291,7 +291,9 @@
                     if (e.target.closest('.tile-acts')) return;
                     if (d.title === (document.getElementById('drawingName')?.value || '').trim()) return;
                     await openDrawingByTitle(d.title);
-                    refreshList();
+                    // 목록 전체를 다시 불러와 그리면(refreshList) 깜빡여서, 활성 표시만 옮긴다
+                    grid.querySelectorAll('.thumb-card.active').forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
                 });
                 // 이름 변경 — 엔진 JS의 이름 변경 창(showRenameModal)을 그대로 연다. 견적요청 중인 도면은 삭제와 같이 막는다
                 card.querySelector('.thumb-ren').addEventListener('click', e => {
