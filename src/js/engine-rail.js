@@ -248,7 +248,6 @@
     function initMinePane() {
         const grid = document.getElementById('mineGrid');
         if (!grid) return;
-        const pane = grid.closest('.rail-pane');
         const click = id => document.getElementById(id)?.click();
         document.getElementById('btnNewDrawing')?.addEventListener('click', () => setTimeout(refreshList, 0));
 
@@ -262,7 +261,6 @@
             if (dateEl) dateEl.textContent = vs[cur] ? fmtDate(vs[cur].savedAt) : _t('저장된 버전이 없습니다');
         }
 
-        let listTimer;
         async function refreshList() {
             if (!token()) {
                 grid.innerHTML = emptyMsg(_t('로그인하면 저장한 도면을 여기서 볼 수 있습니다.'), _t('로그인'));
@@ -329,12 +327,12 @@
 
         loaders.file = () => { renderVerDate(); refreshList(); };
         document.addEventListener('pmok:drawing-renamed', refreshList);
-        // 저장·버전 전환·도면 열기 때마다 엔진이 renderVerList()로 #verList를 다시 그리므로, 그걸 신호로 칩·목록을 갱신
+        // 버전 전환 때마다 엔진이 renderVerList()로 #verList를 다시 그리므로, 그걸 신호로 버전 날짜만 갱신한다.
+        // 예전엔 여기서 refreshList()(목록 전체 다시 불러오기)도 같이 돌렸는데, 도면 열기도 #verList를
+        // 다시 그리는 동작이라 매번 걸려서 — 카드 클릭으로 이미 연 도면을 또 불러와 전체가 깜빡였다.
+        // 목록 자체(새 도면 저장·이름 등)는 카드 클릭(활성 표시만 옮김)과 탭 재진입(loaders.file) 때만 갱신한다.
         const verList = document.getElementById('verList');
-        if (verList) new MutationObserver(() => {
-            renderVerDate();
-            if (pane && !pane.hidden) { clearTimeout(listTimer); listTimer = setTimeout(refreshList, 400); }
-        }).observe(verList, { childList: true });
+        if (verList) new MutationObserver(renderVerDate).observe(verList, { childList: true });
     }
 
     // ── 문양 라이브러리: 내가 올린 문양 + 관리자 라이브러리, 클릭=삽입 / 아이콘=SVG 다운로드 ─────
