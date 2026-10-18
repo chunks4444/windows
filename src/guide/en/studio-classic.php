@@ -61,7 +61,7 @@ include __DIR__ . '/../_head.php';
     <thead><tr><th>Item</th><th>Range</th><th>Unit</th></tr></thead>
     <tbody>
         <tr><td>Frame width</td><td>400 – 3,000</td><td>mm</td></tr>
-        <tr><td>Frame height</td><td>400 – 3,000</td><td>mm</td></tr>
+        <tr><td>Frame height</td><td>400 – 5,000</td><td>mm</td></tr>
     </tbody>
 </table>
 <div class="guide-note">

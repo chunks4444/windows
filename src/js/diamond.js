@@ -421,9 +421,11 @@ async function draw() {
         const pungpanOn = document.getElementById('chkPungpan').checked;
         const pungpanInput = parseInt(document.getElementById('txtPungpan').value) || 0;
         const effectivePungpan = pungpanOn ? pungpanInput : 0;
-        const rawTarget = Math.round(geo.frameH * 2 + geo.innerH) + effectivePungpan;
+        // rawTarget은 문짝 외경(outerH) 기준 목표값이라, 문틀 세로(frameOpeningH, txtH)에 넣으려면
+        // 문틀두께·갭만큼 다시 더해야 한다 — 안 더하면 매번 그만큼씩 모자라게 줄어들어 최소값까지 폭주한다.
+        const rawTarget = Math.round(geo.frameH * 2 + geo.innerH) + effectivePungpan + 2 * geo.frameThick + 2 * geo.frameGap;
         // 유효한 값이고 슬라이더 범위 안에 있을 때만 조정
-        if (Number.isFinite(rawTarget) && rawTarget >= 400 && rawTarget <= 3000) {
+        if (Number.isFinite(rawTarget) && rawTarget >= 400 && rawTarget <= 5000) {
             const currentH = parseInt(txtH.value);
             if (rawTarget !== currentH) {
                 setSlider('txtH', 'numH', rawTarget);
@@ -2078,7 +2080,7 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
 
     const syncPairs = [
         { range: txtW,      num: document.getElementById('numW'),       min: 100, max: 10000 },
-        { range: txtH,      num: document.getElementById('numH'),       min: 400,  max: 3000 },
+        { range: txtH,      num: document.getElementById('numH'),       min: 400,  max: 5000 },
         { range: txtCols,   num: document.getElementById('numCols'),    min: 2,    max: 30   },
         { range: txtFrame,  num: document.getElementById('numFrame'),   min: 15,   max: 150  },
         { range: txtFrameH, num: document.getElementById('numFrameH'),  min: 15,   max: 150  },

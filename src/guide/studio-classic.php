@@ -57,7 +57,7 @@ include __DIR__ . '/_head.php';
     <thead><tr><th>항목</th><th>범위</th><th>단위</th></tr></thead>
     <tbody>
         <tr><td>문틀 가로</td><td>400 ~ 3,000</td><td>mm</td></tr>
-        <tr><td>문틀 세로</td><td>400 ~ 3,000</td><td>mm</td></tr>
+        <tr><td>문틀 세로</td><td>400 ~ 5,000</td><td>mm</td></tr>
     </tbody>
 </table>
 <div class="guide-note">
