@@ -529,8 +529,12 @@
         }).filter(Boolean);
         const oilFinishes = finishOpts.filter(v => v && isOilFinish(v));
         const oilColors   = groups.filter(g => String(g.key || g.label).startsWith(OIL_GROUP_KEY)).flatMap(g => g.colors);
-        // 색한지/칼라유리 임시 색상 — 전용 색상 목록이 정해지기 전까지 기존 AURO 팔레트(제품 하나 전체)를 빌려 쓴다
-        const faceMaterialColors = stainGroups[0]?.g.colors || groups[0]?.colors || [];
+        // 색한지 — "예한 전통한지 색운용지" 33색(실제 제품 견본에서 추출, color_swatches DB 관리)을 쓴다.
+        // 칼라유리는 아직 전용 색상 목록이 없어 기존처럼 AURO 팔레트(제품 하나 전체)를 임시로 빌려 쓴다.
+        const hanjiGroup = groups.find(g => (g.key || g.label) === HANJI_GROUP_KEY);
+        const faceMaterialColors = (faceMaterial?.material === 'hanji' && hanjiGroup?.colors.length)
+            ? hanjiGroup.colors
+            : (stainGroups[0]?.g.colors || groups[0]?.colors || []);
         const oilHexFor   = v => {
             const want = OIL_FINISH_COLOR_CODE[v] || OIL_WOOD_COLOR_CODE[document.getElementById('txtWood')?.value || ''] || 'NO-01';
             return (oilColors.find(c => c.code === want) || oilColors[0] || {}).hex || '#c8b48a';
@@ -699,8 +703,10 @@
 
                     const curSubDef = subs.find(s => s.value === faceMaterial?.sub);
                     if (curSubDef?.hasColor) {
-                        // 전용 색상 목록이 정해지기 전까지 기존 AURO 팔레트 색을 임시로 빌려 쓴다 (faceMaterialColors)
-                        h += `<div class="fin-group"><div class="fin-group-head">${_t('색상')}<small>${_t('임시')}</small></div><div class="fin-swatches">`;
+                        // 한지는 전용 팔레트(HANJI_GROUP_KEY)를 쓰므로 "임시" 표시를 뗀다 — 유리는 아직 전용 색상이
+                        // 없어 AURO를 빌려 쓰는 중이라(faceMaterialColors) 그대로 "임시"로 둔다.
+                        const isTemp = faceMaterial?.material !== 'hanji';
+                        h += `<div class="fin-group"><div class="fin-group-head">${_t('색상')}${isTemp ? `<small>${_t('임시')}</small>` : ''}</div><div class="fin-swatches">`;
                         faceMaterialColors.forEach(c => {
                             const on = faceMaterial?.hex?.toLowerCase() === c.hex.toLowerCase();
                             const tip = [c.brand, c.code, c.name].filter(Boolean).join(' ');
