@@ -26,6 +26,8 @@ $legacySlugRedirects = [
     '표기와-의미-2-도깨비는-뿔이-없다' => '표기와-의미-도깨비는-뿔이',
     // 2026-10-18 「오늘도 짭니다」 7화 제목 개정(평균이 없는 일 → 손바닥도 눈입니다)에 맞춰 슬러그 변경
     '평균이-없는-일' => '손바닥도-눈입니다',
+    // 2026-10-18 내용이 「따져 봅니다」 8화로 대체된 옛 글(비공개) — 예전 링크는 새 글로
+    '장기인-창호-빗살이-두-개' => '장기인-창호-어긋나는-자리',
 ];
 
 $id   = (int)($_GET['id'] ?? 0);
@@ -191,7 +193,7 @@ if (!$metaDesc) {
         }
     }
     if ($metaDesc === '') $metaDesc = strip_tags(db_field($post, 'content'));
-    $metaDesc = mb_substr($metaDesc, 0, 120);
+    // 길이는 아래 공통 처리(160자 안 마지막 문장 끝)에서 자른다 — 여기서 120자로 먼저 자르면 문장 중간에서 끊겼다
 }
 // summary는 여러 문단·300자 넘게 쓰인 글이 많은데, 검색결과 스니펫은 155자 안팎에서 잘린다.
 // 원문(summary)은 목록 카드에서도 쓰이니 건드리지 않고, 메타 태그용으로만 줄바꿈을 펴고
@@ -205,6 +207,7 @@ foreach ($bdLines as $bdIdx => $bdLine) {
 }
 $metaDesc = implode(' ', $bdLines);
 $metaDesc = trim(preg_replace('/\s+/u', ' ', $metaDesc));
+$metaDesc = preg_replace('/^[—–\-\s]+/u', '', $metaDesc); // '— 부제'처럼 줄표로 시작하는 summary — 검색결과 첫 글자가 줄표가 되지 않게
 if (mb_strlen($metaDesc) > 160) {
     $bdCut = mb_substr($metaDesc, 0, 160);
     if (preg_match('/^(.{100,}[.!?。]["\'”’)]*)\s/us', $bdCut . ' ', $bdSentence)) {
