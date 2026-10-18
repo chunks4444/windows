@@ -471,6 +471,8 @@
         if (clearBtn) {
             clearBtn.addEventListener('click', () => {
                 if (clearBtn) clearBtn.style.display = 'none';
+                faceBacking = null; // 초기화는 문 전체 배지도 함께 지운다
+                window.__pmokOnFaceBackingChange?.();
                 onClear();
             });
         }
@@ -480,7 +482,7 @@
         }
 
         function updateClearBtn(hasColors) {
-            if (clearBtn) clearBtn.style.display = hasColors ? '' : 'none';
+            if (clearBtn) clearBtn.style.display = (hasColors || faceBacking) ? '' : 'none';
         }
 
         function restoreColor(hex) {
@@ -496,8 +498,9 @@
     const FACE_MATERIAL_SUBS = {
         hanji: [
             { value: 'saek',    label: '색한지',          hasColor: true  },
-            { value: 'baejeop', label: '배접지',          hasColor: false, hex: '#e2d2ae' }, // 여러 겹 덧대 두꺼운 종이 — 짙은 미색
-            { value: 'ilban',   label: '일반한지(백지)',   hasColor: false, hex: '#f6f2e8' }, // 백지 — 거의 흰 미색
+            // backing: 칸마다가 아니라 살 뒤에 문 전체로 한 장 바르는 종이 — 고르는 순간 내경 전체가 그 색으로 칠해진다
+            { value: 'baejeop', label: '배접지',          hasColor: false, hex: '#e2d2ae', backing: true }, // 여러 겹 덧댄 두꺼운 종이 — 짙은 미색
+            { value: 'ilban',   label: '일반한지(백지)',   hasColor: false, hex: '#f6f2e8', backing: true }, // 백지 — 거의 흰 미색
         ],
         glass: [
             { value: 'plain', label: '일반유리', hasColor: false },
@@ -506,6 +509,18 @@
     };
     const FACE_MATERIAL_BASE_HEX = { hanji: '#e8dcc0', glass: '#bcd2d8' };
     // 색을 고르지 않는 세부 종류의 칠 색 — 종류마다 hex가 있으면 그것, 없으면 재질 기본색(도면에서 배접지·백지를 구분해 보이게)
+    // 문 전체 배지(배접지·백지) — { material, sub, hex } | null. 각 엔진 draw()가 내경 바탕을 이 색으로 칠하고,
+    // getParams/applyParams가 도면과 함께 저장·복원한다(한 페이지엔 엔진 하나라 전역 하나로 충분).
+    let faceBacking = null;
+    const faceBackingHex = () => faceBacking?.hex || '#ffffff';
+    window.__pmokGetFaceBacking = () => faceBacking;
+    window.__pmokSetFaceBacking = fb => {
+        faceBacking = fb ? { material: fb.material, sub: fb.sub, hex: fb.hex } : null;
+        window.__pmokOnFaceBackingChange?.(); // 몬드리안: 새로고침 복원용 저장
+        const clearBtn = document.getElementById('btnFaceClear');
+        if (clearBtn && faceBacking) clearBtn.style.display = '';
+        draw();
+    };
     const faceSubHex = (material, sub) => (FACE_MATERIAL_SUBS[material] || []).find(s => s.value === sub)?.hex || FACE_MATERIAL_BASE_HEX[material];
 
     // 시방서 '면 재질' 표 — 한지·유리를 칠한 칸을 재질·색·크기별로 묶어 크기·개수·면적·무게를 보여준다.
@@ -514,7 +529,8 @@
     // cells: 엔진이 넘겨주는 칠한 칸 목록(문 1짝 기준) — { fm, shape: 'rect'|'diamond'|'tri'|'hex', w, h, side, areaMm2 }
     //   크기는 살 안쪽으로 보이는 칸 치수(내치수)이며, 홈에 물리는 여유분은 더하지 않았다.
     // 무게는 유리만(비중·두께가 원가표에 있을 때) — 한지 무게는 표시하지 않는다(빈칸).
-    function renderFaceMaterialSpec(cells, glassConfig, doorCount) {
+    // innerSize: 내경 { w, h } — 문 전체 배지(배접지·백지)는 짝마다 내경 크기 한 장
+    function renderFaceMaterialSpec(cells, glassConfig, doorCount, innerSize) {
         const physSection = document.getElementById('physSection');
         if (!physSection) return; // 부재목록 열람 권한이 없으면 표도 없다
         let section = document.getElementById('faceMatSection');
@@ -562,6 +578,7 @@
             if (kg != null) g.kg = (g.kg || 0) + kg * n;
             groups.set(key, g);
         };
+        if (faceBacking && innerSize) add(faceBacking, sizeLabel({ shape: 'rect', w: innerSize.w, h: innerSize.h }), innerSize.w * innerSize.h, doors);
         for (const c of cells) if (c.fm) add(c.fm, sizeLabel(c), c.areaMm2, doors);
 
         if (!groups.size) { section.style.display = 'none'; return; }

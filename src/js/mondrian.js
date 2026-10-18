@@ -679,6 +679,7 @@ async function draw() {
     // 줌·팬 시 Konva 노드 재생성 생략: geo·삭제·색상 등 실질 파라미터가 변한 경우만 rebuild
     const _newKvKey = JSON.stringify([
         _geoCache?.sig ?? '',
+        faceBackingHex(), // 문 전체 배지 색이 바뀌면 바탕을 다시 그려야 함
         [...deletedSegs].sort().join(','),
         addedLines.length,
         faceColorMap ? JSON.stringify(Object.entries(faceColorMap).sort()) : '',
@@ -709,9 +710,9 @@ async function draw() {
         const tX = rx => offsetX + (pOffX + rx) * baseScale;
         const tY = ry => offsetY + ry * baseScale;
         if (buildKonvaPattern) {
-            kv.addPatternBg(tX(geo.frameW), tY(effFrameHTop), geo.innerW * baseScale, effInnerH * baseScale);
+            kv.addPatternBg(tX(geo.frameW), tY(effFrameHTop), geo.innerW * baseScale, effInnerH * baseScale, faceBackingHex());
         } else {
-            ctx.fillStyle = '#ffffff';
+            ctx.fillStyle = faceBackingHex();
             ctx.fillRect(tX(geo.frameW), tY(effFrameHTop), geo.innerW * baseScale, effInnerH * baseScale);
         }
     }
@@ -2068,7 +2069,7 @@ async function draw() {
             if (k.startsWith('mondrian:')) continue;
             faceCells.push({ fm: faceMaterialMap[k], shape: 'rect', w: geo.cellW, h: geo.cellH, areaMm2: geo.cellW * geo.cellH });
         }
-        renderFaceMaterialSpec(faceCells, glassConfig, p?.physical?.doorCount || parseInt(txtDoorCount.value) || 1);
+        renderFaceMaterialSpec(faceCells, glassConfig, p?.physical?.doorCount || parseInt(txtDoorCount.value) || 1, { w: geo.innerW, h: _effH });
 
         const body = document.getElementById('physBody');
         const section = document.getElementById('physSection');
@@ -2090,6 +2091,7 @@ async function draw() {
             if (c.fm?.material === 'glass') glassAreaMm2Door += c.areaMm2;
             else if (c.fm?.material === 'hanji') hanjiAreaMm2Door += c.areaMm2;
         }
+        if (faceBacking) hanjiAreaMm2Door += geo.innerW * _effH; // 문 전체 배지(배접지·백지) 한 장
         let glassVolMm3Door = 0, glassKgDoor = null;
         if (glassAreaMm2Door > 0 && glassConfig?.density && glassConfig?.thicknessMm) {
             glassVolMm3Door = glassAreaMm2Door * glassConfig.thicknessMm;
@@ -2656,6 +2658,13 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
     const CURRENT_TITLE_KEY = 'pmok_mondrian_current_title';
     const NAME_KEY          = 'pmok_mondrian_name';
     const MONDRIAN_HISTORY_KEY = 'pmok_mondrian_history';
+    // 문 전체 배지(배접지·백지)도 칸 색처럼 새로고침 후 복원 — 레이아웃·칸 색은 브라우저 기록에서 돌아오는데
+    // 배지만 사라지면 어긋나 보인다
+    const MONDRIAN_BACKING_KEY = 'pmok_mondrian_backing';
+    try { faceBacking = JSON.parse(localStorage.getItem(MONDRIAN_BACKING_KEY) || 'null'); } catch { /* 무시 */ }
+    window.__pmokOnFaceBackingChange = () => {
+        try { localStorage.setItem(MONDRIAN_BACKING_KEY, JSON.stringify(faceBacking)); } catch { /* 저장 공간 등 — 무시 */ }
+    };
     const MONDRIAN_HISTORY_MAX = 20;
     const MAX_VERSIONS      = 20;
 
@@ -2911,6 +2920,7 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
             faceBrushColor: faceColorUI.getCurrentHex(),
             faceColorMap:   faceColorMap ? { ...faceColorMap } : null,
             faceMaterialMap: faceMaterialMap ? { ...faceMaterialMap } : null,
+            faceBacking:     faceBacking ? { ...faceBacking } : null,
             pendingFaceMaterial: pendingFaceMaterial ? { ...pendingFaceMaterial } : null,
             muntolColor:    selectedMuntolColor,
             showMuntol:     showMuntol,
@@ -2959,6 +2969,8 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
         faceColorMap = p.faceColorMap || null;
         faceMaterialMap = p.faceMaterialMap || null;
         pendingFaceMaterial = p.pendingFaceMaterial || null;
+        faceBacking = p.faceBacking || null;
+        window.__pmokOnFaceBackingChange?.();
         faceColorUI.restoreColor(p.faceBrushColor || null);
         faceColorUI.updateClearBtn(!!faceColorMap);
         mondrianLayout = p.mondrianLayout || null;

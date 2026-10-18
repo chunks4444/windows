@@ -581,6 +581,16 @@
             const prevSubDef = faceMaterial?.material === material ? subs.find(s => s.value === faceMaterial.sub) : null;
             const resolvedHex = hex
                 || (subDef?.hasColor ? (prevSubDef?.hasColor && faceMaterial.hex) || faceMaterialColors[0]?.hex : faceSubHex(material, subDef?.value));
+            // 배접지·백지는 칸을 칠하는 붓이 아니라 문 전체 배지 — 누르는 순간 내경 전체가 칠해지고, 다시 누르면 해제.
+            // 칠하기 모드는 끈다(색한지·유리로 칸을 더 칠하려면 그 종류를 고르면 다시 켜짐).
+            if (subDef?.backing) {
+                const off = window.__pmokGetFaceBacking?.()?.sub === subDef.value;
+                window.__pmokSetFaceBacking?.(off ? null : { material, sub: subDef.value, hex: resolvedHex });
+                faceMaterial = { material, sub: faceMaterial?.material === material ? faceMaterial.sub : '', hex: faceMaterial?.hex || resolvedHex, code: faceMaterial?.code || '', brand: faceMaterial?.brand || '', name: faceMaterial?.name || '' };
+                setPaint(false);
+                render();
+                return;
+            }
             const meta = colorMeta || (subDef?.hasColor ? faceMaterialColors.find(c => c.hex.toLowerCase() === resolvedHex.toLowerCase()) : null);
             faceMaterial = {
                 material, sub: subDef?.value || '', hex: resolvedHex,
@@ -677,7 +687,8 @@
                 if (subs.length) {
                     h += `<div class="fin-group"><div class="fin-group-head">${_t('세부 종류')}</div><div class="fin-bases">`;
                     subs.forEach(s => {
-                        const on = faceMaterial?.sub === s.value;
+                        // 배접지·백지는 문 전체 배지가 깔려 있으면 켜짐 표시 — 칸 붓(색한지 등)과 동시에 켜질 수 있다
+                        const on = s.backing ? window.__pmokGetFaceBacking?.()?.sub === s.value : faceMaterial?.sub === s.value;
                         const bg = s.hasColor ? (on ? faceMaterial.hex : faceMaterialColors[0]?.hex) : faceSubHex(faceMaterial.material, s.value);
                         h += `<button type="button" class="fin-base${on ? ' active' : ''}" data-matsub="${esc2(s.value)}">`
                            + `<span class="fin-base-dot" style="background:${esc2(bg)}"></span>`

@@ -593,6 +593,7 @@ async function draw() {
     // 줌·팬 시 Konva 노드 재생성 생략: geo·삭제·색상 등 실질 파라미터가 변한 경우만 rebuild
     const _newKvKey = JSON.stringify([
         _geoCache?.sig ?? '',
+        faceBackingHex(), // 문 전체 배지 색이 바뀌면 바탕을 다시 그려야 함
         [...deletedSegs].sort().join(','),
         addedLines.length,
         faceColorMap ? JSON.stringify(Object.entries(faceColorMap).sort()) : '',
@@ -622,9 +623,9 @@ async function draw() {
         const tX = rx => offsetX + (pOffX + rx) * baseScale;
         const tY = ry => offsetY + ry * baseScale;
         if (buildKonvaPattern) {
-            kv.addPatternBg(tX(geo.frameW), tY(geo.frameHTop), geo.innerW * baseScale, geo.innerH * baseScale);
+            kv.addPatternBg(tX(geo.frameW), tY(geo.frameHTop), geo.innerW * baseScale, geo.innerH * baseScale, faceBackingHex());
         } else {
-            ctx.fillStyle = '#ffffff';
+            ctx.fillStyle = faceBackingHex();
             ctx.fillRect(tX(geo.frameW), tY(geo.frameHTop), geo.innerW * baseScale, geo.innerH * baseScale);
         }
     }
@@ -1864,7 +1865,7 @@ async function draw() {
     function renderPhysTable(p, glassConfig) {
         // 시방서 '면 재질' 표
         const faceCells = Object.values(faceMaterialMap || {}).map(fm => ({ fm, shape: 'rect', w: geo.cellW, h: geo.cellH, areaMm2: geo.cellW * geo.cellH }));
-        renderFaceMaterialSpec(faceCells, glassConfig, p?.physical?.doorCount || parseInt(txtDoorCount.value) || 1);
+        renderFaceMaterialSpec(faceCells, glassConfig, p?.physical?.doorCount || parseInt(txtDoorCount.value) || 1, { w: geo.innerW, h: geo.innerH });
 
         const body = document.getElementById('physBody');
         const section = document.getElementById('physSection');
@@ -1886,6 +1887,7 @@ async function draw() {
             if (c.fm?.material === 'glass') glassAreaMm2Door += c.areaMm2;
             else if (c.fm?.material === 'hanji') hanjiAreaMm2Door += c.areaMm2;
         }
+        if (faceBacking) hanjiAreaMm2Door += geo.innerW * geo.innerH; // 문 전체 배지(배접지·백지) 한 장
         let glassVolMm3Door = 0, glassKgDoor = null;
         if (glassAreaMm2Door > 0 && glassConfig?.density && glassConfig?.thicknessMm) {
             glassVolMm3Door = glassAreaMm2Door * glassConfig.thicknessMm;
@@ -2375,6 +2377,7 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
             faceBrushColor: faceColorUI.getCurrentHex(),
             faceColorMap:   faceColorMap ? { ...faceColorMap } : null,
             faceMaterialMap: faceMaterialMap ? { ...faceMaterialMap } : null,
+            faceBacking:     faceBacking ? { ...faceBacking } : null,
             pendingFaceMaterial: pendingFaceMaterial ? { ...pendingFaceMaterial } : null,
             muntolColor:    selectedMuntolColor,
             showMuntol:     showMuntol,
@@ -2426,6 +2429,8 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
         faceColorMap = p.faceColorMap || null;
         faceMaterialMap = p.faceMaterialMap || null;
         pendingFaceMaterial = p.pendingFaceMaterial || null;
+        faceBacking = p.faceBacking || null;
+        window.__pmokOnFaceBackingChange?.();
         faceColorUI.restoreColor(p.faceBrushColor || null);
         faceColorUI.updateClearBtn(!!faceColorMap);
         updateDoorCountOptions();

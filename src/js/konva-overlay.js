@@ -659,8 +659,8 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
         patternLayer.batchDraw();
     }
 
-    function addPatternBg(x, y, w, h) {
-        patternLayer.add(new Konva.Rect({ x, y, width: w, height: h, fill: '#ffffff', listening: false, perfectDrawEnabled: false }));
+    function addPatternBg(x, y, w, h, fill = '#ffffff') { // fill: 문 전체 배지(배접지·백지) 색
+        patternLayer.add(new Konva.Rect({ x, y, width: w, height: h, fill, listening: false, perfectDrawEnabled: false }));
     }
 
     function addPatternClipGroup(id, x, y, w, h) {
