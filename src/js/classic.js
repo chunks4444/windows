@@ -114,7 +114,7 @@
         if (mat?.hex) faceColorUI.restoreColor(mat.hex);
         // 일반유리는 칸을 안 칠해도 선택 자체로 무게 계산이 바뀌므로, 지오메트리를 다시 받는 draw() 없이
         // 마지막으로 받아둔 부재 데이터로 부재목록 표(renderPhysTable)만 즉시 다시 그린다.
-        draw(); // 재질 선택만으로도(칸을 안 칠해도) 부재목록 유리 무게가 바뀌므로, 최신 지오메트리로 다시 계산해 표를 갱신한다
+        draw();
     };
     window.__pmokGetFaceMaterial = () => pendingFaceMaterial;
     const canvas = document.getElementById('doorCanvas');
@@ -1889,10 +1889,7 @@ async function draw() {
             const h = b.y1 - b.y0;
             faceCells.push({ fm: faceMaterialMap[k], shape: 'rect', w: geo.cellW, h, areaMm2: geo.cellW * h });
         }
-        const plainGlass = (pendingFaceMaterial?.material === 'glass' && pendingFaceMaterial?.sub === 'plain')
-            || Object.values(faceMaterialMap || {}).some(fm => fm?.material === 'glass' && fm.sub === 'plain')
-            ? { w: geo.innerW, h: geo.innerH } : null;
-        renderFaceMaterialSpec(faceCells, glassConfig, p?.physical?.doorCount || parseInt(txtDoorCount.value) || 1, plainGlass);
+        renderFaceMaterialSpec(faceCells, glassConfig, p?.physical?.doorCount || parseInt(txtDoorCount.value) || 1);
 
         const body = document.getElementById('physBody');
         const section = document.getElementById('physSection');
@@ -1907,22 +1904,19 @@ async function draw() {
         const fmtArea = m2  => Math.round(m2 * 10000).toLocaleString();
         const fmtKg   = kg  => kg == null ? '—' : kg.toFixed(2);
 
-        let glassPlainUsed = pendingFaceMaterial?.material === 'glass' && pendingFaceMaterial?.sub === 'plain';
-        let glassColorCells = 0, hanjiCells = 0;
-        if (faceMaterialMap) for (const k in faceMaterialMap) {
-            const fm = faceMaterialMap[k];
-            if (fm?.material === 'glass') { if (fm.sub === 'plain') glassPlainUsed = true; else glassColorCells++; }
-            else if (fm?.material === 'hanji') hanjiCells++;
+        // 유리·한지는 칸별로(색별로) 끼운다 — 칠한 칸 면적만 더한다(시방서 '면 재질' 표의 faceCells와 같은 값).
+        // 일반유리도 문 전체 통유리가 아니라 칠한 칸만 센다.
+        let glassAreaMm2Door = 0, hanjiAreaMm2Door = 0;
+        for (const c of faceCells) {
+            if (c.fm?.material === 'glass') glassAreaMm2Door += c.areaMm2;
+            else if (c.fm?.material === 'hanji') hanjiAreaMm2Door += c.areaMm2;
         }
-        let glassAreaMm2Door = 0;
-        if (glassPlainUsed) glassAreaMm2Door += geo.innerW * geo.innerH;
-        if (glassColorCells > 0) glassAreaMm2Door += geo.cellW * geo.cellH * glassColorCells;
         let glassVolMm3Door = 0, glassKgDoor = null;
         if (glassAreaMm2Door > 0 && glassConfig?.density && glassConfig?.thicknessMm) {
             glassVolMm3Door = glassAreaMm2Door * glassConfig.thicknessMm;
             glassKgDoor     = glassVolMm3Door / 1_000_000 * glassConfig.density;
         }
-        const hanjiAreaM2Door = hanjiCells > 0 ? geo.cellW * geo.cellH * hanjiCells / 1_000_000 : 0;
+        const hanjiAreaM2Door = hanjiAreaMm2Door / 1_000_000;
 
         // 목재·유리 어느 쪽으로도 무게를 구할 수 없으면 전부 — 로만 찬 표가 의미 없으므로 섹션 자체를 숨긴다.
         const hasAnyKg = ph.density != null || glassKgDoor != null;

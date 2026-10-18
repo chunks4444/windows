@@ -60,7 +60,7 @@
     window.__pmokSetFaceMaterial = mat => {
         pendingFaceMaterial = mat;
         if (mat?.hex) faceColorUI.restoreColor(mat.hex);
-        draw(); // 재질 선택만으로도(칸을 안 칠해도) 부재목록 유리 무게가 바뀌므로, 최신 지오메트리로 다시 계산해 표를 갱신한다
+        draw();
     };
     window.__pmokGetFaceMaterial = () => pendingFaceMaterial;
     const canvas = document.getElementById('doorCanvas');
@@ -1711,13 +1711,10 @@ async function draw() {
     // 재질이 glass인 칸(세모) 수 × 세모 한 칸 면적 × 두께(cost_table 유리 항목) × 비중으로 계산한다 —
     // 세모살의 면 칸은 정삼각형(변 길이 width)이라 면적 = (√3/4)×width², width는 hitTestCell과 같은 공식(mm 기준).
     function renderPhysTable(p, glassConfig) {
-        // 시방서 '면 재질' 표 — 정삼각형 칸, 한 변 길이로 표기 (무게표의 triAreaMm2와 같은 공식)
+        // 시방서 '면 재질' 표 — 정삼각형 칸, 한 변 길이로 표기
         const _triSide = rotateOn ? ((geo.innerW + geo.slatT) / (geo.cols * 1.5)) * Math.sqrt(3) : (geo.innerW / geo.cols);
         const faceCells = Object.values(faceMaterialMap || {}).map(fm => ({ fm, shape: 'tri', side: _triSide, areaMm2: (Math.sqrt(3) / 4) * _triSide * _triSide }));
-        const plainGlass = (pendingFaceMaterial?.material === 'glass' && pendingFaceMaterial?.sub === 'plain')
-            || Object.values(faceMaterialMap || {}).some(fm => fm?.material === 'glass' && fm.sub === 'plain')
-            ? { w: geo.innerW, h: geo.innerH } : null;
-        renderFaceMaterialSpec(faceCells, glassConfig, p?.physical?.doorCount || parseInt(txtDoorCount.value) || 1, plainGlass);
+        renderFaceMaterialSpec(faceCells, glassConfig, p?.physical?.doorCount || parseInt(txtDoorCount.value) || 1);
 
         const body = document.getElementById('physBody');
         const section = document.getElementById('physSection');
@@ -1732,27 +1729,19 @@ async function draw() {
         const fmtArea = m2  => Math.round(m2 * 10000).toLocaleString();
         const fmtKg   = kg  => kg == null ? '—' : kg.toFixed(2);
 
-        let glassPlainUsed = pendingFaceMaterial?.material === 'glass' && pendingFaceMaterial?.sub === 'plain';
-        let glassColorCells = 0, hanjiCells = 0;
-        if (faceMaterialMap) for (const k in faceMaterialMap) {
-            const fm = faceMaterialMap[k];
-            if (fm?.material === 'glass') { if (fm.sub === 'plain') glassPlainUsed = true; else glassColorCells++; }
-            else if (fm?.material === 'hanji') hanjiCells++;
+        // 유리·한지는 칸별로(색별로) 끼운다 — 칠한 칸 면적만 더한다(시방서 '면 재질' 표의 faceCells와 같은 값).
+        // 일반유리도 문 전체 통유리가 아니라 칠한 칸만 센다.
+        let glassAreaMm2Door = 0, hanjiAreaMm2Door = 0;
+        for (const c of faceCells) {
+            if (c.fm?.material === 'glass') glassAreaMm2Door += c.areaMm2;
+            else if (c.fm?.material === 'hanji') hanjiAreaMm2Door += c.areaMm2;
         }
-        const S3mm = Math.sqrt(3);
-        const widthMm = rotateOn
-            ? ((geo.innerW + geo.slatT) / (geo.cols * 1.5)) * S3mm
-            : (geo.innerW / geo.cols);
-        const triAreaMm2 = (S3mm / 4) * widthMm * widthMm;
-        let glassAreaMm2Door = 0;
-        if (glassPlainUsed) glassAreaMm2Door += geo.innerW * geo.innerH;
-        if (glassColorCells > 0) glassAreaMm2Door += triAreaMm2 * glassColorCells;
         let glassVolMm3Door = 0, glassKgDoor = null;
         if (glassAreaMm2Door > 0 && glassConfig?.density && glassConfig?.thicknessMm) {
             glassVolMm3Door = glassAreaMm2Door * glassConfig.thicknessMm;
             glassKgDoor     = glassVolMm3Door / 1_000_000 * glassConfig.density;
         }
-        const hanjiAreaM2Door = hanjiCells > 0 ? triAreaMm2 * hanjiCells / 1_000_000 : 0;
+        const hanjiAreaM2Door = hanjiAreaMm2Door / 1_000_000;
 
         // 목재·유리 어느 쪽으로도 무게를 구할 수 없으면 전부 — 로만 찬 표가 의미 없으므로 섹션 자체를 숨긴다.
         const hasAnyKg = ph.density != null || glassKgDoor != null;
