@@ -648,11 +648,11 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                             <div class="spec-lbl"><?= te('세로 먹줄') ?></div>
                             <div class="spec-val"><span id="spStepV">0</span><span class="spec-unit">mm</span></div>
                         </div>
-                        <div class="spec-card accent-blue">
+                        <div class="spec-card accent-blue" title="<?= te('마름모 한 칸의 안쪽 트인 폭 — 살 두께를 뺀 눈꼴(개구부) 크기') ?>">
                             <div class="spec-lbl"><?= te('사선 간격') ?></div>
                             <div class="spec-val"><span id="spDiagEye">0</span><span class="spec-unit">mm</span></div>
                         </div>
-                        <div class="spec-card accent-blue">
+                        <div class="spec-card accent-blue" title="<?= te('사선살 중심선 사이의 먹줄 간격 — 마름모 한 변의 먹줄 피치') ?>">
                             <div class="spec-lbl"><?= te('살 먹줄') ?></div>
                             <div class="spec-val"><span id="spHalfLapWD">0</span><span class="spec-unit">mm</span></div>
                         </div>
