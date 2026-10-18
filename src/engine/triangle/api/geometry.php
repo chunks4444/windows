@@ -267,7 +267,7 @@ $_hSLen   = $rotateOn ? round($innerH + 2*$tenonDepth) : round($innerW + 2*$teno
 $_hSCnt_n = $rotateOn ? max(0, $cols-1) * $doorCount : max(0, $rows-1) * $doorCount;
 
 $_volDoor   = round($outerH + 2*$slatT) * (2*$doorCount)                * $frameW * $_wU
-            + round($outerW + 2*$slatT) * (($pungpanOn?3:2)*$doorCount) * $frameH * $_wU
+            + round($outerW + 2*$slatT) * (($pungpanOn?3:2)*$doorCount) * $frameHTop * $_wU
             + $_hSLen * $_hSCnt_n * $slatT * $_wS
             + array_sum(array_map(fn($d) => (float)$d['len'] * $d['cnt'] * $slatT * $_wS, $parts['diagList']))
             + ($pungpanVisible ? (int)round($innerW) * (int)round($ppPanelH) * $_pT : 0);
@@ -292,9 +292,9 @@ $parts['joints']         = $cols * $rows;
 // 근사(2×(폭+두께)×길이), 양끝 단면은 무시한다(도장 면적 계산과 같은 기준). 풍판은 울거미에 합산.
 // 살 = 직선살($_hSLen·$_hSCnt_n)+사선살($diagList) — 둘 다 cnt에 doorCount가 이미 곱해져 있어 나눠서 1짝분만 쓴다.
 $_ulV  = round($outerH + 2*$slatT) * 2                  * $frameW * $_wU;
-$_ulH  = round($outerW + 2*$slatT) * ($pungpanOn ? 3 : 2) * $frameH * $_wU;
+$_ulH  = round($outerW + 2*$slatT) * ($pungpanOn ? 3 : 2) * $frameHTop * $_wU;
 $_ulVA = 2 * ($frameW + $_wU) * round($outerH + 2*$slatT) * 2;
-$_ulHA = 2 * ($frameH + $_wU) * round($outerW + 2*$slatT) * ($pungpanOn ? 3 : 2);
+$_ulHA = 2 * ($frameHTop + $_wU) * round($outerW + 2*$slatT) * ($pungpanOn ? 3 : 2);
 $_ppV  = $pungpanVisible ? (int)round($innerW) * (int)round($ppPanelH) * $_pT : 0;
 $_ppA  = $pungpanVisible ? 2 * (int)round($innerW) * (int)round($ppPanelH) : 0;
 $_hSCntDoor = $doorCount > 0 ? $_hSCnt_n / $doorCount : 0;

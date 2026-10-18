@@ -32,13 +32,15 @@ function engine_setting_defaults(string $engine): array {
         case 'square':
             return $common + ['cols' => '6', 'ratio' => '1.0', 'shrinkH' => '0', 'rowsManual' => '0', 'rows' => '6', 'min_days' => '3', 'min_work_hours' => '4'];
         case 'cross':
-            return $common + ['cols' => '4', 'shrinkH' => '0', 'min_days' => '4', 'min_work_hours' => '6'];
+            // 빗살 계열(cross/diamond/triangle/hexagon)은 칸이 정사각(or 정삼각)이 아니면 패턴이 깨지므로
+            // 세로 자동 맞춤을 기본으로 켜 둔다 — 정자살(square)은 vRatio로 비정사각을 의도적으로 허용하므로 그대로 둠.
+            return $common + ['cols' => '4', 'shrinkH' => '1', 'min_days' => '4', 'min_work_hours' => '6'];
         case 'diamond':
-            return $common + ['cols' => '4', 'shrinkH' => '0', 'min_days' => '4', 'min_work_hours' => '6'];
+            return $common + ['cols' => '4', 'shrinkH' => '1', 'min_days' => '4', 'min_work_hours' => '6'];
         case 'triangle':
-            return $common + ['cols' => '4', 'shrinkH' => '0', 'rotate' => '1', 'min_days' => '4', 'min_work_hours' => '8'];
+            return $common + ['cols' => '4', 'shrinkH' => '1', 'rotate' => '1', 'min_days' => '4', 'min_work_hours' => '8'];
         case 'hexagon':
-            return $common + ['cols' => '3', 'shrinkH' => '0', 'rotate' => '1', 'min_days' => '5', 'min_work_hours' => '10'];
+            return $common + ['cols' => '3', 'shrinkH' => '1', 'rotate' => '1', 'min_days' => '5', 'min_work_hours' => '10'];
         case 'mondrian':
             // 정자살(square.js)을 복사해 만든 엔진이라 사이드바가 같은 키(세로 비율 등)를 읽는다 — 빠지면 입력칸이 비고 Notice가 난다
             return $common + ['cols' => '6', 'ratio' => '1.0', 'shrinkH' => '0', 'rowsManual' => '0', 'rows' => '6', 'min_days' => '3', 'min_work_hours' => '4'];

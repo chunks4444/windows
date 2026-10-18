@@ -67,6 +67,9 @@ $actualPungpanH    = $effectivePungpanH;
 $halfSurplus  = $pungpanOn ? 0 : $surplus / 2;
 $frameHTop    = $frameH + $halfSurplus;
 $frameHBottom = $pungpanOn ? $frameH : $frameH + ($surplus - $halfSurplus);
+// frameHTop·frameHBottom은 수식상 항상 같은 값(둘 다 surplus를 반씩 받거나, 둘 다 안 받거나) —
+// 세로 자동 맞춤이 꺼져 있을 때 칸이 안 맞아떨어져 남는 높이를 상하 울거미가 함께 흡수한 실제 두께.
+// 부재목록·목재량 계산은 입력값 frameH가 아니라 이 실제 두께를 써야 한다(안 그러면 치수가 안 맞음).
 
 $step     = $stepW;
 $stepH    = $cellH + $slatT;
@@ -155,7 +158,7 @@ $_tMt = (int)($_es['muntolT'] ?? 30);
 $_wMt = (int)$_es['muntolW'];
 
 $_volDoor   = round($outerH + 2*$slatT) * (2*$doorCount)                * $frameW * $_wU
-            + round($outerW + 2*$slatT) * (($pungpanOn?3:2)*$doorCount) * $frameH * $_wU
+            + round($outerW + 2*$slatT) * (($pungpanOn?3:2)*$doorCount) * $frameHTop * $_wU
             + round($innerW + 2*$tenonDepth) * ($hSlatCnt*$doorCount)   * $slatT  * $_wS
             + round($innerH + 2*$tenonDepth) * ($vSlatCnt*$doorCount)   * $slatT  * $_wS
             + ($pungpanVisible ? (int)round($innerW) * (int)round($ppPanelH) * $_pT : 0);
@@ -167,9 +170,9 @@ $_woodJae   = $_vol / $_JAE;
 // 부재별 표면적·체적·무게 (문짝 1짝 기준 — 문틀은 문짝 수와 무관하게 1개) — 표면적은 각목 긴 옆면 4면
 // 근사(2×(폭+두께)×길이), 양끝 단면은 무시한다(도장 면적 계산과 같은 기준). 풍판은 울거미에 합산.
 $_ulV  = round($outerH + 2*$slatT) * 2                  * $frameW * $_wU;
-$_ulH  = round($outerW + 2*$slatT) * ($pungpanOn ? 3 : 2) * $frameH * $_wU;
+$_ulH  = round($outerW + 2*$slatT) * ($pungpanOn ? 3 : 2) * $frameHTop * $_wU;
 $_ulVA = 2 * ($frameW + $_wU) * round($outerH + 2*$slatT) * 2;
-$_ulHA = 2 * ($frameH + $_wU) * round($outerW + 2*$slatT) * ($pungpanOn ? 3 : 2);
+$_ulHA = 2 * ($frameHTop + $_wU) * round($outerW + 2*$slatT) * ($pungpanOn ? 3 : 2);
 $_ppV  = $pungpanVisible ? (int)round($innerW) * (int)round($ppPanelH) * $_pT : 0;
 $_ppA  = $pungpanVisible ? 2 * (int)round($innerW) * (int)round($ppPanelH) : 0;
 $_slH  = round($innerW + 2*$tenonDepth) * $hSlatCnt * $slatT * $_wS;

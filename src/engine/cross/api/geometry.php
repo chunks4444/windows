@@ -176,7 +176,7 @@ $_tMt = (int)($_es['muntolT'] ?? 30);
 $_wMt = (int)$_es['muntolW'];
 
 $_volDoor   = round($outerH + 2*$slatT) * (2*$doorCount)                * $frameW * $_wU
-            + round($outerW + 2*$slatT) * (($pungpanOn?3:2)*$doorCount) * $frameH * $_wU
+            + round($outerW + 2*$slatT) * (($pungpanOn?3:2)*$doorCount) * $frameHTop * $_wU
             + array_sum(array_map(fn($d) => (float)$d['len'] * $d['cnt'] * $slatT * $_wS, $diagList))
             + ($pungpanVisible ? (int)round($innerW) * (int)round($ppPanelH) * $_pT : 0);
 $_volMuntol = $frameOpeningH * 2 * $_tMt * $_wMt
@@ -188,9 +188,9 @@ $_woodJae   = $_vol / $_JAE;
 // 근사(2×(폭+두께)×길이), 양끝 단면은 무시한다(도장 면적 계산과 같은 기준). 풍판은 울거미에 합산.
 // 빗살은 $lenMap이 문짝 1짝 기준 길이·개수라 이걸로 체적·표면적을 구한다($diagList는 이미 doorCount가 곱해짐).
 $_ulV  = round($outerH + 2*$slatT) * 2                  * $frameW * $_wU;
-$_ulH  = round($outerW + 2*$slatT) * ($pungpanOn ? 3 : 2) * $frameH * $_wU;
+$_ulH  = round($outerW + 2*$slatT) * ($pungpanOn ? 3 : 2) * $frameHTop * $_wU;
 $_ulVA = 2 * ($frameW + $_wU) * round($outerH + 2*$slatT) * 2;
-$_ulHA = 2 * ($frameH + $_wU) * round($outerW + 2*$slatT) * ($pungpanOn ? 3 : 2);
+$_ulHA = 2 * ($frameHTop + $_wU) * round($outerW + 2*$slatT) * ($pungpanOn ? 3 : 2);
 $_ppV  = $pungpanVisible ? (int)round($innerW) * (int)round($ppPanelH) * $_pT : 0;
 $_ppA  = $pungpanVisible ? 2 * (int)round($innerW) * (int)round($ppPanelH) : 0;
 $_slVolDoor = 0; $_slLenDoor = 0;
