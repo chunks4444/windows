@@ -43,5 +43,13 @@ Disallow: /src/js/mondrian.js
 # (robots.txt 차단은 색인 삭제가 아니라 동결). 그래서 크롤은 열어두고, 실제 제거는
 # .htaccess의 410(Gone) 규칙이 담당한다 — 크롤이 되는 즉시 인덱스에서 빠진다 (2026-09-02).
 
+# 클로드(Anthropic) 크롤러는 위 SEO용 차단과 별개 — 코드 리뷰 등으로 엔진 페이지를 직접
+# 읽어야 할 때가 있어서 전부 허용해준다. 검색엔진(구글 등)은 그대로 /src/engine/ 차단 유지 (2026-10-18).
+User-agent: ClaudeBot
+User-agent: Claude-User
+User-agent: Claude-SearchBot
+User-agent: anthropic-ai
+Allow: /
+
 Sitemap: https://pyeongmok.com/sitemap.xml
 Sitemap: https://pyeongmok.com/rss.xml
