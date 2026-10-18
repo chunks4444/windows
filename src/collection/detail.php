@@ -8,6 +8,17 @@ require_once __DIR__ . '/../lib/i18n.php';   // t() / term_short() / lang_href()
 $slug = trim($_GET['slug'] ?? '');
 $id   = (int)($_GET['id'] ?? 0);
 
+// 코드 체계를 바꾸며 슬러그가 바뀐 항목의 구주소 → 신주소 301 (공유 링크 보존)
+// 2026-10-18 육모솟을살을 솟을살(SOT)+수식어(YU)에서 별도 계열(YUK)로 통일
+$legacyCollectionSlugs = [
+    'sot-yu-001' => 'yuk-002',
+    'sot-yu-002' => 'yuk-003',
+];
+if (isset($legacyCollectionSlugs[$slug])) {
+    header('Location: ' . lang_href('/collection/detail') . '?slug=' . rawurlencode($legacyCollectionSlugs[$slug]), true, 301);
+    exit;
+}
+
 $editorMap = [
     'classic'  => '/src/engine/classic/classic.php',
     'square'   => '/src/engine/square/square.php',
