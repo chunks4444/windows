@@ -1545,9 +1545,17 @@ input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
 .phys-table thead th { border-bottom: 1px solid var(--border); color: rgba(var(--bg-rgb), 0.7); }
 .phys-table tbody tr.phys-subtotal td { color: rgba(var(--bg-rgb), 0.75); font-weight: 500; border-top: 1px dashed var(--border); }
 .phys-table tbody tr.phys-total td { border-top: 1px solid var(--border); font-weight: 600; color: var(--text-1); }
-/* 시방서 '면 재질' 표 — 재질 앞 색 견본(코드는 행에 마우스를 올리면 title로) */
+/* 시방서 '면 재질' 표 — 재질 앞 색 견본, 마우스를 올리면 색 코드 말풍선이 바로 뜬다(브라우저 title은 1초 넘게 늦어서 CSS로) */
 #faceMatSection .face-mat-sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.15); }
-#faceMatSection tr[title] { cursor: help; }
+#faceMatSection .face-mat-name { position: relative; }
+#faceMatSection .face-mat-name[data-code] { cursor: help; }
+#faceMatSection .face-mat-name[data-code]:hover::after {
+    content: attr(data-code);
+    position: absolute; left: 0; top: calc(100% + 2px); z-index: 20;
+    padding: 4px 8px; border-radius: 6px; background: #fff; color: #111;
+    border: 1px solid #E4E6EB; box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    font-size: 11px; font-weight: 500; white-space: nowrap; pointer-events: none;
+}
 
 /* ── 색상 드롭다운 ───────────────────────── */
 .color-label { font-size: var(--fs-11); font-weight: 400; color: var(--text-1); letter-spacing: -0.2px; }

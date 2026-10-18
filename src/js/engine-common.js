@@ -532,7 +532,7 @@
             let label = _t(fm.material === 'glass' ? '유리' : '한지');
             if (sub) label += ` · ${_t(sub.label)}`;
             // 색별로 나눠 끼우므로 색이 있는 재질은 색까지 구분 — 업체 코드가 없으면 색 이름, 그것도 없으면 hex.
-            // 표에는 색 견본만 보이고, 코드는 마우스를 올리면(title) 나온다.
+            // 표에는 색 견본만 보이고, 코드는 마우스를 올리면 바로 말풍선(data-code, CSS)으로 나온다.
             const color = sub?.hasColor ? ([fm.brand, fm.code].filter(Boolean).join(' ') || fm.name || fm.hex || '') : '';
             const hex = (sub?.hasColor && fm.hex) || FACE_MATERIAL_BASE_HEX[fm.material] || '#ccc';
             return { label, color, hex };
@@ -566,7 +566,7 @@
         const rows = [...groups.values()].sort((a, b) => (b.glass - a.glass) || a.label.localeCompare(b.label) || a.color.localeCompare(b.color) || a.size.localeCompare(b.size, undefined, { numeric: true }));
         const unit = _t('개');
         document.getElementById('faceMatBody').innerHTML = rows.map(g =>
-            `<tr${g.color ? ` title="${esc(g.color)}"` : ''}><td><span class="face-mat-sw" style="background:${esc(g.hex)}"></span>${esc(g.label)}</td><td>${g.size}</td><td>${g.n}${unit}</td><td>${(g.areaMm2 / 1_000_000).toFixed(3)}</td><td>${g.glass ? (g.kg == null ? '—' : g.kg.toFixed(2)) : ''}</td></tr>`
+            `<tr><td class="face-mat-name"${g.color ? ` data-code="${esc(g.color)}"` : ''}><span class="face-mat-sw" style="background:${esc(g.hex)}"></span>${esc(g.label)}</td><td>${g.size}</td><td>${g.n}${unit}</td><td>${(g.areaMm2 / 1_000_000).toFixed(3)}</td><td>${g.glass ? (g.kg == null ? '—' : g.kg.toFixed(2)) : ''}</td></tr>`
         ).join('') + (doors > 1 ? `<tr class="phys-subtotal"><td colspan="5">${_t('문 %s짝 합계', doors)}</td></tr>` : '');
     }
 
