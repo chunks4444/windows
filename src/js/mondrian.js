@@ -2084,8 +2084,8 @@ async function draw() {
         const fmtArea = m2  => Math.round(m2 * 10000).toLocaleString();
         const fmtKg   = kg  => kg == null ? '—' : kg.toFixed(2);
 
-        // 유리·한지는 칸별로(색별로) 끼운다 — 칠한 칸 면적만 더한다(시방서 '면 재질' 표의 faceCells와 같은 값).
-        // 일반유리도 문 전체 통유리가 아니라 칠한 칸만 센다.
+        // 색한지·칼라유리는 칠한 칸 면적(시방서 '면 재질' 표의 faceCells와 같은 값),
+        // 배접지·백지·일반유리(문 전체 배지)는 내경 한 장을 더한다.
         let glassAreaMm2Door = 0, hanjiAreaMm2Door = 0;
         for (const c of faceCells) {
             if (c.fm?.material === 'glass') glassAreaMm2Door += c.areaMm2;
@@ -2171,8 +2171,8 @@ async function draw() {
             const idx = parseInt(key.slice(9), 10);
             if (!mondrianLayout?.rects[idx]) return;
             mondrianLayout.rects[idx].color = isErase ? null : faceColorUI.getCurrentHex();
-            // 재질도 칸(rect)에 같이 저장 — 레이아웃은 새로고침해도 브라우저 기록에서 복원되지만 faceMaterialMap은
-            // 저장한 도면을 열 때만 복원돼서, 새로고침 후 시방서 '면 재질' 표가 비어 있던 문제가 있었다.
+            // 재질도 칸(rect)에 같이 저장 — 색과 재질이 한 칸에 붙어 다녀야 패턴 이전/다음 이동·선 이동·
+            // 저장·새로고침 복원 뒤에도 어긋나지 않는다(faceMaterialMap의 'mondrian:idx'는 예전 도면 호환용).
             mondrianLayout.rects[idx].mat = (isErase || !pendingFaceMaterial) ? null : { ...pendingFaceMaterial };
             if (isErase || !pendingFaceMaterial) {
                 if (faceMaterialMap) {
@@ -2660,8 +2660,8 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
     const WALLPAPER_ENGINE  = 'mondrian';
     const CURRENT_TITLE_KEY = 'pmok_mondrian_current_title';
     const NAME_KEY          = 'pmok_mondrian_name';
-    const MONDRIAN_HISTORY_KEY = 'pmok_mondrian_history';
-    try { localStorage.removeItem('pmok_mondrian_backing'); } catch { /* 예전 배지 저장 키 정리 — 이제 새로고침 복원은 sessionStorage(WORK_KEY)로 */ }
+    // 예전에 패턴 기록·배지를 localStorage에 남기던 키 정리 — 이제 새로 들어오면 비우고, 새로고침 복원은 WORK_KEY(sessionStorage)가 맡는다
+    try { localStorage.removeItem('pmok_mondrian_history'); localStorage.removeItem('pmok_mondrian_backing'); } catch { /* 무시 */ }
     const MONDRIAN_HISTORY_MAX = 20;
     const MAX_VERSIONS      = 20;
 
@@ -3008,7 +3008,6 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
         faceMaterialMap = p.faceMaterialMap || null;
         pendingFaceMaterial = p.pendingFaceMaterial || null;
         faceBacking = p.faceBacking || null;
-        window.__pmokOnFaceBackingChange?.();
         faceColorUI.restoreColor(p.faceBrushColor || null);
         faceColorUI.updateClearBtn(!!faceColorMap);
         mondrianLayout = p.mondrianLayout || null;
@@ -3019,7 +3018,6 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
         // 도면을 불러온 시점이므로 그 전까지 쌓여있던 '지나간 랜덤 패턴' 기록은 지금 패턴 하나로 새로 시작
         mondrianHistory    = [mondrianLayout ? JSON.parse(JSON.stringify(mondrianLayout)) : null];
         mondrianHistoryIdx = 0;
-        _saveMondrianHistory();
         _updateMondrianBtn();
         _updateMondrianHistoryButtons();
         deletedSegs  = new Set(p.deletedSegs || []);
@@ -3547,7 +3545,6 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
             mondrianHistory = mondrianHistory.slice(mondrianHistory.length - MONDRIAN_HISTORY_MAX);
         }
         mondrianHistoryIdx = mondrianHistory.length - 1;
-        _saveMondrianHistory();
         _updateMondrianHistoryButtons();
     }
 
@@ -3556,13 +3553,6 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
         if (mondrianHistoryIdx >= 0 && mondrianHistoryIdx < mondrianHistory.length) {
             mondrianHistory[mondrianHistoryIdx] = mondrianLayout ? JSON.parse(JSON.stringify(mondrianLayout)) : null;
         }
-        _saveMondrianHistory();
-    }
-
-    function _saveMondrianHistory() {
-        try {
-            localStorage.setItem(MONDRIAN_HISTORY_KEY, JSON.stringify({ h: mondrianHistory, i: mondrianHistoryIdx }));
-        } catch { /* 저장 공간 꽉 찬 경우 등 — 무시해도 기능엔 지장 없음 */ }
     }
 
     function _updateMondrianHistoryButtons() {
@@ -3578,7 +3568,6 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
         mondrianHistoryIdx = ni;
         const snap = mondrianHistory[ni];
         mondrianLayout = snap ? JSON.parse(JSON.stringify(snap)) : null;
-        _saveMondrianHistory();
         _mondrianVersion++;
         _updateMondrianBtn();
         _updateMondrianHistoryButtons();

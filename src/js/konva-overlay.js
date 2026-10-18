@@ -659,7 +659,7 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
         patternLayer.batchDraw();
     }
 
-    function addPatternBg(x, y, w, h, fill = '#ffffff') { // fill: 문 전체 배지(배접지·백지) 색
+    function addPatternBg(x, y, w, h, fill = '#ffffff') { // fill: 문 전체 배지(배접지·백지·일반유리) 색
         patternLayer.add(new Konva.Rect({ x, y, width: w, height: h, fill, listening: false, perfectDrawEnabled: false }));
     }
 

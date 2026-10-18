@@ -112,8 +112,6 @@
     window.__pmokSetFaceMaterial = mat => {
         pendingFaceMaterial = mat;
         if (mat?.hex) faceColorUI.restoreColor(mat.hex);
-        // 일반유리는 칸을 안 칠해도 선택 자체로 무게 계산이 바뀌므로, 지오메트리를 다시 받는 draw() 없이
-        // 마지막으로 받아둔 부재 데이터로 부재목록 표(renderPhysTable)만 즉시 다시 그린다.
         draw();
     };
     window.__pmokGetFaceMaterial = () => pendingFaceMaterial;
@@ -1905,8 +1903,8 @@ async function draw() {
         const fmtArea = m2  => Math.round(m2 * 10000).toLocaleString();
         const fmtKg   = kg  => kg == null ? '—' : kg.toFixed(2);
 
-        // 유리·한지는 칸별로(색별로) 끼운다 — 칠한 칸 면적만 더한다(시방서 '면 재질' 표의 faceCells와 같은 값).
-        // 일반유리도 문 전체 통유리가 아니라 칠한 칸만 센다.
+        // 색한지·칼라유리는 칠한 칸 면적(시방서 '면 재질' 표의 faceCells와 같은 값),
+        // 배접지·백지·일반유리(문 전체 배지)는 내경 한 장을 더한다.
         let glassAreaMm2Door = 0, hanjiAreaMm2Door = 0;
         for (const c of faceCells) {
             if (c.fm?.material === 'glass') glassAreaMm2Door += c.areaMm2;
@@ -2563,7 +2561,6 @@ async function draw() {
         faceMaterialMap = p.faceMaterialMap || null;
         pendingFaceMaterial = p.pendingFaceMaterial || null;
         faceBacking = p.faceBacking || null;
-        window.__pmokOnFaceBackingChange?.();
         frameColorMap = p.frameColorMap || null;
         if (p.muntolColor) muntolColorPicker.selectColor(p.muntolColor);
         showMuntol = p.showMuntol !== false;

@@ -472,7 +472,6 @@
             clearBtn.addEventListener('click', () => {
                 if (clearBtn) clearBtn.style.display = 'none';
                 faceBacking = null; // 초기화는 문 전체 배지도 함께 지운다
-                window.__pmokOnFaceBackingChange?.();
                 onClear();
             });
         }
@@ -493,7 +492,7 @@
         return { getCurrentHex, updateClearBtn, restoreColor };
     }
 
-    // 면 재질(한지/유리) 데이터 — 임시 구조. 세부종류·색상 목록은 플레이스홀더이며 추후 실제 값으로 교체 예정.
+    // 면 재질(한지/유리) 데이터 — 세부 종류는 확정. 색한지·칼라유리 색상 목록만 아직 임시(AURO 팔레트를 빌려 씀, engine-rail.js).
     // 실제 선택 UI는 engine-rail.js의 initFinishColors()가 "면" 부위를 고르면 그 화면 안에 그려준다.
     const FACE_MATERIAL_SUBS = {
         hanji: [
@@ -508,7 +507,6 @@
         ],
     };
     const FACE_MATERIAL_BASE_HEX = { hanji: '#e8dcc0', glass: '#bcd2d8' };
-    // 색을 고르지 않는 세부 종류의 칠 색 — 종류마다 hex가 있으면 그것, 없으면 재질 기본색(도면에서 배접지·백지를 구분해 보이게)
     // 문 전체 배지(배접지·백지·일반유리) — { material, sub, hex } | null. 각 엔진 draw()가 내경 바탕을 이 색으로 칠하고,
     // getParams/applyParams가 도면과 함께 저장·복원한다(한 페이지엔 엔진 하나라 전역 하나로 충분).
     let faceBacking = null;
@@ -516,20 +514,20 @@
     window.__pmokGetFaceBacking = () => faceBacking;
     window.__pmokSetFaceBacking = fb => {
         faceBacking = fb ? { material: fb.material, sub: fb.sub, hex: fb.hex } : null;
-        window.__pmokOnFaceBackingChange?.(); // 몬드리안: 새로고침 복원용 저장
         const clearBtn = document.getElementById('btnFaceClear');
         if (clearBtn && faceBacking) clearBtn.style.display = '';
         draw();
     };
+    // 색을 고르지 않는 세부 종류의 칠 색 — 종류마다 hex가 있으면 그것, 없으면 재질 기본색
     const faceSubHex = (material, sub) => (FACE_MATERIAL_SUBS[material] || []).find(s => s.value === sub)?.hex || FACE_MATERIAL_BASE_HEX[material];
 
     // 시방서 '면 재질' 표 — 한지·유리를 칠한 칸을 재질·색·크기별로 묶어 크기·개수·면적·무게를 보여준다.
-    // 유리·한지는 칸마다 색별로 따로 끼운다(일반유리도 문 전체 통유리가 아니라 칠한 칸만).
+    // 색한지·칼라유리는 칸마다 색별로 따로 끼우고, 배접지·백지·일반유리는 문 전체 배지로 짝마다 내경 한 장.
     // 공방이 유리·한지를 몇 장, 어떤 크기로 재단해야 하는지 바로 알 수 있게 하려는 것.
     // cells: 엔진이 넘겨주는 칠한 칸 목록(문 1짝 기준) — { fm, shape: 'rect'|'diamond'|'tri'|'hex', w, h, side, areaMm2 }
     //   크기는 살 안쪽으로 보이는 칸 치수(내치수)이며, 홈에 물리는 여유분은 더하지 않았다.
     // 무게는 유리만(비중·두께가 원가표에 있을 때) — 한지 무게는 표시하지 않는다(빈칸).
-    // innerSize: 내경 { w, h } — 문 전체 배지(배접지·백지)는 짝마다 내경 크기 한 장
+    // innerSize: 내경 { w, h } — 문 전체 배지(배접지·백지·일반유리)는 짝마다 내경 크기 한 장
     function renderFaceMaterialSpec(cells, glassConfig, doorCount, innerSize) {
         const physSection = document.getElementById('physSection');
         if (!physSection) return; // 부재목록 열람 권한이 없으면 표도 없다

@@ -515,8 +515,8 @@
         if (!parts.length) return;
         let target = 'muntol';  // 기본 선택 부위 — 문틀
         let needPart = false;
-        // "면" 부위는 울거미/살/문틀과 달리 나무 마감이 아니라 재질(한지/유리)을 고른다 — 임시 구조,
-        // 세부종류·색상 목록은 플레이스홀더(engine-common.js의 FACE_MATERIAL_* 참고)
+        // "면" 부위는 울거미/살/문틀과 달리 나무 마감이 아니라 재질(한지/유리)을 고른다
+        // (세부 종류·배지 규칙은 engine-common.js의 FACE_MATERIAL_SUBS 참고)
         let faceMaterial = window.__pmokGetFaceMaterial?.() || null; // { material, sub, hex } | null
 
         const finishOpts = [...finSel.options].map(o => o.value);
@@ -688,7 +688,7 @@
                 if (subs.length) {
                     h += `<div class="fin-group"><div class="fin-group-head">${_t('세부 종류')}</div><div class="fin-bases">`;
                     subs.forEach(s => {
-                        // 배접지·백지는 문 전체 배지가 깔려 있으면 켜짐 표시 — 칸 붓(색한지 등)과 동시에 켜질 수 있다
+                        // 배접지·백지·일반유리는 문 전체 배지가 깔려 있으면 켜짐 표시 — 칸 붓(색한지 등)과 동시에 켜질 수 있다
                         const on = s.backing ? window.__pmokGetFaceBacking?.()?.sub === s.value : faceMaterial?.sub === s.value;
                         const bg = s.hasColor ? (on ? faceMaterial.hex : faceMaterialColors[0]?.hex) : faceSubHex(faceMaterial.material, s.value);
                         h += `<button type="button" class="fin-base${on ? ' active' : ''}" data-matsub="${esc2(s.value)}">`

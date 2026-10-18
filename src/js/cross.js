@@ -1824,8 +1824,8 @@ async function draw() {
         const fmtArea = m2  => Math.round(m2 * 10000).toLocaleString();
         const fmtKg   = kg  => kg == null ? '—' : kg.toFixed(2);
 
-        // 유리·한지는 칸별로(색별로) 끼운다 — 칠한 칸 면적만 더한다(시방서 '면 재질' 표의 faceCells와 같은 값).
-        // 일반유리도 문 전체 통유리가 아니라 칠한 칸만 센다.
+        // 색한지·칼라유리는 칠한 칸 면적(시방서 '면 재질' 표의 faceCells와 같은 값),
+        // 배접지·백지·일반유리(문 전체 배지)는 내경 한 장을 더한다.
         let glassAreaMm2Door = 0, hanjiAreaMm2Door = 0;
         for (const c of faceCells) {
             if (c.fm?.material === 'glass') glassAreaMm2Door += c.areaMm2;
@@ -2448,7 +2448,6 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
         faceMaterialMap = p.faceMaterialMap || null;
         pendingFaceMaterial = p.pendingFaceMaterial || null;
         faceBacking = p.faceBacking || null;
-        window.__pmokOnFaceBackingChange?.();
         faceColorUI.restoreColor(p.faceBrushColor || null);
         faceColorUI.updateClearBtn(!!faceColorMap);
         updateDoorCountOptions();
