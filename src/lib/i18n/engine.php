@@ -82,6 +82,8 @@ return [
     '세로부재'                => 'Vertical members',
     '가로 먹줄'               => 'Horizontal ink lines',
     '세로 먹줄'               => 'Vertical ink lines',
+    '가로 방향 격자 먹줄 간격 — 살 한 칸(살 두께 포함) 피치' => 'The grid ink-line spacing across — one slat cell\'s pitch, slat thickness included',
+    '세로 방향 격자 먹줄 간격 — 살 한 칸(살 두께 포함) 피치' => 'The grid ink-line spacing down — one slat cell\'s pitch, slat thickness included',
     '사선 먹줄'               => 'Diagonal ink lines',
     '살 먹줄'                 => 'Slat ink lines',
     '사선살 중심선 사이의 먹줄 간격 — 마름모 한 변의 먹줄 피치' => 'The ink-line spacing between diagonal slat centerlines — the pitch along one side of a diamond',

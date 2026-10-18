@@ -640,11 +640,11 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                             <div class="spec-lbl"><?= te('세로 칸수') ?></div>
                             <div class="spec-val"><span id="spRows">0</span><span class="spec-unit"><?= te('칸') ?></span></div>
                         </div>
-                        <div class="spec-card accent">
+                        <div class="spec-card accent" data-tip="<?= te('가로 방향 격자 먹줄 간격 — 살 한 칸(살 두께 포함) 피치') ?>">
                             <div class="spec-lbl"><?= te('가로 먹줄') ?></div>
                             <div class="spec-val"><span id="spStep">0</span><span class="spec-unit">mm</span></div>
                         </div>
-                        <div class="spec-card accent">
+                        <div class="spec-card accent" data-tip="<?= te('세로 방향 격자 먹줄 간격 — 살 한 칸(살 두께 포함) 피치') ?>">
                             <div class="spec-lbl"><?= te('세로 먹줄') ?></div>
                             <div class="spec-val"><span id="spStepV">0</span><span class="spec-unit">mm</span></div>
                         </div>
