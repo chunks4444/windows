@@ -129,7 +129,7 @@ return [
     // src/company/index.php
     'company_hero_label'       => 'About Workgroup Pyeongmok',
     'company_hero_title'       => 'The path of light and wind,<br>made of wood — <em>Pyeongmok</em>',
-    'company_hero_desc'        => 'Workgroup Pyeongmok (平木) is a changho design and making workshop that brings the beauty of traditional Korean changho into modern spaces.<br>We reinterpret centuries-old lattice joinery through digital tools, building an environment where anyone can design their own changho <br>and carry it all the way through to production.',
+    'company_hero_desc'        => 'Workgroup Pyeongmok (平木) is a woodworking workshop that designs and makes traditional Korean changho, wood changho, partitions and furniture — all built on one lattice technique.<br>We reinterpret centuries-old lattice joinery through digital tools, building an environment where anyone can design their own changho <br>and carry it all the way through to production.',
 
     'company_phil_label'       => 'Philosophy',
     'company_phil_title'       => '평목 (Pyeongmok)',
