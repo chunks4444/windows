@@ -2201,6 +2201,47 @@ async function draw() {
         return 'resumed';
     }
 
+    // 작업 중 새로고침해도 그대로 — 페이지를 떠날 때(pagehide) 지금 상태를 sessionStorage(이 탭에만 남음)에 담아두고,
+    // 다음 로드가 '새로고침'일 때만 되살린다. 상단 메뉴·새 도면 등 다른 경로로 들어오면 예전처럼 새로 시작한다.
+    const WORK_KEY = 'pmok_work_' + WALLPAPER_ENGINE;
+    window.addEventListener('pagehide', () => {
+        if (!_versionsLoaded) return; // 로드가 끝나기 전에 떠나면 빈 상태로 덮어쓰지 않게
+        try {
+            sessionStorage.setItem(WORK_KEY, JSON.stringify({
+                params: getParams(),
+                view: { panX, panY, scaleFactor },
+                title: document.getElementById('drawingName').value.trim(),
+                versions, currentVerIdx, drawingId, isShared, isDrawingLocked,
+                collectionId: window.__pmokCollectionDrawingId || null,
+                openTitle: window.__pmokOpenDrawing || null,
+            }));
+        } catch { /* 저장 공간 부족 등 — 새로고침 복원만 안 될 뿐 */ }
+    });
+
+    function tryRestoreWorkOnReload() {
+        if (performance.getEntriesByType?.('navigation')?.[0]?.type !== 'reload') return false;
+        let w;
+        try { w = JSON.parse(sessionStorage.getItem(WORK_KEY) || 'null'); } catch { return false; }
+        if (!w?.params) return false;
+        // 같은 대상을 다시 연 경우만 — 컬렉션 도면(?drawing_id)·내 도면 열기 대상이 바뀌었으면 그쪽을 따른다
+        if ((w.collectionId || null) !== (window.__pmokCollectionDrawingId || null)) return false;
+        if ((w.openTitle || null) !== (window.__pmokOpenDrawing || null)) return false;
+        versions        = w.versions || [];
+        currentVerIdx   = w.currentVerIdx ?? -1;
+        drawingId       = w.drawingId ?? null;
+        isShared        = !!w.isShared;
+        isDrawingLocked = !!w.isDrawingLocked;
+        _versionsLoaded = true;
+        if (w.view) { panX = w.view.panX; panY = w.view.panY; scaleFactor = w.view.scaleFactor; }
+        applyParams(w.params);
+        document.getElementById('drawingName').value    = w.title || '';
+        document.getElementById('verLabel').textContent = currentVerIdx >= 0 ? 'v' + (currentVerIdx + 1) : '—';
+        updateLockBanner(isDrawingLocked);
+        updateShareButtonUI();
+        renderVerList();
+        return 'reload';
+    }
+
     function shareUrl() {
         return location.origin + location.pathname + '?drawing_id=' + drawingId;
     }
@@ -2601,6 +2642,10 @@ async function draw() {
 
         const resumed = await tryResumePendingSave();
         if (resumed) return resumed;
+
+        // 작업 중 새로고침 → 떠나기 직전 상태 그대로
+        const restored = tryRestoreWorkOnReload();
+        if (restored) return restored;
 
         const pendingTitle = window.__pmokOpenDrawing || null;
         if (pendingTitle) {
