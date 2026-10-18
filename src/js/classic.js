@@ -1879,6 +1879,21 @@ async function draw() {
     // 전체 문짝 합산 소계를 같이 보여주고, 문틀은 문짝 수와 무관하게 한 행. 유리(면)는 faceMaterialMap에서
     // 재질이 glass인 칸 수 × 셀면적 × 두께(cost_table 유리 항목) × 비중으로 전체 문짝 합산 1행만 보여준다.
     function renderPhysTable(p, glassConfig) {
+        // 시방서 '면 재질' 표 — 세살은 칸 높이가 줄마다 달라서(hBarYs) 줄별 실제 높이를 쓴다
+        const _rowBounds = geo.hBarYs ? getCellRowBounds(geo) : [];
+        const faceCells = [];
+        for (const k in faceMaterialMap || {}) {
+            const m = /^cell:(\d+):(\d+)$/.exec(k);
+            const b = m && _rowBounds[+m[2]];
+            if (!b) continue;
+            const h = b.y1 - b.y0;
+            faceCells.push({ fm: faceMaterialMap[k], shape: 'rect', w: geo.cellW, h, areaMm2: geo.cellW * h });
+        }
+        const plainGlass = (pendingFaceMaterial?.material === 'glass' && pendingFaceMaterial?.sub === 'plain')
+            || Object.values(faceMaterialMap || {}).some(fm => fm?.material === 'glass' && fm.sub === 'plain')
+            ? { w: geo.innerW, h: geo.innerH } : null;
+        renderFaceMaterialSpec(faceCells, glassConfig, p?.physical?.doorCount || parseInt(txtDoorCount.value) || 1, plainGlass);
+
         const body = document.getElementById('physBody');
         const section = document.getElementById('physSection');
         if (!body || !section) return;

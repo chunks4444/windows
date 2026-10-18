@@ -1772,6 +1772,22 @@ async function draw() {
     // 재질이 glass인 칸(육각 쐐기) 수 × 쐐기 한 칸 면적 × 두께(cost_table 유리 항목) × 비중으로 계산한다 —
     // 육각살의 면 칸은 정육각형을 6등분한 정삼각형(변 길이 size)이라 면적 = (√3/4)×size², size는 hitTestCell과 같은 공식(mm 기준).
     function renderPhysTable(p, glassConfig) {
+        // 시방서 '면 재질' 표 — 칠하기는 육각 칸 하나를 조각(wedge) 6개 키로 저장하므로 칸 단위로 다시 묶는다
+        const _hexSide = rotateOn ? (geo.innerW - geo.slatT * (geo.cols - 1)) / geo.cols / Math.sqrt(3) : geo.innerW / (geo.cols * Math.sqrt(3));
+        const _wedgeArea = (Math.sqrt(3) / 4) * _hexSide * _hexSide;
+        const _hexCells = new Map();
+        for (const k in faceMaterialMap || {}) {
+            const base = k.split(':').slice(0, -1).join(':');
+            const c = _hexCells.get(base) || { fm: faceMaterialMap[k], shape: 'hex', side: _hexSide, areaMm2: 0 };
+            c.areaMm2 += _wedgeArea;
+            _hexCells.set(base, c);
+        }
+        const faceCells = [..._hexCells.values()];
+        const plainGlass = (pendingFaceMaterial?.material === 'glass' && pendingFaceMaterial?.sub === 'plain')
+            || Object.values(faceMaterialMap || {}).some(fm => fm?.material === 'glass' && fm.sub === 'plain')
+            ? { w: geo.innerW, h: geo.innerH } : null;
+        renderFaceMaterialSpec(faceCells, glassConfig, p?.physical?.doorCount || parseInt(txtDoorCount.value) || 1, plainGlass);
+
         const body = document.getElementById('physBody');
         const section = document.getElementById('physSection');
         if (!body || !section) return;

@@ -506,6 +506,72 @@
     };
     const FACE_MATERIAL_BASE_HEX = { hanji: '#e8dcc0', glass: '#bcd2d8' };
 
+    // 시방서 '면 재질' 표 — 한지·유리를 칠한 칸을 재질·크기별로 묶어 크기·개수·면적·무게를 보여준다.
+    // 공방이 유리·한지를 몇 장, 어떤 크기로 재단해야 하는지 바로 알 수 있게 하려는 것.
+    // cells: 엔진이 넘겨주는 칠한 칸 목록(문 1짝 기준) — { fm, shape: 'rect'|'diamond'|'tri'|'hex', w, h, side, areaMm2 }
+    //   크기는 살 안쪽으로 보이는 칸 치수(내치수)이며, 홈에 물리는 여유분은 더하지 않았다.
+    // plainGlass: 일반유리를 쓰면 내경 전체 한 장 { w, h } (무게표와 같은 규칙 — 일반유리는 칸 단위가 아니라 문 전체)
+    // 무게는 유리만(비중·두께가 원가표에 있을 때) — 한지는 무게가 거의 없어 —로 둔다.
+    function renderFaceMaterialSpec(cells, glassConfig, doorCount, plainGlass) {
+        const physSection = document.getElementById('physSection');
+        if (!physSection) return; // 부재목록 열람 권한이 없으면 표도 없다
+        let section = document.getElementById('faceMatSection');
+        if (!section) {
+            section = document.createElement('div');
+            section.className = 'sb-section';
+            section.id = 'faceMatSection';
+            section.innerHTML = `<div class="sb-section-title">${_t('면 재질')} <small>${_t('한지·유리 칸 내치수')}</small></div>`
+                + `<table class="phys-table"><thead><tr><th>${_t('재질')}</th><th>${_t('크기(mm)')}</th><th>${_t('개수')}</th><th>${_t('면적(㎡)')}</th><th>${_t('무게(kg)')}</th></tr></thead>`
+                + `<tbody id="faceMatBody"></tbody></table>`;
+            physSection.before(section);
+        }
+        const doors = Math.max(1, doorCount || 1);
+        const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+        const matLabel = fm => {
+            const sub = (FACE_MATERIAL_SUBS[fm.material] || []).find(x => x.value === fm.sub);
+            let label = _t(fm.material === 'glass' ? '유리' : '한지');
+            if (sub) label += ` · ${_t(sub.label)}`;
+            const color = [fm.brand, fm.code].filter(Boolean).join(' ');
+            if (color) label += ` (${color})`;
+            return label;
+        };
+        const sizeLabel = c => {
+            const r = v => Math.round(v);
+            if (c.shape === 'tri') return `△ ${_t('한 변')} ${r(c.side)}`;
+            if (c.shape === 'hex') return `⬡ ${_t('한 변')} ${r(c.side)}`;
+            if (c.shape === 'diamond') return `◇ ${r(c.w)}×${r(c.h)}`;
+            return `${r(c.w)}×${r(c.h)}`;
+        };
+        const kgOf = (fm, areaMm2) => (fm.material === 'glass' && glassConfig?.density && glassConfig?.thicknessMm)
+            ? areaMm2 * glassConfig.thicknessMm / 1_000_000 * glassConfig.density : null;
+
+        const groups = new Map();
+        const add = (fm, size, areaMm2, n) => {
+            const label = matLabel(fm);
+            const key = label + '|' + size;
+            const g = groups.get(key) || { label, size, n: 0, areaMm2: 0, kg: null, glass: fm.material === 'glass' };
+            g.n += n;
+            g.areaMm2 += areaMm2 * n;
+            const kg = kgOf(fm, areaMm2);
+            if (kg != null) g.kg = (g.kg || 0) + kg * n;
+            groups.set(key, g);
+        };
+        if (plainGlass) add({ material: 'glass', sub: 'plain' }, sizeLabel({ shape: 'rect', w: plainGlass.w, h: plainGlass.h }), plainGlass.w * plainGlass.h, doors);
+        for (const c of cells) {
+            if (!c.fm || (c.fm.material === 'glass' && c.fm.sub === 'plain')) continue; // 일반유리는 위의 통유리 한 장으로
+            add(c.fm, sizeLabel(c), c.areaMm2, doors);
+        }
+
+        if (!groups.size) { section.style.display = 'none'; return; }
+        section.style.display = '';
+        // 유리 먼저, 그 안에서 재질 이름·크기순
+        const rows = [...groups.values()].sort((a, b) => (b.glass - a.glass) || a.label.localeCompare(b.label) || a.size.localeCompare(b.size, undefined, { numeric: true }));
+        const unit = _t('개');
+        document.getElementById('faceMatBody').innerHTML = rows.map(g =>
+            `<tr><td>${esc(g.label)}</td><td>${g.size}</td><td>${g.n}${unit}</td><td>${(g.areaMm2 / 1_000_000).toFixed(3)}</td><td>${g.kg == null ? '—' : g.kg.toFixed(2)}</td></tr>`
+        ).join('') + (doors > 1 ? `<tr class="phys-subtotal"><td colspan="5">${_t('문 %s짝 합계', doors)}</td></tr>` : '');
+    }
+
     function closeDrawingManager() {
         document.getElementById('dmBackdrop').classList.remove('pm-active');
     }

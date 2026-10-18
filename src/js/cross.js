@@ -1805,6 +1805,14 @@ async function draw() {
     // 재질이 glass인 칸(마름모) 수 × 마름모 면적 × 두께(cost_table 유리 항목) × 비중으로 계산한다 —
     // 빗살의 면 칸은 네모가 아니라 마름모라 면적 공식이 다르다(대각선 d1×d2/2, hitTestCell과 동일 기준).
     function renderPhysTable(p, glassConfig) {
+        // 시방서 '면 재질' 표 — 칸이 마름모라 대각선 길이(가로×세로)로 표기, 면적은 무게표와 같은 공식
+        const _dW = geo.cellW + geo.slatV, _dH = geo.cellH + geo.slatH;
+        const faceCells = Object.values(faceMaterialMap || {}).map(fm => ({ fm, shape: 'diamond', w: _dW, h: _dH, areaMm2: _dW * _dH / 2 }));
+        const plainGlass = (pendingFaceMaterial?.material === 'glass' && pendingFaceMaterial?.sub === 'plain')
+            || Object.values(faceMaterialMap || {}).some(fm => fm?.material === 'glass' && fm.sub === 'plain')
+            ? { w: geo.innerW, h: geo.innerH } : null;
+        renderFaceMaterialSpec(faceCells, glassConfig, p?.physical?.doorCount || parseInt(txtDoorCount.value) || 1, plainGlass);
+
         const body = document.getElementById('physBody');
         const section = document.getElementById('physSection');
         if (!body || !section) return;

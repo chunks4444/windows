@@ -2050,6 +2050,25 @@ async function draw() {
     // 다 달라서(BSP 렉트) 균일 셀 면적을 쓸 수 없고, rect의 비율(w·h, innerW·내경높이 대비)로 직접 구한다.
     // 정자살 격자 칸(cell:col:row)은 다른 엔진과 같은 균일 셀 면적을 쓴다.
     function renderPhysTable(p, glassConfig) {
+        // 시방서 '면 재질' 표 — 랜덤 칸은 칸마다 크기가 달라서 칸별 실제 치수를 쓴다
+        const _effH = mondrianLayout ? lastEffInnerH : geo.innerH;
+        const faceCells = [];
+        for (const k in faceMaterialMap || {}) {
+            const fm = faceMaterialMap[k];
+            if (k.startsWith('mondrian:')) {
+                const r = mondrianLayout?.rects?.[parseInt(k.slice(9), 10)];
+                if (!r) continue;
+                const w = r.w * geo.innerW, h = r.h * _effH;
+                faceCells.push({ fm, shape: 'rect', w, h, areaMm2: w * h });
+            } else {
+                faceCells.push({ fm, shape: 'rect', w: geo.cellW, h: geo.cellH, areaMm2: geo.cellW * geo.cellH });
+            }
+        }
+        const plainGlass = (pendingFaceMaterial?.material === 'glass' && pendingFaceMaterial?.sub === 'plain')
+            || Object.values(faceMaterialMap || {}).some(fm => fm?.material === 'glass' && fm.sub === 'plain')
+            ? { w: geo.innerW, h: _effH } : null;
+        renderFaceMaterialSpec(faceCells, glassConfig, p?.physical?.doorCount || parseInt(txtDoorCount.value) || 1, plainGlass);
+
         const body = document.getElementById('physBody');
         const section = document.getElementById('physSection');
         if (!body || !section) return;
@@ -2218,10 +2237,11 @@ async function draw() {
     // 선 하나를 옮기면, 그 선에 맞닿은 칸들의 경계와 그 선에서 끝나는 수직선들의
     // 끝점을 같이 옮겨서 빈틈·겹침 없이 리사이즈되게 한다 (rects는 전부 리프라 이 두
     // 케이스만 처리하면 더 깊은 단계까지 연쇄로 손볼 필요가 없다).
-    function hitTestMondrianLine(cx, cy) {
+    // slop: 잡기 허용 거리 배율 — 손가락은 마우스보다 부정확해서 터치일 때 넓힌다
+    function hitTestMondrianLine(cx, cy, slop = 1) {
         if (!mondrianLayout) return null;
         let bestIdx = null, bestAxis = null, bestDist = Infinity;
-        const threshold = Math.max(lastSlatPx * 3, 8);
+        const threshold = Math.max(lastSlatPx * 3, 8) * slop;
         for (const [key, seg] of lastSegMap) {
             const m = /^\d+:mo:(\d+)$/.exec(key);
             if (!m) continue;
@@ -2294,7 +2314,7 @@ async function draw() {
     // (끝점만 따로 잡는 건 혼동이 있어서 뺌. 단순하게 통째로 이동만 지원).
     // lastSegMap을 거치지 않고 addedLines에서 직접 화면 좌표를 계산 — 등록 타이밍 등에
     // 영향을 안 받게 독립적으로 동작.
-    function hitTestAddedLine(cx, cy) {
+    function hitTestAddedLine(cx, cy, slop = 1) {
         if (!addedLines.length || !lastBaseScale) return null;
         let bestIdx = null, bestDist = Infinity;
         addedLines.forEach((ln, idx) => {
@@ -2304,7 +2324,7 @@ async function draw() {
             const dist = distToSeg(cx, cy, { cx: p1.x, cy: p1.y, ex: p2.x, ey: p2.y });
             if (dist < bestDist) { bestDist = dist; bestIdx = idx; }
         });
-        const threshold = Math.max(lastSlatPx * 3, 8);
+        const threshold = Math.max(lastSlatPx * 3, 8) * slop;
         if (bestIdx === null || bestDist > threshold) return null;
         const bln = addedLines[bestIdx];
         const axis = Math.abs(bln.nx1 - bln.nx2) < 0.001 ? 'v' : 'h';
@@ -2313,10 +2333,31 @@ async function draw() {
 
     let mondrianDrag = null;
 
-    canvas.addEventListener('mousedown', e => {
+    // 선 이동은 포인터 이벤트로 받아 마우스·터치·펜슬(아이패드)을 같은 코드로 처리한다.
+    // 공통 제스처(engine-common.js)는 터치·펜슬 한 손가락을 항상 팬으로 잡고 pointerdown에서
+    // preventDefault까지 해서 mousedown 흉내 이벤트도 안 오기 때문에, 예전 mousedown 방식은
+    // 패드에서 선을 못 옮기고 도면만 끌려갔다. 선을 잡았으면 stopPropagation으로 공통 팬에
+    // 넘기지 않고, 선이 없는 곳이면 그대로 흘려보내 기존 팬·핀치가 동작한다.
+    // 화면에 닿아 있는 터치 포인터 수 — 두 손가락(핀치) 중 하나가 선 위에 떨어져도 선 이동으로
+    // 가로채지 않게. 캡처 단계라 아래 canvas 핸들러보다 먼저 갱신된다.
+    const _moTouches = new Set();
+    window.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse') _moTouches.add(e.pointerId); }, true);
+    const _moTouchEnd = e => _moTouches.delete(e.pointerId);
+    window.addEventListener('pointerup', _moTouchEnd, true);
+    window.addEventListener('pointercancel', _moTouchEnd, true);
+
+    canvas.addEventListener('pointerdown', e => {
+        if (mondrianDrag) {
+            // 선을 끄는 중에 다른 손가락이 닿으면 무시 — 공통 핸들러가 팬을 동시에 시작하지 않게
+            e.stopPropagation(); e.preventDefault();
+            return;
+        }
         if (e.button !== 0 || !mondrianLayout || lineEditMode || facePaintMode || panMode || placementMode) return;
+        const isTouch = e.pointerType !== 'mouse';
+        if (isTouch && _moTouches.size > 1) return;
+        const slop = isTouch ? 2 : 1;
         const coord = screenToCtxCoord(e.clientX, e.clientY);
-        const addedHit = hitTestAddedLine(coord.x, coord.y);
+        const addedHit = hitTestAddedLine(coord.x, coord.y, slop);
         if (addedHit) {
             const ln = addedLines[addedHit.idx];
             // 랜덤 생성된 살(분할선)과 같은 방식으로 수직/수평 축 고정 이동 — 세로선은
@@ -2341,22 +2382,24 @@ async function draw() {
                 if (onDraggedLine(other.nx2, other.ny2)) connected.push({ idx: oi, which: 2, nx: other.nx2, ny: other.ny2 });
             });
             mondrianDrag = {
-                type: 'added', idx: addedHit.idx, axis: addedHit.axis, connected,
+                type: 'added', pointerId: e.pointerId, idx: addedHit.idx, axis: addedHit.axis, connected,
                 start: { nx1: ln.nx1, ny1: ln.ny1, nx2: ln.nx2, ny2: ln.ny2, cx: coord.x, cy: coord.y },
             };
             canvas.style.cursor = addedHit.axis === 'v' ? 'col-resize' : 'row-resize';
-            e.preventDefault();
+            e.stopPropagation(); e.preventDefault();
             return;
         }
-        const hit = hitTestMondrianLine(coord.x, coord.y);
+        const hit = hitTestMondrianLine(coord.x, coord.y, slop);
         if (!hit) return;
-        mondrianDrag = { type: 'bsp', ...hit };
+        mondrianDrag = { type: 'bsp', pointerId: e.pointerId, ...hit };
         canvas.style.cursor = hit.axis === 'v' ? 'col-resize' : 'row-resize';
-        e.preventDefault();
+        e.stopPropagation(); e.preventDefault();
     });
 
-    window.addEventListener('mousemove', e => {
+    window.addEventListener('pointermove', e => {
         if (mondrianDrag) {
+            if (e.pointerId !== mondrianDrag.pointerId) return;
+            if (e.pointerType !== 'mouse') e.preventDefault();
             const coord = screenToCtxCoord(e.clientX, e.clientY);
             if (mondrianDrag.type === 'added') {
                 const ln = addedLines[mondrianDrag.idx];
@@ -2399,7 +2442,8 @@ async function draw() {
             draw();
             return;
         }
-        if (mondrianLayout && !lineEditMode && !facePaintMode && !panMode && !placementMode) {
+        // 호버 커서 — 마우스 전용(터치·펜슬엔 호버가 없음)
+        if (e.pointerType === 'mouse' && mondrianLayout && !lineEditMode && !facePaintMode && !panMode && !placementMode) {
             const coord = screenToCtxCoord(e.clientX, e.clientY);
             const addedHit = hitTestAddedLine(coord.x, coord.y);
             if (addedHit) {
@@ -2411,13 +2455,15 @@ async function draw() {
         }
     });
 
-    window.addEventListener('mouseup', () => {
-        if (!mondrianDrag) return;
+    const _moEndDrag = e => {
+        if (!mondrianDrag || e.pointerId !== mondrianDrag.pointerId) return;
         mondrianDrag = null;
         canvas.style.cursor = panMode ? 'grab' : 'default';
         _persistMondrianLayout();
         draw(); // 드래그 중 고정해둔 원가 집계(_moCostParams)를 놓은 위치 기준으로 다시 계산
-    });
+    };
+    window.addEventListener('pointerup', _moEndDrag);
+    window.addEventListener('pointercancel', _moEndDrag);
 
     document.getElementById('btnOrder')?.addEventListener('click', () => {
         openOrderModal({
