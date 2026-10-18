@@ -89,7 +89,14 @@ if ((int)$pdo->query('SELECT COUNT(*) FROM work_tags')->fetchColumn() === 0) {
     foreach (['중문','거실','카페','서재','현관','다실','침실','갤러리','한옥','파티션'] as $i => $t)
         $ts->execute([$t, $i]);
 }
-$tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is_active=1 ORDER BY sort_order, id')->fetchAll(PDO::FETCH_COLUMN));
+// 필터 태그는 한글 제목·설명·이미지 설명에 그 낱말이 든 작품이 하나라도 있을 때만 보인다 — 눌러도 빈 화면만 나오는 태그 방지.
+// 매칭은 언어와 상관없이 한글 원문으로 한다(영문 화면에선 제목이 영문이라 글자 매칭이 안 맞으므로 data-match로 따로 넘김).
+$workMatchText = fn($w) => ($w['title'] ?? '') . ' ' . strip_tags($w['description'] ?? '') . ' ' . ($w['alt_text'] ?? '');
+$tagNames = $pdo->query('SELECT name FROM work_tags WHERE is_active=1 ORDER BY sort_order, id')->fetchAll(PDO::FETCH_COLUMN);
+$tags = array_merge(['전체'], array_values(array_filter($tagNames, function ($t) use ($works, $workMatchText) {
+    foreach ($works as $w) if (mb_strpos($workMatchText($w), $t) !== false) return true;
+    return false;
+})));
 } catch (Throwable $e) {
     $works = [];
     $total = 0;
@@ -151,6 +158,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
             ?>
             <div class="wkg-card"
                  data-title="<?= htmlspecialchars(db_field($w, 'title')) ?>"
+                 data-match="<?= htmlspecialchars($workMatchText($w)) ?>"
                  data-desc="<?= htmlspecialchars($desc) ?>"
                  data-images="<?= htmlspecialchars(json_encode($images)) ?>"
                  data-panel-bg="<?= htmlspecialchars($w['panel_bg'] ?: '#111111') ?>"
@@ -215,9 +223,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
     let visibleCount  = PAGE_SIZE;
 
     function matchesTag(card, tag) {
-        return tag === '전체' ||
-            card.dataset.title.includes(tag) ||
-            card.dataset.desc.includes(tag);
+        return tag === '전체' || (card.dataset.match || '').includes(tag);
     }
 
     // 처음 화면엔 스크롤 없이 꽉 차는 만큼(화면 높이에 맞춰 몇 줄이 들어가는지) 보여주고,
