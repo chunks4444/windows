@@ -9,7 +9,7 @@ include __DIR__ . '/../_head.php';
 
 <h1><span class="guide-h1-icon"><?= $guideEngineIcons['diamond'] ?></span>Gyeokja-bit-sal</h1>
 <p class="guide-lead">This engine recreates Gyeokja-bit-sal, in which 45° diagonal slats are layered over a
-    vertical-and-horizontal grid. The 井-shaped weave and the diagonal weave meet on one surface, so each
+    vertical-and-horizontal grid. The 井-shaped grid and the diagonal lattice meet on one surface, so each
     grid cell is divided again into four small triangles.
     As in the Bit-sal engine, cells are always fixed as squares, with vertical, horizontal and diagonal
     slats all drawn over them.</p>

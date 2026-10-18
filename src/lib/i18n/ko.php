@@ -62,7 +62,7 @@ return [
     'home_usage2_title'        => '한식 창호와 목창호,<br>같은 살짜임으로 만듭니다',
     'home_usage2_sub'          => '한옥에 들어가는 창호든 현대 공간에 들어가는 목창호든, 짜는 문법은 하나입니다. 스케일만 다릅니다.',
     'home_line1_title'         => '한식 창호',
-    'home_line1_body'          => '세살·정자살·완자살·교살·솟을살. 여닫이와 미서기, 들어열개까지. 살이 제 크기로 서는 자리입니다.',
+    'home_line1_body'          => '세살·정자살·완자살·빗살·솟을살. 여닫이와 미서기, 들어열개까지. 살이 제 크기로 서는 자리입니다.',
     'home_line2_title'         => '목창호',
     'home_line2_body'          => '한옥이 아닌 공간에 들어가는 창과 문. 살은 그대로 두고 틀만 그 공간의 치수를 따릅니다.',
     'home_line3_title'         => '파티션',
@@ -122,7 +122,7 @@ return [
     // Contact CTA
     'home_contact_label'       => 'Contact',
     'home_contact_title'       => '작은 문의도 괜찮습니다.',
-    'home_contact_body'        => '설계·제작·설치 상담부터<br>협업 및 프로젝트 제안까지 모두 환영합니다.<br><br>편하게 연락해 주세요.<br>빠르게 답변드리겠습니다.',
+    'home_contact_body'        => '설계·제작·설치 상담부터<br>협업 및 프로젝트 제안까지 모두 환영합니다.<br><br>편하게 연락해 주세요.<br>영업일 기준 1~2일 안에 답을 드립니다.',
     'home_contact_email_btn'   => '이메일 문의',
     'home_contact_hint'        => '평일 오전 10시 – 오후 6시 운영 · 주말·공휴일 이메일 접수 가능',
 
@@ -133,8 +133,8 @@ return [
 
     'company_phil_label'       => 'Philosophy',
     'company_phil_title'       => '평목(平木)',
-    'company_phil_p1'          => "곡식을 '되'나 '말' 단위로 깎아낼 때 쓰는<br>도구를 '평미레'라고 하는데<br>여기에 해당하는 한자어가 '평목(平木)'입니다.",
-    'company_phil_p2'          => '평목은 넘쳐도 아니 되고,<br>모자라도 아니 되는,<br>균형을 잡아 주는 일을 합니다.',
+    'company_phil_p1'          => "곡식을 '되'나 '말' 단위로 밀어 고를 때 쓰는<br>도구를 '평미레'라고 하는데<br>여기에 해당하는 한자어가 '평목(平木)'입니다.",
+    'company_phil_p2'          => '평목은 모자란 것은 채우고<br>넘치는 것은 덜어 내,<br>균형을 잡아 주는 일을 합니다.',
     'company_phil_p3'          => '평목의 목수들은 세월이 앉을수록 고요하고 깊어지는<br>창호와 가구를 만들고자 합니다.',
     'company_phil_item1_title' => '짜임은 옛것 그대로 씁니다.',
     'company_phil_item1_desc'  => '세살, 정자살, 빗살, 솟을살. 조선시대 창에 쓰인 짜임을 그대로 엔진에 옮겼습니다. <br>살 간격과 비율만 지금 공간에 맞춥니다.',
@@ -168,7 +168,7 @@ return [
     'company_studio_btn2'      => '주문·가격 안내',
 
     'company_contact_title'    => '함께 만들어가요.',
-    'company_contact_body'     => '작은 문의도 괜찮습니다.<br>설계·제작·설치 상담부터 협업 및 프로젝트 제안까지 모두 환영합니다.<br>편하게 연락해 주세요. 하루 안에 답을 드립니다.',
+    'company_contact_body'     => '작은 문의도 괜찮습니다.<br>설계·제작·설치 상담부터 협업 및 프로젝트 제안까지 모두 환영합니다.<br>편하게 연락해 주세요. 영업일 기준 1~2일 안에 답을 드립니다.',
     'company_contact_email_btn'=> '이메일 문의하기',
     'company_address_value'  => '경기도 양평군 양서면 도곡리 107-2',
     'company_contact_address'  => '주소',
@@ -295,7 +295,7 @@ return [
     // 이메일 문의 모달 (src/components/contact_modal.php)
     'ct_title'                => '이메일 문의',
     'ct_success_strong'       => '문의가 접수되었습니다.',
-    'ct_success_body'         => '확인 후 빠르게 답변 드리겠습니다.',
+    'ct_success_body'         => '확인 후 영업일 기준 1~2일 안에 답을 드립니다.',
     'ct_name'                 => '이름',
     'ct_name_ph'              => '홍길동',
     'ct_email'                => '이메일 (답변 받을 주소)',
@@ -317,7 +317,7 @@ return [
     'ct_err_mail_failed'      => '메일 전송에 실패했습니다. 직접 이메일로 보내주세요.',
 
     // 포트폴리오 (src/portfolio/index.php)
-    'wk_sub'                  => '워크그룹 평목에서 완성된 작품들입니다.',
+    'wk_sub'                  => '워크그룹 평목이 만든 작품들입니다.',
     'wk_count'                => '%d개 작품',
     'wk_filter'               => '필터',
     'wk_tag_all'              => '전체',
@@ -345,7 +345,7 @@ return [
     'col_group_new'           => '새살',
     'col_group_jp'            => '일본살',
     'col_group_shoji'         => '쇼지',
-    'col_group_kumiko'        => '쿠미꼬',
+    'col_group_kumiko'        => '쿠미코',
     'col_meta_suffix'         => '워크그룹 평목 컬렉션',
     'col_meta_default'        => '워크그룹 평목에서 만든 창호 격자 패턴',
     'col_title_suffix'        => '워크그룹 평목 컬렉션',

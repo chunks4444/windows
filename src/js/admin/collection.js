@@ -7,9 +7,9 @@ let statusFilter = 'all';
 let groupFilterSource = ''; // '' | kr | new | jp
 let groupFilterValue  = ''; // '' | <pattern_category id> | new | jp-shoji | jp-kumiko
 const GROUP_SELECT_MAP = { kr: 'admKrSelect', new: 'admNewSelect', jp: 'admJpSelect' };
-const JP_NEW_ONLY_MODIFIERS = ['PM', 'JS', 'JK']; // 새살·쇼지·쿠미꼬 — 자체 창작(PYM) 계열에만 허용
+const JP_NEW_ONLY_MODIFIERS = ['PM', 'JS', 'JK']; // 새살·쇼지·쿠미코 — 자체 창작(PYM) 계열에만 허용
 
-// 모양(계열)을 자체 창작(PYM)이 아닌 걸로 바꾸는데 수식어가 새살/쇼지/쿠미꼬로 남아있으면
+// 모양(계열)을 자체 창작(PYM)이 아닌 걸로 바꾸는데 수식어가 새살/쇼지/쿠미코로 남아있으면
 // 자동으로 비운다 — GYE-JK-001처럼 계열은 우리살인데 일본살 수식어가 붙는 실수를 막기 위함.
 function enforceModifierCategoryRule() {
     const catId  = document.getElementById('lpCategory').value;
@@ -106,7 +106,7 @@ function setGroupFilter(source, value) {
     applyFilter();
 }
 
-// 우리살(전통 계열)/새살/일본살(쇼지·쿠미꼬) 하이라키를 행마다 보여주기 위한 라벨.
+// 우리살(전통 계열)/새살/일본살(쇼지·쿠미코) 하이라키를 행마다 보여주기 위한 라벨.
 // 필터 판정(matchesGroup)과 동일한 slug 접두어 규칙을 쓴다.
 function groupLabel(p) {
     if (!p.pattern_category) return '—';
@@ -115,7 +115,7 @@ function groupLabel(p) {
     if (cat === PYM_CATEGORY_ID) {
         if (slug.startsWith('pym-pm-')) return '새살';
         if (slug.startsWith('pym-js-')) return '일본살 · 쇼지';
-        if (slug.startsWith('pym-jk-')) return '일본살 · 쿠미꼬';
+        if (slug.startsWith('pym-jk-')) return '일본살 · 쿠미코';
         return categoryNames[p.pattern_category] || '자체 창작'; // 아직 새살/일본살로 태깅 안 된 항목
     }
     return `우리살 · ${categoryNames[p.pattern_category] || p.pattern_category}`;

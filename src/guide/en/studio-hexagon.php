@@ -12,9 +12,9 @@ include __DIR__ . '/../_head.php';
     Semo-sotgeul-sal but offsets the crossing points instead of gathering them at a single point, opening up
     hexagons. It is also called Eogeum-yukmo.
     <em>Sotgeul</em> means "rising," named for the way the slats overlap and rise at each crossing point,
-    which gives the weave its layered quality.
+    which gives the lattice its layered quality.
     The honeycomb hexagons the slats form are closer to a circle than a square, so — even with the same
-    weaving technique — the result feels round and generous rather than taut like the triangular pattern.</p>
+    joinery — the result feels round and generous rather than taut like the triangular pattern.</p>
 
 <div class="guide-screenshot">
     <img src="/src/img/guide/studio-hexagon-en.png" alt="Yukmo-sotgeul-sal studio layout — menu tabs on the left with the door settings panel open, canvas in the center, toolbar above the canvas" loading="lazy">

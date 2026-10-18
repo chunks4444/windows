@@ -74,7 +74,7 @@ foreach ($libPatternCats as $c) {
             <option value="" disabled selected hidden>일본살</option>
             <option value="jp">일본살</option>
             <option value="jp-shoji">쇼지</option>
-            <option value="jp-kumiko">쿠미꼬</option>
+            <option value="jp-kumiko">쿠미코</option>
         </select>
     </div>
 

@@ -43,12 +43,12 @@ return [
     'home_engine_alt'          => '%s pattern preview',
 
     // Default engine card descriptions (used when no DB override exists)
-    'home_engine_desc_classic'  => 'The simplest traditional lattice pattern — thin slats woven only vertically and horizontally, spaced wide apart.<br>The generous negative space gives it a plain, open feel.',
+    'home_engine_desc_classic'  => 'The simplest traditional lattice pattern — thin slats joined only vertically and horizontally, spaced wide apart.<br>The generous negative space gives it a plain, open feel.',
     'home_engine_desc_square'   => 'A square lattice pattern where horizontal and vertical slats cross tightly to form repeating 井-shaped grids.<br>It expresses a refined, restrained beauty.',
     'home_engine_desc_cross'    => 'A diamond lattice pattern crossing at a 45° diagonal.<br>The dynamic flow of diagonal lines adds tension to the space.',
-    'home_engine_desc_triangle' => "This engine recreates Semo-sotgeul-sal, where a vertical slat and two diagonal slats meet at a single point from three directions. \u{2018}Sotgeul\u{2019} means \u{201C}rising,\u{201D} named for the way the slats overlap and rise at each crossing point, giving the weave a layered, three-dimensional feel. Because the crossing slats repeat as equilateral triangles across the whole surface, it creates a taut, tense impression — quite different from the round, generous feel of the hexagon pattern. The vertical cell count is calculated automatically so every cell forms an equilateral triangle, and can't be set manually.",
+    'home_engine_desc_triangle' => "This engine recreates Semo-sotgeul-sal, where a vertical slat and two diagonal slats meet at a single point from three directions. \u{2018}Sotgeul\u{2019} means \u{201C}rising,\u{201D} named for the way the slats overlap and rise at each crossing point, giving the lattice a layered, three-dimensional feel. Because the crossing slats repeat as equilateral triangles across the whole surface, it creates a taut, tense impression — quite different from the round, generous feel of the hexagon pattern. The vertical cell count is calculated automatically so every cell forms an equilateral triangle, and can't be set manually.",
     'home_engine_desc_diamond'  => 'A pattern where slats cross radially from four directions, including the diagonals.<br>It creates an ornate, three-dimensional structure.',
-    'home_engine_desc_hexagon'  => "This engine recreates Yukmo-sotgeul-sal (also called Eogeum-yukmo), which uses the same three-directional slats as Semo-sotgeul-sal, but offsets the crossing points instead of joining them at a single point, opening up hexagons. \u{2018}Sotgeul\u{2019} means \u{201C}rising,\u{201D} named for the way the slats overlap and rise at each crossing point, giving the weave a layered feel. The honeycomb-like hexagons the slats form are closer to a circle than a square, so — even with the same weaving technique — it gives a round, generous impression instead of the triangle pattern's tautness.",
+    'home_engine_desc_hexagon'  => "This engine recreates Yukmo-sotgeul-sal (also called Eogeum-yukmo), which uses the same three-directional slats as Semo-sotgeul-sal, but offsets the crossing points instead of joining them at a single point, opening up hexagons. \u{2018}Sotgeul\u{2019} means \u{201C}rising,\u{201D} named for the way the slats overlap and rise at each crossing point, giving the lattice a layered feel. The honeycomb-like hexagons the slats form are closer to a circle than a square, so — even with the same joinery — it gives a round, generous impression instead of the triangle pattern's tautness.",
     'home_engine_desc_mondrian' => 'A free-form engine that randomly subdivides the square lattice grid.<br>Generate a new layout with one click, then draw or drag lines to refine it.',
 
     // Collection strip
@@ -59,10 +59,10 @@ return [
 
     // How the lattice is used
     'home_usage2_label'        => 'How the Lattice Is Used',
-    'home_usage2_title'        => 'Traditional Korean changho and wood changho,<br>woven with the same lattice technique.',
-    'home_usage2_sub'          => "Whether it goes into a hanok or a modern space, the weaving grammar is the same — only the scale changes.",
+    'home_usage2_title'        => 'Traditional Korean changho and wood changho,<br>built with the same lattice joinery.',
+    'home_usage2_sub'          => "Whether it goes into a hanok or a modern space, the joinery is the same — only the scale changes.",
     'home_line1_title'         => 'Hanok Changho',
-    'home_line1_body'          => 'Se-sal, Jeongja-sal, Wanja-sal, Gyo-sal, Sotgeul-sal — hinged, sliding, or lift-and-fold. Where the lattice stands at its true scale.',
+    'home_line1_body'          => 'Se-sal, Jeongja-sal, Wanja-sal, Bit-sal, Sotgeul-sal — hinged, sliding, or lift-and-fold. Where the lattice stands at its true scale.',
     'home_line2_title'         => 'Wood Changho',
     'home_line2_body'          => "Changho for spaces outside the hanok. The lattice stays the same — only the frame follows the space's dimensions.",
     'home_line3_title'         => 'Partitions',
@@ -122,26 +122,26 @@ return [
     // Contact CTA
     'home_contact_label'       => 'Contact',
     'home_contact_title'       => 'Even a small question is welcome.',
-    'home_contact_body'        => 'From design, production, and installation consultations<br>to collaboration and project proposals — all welcome.<br><br>Feel free to reach out.<br>We\'ll get back to you quickly.',
+    'home_contact_body'        => 'From design, production, and installation consultations<br>to collaboration and project proposals — all welcome.<br><br>Feel free to reach out.<br>We\'ll get back to you within 1–2 business days.',
     'home_contact_email_btn'   => 'Email Us',
     'home_contact_hint'        => 'Open weekdays 10 AM – 6 PM · Email inquiries accepted on weekends and holidays',
 
     // src/company/index.php
     'company_hero_label'       => 'About Workgroup Pyeongmok',
     'company_hero_title'       => 'The path of light and wind,<br>made of wood — <em>Pyeongmok</em>',
-    'company_hero_desc'        => 'Workgroup Pyeongmok (平木) is a changho design and making workshop that brings the beauty of traditional Korean changho into modern spaces.<br>We reinterpret centuries-old lattice-weaving techniques through digital tools, building an environment where anyone can design their own changho <br>and carry it all the way through to production.',
+    'company_hero_desc'        => 'Workgroup Pyeongmok (平木) is a changho design and making workshop that brings the beauty of traditional Korean changho into modern spaces.<br>We reinterpret centuries-old lattice joinery through digital tools, building an environment where anyone can design their own changho <br>and carry it all the way through to production.',
 
     'company_phil_label'       => 'Philosophy',
     'company_phil_title'       => '평목 (Pyeongmok)',
     'company_phil_p1'          => "The tool once used to level off grain measured by the \u{2018}doe\u{2019} or \u{2018}mal\u{2019}<br>is called a \u{2018}pyeongmire\u{2019} in Korean —<br>and \u{2018}평목 (平木)’ is the Hanja word for exactly that tool.",
-    'company_phil_p2'          => "A pyeongmok's job is balance —<br>not letting things overflow,<br>not letting them fall short.",
+    'company_phil_p2'          => "A pyeongmok's job is balance —<br>filling what falls short,<br>taking away what overflows.",
     'company_phil_p3'          => "Pyeongmok's carpenters aim to make changho and furniture<br>that grow quieter and deeper as the years settle into them.",
     'company_phil_item1_title' => 'The joinery stays true to the original.',
     'company_phil_item1_desc'  => "Se-sal, Jeongja-sal, Bit-sal, Sotgeul-sal. We carried the exact joinery used in Joseon-era changho straight into the engine. <br>Only the slat spacing and proportions are adapted to fit today's spaces.",
     'company_phil_item2_title' => 'Real-Time Design',
     'company_phil_item2_desc'  => 'Move the dimensions or slat spacing and the drawing updates with you. <br>That same drawing becomes the production drawing, exactly as is.',
     'company_phil_item3_title' => 'Made to Order',
-    'company_phil_item3_desc'  => "Your drawing goes straight to our workshop in Yangpyeong. <br>No two spaces are alike, so no two changho come out the same — each one is woven to fit its own dimensions and light.",
+    'company_phil_item3_desc'  => "Your drawing goes straight to our workshop in Yangpyeong. <br>No two spaces are alike, so no two changho come out the same — each one is made to fit its own dimensions and light.",
 
     // Light & Lattice — prose section directly under Philosophy
     'company_light_label'      => 'Light & Lattice',
@@ -168,7 +168,7 @@ return [
     'company_studio_btn2'      => 'Ordering & Pricing',
 
     'company_contact_title'    => "Let's build it together.",
-    'company_contact_body'     => "Even a small question is welcome.<br>From design, production, and installation consultations to collaboration and project proposals — all welcome.<br>Feel free to reach out. We'll get back to you within a day.",
+    'company_contact_body'     => "Even a small question is welcome.<br>From design, production, and installation consultations to collaboration and project proposals — all welcome.<br>Feel free to reach out. We'll get back to you within 1–2 business days.",
     'company_contact_email_btn'=> 'Email Us',
     'company_address_value'  => '76, Yangseodogok-gil, Yangseo-myeon, Yangpyeong-gun, Gyeonggi-do, Republic of Korea',
     'company_contact_address'  => 'Address',
@@ -295,7 +295,7 @@ return [
     // Email inquiry modal (src/components/contact_modal.php)
     'ct_title'                => 'Email Inquiry',
     'ct_success_strong'       => 'Your inquiry has been received.',
-    'ct_success_body'         => "We'll review it and get back to you shortly.",
+    'ct_success_body'         => "We'll review it and get back to you within 1–2 business days.",
     'ct_name'                 => 'Name',
     'ct_name_ph'              => 'Jane Doe',
     'ct_email'                => 'Email (where we should reply)',
@@ -317,7 +317,7 @@ return [
     'ct_err_mail_failed'      => 'We could not send the mail. Please email us directly.',
 
     // Portfolio (src/portfolio/index.php)
-    'wk_sub'                  => 'Works completed at Workgroup Pyeongmok.',
+    'wk_sub'                  => 'Works made by Workgroup Pyeongmok.',
     'wk_count'                => '%d works',
     'wk_filter'               => 'Filter',
     'wk_tag_all'              => 'All',

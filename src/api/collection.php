@@ -45,7 +45,7 @@ if ($category !== '') {
     $baseWhere .= ' AND p.pattern_category = :category';
     $params[':category'] = $category;
 } elseif ($group !== '') {
-    // 우리살(전통 계열)/새살/일본살(쇼지·쿠미꼬) — 새살·일본살은 '자체 창작'(PYM) 계열 안에서
+    // 우리살(전통 계열)/새살/일본살(쇼지·쿠미코) — 새살·일본살은 '자체 창작'(PYM) 계열 안에서
     // 수식어(PM/JS/JK)가 slug에 접두어로 남는 방식으로 구분한다 (library_patterns에 수식어 컬럼이 없음).
     $pymId = $pdo->query("SELECT id FROM pattern_categories WHERE code='PYM'")->fetchColumn();
     if ($group === 'kr') {

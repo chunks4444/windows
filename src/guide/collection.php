@@ -39,7 +39,7 @@ include __DIR__ . '/_head.php';
 <ul>
     <li><strong>우리살</strong> — 정자살·아자살·완자살·숫대살·세살·빗살·격자빗살·귀갑살·범살·솟을살 등 전통 계열. 드롭다운을 열면 하위에 각 계열이 나타나 세부 필터링도 가능합니다.</li>
     <li><strong>새살</strong> — 전통 계열에 속하지 않는 새로 디자인된 패턴</li>
-    <li><strong>일본살</strong> — 일본식 격자 패턴. 드롭다운을 열면 하위에 <strong>쇼지</strong>·<strong>쿠미꼬</strong> 세부 옵션이 나타납니다.</li>
+    <li><strong>일본살</strong> — 일본식 격자 패턴. 드롭다운을 열면 하위에 <strong>쇼지</strong>·<strong>쿠미코</strong> 세부 옵션이 나타납니다.</li>
     <li><strong>패턴 검색</strong> — 이름·코드로 검색</li>
     <li><strong>좋아요</strong> — 내가 좋아요한 패턴만 표시 (로그인 필요)</li>
 </ul>

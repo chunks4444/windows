@@ -22,26 +22,26 @@ try {
 $homeAiSampleDefaults = [
     '정자살 여닫이 2짝 900×2000',
     '완자살 미서기 3짝 1200×2100',
-    '교살 여닫이 1짝 700×1800 흰색',
+    '빗살 여닫이 1짝 700×1800 흰색',
     '세모솟을살 미서기 2짝 1500×2200',
-    '마름모살 여닫이 4짝 2000×2100',
+    '격자빗살 미서기 4짝 2000×2100',
     '육모솟을살 미서기 3짝 1800×2000',
     '완자살 작은 창 600×900',
     '정자살 넓은 통창 2400×2200',
-    '교살 미닫이 2짝 어두운 원목톤',
-    '마름모살 현관 중문 1000×2100',
+    '빗살 미닫이 2짝 어두운 원목톤',
+    '격자빗살 현관 중문 1000×2100',
 ];
 $homeAiSampleDefaultsEn = [
     'Jeongja-sal, hinged, 2 panels, 900×2000',
     'Wanja-sal, sliding, 3 panels, 1200×2100',
-    'Gyo-sal, hinged, 1 panel, 700×1800, white',
+    'Bit-sal, hinged, 1 panel, 700×1800, white',
     'Semo-sotgeul-sal, sliding, 2 panels, 1500×2200',
-    'Mareummo-sal, hinged, 4 panels, 2000×2100',
+    'Gyeokja-bit-sal, sliding, 4 panels, 2000×2100',
     'Yukmo-sotgeul-sal, sliding, 3 panels, 1800×2000',
     'Wanja-sal, small window, 600×900',
     'Jeongja-sal, wide picture window, 2400×2200',
-    'Gyo-sal, sliding, 2 panels, dark wood tone',
-    'Mareummo-sal, entry partition door, 1000×2100',
+    'Bit-sal, sliding, 2 panels, dark wood tone',
+    'Gyeokja-bit-sal, entry partition door, 1000×2100',
 ];
 $homeAiSampleKey = is_en() ? 'home_ai_sample_prompts_en' : 'home_ai_sample_prompts';
 try {

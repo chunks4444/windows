@@ -10,7 +10,7 @@ include __DIR__ . '/../_head.php';
 <h1><span class="guide-h1-icon"><?= $guideEngineIcons['triangle'] ?></span>Semo-sotgeul-sal</h1>
 <p class="guide-lead">This engine recreates Semo-sotgeul-sal, where a vertical slat and two diagonal slats
     meet at a single point from three directions. <em>Sotgeul</em> means "rising," named for the way the slats
-    overlap and rise at each crossing point, giving the weave a layered, three-dimensional feel.
+    overlap and rise at each crossing point, giving the lattice a layered, three-dimensional feel.
     Because the crossing slats repeat as equilateral triangles across the whole surface, it creates a taut,
     tense impression — quite different from the round, generous feel of the hexagonal pattern.
     The vertical cell count is calculated automatically so that every cell forms an equilateral triangle,
