@@ -2658,13 +2658,7 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
     const CURRENT_TITLE_KEY = 'pmok_mondrian_current_title';
     const NAME_KEY          = 'pmok_mondrian_name';
     const MONDRIAN_HISTORY_KEY = 'pmok_mondrian_history';
-    // 문 전체 배지(배접지·백지)도 칸 색처럼 새로고침 후 복원 — 레이아웃·칸 색은 브라우저 기록에서 돌아오는데
-    // 배지만 사라지면 어긋나 보인다
-    const MONDRIAN_BACKING_KEY = 'pmok_mondrian_backing';
-    try { faceBacking = JSON.parse(localStorage.getItem(MONDRIAN_BACKING_KEY) || 'null'); } catch { /* 무시 */ }
-    window.__pmokOnFaceBackingChange = () => {
-        try { localStorage.setItem(MONDRIAN_BACKING_KEY, JSON.stringify(faceBacking)); } catch { /* 저장 공간 등 — 무시 */ }
-    };
+    try { localStorage.removeItem('pmok_mondrian_backing'); } catch { /* 예전 배지 저장 키 정리 — 이제 새로고침 복원은 sessionStorage(WORK_KEY)로 */ }
     const MONDRIAN_HISTORY_MAX = 20;
     const MAX_VERSIONS      = 20;
 
@@ -3235,33 +3229,13 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
         updateDoorCountOptions();
         renderVerList();
         await draw();
-        // 새 도면으로 처음 들어왔을 때(불러온 기존 패턴이 없을 때)는 빈 격자 대신
-        // 바로 몬드리안 패턴이 보이게 자동 생성 — geo가 채워진 뒤(draw 완료 후)라야
-        // generateMondrian()의 innerW/innerH 가드를 통과한다.
-        // 단, 저장 안 한 상태로 새로고침/재방문한 경우라면 직전에 보고 있던(또는 뒤로
-        // 돌려보던) 랜덤 패턴과 그 기록을 그대로 복원 — 완전히 새로 생성하지는 않는다.
-        if (!mondrianLayout) {
-            try {
-                const saved = localStorage.getItem(MONDRIAN_HISTORY_KEY);
-                if (saved) {
-                    const parsed = JSON.parse(saved);
-                    if (Array.isArray(parsed.h) && parsed.h.length) {
-                        mondrianHistory    = parsed.h;
-                        mondrianHistoryIdx = Math.min(Math.max(parsed.i ?? parsed.h.length - 1, 0), parsed.h.length - 1);
-                        const snap = mondrianHistory[mondrianHistoryIdx];
-                        mondrianLayout = snap ? JSON.parse(JSON.stringify(snap)) : null;
-                        _mondrianVersion++;
-                        _updateMondrianBtn();
-                        _updateMondrianHistoryButtons();
-                        draw();
-                    }
-                }
-            } catch { mondrianHistory = []; mondrianHistoryIdx = -1; }
-            // 복원된 기록의 마지막 패턴이 '초기화(정자살)' 상태(null)였다면 그대로 두지 않고
-            // 새 랜덤 패턴을 생성한다 — 지난번에 리셋해두고 떠난 경우까지 그대로 이어받으면
-            // 새 도면을 열 때마다 계속 빈 격자만 보이게 된다.
-            if (!mondrianLayout) generateMondrian();
-        }
+        // 메뉴·도면·컬렉션 등에서 새로 들어오면 비우고 기본 상태로 — 새 랜덤 패턴, 칠·배지 없음, 패턴 기록도 새로.
+        // (작업 중 새로고침은 위의 tryRestoreWorkOnReload()가 떠나기 직전 상태를 그대로 되살리고 여기까지 오지 않는다.)
+        // geo가 채워진 뒤(draw 완료 후)라야 generateMondrian()의 innerW/innerH 가드를 통과한다.
+        faceBacking = null;
+        mondrianHistory = []; mondrianHistoryIdx = -1;
+        mondrianLayout = null;
+        generateMondrian();
     }
 
     async function saveVersion() {
