@@ -168,7 +168,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
         </nav>
 
         <!-- PANEL — 레일에서 고른 탭 하나만 보인다. 기존 사이드바 요소 id는 그대로라 엔진 JS는 바뀌지 않는다 -->
-        <div class="controls" id="sidebar">
+        <div class="controls" id="sidebar" style="--engine-name:'<?= addslashes(term($navCurrentEngineTitle)) ?>';">
             <div class="sb-inner">
             <section class="rail-pane" data-pane="collection" hidden>
                 <div class="rail-pane-head"><?= te('컬렉션') ?></div>

@@ -98,6 +98,14 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
     color: #111;
     letter-spacing: -0.3px;
 }
+/* 지금 어느 엔진인지 — 각 탭 제목 뒤에 "탭이름 / 엔진명"으로. --engine-name은 #sidebar에 인라인으로 심어둠(engine-nav.php) */
+.rail-pane-head::after {
+    content: " / " var(--engine-name, "");
+    font-size: 12px;
+    font-weight: 400;
+    color: #8A8F99;
+    letter-spacing: 0;
+}
 .rail-pane > .sb-section { border-top: none; padding-top: 4px; padding-bottom: 4px; }
 .rail-pane > :not(.sb-section):not(.rail-pane-head) { margin-left: 16px; margin-right: 16px; }
 
