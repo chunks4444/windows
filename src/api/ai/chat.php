@@ -57,14 +57,14 @@ try {
 
 $paramDescDefault = <<<'EOT'
 공통 파라미터 (모든 엔진):
-- W: 문 너비 (mm, 300–2000)
+- W: 문틀 가로 = 벽 개구부 너비, 여러 짝이면 전체 폭 (mm, 300–10000)
 - H: 문 높이 (mm, 500–3000)
 - cols: 세로살 개수 (2–20)
 - frame: 울거미 가로폭 (mm, 20–200)
 - frameH: 울거미 세로폭 (mm, 20–200)
 - slat: 살 두께 (mm, 5–30)
 - doorType: "swing"(여닫이) | "slide"(미서기)
-- doorCount: 1–4. doorType이 swing(여닫이)이면 최대 2까지만 가능 (3~4짝은 slide/미서기 전용)
+- doorCount: 문짝 수. swing(여닫이)은 1–2, slide(미서기)는 1–4 또는 6 (5짝은 없음)
 - pungpanOn: 풍판 사용 여부 (true/false)
 - pungpan: 풍판 높이 (mm) — pungpanOn=true일 때만 유효
 - wood: 목재 종류 (예: "소나무", "느티나무", "참나무")
