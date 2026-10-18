@@ -511,7 +511,7 @@
     // 공방이 유리·한지를 몇 장, 어떤 크기로 재단해야 하는지 바로 알 수 있게 하려는 것.
     // cells: 엔진이 넘겨주는 칠한 칸 목록(문 1짝 기준) — { fm, shape: 'rect'|'diamond'|'tri'|'hex', w, h, side, areaMm2 }
     //   크기는 살 안쪽으로 보이는 칸 치수(내치수)이며, 홈에 물리는 여유분은 더하지 않았다.
-    // 무게는 유리만(비중·두께가 원가표에 있을 때) — 한지는 무게가 거의 없어 —로 둔다.
+    // 무게는 유리만(비중·두께가 원가표에 있을 때) — 한지 무게는 표시하지 않는다(빈칸).
     function renderFaceMaterialSpec(cells, glassConfig, doorCount) {
         const physSection = document.getElementById('physSection');
         if (!physSection) return; // 부재목록 열람 권한이 없으면 표도 없다
@@ -531,12 +531,11 @@
             const sub = (FACE_MATERIAL_SUBS[fm.material] || []).find(x => x.value === fm.sub);
             let label = _t(fm.material === 'glass' ? '유리' : '한지');
             if (sub) label += ` · ${_t(sub.label)}`;
-            // 색별로 나눠 끼우므로 색이 있는 재질은 색까지 구분 — 업체 코드가 없으면 색 이름, 그것도 없으면 hex
-            if (sub?.hasColor) {
-                const color = [fm.brand, fm.code].filter(Boolean).join(' ') || fm.name || fm.hex || '';
-                if (color) label += ` (${color})`;
-            }
-            return label;
+            // 색별로 나눠 끼우므로 색이 있는 재질은 색까지 구분 — 업체 코드가 없으면 색 이름, 그것도 없으면 hex.
+            // 표에는 색 견본만 보이고, 코드는 마우스를 올리면(title) 나온다.
+            const color = sub?.hasColor ? ([fm.brand, fm.code].filter(Boolean).join(' ') || fm.name || fm.hex || '') : '';
+            const hex = (sub?.hasColor && fm.hex) || FACE_MATERIAL_BASE_HEX[fm.material] || '#ccc';
+            return { label, color, hex };
         };
         const sizeLabel = c => {
             const r = v => Math.round(v);
@@ -550,9 +549,9 @@
 
         const groups = new Map();
         const add = (fm, size, areaMm2, n) => {
-            const label = matLabel(fm);
-            const key = label + '|' + size;
-            const g = groups.get(key) || { label, size, n: 0, areaMm2: 0, kg: null, glass: fm.material === 'glass' };
+            const { label, color, hex } = matLabel(fm);
+            const key = label + '|' + color + '|' + size;
+            const g = groups.get(key) || { label, color, hex, size, n: 0, areaMm2: 0, kg: null, glass: fm.material === 'glass' };
             g.n += n;
             g.areaMm2 += areaMm2 * n;
             const kg = kgOf(fm, areaMm2);
@@ -564,10 +563,10 @@
         if (!groups.size) { section.style.display = 'none'; return; }
         section.style.display = '';
         // 유리 먼저, 그 안에서 재질 이름·크기순
-        const rows = [...groups.values()].sort((a, b) => (b.glass - a.glass) || a.label.localeCompare(b.label) || a.size.localeCompare(b.size, undefined, { numeric: true }));
+        const rows = [...groups.values()].sort((a, b) => (b.glass - a.glass) || a.label.localeCompare(b.label) || a.color.localeCompare(b.color) || a.size.localeCompare(b.size, undefined, { numeric: true }));
         const unit = _t('개');
         document.getElementById('faceMatBody').innerHTML = rows.map(g =>
-            `<tr><td>${esc(g.label)}</td><td>${g.size}</td><td>${g.n}${unit}</td><td>${(g.areaMm2 / 1_000_000).toFixed(3)}</td><td>${g.kg == null ? '—' : g.kg.toFixed(2)}</td></tr>`
+            `<tr${g.color ? ` title="${esc(g.color)}"` : ''}><td><span class="face-mat-sw" style="background:${esc(g.hex)}"></span>${esc(g.label)}</td><td>${g.size}</td><td>${g.n}${unit}</td><td>${(g.areaMm2 / 1_000_000).toFixed(3)}</td><td>${g.glass ? (g.kg == null ? '—' : g.kg.toFixed(2)) : ''}</td></tr>`
         ).join('') + (doors > 1 ? `<tr class="phys-subtotal"><td colspan="5">${_t('문 %s짝 합계', doors)}</td></tr>` : '');
     }
 
