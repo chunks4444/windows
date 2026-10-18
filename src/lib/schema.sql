@@ -484,6 +484,8 @@ CREATE TABLE IF NOT EXISTS works (
     slug        VARCHAR(200)      NOT NULL DEFAULT '',
     description VARCHAR(300)      NOT NULL DEFAULT '',
     description_en VARCHAR(300)   NOT NULL DEFAULT '' COMMENT '영문 값. 비어 있으면 화면에서 한글로 자동 폴백(src/lib/i18n.php의 db_field())',
+    alt_text    VARCHAR(200)      NOT NULL DEFAULT '' COMMENT '대표 이미지 설명(img alt) — 검색엔진·화면낭독기가 읽는 글. 비우면 제목을 씀. 예: 정자살 미서기 창호를 단 한옥 거실',
+    alt_text_en VARCHAR(200)      NOT NULL DEFAULT '' COMMENT 'alt_text의 영문 값. 비어 있으면 한글로 폴백',
     image_url   VARCHAR(500)      NOT NULL DEFAULT '',
     sort_order  SMALLINT UNSIGNED NOT NULL DEFAULT 0,
     is_active   TINYINT(1)        NOT NULL DEFAULT 1,
@@ -497,6 +499,9 @@ CREATE TABLE IF NOT EXISTS works (
     UNIQUE KEY uq_works_slug (slug),
     KEY idx_works_sort (sort_order, is_active)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='완성 작품 갤러리';
+-- 2026-10-18 포트폴리오 이미지 설명(alt)을 제목과 분리 — 제목이 '거실'처럼 겹쳐 alt가 반복되던 문제
+-- ALTER TABLE works ADD COLUMN alt_text VARCHAR(200) NOT NULL DEFAULT '' COMMENT '대표 이미지 설명(img alt) — 검색엔진·화면낭독기가 읽는 글. 비우면 제목을 씀' AFTER description_en,
+--                   ADD COLUMN alt_text_en VARCHAR(200) NOT NULL DEFAULT '' COMMENT 'alt_text의 영문 값. 비어 있으면 한글로 폴백' AFTER alt_text;
 -- 2026-08-14 카드 커스텀 아이콘 SVG 업로드 (포트폴리오 디자인 실험용)
 -- ALTER TABLE works ADD COLUMN icon_svg MEDIUMTEXT NULL DEFAULT NULL COMMENT '업로드한 커스텀 아이콘 SVG (살균된 마크업 원문, NULL=없음 — 있으면 카드에 사진 대신 표시, CSS로 색 컨트롤 가능)' AFTER engine_key;
 

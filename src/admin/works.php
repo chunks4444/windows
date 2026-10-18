@@ -115,6 +115,10 @@ require_admin_role('s');
                 <textarea id="workDesc" rows="2" maxlength="300" placeholder="예: 경기도 양평" style="resize:vertical;padding:8px 10px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg);font-family:inherit;font-size:13px;color:var(--text);outline:none;width:100%;"></textarea>
             </div>
             <div class="adm-mfield">
+                <label>이미지 설명 <span style="font-size:11px;color: var(--text);font-weight:400;">(검색엔진·화면낭독기용 alt — 무엇이 보이는지 구체적으로, 비우면 제목 사용)</span></label>
+                <input id="workAlt" type="text" placeholder="예: 정자살 미서기 창호를 단 한옥 거실" maxlength="200">
+            </div>
+            <div class="adm-mfield">
                 <label>사용 엔진 <span style="font-size:11px;color: var(--text);font-weight:400;">(포트폴리오 카드 호버 아이콘)</span></label>
                 <select id="workEngine" style="height:38px;padding:0 10px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg);font-family:inherit;font-size:13px;color:var(--text);outline:none;width:100%;">
                     <option value="">미지정</option>

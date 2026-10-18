@@ -163,7 +163,7 @@ $tags = array_merge(['전체'], $pdo->query('SELECT name FROM work_tags WHERE is
                 <?php else: ?>
                 <img class="wkg-card-img"
                      src="<?= htmlspecialchars($w['image_url']) ?>"
-                     alt="<?= htmlspecialchars(db_field($w, 'title')) ?>"
+                     alt="<?= htmlspecialchars(db_field($w, 'alt_text') ?: db_field($w, 'title')) ?>"
                      loading="lazy">
                 <?php if ($icon): ?>
                 <span class="wkg-card-icon"><?= $icon ?></span>

@@ -67,6 +67,7 @@ if ($action === 'save') {
     $id          = (int)($body['id'] ?? 0);
     $title       = trim($body['title'] ?? '');
     $description = trim($body['description'] ?? '');
+    $alt_text    = mb_substr(trim($body['alt_text'] ?? ''), 0, 200);
     $image_url   = trim($body['image_url'] ?? '');
 
     if (!empty($body['image_data'])) {
@@ -92,13 +93,13 @@ if ($action === 'save') {
     }
 
     if ($id) {
-        $pdo->prepare('UPDATE works SET title=?, description=?, image_url=?, panel_bg=?, title_color=?, desc_color=?, engine_key=?, icon_svg=? WHERE id=?')
-            ->execute([$title, $description, $image_url, $panel_bg, $title_color, $desc_color, $engine_key, $icon_svg, $id]);
+        $pdo->prepare('UPDATE works SET title=?, description=?, alt_text=?, image_url=?, panel_bg=?, title_color=?, desc_color=?, engine_key=?, icon_svg=? WHERE id=?')
+            ->execute([$title, $description, $alt_text, $image_url, $panel_bg, $title_color, $desc_color, $engine_key, $icon_svg, $id]);
     } else {
         $slug     = make_unique_slug($pdo, 'works', $title);
         $maxOrder = (int)$pdo->query('SELECT COALESCE(MAX(sort_order),0) FROM works')->fetchColumn();
-        $pdo->prepare('INSERT INTO works (title, slug, description, image_url, sort_order, panel_bg, title_color, desc_color, engine_key, icon_svg) VALUES (?,?,?,?,?,?,?,?,?,?)')
-            ->execute([$title, $slug, $description, $image_url, $maxOrder + 1, $panel_bg, $title_color, $desc_color, $engine_key, $icon_svg]);
+        $pdo->prepare('INSERT INTO works (title, slug, description, alt_text, image_url, sort_order, panel_bg, title_color, desc_color, engine_key, icon_svg) VALUES (?,?,?,?,?,?,?,?,?,?,?)')
+            ->execute([$title, $slug, $description, $alt_text, $image_url, $maxOrder + 1, $panel_bg, $title_color, $desc_color, $engine_key, $icon_svg]);
         $id = (int)$pdo->lastInsertId();
     }
     $stmt = $pdo->prepare('SELECT * FROM works WHERE id=?');

@@ -83,7 +83,7 @@ $desc  = strip_tags($work['description'] ?? '');
             <img id="wdMainImg"
                  class="wd-main-img"
                  src="<?= htmlspecialchars($images[0]) ?>"
-                 alt="<?= htmlspecialchars(db_field($work, 'title')) ?>">
+                 alt="<?= htmlspecialchars(db_field($work, 'alt_text') ?: db_field($work, 'title')) ?>">
 
             <!-- 다음 버튼 -->
             <button class="wd-arrow wd-arrow-next" id="wdNext" <?= $total <= 1 ? 'disabled' : '' ?>>
@@ -106,7 +106,7 @@ $desc  = strip_tags($work['description'] ?? '');
                 <?php foreach ($images as $i => $img): ?>
                 <div class="wd-thumb <?= $i === 0 ? 'active' : '' ?>" data-idx="<?= $i ?>">
                     <img src="<?= htmlspecialchars($img) ?>"
-                         alt="<?= htmlspecialchars(db_field($work, 'title')) ?> <?= $i + 1 ?>">
+                         alt="<?= htmlspecialchars(db_field($work, 'alt_text') ?: db_field($work, 'title')) ?> <?= $i + 1 ?>">
                 </div>
                 <?php endforeach; ?>
             </div>

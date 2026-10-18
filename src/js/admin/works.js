@@ -45,6 +45,7 @@ function openModal(id) {
     document.getElementById('workSaveStatus').textContent = '';
     document.getElementById('workTitle').value = w?.title ?? '';
     document.getElementById('workDesc').value  = w?.description ?? '';
+    document.getElementById('workAlt').value   = w?.alt_text ?? '';
     document.getElementById('workEngine').value = w?.engine_key ?? '';
     document.getElementById('workImageUrl').value    = w?.image_url ?? '';
     const prev = document.getElementById('workImgPreview');
@@ -143,6 +144,7 @@ async function saveWork() {
         id:          parseInt(document.getElementById('workId').value) || 0,
         title:       document.getElementById('workTitle').value.trim(),
         description: document.getElementById('workDesc').value.trim(),
+        alt_text:    document.getElementById('workAlt').value.trim(),
         engine_key:  document.getElementById('workEngine').value,
         image_url:   document.getElementById('workImageUrl').value.trim(),
         panel_bg:    document.getElementById('workPanelBg').value,
