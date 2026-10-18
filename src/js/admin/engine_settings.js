@@ -32,7 +32,7 @@ const ENGINE_SECTIONS = [
             { key: 'patternTop', label: '가로살 상',             hint: 'classic 전용' },
             { key: 'patternMid', label: '가로살 중',             hint: 'classic 전용' },
             { key: 'patternBot', label: '가로살 하',             hint: 'classic 전용' },
-            { key: 'shrinkH',    label: '세로 자동 맞춤',        hint: '0 / 1' },
+            { key: 'shrinkH',    label: '문틀세로 자동 맞춤',        hint: '0 / 1' },
             { key: 'rowsManual', label: '가로살 개수 직접 지정', hint: '0 / 1 · square 전용' },
             { key: 'rows',       label: '가로살 개수',           hint: 'square 전용, rowsManual=1일 때' },
             { key: 'rotate',     label: '패턴 세로 방향',        hint: '0 / 1' },

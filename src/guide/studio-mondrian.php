@@ -28,7 +28,7 @@ include __DIR__ . '/_head.php';
         <tr><td>칸 구성</td><td>크기가 제각각인 직사각형 (무작위 분할)</td><td>같은 크기의 칸이 반복되는 균등 격자</td></tr>
         <tr><td>칸수 지정</td><td>없음 — 랜덤 생성과 선 편집으로 구성</td><td>세로 칸수 · 가로살 개수로 지정</td></tr>
         <tr><td>분할선 드래그 이동</td><td>있음</td><td>없음</td></tr>
-        <tr><td>세로 자동 맞춤</td><td>없음</td><td>있음</td></tr>
+        <tr><td>문틀세로 자동 맞춤</td><td>없음</td><td>있음</td></tr>
         <tr><td>살 길이 (부재 목록)</td><td>살마다 달라 "가변"으로 표시</td><td>격자 기준 단일 길이</td></tr>
     </tbody>
 </table>

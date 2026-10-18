@@ -26,7 +26,7 @@ include __DIR__ . '/../_head.php';
     <tbody>
         <tr><td>Zoning</td><td>One cell ratio applied across the whole grid</td><td>Split into top/middle/bottom, each with its own cell count and ratio</td></tr>
         <tr><td>Vertical ratio range</td><td>1.0 – 3.0</td><td>1.0 – 5.0</td></tr>
-        <tr><td>Auto-fit vertically</td><td>Yes</td><td>No</td></tr>
+        <tr><td>Auto-fit frame height</td><td>Yes</td><td>No</td></tr>
     </tbody>
 </table>
 
@@ -37,9 +37,9 @@ include __DIR__ . '/../_head.php';
         <tr><td><strong>Hinged · Sliding / panels</strong></td><td>Hinged 1–2 panels, sliding 1–4, 6 or 8 panels. As with Se-sal, frame thickness and clearance are applied automatically to calculate the real panel dimensions.</td></tr>
         <tr><td><strong>Frame width / height</strong></td><td>Wall opening dimensions (width 100–10,000mm, height 400–5,000mm). The outer panel size is calculated with the frame thickness removed.</td></tr>
         <tr><td><strong>Vertical cells</strong></td><td>2–30. The number of cells (columns) dividing the panel width — the vertical slat count is cells − 1</td></tr>
-        <tr><td><strong>Set horizontal slat count manually</strong></td><td>When checked, you set the horizontal slats directly with <strong>Horizontal slat count</strong> (1–60), and Vertical ratio and Auto-fit vertically are hidden.</td></tr>
+        <tr><td><strong>Set horizontal slat count manually</strong></td><td>When checked, you set the horizontal slats directly with <strong>Horizontal slat count</strong> (1–60), and Vertical ratio and Auto-fit frame height are hidden.</td></tr>
         <tr><td><strong>Vertical ratio</strong></td><td>1.0–3.0. Sets each cell's width-to-height ratio, from which the horizontal slat count is derived automatically (when Set horizontal slat count manually is off).</td></tr>
-        <tr><td><strong>Auto-fit vertically</strong></td><td>When checked, the frame height is adjusted automatically so the last grid row meets the bottom rail exactly.</td></tr>
+        <tr><td><strong>Auto-fit frame height</strong></td><td>When checked, the frame height is adjusted automatically so the last grid row meets the bottom rail exactly.</td></tr>
         <tr><td><strong>Left/right stile · top/bottom rail thickness</strong></td><td>Outer frame thickness (mm)</td></tr>
         <tr><td><strong>Slat thickness</strong></td><td>Cross-section thickness of the lattice slats (mm)</td></tr>
         <tr><td><strong>Use transom panel</strong></td><td>Adds a transom panel zone at the top when checked; its height is set separately</td></tr>

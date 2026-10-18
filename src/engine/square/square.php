@@ -396,7 +396,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
 
                     <hr class="sb-divider">
                     <div class="toggle-row" id="shrinkHRow" style="display:<?= $cfg['rowsManual'] === '1' ? 'none' : 'flex' ?>;">
-                        <span class="toggle-label"><?= te('세로 자동 맞춤') ?></span>
+                        <span class="toggle-label"><?= te('문틀세로 자동 맞춤') ?></span>
                         <label class="toggle-switch">
                             <input type="checkbox" id="chkShrinkH" <?= $cfg['shrinkH'] === '1' ? 'checked' : '' ?>>
                             <span class="toggle-track"></span>

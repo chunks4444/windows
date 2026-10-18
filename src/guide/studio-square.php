@@ -24,7 +24,7 @@ include __DIR__ . '/_head.php';
     <tbody>
         <tr><td>구획 방식</td><td>전체 격자에 동일한 셀 비율 적용</td><td>상/중/하 3단으로 나눠 각 구역 칸수·비율을 독립 지정</td></tr>
         <tr><td>세로 비율 범위</td><td>1.0 ~ 3.0</td><td>1.0 ~ 5.0</td></tr>
-        <tr><td>세로 자동 맞춤</td><td>있음</td><td>없음</td></tr>
+        <tr><td>문틀세로 자동 맞춤</td><td>있음</td><td>없음</td></tr>
     </tbody>
 </table>
 
@@ -35,9 +35,9 @@ include __DIR__ . '/_head.php';
         <tr><td><strong>여닫이·미서기 / 짝수</strong></td><td>여닫이 1~2짝, 미서기 1~4·6·8짝. 세살과 동일하게 문틀 두께·틈새가 자동 반영되어 실제 문짝 치수가 계산됩니다.</td></tr>
         <tr><td><strong>문틀 가로 / 문틀 세로</strong></td><td>벽 개구부 치수 (가로 100~10,000mm, 세로 400~5,000mm). 문틀 두께를 제외한 값이 문짝 외경으로 자동 계산됩니다.</td></tr>
         <tr><td><strong>세로 칸수</strong></td><td>2~30. 문짝 폭을 나누는 칸(세로줄) 수 — 세로살 개수는 칸수 - 1</td></tr>
-        <tr><td><strong>가로살 개수 직접 지정</strong></td><td>체크하면 아래 <strong>가로살 개수</strong>(1~60)로 가로살을 직접 정합니다. 이때 세로 비율·세로 자동 맞춤은 숨겨집니다.</td></tr>
+        <tr><td><strong>가로살 개수 직접 지정</strong></td><td>체크하면 아래 <strong>가로살 개수</strong>(1~60)로 가로살을 직접 정합니다. 이때 세로 비율·문틀세로 자동 맞춤은 숨겨집니다.</td></tr>
         <tr><td><strong>세로 비율</strong></td><td>1.0~3.0. 셀의 가로:세로 비율을 결정하며 이 값에 따라 가로살 개수가 자동 산출됩니다. (가로살 개수 직접 지정이 꺼져 있을 때)</td></tr>
-        <tr><td><strong>세로 자동 맞춤</strong></td><td>체크 시 마지막 격자 행이 하단 울거미에 딱 맞도록 문틀 세로 값을 자동으로 재조정합니다.</td></tr>
+        <tr><td><strong>문틀세로 자동 맞춤</strong></td><td>체크 시 마지막 격자 행이 하단 울거미에 딱 맞도록 문틀 세로 값을 자동으로 재조정합니다.</td></tr>
         <tr><td><strong>좌우 / 상하 울거미 두께</strong></td><td>외곽 프레임 두께 (mm)</td></tr>
         <tr><td><strong>살 두께</strong></td><td>격자 살 단면 두께 (mm)</td></tr>
         <tr><td><strong>풍판 사용</strong></td><td>체크 시 상단 풍판 구역 추가, 풍판 높이 별도 설정</td></tr>

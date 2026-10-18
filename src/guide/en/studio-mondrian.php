@@ -28,7 +28,7 @@ include __DIR__ . '/../_head.php';
         <tr><td>Cell layout</td><td>Rectangles of varying sizes (random division)</td><td>Even grid of identical cells</td></tr>
         <tr><td>Cell count</td><td>None — shaped by random generation and line editing</td><td>Set by vertical cells and horizontal slat count</td></tr>
         <tr><td>Drag dividing lines</td><td>Yes</td><td>No</td></tr>
-        <tr><td>Auto-fit vertically</td><td>No</td><td>Yes</td></tr>
+        <tr><td>Auto-fit frame height</td><td>No</td><td>Yes</td></tr>
         <tr><td>Slat length (member list)</td><td>Differs per slat, shown as "variable"</td><td>One length based on the grid</td></tr>
     </tbody>
 </table>

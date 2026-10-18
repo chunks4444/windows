@@ -34,7 +34,7 @@ include __DIR__ . '/../_head.php';
         <tr><td><strong>Hinged · Sliding / panels</strong></td><td>Hinged 1–2 panels, sliding 1–4, 6 or 8 panels</td></tr>
         <tr><td><strong>Frame width / height</strong></td><td>Wall opening dimensions (width 100–10,000mm, height 400–5,000mm). The outer panel size is calculated with the frame thickness removed.</td></tr>
         <tr><td><strong>Horizontal cells</strong></td><td>2–30. As with Bit-sal, this sets the number of square cells across; the vertical count is derived automatically.</td></tr>
-        <tr><td><strong>Auto-fit vertically</strong></td><td>When checked, the frame height is adjusted so the last row meets the bottom rail exactly</td></tr>
+        <tr><td><strong>Auto-fit frame height</strong></td><td>When checked, the frame height is adjusted so the last row meets the bottom rail exactly</td></tr>
         <tr><td><strong>Left/right stile · top/bottom rail thickness</strong></td><td>Outer frame thickness (mm)</td></tr>
         <tr><td><strong>Slat thickness</strong></td><td>Base thickness for all slats, orthogonal and diagonal alike (mm)</td></tr>
         <tr><td><strong>Use transom panel</strong></td><td>Adds a transom panel zone at the top when checked</td></tr>

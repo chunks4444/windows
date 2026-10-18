@@ -38,7 +38,7 @@ include __DIR__ . '/../_head.php';
         <tr><td><strong>Frame width / height</strong></td><td>Wall opening dimensions (width 100–10,000mm, height 400–5,000mm). The outer panel size is calculated with the frame thickness removed.</td></tr>
         <tr><td><strong>Horizontal cells</strong></td><td>2–30, adjustable in <strong>even steps only</strong> (default 4). This and the slat thickness set the triangle size, and the vertical count is derived automatically.</td></tr>
         <tr><td><strong>Pattern vertical direction</strong></td><td>On by default. Rotates the entire triangular grid 90°. The directional part names in the member list change depending on whether this is on or off.</td></tr>
-        <tr><td><strong>Auto-fit vertically</strong></td><td>When checked, the frame height is adjusted so the last row meets the bottom rail exactly</td></tr>
+        <tr><td><strong>Auto-fit frame height</strong></td><td>When checked, the frame height is adjusted so the last row meets the bottom rail exactly</td></tr>
         <tr><td><strong>Left/right stile · top/bottom rail thickness</strong></td><td>Outer frame thickness (mm)</td></tr>
         <tr><td><strong>Slat thickness</strong></td><td>Width of each slat (mm). It also determines the equilateral triangle cell size.</td></tr>
         <tr><td><strong>Use transom panel</strong></td><td>Adds a transom panel zone at the top when checked</td></tr>

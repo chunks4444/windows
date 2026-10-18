@@ -36,7 +36,7 @@ include __DIR__ . '/_head.php';
         <tr><td><strong>문틀 가로 / 문틀 세로</strong></td><td>벽 개구부 치수 (가로 100~10,000mm, 세로 400~5,000mm). 문틀 두께를 제외한 값이 문짝 외경으로 자동 계산됩니다.</td></tr>
         <tr><td><strong>가로 칸수</strong></td><td>1~29, <strong>홀수 단위</strong>로만 조절됩니다(기본값 3). 이 값과 살 두께로 육각형 크기가 정해집니다.</td></tr>
         <tr><td><strong>패턴 세로 방향</strong></td><td>기본 켜짐. 켜짐(세로형·pointy-top)/꺼짐(가로형·flat-top)으로 육각형 방향이 바뀝니다.</td></tr>
-        <tr><td><strong>세로 자동 맞춤</strong></td><td>체크 시 마지막 행이 하단 울거미에 딱 맞도록 문틀 세로 값을 자동 재조정</td></tr>
+        <tr><td><strong>문틀세로 자동 맞춤</strong></td><td>체크 시 마지막 행이 하단 울거미에 딱 맞도록 문틀 세로 값을 자동 재조정</td></tr>
         <tr><td><strong>좌우 / 상하 울거미 두께</strong></td><td>외곽 프레임 두께 (mm)</td></tr>
         <tr><td><strong>살 두께</strong></td><td>각 살의 폭 (mm)</td></tr>
         <tr><td><strong>풍판 사용</strong></td><td>체크 시 상단 풍판 구역 추가</td></tr>

@@ -505,7 +505,11 @@ async function draw() {
         const effectivePungpan = pungpanOn ? pungpanInput : 0;
         // rawTarget은 문짝 외경(outerH) 기준 목표값이라, 문틀 세로(frameOpeningH, txtH)에 넣으려면
         // 문틀두께·갭만큼 다시 더해야 한다 — 안 더하면 매번 그만큼씩 모자라게 줄어들어 최소값까지 폭주한다.
-        const rawTarget = Math.round(geo.frameH * 2 + geo.innerH) + effectivePungpan + 2 * geo.frameThick + 2 * geo.frameGap;
+        // Math.round가 아니라 ceil — round는 되돌아온 값이 서버 쪽 계산에서 1mm 이내로 모자라게
+        // 반올림될 때가 있어(특히 삼각형/육각형 회전 모드), 그 미세한 부족분 때문에 칸 수가 한 줄 통째로
+        // 깎여 세로 자동 맞춤이 여러 번에 걸쳐 크게 흔들렸다(예: 1800→1793→1703→1613→1523) — ceil로 항상
+        // 살짝 올려 보내면 한 번에 정확히 맞아떨어진다.
+        const rawTarget = Math.ceil(geo.frameH * 2 + geo.innerH) + effectivePungpan + 2 * geo.frameThick + 2 * geo.frameGap;
         // 유효한 값이고 슬라이더 범위 안에 있을 때만 조정
         if (Number.isFinite(rawTarget) && rawTarget >= 400 && rawTarget <= 5000) {
             const currentH = parseInt(txtH.value);

@@ -29,7 +29,7 @@ return [
     '가로 칸수'               => 'Horizontal cells',
     '세로 칸수'               => 'Vertical cells',
     '세로 비율'               => 'Vertical ratio',
-    '세로 자동 맞춤'          => 'Auto-fit vertically',
+    '문틀세로 자동 맞춤'      => 'Auto-fit frame height',
     '세로 내경중심'           => 'Vertical inner center',
     '살 두께'                 => 'Slat thickness',
     '좌우 울거미 두께'        => 'Left/right stile thickness',
