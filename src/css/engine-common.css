@@ -1414,6 +1414,19 @@ input[type="range"]::-moz-range-thumb {
 .spec-card.accent-blue { background: transparent; }
 .spec-card.full { }
 
+/* 이름만으로 뜻을 알기 어려운 시방서 항목 — 마우스를 올리면 바로 뜨는 말풍선(브라우저 title은
+   1초 넘게 늦어서 안 보이는 것처럼 보임, 같은 이유로 '면 재질' 표도 CSS 방식으로 바꿨다) */
+.spec-card[data-tip] { position: relative; cursor: help; }
+.spec-card[data-tip]:hover::after {
+    content: attr(data-tip);
+    position: absolute; left: 0; top: calc(100% + 2px); z-index: 20;
+    padding: 4px 8px; border-radius: 6px; background: #fff; color: #111;
+    border: 1px solid #E4E6EB; box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    font-size: 11px; font-weight: 500; line-height: 1.4;
+    white-space: normal; width: max-content; max-width: 220px;
+    pointer-events: none;
+}
+
 .spec-lbl { font-size: var(--fs-11); color: rgba(var(--bg-rgb), 0.55); font-weight: 400; white-space: nowrap; }
 .spec-lbl::after { content: ':'; }
 .spec-val { font-size: var(--fs-11); font-weight: 400; color: rgba(var(--bg-rgb), 0.55); letter-spacing: -0.3px; }
