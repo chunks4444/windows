@@ -67,7 +67,7 @@ try {
         FROM blog_posts p
         LEFT JOIN blog_series s ON s.id = p.series_id
         WHERE p.is_active = 1
-        ORDER BY p.sort_order, p.id
+        ORDER BY p.created_at DESC, p.id DESC  -- 목록은 항상 최신 글부터(관리자 수동 순서는 상단 피처 캐로셀에만 씀)
         LIMIT :lim OFFSET :off
     ");
     $stmt->bindValue(':lim', $perPage, PDO::PARAM_INT);
