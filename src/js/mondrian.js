@@ -97,7 +97,7 @@
         () => {
             faceColorMap = null;
             faceMaterialMap = null;
-            if (mondrianLayout) { mondrianLayout.rects.forEach(r => { r.color = null; }); _persistMondrianLayout(); _mondrianVersion++; }
+            if (mondrianLayout) { mondrianLayout.rects.forEach(r => { r.color = null; r.mat = null; }); _persistMondrianLayout(); _mondrianVersion++; }
             draw();
         }
     );
@@ -553,7 +553,7 @@ async function draw() {
         document.getElementById('spMtVLen').textContent   = `${p.mtFace}×${p.mtW}×${p.mtVLen}mm`;
         document.getElementById('spMtHLen').textContent   = `${p.mtFace}×${p.mtW}×${p.mtHLen}mm`;
     }
-    renderPhysTable(p, data.glassConfig);
+    renderPhysTable(p, data.glassConfig, effInnerH);
 
     // draw() 안에서 ctx를 재할당 가능하도록 로컬 변수로 섀도잉
     let ctx = canvas.getContext('2d');
@@ -2049,20 +2049,24 @@ async function draw() {
     // 재질이 glass인 칸의 실제 면적을 더해 계산한다 — 몬드리안 랜덤 패턴(mondrian:idx)은 칸마다 크기가
     // 다 달라서(BSP 렉트) 균일 셀 면적을 쓸 수 없고, rect의 비율(w·h, innerW·내경높이 대비)로 직접 구한다.
     // 정자살 격자 칸(cell:col:row)은 다른 엔진과 같은 균일 셀 면적을 쓴다.
-    function renderPhysTable(p, glassConfig) {
-        // 시방서 '면 재질' 표 — 랜덤 칸은 칸마다 크기가 달라서 칸별 실제 치수를 쓴다
-        const _effH = mondrianLayout ? lastEffInnerH : geo.innerH;
+    function renderPhysTable(p, glassConfig, effInnerH) {
+        // 시방서 '면 재질' 표 — 랜덤 칸은 칸마다 크기가 달라서 칸별 실제 치수를 쓴다.
+        // 높이는 draw()가 막 계산한 effInnerH를 받는다(lastEffInnerH는 이 뒤에 갱신돼서 첫 그리기 땐 아직 옛 값).
+        const _effH = effInnerH || geo.innerH;
         const faceCells = [];
-        for (const k in faceMaterialMap || {}) {
-            const fm = faceMaterialMap[k];
-            if (k.startsWith('mondrian:')) {
-                const r = mondrianLayout?.rects?.[parseInt(k.slice(9), 10)];
-                if (!r) continue;
+        if (mondrianLayout) {
+            // 랜덤 칸: 칠한 칸(color)만, 재질은 칸에 저장된 mat 우선 — 예전 도면은 faceMaterialMap에서
+            mondrianLayout.rects.forEach((r, i) => {
+                if (!r.color) return;
+                const fm = r.mat || faceMaterialMap?.[`mondrian:${i}`];
+                if (!fm) return;
                 const w = r.w * geo.innerW, h = r.h * _effH;
                 faceCells.push({ fm, shape: 'rect', w, h, areaMm2: w * h });
-            } else {
-                faceCells.push({ fm, shape: 'rect', w: geo.cellW, h: geo.cellH, areaMm2: geo.cellW * geo.cellH });
-            }
+            });
+        }
+        for (const k in faceMaterialMap || {}) {
+            if (k.startsWith('mondrian:')) continue;
+            faceCells.push({ fm: faceMaterialMap[k], shape: 'rect', w: geo.cellW, h: geo.cellH, areaMm2: geo.cellW * geo.cellH });
         }
         renderFaceMaterialSpec(faceCells, glassConfig, p?.physical?.doorCount || parseInt(txtDoorCount.value) || 1);
 
@@ -2162,6 +2166,9 @@ async function draw() {
             const idx = parseInt(key.slice(9), 10);
             if (!mondrianLayout?.rects[idx]) return;
             mondrianLayout.rects[idx].color = isErase ? null : faceColorUI.getCurrentHex();
+            // 재질도 칸(rect)에 같이 저장 — 레이아웃은 새로고침해도 브라우저 기록에서 복원되지만 faceMaterialMap은
+            // 저장한 도면을 열 때만 복원돼서, 새로고침 후 시방서 '면 재질' 표가 비어 있던 문제가 있었다.
+            mondrianLayout.rects[idx].mat = (isErase || !pendingFaceMaterial) ? null : { ...pendingFaceMaterial };
             if (isErase || !pendingFaceMaterial) {
                 if (faceMaterialMap) {
                     delete faceMaterialMap[key];
@@ -2556,7 +2563,7 @@ async function draw() {
             faceColorMap = null;
             faceColorUI.updateClearBtn(false);
             if (mondrianLayout) {
-                mondrianLayout.rects.forEach(r => { r.color = null; });
+                mondrianLayout.rects.forEach(r => { r.color = null; r.mat = null; });
                 _persistMondrianLayout();
                 _mondrianVersion++;
             }
