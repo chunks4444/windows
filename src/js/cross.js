@@ -1831,7 +1831,10 @@ async function draw() {
             if (c.fm?.material === 'glass') glassAreaMm2Door += c.areaMm2;
             else if (c.fm?.material === 'hanji') hanjiAreaMm2Door += c.areaMm2;
         }
-        if (faceBacking) hanjiAreaMm2Door += geo.innerW * geo.innerH; // 문 전체 배지(배접지·백지) 한 장
+        if (faceBacking) { // 문 전체 배지(배접지·백지·일반유리) 한 장
+            if (faceBacking.material === 'glass') glassAreaMm2Door += geo.innerW * geo.innerH;
+            else hanjiAreaMm2Door += geo.innerW * geo.innerH;
+        }
         let glassVolMm3Door = 0, glassKgDoor = null;
         if (glassAreaMm2Door > 0 && glassConfig?.density && glassConfig?.thicknessMm) {
             glassVolMm3Door = glassAreaMm2Door * glassConfig.thicknessMm;

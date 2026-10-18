@@ -575,13 +575,14 @@
                 return;
             }
             const subs   = FACE_MATERIAL_SUBS[material] || [];
-            const subDef = subs.find(s => s.value === sub) || subs[0];
+            // 기본 버튼(한지/유리)만 눌렀을 때는 칸 붓 종류(색한지·칼라유리)로 시작 — 배지 종류가 첫 번째여도 바로 전체가 칠해지지 않게
+            const subDef = subs.find(s => s.value === sub) || subs.find(s => !s.backing) || subs[0];
             // 색 있는 종류로 바꿀 때 이전 색을 이어 쓰는 건 이전 것도 색 있는 종류였을 때만 — 백지·배접지의 고정색이
             // 색한지 '색'으로 넘어가지 않게
             const prevSubDef = faceMaterial?.material === material ? subs.find(s => s.value === faceMaterial.sub) : null;
             const resolvedHex = hex
                 || (subDef?.hasColor ? (prevSubDef?.hasColor && faceMaterial.hex) || faceMaterialColors[0]?.hex : faceSubHex(material, subDef?.value));
-            // 배접지·백지는 칸을 칠하는 붓이 아니라 문 전체 배지 — 누르는 순간 내경 전체가 칠해지고, 다시 누르면 해제.
+            // 배접지·백지·일반유리는 칸을 칠하는 붓이 아니라 문 전체 배지 — 누르는 순간 내경 전체가 칠해지고, 다시 누르면 해제.
             // 칠하기 모드는 끈다(색한지·유리로 칸을 더 칠하려면 그 종류를 고르면 다시 켜짐).
             if (subDef?.backing) {
                 const off = window.__pmokGetFaceBacking?.()?.sub === subDef.value;

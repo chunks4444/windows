@@ -503,13 +503,13 @@
             { value: 'ilban',   label: '일반한지(백지)',   hasColor: false, hex: '#f6f2e8', backing: true }, // 백지 — 거의 흰 미색
         ],
         glass: [
-            { value: 'plain', label: '일반유리', hasColor: false },
+            { value: 'plain', label: '일반유리', hasColor: false, hex: '#d4e9f7', backing: true }, // 문 전체 한 장 — 밝은 블루
             { value: 'color', label: '칼라유리', hasColor: true  },
         ],
     };
     const FACE_MATERIAL_BASE_HEX = { hanji: '#e8dcc0', glass: '#bcd2d8' };
     // 색을 고르지 않는 세부 종류의 칠 색 — 종류마다 hex가 있으면 그것, 없으면 재질 기본색(도면에서 배접지·백지를 구분해 보이게)
-    // 문 전체 배지(배접지·백지) — { material, sub, hex } | null. 각 엔진 draw()가 내경 바탕을 이 색으로 칠하고,
+    // 문 전체 배지(배접지·백지·일반유리) — { material, sub, hex } | null. 각 엔진 draw()가 내경 바탕을 이 색으로 칠하고,
     // getParams/applyParams가 도면과 함께 저장·복원한다(한 페이지엔 엔진 하나라 전역 하나로 충분).
     let faceBacking = null;
     const faceBackingHex = () => faceBacking?.hex || '#ffffff';
