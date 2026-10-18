@@ -581,6 +581,12 @@
                 render();
                 return;
             }
+            // 재질 자체를 바꾸는 경우(기본 버튼: 한지→유리 등)는 이미 칠해둔 칸도 함께 지운다 —
+            // hex만 새로 고른 재질 기준으로 바뀌어도, 칸마다 남아있는 이전 재질 칠이 뒤섞여 보이는 걸 막는다.
+            // sub/색만 바꿀 때(같은 재질 안에서)는 여기 걸리지 않는다(material이 그대로라서).
+            if (faceMaterial && faceMaterial.material !== material) {
+                document.getElementById('btnFaceClear')?.click();
+            }
             const subs   = FACE_MATERIAL_SUBS[material] || [];
             // 기본 버튼(한지/유리)만 눌렀을 때는 칸 붓 종류(색한지·칼라유리)로 시작 — 배지 종류가 첫 번째여도 바로 전체가 칠해지지 않게
             const subDef = subs.find(s => s.value === sub) || subs.find(s => !s.backing) || subs[0];
