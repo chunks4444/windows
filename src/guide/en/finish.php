@@ -21,7 +21,7 @@ include __DIR__ . '/../_head.php';
 <h2>Using the Finish Tab</h2>
 <ol class="guide-steps">
     <li>Open the <span class="guide-ui"><i class="bi bi-palette"></i> Finish</span> tab in the left-hand menu.</li>
-    <li>Choose the <strong>Wood</strong>.</li>
+    <li>Choose the <strong>Wood</strong>. <strong>Hongsong</strong> is an imported North American softwood sold in Korea under the trade name 'hongsong' — a different tree from <strong>Korean red pine</strong> (sonamu).</li>
     <li>Under <strong>Part to colour</strong>, click one of <strong>Frame · Stile &amp; rail · Slat</strong>. If you click a colour without picking a part first, a hint appears.</li>
     <li>Click a colour among the <strong>Basic</strong> finishes or the stain swatches and that part is painted right away. Clicking a colour also selects the finish it belongs to.</li>
     <li>Switch parts and paint the rest the same way. The name of the selected part's colour is shown just below the part buttons.</li>

@@ -20,7 +20,7 @@ include __DIR__ . '/_head.php';
 <h2>마감 탭 사용 순서</h2>
 <ol class="guide-steps">
     <li>왼쪽 메뉴의 <span class="guide-ui"><i class="bi bi-palette"></i> 마감</span> 탭을 엽니다.</li>
-    <li><strong>수종</strong>을 고릅니다.</li>
+    <li><strong>수종</strong>을 고릅니다. <strong>홍송</strong>은 북미산 수입재로, 국내에서 '홍송'이라는 이름으로 유통되는 나무입니다. 우리 <strong>소나무</strong>와는 다른 나무입니다.</li>
     <li><strong>색칠할 부위</strong>에서 <strong>문틀 · 울거미 · 살</strong> 중 하나를 누릅니다. 부위를 고르지 않고 색을 누르면 안내가 뜹니다.</li>
     <li>아래 <strong>기본</strong> 마감이나 스테인 색 견본에서 색을 누르면 그 부위에 바로 칠해집니다. 색을 누르면 그 색이 속한 마감 종류도 함께 선택됩니다.</li>
     <li>부위를 바꿔 가며 나머지 부위도 같은 방법으로 칠합니다. 현재 고른 부위의 색 이름은 부위 버튼 바로 아래에 표시됩니다.</li>
