@@ -256,6 +256,8 @@ return [
     '오일 마감은 나무결 그대로 한 가지 색으로 칠해집니다.' => 'Oil finishes keep the grain and use a single colour.',
     '나무 본래 색 그대로입니다. 아래에서 색을 고르면 그 마감이 함께 선택됩니다.' => 'The wood keeps its natural colour. Picking a colour below also selects its finish.',
     '먼저 색칠할 부위를 고르세요.'                   => 'Choose a part to colour first.',
+    '바깥에 다는 창호는 마감에 따라 다시 손보는 주기가 크게 다릅니다.' => 'For exterior changho, how often the finish needs redoing varies a lot by finish.',
+    '마감과 관리 글 보기'                            => 'Read: Finishes and care',
     '부위를 고른 뒤 아래에서 색을 누르세요.'          => 'Choose a part, then pick a colour below.',
     '기본'                                           => 'Basic',
     '원목 그대로'                                    => 'Bare wood',

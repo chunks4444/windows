@@ -670,7 +670,7 @@
             }
 
             if (target && faceMode) {
-                // 면 재질 — 한지/유리/없음 (임시 구조, FACE_MATERIAL_* 플레이스홀더)
+                // 면 재질 — 한지/유리/없음 (세부 종류는 engine-common.js FACE_MATERIAL_SUBS)
                 h += `<div class="fin-group"><div class="fin-group-head">${_t('기본')}</div><div class="fin-bases">`;
                 [
                     { v: 'hanji', label: _t('한지'), bg: FACE_MATERIAL_BASE_HEX.hanji },
@@ -734,6 +734,9 @@
                     });
                     h += '</div></div>';
                 });
+                // 마감마다 바깥에서 버티는 기간이 크게 달라(오일·들기름은 자외선·곰팡이를 거의 못 막음) 고르기 전에 볼 글로 연결
+                h += `<div class="fin-note">${_t('바깥에 다는 창호는 마감에 따라 다시 손보는 주기가 크게 다릅니다.')} `
+                   + `<a href="${lh('/blog/' + encodeURIComponent('마감과-관리-무엇을-바르고'))}" target="_blank" rel="noopener">${_t('마감과 관리 글 보기')} <i class="bi bi-box-arrow-up-right"></i></a></div>`;
             }
             root.innerHTML = h;
             if (paintRow) { root.appendChild(paintRow); paintRow.hidden = target !== 'face'; }
