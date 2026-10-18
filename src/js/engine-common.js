@@ -517,13 +517,15 @@
         if (!physSection) return; // 부재목록 열람 권한이 없으면 표도 없다
         let section = document.getElementById('faceMatSection');
         if (!section) {
+            // 부재 목록 안의 한 묶음(울거미·가로살·세로살·문틀과 같은 급)으로 문틀 다음에 붙인다
             section = document.createElement('div');
-            section.className = 'sb-section';
+            section.className = 'slat-group';
             section.id = 'faceMatSection';
-            section.innerHTML = `<div class="sb-section-title">${_t('면 재질')} <small>${_t('한지·유리 칸 내치수')}</small></div>`
-                + `<table class="phys-table"><thead><tr><th>${_t('재질')}</th><th>${_t('크기(mm)')}</th><th>${_t('개수')}</th><th>${_t('면적(㎡)')}</th><th>${_t('무게(kg)')}</th></tr></thead>`
+            section.innerHTML = `<div class="slat-group-title">${_t('면 재질')}</div>`
+                + `<table class="phys-table"><thead><tr><th>${_t('재질')}</th><th>${_t('내치수(mm)')}</th><th>${_t('개수')}</th><th>${_t('면적(㎡)')}</th><th>${_t('무게(kg)')}</th></tr></thead>`
                 + `<tbody id="faceMatBody"></tbody></table>`;
-            physSection.before(section);
+            const partsSection = document.getElementById('spMtVLen')?.closest('.sb-section');
+            if (partsSection) partsSection.appendChild(section); else physSection.before(section);
         }
         const doors = Math.max(1, doorCount || 1);
         const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));

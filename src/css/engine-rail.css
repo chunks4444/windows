@@ -457,7 +457,11 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
 }
 .rail-pane[data-pane="spec"] .sb-section-title small { font-size: 11px; font-weight: 400; color: #4B5160; letter-spacing: 0; }
 .rail-pane[data-pane="spec"] .sb-section-title .sb-chevron { margin-left: auto; color: #4B5160; }
-.rail-pane[data-pane="spec"] .slat-group-title { color: #111; }
+/* 부재 목록 묶음 제목(울거미·가로살·세로살·문틀·면 재질) — 본문과 같은 크기, 굵게만 */
+.rail-pane[data-pane="spec"] .slat-group-title { color: #111; font-weight: 700; }
+/* 면 재질 표 — 위 묶음들과 같은 간격, 값은 다른 부재 줄처럼 검정 */
+.rail-pane[data-pane="spec"] #faceMatSection { margin-top: 16px; }
+.rail-pane[data-pane="spec"] #faceMatSection td { color: #111; }
 /* 항목 이름은 진회색, 치수·개수 값은 검정 (공용 CSS의 55% 투명 회색은 흰 바탕에서 흐림) */
 .rail-pane[data-pane="spec"] .spec-lbl { color: #4B5160; }
 .rail-pane[data-pane="spec"] .spec-val,

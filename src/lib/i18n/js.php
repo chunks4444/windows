@@ -243,9 +243,8 @@ return [
     '칼라유리'                                       => 'Colored glass',
     // 시방서 '면 재질' 표 (engine-common.js renderFaceMaterialSpec)
     '면 재질'                                        => 'Infill materials',
-    '한지·유리 칸 내치수'                            => 'Hanji & glass, clear opening sizes',
+    '내치수(mm)'                                     => 'Clear size (mm)',
     '재질'                                           => 'Material',
-    '크기(mm)'                                       => 'Size (mm)',
     '개수'                                           => 'Qty',
     '면적(㎡)'                                       => 'Area (m²)',
     '무게(kg)'                                       => 'Weight (kg)',
