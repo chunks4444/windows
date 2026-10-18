@@ -531,10 +531,13 @@
         const oilColors   = groups.filter(g => String(g.key || g.label).startsWith(OIL_GROUP_KEY)).flatMap(g => g.colors);
         // 색한지 — "예한 전통한지 색운용지" 33색(실제 제품 견본에서 추출, color_swatches DB 관리)을 쓴다.
         // 칼라유리는 아직 전용 색상 목록이 없어 기존처럼 AURO 팔레트(제품 하나 전체)를 임시로 빌려 쓴다.
+        // faceMaterial이 render()마다 바뀌므로(재질을 고른 뒤에 바뀜) 이 값도 매번 다시 계산해야 한다 —
+        // 여기서 한 번만 계산하면 최초 렌더(재질 선택 전) 시점 값에 고정돼 계속 AURO만 나온다.
         const hanjiGroup = groups.find(g => (g.key || g.label) === HANJI_GROUP_KEY);
-        const faceMaterialColors = (faceMaterial?.material === 'hanji' && hanjiGroup?.colors.length)
+        const faceMaterialColorsFor = mat => (mat === 'hanji' && hanjiGroup?.colors.length)
             ? hanjiGroup.colors
             : (stainGroups[0]?.g.colors || groups[0]?.colors || []);
+        let faceMaterialColors = faceMaterialColorsFor(faceMaterial?.material);
         const oilHexFor   = v => {
             const want = OIL_FINISH_COLOR_CODE[v] || OIL_WOOD_COLOR_CODE[document.getElementById('txtWood')?.value || ''] || 'NO-01';
             return (oilColors.find(c => c.code === want) || oilColors[0] || {}).hex || '#c8b48a';
@@ -653,6 +656,7 @@
             const esc2 = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
             const faceMode = target === 'face';
             if (faceMode) faceMaterial = window.__pmokGetFaceMaterial?.() ?? faceMaterial;
+            faceMaterialColors = faceMaterialColorsFor(faceMaterial?.material);
 
             let h = '';
             // 부위 고르기 — 스테인일 때만 부위별로 색이 다르다 (마감 없음·오일은 한 가지 색)
