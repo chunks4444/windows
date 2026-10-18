@@ -656,7 +656,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                             <div class="spec-lbl"><?= te('살 먹줄') ?></div>
                             <div class="spec-val"><span id="spHalfLapWD">0</span><span class="spec-unit">mm</span></div>
                         </div>
-                        <div class="spec-card accent-blue">
+                        <div class="spec-card accent-blue" data-tip="<?= te('사선살이 45도로 박히는 자리에 울거미에 파는 홈의 폭 — 살 두께가 비스듬히 들어가는 만큼 넓어진 값') ?>">
                             <div class="spec-lbl"><?= te('울거미홈폭') ?></div>
                             <div class="spec-val"><span id="spGrooveWDiag">0</span><span class="spec-unit">mm</span></div>
                         </div>

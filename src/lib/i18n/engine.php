@@ -89,6 +89,7 @@ return [
     '사선살 중심선 사이의 먹줄 간격 — 마름모 한 변의 먹줄 피치' => 'The ink-line spacing between diagonal slat centerlines — the pitch along one side of a diamond',
     '반턱 너비'               => 'Half-lap width',
     '울거미홈폭'              => 'Stile groove width',
+    '사선살이 45도로 박히는 자리에 울거미에 파는 홈의 폭 — 살 두께가 비스듬히 들어가는 만큼 넓어진 값' => 'The groove width cut into the stile where a diagonal slat enters at 45° — widened for the slat thickness entering at an angle',
     '가로울거미홈폭'          => 'Horizontal stile groove width',
     '세로울거미홈폭'          => 'Vertical stile groove width',
     '세로울거미홈간격'        => 'Vertical stile groove spacing',
