@@ -1793,7 +1793,7 @@ async function draw() {
         if (!ph) { section.style.display = 'none'; return; }
 
         const doorCount = ph.doorCount || 1;
-        const JAE_MM3 = 33 * 33 * 3600; // 1재(才) = 33×33×3600mm³ — 목재비 계산과 같은 기준
+        const JAE_MM3 = 30.3 * 30.3 * 3636; // 1재(才) = 30.3×30.3×3636mm³ — 목재비 계산과 같은 기준
         const fmtVol  = mm3 => Math.round(mm3 / 1000).toLocaleString();
         const fmtJae  = mm3 => mm3 == null ? '—' : (mm3 / JAE_MM3).toFixed(2);
         const fmtArea = m2  => Math.round(m2 * 10000).toLocaleString();

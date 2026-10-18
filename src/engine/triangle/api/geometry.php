@@ -254,9 +254,9 @@ $parts['diagList'] = array_map(function($item) use ($doorCount) {
     return ['len' => $item['len'], 'cnt' => $item['cnt'] * 2 * $doorCount];
 }, $merged);
 
-// 목재 재수 계산 (1재 = 33×33×3600mm³, 부재별 실제 단면 사용)
+// 목재 재수 계산 (1재 = 30.3×30.3×3636mm³, 부재별 실제 단면 사용)
 $_es  = get_engine_settings('triangle');
-$_JAE = 33 * 33 * 3600;
+$_JAE = 30.3 * 30.3 * 3636;
 $_wU  = (int)($_es['ulgeomiW']             ?? $_d['울거미']['width_mm'] ?? 33);
 $_wS  = (int)($_es['slatW']               ?? $_d['살']['width_mm']    ?? 20);
 $_pT  = (int)($_es['pungpanT']            ?? 15);

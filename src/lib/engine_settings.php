@@ -252,10 +252,10 @@ function compute_price_estimate(array $parts, array $selection, array $cfg, arra
     $hwRate = $hw ? (float)$hw['unit_price'] : 0.0;
     $hardwareCost = (int)round($doorCount * $hwRate);
 
-    // 도장 면적 (1재 = 33×33×3600mm³, 육면체 4면 기준)
+    // 도장 면적 (1재 = 30.3×30.3×3636mm³, 육면체 4면 기준)
     $slatW     = (float)($cfg['slatW'] ?? 20);
     $slatThick = (float)($cfg['slat']  ?? 12);
-    $JAE_VOL   = 33 * 33 * 3600;
+    $JAE_VOL   = 30.3 * 30.3 * 3636;
     $totalLenMm = ($slatW * $slatThick) > 0 ? ($parts['woodJae_door'] ?? 0) * $JAE_VOL / ($slatW * $slatThick) : 0;
     $surfaceM2  = $totalLenMm * 2 * ($slatW + $slatThick) / 1_000_000;
 
