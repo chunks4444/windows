@@ -770,6 +770,24 @@
         }).open();
     }
 
+    function _orderOpenCompanyPostcode() {
+        new daum.Postcode({
+            oncomplete(data) {
+                document.getElementById('orderCoZipcode').value       = data.zonecode;
+                document.getElementById('orderCoAddress').value       = data.roadAddress || data.autoRoadAddress || data.jibunAddress;
+                document.getElementById('orderCoAddressDetail').value = '';
+                document.getElementById('orderCoAddressDetail').focus();
+            }
+        }).open();
+    }
+
+    // 견적요청 창의 회사 정보 입력칸 ↔ /api/auth/company.php 필드
+    const ORDER_COMPANY_FIELDS = {
+        orderCoName: 'company_name', orderCoBizNo: 'company_biz_no', orderCoBizType: 'company_biz_type',
+        orderCoBizCat: 'company_biz_category', orderCoCeo: 'company_ceo', orderCoPhone: 'company_phone',
+        orderCoZipcode: 'company_zipcode', orderCoAddress: 'company_address', orderCoAddressDetail: 'company_address_detail',
+    };
+
     function openOrderModal(opts) {
         const token = localStorage.getItem('pmok_auth_token');
         if (!token) {
@@ -790,25 +808,17 @@
             const user    = profileRes.user    || {};
             const company = companyRes.company || {};
 
-            if (!user.name || !user.phone) {
-                pmConfirm(
-                    _t('견적요청하려면 프로필에 이름과 연락처를 먼저 입력해주세요.'),
-                    () => { location.href = _lh('/mypage/profile'); },
-                    { sub: _t('프로필 페이지에서 입력 후 다시 시도해주세요.'), type: 'ok', confirmText: _t('프로필로 이동') }
-                );
-                return;
-            }
-
-            document.getElementById('orderDate').textContent      = new Date().toISOString().slice(0, 10);
-            document.getElementById('orderCustName').textContent  = user.name;
-            document.getElementById('orderCustPhone').textContent = user.phone;
-            const companyRow = document.getElementById('orderCompanyRow');
-            if (company.company_name) {
-                document.getElementById('orderCustCompany').textContent = company.company_name;
-                companyRow.style.display = '';
-            } else {
-                companyRow.style.display = 'none';
-            }
+            // 이름·연락처·회사 정보는 이 창에서 바로 입력·수정 — 예전엔 프로필에 이름·연락처가 없으면 프로필 페이지로
+            // 보내고 끝났는데, 그 왕복에서 이탈이 생겨서. 요청할 때 바뀐 값만 프로필·회사 정보에 저장한다.
+            document.getElementById('orderDate').textContent = new Date().toISOString().slice(0, 10);
+            document.getElementById('orderCustName').value   = user.name  || '';
+            document.getElementById('orderCustPhone').value  = user.phone || '';
+            Object.entries(ORDER_COMPANY_FIELDS).forEach(([id, key]) => {
+                document.getElementById(id).value = company[key] || '';
+            });
+            // 회사 정보가 하나라도 있으면 펼쳐서 확인할 수 있게, 없으면 접어 둔다(선택 항목)
+            document.getElementById('orderCompanyBox').open = Object.values(ORDER_COMPANY_FIELDS).some(k => company[k]);
+            document.getElementById('orderCoZipSearchBtn').onclick = _orderOpenCompanyPostcode;
             document.getElementById('orderDrawingTitle').textContent   = getTitle() || _t('(제목 없음)');
             document.getElementById('orderDrawingVersion').textContent = (getVersionLabel && getVersionLabel()) || '—';
 
@@ -848,7 +858,9 @@
                 thumbImg.style.display = 'none';
             }
 
-            document.getElementById('orderSubmitBtn').onclick = () => {
+            document.getElementById('orderSubmitBtn').onclick = async () => {
+                const custName  = document.getElementById('orderCustName').value.trim();
+                const custPhone = document.getElementById('orderCustPhone').value.trim();
                 const dueDate   = dueDateEl.value;
                 const shipZip   = document.getElementById('orderShipZipcode').value.trim();
                 const shipAddr  = document.getElementById('orderShipAddress').value.trim();
@@ -856,9 +868,39 @@
                 const shipPhone = document.getElementById('orderShipPhone').value.trim();
                 const memo      = document.getElementById('orderMemo').value.trim();
 
+                if (!custName)       { pmAlert(_t('요청자 이름을 입력해주세요.'),     { type: 'danger' }); return; }
+                if (!custPhone)      { pmAlert(_t('요청자 연락처를 입력해주세요.'),   { type: 'danger' }); return; }
                 if (!dueDate)        { pmAlert(_t('납기 희망일을 선택해주세요.'),     { type: 'danger' }); return; }
                 if (!shipAddr)       { pmAlert(_t('배송지 주소를 입력해주세요.'),     { type: 'danger' }); return; }
                 if (!shipPhone)      { pmAlert(_t('배송지 연락처를 입력해주세요.'),   { type: 'danger' }); return; }
+
+                // 주문서는 서버가 users 테이블의 이름·연락처·회사명을 읽어 만들므로, 바뀐 값을 먼저 저장한다.
+                // 두 API 모두 PUT이 전체 덮어쓰기라 이 창에 없는 항목(프로필 주소 등)은 불러온 값 그대로 다시 보낸다.
+                const jsonHeaders = { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token };
+                try {
+                    if (custName !== (user.name || '') || custPhone !== (user.phone || '')) {
+                        const r = await fetch('/src/api/auth/profile.php', { method: 'PUT', headers: jsonHeaders, body: JSON.stringify({
+                            name: custName, phone: custPhone, company: user.company || '',
+                            zipcode: user.zipcode || '', address: user.address || '', address_detail: user.address_detail || '',
+                        }) }).then(r => r.json());
+                        if (r.error) { pmAlert(r.error, { type: 'danger' }); return; }
+                        user.name = custName; user.phone = custPhone;
+                    }
+                    const coBody = {};
+                    let coChanged = false;
+                    Object.entries(ORDER_COMPANY_FIELDS).forEach(([id, key]) => {
+                        coBody[key] = document.getElementById(id).value.trim();
+                        if (coBody[key] !== (company[key] || '')) coChanged = true;
+                    });
+                    if (coChanged) {
+                        const r = await fetch('/src/api/auth/company.php', { method: 'PUT', headers: jsonHeaders, body: JSON.stringify(coBody) }).then(r => r.json());
+                        if (r.error) { pmAlert(r.error, { type: 'danger' }); return; }
+                        Object.assign(company, coBody);
+                    }
+                } catch (_) {
+                    pmAlert(_t('요청자·회사 정보를 저장하지 못했습니다.'), { type: 'danger' });
+                    return;
+                }
 
                 fetch('/src/api/orders/create.php', {
                     method: 'POST',

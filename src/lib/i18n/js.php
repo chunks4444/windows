@@ -174,6 +174,9 @@ return [
     '프로필 정보를 불러오지 못했습니다.' => 'Could not load your profile.',
     '프로필로 이동'               => 'Go to profile',
     '납기 희망일을 선택해주세요.' => 'Please choose a requested delivery date.',
+    '요청자 이름을 입력해주세요.' => 'Please enter the requester\'s name.',
+    '요청자 연락처를 입력해주세요.' => 'Please enter the requester\'s phone number.',
+    '요청자·회사 정보를 저장하지 못했습니다.' => 'Could not save the requester and company details.',
     '배송지 주소를 입력해주세요.' => 'Please enter a delivery address.',
     '배송지 연락처를 입력해주세요.' => 'Please enter a delivery phone number.',
 

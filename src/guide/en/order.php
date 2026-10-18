@@ -24,15 +24,15 @@ include __DIR__ . '/../_head.php';
             <td>Check your login status in the top navigation.</td>
         </tr>
         <tr>
-            <td><strong>Profile name and phone number</strong></td>
-            <td>Enter your name and phone number under the account icon → <span class="guide-ui">Profile</span>.</td>
+            <td><strong>Requester name and phone number</strong></td>
+            <td>Enter them right in the quote request window. If they're already in your profile, they're filled in for you.</td>
         </tr>
     </tbody>
 </table>
 
 <div class="guide-note">
     <i class="bi bi-info-circle-fill"></i>
-    <span>The quote request button won't work until your name and phone number are saved. See the <a href="<?= lang_href('/guide/account') ?>">profile settings guide</a>.</span>
+    <span>The name, phone number, and optional company details you enter or edit in the quote request window are also saved to your profile and filled in next time. See also the <a href="<?= lang_href('/guide/account') ?>">profile settings guide</a>.</span>
 </div>
 
 <h2>The Ordering Flow</h2>
@@ -70,7 +70,7 @@ include __DIR__ . '/../_head.php';
         <table class="guide-table" style="margin-top:12px">
             <thead><tr><th>Field</th><th>Description</th></tr></thead>
             <tbody>
-                <tr><td>Your details</td><td>The name, phone number and company name from your profile are filled in automatically.</td></tr>
+                <tr><td>Your details</td><td>Your name, phone number and company details are filled in from your profile, and you can enter or edit them right in this window.</td></tr>
                 <tr><td>Drawing details</td><td>The currently open drawing's title, version and thumbnail are attached automatically.</td></tr>
                 <tr><td>Requested completion date</td><td>Choose the date you'd like production finished by.</td></tr>
                 <tr><td>Delivery address</td><td>Your profile address is filled in by default; change it with <span class="guide-ui">Search address</span>.</td></tr>

@@ -23,15 +23,15 @@ include __DIR__ . '/_head.php';
             <td>상단 내비게이션에서 로그인 여부를 확인합니다.</td>
         </tr>
         <tr>
-            <td><strong>프로필 이름·연락처</strong></td>
-            <td>내비게이션 이메일 아이콘 → <span class="guide-ui">프로필</span>에서 이름과 연락처를 입력합니다.</td>
+            <td><strong>요청자 이름·연락처</strong></td>
+            <td>견적요청 창에서 바로 입력합니다. 프로필에 이미 있으면 자동으로 채워집니다.</td>
         </tr>
     </tbody>
 </table>
 
 <div class="guide-note">
     <i class="bi bi-info-circle-fill"></i>
-    <span>이름과 연락처가 등록되어 있지 않으면 견적요청 버튼이 동작하지 않습니다. <a href="/guide/account">프로필 설정 가이드</a>를 참고하세요.</span>
+    <span>견적요청 창에서 입력하거나 고친 이름·연락처와 회사 정보(선택)는 프로필에도 저장되어 다음 요청 때 자동으로 채워집니다. <a href="/guide/account">프로필 설정 가이드</a>도 참고하세요.</span>
 </div>
 
 <h2>주문 흐름</h2>
@@ -69,7 +69,7 @@ include __DIR__ . '/_head.php';
         <table class="guide-table" style="margin-top:12px">
             <thead><tr><th>항목</th><th>설명</th></tr></thead>
             <tbody>
-                <tr><td>주문자 정보</td><td>프로필에 등록된 이름·연락처·회사명이 자동으로 채워집니다.</td></tr>
+                <tr><td>주문자 정보</td><td>프로필의 이름·연락처와 회사 정보가 채워지며, 이 창에서 바로 입력·수정할 수 있습니다.</td></tr>
                 <tr><td>도면 정보</td><td>현재 열려 있는 도면 제목·버전과 썸네일이 자동으로 첨부됩니다.</td></tr>
                 <tr><td>납기 희망일</td><td>제작 완료를 원하는 날짜를 선택합니다.</td></tr>
                 <tr><td>배송지</td><td>프로필 주소가 기본으로 채워지며, <span class="guide-ui">주소 검색</span>으로 변경할 수 있습니다.</td></tr>
