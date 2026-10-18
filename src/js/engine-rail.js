@@ -576,8 +576,11 @@
             }
             const subs   = FACE_MATERIAL_SUBS[material] || [];
             const subDef = subs.find(s => s.value === sub) || subs[0];
+            // 색 있는 종류로 바꿀 때 이전 색을 이어 쓰는 건 이전 것도 색 있는 종류였을 때만 — 백지·배접지의 고정색이
+            // 색한지 '색'으로 넘어가지 않게
+            const prevSubDef = faceMaterial?.material === material ? subs.find(s => s.value === faceMaterial.sub) : null;
             const resolvedHex = hex
-                || (subDef?.hasColor ? (faceMaterial?.material === material && faceMaterial?.hex) || faceMaterialColors[0]?.hex : FACE_MATERIAL_BASE_HEX[material]);
+                || (subDef?.hasColor ? (prevSubDef?.hasColor && faceMaterial.hex) || faceMaterialColors[0]?.hex : faceSubHex(material, subDef?.value));
             const meta = colorMeta || (subDef?.hasColor ? faceMaterialColors.find(c => c.hex.toLowerCase() === resolvedHex.toLowerCase()) : null);
             faceMaterial = {
                 material, sub: subDef?.value || '', hex: resolvedHex,
@@ -675,7 +678,7 @@
                     h += `<div class="fin-group"><div class="fin-group-head">${_t('세부 종류')}</div><div class="fin-bases">`;
                     subs.forEach(s => {
                         const on = faceMaterial?.sub === s.value;
-                        const bg = s.hasColor ? (on ? faceMaterial.hex : faceMaterialColors[0]?.hex) : FACE_MATERIAL_BASE_HEX[faceMaterial.material];
+                        const bg = s.hasColor ? (on ? faceMaterial.hex : faceMaterialColors[0]?.hex) : faceSubHex(faceMaterial.material, s.value);
                         h += `<button type="button" class="fin-base${on ? ' active' : ''}" data-matsub="${esc2(s.value)}">`
                            + `<span class="fin-base-dot" style="background:${esc2(bg)}"></span>`
                            + `<span class="fin-base-name">${esc2(_t(s.label))}</span></button>`;

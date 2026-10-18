@@ -496,8 +496,8 @@
     const FACE_MATERIAL_SUBS = {
         hanji: [
             { value: 'saek',    label: '색한지',          hasColor: true  },
-            { value: 'baejeop', label: '배접지',          hasColor: false },
-            { value: 'ilban',   label: '일반한지(백지)',   hasColor: false },
+            { value: 'baejeop', label: '배접지',          hasColor: false, hex: '#e2d2ae' }, // 여러 겹 덧대 두꺼운 종이 — 짙은 미색
+            { value: 'ilban',   label: '일반한지(백지)',   hasColor: false, hex: '#f6f2e8' }, // 백지 — 거의 흰 미색
         ],
         glass: [
             { value: 'plain', label: '일반유리', hasColor: false },
@@ -505,6 +505,8 @@
         ],
     };
     const FACE_MATERIAL_BASE_HEX = { hanji: '#e8dcc0', glass: '#bcd2d8' };
+    // 색을 고르지 않는 세부 종류의 칠 색 — 종류마다 hex가 있으면 그것, 없으면 재질 기본색(도면에서 배접지·백지를 구분해 보이게)
+    const faceSubHex = (material, sub) => (FACE_MATERIAL_SUBS[material] || []).find(s => s.value === sub)?.hex || FACE_MATERIAL_BASE_HEX[material];
 
     // 시방서 '면 재질' 표 — 한지·유리를 칠한 칸을 재질·색·크기별로 묶어 크기·개수·면적·무게를 보여준다.
     // 유리·한지는 칸마다 색별로 따로 끼운다(일반유리도 문 전체 통유리가 아니라 칠한 칸만).
@@ -536,7 +538,7 @@
             // 색별로 나눠 끼우므로 색이 있는 재질은 색까지 구분 — 업체 코드가 없으면 색 이름, 그것도 없으면 hex.
             // 표에는 색 견본만 보이고, 코드는 마우스를 올리면 바로 말풍선(data-code, CSS)으로 나온다.
             const color = sub?.hasColor ? ([fm.brand, fm.code].filter(Boolean).join(' ') || fm.name || fm.hex || '') : '';
-            const hex = (sub?.hasColor && fm.hex) || FACE_MATERIAL_BASE_HEX[fm.material] || '#ccc';
+            const hex = (sub?.hasColor && fm.hex) || faceSubHex(fm.material, fm.sub) || '#ccc';
             return { label, color, hex };
         };
         const sizeLabel = c => {
