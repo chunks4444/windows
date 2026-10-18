@@ -643,23 +643,23 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                             <div class="spec-lbl"><?= te('세로 칸수') ?></div>
                             <div class="spec-val"><span id="spRows">0</span><span class="spec-unit"><?= te('칸') ?></span></div>
                         </div>
-                        <div class="spec-card accent">
+                        <div class="spec-card accent" data-tip="<?= te('가로 방향 격자 먹줄 간격 — 살 한 칸(살 두께 포함) 피치') ?>">
                             <div class="spec-lbl"><?= te('가로 먹줄') ?></div>
                             <div class="spec-val"><span id="spStep">0</span><span class="spec-unit">mm</span></div>
                         </div>
-                        <div class="spec-card accent">
+                        <div class="spec-card accent" data-tip="<?= te('세로 방향 격자 먹줄 간격 — 살 한 칸(살 두께 포함) 피치') ?>">
                             <div class="spec-lbl"><?= te('세로 먹줄') ?></div>
                             <div class="spec-val"><span id="spEye">0</span><span class="spec-unit">mm</span></div>
                         </div>
-                        <div class="spec-card accent-blue">
+                        <div class="spec-card accent-blue" data-tip="<?= te('살끼리 비스듬히 교차하는 지점에서 반씩 파고드는 반턱 결구의 너비 — 비스듬한 각도만큼 넓어진 값') ?>">
                             <div class="spec-lbl"><?= te('반턱 너비') ?></div>
                             <div class="spec-val"><span id="spHalfLapW">0</span><span class="spec-unit">mm</span></div>
                         </div>
-                        <div class="spec-card accent-blue">
+                        <div class="spec-card accent-blue" data-tip="<?= te('살 끝이 울거미에 비스듬히 물리는 홈의 폭 — 비스듬한 각도만큼 넓어진 값') ?>">
                             <div class="spec-lbl"><?= te('세로울거미홈폭') ?></div>
                             <div class="spec-val"><span id="spGrooveW">0</span><span class="spec-unit">mm</span></div>
                         </div>
-                        <div class="spec-card accent-blue">
+                        <div class="spec-card accent-blue" data-tip="<?= te('살 끝이 울거미에 수직으로 물리는 홈의 폭 — 살 두께와 같음') ?>">
                             <div class="spec-lbl"><?= te('가로울거미홈폭') ?></div>
                             <div class="spec-val"><span id="spGrooveWH">0</span><span class="spec-unit">mm</span></div>
                         </div>

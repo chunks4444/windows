@@ -673,23 +673,23 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                             <div class="spec-lbl"><?= te('세로 칸수') ?></div>
                             <div class="spec-val"><span id="spRows">0</span><span class="spec-unit"><?= te('칸') ?></span></div>
                         </div>
-                        <div class="spec-card accent" id="spStepCard">
+                        <div class="spec-card accent" id="spStepCard" data-tip="<?= te('가로 방향 격자 먹줄 간격 — 살 한 칸(살 두께 포함) 피치') ?>">
                             <div class="spec-lbl"><?= te('가로 먹줄') ?></div>
                             <div class="spec-val"><span id="spStep">0</span><span class="spec-unit">mm</span></div>
                         </div>
-                        <div class="spec-card accent" id="spStepVCard">
+                        <div class="spec-card accent" id="spStepVCard" data-tip="<?= te('세로 방향 격자 먹줄 간격 — 살 한 칸(살 두께 포함) 피치') ?>">
                             <div class="spec-lbl"><?= te('세로 먹줄') ?></div>
                             <div class="spec-val"><span id="spStepV">0</span><span class="spec-unit">mm</span></div>
                         </div>
-                        <div class="spec-card accent-blue" id="spHalfLapWCard">
+                        <div class="spec-card accent-blue" id="spHalfLapWCard" data-tip="<?= te('살끼리 교차하는 지점에서 서로 반씩 파고드는 반턱 결구의 너비 — 살 두께와 같음') ?>">
                             <div class="spec-lbl"><?= te('반턱 너비') ?></div>
                             <div class="spec-val"><span id="spHalfLapW">0</span><span class="spec-unit">mm</span></div>
                         </div>
-                        <div class="spec-card accent-blue" id="spGrooveWCard">
+                        <div class="spec-card accent-blue" id="spGrooveWCard" data-tip="<?= te('살 끝이 울거미에 수직으로 물리는 홈의 폭 — 살 두께와 같음') ?>">
                             <div class="spec-lbl"><?= te('세로울거미홈폭') ?></div>
                             <div class="spec-val"><span id="spGrooveW">0</span><span class="spec-unit">mm</span></div>
                         </div>
-                        <div class="spec-card accent-blue" id="spGrooveWHCard">
+                        <div class="spec-card accent-blue" id="spGrooveWHCard" data-tip="<?= te('살 끝이 울거미에 수직으로 물리는 홈의 폭 — 살 두께와 같음') ?>">
                             <div class="spec-lbl"><?= te('가로울거미홈폭') ?></div>
                             <div class="spec-val"><span id="spGrooveWH">0</span><span class="spec-unit">mm</span></div>
                         </div>
