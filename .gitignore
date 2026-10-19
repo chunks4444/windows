@@ -9,3 +9,6 @@ ops/backup_uploads/*.log
 ops/backup_db_local/config.ps1
 ops/backup_db_local/.my.cnf
 ops/backup_db_local/*.log
+
+# macOS Finder 메타데이터
+.DS_Store

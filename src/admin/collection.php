@@ -125,7 +125,7 @@ foreach ($libPatternCats as $c) {
             </div>
             <div class="adm-mfield">
                 <label>모양 <small style="color: var(--text);font-weight:400;">컬렉션 페이지 "모양" 필터용 — 연결 도면의 분류와 별개</small></label>
-                <select id="lpCategory" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg-1);color:var(--text);font-size:14px;">
+                <select id="lpCategory" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--input-bg);color:var(--text);font-size:14px;">
                     <option value="">— 분류 없음 —</option>
                     <?php foreach ($libPatternCats as $c): ?>
                     <option value="<?= (int)$c['id'] ?>"><?= htmlspecialchars($c['name']) ?><?= $c['code'] ? ' (' . htmlspecialchars($c['code']) . ')' : '' ?></option>
@@ -134,7 +134,7 @@ foreach ($libPatternCats as $c) {
             </div>
             <div class="adm-mfield" id="lpModifierField">
                 <label>수식어 <small style="color: var(--text);font-weight:400;">코드 세부 구분용, 선택 — 모양·수식어를 바꾸면 저장 시 코드(공유 URL)가 새로 생성됩니다</small></label>
-                <select id="lpModifier" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg-1);color:var(--text);font-size:14px;">
+                <select id="lpModifier" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--input-bg);color:var(--text);font-size:14px;">
                     <option value="">— 기본형(수식어 없음) —</option>
                     <?php foreach ($libPatternMods as $m): ?>
                     <option value="<?= htmlspecialchars($m['code']) ?>"><?= htmlspecialchars($m['name']) ?> (<?= htmlspecialchars($m['code']) ?>)</option>
@@ -181,7 +181,7 @@ foreach ($libPatternCats as $c) {
             <button class="adm-modal-close" onclick="closeDrawingPicker()">&#x2715;</button>
         </div>
         <div class="adm-modal-body">
-            <input type="text" id="drawingPickerSearch" placeholder="도면명 검색" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg-1);color:var(--text);font-size:14px;margin-bottom:14px;">
+            <input type="text" id="drawingPickerSearch" placeholder="도면명 검색" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--input-bg);color:var(--text);font-size:14px;margin-bottom:14px;">
             <div class="lib-drawing-picker-none" onclick="selectDrawing(null)">
                 <i class="bi bi-slash-circle"></i> — 연결 안함 —
             </div>

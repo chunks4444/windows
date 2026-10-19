@@ -205,7 +205,7 @@ foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
                 <div class="blog-info-body" id="blogSeriesBody">
                     <div class="adm-mfield">
                         <label>글쓴이</label>
-                        <select id="postAuthorId" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg-1);color:var(--text);font-size:14px;">
+                        <select id="postAuthorId" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--input-bg);color:var(--text);font-size:14px;">
                             <?php foreach ($blogAuthorList as $a): ?>
                             <option value="<?= (int)$a['id'] ?>"><?= htmlspecialchars($a['name'] ?: $a['email']) ?></option>
                             <?php endforeach; ?>
@@ -213,7 +213,7 @@ foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
                     </div>
                     <div class="adm-mfield">
                         <label>시리즈 <a href="/src/admin/blog_series.php" target="_blank" rel="noopener" class="blog-series-manage-btn">시리즈 관리</a></label>
-                        <select id="postSeriesId" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg-1);color:var(--text);font-size:14px;">
+                        <select id="postSeriesId" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--input-bg);color:var(--text);font-size:14px;">
                             <option value="">— 없음 —</option>
                             <?php foreach ($blogSeriesList as $s): ?>
                             <option value="<?= (int)$s['id'] ?>"><?= htmlspecialchars($s['name']) ?></option>
@@ -230,7 +230,7 @@ foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
                     </div>
                     <div class="adm-mfield">
                         <label>연관 엔진 <span style="font-size:11px;color: var(--text);font-weight:400;">(있으면 글에 "직접 만들어보기" 버튼, 엔진 페이지에 "이 살의 이야기" 링크가 뜸)</span></label>
-                        <select id="postRelatedEngine" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg-1);color:var(--text);font-size:14px;">
+                        <select id="postRelatedEngine" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--input-bg);color:var(--text);font-size:14px;">
                             <option value="">— 없음 —</option>
                             <?php foreach ($engineOptions as $key => $label): ?>
                             <option value="<?= htmlspecialchars($key) ?>"><?= htmlspecialchars($label) ?></option>
@@ -239,7 +239,7 @@ foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
                     </div>
                     <div class="adm-mfield">
                         <label>연관 대표 도면 <span style="font-size:11px;color: var(--text);font-weight:400;">(선택 — 컬렉션에 등록된 패턴 중에서만 고를 수 있습니다. 지정하면 그 도면을 바로 불러온 상태로 엔진이 열림)</span></label>
-                        <select id="postRelatedDrawingId" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg-1);color:var(--text);font-size:14px;">
+                        <select id="postRelatedDrawingId" style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--input-bg);color:var(--text);font-size:14px;">
                             <option value="">— 없음 —</option>
                         </select>
                     </div>

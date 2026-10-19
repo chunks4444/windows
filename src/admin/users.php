@@ -212,7 +212,7 @@ require_admin_role('s');
         </div>
         <div class="adm-modal-body" style="padding:0;max-height:420px;overflow-y:auto;">
             <table style="width:100%;border-collapse:collapse;font-size:12px;">
-                <thead style="position:sticky;top:0;background:var(--card-bg);z-index:1;">
+                <thead style="position:sticky;top:0;background:var(--pm-surface);z-index:1;">
                     <tr>
                         <th style="padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);color: var(--text);font-weight:500;">일시</th>
                         <th style="padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);color: var(--text);font-weight:500;">엔진</th>

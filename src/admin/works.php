@@ -47,7 +47,7 @@ require_admin_role('s');
     </div>
 
     <!-- 필터 태그 관리 -->
-    <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:24px;">
+    <div style="background:var(--pm-surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:24px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
             <div style="font-size:13px;font-weight:600;color:var(--text);">필터 태그 관리</div>
             <button class="adm-edit-btn" style="height:28px;padding:0 12px;font-size:12px;" onclick="openTagModal()">
