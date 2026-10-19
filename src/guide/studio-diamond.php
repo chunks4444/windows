@@ -33,15 +33,15 @@ include __DIR__ . '/_head.php';
         <tr><td><strong>문틀 가로 / 문틀 세로</strong></td><td>벽 개구부 치수 (가로 100~10,000mm, 세로 400~5,000mm). 문틀 두께를 제외한 값이 문짝 외경으로 자동 계산됩니다.</td></tr>
         <tr><td><strong>가로 칸수</strong></td><td>2~30. 빗살과 마찬가지로 정사각 셀의 가로 개수를 정하며, 세로 칸수는 자동 산출됩니다.</td></tr>
         <tr><td><strong>문틀세로 자동 맞춤</strong></td><td>체크 시 마지막 행이 하단 울거미에 딱 맞도록 문틀 세로 값을 자동 재조정</td></tr>
-        <tr><td><strong>좌우 / 상하 울거미 두께</strong></td><td>외곽 프레임 두께 (mm)</td></tr>
-        <tr><td><strong>살 두께</strong></td><td>전체 살(직교·사선 공통)의 기본 두께 (mm)</td></tr>
+        <tr><td><strong>좌우 / 상하 울거미 나비</strong></td><td>외곽 프레임 폭 (mm)</td></tr>
+        <tr><td><strong>살 나비</strong></td><td>전체 살(직교·사선 공통)의 기본 나비 (mm)</td></tr>
         <tr><td><strong>풍판 사용</strong></td><td>체크 시 상단 풍판 구역 추가</td></tr>
     </tbody>
 </table>
 
 <div class="guide-note">
     <i class="bi bi-info-circle-fill"></i>
-    <span>정자살의 "세로 비율"이나 세살의 "상/중/하 배열" 같은 구획 설정은 격자빗살에는 없습니다. 사선 밀도는 별도 항목이 아니라 가로 칸수·살 두께에 종속됩니다.</span>
+    <span>정자살의 "세로 비율"이나 세살의 "상/중/하 배열" 같은 구획 설정은 격자빗살에는 없습니다. 사선 밀도는 별도 항목이 아니라 가로 칸수·살 나비에 종속됩니다.</span>
 </div>
 
 <h2>시방서 탭 — 제작 시방서</h2>

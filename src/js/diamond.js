@@ -981,7 +981,7 @@ async function draw() {
                 const stepW = geo.cellW + geo.slatV;
                 const stepH = geo.cellH + geo.slatH;
 
-                // 교점 중심 좌표 (살 두께 절반 보정)
+                // 교점 중심 좌표 (살 나비 절반 보정)
                 const jx0 = x - geo.slatV / 2;                    // 현재 열 교점 중심 x
                 const jx1 = x + geo.cellW + geo.slatV / 2;        // 다음 열 교점 중심 x
                 const jy0 = y - geo.slatH / 2;                    // 현재 행 교점 중심 y

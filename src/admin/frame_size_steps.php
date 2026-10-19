@@ -30,11 +30,11 @@ require_admin_role('s');
     </div>
     <p style="font-size:13px;color:var(--text-2);max-width:720px;">
         문 높이(문짝 외경 세로, outerH)에 따라 울거미 두께·나비를 몇 단계로 나눠 7개 엔진이 공용으로 참고합니다.
-        <strong>두께</strong>는 도면에 보이는 값(frame/frameH 슬라이더)의 최소치이자 추천값이고,
-        <strong>나비</strong>는 도면에는 안 보이고 부재목록 목재량 계산에만 쓰입니다.
+        <strong>나비</strong>는 도면에 보이는 값(frame/frameH 슬라이더)의 최소치이자 추천값이고,
+        <strong>두께</strong>는 도면에는 안 보이고 부재목록 목재량 계산에만 쓰입니다.
         마지막 단계의 "문 높이 상한"은 비워두면 "이 키 이상이면 전부 이 값"이 됩니다.
         엔진별 정책(최소치만 막기 / 추천값으로 덮어쓰기)은 <a href="/src/admin/engine_settings.php">엔진 기본값 관리</a>의
-        "울거미 두께 단계표 정책" 항목에서 따로 고릅니다.
+        "울거미 나비 단계표 정책" 항목에서 따로 고릅니다.
     </p>
 
     <div id="fssGroups"></div>

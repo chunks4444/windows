@@ -44,8 +44,8 @@ include __DIR__ . '/../_head.php';
     <tbody>
         <tr><td><strong>Hinged · Sliding / panels</strong></td><td>Hinged 1–2 panels, sliding 1–4, 6 or 8 panels. Frame thickness and clearance are applied automatically to calculate the real panel dimensions.</td></tr>
         <tr><td><strong>Frame width / height</strong></td><td>Wall opening dimensions (width 100–10,000mm, height 400–5,000mm). The outer panel size is calculated with the frame thickness removed.</td></tr>
-        <tr><td><strong>Left/right stile · top/bottom rail thickness</strong></td><td>Outer frame thickness (mm)</td></tr>
-        <tr><td><strong>Slat thickness</strong></td><td>Cross-section thickness of the slats (mm)</td></tr>
+        <tr><td><strong>Left/right stile · top/bottom rail width</strong></td><td>Outer frame width (mm)</td></tr>
+        <tr><td><strong>Slat width</strong></td><td>Cross-section width of the slats (mm)</td></tr>
         <tr><td><strong>Vertical ratio</strong></td><td>1.0–3.0. The cell width-to-height ratio that random generation uses as its guide. Higher values produce more tall, narrow cells.</td></tr>
         <tr><td><strong>Use transom panel</strong></td><td>Adds a transom panel zone at the top when checked; its height is set separately</td></tr>
         <tr><td><strong>Show dimensions / Show door frame</strong></td><td>Choose whether measured dimensions and the frame outline appear on the canvas</td></tr>

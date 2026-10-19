@@ -156,7 +156,7 @@ return [
     'company_studio_body'      => 'Workgroup Pyeongmok\'s studio is a <strong>changho design tool</strong> you can use right in your browser. <br>Adjust the frame size, slat spacing, and pattern to complete a changho of your own. Your finished design is built at Workgroup Pyeongmok, using traditional changho-making technique exactly as drawn.',
     'company_features_title'   => 'What all seven engines have in common',
     'company_feature1'         => 'Choose hinged or sliding, and the number of panels',
-    'company_feature2'         => 'Frame dimensions, left/right and top/bottom stile thickness, slat thickness',
+    'company_feature2'         => 'Frame dimensions, left/right and top/bottom stile width, slat width',
     'company_feature3'         => 'Transom panel, dimension labels, frame outline',
     'company_feature4'         => 'Red pine or pine wood species, with six finish options',
     'company_feature5'         => 'Set colors for slats, stiles, and frame; add shapes and motifs',

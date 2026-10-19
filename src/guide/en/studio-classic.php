@@ -74,9 +74,9 @@ include __DIR__ . '/../_head.php';
     <thead><tr><th>Item</th><th>Description</th></tr></thead>
     <tbody>
         <tr><td>Horizontal cells</td><td>Number of horizontal divisions (slat count = cells − 1)</td></tr>
-        <tr><td>Left/right stile thickness</td><td>Thickness of the left and right outer frame members (mm)</td></tr>
-        <tr><td>Top/bottom rail thickness</td><td>Thickness of the top and bottom outer frame members (mm)</td></tr>
-        <tr><td>Slat thickness</td><td>Cross-section thickness of the lattice slats (mm)</td></tr>
+        <tr><td>Left/right stile width</td><td>Width of the left and right outer frame members (mm)</td></tr>
+        <tr><td>Top/bottom rail width</td><td>Width of the top and bottom outer frame members (mm)</td></tr>
+        <tr><td>Slat width</td><td>Cross-section width of the lattice slats (mm)</td></tr>
         <tr><td>Horizontal slats (top/middle/bottom)</td><td>Set the number of horizontal slats in each of the three zones independently, e.g. 3/5/3</td></tr>
         <tr><td>Vertical ratio</td><td>Height ratio between the top, middle and bottom zones</td></tr>
         <tr><td>Use transom panel</td><td>Adds a transom panel zone at the top when checked. Its height is set separately</td></tr>

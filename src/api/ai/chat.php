@@ -62,7 +62,7 @@ $paramDescDefault = <<<'EOT'
 - cols: 세로살 개수 (2–20)
 - frame: 울거미 가로폭 (mm, 20–200)
 - frameH: 울거미 세로폭 (mm, 20–200)
-- slat: 살 두께 (mm, 5–30)
+- slat: 살 나비 (mm, 5–30)
 - doorType: "swing"(여닫이) | "slide"(미서기)
 - doorCount: 문짝 수. swing(여닫이)은 1–2, slide(미서기)는 1–4 또는 6 (5짝은 없음)
 - pungpanOn: 풍판 사용 여부 (true/false)

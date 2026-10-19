@@ -21,7 +21,7 @@ include __DIR__ . '/../_head.php';
 <h2>Characteristics</h2>
 <ul>
     <li>Cells are always fixed as squares, with slats laid along their diagonals to create the 45° pattern.</li>
-    <li><strong>You cannot set the vertical cell count.</strong> It is derived automatically from the square cell size determined by the horizontal cell count and slat thickness.</li>
+    <li><strong>You cannot set the vertical cell count.</strong> It is derived automatically from the square cell size determined by the horizontal cell count and slat width.</li>
     <li>Clipping keeps the slats from protruding outside the frame.</li>
 </ul>
 
@@ -31,17 +31,17 @@ include __DIR__ . '/../_head.php';
     <tbody>
         <tr><td><strong>Hinged · Sliding / panels</strong></td><td>Hinged 1–2 panels, sliding 1–4, 6 or 8 panels</td></tr>
         <tr><td><strong>Frame width / height</strong></td><td>Wall opening dimensions (width 100–10,000mm, height 400–5,000mm). The outer panel size is calculated with the frame thickness removed.</td></tr>
-        <tr><td><strong>Horizontal cells</strong></td><td>2–30. The number of square cells across — this and the slat thickness set the cell size, and the vertical count follows automatically.</td></tr>
+        <tr><td><strong>Horizontal cells</strong></td><td>2–30. The number of square cells across — this and the slat width set the cell size, and the vertical count follows automatically.</td></tr>
         <tr><td><strong>Auto-fit frame height</strong></td><td>When checked, the frame height is adjusted so the last row meets the bottom rail exactly</td></tr>
-        <tr><td><strong>Left/right stile · top/bottom rail thickness</strong></td><td>Outer frame thickness (mm)</td></tr>
-        <tr><td><strong>Slat thickness</strong></td><td>Width of each slat (mm). It also determines the cell size (one side of the square).</td></tr>
+        <tr><td><strong>Left/right stile · top/bottom rail width</strong></td><td>Outer frame width (mm)</td></tr>
+        <tr><td><strong>Slat width</strong></td><td>Width of each slat (mm). It also determines the cell size (one side of the square).</td></tr>
         <tr><td><strong>Use transom panel</strong></td><td>Adds a transom panel zone at the top when checked</td></tr>
     </tbody>
 </table>
 
 <div class="guide-note">
     <i class="bi bi-info-circle-fill"></i>
-    <span>Bit-sal has no zoning settings like the "vertical ratio" or "top/middle/bottom layout" found in Jeongja-sal and Se-sal. To change the grid density, adjust the horizontal cell count or the slat thickness.</span>
+    <span>Bit-sal has no zoning settings like the "vertical ratio" or "top/middle/bottom layout" found in Jeongja-sal and Se-sal. To change the grid density, adjust the horizontal cell count or the slat width.</span>
 </div>
 
 <h2>Specs Tab — Production Specification</h2>
@@ -51,8 +51,8 @@ include __DIR__ . '/../_head.php';
         <tr><td>Frame / outer / inner width and height</td><td>Automatically calculated measured dimensions</td></tr>
         <tr><td>Horizontal / vertical ink lines</td><td>Spacing of the square cells, horizontally and vertically</td></tr>
         <tr><td>Slat ink lines</td><td>Distance between diagonal intersections</td></tr>
-        <tr><td>Half-lap width</td><td>Calculated equal to the slat thickness</td></tr>
-        <tr><td>Vertical stile groove width / Horizontal stile groove width</td><td>Slat thickness × (1 + √2) — the width of the groove the 45° diagonal slats cut into the frame</td></tr>
+        <tr><td>Half-lap width</td><td>Calculated equal to the slat width</td></tr>
+        <tr><td>Vertical stile groove width / Horizontal stile groove width</td><td>Slat width × (1 + √2) — the width of the groove the 45° diagonal slats cut into the frame</td></tr>
     </tbody>
 </table>
 

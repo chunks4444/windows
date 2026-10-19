@@ -40,8 +40,8 @@ include __DIR__ . '/../_head.php';
         <tr><td><strong>Set horizontal slat count manually</strong></td><td>When checked, you set the horizontal slats directly with <strong>Horizontal slat count</strong> (1–60), and Vertical ratio and Auto-fit frame height are hidden.</td></tr>
         <tr><td><strong>Vertical ratio</strong></td><td>1.0–3.0. Sets each cell's width-to-height ratio, from which the horizontal slat count is derived automatically (when Set horizontal slat count manually is off).</td></tr>
         <tr><td><strong>Auto-fit frame height</strong></td><td>When checked, the frame height is adjusted automatically so the last grid row meets the bottom rail exactly.</td></tr>
-        <tr><td><strong>Left/right stile · top/bottom rail thickness</strong></td><td>Outer frame thickness (mm)</td></tr>
-        <tr><td><strong>Slat thickness</strong></td><td>Cross-section thickness of the lattice slats (mm)</td></tr>
+        <tr><td><strong>Left/right stile · top/bottom rail width</strong></td><td>Outer frame width (mm)</td></tr>
+        <tr><td><strong>Slat width</strong></td><td>Cross-section width of the lattice slats (mm)</td></tr>
         <tr><td><strong>Use transom panel</strong></td><td>Adds a transom panel zone at the top when checked; its height is set separately</td></tr>
         <tr><td><strong>Show dimensions / Show door frame</strong></td><td>Choose whether measured dimensions and the frame outline appear on the canvas</td></tr>
     </tbody>

@@ -156,7 +156,7 @@ return [
     'company_studio_body'      => '워크그룹 평목의 스튜디오는 브라우저에서 바로 사용할 수 있는 <strong>창호 설계 도구</strong>입니다. <br>문틀 크기, 살 간격, 패턴을 조정하며 나만의 창호를 완성해 보세요. 완성한 설계는 전통 창호 기법 그대로, 워크그룹 평목에서 제작됩니다.',
     'company_features_title'   => '일곱 엔진에 공통으로 들어 있는 것',
     'company_feature1'         => '여닫이·미서기, 짝수 지정',
-    'company_feature2'         => '문틀 치수, 좌우·상하 울거미 두께, 살 두께',
+    'company_feature2'         => '문틀 치수, 좌우·상하 울거미 나비, 살 나비',
     'company_feature3'         => '풍판, 치수 표기, 문틀 표시',
     'company_feature4'         => '홍송·소나무 수종과 마감 여섯 가지',
     'company_feature5'         => '살·울거미·문틀 색 지정, 도형과 문양 얹기',

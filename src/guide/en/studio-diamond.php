@@ -35,15 +35,15 @@ include __DIR__ . '/../_head.php';
         <tr><td><strong>Frame width / height</strong></td><td>Wall opening dimensions (width 100–10,000mm, height 400–5,000mm). The outer panel size is calculated with the frame thickness removed.</td></tr>
         <tr><td><strong>Horizontal cells</strong></td><td>2–30. As with Bit-sal, this sets the number of square cells across; the vertical count is derived automatically.</td></tr>
         <tr><td><strong>Auto-fit frame height</strong></td><td>When checked, the frame height is adjusted so the last row meets the bottom rail exactly</td></tr>
-        <tr><td><strong>Left/right stile · top/bottom rail thickness</strong></td><td>Outer frame thickness (mm)</td></tr>
-        <tr><td><strong>Slat thickness</strong></td><td>Base thickness for all slats, orthogonal and diagonal alike (mm)</td></tr>
+        <tr><td><strong>Left/right stile · top/bottom rail width</strong></td><td>Outer frame width (mm)</td></tr>
+        <tr><td><strong>Slat width</strong></td><td>Base width for all slats, orthogonal and diagonal alike (mm)</td></tr>
         <tr><td><strong>Use transom panel</strong></td><td>Adds a transom panel zone at the top when checked</td></tr>
     </tbody>
 </table>
 
 <div class="guide-note">
     <i class="bi bi-info-circle-fill"></i>
-    <span>Gyeokja-bit-sal has no zoning settings like Jeongja-sal's "vertical ratio" or Se-sal's "top/middle/bottom layout." Diagonal density is not a separate setting — it follows from the horizontal cell count and slat thickness.</span>
+    <span>Gyeokja-bit-sal has no zoning settings like Jeongja-sal's "vertical ratio" or Se-sal's "top/middle/bottom layout." Diagonal density is not a separate setting — it follows from the horizontal cell count and slat width.</span>
 </div>
 
 <h2>Specs Tab — Production Specification</h2>

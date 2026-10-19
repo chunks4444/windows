@@ -414,17 +414,17 @@
 
     // 문 높이·문 종류별 울거미 두께·나비 단계표(frame_size_steps, 7개 엔진 공용) 반영.
     // draw()가 geometry.php 응답을 받은 직후 data를 그대로 넘겨 호출한다.
-    // - 두께(frame/frameH 슬라이더): min_only 정책이면 슬라이더 min만 단계값으로 올리고, 현재값이 그보다
-    //   낮을 때만 화면 표시도 맞춘다(서버가 이미 이 값으로 계산해서 그렸으므로 다시 그릴 필요 없음).
+    // - 나비(frame/frameH 슬라이더, 정면에 보이는 폭): min_only 정책이면 슬라이더 min만 단계값으로 올리고,
+    //   현재값이 그보다 낮을 때만 화면 표시도 맞춘다(서버가 이미 이 값으로 계산해서 그렸으므로 다시 그릴 필요 없음).
     //   overwrite 정책이면 단계값과 다를 때마다 그 값으로 맞추고, 이번엔 서버가 "바뀌기 전" 값으로 그렸을
     //   수 있으니 다시 그려야 한다(세로 자동 맞춤과 같은 패턴) — 그래서 다시 그려야 하면 true를 반환한다.
-    // - 나비: 도면에 안 보이는 계산 전용 값이라 슬라이더가 없음, 서버가 이미 반영해서 보낸 값을 그대로 씀.
+    // - 두께: 옆에서 본 단면 깊이, 도면에 안 보이는 계산 전용 값이라 슬라이더가 없음, 서버가 이미 반영해서 보낸 값을 그대로 씀.
     // - 하단 표: 문 설정 패널 아래 #frameSizeStepsTable에 현재 문 종류(txtDoorType)의 전체 단계표를 그린다.
     window.applyFrameSizeStep = function (data) {
         renderFrameSizeStepsTable(data?.frameSizeSteps);
         const step = data?.frameSizeStep;
         if (!step) return false;
-        const min = Number(step.frame_thickness);
+        const min = Number(step.frame_width);
         if (!Number.isFinite(min)) return false;
         const policy = data.frameSizePolicy || 'min_only';
         let needsRedraw = false;

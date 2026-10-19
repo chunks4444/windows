@@ -34,8 +34,8 @@ $outerH = max(100, $frameOpeningH - 2 * $frameThick - 2 * $frameGap);
 // 정책 차이는 클라이언트가 슬라이더를 어떻게 보여주느냐일 뿐, 서버는 정책과 무관하게 이 하한을 항상 지킨다.
 $frameSizeStep = get_frame_size_step($doorType, (int)round($outerH));
 if ($frameSizeStep) {
-    $frameW = max($frameW, (int)$frameSizeStep["frame_thickness"]);
-    $frameH = max($frameH, (int)$frameSizeStep["frame_thickness"]);
+    $frameW = max($frameW, (int)$frameSizeStep['frame_width']);
+    $frameH = max($frameH, (int)$frameSizeStep['frame_width']);
 }
 
 if ($doorType === 'slide') {
@@ -195,7 +195,7 @@ $vSlatCnt = max(0, $cols - 1);
 // 목재 재수 계산 (1재 = 30.3×30.3×3636mm³, 부재별 실제 단면 사용)
 $_es  = get_engine_settings('classic');
 $_JAE = 30.3 * 30.3 * 3636;
-$_wU  = (int)($frameSizeStep['frame_width'] ?? $_es['ulgeomiW'] ?? $_d['울거미']['width_mm'] ?? 33);
+$_wU  = (int)($frameSizeStep['frame_thickness'] ?? $_es['ulgeomiW'] ?? $_d['울거미']['width_mm'] ?? 33);
 $_wS  = (int)($_es['slatW']               ?? $_d['살']['width_mm']    ?? 20);
 $_pT  = (int)($_es['pungpanT']            ?? 15);
 $_tMt = (int)($_es['muntolT'] ?? 30);

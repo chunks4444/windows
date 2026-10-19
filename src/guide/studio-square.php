@@ -38,8 +38,8 @@ include __DIR__ . '/_head.php';
         <tr><td><strong>가로살 개수 직접 지정</strong></td><td>체크하면 아래 <strong>가로살 개수</strong>(1~60)로 가로살을 직접 정합니다. 이때 세로 비율·문틀세로 자동 맞춤은 숨겨집니다.</td></tr>
         <tr><td><strong>세로 비율</strong></td><td>1.0~3.0. 셀의 가로:세로 비율을 결정하며 이 값에 따라 가로살 개수가 자동 산출됩니다. (가로살 개수 직접 지정이 꺼져 있을 때)</td></tr>
         <tr><td><strong>문틀세로 자동 맞춤</strong></td><td>체크 시 마지막 격자 행이 하단 울거미에 딱 맞도록 문틀 세로 값을 자동으로 재조정합니다.</td></tr>
-        <tr><td><strong>좌우 / 상하 울거미 두께</strong></td><td>외곽 프레임 두께 (mm)</td></tr>
-        <tr><td><strong>살 두께</strong></td><td>격자 살 단면 두께 (mm)</td></tr>
+        <tr><td><strong>좌우 / 상하 울거미 나비</strong></td><td>외곽 프레임 폭 (mm)</td></tr>
+        <tr><td><strong>살 나비</strong></td><td>격자 살 단면 나비 (mm)</td></tr>
         <tr><td><strong>풍판 사용</strong></td><td>체크 시 상단 풍판 구역 추가, 풍판 높이 별도 설정</td></tr>
         <tr><td><strong>치수 표기 / 문틀 표시</strong></td><td>캔버스에 실측 치수와 문틀 윤곽선을 표시할지 선택</td></tr>
     </tbody>

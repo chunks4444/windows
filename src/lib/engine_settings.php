@@ -16,16 +16,16 @@ function engine_setting_defaults(string $engine): array {
         'muntolT'     => '38',   // 문틀 두께 (mm) — 실제 목재 두께 (정면 30mm + 턱 8mm)
         'muntolW'     => '80',   // 문틀 폭 (mm) — 벽 안으로 들어가는 설치 깊이
         'slat'        => '12',
-        'ulgeomiW'    => '33',   // 울거미 폭 (mm) — 원가 계산용
-        'slatW'       => '20',   // 살 폭 (mm) — 원가 계산용
+        'ulgeomiW'    => '33',   // 울거미 두께 (mm) — 원가 계산용, 옆에서 본 단면 깊이
+        'slatW'       => '20',   // 살 두께 (mm) — 원가 계산용, 옆에서 본 단면 깊이
         'pungpanOn'   => '0',
         'pungpan'     => '0',
         'pungpanT'    => '15',   // 풍판 판재 두께 (mm) — 원가 계산용
         'dimensionOn' => '1',
         'gap'         => '2',
         'basePadding' => '60',
-        // 울거미 두께(frame/frameH)가 문 높이별 단계표(frame_size_steps)를 어떻게 반영할지 —
-        // min_only: 슬라이더 min만 단계값으로 올리고 더 두껍게 가는 건 자유(기본값, 디자인 자유도 보존).
+        // 울거미 나비(frame/frameH)가 문 높이별 단계표(frame_size_steps)를 어떻게 반영할지 —
+        // min_only: 슬라이더 min만 단계값으로 올리고 더 넓게 가는 건 자유(기본값, 디자인 자유도 보존).
         // overwrite: 문 높이·문 종류가 바뀔 때마다 단계값으로 그대로 덮어씀(거래처 규격 등 엄격한 통일이 필요할 때).
         'frameSizePolicy' => 'min_only',
     ];
@@ -212,7 +212,8 @@ function get_cost_table_item(string $category, string $name): ?array {
 }
 
 // 문 높이(outerH, mm) + 문 종류(swing/slide)로 frame_size_steps에서 해당 단계 하나를 찾는다.
-// 7개 엔진 geometry.php가 울거미 두께(frame/frameH 슬라이더 min·기본값) · 나비(부재목록 목재량 계산용) 둘 다 이걸로 구한다.
+// 7개 엔진 geometry.php가 울거미 나비(frame/frameH 슬라이더 min·기본값, 정면에 보이는 폭) ·
+// 두께(부재목록 목재량·원가 계산용, 옆에서 본 단면 깊이) 둘 다 이걸로 구한다.
 function get_frame_size_step(string $doorType, int $heightMm): ?array {
     $doorType = $doorType === 'slide' ? 'slide' : 'swing';
     try {

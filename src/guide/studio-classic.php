@@ -70,9 +70,9 @@ include __DIR__ . '/_head.php';
     <thead><tr><th>항목</th><th>설명</th></tr></thead>
     <tbody>
         <tr><td>가로 칸수</td><td>수평 방향 분할 수 (살 개수 = 칸수 - 1)</td></tr>
-        <tr><td>좌우 울거미 두께</td><td>좌·우 외곽 프레임 두께 (mm)</td></tr>
-        <tr><td>상하 울거미 두께</td><td>상·하 외곽 프레임 두께 (mm)</td></tr>
-        <tr><td>살 두께</td><td>격자 살 단면 두께 (mm)</td></tr>
+        <tr><td>좌우 울거미 나비</td><td>좌·우 외곽 프레임 폭 (mm)</td></tr>
+        <tr><td>상하 울거미 나비</td><td>상·하 외곽 프레임 폭 (mm)</td></tr>
+        <tr><td>살 나비</td><td>격자 살 단면 나비 (mm)</td></tr>
         <tr><td>가로살 (상단/중단/하단)</td><td>세 구역의 가로살 개수를 따로 지정. 예) 3/5/3</td></tr>
         <tr><td>세로 비율</td><td>상·중·하 구역의 세로 높이 비율</td></tr>
         <tr><td>풍판 사용</td><td>체크 시 상단 풍판 구역 추가. 풍판 높이 별도 설정</td></tr>

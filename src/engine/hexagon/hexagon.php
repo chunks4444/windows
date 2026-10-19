@@ -340,14 +340,14 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                     <hr class="sb-divider">
 
                     <div class="ctrl">
-                        <div class="ctrl-header"><span class="ctrl-label"><?= te('좌우 울거미 두께') ?></span></div>
+                        <div class="ctrl-header"><span class="ctrl-label"><?= te('좌우 울거미 나비') ?></span></div>
                         <div class="slider-row">
                             <input type="range" id="txtFrame" min="15" max="150" step="1" value="<?= htmlspecialchars($cfg['frame']) ?>">
                             <input type="number" class="slider-num" id="numFrame" min="15" max="150" step="1" value="<?= htmlspecialchars($cfg['frame']) ?>">
                         </div>
                     </div>
                     <div class="ctrl">
-                        <div class="ctrl-header"><span class="ctrl-label"><?= te('상하 울거미 두께') ?></span></div>
+                        <div class="ctrl-header"><span class="ctrl-label"><?= te('상하 울거미 나비') ?></span></div>
                         <div class="slider-row">
                             <input type="range" id="txtFrameH" min="15" max="150" step="1" value="<?= htmlspecialchars($cfg['frameH']) ?>">
                             <input type="number" class="slider-num" id="numFrameH" min="15" max="150" step="1" value="<?= htmlspecialchars($cfg['frameH']) ?>">
@@ -356,7 +356,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                     <hr class="sb-divider">
 
                     <div class="ctrl">
-                        <div class="ctrl-header"><span class="ctrl-label"><?= te('살 두께') ?></span></div>
+                        <div class="ctrl-header"><span class="ctrl-label"><?= te('살 나비') ?></span></div>
                         <div class="slider-row">
                             <input type="range" id="txtSlat" min="4.5" max="35" step="0.5" value="<?= htmlspecialchars($cfg['slat']) ?>">
                             <input type="number" class="slider-num" id="numSlat" min="4.5" max="35" step="0.5" value="<?= htmlspecialchars($cfg['slat']) ?>">
@@ -645,7 +645,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                             <div class="spec-lbl"><?= te('세로 칸수') ?></div>
                             <div class="spec-val"><span id="spRows">0</span><span class="spec-unit"><?= te('칸') ?></span></div>
                         </div>
-                        <div class="spec-card accent" data-tip="<?= te('가로 방향 격자 먹줄 간격 — 살 한 칸(살 두께 포함) 피치') ?>">
+                        <div class="spec-card accent" data-tip="<?= te('가로 방향 격자 먹줄 간격 — 살 한 칸(살 나비 포함) 피치') ?>">
                             <div class="spec-lbl"><?= te('가로 먹줄') ?></div>
                             <div class="spec-val"><span id="spStep">0</span><span class="spec-unit">mm</span></div>
                         </div>
@@ -669,7 +669,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                             <div class="spec-lbl"><?= te('세로울거미홈폭') ?></div>
                             <div class="spec-val"><span id="spGrooveW">0</span><span class="spec-unit">mm</span></div>
                         </div>
-                        <div class="spec-card accent-blue" data-tip="<?= te('살 끝이 울거미에 수직으로 물리는 홈의 폭 — 살 두께와 같음') ?>">
+                        <div class="spec-card accent-blue" data-tip="<?= te('살 끝이 울거미에 수직으로 물리는 홈의 폭 — 살 나비와 같음') ?>">
                             <div class="spec-lbl"><?= te('가로울거미홈폭') ?></div>
                             <div class="spec-val"><span id="spGrooveWH">0</span><span class="spec-unit">mm</span></div>
                         </div>
