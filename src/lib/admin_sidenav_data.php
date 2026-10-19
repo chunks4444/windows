@@ -30,6 +30,7 @@ return [
         ['mail_settings.php',    'bi-envelope',        '메일 발송 설정'],
         ['render_settings.php',  'bi-stars',           'AI 렌더링 설정'],
         ['engine_settings.php',  'bi-sliders',         '엔진 기본값 관리'],
+        ['frame_size_steps.php', 'bi-rulers',          '울거미 두께·나비 단계표'],
         ['pattern_categories.php','bi-tags',           '패턴 카테고리'],
         ['pattern_modifiers.php', 'bi-tag',            '수식어 관리'],
         ['pattern_drawings.php',  'bi-diagram-3',      '도면 분류'],

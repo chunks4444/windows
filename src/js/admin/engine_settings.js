@@ -32,6 +32,7 @@ const ENGINE_SECTIONS = [
             { key: 'patternMid', label: '가로살 중',             hint: 'classic 전용' },
             { key: 'patternBot', label: '가로살 하',             hint: 'classic 전용' },
             { key: 'shrinkH',    label: '문틀세로 자동 맞춤',        hint: '0 / 1' },
+            { key: 'frameSizePolicy', label: '울거미 두께 단계표 정책', hint: 'min_only(최소치만 막기) / overwrite(추천값으로 덮어쓰기)' },
             { key: 'rowsManual', label: '가로살 개수 직접 지정', hint: '0 / 1 · square 전용' },
             { key: 'rows',       label: '가로살 개수',           hint: 'square 전용, rowsManual=1일 때' },
             { key: 'rotate',     label: '패턴 세로 방향',        hint: '0 / 1' },
