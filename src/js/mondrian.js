@@ -483,6 +483,7 @@ async function draw() {
         return;
     }
     geo = data.geo;
+    if (window.applyFrameSizeStep?.(data)) { draw(); return; }
 
     // 정자살(균등 격자)은 행이 안 딱 맞아떨어지는 나머지(surplus)를 상하 울거미에 나눠 더해
     // 행 간격을 정확히 맞춘다. 몬드리안(랜덤 생성)은 행 개념이 없어 그럴 이유가 없는데도

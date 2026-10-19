@@ -409,6 +409,8 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                     </div>
                 </div>
 
+                <div id="frameSizeStepsTable" class="fss-box"></div>
+
             </section>
             <section class="rail-pane" data-pane="motif" hidden>
                 <div class="rail-pane-head"><?= te('문양 라이브러리') ?></div>

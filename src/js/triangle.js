@@ -457,6 +457,7 @@ async function draw() {
         return;
     }
     geo = data.geo;
+    if (window.applyFrameSizeStep?.(data)) { draw(); return; }
 
     const s = data.specs;
     if (s && document.getElementById('spFrameOpeningW')) {

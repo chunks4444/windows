@@ -1358,6 +1358,16 @@ input[type="range"]::-moz-range-thumb {
 
 .toggle-label { font-size: var(--fs-11); font-weight: 400; color: var(--text-1); letter-spacing: -0.2px; }
 
+/* 문 높이별 울거미 두께·나비 참고표 — 문 설정 패널 맨 아래, 비어 있으면(엔진 로드 전) 안 보임 */
+.fss-box:empty { display: none; }
+.fss-box { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border); }
+.fss-box .fss-title { font-size: var(--fs-11); font-weight: 600; color: var(--text-2); margin-bottom: 6px; }
+.fss-table { width: 100%; border-collapse: collapse; font-size: var(--fs-11); color: var(--text-1); }
+.fss-table th, .fss-table td { text-align: right; padding: 3px 4px; }
+.fss-table th:first-child, .fss-table td:first-child { text-align: left; }
+.fss-table thead th { color: var(--text-3); font-weight: 400; border-bottom: 1px solid var(--border); }
+.fss-table tbody tr:nth-child(odd) { background: rgba(var(--bg-rgb), 0.03); }
+
 .toggle-switch { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
 .toggle-switch input { opacity: 0; width: 0; height: 0; }
 

@@ -422,6 +422,7 @@ async function draw() {
         return;
     }
     geo = data.geo;
+    if (window.applyFrameSizeStep?.(data)) { draw(); return; }
 
     // 시방서/부재목록/예산견적 상세는 열람 권한이 없으면 서버가 null로 내려주고
     // 해당 DOM 섹션 자체도 렌더링하지 않으므로, 아래는 데이터·엘리먼트가 모두 있을 때만 채운다.

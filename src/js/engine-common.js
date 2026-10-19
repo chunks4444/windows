@@ -411,6 +411,52 @@
     const OIL_FINISH_COLOR_CODE = { '들기름': 'NO-10' };   // 마감 → 색 코드
     const OIL_WOOD_COLOR_CODE   = { '소나무': 'NO-02' };   // 수종 → 색 코드. 없으면 NO-01 자연(홍송 등)
     const isOilFinish = v => /오일|기름|유$/.test(String(v || ''));
+
+    // 문 높이·문 종류별 울거미 두께·나비 단계표(frame_size_steps, 7개 엔진 공용) 반영.
+    // draw()가 geometry.php 응답을 받은 직후 data를 그대로 넘겨 호출한다.
+    // - 두께(frame/frameH 슬라이더): min_only 정책이면 슬라이더 min만 단계값으로 올리고, 현재값이 그보다
+    //   낮을 때만 화면 표시도 맞춘다(서버가 이미 이 값으로 계산해서 그렸으므로 다시 그릴 필요 없음).
+    //   overwrite 정책이면 단계값과 다를 때마다 그 값으로 맞추고, 이번엔 서버가 "바뀌기 전" 값으로 그렸을
+    //   수 있으니 다시 그려야 한다(세로 자동 맞춤과 같은 패턴) — 그래서 다시 그려야 하면 true를 반환한다.
+    // - 나비: 도면에 안 보이는 계산 전용 값이라 슬라이더가 없음, 서버가 이미 반영해서 보낸 값을 그대로 씀.
+    // - 하단 표: 문 설정 패널 아래 #frameSizeStepsTable에 현재 문 종류(txtDoorType)의 전체 단계표를 그린다.
+    window.applyFrameSizeStep = function (data) {
+        renderFrameSizeStepsTable(data?.frameSizeSteps);
+        const step = data?.frameSizeStep;
+        if (!step) return false;
+        const min = Number(step.frame_thickness);
+        if (!Number.isFinite(min)) return false;
+        const policy = data.frameSizePolicy || 'min_only';
+        let needsRedraw = false;
+        [['txtFrame', 'numFrame'], ['txtFrameH', 'numFrameH']].forEach(([rangeId, numId]) => {
+            const r = document.getElementById(rangeId), n = document.getElementById(numId);
+            if (!r && !n) return;
+            if (r) r.min = String(min);
+            if (n) n.min = String(min);
+            const cur = parseInt((r || n).value, 10);
+            const shouldForce = policy === 'overwrite' ? cur !== min : cur < min;
+            if (shouldForce) {
+                if (r) r.value = String(min);
+                if (n) n.value = String(min);
+                if (policy === 'overwrite') needsRedraw = true;
+            }
+        });
+        return needsRedraw;
+    };
+
+    function renderFrameSizeStepsTable(stepsAll) {
+        const box = document.getElementById('frameSizeStepsTable');
+        if (!box) return;
+        const doorType = document.getElementById('txtDoorType')?.value === 'slide' ? 'slide' : 'swing';
+        const rows = stepsAll?.[doorType] || [];
+        if (!rows.length) { box.innerHTML = ''; return; }
+        const fmtMax = h => h == null ? _t('%s~', rows[rows.length - 2]?.height_max ?? '') : `~${h}`;
+        box.innerHTML = `<div class="fss-title">${_t('문 높이별 울거미 두께·나비 (참고)')}</div>`
+            + `<table class="fss-table"><thead><tr><th>${_t('문 높이')}</th><th>${_t('두께')}</th><th>${_t('나비')}</th></tr></thead><tbody>`
+            + rows.map(r => `<tr><td>${fmtMax(r.height_max)}</td><td>${r.frame_thickness}</td><td>${r.frame_width}</td></tr>`).join('')
+            + `</tbody></table>`;
+    }
+
     window.applyFinishColorPicker = function (fromUser) {
         const sel   = document.getElementById('txtFinish');
         const block = document.getElementById('finishColorBlock');
