@@ -13,6 +13,7 @@ require_admin_role('s');
     <?php require_once __DIR__ . '/../lib/meta.php'; meta_tags(); ?>
     <?php css_tag('/src/css/dashboard.css'); ?>
     <?php css_tag('/src/css/users.css'); ?>
+    <?php css_tag('/src/css/admin.css'); ?>
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
     <style>
         .it-table { width:100%; border-collapse:collapse; font-size:13px; max-width:900px; }
@@ -65,8 +66,6 @@ require_admin_role('s');
 const TOKEN = () => localStorage.getItem('pmok_auth_token');
 const API   = '/src/api/admin/i18n_terms.php';
 let _terms = [];
-
-function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 async function load() {
     const res = await fetch(API, { headers:{ Authorization:'Bearer '+TOKEN() } });

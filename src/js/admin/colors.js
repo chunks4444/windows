@@ -1,4 +1,3 @@
-const token = () => localStorage.getItem('pmok_auth_token');
 const hdr   = () => ({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token() });
 
 async function loadColors() {
@@ -141,8 +140,6 @@ async function deleteColor(id) {
     });
     if (res.ok) loadColors();
 }
-
-function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('colorSearch').addEventListener('input', e => {

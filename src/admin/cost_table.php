@@ -30,7 +30,7 @@ try {
     <?php css_tag('/src/css/dashboard.css'); ?>
     <?php css_tag('/src/css/users.css'); ?>
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
-    <?php css_tag('/src/css/admin/cost_table.css'); ?>
+    <?php css_tag('/src/css/admin.css'); ?>
 </head>
 <body>
 <?php include __DIR__ . '/../components/nav.php'; ?>

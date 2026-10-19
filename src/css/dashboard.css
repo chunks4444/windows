@@ -141,7 +141,7 @@ body {
     .ord-row { grid-template-columns: 44px 1fr 80px; }
     .ord-row .ord-modal-btn { display: none; }
 }
-/* 관리자 주문 목록의 .ord-status-badge(src/css/admin/orders.css)와 박스 모양 공유, 색상만 각자 정의 */
+/* 관리자 주문 목록의 .ord-status-badge(src/css/admin.css 「주문 관리」 구역)와 박스 모양 공유, 색상만 각자 정의 */
 .ord-status-pill, .ord-status-badge {
     display: inline-block; flex-shrink: 0;
     padding: 3px 10px; border-radius: 99px; font-size: 12px; font-weight: 700; white-space: nowrap;

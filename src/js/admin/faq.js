@@ -52,10 +52,6 @@ async function toggleMain(id) {
     loadFaqs();
 }
 
-function esc(s) {
-    return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-
 function openModal(id) {
     const f = id ? faqs.find(x => x.id == id) : null;
     document.getElementById('faqModalTitle').textContent = f ? 'FAQ 수정' : 'FAQ 추가';

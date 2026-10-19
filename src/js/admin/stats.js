@@ -5,8 +5,6 @@ let anonPage = 1;
 let topPagesPage = 1;
 let topUsersPage = 1;
 
-function token() { return localStorage.getItem('pmok_auth_token'); }
-
 async function init() {
     const user = authGetUser();
     if (!user || user.role !== 's') { location.href = '/'; return; }
@@ -368,10 +366,6 @@ function renderExportLogs(logs) {
             <td style="font-size:11px;color:var(--text-3);font-family:monospace;">${esc(r.version || '—')}</td>
         </tr>
     `).join('') || '<tr><td colspan="6" style="padding:20px;text-align:center;color:var(--text-3);">기록 없음</td></tr>';
-}
-
-function esc(str) {
-    return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 document.querySelectorAll('.st-month-btn').forEach(b => {

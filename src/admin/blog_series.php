@@ -13,6 +13,7 @@ require_admin_role('s');
     <?php require_once __DIR__ . '/../lib/meta.php'; ?>
     <?php meta_tags(); ?>
 <?php css_tag('/src/css/dashboard.css'); ?>
+<?php css_tag('/src/css/admin.css'); ?>
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
     <style>
         .bs-wrap { max-width:900px; }

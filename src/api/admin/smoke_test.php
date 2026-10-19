@@ -66,8 +66,8 @@ foreach ([
 }
 
 // ── 2. 섹션 폴더 안에 섞인 정적 자산이 라우팅 규칙에 안 잡아먹히는지 (2026-07-08 가이드 CSS 404 재발 방지) ──
-$check('가이드 CSS 자산 로드 (/src/guide/guide.css)', function () use ($base) {
-    $r = http_call('GET', $base . '/src/guide/guide.css');
+$check('가이드 CSS 자산 로드 (/src/css/guide.css)', function () use ($base) {
+    $r = http_call('GET', $base . '/src/css/guide.css');
     return [$r['code'] === 200, "HTTP {$r['code']}"];
 });
 

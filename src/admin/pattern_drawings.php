@@ -13,6 +13,7 @@ require_admin_role('s');
     <?php require_once __DIR__ . '/../lib/meta.php'; meta_tags(); ?>
     <?php css_tag('/src/css/dashboard.css'); ?>
     <?php css_tag('/src/css/users.css'); ?>
+    <?php css_tag('/src/css/admin.css'); ?>
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
     <style>
         .pc-dl-filters { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; align-items:center; }
@@ -61,8 +62,6 @@ require_admin_role('s');
 const TOKEN = () => localStorage.getItem('pmok_auth_token');
 const CAT_API = '/src/api/admin/pattern_categories.php';
 let _cats = [];
-
-function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 let _dlPage = 1, _dlFilter = '', _dlHasMore = false, _dlQuery = '', _dlSearchTimer = null;
 

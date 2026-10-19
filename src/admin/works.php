@@ -14,6 +14,7 @@ require_admin_role('s');
     <?php meta_tags(); ?>
 <?php css_tag('/src/css/dashboard.css'); ?>
     <?php css_tag('/src/css/users.css'); ?>
+    <?php css_tag('/src/css/admin.css'); ?>
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
     <style>
         .drag-handle { cursor:grab; color: var(--text); }
@@ -218,8 +219,6 @@ function renderTags() {
             <button onclick="deleteTag(${t.id})" style="border:none;background:none;cursor:pointer;color:var(--danger);padding:0;font-size:13px;line-height:1;" title="삭제">✕</button>
         </div>`).join('');
 }
-
-function esc(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 function openTagModal(id) {
     const t = id ? tags.find(x => x.id == id) : null;

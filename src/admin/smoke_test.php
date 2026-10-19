@@ -13,6 +13,7 @@ require_admin_role('s');
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <?php require_once __DIR__ . '/../lib/meta.php'; meta_tags(); ?>
     <?php css_tag('/src/css/dashboard.css'); ?>
+    <?php css_tag('/src/css/admin.css'); ?>
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
 <style>
 .st-wrap { max-width: 760px; margin: 0 auto; padding: 32px 20px 60px; }
@@ -110,10 +111,6 @@ async function runSmokeTest() {
     } finally {
         btn.disabled = false; btnText.textContent = '다시 실행';
     }
-}
-
-function esc(str) {
-    return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
 document.addEventListener('DOMContentLoaded', () => {

@@ -107,10 +107,6 @@ async function saveOrder(id, value) {
     render();
 }
 
-function esc(s) {
-    return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-
 function openModal(id) {
     const p = id ? posts.find(x => x.id == id) : null;
     document.getElementById('blogModalTitle').textContent = p ? '글 수정' : '글 추가';

@@ -7,7 +7,12 @@ function css_url(string $path): string {
     return $path . '?v=' . $v;
 }
 
+// 같은 CSS를 한 페이지에서 두 번 넣지 않는다 — 어드민 페이지는 <head>에서 admin.css를 넣고,
+// 사이드 메뉴 컴포넌트(admin_sidenav.php)도 혹시 빠진 페이지를 위해 한 번 더 부르기 때문.
 function css_tag(string $path): void {
+    static $done = [];
+    if (isset($done[$path])) return;
+    $done[$path] = true;
     echo '<link rel="stylesheet" href="' . css_url($path) . '">' . "\n    ";
 }
 

@@ -16,7 +16,7 @@ require_admin_role('s');
     <?php css_tag('/src/css/users.css'); ?>
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
 
-    <?php css_tag('/src/css/admin/oauth.css'); ?>
+    <?php css_tag('/src/css/admin.css'); ?>
     <style>
         .rp-table { width:100%; border-collapse:collapse; font-size:13px; }
         .rp-table th { background:var(--bg); padding:8px 12px; text-align:left; font-weight:600; color: var(--text); border-bottom:2px solid var(--border); }

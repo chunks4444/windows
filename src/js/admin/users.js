@@ -4,8 +4,6 @@ let searchTimer = null;
 let editingId   = null;
 let companyId   = null;
 
-function token() { return localStorage.getItem('pmok_auth_token'); }
-
 async function init() {
     const user = authGetUser();
     if (!user || user.role !== 's') { location.href = '/'; return; }
@@ -267,10 +265,6 @@ document.getElementById('companyModalOverlay').addEventListener('click', functio
 function fmtDatetime(dt) {
     if (!dt) return '<span class="adm-null">—</span>';
     return dt.slice(0, 16).replace('T', ' ');
-}
-
-function esc(str) {
-    return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
 // 오버레이 클릭 시 닫기

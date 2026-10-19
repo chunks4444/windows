@@ -23,7 +23,7 @@ foreach ($libPatternCats as $c) {
     <?php css_tag('/src/css/users.css'); ?>
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
     
-    <?php css_tag('/src/css/admin/collection.css'); ?>
+    <?php css_tag('/src/css/admin.css'); ?>
     <style>
         .lib-admin-filter-select {
             height: 32px; padding: 0 10px;

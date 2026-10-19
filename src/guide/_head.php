@@ -173,7 +173,7 @@ foreach ($guide_nav as $sec) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 <?php css_tag('/src/css/common.css'); ?>
     <?php css_tag('/src/css/nav.css'); ?>
-    <?php css_tag('/src/guide/guide.css'); ?>
+    <?php css_tag('/src/css/guide.css'); ?>
 </head>
 <body>
 <?php include __DIR__ . '/../components/nav.php'; ?>

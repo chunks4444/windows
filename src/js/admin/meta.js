@@ -1,6 +1,5 @@
 let editingId = null;
 
-function token()   { return localStorage.getItem('pmok_auth_token'); }
 function headers() { return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token() }; }
 
 async function init() {
@@ -167,10 +166,6 @@ function showAlert(msg) {
 }
 
 function truncate(str, n) { return str.length > n ? str.slice(0, n) + '…' : str; }
-
-function esc(str) {
-    return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
 
 document.getElementById('metaModalOverlay').addEventListener('click', e => {
     if (e.target === e.currentTarget) closeModal();

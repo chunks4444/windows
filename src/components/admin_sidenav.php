@@ -2,11 +2,12 @@
 // 어드민 좌측 메뉴 트리 — 각 어드민 페이지 <body> 상단(nav.php 다음)에 include
 // 새 어드민 페이지 추가 시 이 목록에도 같이 추가할 것 (/src/admin/은 stats.php로 리다이렉트되는 진입점)
 require_once __DIR__ . '/../lib/meta.php';
-css_tag('/src/css/admin_sidenav.css');
+css_tag('/src/css/admin.css'); // 보통 페이지 <head>에서 이미 불러와 여기선 건너뜀
 
 $admSidenavCurrent = basename($_SERVER['PHP_SELF']);
 $admSidenavSections = require __DIR__ . '/../lib/admin_sidenav_data.php';
 ?>
+<script src="/src/js/admin/common.js?v=<?= md5_file(__DIR__ . '/../js/admin/common.js') ?>"></script>
 <aside class="adm-sidenav" id="admSidenav">
     <?php foreach ($admSidenavSections as $admSec):
         $admSecActive = false;

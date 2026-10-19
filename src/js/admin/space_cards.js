@@ -38,10 +38,6 @@ function render() {
     bindDrag();
 }
 
-function esc(s) {
-    return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-
 function openModal(id) {
     const c = id ? cards.find(x => x.id == id) : null;
     document.getElementById('scModalTitle').textContent = c ? '공간 카드 수정' : '공간 카드 추가';

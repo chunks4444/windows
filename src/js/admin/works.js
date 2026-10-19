@@ -34,10 +34,6 @@ function render() {
     bindDrag();
 }
 
-function esc(s) {
-    return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-
 function openModal(id) {
     const w = id ? works.find(x => x.id == id) : null;
     document.getElementById('worksModalTitle').textContent = w ? '작품 수정' : '작품 추가';

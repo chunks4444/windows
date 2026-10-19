@@ -32,6 +32,7 @@ foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
 <?php css_tag('/src/css/dashboard.css'); ?>
     <?php css_tag('/src/css/users.css'); ?>
     <?php css_tag('/src/css/stats.css'); ?>
+    <?php css_tag('/src/css/admin.css'); ?>
     <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
     <style>
         .blog-order-input { width:56px; padding:4px 6px; border:1px solid var(--border); border-radius:5px; font-size:12px; text-align:center; background:var(--bg); color:var(--text); }

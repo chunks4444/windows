@@ -4,8 +4,6 @@ let currentPage = 1;
 let searchTimer = null;
 let editingId   = null;
 
-function token() { return localStorage.getItem('pmok_auth_token'); }
-
 async function init() {
     const user = authGetUser();
     if (!user || user.role !== 's') { location.href = '/'; return; }
@@ -241,10 +239,6 @@ async function saveOrder() {
     } finally {
         btn.disabled = false; btn.textContent = '저장';
     }
-}
-
-function esc(str) {
-    return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
 document.getElementById('admModalOverlay').addEventListener('click', function(e) {

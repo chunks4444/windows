@@ -77,7 +77,6 @@ async function load() {
 }
 
 function fmt(n) { return Number(n).toLocaleString('ko-KR'); }
-function esc(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
 const LABOR_ENGINE_FIELDS = [
     { name: 'craft_time',   label: '교차점당 작업시간', unit: '분' },

@@ -25,7 +25,6 @@ let _editOriginalModifier  = '';
 let _editOriginalSlug      = '';
 let _currentKeepDrawingId  = null; // 지금 열려있는 추가/수정 모달 자신이 쓰던 도면 (피커에서 제외 대상 예외)
 
-function token()   { return localStorage.getItem('pmok_auth_token'); }
 function headers() { return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token() }; }
 
 async function init() {
@@ -459,10 +458,6 @@ function showAlert(msg) {
     el.textContent   = msg;
     el.className     = 'adm-alert adm-alert-error';
     el.style.display = '';
-}
-
-function esc(str) {
-    return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 }
 
 document.getElementById('libModalOverlay').addEventListener('click', e => {

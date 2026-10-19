@@ -32,10 +32,6 @@ function render() {
     bindDrag();
 }
 
-function esc(s) {
-    return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-
 function openModal(id) {
     const m = id ? motifs.find(x => x.id == id) : null;
     document.getElementById('svgMotifModalTitle').textContent = m ? '문양 수정' : '문양 추가';

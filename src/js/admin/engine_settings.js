@@ -1,4 +1,3 @@
-const token = () => localStorage.getItem('pmok_auth_token');
 const hdr   = () => ({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token() });
 
 const ENGINES = window.__pmokEngineKeys || ['classic', 'square', 'cross', 'diamond', 'triangle', 'hexagon'];
@@ -133,10 +132,6 @@ async function loadAll() {
     currentSettings = data.settings || {};
     renderGrid();
     document.getElementById('engineSettingsPage').style.display = '';
-}
-
-function esc(s) {
-    return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
 init();

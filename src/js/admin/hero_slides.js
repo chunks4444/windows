@@ -32,10 +32,6 @@ function render() {
     bindDrag();
 }
 
-function esc(s) {
-    return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-
 function openModal(id) {
     const s = id ? slides.find(x => x.id == id) : null;
     document.getElementById('hsModalTitle').textContent = s ? '슬라이드 수정' : '슬라이드 추가';
