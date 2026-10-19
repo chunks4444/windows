@@ -24,6 +24,10 @@ function engine_setting_defaults(string $engine): array {
         'dimensionOn' => '1',
         'gap'         => '2',
         'basePadding' => '60',
+        // 울거미 두께(frame/frameH)가 문 높이별 단계표(frame_size_steps)를 어떻게 반영할지 —
+        // min_only: 슬라이더 min만 단계값으로 올리고 더 두껍게 가는 건 자유(기본값, 디자인 자유도 보존).
+        // overwrite: 문 높이·문 종류가 바뀔 때마다 단계값으로 그대로 덮어씀(거래처 규격 등 엄격한 통일이 필요할 때).
+        'frameSizePolicy' => 'min_only',
     ];
 
     switch ($engine) {
@@ -204,6 +208,44 @@ function get_cost_table_item(string $category, string $name): ?array {
         return $row ?: null;
     } catch (Throwable $e) {
         return null;
+    }
+}
+
+// 문 높이(outerH, mm) + 문 종류(swing/slide)로 frame_size_steps에서 해당 단계 하나를 찾는다.
+// 7개 엔진 geometry.php가 울거미 두께(frame/frameH 슬라이더 min·기본값) · 나비(부재목록 목재량 계산용) 둘 다 이걸로 구한다.
+function get_frame_size_step(string $doorType, int $heightMm): ?array {
+    $doorType = $doorType === 'slide' ? 'slide' : 'swing';
+    try {
+        $stmt = db()->prepare(
+            'SELECT stage_order, height_max, frame_thickness, frame_width
+             FROM frame_size_steps
+             WHERE door_type = ? AND is_active = 1 AND (height_max IS NULL OR height_max >= ?)
+             ORDER BY (height_max IS NULL), height_max ASC
+             LIMIT 1'
+        );
+        $stmt->execute([$doorType, $heightMm]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
+    } catch (Throwable $e) {
+        return null;
+    }
+}
+
+// 좌측 패널 하단에 통째로 보여줄 단계표 전체(문 종류 하나 기준) — 사용자가 여닫이/미서기를 바꾸면
+// 클라이언트가 이 중 맞는 door_type의 표로 다시 그린다. 두 door_type을 한 번에 다 보내 전환 시 재요청이 없게 한다.
+function get_frame_size_steps_all(): array {
+    try {
+        $stmt = db()->query(
+            'SELECT door_type, stage_order, height_max, frame_thickness, frame_width
+             FROM frame_size_steps WHERE is_active = 1 ORDER BY door_type, stage_order'
+        );
+        $out = ['swing' => [], 'slide' => []];
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $r) {
+            $out[$r['door_type']][] = $r;
+        }
+        return $out;
+    } catch (Throwable $e) {
+        return ['swing' => [], 'slide' => []];
     }
 }
 

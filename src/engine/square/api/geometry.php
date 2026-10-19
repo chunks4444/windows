@@ -31,6 +31,14 @@ $frameGap      = max(0,   (int)($_POST['frameGap']      ?? 2));
 $base   = $frameOpeningW - 2 * $frameThick - 2 * $frameGap;
 $outerH = max(100, $frameOpeningH - 2 * $frameThick - 2 * $frameGap);
 
+// 문 높이(outerH)·문 종류로 울거미 두께·나비 단계값을 찾아 최소치로 강제한다 — "최소치만 막기"/"덮어쓰기"
+// 정책 차이는 클라이언트가 슬라이더를 어떻게 보여주느냐일 뿐, 서버는 정책과 무관하게 이 하한을 항상 지킨다.
+$frameSizeStep = get_frame_size_step($doorType, (int)round($outerH));
+if ($frameSizeStep) {
+    $frameW = max($frameW, (int)$frameSizeStep['frame_thickness']);
+    $frameH = max($frameH, (int)$frameSizeStep['frame_thickness']);
+}
+
 if ($doorType === 'slide') {
     $outerW = ($base + $frameW * ($doorCount - 1)) / $doorCount;
 } else {
@@ -151,7 +159,7 @@ $vSlatCnt = max(0, $cols - 1);
 // 목재 재수 계산 (1재 = 30.3×30.3×3636mm³, 부재별 실제 단면 사용)
 $_es  = get_engine_settings('square');
 $_JAE = 30.3 * 30.3 * 3636;
-$_wU  = (int)($_es['ulgeomiW']             ?? $_d['울거미']['width_mm'] ?? 33);
+$_wU  = (int)($frameSizeStep['frame_width'] ?? $_es['ulgeomiW'] ?? $_d['울거미']['width_mm'] ?? 33);
 $_wS  = (int)($_es['slatW']               ?? $_d['살']['width_mm']    ?? 20);
 $_pT  = (int)($_es['pungpanT']            ?? 15);
 $_tMt = (int)($_es['muntolT'] ?? 30);
@@ -252,4 +260,7 @@ echo json_encode([
     'price' => ['total' => $perms['price'] ? $price['total'] : null, 'leadTimeDays' => $perms['leadtime'] ? $price['leadTimeDays'] : null],
     'costBreakdown' => $perms['cost'] ? $price['breakdown'] : null,
     'glassConfig' => $perms['physical'] ? ['density' => $_glass['density'] ?? null, 'thicknessMm' => $_glass['thickness_mm'] ?? null] : null,
+    'frameSizeStep'   => $frameSizeStep,
+    'frameSizeSteps'  => get_frame_size_steps_all(),
+    'frameSizePolicy' => $_es['frameSizePolicy'] ?? 'min_only',
 ]);
