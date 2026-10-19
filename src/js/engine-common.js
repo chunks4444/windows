@@ -447,11 +447,15 @@
     function renderFrameSizeStepsTable(stepsAll) {
         const box = document.getElementById('frameSizeStepsTable');
         if (!box) return;
-        const doorType = document.getElementById('txtDoorType')?.value === 'slide' ? 'slide' : 'swing';
+        const isSlide = document.getElementById('txtDoorType')?.value === 'slide';
+        const doorType = isSlide ? 'slide' : 'swing';
+        const doorTypeLabel = isSlide ? _t('미서기') : _t('여닫이');
         const rows = stepsAll?.[doorType] || [];
         if (!rows.length) { box.innerHTML = ''; return; }
         const fmtMax = h => h == null ? _t('%s~', rows[rows.length - 2]?.height_max ?? '') : `~${h}`;
-        box.innerHTML = `<div class="fss-title">${_t('문 높이별 울거미 두께·나비 (참고)')}</div>`
+        // 문 종류를 바꾸면 이 표도 같이 바뀌므로, 지금 어느 쪽 표인지 제목에 분명히 적는다(단순 "참고"만으로는
+        // 여닫이·미서기 중 뭘 보고 있는지 구분이 안 된다는 피드백 반영).
+        box.innerHTML = `<div class="fss-title">${_t('%s 기준 문 높이별 울거미 두께·나비', doorTypeLabel)}</div>`
             + `<table class="fss-table"><thead><tr><th>${_t('문 높이')}</th><th>${_t('두께')}</th><th>${_t('나비')}</th></tr></thead><tbody>`
             + rows.map(r => `<tr><td>${fmtMax(r.height_max)}</td><td>${r.frame_thickness}</td><td>${r.frame_width}</td></tr>`).join('')
             + `</tbody></table>`;
