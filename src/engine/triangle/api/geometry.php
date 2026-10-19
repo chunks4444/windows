@@ -13,7 +13,7 @@ $pungpanH  = max(0,   (int)($_POST['pungpanH']  ?? 0));
 $pungpanOn = (($_POST['pungpanOn'] ?? '0') === '1');
 $frameW    = max(15,  (int)($_POST['frameW']    ?? 60));
 $frameH    = max(15,  (int)($_POST['frameH']    ?? 60));
-$slatT     = max(8,   (int)($_POST['slatT']     ?? 12));
+$slatT     = max(4.5, (float)($_POST['slatT']   ?? 12));
 $rotateOn  = (($_POST['rotateOn']  ?? '0') === '1');
 $doorType  = in_array($_POST['doorType'] ?? '', ['swing','slide']) ? $_POST['doorType'] : 'swing';
 $doorCount = max(1, min(8, (int)($_POST['doorCount'] ?? 1)));

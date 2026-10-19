@@ -358,8 +358,8 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                     <div class="ctrl">
                         <div class="ctrl-header"><span class="ctrl-label"><?= te('살 두께') ?></span></div>
                         <div class="slider-row">
-                            <input type="range" id="txtSlat" min="8" max="35" step="1" value="<?= htmlspecialchars($cfg['slat']) ?>">
-                            <input type="number" class="slider-num" id="numSlat" min="8" max="35" step="1" value="<?= htmlspecialchars($cfg['slat']) ?>">
+                            <input type="range" id="txtSlat" min="4.5" max="35" step="0.5" value="<?= htmlspecialchars($cfg['slat']) ?>">
+                            <input type="number" class="slider-num" id="numSlat" min="4.5" max="35" step="0.5" value="<?= htmlspecialchars($cfg['slat']) ?>">
                         </div>
                     </div>
 

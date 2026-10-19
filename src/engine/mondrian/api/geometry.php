@@ -13,7 +13,7 @@ $pungpanH  = max(0,   (int)($_POST['pungpanH']  ?? 0));
 $pungpanOn = (($_POST['pungpanOn'] ?? '0') === '1');
 $frameW    = max(15,  (int)($_POST['frameW']    ?? 60));
 $frameH    = max(15,  (int)($_POST['frameH']    ?? 60));
-$slatT     = max(8,   (int)($_POST['slatT']     ?? 12));
+$slatT     = max(4.5, (float)($_POST['slatT']   ?? 12));
 $vRatio    = max(1.0, min(3.0, (float)($_POST['vRatio'] ?? 1.0)));
 $rowsManual = (($_POST['rowsManual'] ?? '0') === '1');
 $rowsCount  = max(1, (int)($_POST['rows'] ?? 6));

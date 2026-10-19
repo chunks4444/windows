@@ -2146,7 +2146,7 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
         { range: txtCols,   num: document.getElementById('numCols'),    min: 1,    max: 29,  snapFn: toOdd },
         { range: txtFrame,  num: document.getElementById('numFrame'),   min: 15,   max: 150  },
         { range: txtFrameH, num: document.getElementById('numFrameH'),  min: 15,   max: 150  },
-        { range: txtSlat,   num: document.getElementById('numSlat'),    min: 8,    max: 35   },
+        { range: txtSlat,   num: document.getElementById('numSlat'),    min: 4.5,  max: 35   },
         { range: document.getElementById('txtPungpan'), num: document.getElementById('numPungpan'), min: 0, max: 600 },
     ];
 
