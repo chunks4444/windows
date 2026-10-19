@@ -35,5 +35,12 @@
     "additionalDirectories": [
       "D:\\chun_full\\0_chun_work\\1 평목\\2 평목 로고"
     ]
+  },
+  "autoMode": {
+    "allow": [
+      "$defaults",
+      "Deploying the Pyeongmok site is authorized by the user: ssh pyeongmok then git pull origin main (and git log/git status) in /home/chunks/web/studio.pyeongmok.com on the production server.",
+      "Read-only inspection on the pyeongmok production server via ssh pyeongmok is authorized, including sudo reads of Apache access/error logs under /var/log/apache2 (grep/zgrep/tail/ls) for crawl and error checks."
+    ]
   }
 }
