@@ -1378,14 +1378,24 @@ input[type="range"]::-moz-range-thumb {
     top: calc(100% + 8px);
     z-index: 30;
     max-width: 240px;
-    padding: 6px 10px;
+    padding: 6px 22px 6px 10px;
     font-size: var(--fs-11);
     line-height: 1.4;
     color: var(--bg);
     background: var(--sidebar-bg);
+    border: 1px solid rgba(var(--bg-rgb), 0.3);
     border-radius: 8px;
     box-shadow: 0 6px 18px rgba(var(--text-rgb), .18);
     cursor: pointer;
+}
+.auto-adjust-note::after {
+    content: '×';
+    position: absolute;
+    top: 2px;
+    right: 6px;
+    font-size: var(--fs-12);
+    line-height: 1;
+    color: rgba(var(--bg-rgb), 0.7);
 }
 .auto-adjust-note::before {
     content: '';
