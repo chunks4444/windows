@@ -1322,8 +1322,11 @@ input[type="range"]::-moz-range-thumb {
 }
 
 /* ── SLIDER + NUMBER INPUT ROW ───────────── */
-.slider-row { display: flex; align-items: center; gap: 8px; }
+.slider-row { display: flex; align-items: center; gap: 6px; }
 .slider-row input[type="range"] { flex: 1; }
+
+/* 슬라이더 좌우 min/max 표시 — engine-common.js initSliderMinMax()가 모든 슬라이더에 자동으로 넣는다 */
+.slider-minmax { font-size: var(--fs-11); color: var(--text-3); flex-shrink: 0; }
 
 .slider-num {
     width: 52px;

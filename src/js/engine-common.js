@@ -412,6 +412,32 @@
     const OIL_WOOD_COLOR_CODE   = { '소나무': 'NO-02' };   // 수종 → 색 코드. 없으면 NO-01 자연(홍송 등)
     const isOilFinish = v => /오일|기름|유$/.test(String(v || ''));
 
+    // 모든 슬라이더 좌우에 현재 min/max 값을 숫자로 보여준다 — 울거미 나비처럼 min이 문 높이에 따라
+    // 동적으로 바뀌는 슬라이더에서 "왜 더 안 내려가지?"가 바로 보이게. 페이지 로드 시 한 번 라벨을
+    // 끼워 넣고, min/max를 프로그램으로 바꾸는 곳(현재는 frame_size_steps뿐)에서
+    // updateSliderMinMax()를 같이 불러 갱신한다.
+    function initSliderMinMax() {
+        document.querySelectorAll('.slider-row input[type="range"]').forEach(r => {
+            if (r.previousElementSibling?.classList.contains('slider-min')) return;
+            const minLabel = document.createElement('span');
+            minLabel.className = 'slider-minmax slider-min';
+            const maxLabel = document.createElement('span');
+            maxLabel.className = 'slider-minmax slider-max';
+            r.before(minLabel);
+            r.after(maxLabel);
+            updateSliderMinMax(r);
+        });
+    }
+    window.updateSliderMinMax = function (r) {
+        const row = r?.closest('.slider-row');
+        if (!row) return;
+        const minLabel = row.querySelector('.slider-min');
+        const maxLabel = row.querySelector('.slider-max');
+        if (minLabel) minLabel.textContent = r.min;
+        if (maxLabel) maxLabel.textContent = r.max;
+    };
+    initSliderMinMax();
+
     // 서버·클라이언트가 슬라이더 값을 사용자 모르게 바꾸지 않도록 — 값을 자동 조정할 때마다 그 라벨
     // 옆에 짧게 이유를 보여준다(frame_size_steps 최소치 강제, 문틀세로 자동 맞춤 등 공용으로 씀).
     // 슬라이더 아래 말풍선으로 띄웠더니 다음 컨트롤과 겹쳐서(레이아웃이 밀리거나 안 밀리거나 둘 다
@@ -463,7 +489,7 @@
             // 순서가 바뀌면 여기서 "이미 min이네, 조정 필요 없음"으로 잘못 판단해 숫자칸(n)엔 반영을
             // 안 하고 슬라이더(r)만 브라우저가 멋대로 옮긴 채로 남는다.
             const cur = parseInt((n || r).value, 10);
-            if (r) r.min = String(min);
+            if (r) { r.min = String(min); updateSliderMinMax(r); }
             if (n) n.min = String(min);
             const shouldForce = policy === 'overwrite' ? cur !== min : cur < min;
             if (shouldForce) {
