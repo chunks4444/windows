@@ -1368,16 +1368,33 @@ input[type="range"]::-moz-range-thumb {
 .fss-table thead th { color: var(--text-3); font-weight: 400; border-bottom: 1px solid var(--border); }
 .fss-table tbody tr:nth-child(odd) { background: rgba(var(--bg-rgb), 0.03); }
 
-/* 자동 조정 안내문 — 서버·클라이언트가 슬라이더 값을 사용자 몰래 바꾸지 않도록, 바뀐 즉시 해당 ctrl 아래 표시 */
+/* 자동 조정 안내문 — 서버·클라이언트가 슬라이더 값을 사용자 몰래 바꾸지 않도록, 바뀐 즉시 해당 슬라이더
+   옆에 말풍선으로 띄운다. position:absolute라 문서 흐름에 안 끼어들어 다른 ctrl을 밀어내리지 않는다
+   (처음엔 일반 블록으로 넣었더니 뜨고 사라질 때마다 사이드바 레이아웃이 흔들렸다). 클릭하면 닫힘. */
+.ctrl { position: relative; }
 .auto-adjust-note {
-    margin-top: 4px;
-    padding: 4px 8px;
+    position: absolute;
+    left: 0;
+    top: calc(100% + 8px);
+    z-index: 30;
+    max-width: 240px;
+    padding: 6px 10px;
     font-size: var(--fs-11);
     line-height: 1.4;
-    color: var(--text-2);
-    background: rgba(var(--bg-rgb), 0.05);
-    border-left: 2px solid var(--text-3);
-    border-radius: 4px;
+    color: var(--bg);
+    background: var(--sidebar-bg);
+    border-radius: 8px;
+    box-shadow: 0 6px 18px rgba(var(--text-rgb), .18);
+    cursor: pointer;
+}
+.auto-adjust-note::before {
+    content: '';
+    position: absolute;
+    left: 16px;
+    top: -6px;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 6px solid var(--sidebar-bg);
 }
 
 .toggle-switch { position: relative; width: 36px; height: 20px; flex-shrink: 0; }

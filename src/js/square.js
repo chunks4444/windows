@@ -441,7 +441,6 @@ async function draw() {
                 draw();
                 return;
             }
-            window.setAutoNote?.('txtH', '');
         }
     } else {
         window.setAutoNote?.('txtH', '');
