@@ -412,6 +412,23 @@
     const OIL_WOOD_COLOR_CODE   = { '소나무': 'NO-02' };   // 수종 → 색 코드. 없으면 NO-01 자연(홍송 등)
     const isOilFinish = v => /오일|기름|유$/.test(String(v || ''));
 
+    // 서버·클라이언트가 슬라이더 값을 사용자 모르게 바꾸지 않도록 — 값을 자동 조정할 때마다 그 ctrl 바로
+    // 아래에 이유를 보여준다(frame_size_steps 최소치 강제, 문틀세로 자동 맞춤 등 공용으로 씀).
+    // text가 빈 값이면 기존 안내문을 지운다(더 이상 조정이 적용되지 않을 때).
+    window.setAutoNote = function (inputId, text) {
+        const input = document.getElementById(inputId);
+        const ctrl  = input?.closest('.ctrl');
+        if (!ctrl) return;
+        let note = ctrl.querySelector('.auto-adjust-note');
+        if (!text) { note?.remove(); return; }
+        if (!note) {
+            note = document.createElement('div');
+            note.className = 'auto-adjust-note';
+            ctrl.appendChild(note);
+        }
+        note.textContent = text;
+    };
+
     // 문 높이·문 종류별 울거미 두께·나비 단계표(frame_size_steps, 7개 엔진 공용) 반영.
     // draw()가 geometry.php 응답을 받은 직후 data를 그대로 넘겨 호출한다.
     // - 나비(frame/frameH 슬라이더, 정면에 보이는 폭): min_only 정책이면 슬라이더 min만 단계값으로 올리고,
@@ -423,10 +440,14 @@
     window.applyFrameSizeStep = function (data) {
         renderFrameSizeStepsTable(data?.frameSizeSteps);
         const step = data?.frameSizeStep;
-        if (!step) return false;
+        if (!step) {
+            setAutoNote('txtFrame', ''); setAutoNote('txtFrameH', '');
+            return false;
+        }
         const min = Number(step.frame_width);
         if (!Number.isFinite(min)) return false;
         const policy = data.frameSizePolicy || 'min_only';
+        const doorHeight = Math.round(data?.geo?.frameOpeningH ?? data?.geo?.outerH ?? 0);
         let needsRedraw = false;
         [['txtFrame', 'numFrame'], ['txtFrameH', 'numFrameH']].forEach(([rangeId, numId]) => {
             const r = document.getElementById(rangeId), n = document.getElementById(numId);
@@ -439,6 +460,9 @@
                 if (r) r.value = String(min);
                 if (n) n.value = String(min);
                 if (policy === 'overwrite') needsRedraw = true;
+                setAutoNote(rangeId, _t('문 높이 %smm 기준 최소 나비 %smm로 자동 조정됨', doorHeight, min));
+            } else {
+                setAutoNote(rangeId, '');
             }
         });
         return needsRedraw;

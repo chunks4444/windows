@@ -1368,6 +1368,18 @@ input[type="range"]::-moz-range-thumb {
 .fss-table thead th { color: var(--text-3); font-weight: 400; border-bottom: 1px solid var(--border); }
 .fss-table tbody tr:nth-child(odd) { background: rgba(var(--bg-rgb), 0.03); }
 
+/* 자동 조정 안내문 — 서버·클라이언트가 슬라이더 값을 사용자 몰래 바꾸지 않도록, 바뀐 즉시 해당 ctrl 아래 표시 */
+.auto-adjust-note {
+    margin-top: 4px;
+    padding: 4px 8px;
+    font-size: var(--fs-11);
+    line-height: 1.4;
+    color: var(--text-2);
+    background: rgba(var(--bg-rgb), 0.05);
+    border-left: 2px solid var(--text-3);
+    border-radius: 4px;
+}
+
 .toggle-switch { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
 .toggle-switch input { opacity: 0; width: 0; height: 0; }
 

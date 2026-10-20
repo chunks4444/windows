@@ -260,6 +260,9 @@ return [
     '%s~'                                             => '%s+',
     '여닫이'                                          => 'Hinged',
     '미서기'                                          => 'Sliding',
+    // 자동 조정 안내문(auto-adjust-note) — 값이 왜 바뀌었는지 그 자리에서 바로 보여주기 위한 문구
+    '문 높이 %smm 기준 최소 나비 %smm로 자동 조정됨' => 'For a %smm door height, auto-adjusted to the %smm minimum width',
+    '격자에 맞춰 문틀세로가 %smm → %smm로 자동 조정됨' => 'Frame height auto-adjusted from %smm to %smm to fit the grid',
     '오일 마감은 나무결 그대로 한 가지 색으로 칠해집니다.' => 'Oil finishes keep the grain and use a single colour.',
     '나무 본래 색 그대로입니다. 아래에서 색을 고르면 그 마감이 함께 선택됩니다.' => 'The wood keeps its natural colour. Picking a colour below also selects its finish.',
     '먼저 색칠할 부위를 고르세요.'                   => 'Choose a part to colour first.',
