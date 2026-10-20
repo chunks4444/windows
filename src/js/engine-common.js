@@ -412,26 +412,28 @@
     const OIL_WOOD_COLOR_CODE   = { '소나무': 'NO-02' };   // 수종 → 색 코드. 없으면 NO-01 자연(홍송 등)
     const isOilFinish = v => /오일|기름|유$/.test(String(v || ''));
 
-    // 서버·클라이언트가 슬라이더 값을 사용자 모르게 바꾸지 않도록 — 값을 자동 조정할 때마다 그 ctrl 바로
-    // 아래에 이유를 보여준다(frame_size_steps 최소치 강제, 문틀세로 자동 맞춤 등 공용으로 씀).
+    // 서버·클라이언트가 슬라이더 값을 사용자 모르게 바꾸지 않도록 — 값을 자동 조정할 때마다 그 라벨
+    // 옆에 짧게 이유를 보여준다(frame_size_steps 최소치 강제, 문틀세로 자동 맞춤 등 공용으로 씀).
+    // 슬라이더 아래 말풍선으로 띄웠더니 다음 컨트롤과 겹쳐서(레이아웃이 밀리거나 안 밀리거나 둘 다
+    // 지저분했다) ctrl-header(라벨 줄) 안에 끼워 넣는 걸로 바꿨다 — 라벨 옆이라 거의 자리를 안 차지한다.
     // text가 빈 값이면 기존 안내문을 지운다(더 이상 조정이 적용되지 않을 때).
     // 한 번 뜬 안내문은 재계산 때마다 조건을 다시 안 만족한다고 바로 지우지 않는다 — 조정 직후
     // 재귀 draw()가 "이미 맞춰졌으니 더 조정 안 해도 됨" 상태를 즉시 다시 계산해서, 띄우자마자
     // 같은 틱 안에서 지워버리는 문제가 있었다(사용자가 읽기도 전에 사라짐). 사용자가 직접 클릭해서
     // 닫을 때까지 떠 있고, 내용이 바뀌면(예: 문 높이 구간이 달라짐) 갱신만 한다.
     window.setAutoNote = function (inputId, text) {
-        const input = document.getElementById(inputId);
-        const ctrl  = input?.closest('.ctrl');
-        if (!ctrl) return;
-        let note = ctrl.querySelector('.auto-adjust-note');
+        const input  = document.getElementById(inputId);
+        const header = input?.closest('.ctrl')?.querySelector('.ctrl-header');
+        if (!header) return;
+        let note = header.querySelector('.auto-adjust-note');
         if (!text) { note?.remove(); return; }
         if (note) { note.textContent = text; return; }
-        note = document.createElement('div');
+        note = document.createElement('span');
         note.className = 'auto-adjust-note';
         note.textContent = text;
         note.title = _t('클릭하면 닫힘');
         note.addEventListener('click', () => note.remove());
-        ctrl.appendChild(note);
+        header.appendChild(note);
     };
 
     // 문 높이·문 종류별 울거미 두께·나비 단계표(frame_size_steps, 7개 엔진 공용) 반영.
@@ -452,20 +454,23 @@
         const min = Number(step.frame_width);
         if (!Number.isFinite(min)) return false;
         const policy = data.frameSizePolicy || 'min_only';
-        const doorHeight = Math.round(data?.geo?.frameOpeningH ?? data?.geo?.outerH ?? 0);
         let needsRedraw = false;
         [['txtFrame', 'numFrame'], ['txtFrameH', 'numFrameH']].forEach(([rangeId, numId]) => {
             const r = document.getElementById(rangeId), n = document.getElementById(numId);
             if (!r && !n) return;
+            // min을 올리기 전에 현재값을 먼저 읽어야 한다 — range input은 min 속성이 현재값보다
+            // 커지는 순간 브라우저가 알아서 value를 그 min으로 clamp해버린다(number input은 안 그럼).
+            // 순서가 바뀌면 여기서 "이미 min이네, 조정 필요 없음"으로 잘못 판단해 숫자칸(n)엔 반영을
+            // 안 하고 슬라이더(r)만 브라우저가 멋대로 옮긴 채로 남는다.
+            const cur = parseInt((n || r).value, 10);
             if (r) r.min = String(min);
             if (n) n.min = String(min);
-            const cur = parseInt((r || n).value, 10);
             const shouldForce = policy === 'overwrite' ? cur !== min : cur < min;
             if (shouldForce) {
                 if (r) r.value = String(min);
                 if (n) n.value = String(min);
                 if (policy === 'overwrite') needsRedraw = true;
-                setAutoNote(rangeId, _t('문 높이 %s 기준 최소 나비 %smm로 자동 조정됨', doorHeight, min));
+                setAutoNote(rangeId, _t('문높이 기준 자동조정 %s->%s', cur, min));
             }
             // shouldForce가 false인 건 "조정이 필요 없어졌다"가 아니라 "방금 조정한 값이 이미 min과
             // 같다"인 경우가 대부분이라(강제 직후 재계산 시 cur===min) 여기서 지우지 않는다 — 사용자가
