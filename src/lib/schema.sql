@@ -758,37 +758,38 @@ CREATE TABLE IF NOT EXISTS engine_settings (
 -- 문 높이(outerH, 문짝 외경 세로)에 따라 울거미 두께·나비가 몇 단계로 달라져야 하는지 — 장기인 『창호』의
 -- "울거미는 문 치수에 따라 표로 정한다" 원칙을 디비화한 것(2026-10-20, 어드민 '울거미 단계표'에서 관리,
 -- 7개 엔진 전부 공용 — 패턴과 무관하게 문 높이·문 종류로만 정해짐).
--- frame_thickness(두께) = 도면에 보이는 값(좌우/상하 울거미 frame·frameH) 추천값이자 최소값 — 정책이
---   "min_only"면 슬라이더 min만 이 값으로 올리고(더 두껍게는 자유), "overwrite"면 매번 이 값으로 덮어씀.
+-- frame_width(나비) = 정면에서 보이는 폭(좌우/상하 울거미 frame·frameH) 추천값이자 최소값 — 정책이
+--   "min_only"면 슬라이더 min만 이 값으로 올리고(더 넓게는 자유), "overwrite"면 매번 이 값으로 덮어씀.
 --   정책은 engine_settings의 frameSizePolicy 키(엔진별)로 어드민이 고른다.
--- frame_width(나비) = 도면에는 안 보이고 부재목록 목재량·무게 계산에만 쓰는 값(기존 engine_settings의
---   고정 ulgeomiW=33 하나를 대신해 문 높이·문 종류별로 달라지게 한다).
+-- frame_thickness(두께) = 옆에서 본 단면 깊이 — 도면에는 안 보이고 부재목록 목재량·원가 계산에만 쓰는 값
+--   (기존 engine_settings의 고정 ulgeomiW=33 하나를 대신해 문 높이·문 종류별로 달라지게 한다).
 -- height_max NULL = 그 door_type의 마지막 단계(상한 없음, "이 키 이상이면 전부 이 값").
--- 숫자는 전부 임시값(여닫이는 외부 감사 스크린샷 기준, 미서기는 아직 미정이라 여닫이와 동일하게 시작) —
+-- 나비는 여닫이 두께 ×1(2026-10-20, 단계마다 여닫이 두께와 같은 값). 미서기는 두께 33 고정이라 2단부터
+-- 나비가 두께보다 넓다(33×75까지 허용, 사장님 확인). 문 높이 경계·여닫이 두께는 아직 임시값 —
 -- 어드민 화면에서 실측치로 교체할 것을 전제로 한다.
 CREATE TABLE IF NOT EXISTS frame_size_steps (
     id              INT UNSIGNED           NOT NULL AUTO_INCREMENT,
     door_type       ENUM('swing','slide')  NOT NULL COMMENT '여닫이(swing)/미서기(slide) — 문 종류별로 표가 따로 있음',
     stage_order     TINYINT UNSIGNED       NOT NULL COMMENT '같은 door_type 안에서의 단계 순서(1부터, 오름차순)',
     height_max      INT UNSIGNED           NULL     DEFAULT NULL COMMENT '이 단계가 적용되는 문 높이(outerH, mm) 상한. NULL=마지막 단계(상한 없음)',
-    frame_thickness SMALLINT UNSIGNED      NOT NULL COMMENT '울거미 두께(mm) 추천값 — 도면에 보이는 frame/frameH 슬라이더의 기본값이자 최소값',
-    frame_width     SMALLINT UNSIGNED      NOT NULL COMMENT '울거미 나비(mm) — 부재목록 목재량 계산 전용, 도면에는 안 보임',
+    frame_thickness SMALLINT UNSIGNED      NOT NULL COMMENT '울거미 두께(mm) — 옆에서 본 단면 깊이, 부재목록 목재량·원가 계산 전용, 도면에는 안 보임',
+    frame_width     SMALLINT UNSIGNED      NOT NULL COMMENT '울거미 나비(mm) 추천값 — 정면에 보이는 frame/frameH 슬라이더의 기본값이자 최소값',
     is_active       TINYINT(1)             NOT NULL DEFAULT 1,
     PRIMARY KEY (id),
     KEY idx_fss_lookup (door_type, stage_order)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='문 높이별 울거미 두께·나비 단계표 (여닫이/미서기 별도, 7개 엔진 공용, 어드민 관리)';
 
 INSERT IGNORE INTO frame_size_steps (door_type, stage_order, height_max, frame_thickness, frame_width) VALUES
-('swing', 1, 600,  36, 54),
-('swing', 2, 1200, 45, 60),
-('swing', 3, 1800, 54, 75),
-('swing', 4, 2400, 60, 90),
-('swing', 5, NULL, 75, 90),
-('slide', 1, 600,  36, 54),
-('slide', 2, 1200, 45, 60),
-('slide', 3, 1800, 54, 75),
-('slide', 4, 2400, 60, 90),
-('slide', 5, NULL, 75, 90);
+('swing', 1, 600,  36, 36),
+('swing', 2, 1200, 45, 45),
+('swing', 3, 1800, 54, 54),
+('swing', 4, 2400, 60, 60),
+('swing', 5, NULL, 75, 75),
+('slide', 1, 600,  33, 36),
+('slide', 2, 1200, 33, 45),
+('slide', 3, 1800, 33, 54),
+('slide', 4, 2400, 33, 60),
+('slide', 5, NULL, 33, 75);
 
 
 -- AI 렌더링 재질/조명 프리셋 (엔진 사이드바 선택 박스, 어드민에서 편집)
