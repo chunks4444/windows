@@ -261,7 +261,7 @@ return [
     '여닫이'                                          => 'Hinged',
     '미서기'                                          => 'Sliding',
     // 자동 조정 안내문(auto-adjust-note) — 값이 왜 바뀌었는지 그 자리에서 바로 보여주기 위한 문구
-    '문높이 기준 최소값 %s->%s로 자동조정'           => 'Minimum auto-adjusted %s->%s for door height',
+    '최소 %s->%s'                                     => 'Min %s->%s',
     '격자에 맞춰 자동조정 %s->%s'                     => 'Adjusted to fit grid %s->%s',
     '클릭하면 닫힘'                                   => 'Click to dismiss',
     '오일 마감은 나무결 그대로 한 가지 색으로 칠해집니다.' => 'Oil finishes keep the grain and use a single colour.',

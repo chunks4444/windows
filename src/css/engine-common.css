@@ -1253,12 +1253,13 @@ canvas:active { cursor: grabbing; }
 
 .ctrl-header {
     display: flex;
+    flex-wrap: nowrap;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 4px;
 }
 
-.ctrl-label { font-size: var(--fs-11); font-weight: 400; color: var(--text-1); letter-spacing: -0.2px; }
+.ctrl-label { font-size: var(--fs-11); font-weight: 400; color: var(--text-1); letter-spacing: -0.2px; white-space: nowrap; flex-shrink: 0; }
 
 /* ── RANGE SLIDER ────────────────────────── */
 input[type="range"] {
@@ -1382,6 +1383,10 @@ input[type="range"]::-moz-range-thumb {
     padding: 2px 18px 2px 8px;
     margin-left: 8px;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+    min-width: 0;
     cursor: pointer;
     position: relative;
 }
