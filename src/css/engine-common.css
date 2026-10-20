@@ -1254,7 +1254,9 @@ canvas:active { cursor: grabbing; }
 .ctrl-header {
     display: flex;
     flex-wrap: nowrap;
-    justify-content: space-between;
+    /* space-between이면 안내 배지가 라벨에서 멀리 오른쪽 끝까지 밀려나 사이드바 밖으로
+       넘어가 잘려 보였다 — 라벨 바로 옆(왼쪽)에 붙게 flex-start로 변경. */
+    justify-content: flex-start;
     align-items: center;
     margin-bottom: 4px;
 }
