@@ -503,7 +503,7 @@ async function draw() {
         if (Number.isFinite(rawTarget) && rawTarget >= 400 && rawTarget <= 5000) {
             const currentH = parseInt(txtH.value);
             if (rawTarget !== currentH) {
-                window.setAutoNote?.('txtH', _t('격자에 맞춰 문틀세로가 %smm → %smm로 자동 조정됨', currentH, rawTarget));
+                window.setAutoNote?.('txtH', _t('격자에 맞춰 문틀세로가 %s → %smm로 자동 조정됨', currentH, rawTarget));
                 setSlider('txtH', 'numH', rawTarget);
                 draw();
                 return;

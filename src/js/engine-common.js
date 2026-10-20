@@ -465,7 +465,7 @@
                 if (r) r.value = String(min);
                 if (n) n.value = String(min);
                 if (policy === 'overwrite') needsRedraw = true;
-                setAutoNote(rangeId, _t('문 높이 %smm 기준 최소 나비 %smm로 자동 조정됨', doorHeight, min));
+                setAutoNote(rangeId, _t('문 높이 %s 기준 최소 나비 %smm로 자동 조정됨', doorHeight, min));
             }
             // shouldForce가 false인 건 "조정이 필요 없어졌다"가 아니라 "방금 조정한 값이 이미 min과
             // 같다"인 경우가 대부분이라(강제 직후 재계산 시 cur===min) 여기서 지우지 않는다 — 사용자가
