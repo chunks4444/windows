@@ -24,6 +24,13 @@ $email    = trim($body['email'] ?? '');
 $password = $body['password'] ?? '';
 $agree    = !empty($body['agree']);
 
+// 허니팟: auth_modal.php의 숨김 칸(website)은 사람은 못 보고 봇만 채움.
+// 성공한 척 응답해서 봇이 우회를 시도하지 않게 하고, 실제 가입·메일 발송은 하지 않음
+if (trim($body['website'] ?? '') !== '') {
+    error_log("register honeypot: ip=$ip email=$email");
+    http_response_code(201); echo json_encode(['ok' => true]); exit;
+}
+
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     http_response_code(422); echo json_encode(['error' => t('auth_err_email_invalid')]); exit;
 }

@@ -107,6 +107,11 @@ $showImpersonation = $authPayload && (($authPayload['role'] ?? null) === 's' || 
                         <label><?= htmlspecialchars(t('auth_password_confirm')) ?></label>
                         <input type="password" id="regPassword2" placeholder="<?= htmlspecialchars(t('auth_password_retype')) ?>" required autocomplete="new-password">
                     </div>
+                    <!-- 봇 방지 허니팟: 사람 눈엔 안 보이는 칸. 값이 채워져 오면 register.php가 가입을 조용히 버림 -->
+                    <div aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;">
+                        <label for="regWebsite">Website</label>
+                        <input type="text" id="regWebsite" name="website" tabindex="-1" autocomplete="off">
+                    </div>
                     <button type="submit" class="auth-submit" id="btnRegister"><?= htmlspecialchars(t('auth_tab_register')) ?></button>
                 </form>
 
@@ -302,6 +307,7 @@ async function authRegister(e) {
                 email:    document.getElementById('regEmail').value,
                 password: pw,
                 agree:    true,
+                website:  document.getElementById('regWebsite').value,
             }),
         });
         const data = await res.json();
