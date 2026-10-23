@@ -88,7 +88,6 @@ function oauth_get_token(array $cfg, string $code, string $provider, ?string &$e
         CURLOPT_TIMEOUT        => 10,
     ]);
     $res  = curl_exec($ch);
-    curl_close($ch);
     $data = json_decode($res, true);
     if (!isset($data['access_token'])) {
         $error = ($data['error_description'] ?? $data['error'] ?? 'unknown');
@@ -105,7 +104,6 @@ function oauth_get_email(string $provider, array $cfg, string $access_token): ?s
         CURLOPT_TIMEOUT        => 10,
     ]);
     $res  = curl_exec($ch);
-    curl_close($ch);
     $data = json_decode($res, true);
 
     switch ($provider) {

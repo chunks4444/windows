@@ -64,7 +64,6 @@ function ai_translate_ko_en(string $text): string {
     $ch = curl_init($url);
     curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 10, CURLOPT_HTTPHEADER => ['User-Agent: Mozilla/5.0']]);
     $res = curl_exec($ch);
-    curl_close($ch);
     if (!$res) return $text;
     $data = json_decode($res, true);
     $out = '';
@@ -214,7 +213,6 @@ function ai_render_openai(string $imageBase64, string $prompt, ?array $rect = nu
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $curlErr  = curl_error($ch);
-    curl_close($ch);
     $inputImgForQa = @imagecreatefrompng($tmpImg);
     unlink($tmpImg);
 

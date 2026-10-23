@@ -87,7 +87,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
     ]);
     $raw  = curl_exec($ch);
     $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    @curl_close($ch);
 
     $data = json_decode($raw, true);
     if ($code === 200 && isset($data['content'])) {

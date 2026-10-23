@@ -214,7 +214,6 @@ $raw       = curl_exec($ch);
 $code      = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 $curlErrno = curl_errno($ch);
 $curlErr   = curl_error($ch);
-curl_close($ch);
 
 if (!$raw || $code !== 200) {
     error_log('[ai/chat] upstream failure: http=' . $code . ' curl_errno=' . $curlErrno . ' curl_err=' . $curlErr . ' body=' . substr((string)$raw, 0, 500));

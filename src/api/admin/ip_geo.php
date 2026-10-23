@@ -72,7 +72,6 @@ if ($missing) {
         CURLOPT_TIMEOUT        => 5,
     ]);
     $resp = curl_exec($ch);
-    curl_close($ch);
     $rows = $resp ? (json_decode($resp, true) ?: []) : [];
     $ins  = $pdo->prepare('INSERT INTO ip_geo (ip, country, city) VALUES (?, ?, ?)
                            ON DUPLICATE KEY UPDATE country = VALUES(country), city = VALUES(city), looked_up_at = NOW()');

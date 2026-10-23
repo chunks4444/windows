@@ -2,7 +2,11 @@
 # 이 안에서 PHP가 실행되면 안 됨(업로드 검증을 우회해 웹셸을 심는 전형적인 침입 경로).
 # 각 업로드 API가 확장자를 강제하고 있긴 하지만(svg_insert.php→.svg 고정, wallpapers/upload.php→
 # GD 재인코딩 후 .jpg 고정 등), 여기서도 한 번 더 막아 이중으로 방어한다 (2026-09-02 보안 점검).
+# mod_php 식별자는 PHP 7은 mod_php7.c, PHP 8 이상은 mod_php.c — 서버 PHP 버전과 무관하게 걸리도록 둘 다 둠
 <IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php.c>
     php_flag engine off
 </IfModule>
 

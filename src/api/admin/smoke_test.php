@@ -33,7 +33,6 @@ function http_call(string $method, string $url, ?array $body = null, ?string $au
     $raw  = curl_exec($ch);
     $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $err  = curl_error($ch);
-    curl_close($ch);
     return ['code' => $code, 'body' => $raw, 'json' => $raw ? json_decode($raw, true) : null, 'curl_error' => $err];
 }
 

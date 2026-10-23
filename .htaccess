@@ -47,8 +47,14 @@ RewriteRule ^index\.php$ / [R=301,L,QSA]
 # 파일을 못 찾아 전체 페이지가 깨짐(Host 조건 없이 걸었다가 로컬에서 에러난 적 있음)
 # mod_php가 없는 로컬(php-fpm/proxy_fcgi) Apache에서는 php_value 자체가 미등록 지시어라 <If> 조건과
 # 무관하게 500이 나서, mod_php가 없으면 이 블록 전체를 파싱 단계에서 건너뛰도록 IfModule로 한 번 더 감쌈
-# 운영 서버는 php7.4를 mod_php로 로드하므로 모듈 식별자는 mod_php7.c (php 버전 올리면 이 이름도 같이 바꿔야 함)
+# mod_php 식별자는 PHP 7은 mod_php7.c, PHP 8 이상은 mod_php.c (2026-10 PHP 8.5 이전 때 8.x 쪽이 빠져
+# 있어 이 블록이 조용히 꺼졌었음) — 서버 PHP 버전과 무관하게 걸리도록 둘 다 둠
 <IfModule mod_php7.c>
+<If "%{HTTP_HOST} == 'studio.pyeongmok.com' || %{HTTP_HOST} == 'pyeongmok.com' || %{HTTP_HOST} == 'www.pyeongmok.com'">
+    php_value auto_prepend_file "/home/chunks/web/studio.pyeongmok.com/src/lib/ip_block.php"
+</If>
+</IfModule>
+<IfModule mod_php.c>
 <If "%{HTTP_HOST} == 'studio.pyeongmok.com' || %{HTTP_HOST} == 'pyeongmok.com' || %{HTTP_HOST} == 'www.pyeongmok.com'">
     php_value auto_prepend_file "/home/chunks/web/studio.pyeongmok.com/src/lib/ip_block.php"
 </If>
