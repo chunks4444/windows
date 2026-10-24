@@ -276,6 +276,7 @@
     display: block;
     text-decoration: none;
     color: inherit;
+    background: #F4F5F6;   /* 컬렉션 카드와 같은 배경 */
 }
 
 .collection-strip-card img {
@@ -283,6 +284,7 @@
     aspect-ratio: 1 / 1;
     object-fit: cover;
     display: block;
+    mix-blend-mode: multiply;   /* 저장 이미지의 흰 배경이 #F4F5F6으로 비치게 */
     transition: transform 0.4s ease;
 }
 
