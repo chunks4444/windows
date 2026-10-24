@@ -84,6 +84,9 @@ body { padding-top: 68px; }
     font-weight: 400;
     padding: 10px 18px;
 }
+/* 스튜디오 메뉴 패턴 아이콘 — 패턴별 색(--ei)으로 칠함. 어두운 엔진 페이지 네비에선 흰색을 섞어 밝게 */
+.nav-eng-ic { display: inline-flex; flex-shrink: 0; color: var(--ei, currentColor) !important; }
+body.pm-generator:not(.pm-light) .nav-eng-ic { color: color-mix(in srgb, var(--ei) 55%, #fff) !important; }
 .pm-navbar .dropdown-item svg,
 .pm-navbar .dropdown-item i.bi { transition: transform .5s cubic-bezier(.25,.46,.45,.94); }
 .pm-navbar .dropdown-item:hover svg,

@@ -176,13 +176,15 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                     ['engine_key'=>'mondrian', 'title'=>'Mondrian',         'description'=>t('home_engine_desc_mondrian'), 'image_url'=>''],
                 ];
                 $renderCards = !empty($studioCards) ? $studioCards : $defaultCards;
+                // 패턴별 아이콘 원 색 — AURO 560 팔레트에서 골라 흰 아이콘이 읽히는 중간 톤으로
+                $eiColors = ['classic'=>'#d46d28', 'square'=>'#c88019', 'cross'=>'#5e945b', 'triangle'=>'#228b80', 'diamond'=>'#2d80a6', 'hexagon'=>'#860e10', 'mondrian'=>'#115296'];
                 ?>
                 <div class="engine-icon-row">
                 <?php foreach ($renderCards as $sc):
                     $key   = $sc['engine_key'];
                     $title = (is_en() && !empty($sc['title_en'])) ? $sc['title_en'] : $sc['title'];
                 ?>
-                    <a href="<?= htmlspecialchars(lang_href('/src/engine/' . $key . '/' . $key . '.php')) ?>" class="engine-icon-shortcut" aria-label="<?= htmlspecialchars(sprintf(t('home_engine_alt'), $title)) ?>">
+                    <a href="<?= htmlspecialchars(lang_href('/src/engine/' . $key . '/' . $key . '.php')) ?>" class="engine-icon-shortcut" style="--ei: <?= $eiColors[$key] ?? '#6c422b' ?>" aria-label="<?= htmlspecialchars(sprintf(t('home_engine_alt'), $title)) ?>">
                         <span class="engine-icon-circle"><?= $svgIcons[$key] ?? '' ?></span>
                         <span class="engine-icon-label"><?= htmlspecialchars($title) ?></span>
                     </a>

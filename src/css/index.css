@@ -580,26 +580,26 @@
     color: var(--text);
 }
 
+/* 패턴별 색(--ei, index.php의 $eiColors)을 채운 원 + 흰 아이콘 */
 .engine-icon-circle {
     width: 52px;
     height: 52px;
     border-radius: 50%;
-    background: var(--bg);
-    border: 1px solid var(--border);
+    background: var(--ei, var(--text));
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background .15s ease, transform .15s ease;
+    transition: filter .15s ease, transform .15s ease;
 }
 
 .engine-icon-circle svg {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     transition: transform .3s cubic-bezier(.25, .46, .45, .94);
 }
 
 .engine-icon-shortcut:hover .engine-icon-circle {
-    background: var(--text);
+    filter: brightness(.92);
     transform: translateY(-3px);
 }
 
@@ -615,18 +615,10 @@
 }
 
 .pm-symbol-bar {
-    fill: rgba(var(--text-rgb), 0.9);
-}
-
-.engine-icon-shortcut:hover .pm-symbol-bar {
     fill: #fff;
 }
 
 .pm-symbol-stroke {
-    stroke: rgba(var(--text-rgb), 0.9);
-}
-
-.engine-icon-shortcut:hover .pm-symbol-stroke {
     stroke: #fff;
 }
 
