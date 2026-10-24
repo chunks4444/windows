@@ -2949,7 +2949,7 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
     btnSavePNG.addEventListener('click', async function() {
         if (!localStorage.getItem('pmok_auth_token')) { pmokRequireAuth(() => btnSavePNG.click()); return; }
         updateModified();
-        const sheet = await buildExportSheet(2400);
+        const sheet = await buildExportSheet(2400, 1, { transparent: window.pmokExportTransparent?.() });
         const filename = getExportFilename('png');
         const link = document.createElement('a');
         link.download = filename;

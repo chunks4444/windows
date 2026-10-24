@@ -1456,9 +1456,57 @@
         return _pmExportLogoPromise;
     }
 
+    // ── PNG 내보내기 "배경 투명" 옵션 (기본 켜짐, 선택은 브라우저에 기억) ─────────────────
+    // 체크박스(#chkPngTransparent)는 각 엔진 페이지의 내보내기 탭에 있고, PNG 버튼 핸들러가
+    // window.pmokExportTransparent()로 읽어 buildExportSheet()에 넘긴다. PDF는 인쇄용이라 항상 흰 시트.
+    const _TRANSPARENT_KEY = 'pmok_png_transparent';
+    window.pmokExportTransparent = () => { const el = document.getElementById('chkPngTransparent'); return !!(el && el.checked); };
+    (function () {
+        const el = document.getElementById('chkPngTransparent');
+        if (!el) return;
+        try { const v = localStorage.getItem(_TRANSPARENT_KEY); if (v !== null) el.checked = v === '1'; } catch (_) {}
+        el.addEventListener('change', () => { try { localStorage.setItem(_TRANSPARENT_KEY, el.checked ? '1' : '0'); } catch (_) {} });
+    })();
+
+    // 화면 캡처(투명 배경)에서 실제로 그려진 부분(알파>12)만 찾아 여백을 조금 두고 잘라낸다. 못 찾으면 null.
+    function _cropTransparentExport(rawCanvas) {
+        const w = rawCanvas.width, h = rawCanvas.height;
+        let data;
+        try { data = rawCanvas.getContext('2d').getImageData(0, 0, w, h).data; } catch (_) { return null; }   // 캔버스 오염(CORS) 등
+        let minX = w, minY = h, maxX = -1, maxY = -1;
+        for (let y = 0; y < h; y++) {
+            const row = y * w * 4;
+            for (let x = 0; x < w; x++) {
+                if (data[row + x * 4 + 3] > 12) {
+                    if (x < minX) minX = x; if (x > maxX) maxX = x;
+                    if (y < minY) minY = y; if (y > maxY) maxY = y;
+                }
+            }
+        }
+        if (maxX < 0) return null;
+        const pad = Math.max(8, Math.round(Math.max(maxX - minX, maxY - minY) * 0.02));
+        const x0 = Math.max(0, minX - pad), y0 = Math.max(0, minY - pad);
+        const x1 = Math.min(w, maxX + 1 + pad), y1 = Math.min(h, maxY + 1 + pad);
+        const out = document.createElement('canvas');
+        out.width = x1 - x0; out.height = y1 - y0;
+        out.getContext('2d').drawImage(rawCanvas, x0, y0, out.width, out.height, 0, 0, out.width, out.height);
+        return out;
+    }
+
     // PNG/PDF 내보내기 공용: 도면 캡처 + 로고/도면명/출력일/문틀크기가 담긴 헤더·푸터를 붙인 시트를 targetW(px) 폭으로 생성
-    async function buildExportSheet(targetW, fontScale) {
+    // opts.transparent: 머리말 없이 도면만 투명 배경으로(PNG 전용). 불가능하면 이유를 알리고(조용히 바꾸지 않는다) 흰 시트로 내보낸다.
+    async function buildExportSheet(targetW, fontScale, opts) {
         fontScale = fontScale || 1;
+        if (opts && opts.transparent) {
+            if (appBackgroundImage) {
+                // 배치 모드(배경 사진 위에 도면)는 사진까지 한 장이라 도면만 따로 투명하게 뺄 수 없다
+                if (typeof pmAlert === 'function') pmAlert(_t('배경 사진을 쓰는 중이라 투명 배경으로 저장할 수 없어 흰 배경으로 저장했습니다.'), { sub: _t('사진 위에 올린 도면은 사진과 한 장으로 저장돼서, 배경만 투명하게 만들 수 없습니다.') });
+            } else {
+                const t = _cropTransparentExport(_exportCapture(null));
+                if (t) return t;
+                if (typeof pmAlert === 'function') pmAlert(_t('투명 배경으로 저장하지 못해 흰 배경으로 저장했습니다.'), { sub: _t('화면에서 도면을 찾지 못했거나 브라우저가 이미지 읽기를 막았습니다.') });
+            }
+        }
         const rawCanvas = _exportCapture(appBackgroundImage ? '#E5E7EA' : null);
         const logoImg = await _loadExportLogo();
 
@@ -1912,7 +1960,7 @@
 
 // ── 프리젠테이션 모드 썸네일 (컬렉션/마이페이지 카드용) — 6개 엔진 공용 ──────
 // kv.getPatternGeometry()가 돌려주는 살/울거미 지오메트리(팬·줌 무관 raw 좌표)를
-// 새 캔버스에 다시 그린다. 배경(#FAF7F0)과 구도는 항상 같지만, 울거미·살·면은 사용자가 정한 마감 색 그대로
+// 새 캔버스에 다시 그린다. 배경(흰색)과 구도는 항상 같지만, 울거미·살·면은 사용자가 정한 마감 색 그대로
 // 칠한다(예전엔 고정 어두운 색이라 저장 이미지에 마감 색이 안 나왔음). 지오메트리가 비어있으면(배치모드 등) null 반환 → 호출부 폴백.
 function renderPresentationThumbnail(kv, targetW = 1024, targetH = 1024) {
     try {
@@ -1963,9 +2011,9 @@ function _renderPresentationThumbnailImpl(kv, targetW, targetH) {
     canvas.width = targetW; canvas.height = targetH;
     const ctx = canvas.getContext('2d');
 
-    // 배경: 컬렉션/도면 관리 카드 배경(#FAF7F0)과 정확히 맞도록 단색으로 채운다
+    // 배경: 컬렉션/도면 관리 카드 배경(흰색)과 정확히 맞도록 단색으로 채운다
     // (예전엔 비네트 그라데이션이라 가장자리가 카드 배경보다 살짝 어두웠음)
-    ctx.fillStyle = '#FAF7F0';
+    ctx.fillStyle = '#FFFFFF';
     ctx.fillRect(0, 0, targetW, targetH);
 
     const clampRect = (r, minPx) => {
@@ -2004,7 +2052,7 @@ function _renderPresentationThumbnailImpl(kv, targetW, targetH) {
     // 울거미·살은 사용자가 정한 마감 색 그대로 그린다(색 정보가 없는 옛 호출/예외 상황만 기본 어두운 색).
     const DEF_SLAT = 'rgba(74,68,60,0.92)', DEF_FRAME = '#2E2A26';
     const colorOr = (c, def) => (typeof c === 'string' && c) ? c : def;
-    // 흰색·밝은 마감은 카드 배경(#FAF7F0) 위에서 안 보이므로 아주 얇은 윤곽선을 더한다
+    // 흰색·밝은 마감은 흰 배경 위에서 안 보이므로 아주 얇은 윤곽선을 더한다
     const isLight = c => {
         const m = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(String(c).trim());
         if (!m) return false;

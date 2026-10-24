@@ -759,6 +759,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                 <div class="export-list">
                     <button class="export-big" id="btnSavePDF" type="button"><i class="bi bi-file-earmark-pdf"></i><span><b>PDF</b><small><?= te('인쇄·공방 전달용 도면') ?></small></span></button>
                     <button class="export-big" id="btnSavePNG" type="button"><i class="bi bi-file-earmark-image"></i><span><b>PNG</b><small><?= te('이미지 공유용') ?></small></span></button>
+                    <label class="export-opt" for="chkPngTransparent"><input type="checkbox" id="chkPngTransparent" checked><span><?= te('배경 투명') ?><small><?= te('도면만 투명 배경으로 저장 (머리말 없음)') ?></small></span></label>
                     <button class="export-big" id="btnSaveDXF" type="button"><i class="bi bi-file-earmark-binary"></i><span><b>DXF</b><small><?= te('CAD 편집용') ?></small></span></button>
                 </div>
             </section>

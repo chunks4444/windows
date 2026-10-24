@@ -318,4 +318,14 @@ return [
     '마감 없음'                                      => 'No finish',
     '가변'                                           => 'varies',
     '원형'                                           => 'Circle',
+
+    // PNG 내보내기 "배경 투명" 옵션 (engine-common.js buildExportSheet)
+    '배경 사진을 쓰는 중이라 투명 배경으로 저장할 수 없어 흰 배경으로 저장했습니다.'
+        => 'A background photo is in use, so this was saved on a white background instead of transparent.',
+    '사진 위에 올린 도면은 사진과 한 장으로 저장돼서, 배경만 투명하게 만들 수 없습니다.'
+        => 'A drawing placed on a photo is saved together with the photo, so only the background cannot be made transparent.',
+    '투명 배경으로 저장하지 못해 흰 배경으로 저장했습니다.'
+        => 'Could not save with a transparent background, so it was saved on a white background instead.',
+    '화면에서 도면을 찾지 못했거나 브라우저가 이미지 읽기를 막았습니다.'
+        => 'The drawing could not be found on screen, or the browser blocked reading the image.',
 ];

@@ -270,4 +270,6 @@ return [
     '인쇄·공방 전달용 도면'   => 'Drawing for printing and the workshop',
     '이미지 공유용'           => 'Image for sharing',
     'CAD 편집용'              => 'For editing in CAD',
+    '배경 투명'               => 'Transparent background',
+    '도면만 투명 배경으로 저장 (머리말 없음)' => 'Save only the drawing on a transparent background (no header)',
 ];
