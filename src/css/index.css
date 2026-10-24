@@ -424,7 +424,7 @@
 
 .process-step {
     border-radius: 14px;
-    background: var(--accent-tint);
+    background: #F4F5F6;
     border: 1px solid rgba(var(--text-rgb), .07);
     display: flex;
     flex-direction: column;
@@ -690,7 +690,7 @@
     overflow: hidden;
     text-decoration: none;
     color: inherit;
-    background: var(--accent-tint);
+    background: #F4F5F6;
     transition: box-shadow 0.2s;
 }
 .home-blog-card:hover {
@@ -701,7 +701,7 @@
 .home-blog-card-thumb {
     width: 100%;
     aspect-ratio: 16 / 10;
-    background: var(--accent-tint);
+    background: #F4F5F6;
     overflow: hidden;
 }
 .home-blog-card-thumb img {
@@ -801,7 +801,7 @@
 }
 
 .home-contact-section .container {
-    background: var(--accent-tint);
+    background: #F4F5F6;
     border-radius: 20px;
     padding: 64px 40px;
 }
