@@ -1912,8 +1912,8 @@
 
 // ── 프리젠테이션 모드 썸네일 (컬렉션/마이페이지 카드용) — 6개 엔진 공용 ──────
 // kv.getPatternGeometry()가 돌려주는 살/울거미 지오메트리(팬·줌 무관 raw 좌표)를
-// 고정 팔레트로 새 캔버스에 다시 그린다. 사용자가 그때그때 고른 색/배경과 무관하게
-// 카드 썸네일은 항상 이 스타일로 통일된다. 지오메트리가 비어있으면(배치모드 등) null 반환 → 호출부 폴백.
+// 새 캔버스에 다시 그린다. 배경(#FAF7F0)과 구도는 항상 같지만, 울거미·살·면은 사용자가 정한 마감 색 그대로
+// 칠한다(예전엔 고정 어두운 색이라 저장 이미지에 마감 색이 안 나왔음). 지오메트리가 비어있으면(배치모드 등) null 반환 → 호출부 폴백.
 function renderPresentationThumbnail(kv, targetW = 1024, targetH = 1024) {
     try {
         return _renderPresentationThumbnailImpl(kv, targetW, targetH);
@@ -2001,18 +2001,38 @@ function _renderPresentationThumbnailImpl(kv, targetW, targetH) {
         ctx.fill();
     });
 
+    // 울거미·살은 사용자가 정한 마감 색 그대로 그린다(색 정보가 없는 옛 호출/예외 상황만 기본 어두운 색).
+    const DEF_SLAT = 'rgba(74,68,60,0.92)', DEF_FRAME = '#2E2A26';
+    const colorOr = (c, def) => (typeof c === 'string' && c) ? c : def;
+    // 흰색·밝은 마감은 카드 배경(#FAF7F0) 위에서 안 보이므로 아주 얇은 윤곽선을 더한다
+    const isLight = c => {
+        const m = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(String(c).trim());
+        if (!m) return false;
+        let h = m[1]; if (h.length === 3) h = h.split('').map(x => x + x).join('');
+        const v = [0, 2, 4].map(i => parseInt(h.slice(i, i + 2), 16));
+        return (0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]) > 215;
+    };
+    const EDGE = 'rgba(46,42,38,0.45)';
+
     ctx.shadowColor  = 'rgba(46,42,38,0.10)';
     ctx.shadowBlur   = 1;
     ctx.shadowOffsetY = 1;
-    ctx.fillStyle   = 'rgba(74,68,60,0.92)';
     slatRects.forEach(r => {
         const c = clampRect(r, 1);
+        const col = colorOr(r.fill, DEF_SLAT);
+        ctx.fillStyle = col;
         ctx.fillRect(c.x, c.y, c.w, c.h);
+        if (isLight(col)) { ctx.strokeStyle = EDGE; ctx.lineWidth = 0.6; ctx.strokeRect(c.x, c.y, c.w, c.h); }
     });
-    ctx.strokeStyle = 'rgba(74,68,60,0.92)';
     ctx.lineCap     = 'round';
     slatLines.forEach(l => {
-        ctx.lineWidth = Math.max(l.strokeWidth * fitScale, 1);
+        const col = colorOr(l.stroke, DEF_SLAT);
+        const lw  = Math.max(l.strokeWidth * fitScale, 1);
+        if (isLight(col)) {   // 밝은 대각선 살은 먼저 한 겹 어둡게 깔아 윤곽을 만든다
+            ctx.strokeStyle = EDGE; ctx.lineWidth = lw + 1.2;
+            ctx.beginPath(); ctx.moveTo(toX(l.x1), toY(l.y1)); ctx.lineTo(toX(l.x2), toY(l.y2)); ctx.stroke();
+        }
+        ctx.strokeStyle = col; ctx.lineWidth = lw;
         ctx.beginPath();
         ctx.moveTo(toX(l.x1), toY(l.y1));
         ctx.lineTo(toX(l.x2), toY(l.y2));
@@ -2020,10 +2040,12 @@ function _renderPresentationThumbnailImpl(kv, targetW, targetH) {
     });
     ctx.restore();
 
-    ctx.fillStyle = '#2E2A26';
     frameRects.forEach(r => {
         const c = clampRect(r, 3);
+        const col = colorOr(r.fill, DEF_FRAME);
+        ctx.fillStyle = col;
         ctx.fillRect(c.x, c.y, c.w, c.h);
+        if (isLight(col)) { ctx.strokeStyle = EDGE; ctx.lineWidth = 0.8; ctx.strokeRect(c.x, c.y, c.w, c.h); }
     });
 
     return canvas.toDataURL('image/png');

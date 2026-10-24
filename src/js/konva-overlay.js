@@ -735,8 +735,15 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
         (_activeClipGroup || patternLayer).add(line);
     }
 
+    // 살의 "표시용" 색 — 선택 강조색(파랑)이 아니라 사용자가 정한 색(개별 덮어쓰기 > 기본색).
+    // 저장 썸네일에 선택 강조가 섞여 들어가지 않게 하려고 node.fill()/stroke()를 직접 읽지 않는다.
+    function _slatDisplayColor(node) {
+        return slatColorOverrides[node.getAttr('_pmok_lineKey')] || node.getAttr('_pmok_baseFill');
+    }
+
     // 프리젠테이션 모드 썸네일용 — patternLayer에 쌓인 살/울거미/면색 지오메트리만 읽어서 반환.
     // _pmok_type이 없는 rect(장부 등 시공 디테일)는 여전히 제외된다.
+    // 울거미·살에는 마감(색) 정보를 같이 실어 보낸다 — 저장 이미지에 선택한 마감 색이 그대로 나오게 하기 위함.
     function getPatternGeometry() {
         const frameRects = [];
         const slatRects  = [];
@@ -744,8 +751,8 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
         const paintRects = [];
         patternLayer.find('Rect').forEach(node => {
             const type = node.getAttr('_pmok_type');
-            if (type === 'frame')    { frameRects.push(node.getClientRect({ relativeTo: patternLayer })); return; }
-            if (type === 'slat')     { slatRects.push(node.getClientRect({ relativeTo: patternLayer }));  return; }
+            if (type === 'frame')    { frameRects.push({ ...node.getClientRect({ relativeTo: patternLayer }), fill: node.fill() }); return; }
+            if (type === 'slat')     { slatRects.push({ ...node.getClientRect({ relativeTo: patternLayer }), fill: _slatDisplayColor(node) });  return; }
             if (type === 'facepaint') {
                 const box = node.getClientRect({ relativeTo: patternLayer });
                 paintRects.push({ ...box, fill: node.fill() });
@@ -759,7 +766,8 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
                 const pt = node.points();
                 const p1 = t.point({ x: pt[0], y: pt[1] });
                 const p2 = t.point({ x: pt[2], y: pt[3] });
-                slatLines.push({ x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, strokeWidth: node.strokeWidth() });
+                const isSlat = node.getAttr('_pmok_lineKey') !== undefined;
+                slatLines.push({ x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, strokeWidth: node.strokeWidth(), stroke: isSlat ? _slatDisplayColor(node) : node.stroke() });
                 return;
             }
             if (node.getAttr('_pmok_type') !== 'facepaint') return;
