@@ -129,8 +129,8 @@ body {
     cursor: pointer; transition: border-color .15s;
 }
 .ord-row:hover { border-color: var(--accent); }
-.ord-row-thumb { width: 56px; height: 56px; border-radius: 6px; object-fit: cover; background: var(--bg); }
-.ord-row-thumb-empty { background: var(--border); }
+.ord-row-thumb { width: 56px; height: 56px; border-radius: 6px; object-fit: cover; background: #F4F5F6; }
+.ord-row-thumb-empty { background: #F4F5F6; }
 .ord-row-main { min-width: 0; }
 .ord-row-title { font-size: 14px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ord-row-sub { font-size: 12px; color: var(--text); opacity: .65; margin-top: 2px; }
