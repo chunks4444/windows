@@ -20,7 +20,7 @@ node --check src/js/classic.js
 
 # DB는 외부에 직접 노출되지 않음 (MySQL bind-address 127.0.0.1) — 로컬 개발 전에 SSH 터널이 떠 있어야 함
 # Windows: ops/db_tunnel/start_tunnel.ps1 (로그인 시 자동 실행되도록 register_task.ps1로 등록 가능)
-# macOS:   ops/db_tunnel/start_tunnel.sh
+# macOS:   ops/db_tunnel/start_tunnel.sh (로그인 시 자동 실행+끊기면 재접속: register_launchagent.sh로 1회 등록)
 # 터널이 127.0.0.1:13306을 열어주면 src/lib/db.php가 자동으로 그 쪽으로 접속함
 
 # 로컬 개발 서버 (포트 8899)
