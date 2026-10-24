@@ -6,7 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **평목(平木)** — 한국 전통 창호(살창) 실시간 설계 스튜디오. 브라우저에서 도면을 설계하고 공방에 제작을 주문하는 서비스.
 
-스택: PHP (프레임워크 없음), 바닐라 JS, MySQL (PDO), 순수 CSS. 빌드 툴 없음. 파일을 수정하면 즉시 반영.
+스택: PHP 8.5 (프레임워크 없음), 바닐라 JS, MySQL 8.4 (PDO), 순수 CSS. 빌드 툴 없음. 파일을 수정하면 즉시 반영.
+
+환경: 운영 = Ubuntu 26.04 + Apache 2.4 + mod_php 8.5.12 (`ssh pyeongmok`). 로컬(Mac) = Homebrew httpd + php-fpm 8.5.12, php.ini 주요값(시간대 Asia/Seoul·메모리·업로드 한도)은 운영과 동일, 단 display_errors만 켬. 로컬도 DB 터널로 **운영 DB에 직접** 붙으므로 저장·삭제 테스트 주의.
 
 ## 개발 명령어
 
@@ -87,8 +89,8 @@ JWT를 httpOnly 쿠키(`pmok_auth`)로 발급. `jwt_from_request()`가 쿠키 �
 ### 데이터베이스
 
 `db()` 함수가 PDO 싱글턴을 반환. 환경 감지:
-- `HTTP_HOST === 'studio.pyeongmok.com'` → Unix 소켓 (`/var/run/mysqld/mysqld.sock`)
-- 그 외 → TCP (`211.35.72.68:6836`)
+- `/var/run/mysqld/mysqld.sock`이 읽히면(운영) → Unix 소켓
+- 그 외(로컬) → SSH 터널 `127.0.0.1:13306`
 
 스키마 변경은 마이그레이션 프레임워크 없이 수동 `ALTER TABLE`. 신규 테이블은 `schema.sql`에 `CREATE TABLE IF NOT EXISTS`로 추가.
 
