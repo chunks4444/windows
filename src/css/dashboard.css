@@ -179,7 +179,8 @@ body {
 @media (max-width: 480px)  { .db-grid { grid-template-columns: 1fr; } }
 
 .db-card {
-    background: #FAF7F0;
+    background: #FFFFFF;
+    box-shadow: 0 0 0 1px rgba(var(--text-rgb), 0.08);
     border-radius: 14px;
     overflow: hidden;
     cursor: pointer;
@@ -300,7 +301,7 @@ body {
 .db-thumb {
     width: 100%;
     aspect-ratio: 1 / 1;
-    background: #FAF7F0;
+    background: #FFFFFF;
     overflow: hidden;
     position: relative;
 }
@@ -337,7 +338,7 @@ body {
 /* ── 카드 정보 ───────────────────────────────── */
 .db-card-body {
     padding: 12px 14px 14px;
-    background: #FAF7F0;
+    background: #FFFFFF;
     border-top: 1px solid var(--border);
 }
 
