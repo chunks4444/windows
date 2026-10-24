@@ -1426,7 +1426,14 @@
         return entities;
     }
 
+    // 화면 캡처 — 선택한 살의 파란 강조가 파일에 찍히지 않도록 캡처하는 동안만 선택 강조를 끈다
+    // (konva-overlay.js withoutSelectionHighlight: 선택 상태·화면은 캡처 후 원래대로 복원된다)
     function _exportCapture(bgColor) {
+        const f = window.pmokWithoutSelectionHighlight;
+        return typeof f === 'function' ? f(() => _exportCaptureRaw(bgColor)) : _exportCaptureRaw(bgColor);
+    }
+
+    function _exportCaptureRaw(bgColor) {
         const exportCanvas = document.createElement('canvas');
         const exportCtx = exportCanvas.getContext('2d');
         exportCanvas.width  = logW * 2;
@@ -1493,7 +1500,39 @@
         return out;
     }
 
-    // PNG/PDF 내보내기 공용: 도면 캡처 + 로고/도면명/출력일/문틀크기가 담긴 헤더·푸터를 붙인 시트를 targetW(px) 폭으로 생성
+    // 내보내기 시트 하단 "마감 정보" — 화면 Finish 탭의 선택값(수종·마감·철물·문틀/울거미/살 컬러)을 그대로 읽는다.
+    // 컬러는 색 선택기 미리보기에 보이는 이름·코드(툴팁 전체 이름 우선)와 같은 값이라 화면과 시트 표기가 어긋나지 않는다.
+    // 컬러 선택기가 숨겨진 상태(마감 없음, 팔레트 없는 오일)면 컬러 줄은 넣지 않는다. 면 컬러는 면마다 달라 표에서 뺀다(도면에 그대로 보임).
+    function _collectFinishSpec() {
+        const rows = [];
+        const selText = id => { const s = document.getElementById(id); const o = s && s.options && s.options[s.selectedIndex]; return o ? (o.text || '').replace(/\s+/g, ' ').trim() : ''; };
+        const add = (label, value, swatch) => { if (label && value) rows.push({ label, value, swatch: swatch || null }); };
+        add(_t('수종'), selText('txtWood'));
+        const finish = document.getElementById('txtFinish');
+        if (finish) add(_t('마감'), finish.value ? selText('txtFinish') : _t('마감 없음'));
+        const hw = document.getElementById('txtHardware');
+        if (hw && hw.value) add(_t('철물'), selText('txtHardware'));
+        const block = document.getElementById('finishColorBlock');
+        if (block && !block.hidden) {
+            block.querySelectorAll('.color-row-stack').forEach(row => {
+                const label = row.querySelector('.color-label'), dot = row.querySelector('[id$="PreviewDot"]');
+                const btn = row.querySelector('[id$="PreviewBtn"]'), nameEl = row.querySelector('[id$="PreviewName"]');
+                if (!label || !dot || !nameEl || /^face/i.test(dot.id)) return;
+                const value = ((btn && btn.title) || nameEl.textContent || '').replace(/\s+/g, ' ').trim();
+                add(label.textContent.trim(), value === '—' ? '' : value, getComputedStyle(dot).backgroundColor);
+            });
+        }
+        return rows;
+    }
+
+    function _fitText(ctx, text, maxW) {
+        if (ctx.measureText(text).width <= maxW) return text;
+        let t = text;
+        while (t.length > 1 && ctx.measureText(t + '…').width > maxW) t = t.slice(0, -1);
+        return t + '…';
+    }
+
+    // PNG/PDF 내보내기 공용: 도면 캡처 + 로고/도면명/출력일이 담긴 헤더, 아래에 마감 정보 표를 붙인 시트를 targetW(px) 폭으로 생성
     // opts.transparent: 머리말 없이 도면만 투명 배경으로(PNG 전용). 불가능하면 이유를 알리고(조용히 바꾸지 않는다) 흰 시트로 내보낸다.
     async function buildExportSheet(targetW, fontScale, opts) {
         fontScale = fontScale || 1;
@@ -1516,7 +1555,12 @@
         const lineH   = Math.round(24 * fontScale);
         const drawW   = targetW - pad * 2;
         const drawH   = Math.round(drawW * (rawCanvas.height / rawCanvas.width));
-        const totalH  = headerH + drawH + pad;
+        // 하단 마감 정보 표 (3열). 항목이 없으면 높이 0
+        const spec    = _collectFinishSpec();
+        const sFont = Math.round(22 * fontScale), sSmall = Math.round(17 * fontScale), sTitle = Math.round(24 * fontScale);
+        const sCols = 3, sCellH = Math.round(sFont * 2.7), sTitleH = Math.round(sTitle * 2.1);
+        const specH   = spec.length ? Math.round(pad * 0.6) + sTitleH + Math.ceil(spec.length / sCols) * sCellH + Math.round(pad * 0.4) : 0;
+        const totalH  = headerH + drawH + pad + specH;
 
         const sheet = document.createElement('canvas');
         sheet.width  = targetW;
@@ -1556,6 +1600,36 @@
 
         // 본문: 도면 캡처
         ctx.drawImage(rawCanvas, pad, headerH, drawW, drawH);
+
+        // 하단: 마감 정보 (수종·마감·철물·컬러 — 컬러는 색 견본 사각형과 함께)
+        if (spec.length) {
+            const top = headerH + drawH + Math.round(pad * 0.6);
+            ctx.strokeStyle = '#E5E7EA';
+            ctx.lineWidth = Math.max(1, Math.round(targetW * 0.0015));
+            ctx.beginPath(); ctx.moveTo(pad, top); ctx.lineTo(targetW - pad, top); ctx.stroke();
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = '#23262A';
+            ctx.font = `600 ${sTitle}px -apple-system,sans-serif`;
+            ctx.fillText(_t('마감 정보'), pad, top + Math.round(sTitleH * 0.55));
+            const colW = Math.floor((targetW - pad * 2) / sCols), gridTop = top + sTitleH;
+            spec.forEach((r, i) => {
+                const cx = pad + (i % sCols) * colW, cy = gridTop + Math.floor(i / sCols) * sCellH;
+                ctx.font = `${sSmall}px -apple-system,sans-serif`;
+                ctx.fillStyle = '#7A8088';
+                ctx.fillText(r.label, cx, cy + Math.round(sCellH * 0.28));
+                const sw = r.swatch ? Math.round(sFont * 1.05) : 0, gap = sw ? Math.round(sFont * 0.45) : 0;
+                const vy = cy + Math.round(sCellH * 0.68);
+                if (sw) {
+                    const sy = vy - Math.round(sw / 2);
+                    ctx.fillStyle = r.swatch; ctx.fillRect(cx, sy, sw, sw);
+                    ctx.strokeStyle = 'rgba(35,38,42,0.35)'; ctx.lineWidth = 1; ctx.strokeRect(cx + 0.5, sy + 0.5, sw - 1, sw - 1);
+                }
+                ctx.font = `${sFont}px -apple-system,sans-serif`;
+                ctx.fillStyle = '#23262A';
+                ctx.fillText(_fitText(ctx, r.value, colW - sw - gap - pad), cx + sw + gap, vy);
+            });
+        }
 
         return sheet;
     }

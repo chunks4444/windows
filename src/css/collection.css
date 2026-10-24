@@ -179,7 +179,7 @@ body { background: var(--bg); }
     border-radius: var(--r);
     overflow: hidden;
     cursor: pointer;
-    background: #FFFFFF;
+    background: #F4F5F6;
     box-shadow: 0 0 0 1px rgba(var(--text-rgb), 0.08), 0 1px 3px rgba(var(--text-rgb), 0.04);
     transition: box-shadow 0.2s, transform 0.2s;
 }
@@ -204,7 +204,7 @@ body { background: var(--bg); }
 .lib-card-img {
     width: 100%;
     overflow: hidden;
-    background: #FFFFFF;
+    background: #F4F5F6;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -219,6 +219,7 @@ body { background: var(--bg); }
 }
 
 .lib-card-img img {
+    mix-blend-mode: multiply;   /* 저장 이미지의 흰 배경이 카드 배경(#F4F5F6)으로 비치게 */
     transition: transform 0.3s ease;
 }
 
@@ -311,7 +312,7 @@ body { background: var(--bg); }
 /* ── 카드 하단 정보 ──────────────────────────── */
 .lib-card-body {
     padding: 10px 12px 12px;
-    background: #FFFFFF;
+    background: #F4F5F6;
     border-top: 1px solid var(--border);
 }
 

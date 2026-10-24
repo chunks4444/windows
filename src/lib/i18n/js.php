@@ -328,4 +328,9 @@ return [
         => 'Could not save with a transparent background, so it was saved on a white background instead.',
     '화면에서 도면을 찾지 못했거나 브라우저가 이미지 읽기를 막았습니다.'
         => 'The drawing could not be found on screen, or the browser blocked reading the image.',
+
+    // 내보내기 시트 하단 "마감 정보" 표 (engine-common.js buildExportSheet / _collectFinishSpec)
+    '마감 정보' => 'Finish details',
+    '마감'      => 'Finish',
+    '철물'      => 'Hardware',
 ];

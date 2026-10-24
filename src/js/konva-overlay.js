@@ -885,6 +885,27 @@ window.initKonvaOverlay = function ({ canvas, getState, getSegMap, deletedSegs, 
         slatColorOverrides = p.slatColorOverrides ? { ...p.slatColorOverrides } : {};
     }
 
+    // 내보내기(PNG/PDF) 캡처 동안만 선택한 살의 파란 강조를 끈다. 강조는 두 군데에서 그려진다 —
+    // Konva 레이어의 살 색(updatePatternHighlight)과 메인 캔버스 외곽선(drawSlatOverlay, 엔진 draw()가 다시 그림).
+    // 둘 다 선택을 비운 상태로 다시 그린 뒤 fn()을 실행하고, 끝나면 선택과 화면을 원래대로 되돌린다(동기 실행).
+    function withoutSelectionHighlight(fn) {
+        const saved = _selectedLineKey;
+        if (!saved) return fn();
+        _selectedLineKey = null;
+        try {
+            updatePatternHighlight();
+            patternLayer.draw();            // updatePatternHighlight 는 batchDraw(비동기)라 캡처 전에 즉시 그리게 한다
+            window.draw?.();
+            return fn();
+        } finally {
+            _selectedLineKey = saved;
+            updatePatternHighlight();
+            patternLayer.draw();
+            window.draw?.();
+        }
+    }
+    window.pmokWithoutSelectionHighlight = withoutSelectionHighlight;
+
     return {
         syncSize,
         handleSlatSelect,

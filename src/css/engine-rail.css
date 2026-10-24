@@ -230,9 +230,12 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
     aspect-ratio: 1;
     object-fit: contain;
     border-radius: 8px;
-    background: #F4F5F7;
+    background: #F4F5F6;
     transition: filter 0.15s;
 }
+/* 저장 이미지는 불투명 흰 배경이라 img 자신의 background로는 안 비친다 — 뒤에 #F4F5F6 판을 깔고 multiply */
+.thumb-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; aspect-ratio: 1; border-radius: 8px; background: #F4F5F6; }
+.thumb-card img { position: relative; mix-blend-mode: multiply; }
 .thumb-card .thumb-ph { display: flex; align-items: center; justify-content: center; color: #B4B9C2; font-size: 26px; }
 .thumb-card:hover img, .thumb-card:hover .thumb-ph { filter: brightness(0.86); }
 .thumb-name { font-size: 11.5px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
