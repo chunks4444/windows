@@ -177,7 +177,7 @@ $blogQuote = $blogQuotes ? $blogQuotes[array_rand($blogQuotes)] : null;
                 ];
                 $renderCards = !empty($studioCards) ? $studioCards : $defaultCards;
                 // 패턴별 아이콘 원 색 — AURO 560 팔레트에서 골라 흰 아이콘이 읽히는 중간 톤으로
-                $eiColors = ['classic'=>'#d46d28', 'square'=>'#c88019', 'cross'=>'#5e945b', 'triangle'=>'#228b80', 'diamond'=>'#2d80a6', 'hexagon'=>'#860e10', 'mondrian'=>'#115296'];
+                $eiColors = ['classic'=>'#d46d28', 'square'=>'#A21CAF', 'cross'=>'#5e945b', 'triangle'=>'#228b80', 'diamond'=>'#2d80a6', 'hexagon'=>'#860e10', 'mondrian'=>'#115296'];
                 ?>
                 <div class="engine-icon-row">
                 <?php foreach ($renderCards as $sc):
