@@ -640,6 +640,8 @@
     white-space: nowrap;
 }
 .home-blog-more:hover { color: var(--text-muted); gap: 9px; }
+/* '전체보기' 화살표 — 글자보다 한 단계 굵고 크게 */
+.home-blog-more .bi { font-size: 1.2em; -webkit-text-stroke: 1.2px currentColor; }
 
 .home-quote-banner {
     display: block;

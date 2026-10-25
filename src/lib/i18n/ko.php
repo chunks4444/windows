@@ -52,8 +52,8 @@ return [
     'home_engine_desc_mondrian' => '정자살 격자를 무작위로 분할해 만든 자유 패턴 엔진.<br>버튼 한 번으로 새 구성을 만들고, 선을 직접 그리거나 옮겨 다듬을 수 있습니다.',
 
     // 컬렉션 스트립
-    'home_collection_title'    => '마음에 드는 패턴을 골라 편집해보세요.',
-    'home_collection_more'     => '컬렉션 전체 보기',
+    'home_collection_title'    => '마음에 드는 창호 패턴을 골라 편집해보세요.',
+    'home_collection_more'     => '전체보기',
     'home_collection_prev'     => '이전 패턴 보기',
     'home_collection_next'     => '다음 패턴 보기',
 
@@ -74,7 +74,7 @@ return [
     'home_process_label'       => '사용법',
     'home_process_title'       => '그린 것과 나온 것이 다르지 않게',
     'home_process_body'        => '설계와 제작 사이, 말로 옮겨 적는 단계가 없습니다. 완성한 도면 그대로 워크그룹 평목에서 제작됩니다.',
-    'home_guide_more'          => '가이드 전체 보기',
+    'home_guide_more'          => '전체보기',
 
     'home_step1_title'         => '패턴 설계',
     'home_step1_desc'          => '워크그룹 평목의 스튜디오는 브라우저에서 바로 사용할 수 있는 창호 설계 도구입니다. 상단 스튜디오 메뉴에서 원하는 창호 패턴을 선택하고, 문틀 크기·살 간격·패턴을 조정하며 나만의 창호를 완성해 보세요.',

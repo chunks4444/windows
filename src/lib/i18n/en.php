@@ -52,8 +52,8 @@ return [
     'home_engine_desc_mondrian' => 'A free-form engine that randomly subdivides the square lattice grid.<br>Generate a new layout with one click, then draw or drag lines to refine it.',
 
     // Collection strip
-    'home_collection_title'    => 'Pick a pattern you like and start editing.',
-    'home_collection_more'     => 'View Full Collection',
+    'home_collection_title'    => 'Pick a changho pattern you like and start editing.',
+    'home_collection_more'     => 'View All',
     'home_collection_prev'     => 'View previous pattern',
     'home_collection_next'     => 'View next pattern',
 
@@ -74,7 +74,7 @@ return [
     'home_process_label'       => 'How It Works',
     'home_process_title'       => 'What You Draw Is What You Get',
     'home_process_body'        => 'There\'s no step where your design gets translated into words between design and production. Your finished drawing is built exactly as drawn, at Workgroup Pyeongmok.',
-    'home_guide_more'          => 'View Full Guide',
+    'home_guide_more'          => 'View All',
 
     'home_step1_title'         => 'Design the Pattern',
     'home_step1_desc'          => 'Workgroup Pyeongmok\'s studio is a changho design tool you can use right in your browser. Pick a lattice pattern from the Studio menu above, then adjust the frame size, slat spacing, and pattern to complete your own changho.',
