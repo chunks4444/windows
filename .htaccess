@@ -164,6 +164,10 @@ RewriteRule ^uploads/(.*)$ https://pyeongmok.com/uploads/$1 [R=302,L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^uploads/drawing_thumbs/([A-Za-z0-9_]+)$ uploads/drawing_thumbs/$1.png [L]
 
+# 운영·개발용 스크립트(ops/ 의 SSH 터널·백업 스크립트, 로컬 개발 라우터)는 웹으로 열 이유가 없음 (2026-10)
+RewriteRule ^ops(/|$) - [F,L]
+RewriteRule ^dev_router\.php$ - [F,L]
+
 # DB 스키마·백업 파일은 웹으로 내려받을 이유가 없음 (src/lib/schema.sql 이 그대로 내려받아지던 것을 차단, 2026-10)
 <FilesMatch "\.(sql|sql\.gz|bak)$">
     Require all denied

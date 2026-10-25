@@ -89,7 +89,7 @@ $navStudioActive = [
     'mondrian' => $isMondrian,
 ];
 // 패턴별 아이콘 색 — AURO 560/930 팔레트 (메인 index.php의 $eiColors와 같은 값)
-$navStudioColors = ['classic'=>'#d46d28', 'square'=>'#A21CAF', 'cross'=>'#5e945b', 'triangle'=>'#228b80', 'diamond'=>'#2d80a6', 'hexagon'=>'#860e10', 'mondrian'=>'#115296'];
+$navStudioColors = ['classic'=>'#d46d28', 'square'=>'#A21CAF', 'cross'=>'#228b80', 'triangle'=>'#FF3B4B', 'diamond'=>'#2d80a6', 'hexagon'=>'#860e10', 'mondrian'=>'#115296'];
 $navStudioIcons = [
     'classic' => '<svg width="27" height="27" viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
             <rect fill="currentColor" x="148" y="204" width="384" height="46" rx="23"/>
