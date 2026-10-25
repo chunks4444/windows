@@ -121,7 +121,7 @@ include __DIR__ . '/../_head.php';
 
 <h2>How We Respond</h2>
 <p>
-    A staff member will contact you within one to two business days of your request.
+    A staff member will look into your request and contact you soon.
     We'll send the quote along with the details to your registered email or phone number.
 </p>
 

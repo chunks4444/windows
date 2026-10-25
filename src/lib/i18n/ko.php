@@ -122,7 +122,7 @@ return [
     // Contact CTA
     'home_contact_label'       => 'Contact',
     'home_contact_title'       => '작은 문의도 괜찮습니다.',
-    'home_contact_body'        => '설계·제작·설치 상담부터<br>협업 및 프로젝트 제안까지 모두 환영합니다.<br><br>편하게 연락해 주세요.<br>영업일 기준 1~2일 안에 답을 드립니다.',
+    'home_contact_body'        => '설계·제작·설치 상담부터<br>협업 및 프로젝트 제안까지 모두 환영합니다.<br><br>편하게 연락해 주세요.<br>살펴보고 빠르게 답을 드리겠습니다.',
     'home_contact_email_btn'   => '이메일 문의',
     'home_contact_hint'        => '평일 오전 10시 – 오후 6시 운영 · 주말·공휴일 이메일 접수 가능',
 
@@ -168,7 +168,7 @@ return [
     'company_studio_btn2'      => '주문·가격 안내',
 
     'company_contact_title'    => '함께 만들어가요.',
-    'company_contact_body'     => '작은 문의도 괜찮습니다.<br>설계·제작·설치 상담부터 협업 및 프로젝트 제안까지 모두 환영합니다.<br>편하게 연락해 주세요. 영업일 기준 1~2일 안에 답을 드립니다.',
+    'company_contact_body'     => '작은 문의도 괜찮습니다.<br>설계·제작·설치 상담부터 협업 및 프로젝트 제안까지 모두 환영합니다.<br>편하게 연락해 주세요. 살펴보고 빠르게 답을 드리겠습니다.',
     'company_contact_email_btn'=> '이메일 문의하기',
     'company_address_value'  => '경기도 양평군 양서면 도곡리 107-2',
     'company_contact_address'  => '주소',
@@ -295,7 +295,7 @@ return [
     // 이메일 문의 모달 (src/components/contact_modal.php)
     'ct_title'                => '이메일 문의',
     'ct_success_strong'       => '문의가 접수되었습니다.',
-    'ct_success_body'         => '확인 후 영업일 기준 1~2일 안에 답을 드립니다.',
+    'ct_success_body'         => '문의 감사합니다. 살펴보고 빠르게 답을 드리겠습니다.',
     'ct_name'                 => '이름',
     'ct_name_ph'              => '홍길동',
     'ct_email'                => '이메일 (답변 받을 주소)',

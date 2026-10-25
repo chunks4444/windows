@@ -122,7 +122,7 @@ return [
     // Contact CTA
     'home_contact_label'       => 'Contact',
     'home_contact_title'       => 'Even a small question is welcome.',
-    'home_contact_body'        => 'From design, production, and installation consultations<br>to collaboration and project proposals — all welcome.<br><br>Feel free to reach out.<br>We\'ll get back to you within 1–2 business days.',
+    'home_contact_body'        => 'From design, production, and installation consultations<br>to collaboration and project proposals — all welcome.<br><br>Feel free to reach out.<br>We\'ll look into it and get back to you soon.',
     'home_contact_email_btn'   => 'Email Us',
     'home_contact_hint'        => 'Open weekdays 10 AM – 6 PM · Email inquiries accepted on weekends and holidays',
 
@@ -168,7 +168,7 @@ return [
     'company_studio_btn2'      => 'Ordering & Pricing',
 
     'company_contact_title'    => "Let's build it together.",
-    'company_contact_body'     => "Even a small question is welcome.<br>From design, production, and installation consultations to collaboration and project proposals — all welcome.<br>Feel free to reach out. We'll get back to you within 1–2 business days.",
+    'company_contact_body'     => "Even a small question is welcome.<br>From design, production, and installation consultations to collaboration and project proposals — all welcome.<br>Feel free to reach out. We'll look into it and get back to you soon.",
     'company_contact_email_btn'=> 'Email Us',
     'company_address_value'  => '76, Yangseodogok-gil, Yangseo-myeon, Yangpyeong-gun, Gyeonggi-do, Republic of Korea',
     'company_contact_address'  => 'Address',
@@ -295,7 +295,7 @@ return [
     // Email inquiry modal (src/components/contact_modal.php)
     'ct_title'                => 'Email Inquiry',
     'ct_success_strong'       => 'Your inquiry has been received.',
-    'ct_success_body'         => "We'll review it and get back to you within 1–2 business days.",
+    'ct_success_body'         => "Thank you for reaching out. We'll look into it and get back to you soon.",
     'ct_name'                 => 'Name',
     'ct_name_ph'              => 'Jane Doe',
     'ct_email'                => 'Email (where we should reply)',
