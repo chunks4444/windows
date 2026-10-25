@@ -232,15 +232,15 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                         </svg>
                         <span><?= te('새 도면') ?></span>
                     </button>
+                    <button class="title-group-btn" id="btnShare" title="<?= te('먼저 저장해주세요') ?>" disabled>
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                            <line x1="8.6" y1="10.5" x2="15.4" y2="6.5"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/>
+                        </svg>
+                        <span><?= te('공유') ?></span>
+                    </button>
                 </div>
                 <div class="file-row ver-wrap">
-                    <button class="title-group-btn" id="btnShare" title="<?= te('먼저 저장해주세요') ?>" disabled>
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-                                <line x1="8.6" y1="10.5" x2="15.4" y2="6.5"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/>
-                            </svg>
-                            <span><?= te('공유') ?></span>
-                        </button>
                         <div class="ver-dropdown share-dropdown" id="shareDropdown">
                             <div class="share-dd-id" id="shareDdId"><?= te('도면 #—') ?></div>
                             <div class="share-dd-linkrow">
