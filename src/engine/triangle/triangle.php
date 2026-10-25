@@ -172,6 +172,10 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
             <div class="sb-inner">
             <section class="rail-pane" data-pane="collection" hidden>
                 <div class="rail-pane-head"><?= te('컬렉션') ?></div>
+                <div class="col-seg" id="collectionSeg">
+                    <button type="button" class="active" data-view="all"><?= te('전체 컬렉션') ?></button>
+                    <button type="button" data-view="boards"><?= te('내 보드') ?></button>
+                </div>
                 <div id="collectionGroupFilters" style="display:grid;grid-template-columns:repeat(3, 1fr);gap:6px;margin-bottom:6px;">
                     <select id="collectionKrSelect" class="sb-select">
                         <option value="" disabled selected hidden><?= htmlspecialchars(t('col_group_kr')) ?></option>
@@ -194,6 +198,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                 </div>
                 <div class="thumb-grid" id="collectionGrid"></div>
                 <button type="button" class="hbtn pane-more" id="collectionMore" hidden><?= te('더 보기') ?></button>
+                <div id="collectionBoards"></div>
                 <a class="pane-link" href="/collection" data-lh><?= te('전체 컬렉션 보기') ?> <i class="bi bi-arrow-right"></i></a>
             </section>
             <section class="rail-pane" data-pane="file" hidden>

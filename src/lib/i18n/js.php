@@ -331,6 +331,9 @@ return [
 
     // 내보내기 시트 하단 "마감 정보" 표 (engine-common.js buildExportSheet / _collectFinishSpec)
     '마감 정보' => 'Finish details',
+    '내 보드' => 'My boards',
+    '로그인하면 내 보드를 볼 수 있습니다.' => 'Log in to see your boards.',
+    '이 보드는 비어 있습니다.' => 'This board is empty.',
     '마감'      => 'Finish',
     '철물'      => 'Hardware',
 ];

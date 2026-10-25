@@ -230,6 +230,74 @@
             }
         });
 
+        // ── 내 보드: 도면관리의 '내 보드'와 같은 데이터를 이 패널에서 보기만 한다 (이름 변경·삭제는 도면관리에서) ──
+        const seg       = document.getElementById('collectionSeg');
+        const boardsBox = document.getElementById('collectionBoards');
+        const colPane   = grid.closest('.rail-pane');
+
+        function boardCard(imgSrc, name, sub, onClick) {
+            const card = document.createElement('button');
+            card.type = 'button';
+            card.className = 'thumb-card';
+            card.title = name;
+            card.innerHTML = (imgSrc ? `<img src="${esc(imgSrc)}" alt="" loading="lazy">` : '<div class="thumb-ph"><i class="bi bi-collection"></i></div>')
+                + `<span class="thumb-name">${esc(name)}</span>` + (sub ? `<span class="thumb-sub">${esc(sub)}</span>` : '');
+            card.addEventListener('click', onClick);
+            return card;
+        }
+        function boardsLoginPrompt() {
+            boardsBox.innerHTML = emptyMsg(_t('로그인하면 내 보드를 볼 수 있습니다.'), _t('로그인'));
+            boardsBox.querySelector('.pane-login-btn')?.addEventListener('click', () => pmokRequireAuth(showBoards));
+        }
+        async function showBoards() {
+            if (!token()) { boardsLoginPrompt(); return; }
+            boardsBox.innerHTML = emptyMsg(_t('불러오는 중…'));
+            try {
+                const res = await fetch('/src/api/boards/list.php', { headers: authHeaders() });
+                if (res.status === 401) { boardsLoginPrompt(); return; }
+                const boards = (await res.json()).boards || [];
+                if (!boards.length) { boardsBox.innerHTML = emptyMsg(_t('저장된 보드가 없습니다.')); return; }
+                const g = document.createElement('div');
+                g.className = 'thumb-grid';
+                boards.forEach(b => g.appendChild(boardCard(b.first_image, b.name, _t('패턴 %s개', b.item_count), () => showBoardItems(b))));
+                boardsBox.innerHTML = '';
+                boardsBox.appendChild(g);
+            } catch { boardsBox.innerHTML = emptyMsg(_t('불러오기 실패')); }
+        }
+        async function showBoardItems(b) {
+            boardsBox.innerHTML = `<div class="col-board-head"><button type="button" class="hbtn col-back"><i class="bi bi-chevron-left"></i> ${esc(_t('내 보드'))}</button><span class="col-board-name">${esc(b.name)}</span></div>`
+                + emptyMsg(_t('불러오는 중…'));
+            boardsBox.querySelector('.col-back').addEventListener('click', showBoards);
+            const loadingEl = boardsBox.querySelector('.pane-empty');
+            try {
+                const res = await fetch('/src/api/boards/items.php', { method: 'POST', headers: authHeaders(), body: JSON.stringify({ board_id: b.id }) });
+                if (res.status === 401) { boardsLoginPrompt(); return; }
+                const items = (await res.json()).items || [];
+                if (!items.length) { loadingEl.textContent = _t('이 보드는 비어 있습니다.'); return; }
+                const g = document.createElement('div');
+                g.className = 'thumb-grid';
+                items.forEach(p => {
+                    if (!p.drawing_id || !p.engine) return;
+                    g.appendChild(boardCard(p.image_path, p.display_name || p.name_ko || '', '', () => {
+                        const url = lh('/src/engine/' + p.engine + '/' + p.engine + '.php') + '?drawing_id=' + encodeURIComponent(p.drawing_id);
+                        pmConfirm(_t('이 컬렉션 도면을 여시겠습니까?'), () => { location.href = url; },
+                            { sub: _t('저장하지 않은 작업은 사라집니다.'), type: 'primary', confirmText: _t('열기') });
+                    }));
+                });
+                loadingEl.replaceWith(g);
+            } catch { loadingEl.textContent = _t('불러오기 실패'); }
+        }
+        function setView(v) {
+            seg?.querySelectorAll('button').forEach(btn => btn.classList.toggle('active', btn.dataset.view === v));
+            colPane?.classList.toggle('col-view-boards', v === 'boards');
+            if (v === 'boards') showBoards();
+        }
+        seg?.querySelectorAll('button').forEach(btn => btn.addEventListener('click', () => {
+            const v = btn.dataset.view;
+            if (v === 'boards' && !token()) { pmokRequireAuth(() => setView('boards')); return; }
+            setView(v);
+        }));
+
         loaders.collection = () => { if (!loaded) { loaded = true; load(true); } };
         more?.addEventListener('click', () => load(false));
         let t;

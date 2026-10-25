@@ -838,7 +838,8 @@
     }
 
     function loadSavedRenders() {
-        fetch('/src/api/renders/list.php?engine=' + encodeURIComponent(_engineName()), { headers: _wpHeaders() })
+        // 엔진 구분 없이 내 계정의 렌더링 전부 — 도면관리의 렌더링 탭(dashboard.js)과 같은 목록
+        fetch('/src/api/renders/list.php', { headers: _wpHeaders() })
             .then(r => r.json())
             .then(data => {
                 // 레일 구조(렌더링 탭 갤러리)에선 저장된 렌더 전부(서버 최대 300장, 이미지는 lazy), 옛 구조는 최근 MAX_RENDERS장
