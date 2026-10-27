@@ -277,25 +277,6 @@ $metaKeywords = trim($metaKeywords . ', ' . t('meta_brand_keywords'), ', ');
             <h1 class="bd-title"><?= htmlspecialchars(db_field($post, 'title')) ?></h1>
         </header>
 
-        <?php if ($seriesInfo): ?>
-        <div class="bd-series-box">
-            <p class="bd-series-box-label"><?= htmlspecialchars(t('bd_series_label')) ?><br><?= htmlspecialchars(db_field($seriesInfo, 'name')) ?><?= $post['series_order'] ? ' · ' . htmlspecialchars(sprintf(t('bd_series_episode'), (int)$post['series_order'])) : '' ?> <span class="bd-series-box-total"><?= htmlspecialchars(sprintf(t('bd_series_total'), count($seriesEpisodes))) ?></span> <span class="bd-series-box-status <?= $seriesInfo['is_completed'] ? 'is-completed' : 'is-ongoing' ?>"><?= htmlspecialchars($seriesInfo['is_completed'] ? t('bd_series_completed') : t('bd_series_ongoing')) ?></span></p>
-            <?php if ($seriesInfo['tagline']): ?>
-            <p class="bd-series-box-tagline">"<?= htmlspecialchars(db_field($seriesInfo, 'tagline')) ?>"</p>
-            <?php endif; ?>
-            <ol class="bd-series-box-list">
-                <?php foreach ($seriesEpisodes as $ep): ?>
-                <li class="<?= $ep['id'] === $post['id'] ? 'current' : '' ?>">
-                    <?php if ($ep['id'] === $post['id']): ?>
-                    <span><?= htmlspecialchars(sprintf(t('bd_series_episode'), $ep['series_order'])) ?> <?= htmlspecialchars(db_field($ep, 'title')) ?></span>
-                    <?php else: ?>
-                    <a href="<?= lang_href('/blog/' . rawurlencode($ep['slug'])) ?>"><?= htmlspecialchars(sprintf(t('bd_series_episode'), $ep['series_order'])) ?> <?= htmlspecialchars(db_field($ep, 'title')) ?></a>
-                    <?php endif; ?>
-                </li>
-                <?php endforeach; ?>
-            </ol>
-        </div>
-        <?php endif; ?>
         <?php if (!empty($post['thumbnail_url'])): ?>
         <figure class="bd-hero-img">
             <img src="<?= htmlspecialchars($post['thumbnail_url']) ?>" alt="<?= htmlspecialchars(db_field($post, 'title')) ?>">
@@ -364,6 +345,26 @@ $metaKeywords = trim($metaKeywords . ', ' . t('meta_brand_keywords'), ', ');
             <p class="bd-source-license"><?= htmlspecialchars(t('bd_license')) ?></p>
             <p class="bd-source-license bd-feedback"><?= sprintf(htmlspecialchars(t('bd_feedback')), '<button type="button" class="bd-feedback-email" data-bs-toggle="modal" data-bs-target="#contactModal">pyeongmok@gmail.com</button>') ?></p>
         </div>
+
+        <?php if ($seriesInfo): ?>
+        <div class="bd-series-box">
+            <p class="bd-series-box-label"><?= htmlspecialchars(t('bd_series_label')) ?><br><?= htmlspecialchars(db_field($seriesInfo, 'name')) ?><?= $post['series_order'] ? ' · ' . htmlspecialchars(sprintf(t('bd_series_episode'), (int)$post['series_order'])) : '' ?> <span class="bd-series-box-total"><?= htmlspecialchars(sprintf(t('bd_series_total'), count($seriesEpisodes))) ?></span> <span class="bd-series-box-status <?= $seriesInfo['is_completed'] ? 'is-completed' : 'is-ongoing' ?>"><?= htmlspecialchars($seriesInfo['is_completed'] ? t('bd_series_completed') : t('bd_series_ongoing')) ?></span></p>
+            <?php if ($seriesInfo['tagline']): ?>
+            <p class="bd-series-box-tagline">"<?= htmlspecialchars(db_field($seriesInfo, 'tagline')) ?>"</p>
+            <?php endif; ?>
+            <ol class="bd-series-box-list">
+                <?php foreach ($seriesEpisodes as $ep): ?>
+                <li class="<?= $ep['id'] === $post['id'] ? 'current' : '' ?>">
+                    <?php if ($ep['id'] === $post['id']): ?>
+                    <span><?= htmlspecialchars(sprintf(t('bd_series_episode'), $ep['series_order'])) ?> <?= htmlspecialchars(db_field($ep, 'title')) ?></span>
+                    <?php else: ?>
+                    <a href="<?= lang_href('/blog/' . rawurlencode($ep['slug'])) ?>"><?= htmlspecialchars(sprintf(t('bd_series_episode'), $ep['series_order'])) ?> <?= htmlspecialchars(db_field($ep, 'title')) ?></a>
+                    <?php endif; ?>
+                </li>
+                <?php endforeach; ?>
+            </ol>
+        </div>
+        <?php endif; ?>
 
         <?php
         // 연관 엔진을 관리자가 비워두고 연관 도면만 지정한 경우, 도면 자체의 타입으로 보완

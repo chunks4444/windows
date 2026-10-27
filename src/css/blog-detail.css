@@ -110,7 +110,7 @@ body { background: var(--bg); }
     background: #F4F5F6;
     border-radius: var(--r);
     padding: 1.25rem 1.4rem;
-    margin-bottom: 2rem;
+    margin: 1.5rem 0 2rem;
 }
 .bd-series-box-label {
     font-size: var(--fs-12); font-weight: 700; letter-spacing: .04em;
@@ -141,26 +141,6 @@ body { background: var(--bg); }
 .bd-series-box-list a:hover { color: var(--text-muted); text-decoration: underline; }
 .bd-series-box-list li.current span {
     font-size: var(--fs-14); font-weight: 700; color: var(--text);
-}
-
-/* 넓은 화면: 본문 왼쪽 바깥에 고정되는 시리즈 인덱스 */
-@media (min-width: 1200px) {
-    .bd-series-box {
-        float: left;
-        position: sticky; top: 96px;
-        width: 220px;
-        margin: 0 0 0 -260px;
-        padding: 0 0 0 1rem;
-        background: none;
-        border-left: 2px solid rgba(var(--text-rgb), 0.12);
-        border-radius: 0;
-        max-height: calc(100vh - 140px);
-        overflow-y: auto;
-    }
-    .bd-series-box-tagline { font-size: var(--fs-15); margin-bottom: .6rem; }
-    .bd-series-box-list { padding-top: .6rem; }
-    .bd-series-box-list li { line-height: 1.45; }
-    .bd-series-box-list li.current { margin-left: -1rem; padding-left: calc(1rem - 2px); border-left: 2px solid var(--accent); }
 }
 
 /* ── 엔진 딥링크 박스 ───────────────────────────────────── */
@@ -200,14 +180,13 @@ body { background: var(--bg); }
     color: var(--text);
     word-break: keep-all;
 }
-/* 첫 문단 첫 글자 드롭캡 (메인 컬러) */
+/* 첫 문단 첫 글자 강조 (메인 컬러). 문단 길이와 무관하게 쓰도록 float 드롭캡이 아닌 인라인 확대 */
 .bd-body > p:first-of-type::first-letter {
-    float: left;
-    font-size: 3.6em;
-    line-height: .85;
+    font-size: 2.1em;
+    line-height: 1;
     font-weight: 700;
     color: var(--accent);
-    margin: .06em .12em 0 0;
+    margin-right: .04em;
 }
 /* 영문은 한글 기준(17px/1.7)보다 살짝 크고 줄간격은 더 타이트해야 장문 가독성이 좋다 */
 html[lang="en"] .bd-body {
