@@ -272,32 +272,14 @@ $metaKeywords = trim($metaKeywords . ', ' . t('meta_brand_keywords'), ', ');
 
 <div class="bd-page">
     <article class="bd-article">
-
         <header class="bd-header">
             <a href="<?= lang_href('/blog/') ?>" class="bd-back"><i class="bi bi-arrow-left"></i> <?= htmlspecialchars(t('bd_back')) ?></a>
             <h1 class="bd-title"><?= htmlspecialchars(db_field($post, 'title')) ?></h1>
-            <time class="bd-date" datetime="<?= date('Y-m-d', strtotime($post['created_at'])) ?>">
-                <?= date('Y.m.d', strtotime($post['created_at'])) ?><?php $bdAuthor = db_field($post, 'author_name'); ?><?= $bdAuthor ? ' · ' . htmlspecialchars($bdAuthor) : '' ?>
-            </time>
-            <div class="bd-share-row">
-                <button id="btnShare" type="button" class="bd-share-btn" title="<?= htmlspecialchars(t('share_title')) ?>"><i class="bi bi-share"></i></button>
-                <button id="btnShareKakao" type="button" class="bd-share-btn" title="<?= htmlspecialchars(t('share_kakao_aria')) ?>">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.8 5.3 4.6 6.7-.2.7-.7 2.6-.8 3-.1.5.2.5.4.4.2-.1 2.6-1.8 3.6-2.5.7.1 1.4.2 2.2.2 5.5 0 10-3.6 10-8 0-4.4-4.5-7.8-10-7.8z"/></svg>
-                </button>
-                <button id="btnShareFb" type="button" class="bd-share-btn" title="<?= htmlspecialchars(t('share_fb_aria')) ?>">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7.9h2.7l.4-3.1h-3.1V8.1c0-.9.3-1.5 1.6-1.5h1.7V3.8C15.9 3.7 14.8 3.6 13.6 3.6c-2.5 0-4.2 1.5-4.2 4.3v2.1H6.7v3.1h2.7V21h4.1z"/></svg>
-                </button>
-                <a id="btnShareX" class="bd-share-btn" href="#" target="_blank" rel="noopener" title="<?= htmlspecialchars(t('bd_share_x_aria')) ?>"><i class="bi bi-twitter-x"></i></a>
-                <a id="btnShareThreads" class="bd-share-btn" href="#" target="_blank" rel="noopener" title="<?= htmlspecialchars(t('share_threads_aria')) ?>"><i class="bi bi-threads"></i></a>
-                <?php if ($isSuperViewer): ?>
-                <a class="bd-share-btn" href="/src/admin/blog.php?edit=<?= (int)$post['id'] ?>" title="<?= htmlspecialchars(t('blog_edit_post')) ?>"><i class="bi bi-pencil-fill"></i></a>
-                <?php endif; ?>
-            </div>
         </header>
 
         <?php if ($seriesInfo): ?>
         <div class="bd-series-box">
-            <p class="bd-series-box-label"><?= htmlspecialchars(t('bd_series_label')) ?> · <?= htmlspecialchars(db_field($seriesInfo, 'name')) ?><?= $post['series_order'] ? ' · ' . htmlspecialchars(sprintf(t('bd_series_episode'), (int)$post['series_order'])) : '' ?> <span class="bd-series-box-total"><?= htmlspecialchars(sprintf(t('bd_series_total'), count($seriesEpisodes))) ?></span> <span class="bd-series-box-status <?= $seriesInfo['is_completed'] ? 'is-completed' : 'is-ongoing' ?>"><?= htmlspecialchars($seriesInfo['is_completed'] ? t('bd_series_completed') : t('bd_series_ongoing')) ?></span></p>
+            <p class="bd-series-box-label"><?= htmlspecialchars(t('bd_series_label')) ?><br><?= htmlspecialchars(db_field($seriesInfo, 'name')) ?><?= $post['series_order'] ? ' · ' . htmlspecialchars(sprintf(t('bd_series_episode'), (int)$post['series_order'])) : '' ?> <span class="bd-series-box-total"><?= htmlspecialchars(sprintf(t('bd_series_total'), count($seriesEpisodes))) ?></span> <span class="bd-series-box-status <?= $seriesInfo['is_completed'] ? 'is-completed' : 'is-ongoing' ?>"><?= htmlspecialchars($seriesInfo['is_completed'] ? t('bd_series_completed') : t('bd_series_ongoing')) ?></span></p>
             <?php if ($seriesInfo['tagline']): ?>
             <p class="bd-series-box-tagline">"<?= htmlspecialchars(db_field($seriesInfo, 'tagline')) ?>"</p>
             <?php endif; ?>
@@ -314,6 +296,31 @@ $metaKeywords = trim($metaKeywords . ', ' . t('meta_brand_keywords'), ', ');
             </ol>
         </div>
         <?php endif; ?>
+        <?php if (!empty($post['thumbnail_url'])): ?>
+        <figure class="bd-hero-img">
+            <img src="<?= htmlspecialchars($post['thumbnail_url']) ?>" alt="<?= htmlspecialchars(db_field($post, 'title')) ?>">
+        </figure>
+        <?php endif; ?>
+
+        <div class="bd-meta">
+            <div class="bd-byline"><?php $bdAuthor = db_field($post, 'author_name'); ?><?= $bdAuthor ? '<span class="bd-by">' . (is_en() ? 'By' : '글') . '</span> <strong>' . htmlspecialchars($bdAuthor) . '</strong> <span class="bd-sep">·</span> ' : '' ?><time class="bd-date" datetime="<?= date('Y-m-d', strtotime($post['created_at'])) ?>"><?= date('Y.m.d', strtotime($post['created_at'])) ?></time></div>
+            <div class="bd-share-row">
+                <button id="btnShare" type="button" class="bd-share-btn" title="<?= htmlspecialchars(t('share_title')) ?>"><i class="bi bi-share"></i></button>
+                <button id="btnShareKakao" type="button" class="bd-share-btn" title="<?= htmlspecialchars(t('share_kakao_aria')) ?>">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.8 5.3 4.6 6.7-.2.7-.7 2.6-.8 3-.1.5.2.5.4.4.2-.1 2.6-1.8 3.6-2.5.7.1 1.4.2 2.2.2 5.5 0 10-3.6 10-8 0-4.4-4.5-7.8-10-7.8z"/></svg>
+                </button>
+                <button id="btnShareFb" type="button" class="bd-share-btn" title="<?= htmlspecialchars(t('share_fb_aria')) ?>">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7.9h2.7l.4-3.1h-3.1V8.1c0-.9.3-1.5 1.6-1.5h1.7V3.8C15.9 3.7 14.8 3.6 13.6 3.6c-2.5 0-4.2 1.5-4.2 4.3v2.1H6.7v3.1h2.7V21h4.1z"/></svg>
+                </button>
+                <a id="btnShareX" class="bd-share-btn" href="#" target="_blank" rel="noopener" title="<?= htmlspecialchars(t('bd_share_x_aria')) ?>"><i class="bi bi-twitter-x"></i></a>
+                <a id="btnShareThreads" class="bd-share-btn" href="#" target="_blank" rel="noopener" title="<?= htmlspecialchars(t('share_threads_aria')) ?>"><i class="bi bi-threads"></i></a>
+                <?php if ($isSuperViewer): ?>
+                <a class="bd-share-btn" href="/src/admin/blog.php?edit=<?= (int)$post['id'] ?>" title="<?= htmlspecialchars(t('blog_edit_post')) ?>"><i class="bi bi-pencil-fill"></i></a>
+                <?php endif; ?>
+            </div>
+        </div>
+        <hr class="bd-divider">
+
 
         <?php if (is_en() && !empty($post['content_en'])): ?>
         <div class="bd-ai-translation-notice" style="font-size:12px;color:var(--text-muted);margin:20px 0 28px;">
@@ -322,14 +329,6 @@ $metaKeywords = trim($metaKeywords . ', ' . t('meta_brand_keywords'), ', ');
                 <a href="<?= htmlspecialchars('/blog/' . rawurlencode($post['slug'])) ?>">Read the original</a>
             </p>
         </div>
-        <?php endif; ?>
-
-        <hr class="bd-divider<?= (is_en() && !empty($post['content_en'])) ? ' bd-divider-thin' : '' ?>">
-
-        <?php if (!empty($post['thumbnail_url'])): ?>
-        <figure class="bd-hero-img">
-            <img src="<?= htmlspecialchars($post['thumbnail_url']) ?>" alt="<?= htmlspecialchars(db_field($post, 'title')) ?>">
-        </figure>
         <?php endif; ?>
 
         <div class="bd-body"><?= db_field($post, 'content') ?></div>
