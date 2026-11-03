@@ -196,7 +196,7 @@ function renderSpec(spec) {
 function drawingLink(o) {
     if (!o.drawing_id) return '<span class="ord-spec-sub">(저장 전 도면으로 접수 — 연결된 도면 없음)</span>';
     const e = encodeURIComponent(o.engine);
-    return `<a href="/src/engine/${e}/${e}.php?drawing_id=${o.drawing_id}&admin_view=1" target="_blank" rel="noopener" class="ord-drawing-link">도면 보기 ↗</a>`;
+    return `<a href="/src/engine/${e}/${e}.php?drawing_id=${o.drawing_id}" target="_blank" rel="noopener" class="ord-drawing-link">엔진에서 도면 열기 ↗</a>`;
 }
 
 function renderDetail(o, history = [], spec = null) {
