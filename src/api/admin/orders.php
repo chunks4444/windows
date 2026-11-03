@@ -7,6 +7,104 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') exit;
 require_once __DIR__ . '/../../lib/db.php';
 require_once __DIR__ . '/../../lib/jwt.php';
 require_once __DIR__ . '/../../lib/order_status.php';
+require_once __DIR__ . '/../../lib/engine_settings.php';
+
+// 주문 시점 도면 사양(spec_json = 엔진 getParams() 스냅샷)을 관리자 상세 화면용 요약으로 바꾼다.
+// 문 1짝 크기는 스냅샷에 없어서 7엔진 geometry.php와 같은 공식(문틀 치수 − 문틀두께·갭 → 짝수로 나눔)으로 다시 계산한다.
+// 문틀두께·갭·울거미 단계표는 "지금" 엔진설정 값이라, 주문 뒤에 설정을 바꿨다면 주문 당시와 몇 mm 다를 수 있다.
+function order_spec_summary(string $engine, ?string $specJson): ?array {
+    $p = $specJson ? json_decode($specJson, true) : null;
+    if (!is_array($p) || empty($p['W']) || empty($p['H'])) return null;
+
+    $cfg        = get_engine_settings($engine);
+    $frameThick = (int) ($cfg['frameThick'] ?? 30);
+    $frameGap   = (int) ($cfg['frameGap'] ?? 2);
+    $doorType   = ($p['doorType'] ?? '') === 'slide' ? 'slide' : 'swing';
+    $doorCount  = max(1, (int) ($p['doorCount'] ?? 1));
+    $openingW   = (int) $p['W'];
+    $openingH   = (int) $p['H'];
+    $frameW     = (int) ($p['frame'] ?? 0);
+    $frameH     = (int) ($p['frameH'] ?? 0);
+
+    $outerH = max(100, $openingH - 2 * $frameThick - 2 * $frameGap);
+    if ($step = get_frame_size_step($doorType, (int) round($outerH))) {
+        $frameW = max($frameW, (int) $step['frame_width']);
+        $frameH = max($frameH, (int) $step['frame_width']);
+    }
+    $base   = $openingW - 2 * $frameThick - 2 * $frameGap;
+    $outerW = $doorType === 'slide'
+        ? ($base + $frameW * ($doorCount - 1)) / $doorCount
+        : ($base - $frameGap * ($doorCount - 1)) / $doorCount;
+    $outerW = max(100, $outerW);
+
+    // 색은 hex로만 저장되므로 컬러 팔레트(color_swatches)에서 업체 코드·이름을 찾아 붙인다
+    $swatches = [];
+    try {
+        foreach (db()->query('SELECT brand, code, name, hex FROM color_swatches ORDER BY is_active DESC, id') as $s) {
+            $swatches[strtolower($s['hex'])] ??= $s;
+        }
+    } catch (Throwable $e) {}
+    $color = function ($hex) use ($swatches) {
+        if (!is_string($hex) || $hex === '') return null;
+        $s = $swatches[strtolower($hex)] ?? null;
+        return [
+            'hex'   => $hex,
+            'label' => $s ? trim(($s['brand'] ? $s['brand'] . ' ' : '') . $s['code'] . ' ' . $s['name']) : '',
+        ];
+    };
+
+    // 면 재질 — 문 전체 배지(배접지·백지·일반유리) 1종 + 칸별 재질(색한지·칼라유리)을 재질·색별 칸 수로 묶음
+    $subLabels = ['saek' => '색한지', 'baejeop' => '배접지', 'ilban' => '일반한지(백지)', 'plain' => '일반유리', 'color' => '칼라유리'];
+    $faceLabel = function ($fm) use ($subLabels) {
+        $label = ($fm['material'] ?? '') === 'glass' ? '유리' : '한지';
+        if (!empty($fm['sub'])) $label .= ' · ' . ($subLabels[$fm['sub']] ?? $fm['sub']);
+        $code = trim(($fm['brand'] ?? '') . ' ' . ($fm['code'] ?? ''));
+        if ($code !== '' || !empty($fm['name'])) $label .= ' (' . trim($code . ' ' . ($fm['name'] ?? '')) . ')';
+        return $label;
+    };
+    $faceCells = [];
+    foreach ((array) ($p['faceMaterialMap'] ?? []) as $fm) {
+        if (!is_array($fm) || empty($fm['material'])) continue;
+        $key = $faceLabel($fm);
+        $faceCells[$key] ??= ['label' => $key, 'hex' => $fm['hex'] ?? '', 'cells' => 0];
+        $faceCells[$key]['cells']++;
+    }
+    $backing = is_array($p['faceBacking'] ?? null) && !empty($p['faceBacking']['material'])
+        ? ['label' => $faceLabel($p['faceBacking']), 'hex' => $p['faceBacking']['hex'] ?? '']
+        : null;
+
+    return [
+        'size' => [
+            'openingW'    => $openingW,
+            'openingH'    => $openingH,
+            'doorType'    => $doorType,
+            'doorCount'   => $doorCount,
+            'doorW'       => round($outerW, 1),
+            'doorH'       => $outerH,
+            'frameW'      => $frameW,
+            'frameH'      => $frameH,
+            'slat'        => isset($p['slat']) ? (float) $p['slat'] : null,
+            'cols'        => isset($p['cols']) ? (int) $p['cols'] : null,
+            'rows'        => !empty($p['rowsManual']) ? (int) ($p['rows'] ?? 0) : null,
+            'vRatio'      => isset($p['vRatio']) ? (float) $p['vRatio'] : null,
+            'pungpan'     => !empty($p['pungpanOn']) ? (int) ($p['pungpan'] ?? 0) : null,
+            'rotate'      => !empty($p['rotate']),
+            'showMuntol'  => !empty($p['showMuntol']),
+            'frameThick'  => $frameThick,
+            'frameGap'    => $frameGap,
+        ],
+        'finish' => [
+            'wood'        => (string) ($p['wood'] ?? ''),
+            'finish'      => (string) ($p['finish'] ?? ''),
+            'hardware'    => (string) ($p['hardware'] ?? ''),
+            'frameColor'  => $color($p['frameColor'] ?? null),
+            'slatColor'   => $color($p['slatColor'] ?? null),
+            'muntolColor' => !empty($p['showMuntol']) ? $color($p['muntolColor'] ?? null) : null,
+            'backing'     => $backing,
+            'faceCells'   => array_values($faceCells),
+        ],
+    ];
+}
 
 $payload = jwt_from_request();
 if (!$payload || ($payload['role'] ?? '') !== 's') {
@@ -39,7 +137,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || ($_SERVER['REQUEST_METHOD'] === 'POS
             $history = $histStmt->fetchAll();
         }
 
-        echo json_encode(['order' => $order, 'history' => $history]);
+        echo json_encode([
+            'order'   => $order,
+            'history' => $history,
+            'spec'    => order_spec_summary($order['engine'], $order['spec_json']),
+        ]);
         exit;
     }
 

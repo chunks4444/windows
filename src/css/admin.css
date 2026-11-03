@@ -268,6 +268,12 @@ tr.drag-over td { background:var(--accent-tint); }
 .ord-price-table td { padding: 5px 4px; border-bottom: 1px solid var(--border); }
 .ord-price-table td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
 .ord-price-total td { font-weight: 700; border-bottom: none; border-top: 1px solid var(--text); }
+/* 주문 상세 — 도면 사양(상세 크기·마감) 표: 왼쪽 항목명은 좁게, 값은 왼쪽 정렬 */
+.ord-spec-table td:first-child { width: 120px; color: var(--text-3); white-space: nowrap; }
+.ord-spec-table td:last-child { text-align: left; }
+.ord-spec-sub { color: var(--text-3); font-size: var(--fs-12); }
+.ord-swatch { display: inline-block; width: 12px; height: 12px; border-radius: 3px; border: 1px solid var(--border); vertical-align: -1px; margin-right: 6px; }
+.ord-drawing-link { margin-left: 8px; font-weight: 600; color: var(--accent); white-space: nowrap; }
 
 .ord-history-list { display: flex; flex-direction: column; gap: 10px; }
 .ord-history-item { display: flex; gap: 10px; padding: 10px; border: 1px solid var(--border); border-radius: var(--r-sm); }

@@ -1,4 +1,4 @@
-const ENGINE_MAP = { square: '정자살', classic: '완자살', cross: '아자살', diamond: '완자문살', triangle: '세모솟을살', hexagon: '육모살' };
+const ENGINE_MAP = { square: '정자살', classic: '완자살', cross: '아자살', diamond: '완자문살', triangle: '세모솟을살', hexagon: '육모살', mondrian: '몬드리안' };
 
 let currentPage = 1;
 let searchTimer = null;
@@ -96,7 +96,7 @@ async function openModal(id) {
     if (!res.ok) { document.getElementById('admDetailContent').innerHTML = `<p style="color:var(--danger);">${esc(data.error || '불러오기 실패')}</p>`; return; }
 
     document.getElementById('admModalTitle').textContent = `${fmtOrderCode(data.order.engine, id)} 상세`;
-    renderDetail(data.order, data.history || []);
+    renderDetail(data.order, data.history || [], data.spec);
     document.getElementById('admMStatus').value     = data.order.status;
     document.getElementById('admMNote').value        = data.order.revision_note || '';
     document.getElementById('admMCarrier').value     = data.order.tracking_carrier || '';
@@ -157,13 +157,57 @@ function renderHistory(history, engine) {
     `;
 }
 
-function renderDetail(o, history = []) {
+// 주문 시점 도면 사양 — 서버(order_spec_summary)가 spec_json을 요약해 내려준 값
+function renderSpec(spec) {
+    if (!spec) return '<div class="full ord-detail-value">도면 사양 기록이 없습니다 (구버전 주문).</div>';
+    const s = spec.size, f = spec.finish;
+    const mm = n => Number(n).toLocaleString() + 'mm';
+    const sw = c => c ? `<span class="ord-swatch" style="background:${esc(c.hex)}"></span>${c.label ? esc(c.label) : esc(c.hex)}` : '—';
+    const doorKind = (s.doorType === 'slide' ? '미서기' : '여닫이') + ' ' + s.doorCount + '짝';
+    const sizeRows = [
+        ['문틀(개구부)', `${mm(s.openingW)} × ${mm(s.openingH)}`],
+        ['문 종류', doorKind],
+        ['문 1짝 크기', `${mm(s.doorW)} × ${mm(s.doorH)} <span class="ord-spec-sub">(문틀두께 ${s.frameThick} · 갭 ${s.frameGap} 기준 계산)</span>`],
+        ['울거미 나비', `좌우 ${mm(s.frameW)} · 상하 ${mm(s.frameH)}`],
+        ['살 나비', s.slat != null ? mm(s.slat) : '—'],
+        ['칸수', [s.cols != null ? `세로 ${s.cols}칸` : '', s.rows ? `가로살 ${s.rows}개` : '', s.vRatio && s.vRatio !== 1 ? `세로비율 ${s.vRatio}` : ''].filter(Boolean).join(' · ') || '—'],
+        ['풍판', s.pungpan != null ? mm(s.pungpan) : '없음'],
+    ];
+    if (s.rotate) sizeRows.push(['회전', '90° 회전']);
+    const finishRows = [
+        ['목재', f.wood ? esc(f.wood) : '—'],
+        ['마감', f.finish ? esc(f.finish) : '마감 없음'],
+        ['부자재', f.hardware ? esc(f.hardware) : '없음'],
+        ['울거미 색', sw(f.frameColor)],
+        ['살 색', sw(f.slatColor)],
+        ['문틀', s.showMuntol ? sw(f.muntolColor) : '표시 안 함'],
+        ['면 배지(문 전체)', f.backing ? sw(f.backing) : '없음'],
+    ];
+    if (f.faceCells.length) finishRows.push(['칸별 면 재질', f.faceCells.map(c => `${sw(c)} — ${c.cells}칸`).join('<br>')]);
+    const table = rows => `<table class="ord-price-table ord-spec-table">${rows.map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join('')}</table>`;
+    return `
+        <div class="full ord-detail-label">상세 크기</div>
+        <div class="full ord-detail-value">${table(sizeRows)}</div>
+        <div class="full ord-detail-label">마감</div>
+        <div class="full ord-detail-value">${table(finishRows)}</div>
+    `;
+}
+
+function drawingLink(o) {
+    if (!o.drawing_id) return '<span class="ord-spec-sub">(저장 전 도면으로 접수 — 연결된 도면 없음)</span>';
+    const e = encodeURIComponent(o.engine);
+    return `<a href="/src/engine/${e}/${e}.php?drawing_id=${o.drawing_id}&admin_view=1" target="_blank" rel="noopener" class="ord-drawing-link">도면 보기 ↗</a>`;
+}
+
+function renderDetail(o, history = [], spec = null) {
     const shipAddr = [o.ship_zipcode, o.ship_address, o.ship_address_detail].filter(Boolean).join(' ');
     document.getElementById('admDetailContent').innerHTML = `
         ${o.thumbnail ? `<img src="${o.thumbnail}" class="ord-thumb" alt="도면 썸네일">` : ''}
         <div class="ord-detail-grid">
             <div class="full ord-detail-label">엔진/도면</div>
-            <div class="full ord-detail-value">${ENGINE_MAP[o.engine] || esc(o.engine)} — ${esc(o.title || '(제목 없음)')}${o.version_label ? ' (' + esc(o.version_label) + ')' : ''}</div>
+            <div class="full ord-detail-value">${ENGINE_MAP[o.engine] || esc(o.engine)} — ${esc(o.title || '(제목 없음)')}${o.version_label ? ' (' + esc(o.version_label) + ')' : ''} ${drawingLink(o)}</div>
+
+            ${renderSpec(spec)}
 
             ${renderHistory(history, o.engine)}
 
