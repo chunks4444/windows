@@ -46,7 +46,7 @@ function quote_supplier_defaults(): array {
     return [
         'name'      => '워크그룹 평목',
         'biz_no'    => '135-32-53949',
-        'ceo'       => '',
+        'ceo'       => '전경수',
         'address'   => '경기도 양평군 양서면 도곡리 107-2',
         'biz_type'  => '',
         'biz_item'  => '',
