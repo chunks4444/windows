@@ -8,6 +8,7 @@ require_once __DIR__ . '/../../lib/db.php';
 require_once __DIR__ . '/../../lib/jwt.php';
 require_once __DIR__ . '/../../lib/order_status.php';
 require_once __DIR__ . '/../../lib/engine_settings.php';
+require_once __DIR__ . '/../../lib/order_estimate.php';
 
 // 목재 사용량(재 수) — 관리자 전용. 엔진 응답(고객에게도 내려감)에는 재 수를 싣지 않으므로,
 // 주문 시점 견적의 목재비(price_breakdown.door/muntol)를 현재 원가표의 그 목재 단가×가중치로 나눠 되짚는다.
@@ -158,6 +159,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || ($_SERVER['REQUEST_METHOD'] === 'POS
             );
             $histStmt->execute([$order['drawing_id'], $id]);
             $history = $histStmt->fetchAll();
+        }
+
+        // 견적 스냅샷이 없는 주문(서버 산출 도입 전, 원가 열람권한 없는 회원이 접수해 빈 값으로 들어온 것)은
+        // 관리자가 처음 열 때 한 번만 지금 원가표로 산출해 주문에 고정 저장한다 — 이후엔 원가표·도면이 바뀌어도 그대로(computedAt으로 시점 표시).
+        if (!$order['price_breakdown'] && ($est = order_compute_estimate($order['engine'], $order['spec_json'], 'admin_backfill'))) {
+            $order['price_breakdown'] = json_encode($est['breakdown'], JSON_UNESCAPED_UNICODE);
+            $order['estimated_price'] = $order['estimated_price'] ?: $est['breakdown']['total'];
+            $pdo->prepare('UPDATE orders SET price_breakdown = ?, estimated_price = ? WHERE id = ? AND price_breakdown IS NULL')
+                ->execute([$order['price_breakdown'], $order['estimated_price'], $id]);
         }
 
         // 도면 최신 저장본의 예상견적 — 엔진 getParams()가 저장 시 화면의 예상가를 estimatedPrice로 함께 남긴다.

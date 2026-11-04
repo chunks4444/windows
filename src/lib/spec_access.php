@@ -6,6 +6,8 @@ require_once __DIR__ . '/jwt.php';
 require_once __DIR__ . '/db.php';
 
 function get_content_permissions(): array {
+    // 서버 내부에서 geometry.php를 돌려 주문 견적을 산출할 때만 켜짐(src/lib/order_estimate.php) — 요청으로는 못 켬
+    if (!empty($GLOBALS['PMOK_PERMS_OVERRIDE'])) return array_fill_keys(['spec', 'parts', 'physical', 'cost', 'price', 'leadtime', 'shipping', 'desc'], true);
     $payload = jwt_from_request();
     if (!$payload) return ['spec' => false, 'parts' => false, 'physical' => false, 'cost' => false, 'price' => false, 'leadtime' => false, 'shipping' => false, 'desc' => false];
 

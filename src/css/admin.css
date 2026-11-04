@@ -308,3 +308,4 @@ tr.drag-over td { background:var(--accent-tint); }
 .ord-est-divider { border-top: 1px solid var(--border); margin: 5px 0; }
 .ord-est-note { font-size: var(--fs-11, 11px); color: #4B5160; margin-top: 4px; }
 .ord-est-current { margin-top: 10px; font-size: var(--fs-13); }
+.ord-est-stamp { font-size: var(--fs-12); color: #111; margin-top: 8px; }

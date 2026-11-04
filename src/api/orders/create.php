@@ -10,6 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 require_once __DIR__ . '/../../lib/jwt.php';
 require_once __DIR__ . '/../../lib/db.php';
 require_once __DIR__ . '/../../lib/engine_settings.php';
+require_once __DIR__ . '/../../lib/order_estimate.php';
 require_once __DIR__ . '/../../lib/mailer.php';
 
 $payload = jwt_from_request();
@@ -62,6 +63,16 @@ if ($thumbnail !== null && (!is_string($thumbnail) || strpos($thumbnail, 'data:i
 }
 
 $pdo = db();
+
+// 예상견적은 접수 시각 기준으로 고정한다 — 화면 값(원가 열람권한 있는 회원만 받음)이 있으면 그걸, 없으면 서버가 같은 엔진 계산으로 산출.
+// 이후 도면·원가표가 바뀌어도 주문에 묶인 견적은 그대로이고, computedAt으로 언제 값인지 남긴다.
+if (is_array($priceBreakdown)) {
+    $priceBreakdown['computedAt'] = date('Y-m-d H:i:s');
+    $priceBreakdown['source']     = 'order';
+} elseif ($est = order_compute_estimate($engine, $spec !== null ? json_encode($spec) : null, 'order')) {
+    $priceBreakdown = $est['breakdown'];
+    if (!$estimatedPrice) $estimatedPrice = (float) $priceBreakdown['total'];
+}
 
 // 요청자 정보는 클라이언트가 아니라 서버에서 직접 조회 (스냅샷 무결성)
 $stmt = $pdo->prepare('SELECT name, phone, email, company_name FROM users WHERE id = ?');

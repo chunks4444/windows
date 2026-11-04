@@ -106,9 +106,17 @@ async function openModal(id) {
     toggleConditionalFields();
 }
 
+// 견적이 언제 값인지 — 주문에 고정 저장된 시점(computedAt). 도면·원가표가 나중에 바뀌어도 이 값은 그대로다.
+// computedAt 도입 전 주문은 화면 값을 접수 때 저장했으므로 주문일시가 곧 산출 시각.
+function estimateStamp(b, orderCreatedAt) {
+    const at = fmtOrderDatetime(b.computedAt || orderCreatedAt);
+    if (b.source === 'admin_backfill') return `<strong>${at}</strong> 산출·고정 <span class="ord-spec-sub">— 주문 기록에 견적이 없어 관리자 첫 열람 때 그 시점 원가표로 계산</span>`;
+    return `<strong>${at}</strong> 기준 (주문 접수 시점 고정)${b.approx ? ' <span class="ord-spec-sub">· 몬드리안 실측 살 미반영 근사값</span>' : ''}`;
+}
+
 // 엔진 "예상 견적" 패널(src/engine/*/*.php .sb-price-box)과 같은 항목명·순서·구분선으로 그린다 — 고객이 본 화면 그대로.
 // 값은 주문 시점 price_breakdown 스냅샷이고, 마감만 0원이면 '–'(엔진 applyPriceFromServer와 같은 규칙).
-function renderPriceBreakdown(breakdownJson) {
+function renderPriceBreakdown(breakdownJson, orderCreatedAt) {
     if (!breakdownJson) return '<div class="ord-detail-value">견적 산출 내역이 없습니다 (구버전 주문이거나 도면 없이 접수됨).</div>';
     let b;
     try { b = JSON.parse(breakdownJson); } catch { return '<div class="ord-detail-value">견적 내역을 읽을 수 없습니다.</div>'; }
@@ -132,7 +140,9 @@ function renderPriceBreakdown(breakdownJson) {
                 ${row('이익', won(b.profit), 'key')}
                 ${div}
                 ${row('판매가', won(b.total), 'key total')}
+                ${b.leadTimeDays != null ? row('최소 납기', `<strong>${Number(b.leadTimeDays)}</strong>일`) : ''}
             </div>
+            <div class="ord-est-stamp">${estimateStamp(b, orderCreatedAt)}</div>
             <div class="ord-est-note">계산 공식 ${b.formulaVersion ? 'v' + esc(b.formulaVersion) : 'v1.0 (버전 기록 전)'} · ※ 배송비·시공비 제외</div>
         </div>
     `;
@@ -277,7 +287,7 @@ function renderDetail(o, history = [], spec = null, wood = null, drawingEstimate
 
         ${ordGroup('size', '상세 크기', specHtml ? specHtml.size : noSpec)}
         ${ordGroup('finish', '마감', specHtml ? specHtml.finish : noSpec)}
-        ${ordGroup('estimate', '예상 견적 <small>주문 시점 도면 화면 그대로</small>', renderPriceBreakdown(o.price_breakdown) + renderDrawingEstimate(o, drawingEstimate))}
+        ${ordGroup('estimate', '예상 견적 <small>도면 화면 그대로 · 시점 고정</small>', renderPriceBreakdown(o.price_breakdown, o.created_at) + renderDrawingEstimate(o, drawingEstimate))}
         ${history.length ? ordGroup('history', `같은 도면의 이전 주문 <small>${history.length}건</small>`, renderHistory(history, o.engine), false) : ''}
     `;
 }
