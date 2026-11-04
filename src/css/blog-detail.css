@@ -194,7 +194,11 @@ html[lang="en"] .bd-body {
     line-height: 1.6;
 }
 .bd-body p {
-    margin: 0 0 1.1em;
+    margin: 0 0 .5em;
+}
+/* 글이 문장마다 <p>라서 단락 구분은 에디터의 빈 줄(<p><br></p>) — 한 줄 통째 대신 반 줄 높이로 */
+.bd-body p:has(> br:only-child) {
+    line-height: .9;
 }
 .bd-body h2, .bd-body h3 {
     font-weight: 600; letter-spacing: -.01em; color: var(--text);
