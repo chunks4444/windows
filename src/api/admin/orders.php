@@ -9,6 +9,29 @@ require_once __DIR__ . '/../../lib/jwt.php';
 require_once __DIR__ . '/../../lib/order_status.php';
 require_once __DIR__ . '/../../lib/engine_settings.php';
 
+// 목재 사용량(재 수) — 관리자 전용. 엔진 응답(고객에게도 내려감)에는 재 수를 싣지 않으므로,
+// 주문 시점 견적의 목재비(price_breakdown.door/muntol)를 현재 원가표의 그 목재 단가×가중치로 나눠 되짚는다.
+// compute_price_estimate()가 목재비 = 재 수 × 가중치 × 단가로 계산하므로, 주문 뒤 단가·가중치를 안 바꿨다면 정확히 같은 값.
+function order_wood_usage(?string $specJson, ?string $breakdownJson): ?array {
+    $p = $specJson ? json_decode($specJson, true) : null;
+    $b = $breakdownJson ? json_decode($breakdownJson, true) : null;
+    if (!is_array($p) || !is_array($b) || empty($p['wood'])) return null;
+    $item = get_cost_table_item('wood', $p['wood']);
+    $per  = $item ? (float) $item['unit_price'] * (float) $item['weight'] : 0;
+    if ($per <= 0) return null;
+
+    $JAE_M3 = 30.3 * 30.3 * 3636 / 1e9; // 1재 부피(㎥) — geometry.php의 $_JAE와 같은 기준
+    $door   = (float) ($b['door'] ?? 0) / $per;
+    $muntol = (float) ($b['muntol'] ?? 0) / $per;
+    return [
+        'wood'     => $p['wood'],
+        'doorJae'  => round($door, 2),
+        'muntolJae'=> round($muntol, 2),
+        'totalJae' => round($door + $muntol, 2),
+        'totalM3'  => round(($door + $muntol) * $JAE_M3, 4),
+    ];
+}
+
 // 주문 시점 도면 사양(spec_json = 엔진 getParams() 스냅샷)을 관리자 상세 화면용 요약으로 바꾼다.
 // 문 1짝 크기는 스냅샷에 없어서 7엔진 geometry.php와 같은 공식(문틀 치수 − 문틀두께·갭 → 짝수로 나눔)으로 다시 계산한다.
 // 문틀두께·갭·울거미 단계표는 "지금" 엔진설정 값이라, 주문 뒤에 설정을 바꿨다면 주문 당시와 몇 mm 다를 수 있다.
@@ -141,6 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || ($_SERVER['REQUEST_METHOD'] === 'POS
             'order'   => $order,
             'history' => $history,
             'spec'    => order_spec_summary($order['engine'], $order['spec_json']),
+            'wood'    => order_wood_usage($order['spec_json'], $order['price_breakdown']),
         ]);
         exit;
     }

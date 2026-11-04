@@ -96,7 +96,7 @@ async function openModal(id) {
     if (!res.ok) { document.getElementById('admDetailContent').innerHTML = `<p style="color:var(--danger);">${esc(data.error || '불러오기 실패')}</p>`; return; }
 
     document.getElementById('admModalTitle').textContent = `${fmtOrderCode(data.order.engine, id)} 상세`;
-    renderDetail(data.order, data.history || [], data.spec);
+    renderDetail(data.order, data.history || [], data.spec, data.wood);
     document.getElementById('admMStatus').value     = data.order.status;
     document.getElementById('admMNote').value        = data.order.revision_note || '';
     document.getElementById('admMCarrier').value     = data.order.tracking_carrier || '';
@@ -158,7 +158,7 @@ function renderHistory(history, engine) {
 }
 
 // 주문 시점 도면 사양 — 서버(order_spec_summary)가 spec_json을 요약해 내려준 값
-function renderSpec(spec) {
+function renderSpec(spec, wood) {
     if (!spec) return '<div class="full ord-detail-value">도면 사양 기록이 없습니다 (구버전 주문).</div>';
     const s = spec.size, f = spec.finish;
     const mm = n => Number(n).toLocaleString() + 'mm';
@@ -183,6 +183,11 @@ function renderSpec(spec) {
         ['문틀', s.showMuntol ? sw(f.muntolColor) : '표시 안 함'],
         ['면 배지(문 전체)', f.backing ? sw(f.backing) : '없음'],
     ];
+    if (wood) {
+        const jae = n => Number(n).toLocaleString(undefined, { maximumFractionDigits: 2 }) + '재';
+        finishRows.splice(1, 0, ['목재 사용량', `<strong>${jae(wood.totalJae)}</strong> (${wood.totalM3}㎥)`
+            + ` <span class="ord-spec-sub">문 ${jae(wood.doorJae)}${wood.muntolJae > 0 ? ' · 문틀 ' + jae(wood.muntolJae) : ''} · 1재=30.3×30.3×3636mm, 주문 당시 목재비÷현재 단가로 역산</span>`]);
+    }
     if (f.faceCells.length) finishRows.push(['칸별 면 재질', f.faceCells.map(c => `${sw(c)} — ${c.cells}칸`).join('<br>')]);
     const table = rows => `<table class="ord-price-table ord-spec-table">${rows.map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join('')}</table>`;
     return `
@@ -199,7 +204,7 @@ function drawingLink(o) {
     return `<a href="/src/engine/${e}/${e}.php?drawing_id=${o.drawing_id}" target="_blank" rel="noopener" class="ord-drawing-link">엔진에서 도면 열기 ↗</a>`;
 }
 
-function renderDetail(o, history = [], spec = null) {
+function renderDetail(o, history = [], spec = null, wood = null) {
     const shipAddr = [o.ship_zipcode, o.ship_address, o.ship_address_detail].filter(Boolean).join(' ');
     document.getElementById('admDetailContent').innerHTML = `
         ${o.thumbnail ? `<img src="${o.thumbnail}" class="ord-thumb" alt="도면 썸네일">` : ''}
@@ -207,7 +212,7 @@ function renderDetail(o, history = [], spec = null) {
             <div class="full ord-detail-label">엔진/도면</div>
             <div class="full ord-detail-value">${ENGINE_MAP[o.engine] || esc(o.engine)} — ${esc(o.title || '(제목 없음)')}${o.version_label ? ' (' + esc(o.version_label) + ')' : ''} ${drawingLink(o)}</div>
 
-            ${renderSpec(spec)}
+            ${renderSpec(spec, wood)}
 
             ${renderHistory(history, o.engine)}
 
