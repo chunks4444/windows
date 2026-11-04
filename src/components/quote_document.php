@@ -79,6 +79,12 @@ $__supplierRows = [
   <tr>
     <td style="padding:0 0 16px;">
       <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+        <?php if (trim((string) ($__q['title'] ?? '')) !== ''): ?>
+        <tr>
+          <td style="<?= $__th ?>width:90px;text-align:center;font-size:13px;">건명</td>
+          <td style="<?= $__td ?>font-size:14px;"><?= $__h($__q['title']) ?></td>
+        </tr>
+        <?php endif; ?>
         <tr>
           <td style="<?= $__th ?>width:90px;text-align:center;font-size:13px;">합계금액</td>
           <td style="<?= $__td ?>font-size:15px;font-weight:700;">일금 <?= $__h(quote_amount_korean((int) $__q['total_amount'])) ?>원정

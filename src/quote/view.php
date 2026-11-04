@@ -6,6 +6,7 @@ require_once __DIR__ . '/../lib/admin_guard.php';
 require_admin_role('s');
 require_once __DIR__ . '/../lib/quote.php';
 
+try { quote_ensure_table(); } catch (Throwable $e) { error_log('quote table ensure failed: ' . $e->getMessage()); }
 $quote = quote_by_id((int) ($_GET['id'] ?? 0));
 if (!$quote) { http_response_code(404); echo '견적서를 찾을 수 없습니다.'; exit; }
 // ?pdf=1 — 발신 메일에 첨부되는 것과 같은 PDF를 내려받기
@@ -75,7 +76,7 @@ $h = fn($v) => htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8');
         <b>아직 고객에게 보내지 않았습니다.</b> 아래 내용을 검토한 뒤 발신하세요. 받는 주소: <?= $sendTo !== '' ? $h($sendTo) : '<span style="color:#8A2A2A">(수신자 이메일 없음 — 이메일을 넣어 재발행하세요)</span>' ?>
         <?php endif; ?>
     </div>
-    <a href="/src/admin/quotes.php?order_id=<?= (int) $quote['order_id'] ?>" style="font-size:13px;color:#23262A;">고칠 곳이 있으면 재발행</a>
+    <a href="/src/admin/quotes.php?<?= $quote['order_id'] ? 'order_id=' . (int) $quote['order_id'] : 'base_no=' . rawurlencode($quote['base_no']) ?>" style="font-size:13px;color:#23262A;">고칠 곳이 있으면 재발행</a>
     <button id="qvSendBtn" onclick="sendQuote()" <?= $sendTo === '' ? 'disabled' : '' ?>><?= $quote['emailed_at'] ? '다시 발신' : '고객에게 발신' ?></button>
     <div class="msg" id="qvSendMsg"></div>
 </div>

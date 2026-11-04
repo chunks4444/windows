@@ -42,7 +42,7 @@ require_admin_role('s');
         <h1 class="db-title"><i class="bi bi-file-earmark-text me-2"></i>견적서</h1>
         <button class="adm-btn-save" onclick="openPicker()"><i class="bi bi-plus-lg me-1"></i>새 견적서</button>
     </div>
-    <p class="qt-lead">주문을 골라 견적서를 작성·발행(저장)하고, 견적서 화면에서 검토한 뒤 '발신'으로 고객에게 메일을 보냅니다. 견적서는 관리자만 볼 수 있고 고객에게는 메일 본문으로만 전달됩니다. 다시 발행하면 차수가 올라가고 이전 차수는 보관됩니다.</p>
+    <p class="qt-lead">견적요청(주문)을 골라, 또는 견적요청 없이 직접 견적서를 작성·발행(저장)하고, 견적서 화면에서 검토한 뒤 '발신'으로 고객에게 메일을 보냅니다. 견적서는 관리자만 볼 수 있고 고객에게는 메일 본문으로만 전달됩니다. 다시 발행하면 차수가 올라가고 이전 차수는 보관됩니다.</p>
 
     <div class="adm-table-wrap">
         <div class="adm-toolbar">
@@ -92,6 +92,11 @@ require_admin_role('s');
             <button class="adm-modal-close" onclick="closePicker()">&#x2715;</button>
         </div>
         <div class="adm-modal-body">
+            <button class="qt-standalone-btn" onclick="closePicker(); openEditor({})">
+                <i class="bi bi-pencil-square"></i>
+                <span><strong>견적요청 없이 직접 작성</strong><span class="qt-muted">도면·주문 없이 수신자와 품목을 직접 입력합니다 (전화·현장 견적 등)</span></span>
+            </button>
+            <div class="qt-or">또는 견적요청(주문)에서 작성</div>
             <div class="adm-mfield">
                 <input type="text" id="qtPickerSearch" placeholder="고객명, 회사명, 도면명 또는 주문번호" oninput="onPickerInput()">
             </div>
@@ -110,6 +115,11 @@ require_admin_role('s');
         <div class="adm-modal-body">
             <div id="qtEditorAlert" style="display:none;"></div>
             <div id="qtOrderSummary"></div>
+
+            <div class="adm-mfield" style="margin-top:12px;">
+                <label>건명 <small class="qt-muted" style="text-transform:none;letter-spacing:0;">견적서 본문과 메일 제목에 표시 (예: 거실 중문, ○○주택 창호 일괄)</small></label>
+                <input type="text" id="qtTitle" maxlength="100">
+            </div>
 
             <div class="ord-section-title">수신 (고객)</div>
             <div class="qt-grid2" id="qtCustomerForm"></div>
@@ -137,7 +147,7 @@ require_admin_role('s');
 
             <div class="ord-section-title">발행</div>
             <label class="qt-check" id="qtSetStatusRow"><input type="checkbox" id="qtSetStatus" checked> 주문 상태를 '견적확정'으로 바꾸기</label>
-            <p class="qt-muted" style="margin:6px 0 0;">발행하면 견적서가 저장되고 주문의 확정 가격이 이 견적서의 공급가액으로 바뀝니다. <strong>메일은 나가지 않습니다</strong> — 열리는 견적서 화면에서 검토한 뒤 '고객에게 발신'을 누르세요.</p>
+            <p class="qt-muted" style="margin:6px 0 0;">발행하면 견적서가 저장되고, 견적요청(주문)에서 작성한 경우 주문의 확정 가격이 이 견적서의 공급가액으로 바뀝니다. <strong>메일은 나가지 않습니다</strong> — 열리는 견적서 화면에서 검토한 뒤 '고객에게 발신'을 누르세요.</p>
 
             <div id="qtHistory"></div>
         </div>

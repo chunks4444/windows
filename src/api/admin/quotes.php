@@ -3,9 +3,11 @@
 //
 // POST {action:'list', page, q}            발행된 견적서 목록(전 차수)
 // POST {action:'orders', q}                견적서를 쓸 주문 찾기(최근 주문 + 최신 견적 차수)
-// POST {action:'draft', order_id}          작성 창 기본값 — 이전 차수가 있으면 그 내용을, 없으면 주문 정보로 1줄 채움
-// POST {action:'issue', order_id, items, valid_until, lead_time, note, set_status, customer}
-//                                          발행(새 차수 저장) → 확정가 갱신 → (선택) 상태 '견적확정'. 메일은 보내지 않는다.
+// POST {action:'draft', order_id | base_no | (없음)}
+//                                          작성 창 기본값 — 이전 차수가 있으면 그 내용을, 없으면 주문 정보로 1줄(주문 없으면 빈칸)
+// POST {action:'issue', order_id?, base_no?, title, items, valid_until, lead_time, note, set_status, customer}
+//                                          발행(새 차수 저장). 주문 견적서면 확정가 갱신 → (선택) 상태 '견적확정'. 메일은 보내지 않는다.
+//                                          order_id 없으면 견적요청 없이 직접 작성(base_no 있으면 그 묶음 재발행, 없으면 새 PM-yymmdd-NN).
 // POST {action:'send', quote_id}           고객에게 발신 — 관리자가 견적서 화면에서 검토한 뒤 따로 누른다(견적서 전문이 메일 본문).
 //                                          최신 차수만 발신 가능(재발행으로 효력 없는 이전 차수는 막음). 다시 누르면 재발신.
 // POST {action:'supplier', supplier}       공급자(평목) 정보 저장
@@ -29,6 +31,12 @@ $adminId = (int) $payload['sub'];
 $pdo  = db();
 $body = json_decode(file_get_contents('php://input'), true) ?? [];
 $action = (string) ($body['action'] ?? 'list');
+try {
+    quote_ensure_table(); // 테이블 생성·구조 맞추기(직접 작성 견적서용 컬럼 등)
+} catch (Throwable $e) {
+    error_log('quote table ensure failed: ' . $e->getMessage());
+    http_response_code(500); echo json_encode(['error' => '견적서 테이블 준비에 실패했습니다.'], JSON_UNESCAPED_UNICODE); exit;
+}
 
 function fail(string $msg, int $code = 422): never {
     http_response_code($code); echo json_encode(['error' => $msg], JSON_UNESCAPED_UNICODE); exit;
@@ -108,26 +116,25 @@ case 'list': {
     $q = trim((string) ($body['q'] ?? ''));
     $where = ''; $params = [];
     if ($q !== '') {
+        // 수신자 이름·회사는 견적서에 저장된 스냅샷(customer_json)에서 찾는다 — 직접 작성 견적서는 주문이 없으므로
         $like = '%' . $q . '%';
-        $where = 'WHERE (q.quote_no LIKE ? OR o.customer_name LIKE ? OR o.company_name LIKE ? OR o.title LIKE ? OR o.id = ?)';
+        $where = 'WHERE (q.quote_no LIKE ? OR q.title LIKE ? OR o.title LIKE ? OR q.customer_json LIKE ? OR q.order_id = ?)';
         $params = [$like, $like, $like, $like, (int) preg_replace('/\D/', '', $q)];
     }
-    try {
-        $st = $pdo->prepare("SELECT q.id, q.order_id, q.revision, q.quote_no, q.issued_at, q.valid_until,
-                                    q.supply_amount, q.vat_amount, q.total_amount, q.emailed_to, q.emailed_at,
-                                    o.engine, o.title, o.customer_name, o.company_name, o.status AS order_status,
-                                    (SELECT MAX(revision) FROM quotes q2 WHERE q2.order_id = q.order_id) AS latest_revision
-                             FROM quotes q JOIN orders o ON o.id = q.order_id $where
-                             ORDER BY q.issued_at DESC, q.id DESC LIMIT $limit OFFSET $offset");
-        $st->execute($params);
-        $rows = $st->fetchAll();
-        $cnt = $pdo->prepare("SELECT COUNT(*) FROM quotes q JOIN orders o ON o.id = q.order_id $where");
-        $cnt->execute($params);
-        $total = (int) $cnt->fetchColumn();
-    } catch (PDOException $e) {
-        $rows = []; $total = 0; // 첫 발행 전이라 테이블이 아직 없음
-    }
-    out(['quotes' => $rows, 'total' => $total, 'page' => $page, 'limit' => $limit, 'supplier' => quote_supplier()]);
+    $st = $pdo->prepare("SELECT q.id, q.order_id, q.base_no, q.revision, q.quote_no, q.issued_at, q.valid_until,
+                                q.supply_amount, q.vat_amount, q.total_amount, q.emailed_to, q.emailed_at,
+                                COALESCE(NULLIF(q.title, ''), o.title, '') AS title,
+                                JSON_UNQUOTE(JSON_EXTRACT(q.customer_json, '$.name'))    AS customer_name,
+                                JSON_UNQUOTE(JSON_EXTRACT(q.customer_json, '$.company')) AS company_name,
+                                o.engine, o.status AS order_status,
+                                (SELECT MAX(revision) FROM quotes q2 WHERE q2.base_no = q.base_no) AS latest_revision
+                         FROM quotes q LEFT JOIN orders o ON o.id = q.order_id $where
+                         ORDER BY q.issued_at DESC, q.id DESC LIMIT $limit OFFSET $offset");
+    $st->execute($params);
+    $rows = $st->fetchAll();
+    $cnt = $pdo->prepare("SELECT COUNT(*) FROM quotes q LEFT JOIN orders o ON o.id = q.order_id $where");
+    $cnt->execute($params);
+    out(['quotes' => $rows, 'total' => (int) $cnt->fetchColumn(), 'page' => $page, 'limit' => $limit, 'supplier' => quote_supplier()]);
 }
 
 case 'orders': {
@@ -157,21 +164,51 @@ case 'orders': {
 }
 
 case 'draft': {
-    $o = load_order($pdo, (int) ($body['order_id'] ?? 0));
-    $history = quote_list_for_order((int) $o['id']);
+    // 세 가지 진입: {order_id} 주문 견적서 / {base_no} 직접 작성 견적서 재발행 / {} 직접 작성 새 견적서
+    $orderId = (int) ($body['order_id'] ?? 0);
+    $baseNo  = trim((string) ($body['base_no'] ?? ''));
+    if (!$orderId && $baseNo !== '') {
+        $st = $pdo->prepare('SELECT order_id FROM quotes WHERE base_no = ? LIMIT 1');
+        $st->execute([$baseNo]);
+        $found = $st->fetch() ?: fail('견적서를 찾을 수 없습니다.', 404);
+        if ($found['order_id']) $orderId = (int) $found['order_id']; // 주문 견적서였으면 주문 흐름으로
+    }
+    $o = $orderId ? load_order($pdo, $orderId) : null;
+    if ($o) $baseNo = quote_order_code($o['engine'], (int) $o['id']);
+    $history = $o ? quote_list_for_order((int) $o['id']) : ($baseNo !== '' ? quote_list_for_base($baseNo) : []);
     $prev = null;
     if ($history) {
-        $st = $pdo->prepare('SELECT items_json, note, lead_time, valid_until, issued_at, customer_json FROM quotes WHERE id = ?');
+        $st = $pdo->prepare('SELECT items_json, note, lead_time, valid_until, issued_at, customer_json, title FROM quotes WHERE id = ?');
         $st->execute([$history[0]['id']]);
         $prev = $st->fetch();
     }
-    $bd = json_decode((string) $o['price_breakdown'], true) ?: [];
-    $leadDays = isset($bd['leadTimeDays']) ? (int) $bd['leadTimeDays'] : null;
     $validDays = 30;
     if ($prev && $prev['valid_until']) {
         $validDays = max(1, (int) round((strtotime($prev['valid_until']) - strtotime(substr($prev['issued_at'], 0, 10))) / 86400));
     }
-    out([
+    $common = [
+        'base_no'       => $baseNo !== '' ? $baseNo : null,
+        'next_revision' => $history ? (int) $history[0]['revision'] + 1 : 1,
+        'history'       => $history,
+        'note'          => $prev ? (string) $prev['note'] : '',
+        'valid_until'   => date('Y-m-d', strtotime("+{$validDays} days")),
+        'supplier'      => quote_supplier(),
+    ];
+    if (!$o) {
+        // 직접 작성 — 이전 차수가 있으면 그 내용(수신자 포함), 없으면 빈칸
+        $blankCustomer = ['name' => '', 'company' => '', 'biz_no' => '', 'ceo' => '', 'phone' => '', 'email' => '', 'address' => ''];
+        out($common + [
+            'order'     => null,
+            'title'     => $prev ? (string) $prev['title'] : '',
+            'items'     => $prev ? json_decode($prev['items_json'], true) : [['name' => '', 'spec' => '', 'qty' => 1, 'unit_price' => 0]],
+            'lead_time' => $prev ? (string) $prev['lead_time'] : '',
+            'customer'  => $prev ? (json_decode($prev['customer_json'], true) ?: []) + $blankCustomer : $blankCustomer,
+        ]);
+    }
+    $bd = json_decode((string) $o['price_breakdown'], true) ?: [];
+    $leadDays = isset($bd['leadTimeDays']) ? (int) $bd['leadTimeDays'] : null;
+    out($common + [
+        'title' => $prev && $prev['title'] !== null ? (string) $prev['title'] : (string) $o['title'],
         'order' => [
             'id' => (int) $o['id'], 'code' => quote_order_code($o['engine'], (int) $o['id']),
             'engine' => $o['engine'], 'title' => $o['title'], 'version_label' => $o['version_label'],
@@ -180,21 +217,24 @@ case 'draft': {
             'estimated_price' => $o['estimated_price'], 'final_price' => $o['final_price'],
             'price_note' => $o['price_note'], 'memo' => $o['memo'], 'due_date' => $o['due_date'],
         ],
-        'next_revision' => $history ? (int) $history[0]['revision'] + 1 : 1,
-        'history'  => $history,
         'items'    => $prev ? json_decode($prev['items_json'], true) : default_items($o),
-        'note'     => $prev ? (string) $prev['note'] : '',
         'lead_time'=> $prev ? (string) $prev['lead_time'] : ($leadDays ? "주문 확정 후 약 {$leadDays}일" : ''),
-        'valid_until' => date('Y-m-d', strtotime("+{$validDays} days")),
         // 수신자 정보는 매번 지금 회원정보로 새로 채움(이전 차수 뒤 회원이 사업자정보를 고쳤을 수 있음)
         'customer' => default_customer($o),
-        'supplier' => quote_supplier(),
     ]);
 }
 
 case 'issue': {
-    $o = load_order($pdo, (int) ($body['order_id'] ?? 0));
-    if ($o['status'] === 'cancelled') fail('취소된 주문에는 견적서를 발행할 수 없습니다.');
+    // order_id 있으면 주문 견적서, 없으면 직접 작성(base_no 있으면 그 묶음의 재발행, 없으면 새 묶음)
+    $o = !empty($body['order_id']) ? load_order($pdo, (int) $body['order_id']) : null;
+    if ($o && $o['status'] === 'cancelled') fail('취소된 주문에는 견적서를 발행할 수 없습니다.');
+    $title = mb_substr(trim((string) ($body['title'] ?? '')), 0, 100);
+    $reissueBase = $o ? '' : trim((string) ($body['base_no'] ?? ''));
+    if ($reissueBase !== '') {
+        $st = $pdo->prepare('SELECT COUNT(*) FROM quotes WHERE base_no = ? AND order_id IS NULL');
+        $st->execute([$reissueBase]);
+        if (!(int) $st->fetchColumn()) fail('재발행할 견적서를 찾을 수 없습니다.', 404);
+    }
 
     $calc = quote_normalize_items($body['items'] ?? null);
     if (isset($calc['error'])) fail($calc['error']);
@@ -205,46 +245,52 @@ case 'issue': {
     $note = trim((string) ($body['note'] ?? ''));
     if (mb_strlen($note) > 3000) fail('비고가 너무 깁니다.');
 
-    $customer = default_customer($o);
+    $customer = ['name' => '', 'company' => '', 'biz_no' => '', 'ceo' => '', 'phone' => '', 'email' => '', 'address' => ''];
+    if ($o) $customer = default_customer($o);
     foreach ($customer as $k => $_) {
         if (isset($body['customer'][$k])) $customer[$k] = mb_substr(trim((string) $body['customer'][$k]), 0, 200);
     }
     if ($customer['name'] === '' && $customer['company'] === '') fail('수신자(고객) 이름이나 회사명을 입력해주세요.');
+    if ($customer['email'] !== '' && !filter_var($customer['email'], FILTER_VALIDATE_EMAIL)) fail('수신자 이메일 형식을 확인해주세요.');
 
-    quote_ensure_table();
+    // 동시 발행 대비 — 번호·차수 정하는 동안 전역 잠금(관리자 1~2명이라 충분)
+    if (!(int) $pdo->query("SELECT GET_LOCK('pmok_quote_issue', 10)")->fetchColumn()) fail('다른 발행이 진행 중입니다. 잠시 후 다시 시도해주세요.', 409);
     $pdo->beginTransaction();
     try {
-        // 같은 주문 동시 발행 대비 — 주문 행을 잠그고 다음 차수를 정한다
-        $pdo->prepare('SELECT id FROM orders WHERE id = ? FOR UPDATE')->execute([$o['id']]);
-        $st = $pdo->prepare('SELECT COALESCE(MAX(revision), 0) + 1 FROM quotes WHERE order_id = ?');
-        $st->execute([$o['id']]);
+        $baseNo = $o ? quote_order_code($o['engine'], (int) $o['id']) : ($reissueBase !== '' ? $reissueBase : quote_next_standalone_base());
+        $st = $pdo->prepare('SELECT COALESCE(MAX(revision), 0) + 1 FROM quotes WHERE base_no = ?');
+        $st->execute([$baseNo]);
         $rev = (int) $st->fetchColumn();
-        $quoteNo = quote_order_code($o['engine'], (int) $o['id']) . '-Q' . $rev;
+        $quoteNo = $baseNo . '-Q' . $rev;
         $now = date('Y-m-d H:i:s');
 
-        $pdo->prepare('INSERT INTO quotes (order_id, revision, quote_no, issued_at, issued_by, valid_until, lead_time,
+        $pdo->prepare('INSERT INTO quotes (order_id, base_no, revision, quote_no, title, issued_at, issued_by, valid_until, lead_time,
                                            items_json, supply_amount, vat_amount, total_amount, note, customer_json, supplier_json)
-                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
             ->execute([
-                $o['id'], $rev, $quoteNo, $now, $adminId, $validUntil ?: null, $leadTime ?: null,
+                $o ? $o['id'] : null, $baseNo, $rev, $quoteNo, $title !== '' ? $title : null, $now, $adminId, $validUntil ?: null, $leadTime ?: null,
                 json_encode($calc['items'], JSON_UNESCAPED_UNICODE), $calc['supply'], $calc['vat'], $calc['total'],
                 $note ?: null, json_encode($customer, JSON_UNESCAPED_UNICODE), json_encode(quote_supplier(), JSON_UNESCAPED_UNICODE),
             ]);
         $quoteId = (int) $pdo->lastInsertId();
 
-        // 주문의 확정 가격 = 견적서 공급가액(부가세 제외). 상태는 체크했고 아직 견적확정 전 단계일 때만 '견적확정'으로.
-        $sets = ['final_price = ?', "price_formula_version = 'quote'"]; $binds = [$calc['supply']];
-        if (!empty($body['set_status']) && in_array($o['status'], ['pending_review', 'revision_requested', 'approved'], true)) {
-            array_push($sets, "status = 'quote_finalized'", 'reviewed_by = ?', 'reviewed_at = ?');
-            array_push($binds, $adminId, $now);
+        // 주문 견적서만: 주문의 확정 가격 = 견적서 공급가액(부가세 제외). 상태는 체크했고 아직 견적확정 전 단계일 때만 '견적확정'으로.
+        if ($o) {
+            $sets = ['final_price = ?', "price_formula_version = 'quote'"]; $binds = [$calc['supply']];
+            if (!empty($body['set_status']) && in_array($o['status'], ['pending_review', 'revision_requested', 'approved'], true)) {
+                array_push($sets, "status = 'quote_finalized'", 'reviewed_by = ?', 'reviewed_at = ?');
+                array_push($binds, $adminId, $now);
+            }
+            $binds[] = $o['id'];
+            $pdo->prepare('UPDATE orders SET ' . implode(', ', $sets) . ' WHERE id = ?')->execute($binds);
         }
-        $binds[] = $o['id'];
-        $pdo->prepare('UPDATE orders SET ' . implode(', ', $sets) . ' WHERE id = ?')->execute($binds);
         $pdo->commit();
     } catch (Throwable $e) {
         $pdo->rollBack();
         error_log('quote issue failed: ' . $e->getMessage());
         fail('견적서 저장에 실패했습니다.', 500);
+    } finally {
+        $pdo->query("SELECT RELEASE_LOCK('pmok_quote_issue')");
     }
 
     out(['ok' => true, 'quote_id' => $quoteId, 'quote_no' => $quoteNo]);

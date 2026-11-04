@@ -38,8 +38,10 @@ async function qtInit() {
     if (!user || user.role !== 's') { location.href = '/'; return; }
     document.getElementById('adminPage').style.display = '';
     await loadQuotes(1);
-    const orderId = parseInt(new URLSearchParams(location.search).get('order_id') || '0', 10);
+    const sp = new URLSearchParams(location.search);
+    const orderId = parseInt(sp.get('order_id') || '0', 10);
     if (orderId) openEditor(orderId);
+    else if (sp.get('base_no')) openEditor({ base_no: sp.get('base_no') });
 }
 
 /* ── 발행 목록 ── */
@@ -64,13 +66,15 @@ async function loadQuotes(page) {
                 <td class="adm-id">${esc(q.quote_no)}${old ? ' <span class="qt-badge-old">재발행됨</span>' : ''}</td>
                 <td style="color:var(--text-3);font-size:12px;">${fmtOrderDatetime(q.issued_at)}</td>
                 <td>${esc(q.company_name || q.customer_name)}${q.company_name ? `<br><span class="qt-muted">${esc(q.customer_name)}</span>` : ''}</td>
-                <td>${esc(QT_ENGINE_NAME[q.engine] || q.engine)}${q.title ? ' · ' + esc(q.title) : ''}<br><span class="qt-muted">${fmtOrderCode(q.engine, q.order_id)} · ${esc(ORDER_STATUS_LABELS[q.order_status]?.label || q.order_status)}</span></td>
+                <td>${q.order_id
+                    ? `${esc(QT_ENGINE_NAME[q.engine] || q.engine)}${q.title ? ' · ' + esc(q.title) : ''}<br><span class="qt-muted">${fmtOrderCode(q.engine, q.order_id)} · ${esc(ORDER_STATUS_LABELS[q.order_status]?.label || q.order_status)}</span>`
+                    : `${q.title ? esc(q.title) : '<span class="qt-muted">(건명 없음)</span>'}<br><span class="qt-muted">직접 작성 (견적요청 없음)</span>`}</td>
                 <td style="text-align:right;">${qtWon(q.supply_amount)}</td>
                 <td style="text-align:right;font-weight:600;">${qtWon(q.total_amount)}</td>
                 <td style="font-size:12px;">${q.emailed_at ? `<span title="${esc(q.emailed_to)}">${fmtOrderDatetime(q.emailed_at)}</span>` : '<span class="qt-badge-old">미발신</span>'}</td>
                 <td><div class="adm-action-cell">
                     <a class="adm-edit-btn" href="/src/quote/view.php?id=${q.id}" target="_blank" rel="noopener">보기·발신</a>
-                    ${old ? '' : `<button class="adm-edit-btn" onclick="openEditor(${q.order_id})">재발행</button>`}
+                    ${old ? '' : `<button class="adm-edit-btn" onclick='openEditor(${q.order_id ? Number(q.order_id) : JSON.stringify({ base_no: q.base_no }).replace(/'/g, '&#39;')})'>재발행</button>`}
                 </div></td>
             </tr>`;
         }).join('');
@@ -143,23 +147,29 @@ async function loadPicker() {
 }
 
 /* ── 2단계: 작성 ── */
-async function openEditor(orderId) {
+// target: 주문 id(숫자) 또는 {order_id} / {base_no}(직접 작성 견적서 재발행) / {}(견적요청 없이 직접 작성)
+async function openEditor(target) {
+    const req = typeof target === 'number' ? { order_id: target } : (target || {});
     const ov = document.getElementById('qtEditorOverlay');
     ov.classList.add('open');
     qtHideAlert();
     document.getElementById('qtOrderSummary').innerHTML = '<p class="qt-muted">불러오는 중…</p>';
     try {
-        qtDraft = await qtApi({ action: 'draft', order_id: orderId });
+        qtDraft = await qtApi({ action: 'draft', ...req });
     } catch (err) {
         qtShowAlert(err.message);
         document.getElementById('qtOrderSummary').innerHTML = '';
         return;
     }
     const d = qtDraft, o = d.order;
-    document.getElementById('qtEditorTitle').textContent = `${o.code} 견적서 ${d.next_revision > 1 ? d.next_revision + '차 재발행' : '작성'}`;
+    const label = o ? o.code : (d.base_no || '직접 작성');
+    document.getElementById('qtEditorTitle').textContent = `${label} 견적서 ${d.next_revision > 1 ? d.next_revision + '차 재발행' : '작성'}`;
+    document.getElementById('qtTitle').value = d.title || '';
 
     const won = n => n ? qtWon(n) + '원' : '—';
-    document.getElementById('qtOrderSummary').innerHTML = `
+    document.getElementById('qtOrderSummary').innerHTML = !o
+        ? `<div class="qt-order qt-muted">견적요청(주문) 없이 직접 작성하는 견적서입니다. 수신자와 품목을 입력하세요.${d.base_no ? ` 번호: <strong>${esc(d.base_no)}-Q${d.next_revision}</strong>` : ' 번호는 발행할 때 PM-날짜-순번으로 붙습니다.'}</div>`
+        : `
         <div class="qt-order">
             ${o.thumbnail ? `<img src="${o.thumbnail}" class="qt-order-thumb" alt="">` : ''}
             <div class="qt-order-body">
@@ -184,7 +194,7 @@ async function openEditor(orderId) {
     document.getElementById('qtValidUntil').value = d.valid_until || '';
     document.getElementById('qtLeadTime').value   = d.lead_time || '';
     document.getElementById('qtNote').value       = d.note || '';
-    const canFinalize = ['pending_review', 'revision_requested', 'approved'].includes(o.status);
+    const canFinalize = !!o && ['pending_review', 'revision_requested', 'approved'].includes(o.status);
     document.getElementById('qtSetStatusRow').style.display = canFinalize ? '' : 'none';
     document.getElementById('qtSetStatus').checked = canFinalize;
 
@@ -199,7 +209,8 @@ async function openEditor(orderId) {
 function closeEditor() {
     document.getElementById('qtEditorOverlay').classList.remove('open');
     qtDraft = null;
-    if (new URLSearchParams(location.search).has('order_id')) history.replaceState(null, '', location.pathname);
+    const sp = new URLSearchParams(location.search);
+    if (sp.has('order_id') || sp.has('base_no')) history.replaceState(null, '', location.pathname);
 }
 
 function renderItems() {
@@ -247,7 +258,9 @@ async function issueQuote() {
     document.querySelectorAll('[data-cus]').forEach(el => { customer[el.dataset.cus] = el.value.trim(); });
     const setStatus = document.getElementById('qtSetStatusRow').style.display !== 'none' && document.getElementById('qtSetStatus').checked;
     const total = document.querySelector('#qtTotals .qt-grand span:last-child')?.textContent || '';
-    const msg = `${qtDraft.order.code} 견적서 ${qtDraft.next_revision}차를 발행(저장)합니다.\n합계 ${total}`
+    const title = document.getElementById('qtTitle').value.trim();
+    const label = qtDraft.order ? qtDraft.order.code : (qtDraft.base_no || '직접 작성');
+    const msg = `${label} 견적서 ${qtDraft.next_revision}차를 발행(저장)합니다.${title ? '\n건명 ' + title : ''}\n합계 ${total}`
         + (setStatus ? "\n주문 상태를 '견적확정'으로 바꿉니다." : '')
         + '\n\n메일은 나가지 않습니다. 열리는 견적서 화면에서 검토 후 발신하세요.';
     if (!confirm(msg)) return;
@@ -258,7 +271,9 @@ async function issueQuote() {
     try {
         const r = await qtApi({
             action: 'issue',
-            order_id: qtDraft.order.id,
+            order_id: qtDraft.order ? qtDraft.order.id : null,
+            base_no: qtDraft.order ? null : qtDraft.base_no,
+            title,
             items: qtItems,
             customer,
             valid_until: document.getElementById('qtValidUntil').value,

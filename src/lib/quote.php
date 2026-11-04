@@ -1,8 +1,9 @@
 <?php
 // 견적서 발행 모듈 공용 함수 (2026-11-04)
 //
-// 흐름: 관리자가 어드민 '견적서' 메뉴(/src/admin/quotes.php, 주문 상세의 '견적서 작성' 버튼으로도 진입)에서 작성·발행
-//       → quotes 테이블에 한 행 저장 → (선택) 견적서 내용 전체를 메일 본문에 담아 고객에게 발송.
+// 흐름: 관리자가 어드민 '견적서' 메뉴(/src/admin/quotes.php, 주문 상세의 '견적서 작성' 버튼으로도 진입)에서 작성·발행(저장)
+//       → 견적서 화면에서 검토 → '고객에게 발신'(견적서 전문 메일 본문 + PDF 첨부).
+//       견적요청(주문) 없이 '직접 작성'도 가능 — 수신자·품목을 빈칸부터 입력, order_id 없음.
 // 견적서 화면(/src/quote/view.php?id=)과 목록은 슈퍼 관리자만 볼 수 있다 — 고객용 웹 열람 화면·링크는 없음(메일 본문이 전달 수단).
 // 재발행하면 차수(revision)를 올려 새 행으로 저장하고 이전 차수는 그대로 보관한다(화면에 "재발행되어 효력 없음" 표시).
 // 금액 규칙: 품목 금액 = 수량 × 단가(원 단위 반올림), 공급가액 = 합, 세액 = 공급가액의 10%(원 미만 절사), 합계 = 공급가액 + 세액.
@@ -14,13 +15,21 @@ const QUOTE_MAX_ITEMS  = 30;
 const QUOTE_ENGINE_CODE = ['classic' => 'CL', 'square' => 'SQ', 'cross' => 'CR', 'diamond' => 'DM', 'triangle' => 'TR', 'hexagon' => 'HX', 'mondrian' => 'MD'];
 const QUOTE_ENGINE_NAME = ['square' => '정자살', 'classic' => '완자살', 'cross' => '아자살', 'diamond' => '완자문살', 'triangle' => '세모솟을살', 'hexagon' => '육모살', 'mondrian' => '몬드리안'];
 
-// 테이블이 없으면 만든다 — schema.sql의 quotes 정의와 같아야 한다. 발행(쓰기) 때만 호출.
+// 테이블을 지금 구조로 맞춘다 — schema.sql의 quotes 정의와 같아야 한다. 견적서 API·화면 요청마다 1번(가벼운 확인 쿼리).
+// 2026-11-04 오후: 견적요청(주문) 없이 직접 작성하는 견적서 추가 — order_id NULL 허용, 차수는 base_no(견적 묶음 번호)별로 센다.
+// 그 전에 만들어진 테이블이면 여기서 ALTER로 맞춘다(운영 DB에 먼저 생겼을 수 있어서).
 function quote_ensure_table(): void {
-    db()->exec("CREATE TABLE IF NOT EXISTS quotes (
+    static $done = false;
+    if ($done) return;
+    $done = true;
+    $pdo = db();
+    $pdo->exec("CREATE TABLE IF NOT EXISTS quotes (
         id              INT UNSIGNED  NOT NULL AUTO_INCREMENT COMMENT '견적서 고유 ID',
-        order_id        INT UNSIGNED  NOT NULL COMMENT '어느 주문의 견적서인지 (orders.id)',
-        revision        SMALLINT UNSIGNED NOT NULL DEFAULT 1 COMMENT '차수 — 같은 주문에 재발행할 때마다 1씩 올라감, 이전 차수는 보관',
-        quote_no        VARCHAR(40)   NOT NULL COMMENT '견적번호 (예: SQ-1024-Q2 = 주문코드 + 차수)',
+        order_id        INT UNSIGNED  NULL COMMENT '어느 주문의 견적서인지 (orders.id) — 견적요청 없이 직접 작성한 견적서는 NULL',
+        base_no         VARCHAR(40)   NOT NULL COMMENT '견적 묶음 번호 — 주문 견적서는 주문코드(SQ-1024), 직접 작성은 PM-yymmdd-NN. 차수는 이 번호별로 센다',
+        revision        SMALLINT UNSIGNED NOT NULL DEFAULT 1 COMMENT '차수 — 같은 묶음에 재발행할 때마다 1씩 올라감, 이전 차수는 보관',
+        quote_no        VARCHAR(40)   NOT NULL COMMENT '견적번호 = base_no + -Q차수 (예: SQ-1024-Q2, PM-261104-01-Q1)',
+        title           VARCHAR(100)  NULL COMMENT '건명 (예: 거실 중문) — 견적서 본문·메일 제목에 표시, 주문 견적서는 기본값이 도면명',
         issued_at       DATETIME      NOT NULL COMMENT '발행일시',
         issued_by       INT UNSIGNED  NULL COMMENT '발행한 관리자 user_id',
         valid_until     DATE          NULL COMMENT '견적 유효기한',
@@ -35,9 +44,22 @@ function quote_ensure_table(): void {
         emailed_to      VARCHAR(255)  NULL COMMENT '견적서 메일을 보낸 주소 (안 보냈으면 NULL)',
         emailed_at      DATETIME      NULL COMMENT '마지막 메일 발송 시각',
         PRIMARY KEY (id),
-        UNIQUE KEY uk_quotes_order_rev (order_id, revision),
+        UNIQUE KEY uk_quotes_base_rev (base_no, revision),
+        KEY idx_quotes_order (order_id),
         CONSTRAINT fk_quotes_order FOREIGN KEY (order_id) REFERENCES orders (id) ON DELETE CASCADE
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='발행된 견적서 (주문별 차수 보관)'");
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='발행된 견적서 (견적 묶음별 차수 보관)'");
+
+    // 예전 구조(주문 전용, base_no·title 없음)로 이미 만들어진 테이블 맞추기
+    $hasBase = (int) $pdo->query("SELECT COUNT(*) FROM information_schema.COLUMNS
+                                  WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'quotes' AND COLUMN_NAME = 'base_no'")->fetchColumn();
+    if (!$hasBase) {
+        $pdo->exec("ALTER TABLE quotes
+            ADD COLUMN base_no VARCHAR(40) NOT NULL DEFAULT '' COMMENT '견적 묶음 번호 — 주문 견적서는 주문코드(SQ-1024), 직접 작성은 PM-yymmdd-NN. 차수는 이 번호별로 센다' AFTER order_id,
+            ADD COLUMN title VARCHAR(100) NULL COMMENT '건명 (예: 거실 중문) — 견적서 본문·메일 제목에 표시, 주문 견적서는 기본값이 도면명' AFTER quote_no,
+            MODIFY COLUMN order_id INT UNSIGNED NULL COMMENT '어느 주문의 견적서인지 (orders.id) — 견적요청 없이 직접 작성한 견적서는 NULL'");
+        $pdo->exec("UPDATE quotes SET base_no = REGEXP_REPLACE(quote_no, '-Q[0-9]+$', '') WHERE base_no = ''");
+        $pdo->exec("ALTER TABLE quotes ALTER COLUMN base_no DROP DEFAULT, ADD UNIQUE KEY uk_quotes_base_rev (base_no, revision)");
+    }
 }
 
 // 공급자(평목) 기본 정보 — site_config 'quote_supplier'(JSON)에 저장된 값이 있으면 그걸 쓴다.
@@ -147,12 +169,34 @@ function quote_list_for_order(int $orderId): array {
     }
 }
 
-// 견적서 한 장 + 주문 정보 (관리자 화면·메일 렌더링용)
+// 견적 묶음 하나(직접 작성 견적서의 재발행 이력 등)의 발행 이력, 최신 차수 먼저
+function quote_list_for_base(string $baseNo): array {
+    try {
+        $st = db()->prepare('SELECT id, revision, quote_no, issued_at, valid_until, supply_amount, vat_amount, total_amount,
+                                    emailed_to, emailed_at
+                             FROM quotes WHERE base_no = ? ORDER BY revision DESC');
+        $st->execute([$baseNo]);
+        return $st->fetchAll();
+    } catch (PDOException $e) {
+        return [];
+    }
+}
+
+// 직접 작성(주문 없는) 견적서의 새 묶음 번호 — PM-yymmdd-NN (그날 몇 번째인지). 발행 잠금(GET_LOCK) 안에서 호출할 것.
+function quote_next_standalone_base(): string {
+    $prefix = 'PM-' . date('ymd') . '-';
+    $st = db()->prepare('SELECT COUNT(DISTINCT base_no) FROM quotes WHERE base_no LIKE ?');
+    $st->execute([$prefix . '%']);
+    return $prefix . sprintf('%02d', (int) $st->fetchColumn() + 1);
+}
+
+// 견적서 한 장 + (있으면) 주문 정보 (관리자 화면·메일·PDF 렌더링용). title은 건명, 없으면(구버전 행) 주문 도면명.
 function quote_by_id(int $id): ?array {
     try {
-        $st = db()->prepare('SELECT q.*, o.engine, o.title, o.version_label, o.thumbnail, o.status AS order_status,
-                                    (SELECT MAX(revision) FROM quotes q2 WHERE q2.order_id = q.order_id) AS latest_revision
-                             FROM quotes q JOIN orders o ON o.id = q.order_id WHERE q.id = ?');
+        $st = db()->prepare('SELECT q.*, COALESCE(NULLIF(q.title, \'\'), o.title, \'\') AS title,
+                                    o.engine, o.version_label, o.thumbnail, o.status AS order_status,
+                                    (SELECT MAX(revision) FROM quotes q2 WHERE q2.base_no = q.base_no) AS latest_revision
+                             FROM quotes q LEFT JOIN orders o ON o.id = q.order_id WHERE q.id = ?');
         $st->execute([$id]);
         return $st->fetch() ?: null;
     } catch (PDOException $e) {
