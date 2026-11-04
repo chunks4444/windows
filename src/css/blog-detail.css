@@ -176,7 +176,7 @@ body { background: var(--bg); }
     margin: 0;
     font-family: 'Noto Serif KR', 'Nanum Myeongjo', 'Batang', serif;
     font-size: 17px;
-    line-height: 1.9;
+    line-height: 1.7;
     color: var(--text);
     word-break: keep-all;
 }
