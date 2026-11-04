@@ -55,19 +55,56 @@ function send_mail(string $to, string $subject, string $template, array $vars = 
     return _smtp_send($cfg['mail_smtp_user'], $cfg['mail_smtp_pass'], $from, $to, $subject, $mimeHeaders, $body, $extra_headers, $bcc);
 }
 
-// 첨부파일이 없으면 기존과 동일한 단일 text/html 파트, 있으면 multipart/mixed로 감싼다
-function _build_mime_part(string $html, array $attachments): array {
-    if (!$attachments) {
-        return [
-            "Content-Type: text/html; charset=UTF-8\r\nContent-Transfer-Encoding: base64",
-            chunk_split(base64_encode($html)),
-        ];
+// 본문 <img src="data:image/...;base64,...">를 CID 인라인 이미지로 바꾼다.
+// Gmail 등 대부분의 메일 클라이언트는 data: 주소 이미지를 차단해 깨진 이미지로 보이기 때문
+// (견적요청 메일의 도면 썸네일이 대표적). 이미지는 메일 안에 함께 실려 가므로 외부 공개 주소가 필요 없다.
+function _extract_inline_images(string &$html): array {
+    $images = [];
+    $html = preg_replace_callback(
+        '/src=(["\'])data:(image\/(?:png|jpeg|gif|webp));base64,([A-Za-z0-9+\/=\s]+)\1/',
+        function ($m) use (&$images) {
+            $binary = base64_decode(preg_replace('/\s+/', '', $m[3]), true);
+            if ($binary === false) return $m[0];
+            $cid = 'img' . count($images) . '_' . bin2hex(random_bytes(6)) . '@pyeongmok.com';
+            $images[] = ['cid' => $cid, 'mime' => $m[2], 'content' => $binary];
+            return 'src=' . $m[1] . 'cid:' . $cid . $m[1];
+        },
+        $html
+    );
+    return $images;
+}
+
+// 본문(html) 파트: 인라인 이미지가 없으면 단일 text/html, 있으면 multipart/related로 묶는다.
+function _build_html_part(string $html): array {
+    $images = _extract_inline_images($html);
+    $htmlHeaders = "Content-Type: text/html; charset=UTF-8\r\nContent-Transfer-Encoding: base64";
+    $htmlBody    = chunk_split(base64_encode($html));
+    if (!$images) return [$htmlHeaders, $htmlBody];
+
+    $boundary = 'pmok_rel_' . bin2hex(random_bytes(12));
+    $body = "--{$boundary}\r\n{$htmlHeaders}\r\n\r\n{$htmlBody}\r\n";
+    foreach ($images as $i => $img) {
+        $ext = substr($img['mime'], 6);
+        $body .= "--{$boundary}\r\n"
+               . "Content-Type: {$img['mime']}; name=\"image{$i}.{$ext}\"\r\n"
+               . "Content-Transfer-Encoding: base64\r\n"
+               . "Content-ID: <{$img['cid']}>\r\n"
+               . "Content-Disposition: inline; filename=\"image{$i}.{$ext}\"\r\n\r\n"
+               . chunk_split(base64_encode($img['content'])) . "\r\n";
     }
+    $body .= "--{$boundary}--\r\n";
+    return ["Content-Type: multipart/related; type=\"text/html\"; boundary=\"{$boundary}\"", $body];
+}
+
+// 첨부파일이 없으면 본문 파트 그대로, 있으면 multipart/mixed로 감싼다
+function _build_mime_part(string $html, array $attachments): array {
+    [$htmlHeaders, $htmlBody] = _build_html_part($html);
+    if (!$attachments) return [$htmlHeaders, $htmlBody];
+
     $boundary = 'pmok_' . bin2hex(random_bytes(12));
     $body  = "--{$boundary}\r\n"
-           . "Content-Type: text/html; charset=UTF-8\r\n"
-           . "Content-Transfer-Encoding: base64\r\n\r\n"
-           . chunk_split(base64_encode($html)) . "\r\n";
+           . $htmlHeaders . "\r\n\r\n"
+           . $htmlBody . "\r\n";
 
     foreach ($attachments as $att) {
         $content = isset($att['tmp_name']) ? @file_get_contents($att['tmp_name']) : ($att['content'] ?? '');
