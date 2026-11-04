@@ -42,7 +42,7 @@ require_admin_role('s');
         <h1 class="db-title"><i class="bi bi-file-earmark-text me-2"></i>견적서</h1>
         <button class="adm-btn-save" onclick="openPicker()"><i class="bi bi-plus-lg me-1"></i>새 견적서</button>
     </div>
-    <p class="qt-lead">주문을 골라 견적서를 작성·발행합니다. 견적서는 관리자만 볼 수 있고, 고객에게는 메일 본문으로만 전달됩니다. 다시 발행하면 차수가 올라가고 이전 차수는 보관됩니다.</p>
+    <p class="qt-lead">주문을 골라 견적서를 작성·발행(저장)하고, 견적서 화면에서 검토한 뒤 '발신'으로 고객에게 메일을 보냅니다. 견적서는 관리자만 볼 수 있고 고객에게는 메일 본문으로만 전달됩니다. 다시 발행하면 차수가 올라가고 이전 차수는 보관됩니다.</p>
 
     <div class="adm-table-wrap">
         <div class="adm-toolbar">
@@ -136,9 +136,8 @@ require_admin_role('s');
             </div>
 
             <div class="ord-section-title">발행</div>
-            <label class="qt-check"><input type="checkbox" id="qtSendEmail" checked> 고객에게 견적서 메일 보내기 <span id="qtSendTo" class="qt-muted"></span></label>
             <label class="qt-check" id="qtSetStatusRow"><input type="checkbox" id="qtSetStatus" checked> 주문 상태를 '견적확정'으로 바꾸기</label>
-            <p class="qt-muted" style="margin:6px 0 0;">발행하면 주문의 확정 가격이 이 견적서의 공급가액으로 바뀝니다.</p>
+            <p class="qt-muted" style="margin:6px 0 0;">발행하면 견적서가 저장되고 주문의 확정 가격이 이 견적서의 공급가액으로 바뀝니다. <strong>메일은 나가지 않습니다</strong> — 열리는 견적서 화면에서 검토한 뒤 '고객에게 발신'을 누르세요.</p>
 
             <div id="qtHistory"></div>
         </div>

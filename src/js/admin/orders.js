@@ -251,7 +251,7 @@ function renderQuotes(o, quotes) {
     const won = n => Math.round(Number(n)).toLocaleString('ko-KR') + '원';
     const list = quotes.length ? `<div class="ord-quote-list">${quotes.map((q, i) => `
         <div><a href="/src/quote/view.php?id=${q.id}" target="_blank" rel="noopener">${esc(q.quote_no)}</a>${i ? ' <span class="ord-spec-sub">(재발행됨)</span>' : ''}
-        <span class="ord-spec-sub">· ${fmtOrderDatetime(q.issued_at)} · 공급가액 ${won(q.supply_amount)} / 합계 ${won(q.total_amount)} · ${q.emailed_at ? '메일 ' + fmtOrderDatetime(q.emailed_at) : '메일 안 보냄'}</span></div>`).join('')}</div>`
+        <span class="ord-spec-sub">· ${fmtOrderDatetime(q.issued_at)} · 공급가액 ${won(q.supply_amount)} / 합계 ${won(q.total_amount)} · ${q.emailed_at ? '발신 ' + fmtOrderDatetime(q.emailed_at) : '미발신'}</span></div>`).join('')}</div>`
         : '<div class="ord-detail-value" style="margin-bottom:10px;">아직 발행한 견적서가 없습니다.</div>';
     const btn = o.status === 'cancelled' ? '' :
         `<a class="adm-btn-save" style="display:inline-flex;align-items:center;text-decoration:none;" href="/src/admin/quotes.php?order_id=${o.id}">${quotes.length ? '견적서 재발행' : '견적서 작성'}</a>`;

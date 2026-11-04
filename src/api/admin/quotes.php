@@ -4,9 +4,10 @@
 // POST {action:'list', page, q}            발행된 견적서 목록(전 차수)
 // POST {action:'orders', q}                견적서를 쓸 주문 찾기(최근 주문 + 최신 견적 차수)
 // POST {action:'draft', order_id}          작성 창 기본값 — 이전 차수가 있으면 그 내용을, 없으면 주문 정보로 1줄 채움
-// POST {action:'issue', order_id, items, valid_until, lead_time, note, send_email, set_status, customer}
-//                                          발행(새 차수 저장) → 확정가 갱신 → (선택) 상태 '견적확정' → (선택) 메일 발송
-// POST {action:'resend', quote_id}         같은 견적서 메일 다시 보내기 (견적서 내용 전체가 메일 본문)
+// POST {action:'issue', order_id, items, valid_until, lead_time, note, set_status, customer}
+//                                          발행(새 차수 저장) → 확정가 갱신 → (선택) 상태 '견적확정'. 메일은 보내지 않는다.
+// POST {action:'send', quote_id}           고객에게 발신 — 관리자가 견적서 화면에서 검토한 뒤 따로 누른다(견적서 전문이 메일 본문).
+//                                          최신 차수만 발신 가능(재발행으로 효력 없는 이전 차수는 막음). 다시 누르면 재발신.
 // POST {action:'supplier', supplier}       공급자(평목) 정보 저장
 header('Content-Type: application/json; charset=UTF-8');
 require_once __DIR__ . '/../../lib/cors.php';
@@ -201,8 +202,6 @@ case 'issue': {
         if (isset($body['customer'][$k])) $customer[$k] = mb_substr(trim((string) $body['customer'][$k]), 0, 200);
     }
     if ($customer['name'] === '' && $customer['company'] === '') fail('수신자(고객) 이름이나 회사명을 입력해주세요.');
-    $sendEmail = !empty($body['send_email']);
-    if ($sendEmail && !filter_var($customer['email'], FILTER_VALIDATE_EMAIL)) fail('메일을 보내려면 수신자 이메일을 확인해주세요.');
 
     quote_ensure_table();
     $pdo->beginTransaction();
@@ -240,17 +239,14 @@ case 'issue': {
         fail('견적서 저장에 실패했습니다.', 500);
     }
 
-    $mailed = null;
-    if ($sendEmail) {
-        $mailed = send_quote_mail(quote_by_id($quoteId));
-        if ($mailed) $pdo->prepare('UPDATE quotes SET emailed_to = ?, emailed_at = NOW() WHERE id = ?')->execute([$customer['email'], $quoteId]);
-    }
-    out(['ok' => true, 'quote_id' => $quoteId, 'quote_no' => $quoteNo, 'mailed' => $mailed]);
+    out(['ok' => true, 'quote_id' => $quoteId, 'quote_no' => $quoteNo]);
 }
 
-case 'resend': {
+case 'send': {
     $q = quote_by_id((int) ($body['quote_id'] ?? 0)) ?: fail('견적서를 찾을 수 없습니다.', 404);
+    if ((int) $q['revision'] < (int) $q['latest_revision']) fail('재발행되어 효력이 없는 이전 차수는 발신할 수 없습니다.');
     $to = json_decode($q['customer_json'], true)['email'] ?? '';
+    if (!filter_var($to, FILTER_VALIDATE_EMAIL)) fail('수신자 이메일(' . $to . ')이 올바르지 않습니다. 이메일을 고쳐 재발행한 뒤 발신하세요.');
     if (!send_quote_mail($q)) fail('메일 발송에 실패했습니다. 수신자 이메일(' . $to . ')과 메일 발송 설정을 확인해주세요.', 500);
     $pdo->prepare('UPDATE quotes SET emailed_to = ?, emailed_at = NOW() WHERE id = ?')->execute([$to, $q['id']]);
     out(['ok' => true, 'to' => $to]);

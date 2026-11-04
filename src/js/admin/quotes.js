@@ -67,11 +67,10 @@ async function loadQuotes(page) {
                 <td>${esc(QT_ENGINE_NAME[q.engine] || q.engine)}${q.title ? ' · ' + esc(q.title) : ''}<br><span class="qt-muted">${fmtOrderCode(q.engine, q.order_id)} · ${esc(ORDER_STATUS_LABELS[q.order_status]?.label || q.order_status)}</span></td>
                 <td style="text-align:right;">${qtWon(q.supply_amount)}</td>
                 <td style="text-align:right;font-weight:600;">${qtWon(q.total_amount)}</td>
-                <td style="font-size:12px;">${q.emailed_at ? `<span title="${esc(q.emailed_to)}">${fmtOrderDatetime(q.emailed_at)}</span>` : '<span class="qt-muted">안 보냄</span>'}</td>
+                <td style="font-size:12px;">${q.emailed_at ? `<span title="${esc(q.emailed_to)}">${fmtOrderDatetime(q.emailed_at)}</span>` : '<span class="qt-badge-old">미발신</span>'}</td>
                 <td><div class="adm-action-cell">
-                    <a class="adm-edit-btn" href="/src/quote/view.php?id=${q.id}" target="_blank" rel="noopener">보기</a>
-                    ${old ? '' : `<button class="adm-edit-btn" onclick="openEditor(${q.order_id})">재발행</button>
-                    <button class="adm-edit-btn" onclick="resendQuote(${q.id}, '${esc(q.quote_no)}')">메일</button>`}
+                    <a class="adm-edit-btn" href="/src/quote/view.php?id=${q.id}" target="_blank" rel="noopener">보기·발신</a>
+                    ${old ? '' : `<button class="adm-edit-btn" onclick="openEditor(${q.order_id})">재발행</button>`}
                 </div></td>
             </tr>`;
         }).join('');
@@ -93,15 +92,6 @@ function qtRenderPagination(total, page, limit) {
 function onSearchInput() {
     clearTimeout(qtSearchTimer);
     qtSearchTimer = setTimeout(() => loadQuotes(1), 350);
-}
-
-async function resendQuote(id, no) {
-    if (!confirm(`${no} 견적서 메일을 고객에게 다시 보낼까요?`)) return;
-    try {
-        const r = await qtApi({ action: 'resend', quote_id: id });
-        alert(`${r.to} 로 보냈습니다.`);
-        loadQuotes(qtPage);
-    } catch (err) { alert(err.message); }
 }
 
 /* ── 공급자 정보 ── */
@@ -184,7 +174,6 @@ async function openEditor(orderId) {
     document.getElementById('qtCustomerForm').innerHTML = QT_CUSTOMER_FIELDS.map(([k, label]) =>
         `<div class="adm-mfield"><label>${label}</label><input type="text" data-cus="${k}" value="${esc(d.customer[k] || '')}" maxlength="200"></div>`
     ).join('');
-    document.querySelectorAll('[data-cus="email"]').forEach(el => el.addEventListener('input', qtUpdateSendTo));
 
     qtItems = (d.items || []).map(it => ({ name: it.name || '', spec: it.spec || '', qty: it.qty ?? 1, unit_price: it.unit_price ?? 0 }));
     if (!qtItems.length) qtItems.push({ name: '', spec: '', qty: 1, unit_price: 0 });
@@ -195,17 +184,15 @@ async function openEditor(orderId) {
     document.getElementById('qtValidUntil').value = d.valid_until || '';
     document.getElementById('qtLeadTime').value   = d.lead_time || '';
     document.getElementById('qtNote').value       = d.note || '';
-    document.getElementById('qtSendEmail').checked = true;
     const canFinalize = ['pending_review', 'revision_requested', 'approved'].includes(o.status);
     document.getElementById('qtSetStatusRow').style.display = canFinalize ? '' : 'none';
     document.getElementById('qtSetStatus').checked = canFinalize;
-    qtUpdateSendTo();
 
     document.getElementById('qtHistory').innerHTML = d.history.length ? `
         <div class="ord-section-title">이전 발행 <small class="qt-muted">${d.history.length}건 · 작성 창은 최신 차수 내용으로 채워짐</small></div>
         <div class="qt-history">${d.history.map(h => `
             <div><a href="/src/quote/view.php?id=${h.id}" target="_blank" rel="noopener">${esc(h.quote_no)}</a>
-            <span class="qt-muted">${fmtOrderDatetime(h.issued_at)} · 합계 ${qtWon(h.total_amount)}원 · ${h.emailed_at ? '메일 ' + fmtOrderDatetime(h.emailed_at) : '메일 안 보냄'}</span></div>`).join('')}
+            <span class="qt-muted">${fmtOrderDatetime(h.issued_at)} · 합계 ${qtWon(h.total_amount)}원 · ${h.emailed_at ? '발신 ' + fmtOrderDatetime(h.emailed_at) : '미발신'}</span></div>`).join('')}
         </div>` : '';
 }
 
@@ -213,11 +200,6 @@ function closeEditor() {
     document.getElementById('qtEditorOverlay').classList.remove('open');
     qtDraft = null;
     if (new URLSearchParams(location.search).has('order_id')) history.replaceState(null, '', location.pathname);
-}
-
-function qtUpdateSendTo() {
-    const email = document.querySelector('[data-cus="email"]')?.value.trim() || '';
-    document.getElementById('qtSendTo').textContent = email ? `→ ${email}` : '(수신자 이메일을 입력하세요)';
 }
 
 function renderItems() {
@@ -263,12 +245,11 @@ async function issueQuote() {
     if (!qtDraft) return;
     const customer = {};
     document.querySelectorAll('[data-cus]').forEach(el => { customer[el.dataset.cus] = el.value.trim(); });
-    const sendEmail = document.getElementById('qtSendEmail').checked;
     const setStatus = document.getElementById('qtSetStatusRow').style.display !== 'none' && document.getElementById('qtSetStatus').checked;
     const total = document.querySelector('#qtTotals .qt-grand span:last-child')?.textContent || '';
-    const msg = `${qtDraft.order.code} 견적서 ${qtDraft.next_revision}차를 발행합니다.\n합계 ${total}`
-        + (sendEmail ? `\n→ ${customer.email} 로 메일을 보냅니다.` : '\n(메일은 보내지 않음)')
-        + (setStatus ? "\n주문 상태를 '견적확정'으로 바꿉니다." : '');
+    const msg = `${qtDraft.order.code} 견적서 ${qtDraft.next_revision}차를 발행(저장)합니다.\n합계 ${total}`
+        + (setStatus ? "\n주문 상태를 '견적확정'으로 바꿉니다." : '')
+        + '\n\n메일은 나가지 않습니다. 열리는 견적서 화면에서 검토 후 발신하세요.';
     if (!confirm(msg)) return;
 
     const btn = document.getElementById('qtIssueBtn');
@@ -283,15 +264,10 @@ async function issueQuote() {
             valid_until: document.getElementById('qtValidUntil').value,
             lead_time: document.getElementById('qtLeadTime').value.trim(),
             note: document.getElementById('qtNote').value.trim(),
-            send_email: sendEmail,
             set_status: setStatus,
         });
-        closeEditor();
-        await loadQuotes(1);
-        if (sendEmail && r.mailed === false) {
-            alert(`${r.quote_no} 발행은 됐지만 메일 발송에 실패했습니다. 메일 발송 설정을 확인한 뒤 목록의 '메일' 버튼으로 다시 보내세요.`);
-        }
-        window.open('/src/quote/view.php?id=' + r.quote_id, '_blank', 'noopener');
+        // 검토·발신 화면으로 바로 이동 (새 탭은 await 뒤라 팝업 차단될 수 있어 같은 탭으로)
+        location.href = '/src/quote/view.php?id=' + r.quote_id;
     } catch (err) {
         qtShowAlert(err.message);
         document.querySelector('#qtEditorOverlay .adm-modal-body').scrollTop = 0;
