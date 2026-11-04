@@ -8,6 +8,16 @@ require_once __DIR__ . '/../lib/quote.php';
 
 $quote = quote_by_id((int) ($_GET['id'] ?? 0));
 if (!$quote) { http_response_code(404); echo '견적서를 찾을 수 없습니다.'; exit; }
+// ?pdf=1 — 발신 메일에 첨부되는 것과 같은 PDF를 내려받기
+if (!empty($_GET['pdf'])) {
+    $pdf = quote_pdf($quote);
+    $fn  = quote_pdf_filename($quote);
+    header('Content-Type: application/pdf');
+    header("Content-Disposition: inline; filename=\"quote-{$quote['quote_no']}.pdf\"; filename*=UTF-8''" . rawurlencode($fn));
+    header('Content-Length: ' . strlen($pdf));
+    echo $pdf;
+    exit;
+}
 $superseded = (int) $quote['revision'] < (int) $quote['latest_revision'];
 $sendTo = (string) (json_decode($quote['customer_json'], true)['email'] ?? '');
 $h = fn($v) => htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8');
@@ -51,7 +61,8 @@ $h = fn($v) => htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8');
     <a href="/src/admin/quotes.php">← 견적서 목록</a>
     <span><?= htmlspecialchars($quote['quote_no']) ?><?= $quote['title'] ? ' · ' . htmlspecialchars($quote['title']) : '' ?></span>
     <span class="sp"></span>
-    <button class="primary" onclick="window.print()">인쇄 / PDF 저장</button>
+    <a href="?id=<?= (int) $quote['id'] ?>&amp;pdf=1" target="_blank" rel="noopener">PDF 받기 (메일 첨부본)</a>
+    <button class="primary" onclick="window.print()">인쇄</button>
 </div>
 <?php if ($superseded): ?>
 <div class="qv-warn">이 견적서(<?= (int) $quote['revision'] ?>차)는 이후 <?= (int) $quote['latest_revision'] ?>차로 재발행되어 효력이 없습니다. 인쇄하면 이 안내는 빠집니다.</div>
@@ -93,7 +104,7 @@ async function sendQuote() {
         const st = document.getElementById('qvSendStatus');
         st.innerHTML = '<b>발신됨</b> · ';
         st.appendChild(document.createTextNode(now.getFullYear() + '-' + p(now.getMonth() + 1) + '-' + p(now.getDate()) + ' ' + p(now.getHours()) + ':' + p(now.getMinutes()) + ' → ' + to));
-        msg.className = 'msg ok'; msg.textContent = '보냈습니다. 영업 메일함에도 숨은참조 사본이 갑니다.';
+        msg.className = 'msg ok'; msg.textContent = '보냈습니다(PDF 첨부). 영업 메일함에도 숨은참조 사본이 갑니다.';
         btn.textContent = '다시 발신';
     } catch (err) {
         msg.className = 'msg err'; msg.textContent = err.message;

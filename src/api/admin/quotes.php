@@ -83,12 +83,20 @@ function send_quote_mail(array $q): bool {
     $customer = json_decode($q['customer_json'], true) ?: [];
     $to = $customer['email'] ?? '';
     if (!filter_var($to, FILTER_VALIDATE_EMAIL)) return false;
+    // 같은 견적서를 PDF로도 첨부 — PDF 생성이 실패하면 본문만이라도 보내지 않고 발신을 멈춘다(관리자가 원인 확인)
+    try {
+        $pdf = quote_pdf($q);
+    } catch (Throwable $e) {
+        error_log('quote pdf failed: ' . $e->getMessage());
+        fail('견적서 PDF를 만들지 못해 발신하지 않았습니다. (' . $e->getMessage() . ')', 500);
+    }
     return send_mail(
         $to,
         '[워크그룹 평목] 견적서 ' . $q['quote_no'] . ($q['title'] ? ' — ' . $q['title'] : ''),
         'quote',
         ['quote' => $q],
-        '', 'sales', mail_address('sales')
+        '', 'sales', mail_address('sales'),
+        [['name' => quote_pdf_filename($q), 'type' => 'application/pdf', 'content' => $pdf]]
     );
 }
 

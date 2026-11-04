@@ -159,3 +159,43 @@ function quote_by_id(int $id): ?array {
         return null;
     }
 }
+
+// ── PDF (발신 메일 첨부 · 견적서 화면 'PDF 받기') ─────────────────────────────
+// mPDF(순수 PHP, src/lib/vendor — 운영서버에 composer·크롬이 없어 저장소에 포함) + 나눔고딕(src/lib/pdf_fonts, OFL 라이선스).
+// 화면·메일과 같은 components/quote_document.php HTML을 그대로 PDF로 그린다.
+// mPDF 갱신: 저장소 밖에서 composer require mpdf/mpdf 후 vendor 통째로 교체(ttfonts는 DejaVuSansCondensed 2개만 남기고 삭제 — 87MB라서).
+function quote_pdf(array $quote): string {
+    require_once __DIR__ . '/vendor/autoload.php';
+    $tmp = sys_get_temp_dir() . '/pmok_mpdf';
+    if (!is_dir($tmp)) @mkdir($tmp, 0700, true);
+
+    $defaults     = (new \Mpdf\Config\ConfigVariables())->getDefaults();
+    $fontDefaults = (new \Mpdf\Config\FontVariables())->getDefaults();
+    $mpdf = new \Mpdf\Mpdf([
+        'mode' => 'utf-8', 'format' => 'A4',
+        'margin_left' => 14, 'margin_right' => 14, 'margin_top' => 14, 'margin_bottom' => 14,
+        'tempDir'  => $tmp,
+        'fontDir'  => array_merge($defaults['fontDir'], [__DIR__ . '/pdf_fonts']),
+        'fontdata' => $fontDefaults['fontdata'] + [
+            'nanumgothic' => ['R' => 'NanumGothic-Regular.ttf', 'B' => 'NanumGothic-Bold.ttf'],
+        ],
+        'default_font' => 'nanumgothic',
+    ]);
+    $mpdf->SetTitle('견적서 ' . $quote['quote_no']);
+    $mpdf->SetAuthor(json_decode($quote['supplier_json'], true)['name'] ?? '워크그룹 평목');
+
+    $quoteShowThumb = true;
+    ob_start();
+    include __DIR__ . '/../components/quote_document.php';
+    $html = ob_get_clean();
+    // 화면용 글꼴 이름(맥·윈도 시스템 폰트)은 PDF에 없으므로 나눔고딕으로 바꾼다
+    $html = preg_replace('/font-family:[^;"]+/', 'font-family:nanumgothic', $html);
+    // mPDF는 숫자 굵기(600~900)를 굵게로 인식하지 않음 — 나눔고딕은 보통/굵게 2종뿐이라 bold로 통일
+    $html = preg_replace('/font-weight:\s*[6-9]00/', 'font-weight:bold', $html);
+    $mpdf->WriteHTML($html);
+    return $mpdf->Output('', \Mpdf\Output\Destination::STRING_RETURN);
+}
+
+function quote_pdf_filename(array $quote): string {
+    return '견적서_' . $quote['quote_no'] . '.pdf';
+}

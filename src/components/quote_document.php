@@ -150,7 +150,7 @@ $__supplierRows = [
         <tr><td style="<?= $__th ?>">입금계좌</td><td style="<?= $__td ?>"><?= $__h($__s['bank']) ?></td></tr>
         <?php endif; ?>
         <?php if (!empty($__q['note'])): ?>
-        <tr><td style="<?= $__th ?>vertical-align:top;">비고</td><td style="<?= $__td ?>white-space:pre-line;line-height:1.6;"><?= $__h($__q['note']) ?></td></tr>
+        <tr><td style="<?= $__th ?>vertical-align:top;">비고</td><td style="<?= $__td ?>line-height:1.6;"><?= nl2br($__h($__q['note'])) ?></td></tr>
         <?php endif; ?>
       </table>
     </td>
