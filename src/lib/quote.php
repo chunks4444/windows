@@ -212,8 +212,12 @@ function quote_by_id(int $id): ?array {
 // mPDF 갱신: 저장소 밖에서 composer require mpdf/mpdf 후 vendor 통째로 교체(ttfonts는 DejaVuSansCondensed 2개만 남기고 삭제 — 87MB라서).
 function quote_pdf(array $quote): string {
     require_once __DIR__ . '/vendor/autoload.php';
-    $tmp = sys_get_temp_dir() . '/pmok_mpdf';
+    // 임시 폴더는 실행 사용자별로 — 웹(www-data)과 CLI(chunks)가 같은 /tmp를 쓰는 서버라, 한쪽이 0700으로 만든 폴더를
+    // 다른 쪽이 못 써서 웹의 PDF 생성이 실패했었다(2026-11-04).
+    $uid = function_exists('posix_geteuid') ? posix_geteuid() : getmyuid();
+    $tmp = sys_get_temp_dir() . '/pmok_mpdf_' . $uid;
     if (!is_dir($tmp)) @mkdir($tmp, 0700, true);
+    if (!is_dir($tmp) || !is_writable($tmp)) throw new RuntimeException('PDF 임시 폴더에 쓸 수 없습니다: ' . $tmp);
 
     $defaults     = (new \Mpdf\Config\ConfigVariables())->getDefaults();
     $fontDefaults = (new \Mpdf\Config\FontVariables())->getDefaults();

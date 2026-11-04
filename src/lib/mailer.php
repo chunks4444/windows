@@ -74,11 +74,16 @@ function _build_mime_part(string $html, array $attachments): array {
         if (!$content) continue;
         $filename = $att['name'] ?? 'attachment';
         $mime     = $att['type'] ?: 'application/octet-stream';
-        $encName  = '=?UTF-8?B?' . base64_encode($filename) . '?=';
+        // 파일 이름 — 따옴표 안에 =?UTF-8?B?…?=를 넣던 방식은 표준이 아니라 메일앱에 따라 한글 이름이 깨지고 확장자(.pdf)도 못 알아봤다(2026-11-04).
+        // RFC 2231(filename*=UTF-8''퍼센트인코딩)로 한글 이름을 주고, 그걸 모르는 메일앱용으로 영문만 남긴 이름을 같이 준다.
+        $ext   = pathinfo($filename, PATHINFO_EXTENSION);
+        $ascii = trim(preg_replace('/_+/', '_', preg_replace('/[^A-Za-z0-9._-]/', '_', pathinfo($filename, PATHINFO_FILENAME))), '_');
+        $ascii = ($ascii !== '' ? $ascii : 'attachment') . ($ext !== '' ? '.' . preg_replace('/[^A-Za-z0-9]/', '', $ext) : '');
+        $star  = "UTF-8''" . rawurlencode($filename);
         $body .= "--{$boundary}\r\n"
-               . "Content-Type: {$mime}; name=\"{$encName}\"\r\n"
+               . "Content-Type: {$mime}; name=\"{$ascii}\"\r\n"
                . "Content-Transfer-Encoding: base64\r\n"
-               . "Content-Disposition: attachment; filename=\"{$encName}\"\r\n\r\n"
+               . "Content-Disposition: attachment; filename=\"{$ascii}\";\r\n filename*={$star}\r\n\r\n"
                . chunk_split(base64_encode($content)) . "\r\n";
     }
     $body .= "--{$boundary}--\r\n";
@@ -128,8 +133,8 @@ function _smtp_send(string $authUser, string $authPass, string $from, string $to
     $send('DATA');
     $read();
 
-    $subj = '=?UTF-8?B?' . base64_encode('[' . SITE_NAME . '] ' . $subject) . '?=';
-    $msg  = "From: " . SITE_NAME . " <{$from}>\r\n"
+    $subj = _mime_header('[' . SITE_NAME . '] ' . $subject);
+    $msg  = "From: " . _mime_header(SITE_NAME) . " <{$from}>\r\n"
           . "To: {$to}\r\n"
           . "Subject: {$subj}\r\n"
           . "MIME-Version: 1.0\r\n"
@@ -145,10 +150,24 @@ function _smtp_send(string $authUser, string $authPass, string $from, string $to
     return substr(trim($resp), 0, 3) === '250';
 }
 
+// 한글 등 비ASCII 헤더(제목·보내는 사람 이름) 인코딩 — RFC 2047은 인코딩 덩어리 하나를 75자 이하로 제한한다.
+// 예전엔 긴 제목을 한 덩어리로 넣어 일부 메일앱에서 제목이 깨졌고, From 이름은 인코딩 없이 들어갔다(2026-11-04 수정).
+// 글자 중간에서 자르지 않도록 UTF-8 글자 단위로 45바이트(base64 60자)씩 나눠 줄바꿈+공백으로 잇는다.
+function _mime_header(string $text): string {
+    if (!preg_match('/[^\x20-\x7E]/', $text)) return $text;
+    $chunks = []; $buf = '';
+    foreach (mb_str_split($text, 1, 'UTF-8') as $ch) {
+        if (strlen($buf) + strlen($ch) > 45) { $chunks[] = $buf; $buf = ''; }
+        $buf .= $ch;
+    }
+    if ($buf !== '') $chunks[] = $buf;
+    return implode("\r\n ", array_map(fn($c) => '=?UTF-8?B?' . base64_encode($c) . '?=', $chunks));
+}
+
 function _mail_fallback(string $to, string $subject, string $mimeHeaders, string $body, string $from, string $extra_headers = '', string $bcc = ''): bool {
-    $subj_enc = '=?UTF-8?B?' . base64_encode('[' . SITE_NAME . '] ' . $subject) . '?=';
+    $subj_enc = _mime_header('[' . SITE_NAME . '] ' . $subject);
     $parts    = [
-        'From: ' . SITE_NAME . ' <' . $from . '>',
+        'From: ' . _mime_header(SITE_NAME) . ' <' . $from . '>',
         'MIME-Version: 1.0',
         $mimeHeaders,
     ];

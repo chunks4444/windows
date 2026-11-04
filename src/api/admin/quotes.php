@@ -98,9 +98,10 @@ function send_quote_mail(array $q, string $intro = ''): bool {
         error_log('quote pdf failed: ' . $e->getMessage());
         fail('견적서 PDF를 만들지 못해 발신하지 않았습니다. (' . $e->getMessage() . ')', 500);
     }
+    // 제목 앞의 [워크그룹 평목]은 mailer가 붙인다
     return send_mail(
         $to,
-        '[워크그룹 평목] 견적서 ' . $q['quote_no'] . ($q['title'] ? ' — ' . $q['title'] : ''),
+        '견적서 ' . $q['quote_no'] . ($q['title'] ? ' — ' . $q['title'] : ''),
         'quote',
         ['quote' => $q, 'intro' => $intro],
         '', 'sales', mail_address('sales'),
