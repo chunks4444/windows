@@ -44,7 +44,7 @@ function quote_ensure_table(): void {
 // 관리자 견적서 작성 창의 '공급자 정보'에서 고치면 저장되고, 이후 발행분부터 반영(이미 발행된 견적서는 스냅샷이라 그대로).
 function quote_supplier_defaults(): array {
     return [
-        'name'      => '워크그룹 평목',
+        'name'      => '워크그룹 평목(루나미디어)',
         'biz_no'    => '135-32-53949',
         'ceo'       => '전경수',
         'address'   => '경기도 양평군 양서면 도곡리 107-2',
