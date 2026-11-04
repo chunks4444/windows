@@ -86,7 +86,17 @@ function _build_mime_part(string $html, array $attachments): array {
     return ["Content-Type: multipart/mixed; boundary=\"{$boundary}\"", $body];
 }
 
-function _smtp_send(string $authUser, string $authPass, string $from, string $to, string $subject, string $mimeHeaders, string $body, string $extra_headers = '', string $bcc = ''): bool {
+// 템플릿 파일 없이 완성된 HTML을 그대로 보낸다 (홍보메일용). 제목 앞에 [사이트명]을 붙이지 않는다 — "(광고)"가 맨 앞이어야 해서.
+// $attachments: [['name'=>string, 'content'=>바이너리, 'type'=>string], ...]
+function send_html_mail(string $to, string $subject, string $html, string $extra_headers = '', array $attachments = []): bool {
+    $cfg  = mail_config();
+    $from = $cfg['mail_sales'];
+    [$mimeHeaders, $body] = _build_mime_part($html, $attachments);
+    if (!$cfg['mail_smtp_pass']) return _mail_fallback($to, $subject, $mimeHeaders, $body, $from, $extra_headers, '', true);
+    return _smtp_send($cfg['mail_smtp_user'], $cfg['mail_smtp_pass'], $from, $to, $subject, $mimeHeaders, $body, $extra_headers, '', true);
+}
+
+function _smtp_send(string $authUser, string $authPass, string $from, string $to, string $subject, string $mimeHeaders, string $body, string $extra_headers = '', string $bcc = '', bool $rawSubject = false): bool {
     $sock = @stream_socket_client('tcp://' . SMTP_HOST . ':' . SMTP_PORT, $errno, $errstr, 10);
     if (!$sock) return false;
     stream_set_timeout($sock, 10);
@@ -128,7 +138,7 @@ function _smtp_send(string $authUser, string $authPass, string $from, string $to
     $send('DATA');
     $read();
 
-    $subj = '=?UTF-8?B?' . base64_encode('[' . SITE_NAME . '] ' . $subject) . '?=';
+    $subj = '=?UTF-8?B?' . base64_encode($rawSubject ? $subject : '[' . SITE_NAME . '] ' . $subject) . '?=';
     $msg  = "From: " . SITE_NAME . " <{$from}>\r\n"
           . "To: {$to}\r\n"
           . "Subject: {$subj}\r\n"
@@ -145,8 +155,8 @@ function _smtp_send(string $authUser, string $authPass, string $from, string $to
     return substr(trim($resp), 0, 3) === '250';
 }
 
-function _mail_fallback(string $to, string $subject, string $mimeHeaders, string $body, string $from, string $extra_headers = '', string $bcc = ''): bool {
-    $subj_enc = '=?UTF-8?B?' . base64_encode('[' . SITE_NAME . '] ' . $subject) . '?=';
+function _mail_fallback(string $to, string $subject, string $mimeHeaders, string $body, string $from, string $extra_headers = '', string $bcc = '', bool $rawSubject = false): bool {
+    $subj_enc = '=?UTF-8?B?' . base64_encode($rawSubject ? $subject : '[' . SITE_NAME . '] ' . $subject) . '?=';
     $parts    = [
         'From: ' . SITE_NAME . ' <' . $from . '>',
         'MIME-Version: 1.0',
