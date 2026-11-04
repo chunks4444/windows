@@ -98,13 +98,18 @@ function send_quote_mail(array $q, string $intro = ''): bool {
         error_log('quote pdf failed: ' . $e->getMessage());
         fail('견적서 PDF를 만들지 못해 발신하지 않았습니다. (' . $e->getMessage() . ')', 500);
     }
+    // 숨은참조: 영업 메일 + 관리자(슈퍼·관리자 권한, 탈퇴 안 한) 계정 이메일 전부 — 견적요청 알림(orders/create.php)과 같은 대상
+    $bcc = [mail_address('sales')];
+    try {
+        $bcc = array_merge($bcc, db()->query("SELECT email FROM users WHERE role IN ('s','m') AND withdrawn_at IS NULL")->fetchAll(PDO::FETCH_COLUMN));
+    } catch (Throwable $e) {}
     // 제목 앞의 [워크그룹 평목]은 mailer가 붙인다
     return send_mail(
         $to,
         '견적서 ' . $q['quote_no'] . ($q['title'] ? ' — ' . $q['title'] : ''),
         'quote',
         ['quote' => $q, 'intro' => $intro],
-        '', 'sales', mail_address('sales'),
+        '', 'sales', implode(',', $bcc),
         [['name' => quote_pdf_filename($q), 'type' => 'application/pdf', 'content' => $pdf]]
     );
 }

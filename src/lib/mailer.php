@@ -126,8 +126,9 @@ function _smtp_send(string $authUser, string $authPass, string $from, string $to
     $read();
     $send('RCPT TO:<' . $to . '>');
     $read();
-    if ($bcc && $bcc !== $to) {
-        $send('RCPT TO:<' . $bcc . '>');
+    // 숨은참조 — 쉼표로 여러 주소 가능(헤더엔 안 쓰고 RCPT로만 넣으므로 받는 사람에게 안 보임)
+    foreach (_bcc_list($bcc, $to) as $b) {
+        $send('RCPT TO:<' . $b . '>');
         $read();
     }
     $send('DATA');
@@ -173,6 +174,17 @@ function _mail_fallback(string $to, string $subject, string $mimeHeaders, string
     ];
     if ($extra_headers !== '') $parts[] = $extra_headers;
     $ok = mail($to, $subj_enc, $body, implode("\r\n", $parts));
-    if ($bcc && $bcc !== $to) mail($bcc, $subj_enc, $body, implode("\r\n", $parts));
+    foreach (_bcc_list($bcc, $to) as $b) mail($b, $subj_enc, $body, implode("\r\n", $parts));
     return $ok;
+}
+
+// "a@x.com, b@y.com" → 유효한 주소 배열(중복·받는 사람 본인 제외)
+function _bcc_list(string $bcc, string $to): array {
+    $out = [];
+    foreach (preg_split('/\s*,\s*/', trim($bcc), -1, PREG_SPLIT_NO_EMPTY) as $b) {
+        $k = strtolower($b);
+        if ($k === strtolower($to) || isset($out[$k]) || !filter_var($b, FILTER_VALIDATE_EMAIL)) continue;
+        $out[$k] = $b;
+    }
+    return array_values($out);
 }

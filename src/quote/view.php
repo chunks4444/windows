@@ -112,7 +112,7 @@ async function sendQuote() {
         const st = document.getElementById('qvSendStatus');
         st.innerHTML = '<b>발신됨</b> · ';
         st.appendChild(document.createTextNode(now.getFullYear() + '-' + p(now.getMonth() + 1) + '-' + p(now.getDate()) + ' ' + p(now.getHours()) + ':' + p(now.getMinutes()) + ' → ' + to));
-        msg.className = 'msg ok'; msg.textContent = '보냈습니다(PDF 첨부). 영업 메일함에도 숨은참조 사본이 갑니다.';
+        msg.className = 'msg ok'; msg.textContent = '보냈습니다(PDF 첨부). 관리자 계정들과 영업 메일로 숨은참조 사본이 갑니다.';
         btn.textContent = '다시 발신';
     } catch (err) {
         msg.className = 'msg err'; msg.textContent = err.message;
