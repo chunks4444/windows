@@ -280,3 +280,31 @@ tr.drag-over td { background:var(--accent-tint); }
 .ord-history-thumb { width: 64px; height: 64px; object-fit: cover; border: 1px solid var(--border); border-radius: var(--r-sm); flex-shrink: 0; }
 .ord-history-body { display: flex; flex-direction: column; gap: 4px; font-size: var(--fs-13); }
 .ord-history-note { color: var(--text-3); }
+.ord-estimate-diff { color: var(--danger, #c0392b); font-weight: 600; font-size: var(--fs-12); }
+
+/* 주문 상세 — 정보 묶음 접기/펴기 (<details>) */
+.ord-group { border-top: 1px solid var(--border); }
+.ord-group:last-child { border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+.ord-group-title { display: flex; align-items: center; gap: 8px; padding: 12px 2px; cursor: pointer; list-style: none; font-size: var(--fs-13); font-weight: 700; color: var(--text); user-select: none; }
+.ord-group-title::-webkit-details-marker { display: none; }
+.ord-group-title::after { content: ''; margin-left: auto; width: 7px; height: 7px; border-right: 1.5px solid var(--text-3); border-bottom: 1.5px solid var(--text-3); transform: rotate(-45deg); transition: transform .15s; }
+.ord-group[open] > .ord-group-title::after { transform: rotate(45deg); }
+.ord-group-title small { font-weight: 400; color: var(--text-3); font-size: var(--fs-12); }
+.ord-group-body { padding: 0 2px 14px; font-size: var(--fs-13); }
+.ord-group-body .ord-detail-grid { margin-bottom: 0; }
+.ord-group-body .ord-detail-grid > .ord-detail-label:first-child,
+.ord-group-body .ord-detail-grid > .ord-detail-label:nth-child(2) { margin-top: 0; }
+
+/* 예상 견적 — 엔진 "예상 견적" 패널(engine-rail.css .rail-pane .sb-price-box)과 같은 모양 */
+.ord-est-box { max-width: 360px; }
+.ord-est-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 13px; color: #111; }
+.ord-est-amount { font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.ord-est-break { display: flex; flex-direction: column; gap: 2px; margin-top: 5px; padding-top: 5px; border-top: 1px solid var(--border); }
+.ord-est-row { display: flex; justify-content: space-between; font-size: var(--fs-12); color: #4B5160; }
+.ord-est-row span:last-child { font-variant-numeric: tabular-nums; }
+.ord-est-row.key span:last-child, .ord-est-row.total span { color: #111; }
+.ord-est-row.total { padding: 5px 0; font-weight: 700; }
+.ord-est-row small { color: #4B5160; }
+.ord-est-divider { border-top: 1px solid var(--border); margin: 5px 0; }
+.ord-est-note { font-size: var(--fs-11, 11px); color: #4B5160; margin-top: 4px; }
+.ord-est-current { margin-top: 10px; font-size: var(--fs-13); }

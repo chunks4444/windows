@@ -96,7 +96,7 @@ async function openModal(id) {
     if (!res.ok) { document.getElementById('admDetailContent').innerHTML = `<p style="color:var(--danger);">${esc(data.error || '불러오기 실패')}</p>`; return; }
 
     document.getElementById('admModalTitle').textContent = `${fmtOrderCode(data.order.engine, id)} 상세`;
-    renderDetail(data.order, data.history || [], data.spec, data.wood);
+    renderDetail(data.order, data.history || [], data.spec, data.wood, data.drawingEstimate);
     document.getElementById('admMStatus').value     = data.order.status;
     document.getElementById('admMNote').value        = data.order.revision_note || '';
     document.getElementById('admMCarrier').value     = data.order.tracking_carrier || '';
@@ -106,36 +106,40 @@ async function openModal(id) {
     toggleConditionalFields();
 }
 
+// 엔진 "예상 견적" 패널(src/engine/*/*.php .sb-price-box)과 같은 항목명·순서·구분선으로 그린다 — 고객이 본 화면 그대로.
+// 값은 주문 시점 price_breakdown 스냅샷이고, 마감만 0원이면 '–'(엔진 applyPriceFromServer와 같은 규칙).
 function renderPriceBreakdown(breakdownJson) {
-    if (!breakdownJson) return '<div class="full ord-detail-value">견적 산출 내역이 없습니다 (구버전 주문이거나 도면 없이 접수됨).</div>';
+    if (!breakdownJson) return '<div class="ord-detail-value">견적 산출 내역이 없습니다 (구버전 주문이거나 도면 없이 접수됨).</div>';
     let b;
-    try { b = JSON.parse(breakdownJson); } catch { return '<div class="full ord-detail-value">견적 내역을 읽을 수 없습니다.</div>'; }
+    try { b = JSON.parse(breakdownJson); } catch { return '<div class="ord-detail-value">견적 내역을 읽을 수 없습니다.</div>'; }
 
-    const won = n => Number(n || 0).toLocaleString() + '원';
-    const rows = [
-        ['문',   b.door],
-        ['문틀', b.muntol],
-        ['목재비 합계', b.wood],
-        ['가공비' + (b.craftTime ? ` (${esc(b.craftTime)})` : ''), b.craft],
-        ['철물', b.hardware],
-        ['마감', b.finish],
-        ['부자재/간접비', b.overhead],
-        ['이윤', b.profit],
-    ];
+    const won = n => Math.round(Number(n || 0)).toLocaleString('ko-KR') + '원';
+    const row = (label, val, cls = '') => `<div class="ord-est-row ${cls}"><span>${label}</span><span>${val}</span></div>`;
+    const div = '<div class="ord-est-divider"></div>';
     return `
-        <table class="ord-price-table">
-            ${rows.map(([label, val]) => `<tr><td>${label}</td><td>${won(val)}</td></tr>`).join('')}
-            <tr class="ord-price-total"><td>합계</td><td>${won(b.total)}</td></tr>
-            <tr><td>계산 공식</td><td>${b.formulaVersion ? 'v' + esc(b.formulaVersion) : 'v1.0 (버전 기록 전)'}</td></tr>
-        </table>
+        <div class="ord-est-box">
+            <div class="ord-est-head"><span>예상가격</span><span class="ord-est-amount">${won(b.total)}</span></div>
+            <div class="ord-est-break">
+                ${row('문(창호) 목재', won(b.door))}
+                ${row('문틀 목재', won(b.muntol))}
+                ${row('목재비', won(b.wood), 'key')}
+                ${div}
+                ${row(`제작비 <small>${esc(b.craftTime || '')}</small>`, won(b.craft), 'key')}
+                ${row('부자재', won(b.hardware), 'key')}
+                ${row('마감', b.finish > 0 ? won(b.finish) : '–', 'key')}
+                ${div}
+                ${row('간접비', won(b.overhead), 'key')}
+                ${row('이익', won(b.profit), 'key')}
+                ${div}
+                ${row('판매가', won(b.total), 'key total')}
+            </div>
+            <div class="ord-est-note">계산 공식 ${b.formulaVersion ? 'v' + esc(b.formulaVersion) : 'v1.0 (버전 기록 전)'} · ※ 배송비·시공비 제외</div>
+        </div>
     `;
 }
 
 function renderHistory(history, engine) {
-    if (!history.length) return '';
     return `
-        <div class="full ord-detail-label">같은 도면의 이전 주문 이력</div>
-        <div class="full ord-detail-value">
             <div class="ord-history-list">
                 ${history.map(h => `
                     <div class="ord-history-item">
@@ -153,13 +157,12 @@ function renderHistory(history, engine) {
                     </div>
                 `).join('')}
             </div>
-        </div>
     `;
 }
 
 // 주문 시점 도면 사양 — 서버(order_spec_summary)가 spec_json을 요약해 내려준 값
 function renderSpec(spec, wood) {
-    if (!spec) return '<div class="full ord-detail-value">도면 사양 기록이 없습니다 (구버전 주문).</div>';
+    if (!spec) return null;
     const s = spec.size, f = spec.finish;
     const mm = n => Number(n).toLocaleString() + 'mm';
     const sw = c => c ? `<span class="ord-swatch" style="background:${esc(c.hex)}"></span>${c.label ? esc(c.label) : esc(c.hex)}` : '—';
@@ -190,13 +193,31 @@ function renderSpec(spec, wood) {
     }
     if (f.faceCells.length) finishRows.push(['칸별 면 재질', f.faceCells.map(c => `${sw(c)} — ${c.cells}칸`).join('<br>')]);
     const table = rows => `<table class="ord-price-table ord-spec-table">${rows.map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join('')}</table>`;
-    return `
-        <div class="full ord-detail-label">상세 크기</div>
-        <div class="full ord-detail-value">${table(sizeRows)}</div>
-        <div class="full ord-detail-label">마감</div>
-        <div class="full ord-detail-value">${table(finishRows)}</div>
-    `;
+    return { size: table(sizeRows), finish: table(finishRows) };
 }
+
+// 상세 모달의 정보 묶음 — 접고 편 상태는 묶음 key별로 이 브라우저에 기억(다음 주문을 열어도 유지)
+const ORD_GROUP_KEY = 'pmok_admin_order_groups';
+function ordGroupState() {
+    try { return JSON.parse(localStorage.getItem(ORD_GROUP_KEY) || '{}'); } catch { return {}; }
+}
+function ordGroup(key, title, body, defaultOpen = true) {
+    const st = ordGroupState();
+    const open = key in st ? st[key] : defaultOpen;
+    return `<details class="ord-group" data-group="${key}"${open ? ' open' : ''}>
+        <summary class="ord-group-title">${title}</summary>
+        <div class="ord-group-body">${body}</div>
+    </details>`;
+}
+document.addEventListener('toggle', e => {
+    const d = e.target;
+    if (!(d instanceof HTMLDetailsElement) || !d.classList.contains('ord-group')) return;
+    try {
+        const st = ordGroupState();
+        st[d.dataset.group] = d.open;
+        localStorage.setItem(ORD_GROUP_KEY, JSON.stringify(st));
+    } catch {}
+}, true);
 
 function drawingLink(o) {
     if (!o.drawing_id) return '<span class="ord-spec-sub">(저장 전 도면으로 접수 — 연결된 도면 없음)</span>';
@@ -204,45 +225,60 @@ function drawingLink(o) {
     return `<a href="/src/engine/${e}/${e}.php?drawing_id=${o.drawing_id}" target="_blank" rel="noopener" class="ord-drawing-link">엔진에서 도면 열기 ↗</a>`;
 }
 
-function renderDetail(o, history = [], spec = null, wood = null) {
+// 도면 최신 저장본의 예상가(params.estimatedPrice) — 주문 뒤 고객이 도면을 고쳤다면 주문 시점 판매가와 다르다
+function renderDrawingEstimate(o, de) {
+    if (!de || !(Number(de.price) > 0)) return '';
+    const won = n => Math.round(Number(n)).toLocaleString('ko-KR') + '원';
+    const base = JSON.parse(o.price_breakdown || 'null')?.total ?? o.estimated_price;
+    const diff = Number(base) > 0 ? Math.round(de.price - base) : 0;
+    return `<div class="ord-est-current">현재 도면 저장본 예상가 <strong>${won(de.price)}</strong>`
+        + (diff ? ` <span class="ord-estimate-diff">(주문 시점보다 ${diff > 0 ? '+' : '−'}${Math.abs(diff).toLocaleString()}원)</span>` : ' <span class="ord-spec-sub">(주문 시점과 같음)</span>')
+        + ` <span class="ord-spec-sub">· ${fmtOrderDatetime(de.saved_at)} 저장</span></div>`;
+}
+
+function renderDetail(o, history = [], spec = null, wood = null, drawingEstimate = null) {
     const shipAddr = [o.ship_zipcode, o.ship_address, o.ship_address_detail].filter(Boolean).join(' ');
+    const specHtml = renderSpec(spec, wood);
+    const noSpec   = '<div class="ord-detail-value">도면 사양 기록이 없습니다 (구버전 주문).</div>';
     document.getElementById('admDetailContent').innerHTML = `
-        ${o.thumbnail ? `<img src="${o.thumbnail}" class="ord-thumb" alt="도면 썸네일">` : ''}
-        <div class="ord-detail-grid">
-            <div class="full ord-detail-label">엔진/도면</div>
-            <div class="full ord-detail-value">${ENGINE_MAP[o.engine] || esc(o.engine)} — ${esc(o.title || '(제목 없음)')}${o.version_label ? ' (' + esc(o.version_label) + ')' : ''} ${drawingLink(o)}</div>
+        ${ordGroup('drawing', '도면', `
+            ${o.thumbnail ? `<img src="${o.thumbnail}" class="ord-thumb" alt="도면 썸네일">` : ''}
+            <div class="ord-detail-value">${ENGINE_MAP[o.engine] || esc(o.engine)} — ${esc(o.title || '(제목 없음)')}${o.version_label ? ' (' + esc(o.version_label) + ')' : ''} ${drawingLink(o)}</div>
+        `)}
 
-            ${renderSpec(spec, wood)}
+        ${ordGroup('customer', '주문·고객', `
+            <div class="ord-detail-grid">
+                <div class="ord-detail-label">고객명</div>
+                <div class="ord-detail-label">연락처</div>
+                <div class="ord-detail-value">${esc(o.customer_name)}</div>
+                <div class="ord-detail-value">${esc(o.customer_phone)}</div>
 
-            ${renderHistory(history, o.engine)}
+                <div class="ord-detail-label">회사명</div>
+                <div class="ord-detail-label">납기희망일</div>
+                <div class="ord-detail-value">${o.company_name ? esc(o.company_name) : '—'}</div>
+                <div class="ord-detail-value">${o.due_date || '—'}</div>
 
-            <div class="ord-detail-label">고객명</div>
-            <div class="ord-detail-label">연락처</div>
-            <div class="ord-detail-value">${esc(o.customer_name)}</div>
-            <div class="ord-detail-value">${esc(o.customer_phone)}</div>
+                <div class="full ord-detail-label">배송지</div>
+                <div class="full ord-detail-value">${shipAddr ? esc(shipAddr) : '—'}${o.ship_phone ? ' / ' + esc(o.ship_phone) : ''}</div>
 
-            <div class="ord-detail-label">회사명</div>
-            <div class="ord-detail-label">납기희망일</div>
-            <div class="ord-detail-value">${o.company_name ? esc(o.company_name) : '—'}</div>
-            <div class="ord-detail-value">${o.due_date || '—'}</div>
+                <div class="full ord-detail-label">요청사항</div>
+                <div class="full ord-detail-value">${o.memo ? esc(o.memo) : '—'}</div>
 
-            <div class="full ord-detail-label">배송지</div>
-            <div class="full ord-detail-value">${shipAddr ? esc(shipAddr) : '—'}${o.ship_phone ? ' / ' + esc(o.ship_phone) : ''}</div>
+                <div class="ord-detail-label">확정 가격</div>
+                <div class="ord-detail-label">주문일시</div>
+                <div class="ord-detail-value">${o.final_price ? Number(o.final_price).toLocaleString() + '원' : '미입력'}</div>
+                <div class="ord-detail-value">${fmtOrderDatetime(o.created_at)}</div>
 
-            <div class="full ord-detail-label">요청사항</div>
-            <div class="full ord-detail-value">${o.memo ? esc(o.memo) : '—'}</div>
+                <div class="ord-detail-label">최근 처리일시</div>
+                <div class="ord-detail-label"></div>
+                <div class="ord-detail-value">${fmtOrderDatetime(o.reviewed_at)}</div>
+            </div>
+        `)}
 
-            <div class="full ord-detail-label">주문 시점 예상견적 상세 (도면 화면과 동일한 산출 내역 — 상담 참고용)</div>
-            <div class="full ord-detail-value">${renderPriceBreakdown(o.price_breakdown)}</div>
-
-            <div class="ord-detail-label">확정 가격</div>
-            <div class="ord-detail-label">주문일시</div>
-            <div class="ord-detail-value">${o.final_price ? Number(o.final_price).toLocaleString() + '원' : '미입력'}</div>
-            <div class="ord-detail-value">${fmtOrderDatetime(o.created_at)}</div>
-
-            <div class="ord-detail-label">최근 처리일시</div>
-            <div class="ord-detail-value">${fmtOrderDatetime(o.reviewed_at)}</div>
-        </div>
+        ${ordGroup('size', '상세 크기', specHtml ? specHtml.size : noSpec)}
+        ${ordGroup('finish', '마감', specHtml ? specHtml.finish : noSpec)}
+        ${ordGroup('estimate', '예상 견적 <small>주문 시점 도면 화면 그대로</small>', renderPriceBreakdown(o.price_breakdown) + renderDrawingEstimate(o, drawingEstimate))}
+        ${history.length ? ordGroup('history', `같은 도면의 이전 주문 <small>${history.length}건</small>`, renderHistory(history, o.engine), false) : ''}
     `;
 }
 

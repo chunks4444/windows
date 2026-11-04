@@ -160,8 +160,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || ($_SERVER['REQUEST_METHOD'] === 'POS
             $history = $histStmt->fetchAll();
         }
 
+        // 도면 최신 저장본의 예상견적 — 엔진 getParams()가 저장 시 화면의 예상가를 estimatedPrice로 함께 남긴다.
+        // 주문 뒤 고객이 도면을 고쳐 다시 저장했다면 주문 시점 예상가(orders.estimated_price)와 달라질 수 있어 둘 다 보여준다.
+        $drawingEstimate = null;
+        if ($order['drawing_id']) {
+            $verStmt = $pdo->prepare(
+                "SELECT JSON_EXTRACT(params, '$.estimatedPrice') AS price, saved_at FROM drawing_versions
+                 WHERE drawing_id = ? ORDER BY saved_at DESC, id DESC LIMIT 1"
+            );
+            $verStmt->execute([$order['drawing_id']]);
+            if ($ver = $verStmt->fetch()) {
+                $drawingEstimate = ['price' => $ver['price'] !== null ? (float) $ver['price'] : null, 'saved_at' => $ver['saved_at']];
+            }
+        }
+
         echo json_encode([
             'order'   => $order,
+            'drawingEstimate' => $drawingEstimate,
             'history' => $history,
             'spec'    => order_spec_summary($order['engine'], $order['spec_json']),
             'wood'    => order_wood_usage($order['spec_json'], $order['price_breakdown']),
