@@ -96,7 +96,7 @@ async function openModal(id) {
     if (!res.ok) { document.getElementById('admDetailContent').innerHTML = `<p style="color:var(--danger);">${esc(data.error || '불러오기 실패')}</p>`; return; }
 
     document.getElementById('admModalTitle').textContent = `${fmtOrderCode(data.order.engine, id)} 상세`;
-    renderDetail(data.order, data.history || [], data.spec, data.wood, data.drawingEstimate);
+    renderDetail(data.order, data.history || [], data.spec, data.wood, data.drawingEstimate, data.quotes || []);
     document.getElementById('admMStatus').value     = data.order.status;
     document.getElementById('admMNote').value        = data.order.revision_note || '';
     document.getElementById('admMCarrier').value     = data.order.tracking_carrier || '';
@@ -246,7 +246,19 @@ function renderDrawingEstimate(o, de) {
         + ` <span class="ord-spec-sub">· ${fmtOrderDatetime(de.saved_at)} 저장</span></div>`;
 }
 
-function renderDetail(o, history = [], spec = null, wood = null, drawingEstimate = null) {
+// 이 주문의 견적서 발행 이력 + 작성 버튼 — 작성·발행은 어드민 '견적서' 메뉴(src/admin/quotes.php)에서 한다
+function renderQuotes(o, quotes) {
+    const won = n => Math.round(Number(n)).toLocaleString('ko-KR') + '원';
+    const list = quotes.length ? `<div class="ord-quote-list">${quotes.map((q, i) => `
+        <div><a href="/src/quote/view.php?id=${q.id}" target="_blank" rel="noopener">${esc(q.quote_no)}</a>${i ? ' <span class="ord-spec-sub">(재발행됨)</span>' : ''}
+        <span class="ord-spec-sub">· ${fmtOrderDatetime(q.issued_at)} · 공급가액 ${won(q.supply_amount)} / 합계 ${won(q.total_amount)} · ${q.emailed_at ? '메일 ' + fmtOrderDatetime(q.emailed_at) : '메일 안 보냄'}</span></div>`).join('')}</div>`
+        : '<div class="ord-detail-value" style="margin-bottom:10px;">아직 발행한 견적서가 없습니다.</div>';
+    const btn = o.status === 'cancelled' ? '' :
+        `<a class="adm-btn-save" style="display:inline-flex;align-items:center;text-decoration:none;" href="/src/admin/quotes.php?order_id=${o.id}">${quotes.length ? '견적서 재발행' : '견적서 작성'}</a>`;
+    return list + btn;
+}
+
+function renderDetail(o, history = [], spec = null, wood = null, drawingEstimate = null, quotes = []) {
     const shipAddr = [o.ship_zipcode, o.ship_address, o.ship_address_detail].filter(Boolean).join(' ');
     const specHtml = renderSpec(spec, wood);
     const noSpec   = '<div class="ord-detail-value">도면 사양 기록이 없습니다 (구버전 주문).</div>';
@@ -288,6 +300,7 @@ function renderDetail(o, history = [], spec = null, wood = null, drawingEstimate
         ${ordGroup('size', '상세 크기', specHtml ? specHtml.size : noSpec)}
         ${ordGroup('finish', '마감', specHtml ? specHtml.finish : noSpec)}
         ${ordGroup('estimate', '예상 견적 <small>도면 화면 그대로 · 시점 고정</small>', renderPriceBreakdown(o.price_breakdown, o.created_at) + renderDrawingEstimate(o, drawingEstimate))}
+        ${ordGroup('quotes', `견적서 <small>${quotes.length ? quotes.length + '건 발행' : '미발행'}</small>`, renderQuotes(o, quotes))}
         ${history.length ? ordGroup('history', `같은 도면의 이전 주문 <small>${history.length}건</small>`, renderHistory(history, o.engine), false) : ''}
     `;
 }

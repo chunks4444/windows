@@ -257,7 +257,7 @@ function get_frame_size_steps_all(): array {
 // 예상원가 공식 버전 — compute_price_estimate() 또는 엔진별 geometry.php의 부재·짜임 수 산정을 바꾸면
 // 버전을 올리고 COST_FORMULA_HISTORY 맨 위에 한 줄 추가할 것. 견적 요청(orders.price_breakdown.formulaVersion)에
 // 이 버전이 함께 저장되어, 나중에 옛 견적 금액이 왜 다른지 추적할 수 있다. 관리자 원가 테이블 '계산 방법' 탭에 표시.
-// (orders.price_formula_version 컬럼은 관리자가 확정가를 수기 입력했는지('manual') 표시하는 별개 용도)
+// (orders.price_formula_version 컬럼은 관리자가 확정가를 수기 입력했는지('manual') 표시하는 별개 용도, 견적서 발행으로 정해졌으면 'quote')
 const COST_FORMULA_VERSION = '1.1';
 const COST_FORMULA_HISTORY = [
     ['1.1', '2026-10-04', '짜임 작업시간에 문짝 수 반영(7엔진 공통 — 이전엔 2짝 이상도 짜임 작업이 1짝 분량만 잡힘). 몬드리안은 실제 살 개수·길이로 살 목재를, 짜임 수는 살 개수×2로 계산.'],
