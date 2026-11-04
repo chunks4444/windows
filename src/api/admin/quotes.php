@@ -8,7 +8,7 @@
 // POST {action:'issue', order_id?, base_no?, title, items, valid_until, lead_time, note, set_status, customer}
 //                                          발행(새 차수 저장). 주문 견적서면 확정가 갱신 → (선택) 상태 '견적확정'. 메일은 보내지 않는다.
 //                                          order_id 없으면 견적요청 없이 직접 작성(base_no 있으면 그 묶음 재발행, 없으면 새 PM-yymmdd-NN).
-// POST {action:'send', quote_id}           고객에게 발신 — 관리자가 견적서 화면에서 검토한 뒤 따로 누른다(견적서 전문이 메일 본문).
+// POST {action:'send', quote_id, intro}    고객에게 발신(intro = 메일 맨 위 인사말, 비우면 견본 문구) — 관리자가 견적서 화면에서 검토한 뒤 따로 누른다(견적서 전문이 메일 본문).
 //                                          최신 차수만 발신 가능(재발행으로 효력 없는 이전 차수는 막음). 다시 누르면 재발신.
 // POST {action:'supplier', supplier}       공급자(평목) 정보 저장
 header('Content-Type: application/json; charset=UTF-8');
@@ -87,7 +87,7 @@ function default_items(array $o): array {
 }
 
 // 메일 본문 = 견적서 문서 그 자체(components/quote_document.php, 인라인 스타일). 고객용 웹 열람 화면이 없으므로 링크 대신 내용 전체를 싣는다.
-function send_quote_mail(array $q): bool {
+function send_quote_mail(array $q, string $intro = ''): bool {
     $customer = json_decode($q['customer_json'], true) ?: [];
     $to = $customer['email'] ?? '';
     if (!filter_var($to, FILTER_VALIDATE_EMAIL)) return false;
@@ -102,7 +102,7 @@ function send_quote_mail(array $q): bool {
         $to,
         '[워크그룹 평목] 견적서 ' . $q['quote_no'] . ($q['title'] ? ' — ' . $q['title'] : ''),
         'quote',
-        ['quote' => $q],
+        ['quote' => $q, 'intro' => $intro],
         '', 'sales', mail_address('sales'),
         [['name' => quote_pdf_filename($q), 'type' => 'application/pdf', 'content' => $pdf]]
     );
@@ -301,7 +301,9 @@ case 'send': {
     if ((int) $q['revision'] < (int) $q['latest_revision']) fail('재발행되어 효력이 없는 이전 차수는 발신할 수 없습니다.');
     $to = json_decode($q['customer_json'], true)['email'] ?? '';
     if (!filter_var($to, FILTER_VALIDATE_EMAIL)) fail('수신자 이메일(' . $to . ')이 올바르지 않습니다. 이메일을 고쳐 재발행한 뒤 발신하세요.');
-    if (!send_quote_mail($q)) fail('메일 발송에 실패했습니다. 수신자 이메일(' . $to . ')과 메일 발송 설정을 확인해주세요.', 500);
+    $intro = trim((string) ($body['intro'] ?? ''));
+    if (mb_strlen($intro) > 2000) fail('메일 인사말이 너무 깁니다.');
+    if (!send_quote_mail($q, $intro)) fail('메일 발송에 실패했습니다. 수신자 이메일(' . $to . ')과 메일 발송 설정을 확인해주세요.', 500);
     $pdo->prepare('UPDATE quotes SET emailed_to = ?, emailed_at = NOW() WHERE id = ?')->execute([$to, $q['id']]);
     out(['ok' => true, 'to' => $to]);
 }

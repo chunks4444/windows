@@ -10,6 +10,8 @@
 
 require_once __DIR__ . '/db.php';
 
+// 발신 메일 맨 위 인사말 견본 — 관리자가 견적서 화면의 '메일 인사말' 칸에서 매번 고쳐 보낼 수 있고, 비우면 이 문구
+const QUOTE_MAIL_INTRO_DEFAULT = "안녕하세요, 워크그룹 평목입니다.\n요청하신 견적서를 보내드립니다. 같은 내용의 PDF 파일을 첨부했습니다.\n내용 확인 후 문의 사항은 이 메일에 회신해 주세요.";
 const QUOTE_VAT_RATE   = 0.10;
 const QUOTE_MAX_ITEMS  = 30;
 const QUOTE_ENGINE_CODE = ['classic' => 'CL', 'square' => 'SQ', 'cross' => 'CR', 'diamond' => 'DM', 'triangle' => 'TR', 'hexagon' => 'HX', 'mondrian' => 'MD'];

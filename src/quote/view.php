@@ -41,6 +41,9 @@ $h = fn($v) => htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8');
     .qv-send .st b { color: #23262A; }
     .qv-send button { height: 34px; padding: 0 16px; border-radius: 6px; border: none; background: #23262A; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; }
     .qv-send button:disabled { opacity: .5; cursor: default; }
+    .qv-send .intro { width: 100%; display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 600; }
+    .qv-send .intro small { font-weight: 400; color: #6B6A66; }
+    .qv-send .intro textarea { width: 100%; box-sizing: border-box; border: 1px solid #C9C6BF; border-radius: 6px; padding: 8px; font: inherit; font-size: 13px; font-weight: 400; line-height: 1.6; resize: vertical; }
     .qv-send .msg { width: 100%; font-size: 12px; }
     .qv-send .msg:empty { display: none; }
     .qv-send .msg.err { color: #8A2A2A; }
@@ -78,6 +81,10 @@ $h = fn($v) => htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8');
     </div>
     <a href="/src/admin/quotes.php?<?= $quote['order_id'] ? 'order_id=' . (int) $quote['order_id'] : 'base_no=' . rawurlencode($quote['base_no']) ?>" style="font-size:13px;color:#23262A;">고칠 곳이 있으면 재발행</a>
     <button id="qvSendBtn" onclick="sendQuote()" <?= $sendTo === '' ? 'disabled' : '' ?>><?= $quote['emailed_at'] ? '다시 발신' : '고객에게 발신' ?></button>
+    <label class="intro">
+        <span>메일 인사말 <small>— 메일 맨 위, 견적서 위에 들어가는 문구. 견본이니 고쳐서 보내세요 (비우면 견본 그대로)</small></span>
+        <textarea id="qvIntro" rows="4" maxlength="2000"><?= $h(QUOTE_MAIL_INTRO_DEFAULT) ?></textarea>
+    </label>
     <div class="msg" id="qvSendMsg"></div>
 </div>
 <?php endif; ?>
@@ -97,7 +104,7 @@ async function sendQuote() {
         const res = await fetch('/src/api/admin/quotes.php', {
             method: 'POST', credentials: 'same-origin',
             headers: Object.assign({ 'Content-Type': 'application/json' }, tk ? { Authorization: 'Bearer ' + tk } : {}),
-            body: JSON.stringify({ action: 'send', quote_id: <?= (int) $quote['id'] ?> }),
+            body: JSON.stringify({ action: 'send', quote_id: <?= (int) $quote['id'] ?>, intro: document.getElementById('qvIntro').value }),
         });
         const data = await res.json().catch(() => ({ error: '서버 응답을 읽지 못했습니다.' }));
         if (!res.ok) throw new Error(data.error || '발신에 실패했습니다.');
