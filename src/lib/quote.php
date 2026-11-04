@@ -228,7 +228,6 @@ function quote_pdf(array $quote): string {
     $mpdf->SetTitle('견적서 ' . $quote['quote_no']);
     $mpdf->SetAuthor(json_decode($quote['supplier_json'], true)['name'] ?? '워크그룹 평목');
 
-    $quoteShowThumb = true;
     ob_start();
     include __DIR__ . '/../components/quote_document.php';
     $html = ob_get_clean();

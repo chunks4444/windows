@@ -11,7 +11,7 @@
         요청하신 창호 제작 견적서를 보내드립니다(같은 내용의 PDF 파일을 첨부했습니다). 내용 확인 후 문의 사항은 이 메일에 회신해 주세요.
       </td></tr>
       <tr><td style="padding:16px 28px 28px;">
-        <?php $quoteShowThumb = false; include __DIR__ . '/../quote_document.php'; ?>
+        <?php include __DIR__ . '/../quote_document.php'; ?>
       </td></tr>
     </table>
     <p style="font-size:11px;color:#6B6A66;margin:14px 0 0;">워크그룹 평목 · pyeongmok.com</p>

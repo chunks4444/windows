@@ -82,7 +82,7 @@ $h = fn($v) => htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8');
 </div>
 <?php endif; ?>
 <div class="qv-page">
-    <?php $quoteShowThumb = true; include __DIR__ . '/../components/quote_document.php'; ?>
+    <?php include __DIR__ . '/../components/quote_document.php'; ?>
 </div>
 <?php if (!$superseded): ?>
 <script>

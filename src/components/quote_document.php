@@ -1,7 +1,7 @@
 <?php
 // 견적서 문서 본체 — 관리자 견적서 화면(src/quote/view.php)과 고객 메일 본문(components/mailform/quote.php)이 함께 쓴다.
 // 메일 프로그램은 <style>·CSS 변수를 대부분 무시하므로 표 레이아웃 + 인라인 스타일 + 색상값 직접 지정으로만 그린다.
-// 입력: $quote (src/lib/quote.php quote_by_id() 결과), 선택: $quoteShowThumb (도면 썸네일 표시 — data URI라 메일에선 끔)
+// 입력: $quote (src/lib/quote.php quote_by_id() 결과). 도면 그림은 넣지 않는다(품목이 여러 개면 복잡해서 — 2026-11-04 사용자 결정).
 require_once __DIR__ . '/../lib/quote.php';
 
 $__q    = $quote;
@@ -95,14 +95,6 @@ $__supplierRows = [
     </td>
   </tr>
 
-  <?php if (!empty($quoteShowThumb) && !empty($__q['thumbnail'])): ?>
-  <tr>
-    <td style="padding:0 0 16px;text-align:center;">
-      <img src="<?= $__h($__q['thumbnail']) ?>" alt="도면" style="max-width:100%;max-height:260px;border:1px solid <?= $__line ?>;">
-      <div style="font-size:11px;color:<?= $__muted ?>;margin-top:4px;">도면: <?= $__h($__q['title']) ?><?= !empty($__q['version_label']) ? ' (' . $__h($__q['version_label']) . ')' : '' ?></div>
-    </td>
-  </tr>
-  <?php endif; ?>
 
   <!-- 품목 -->
   <tr>
