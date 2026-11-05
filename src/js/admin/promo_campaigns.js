@@ -76,6 +76,9 @@ function getBodyHtml() {
 function setBodyHtml(html) { jodit.value = html; }
 
 // ── 편집기 ───────────────────────────────────────────────
+// 새 홍보메일을 열 때 제목 칸에 미리 들어가는 기본 제목 ({{회사명}}은 발송 시 받는 회사 이름으로 바뀜)
+const DEFAULT_SUBJECT = '[제작 협력] {{회사명}} — 창호·파티션 제작 파트너 제안';
+
 async function openEditor(id) {
     let c = null;
     if (id) {
@@ -85,7 +88,7 @@ async function openEditor(id) {
     document.getElementById('pmEditorTitle').textContent = c ? '홍보메일 편집' : '새 홍보메일';
     document.getElementById('pmId').value      = c?.id ?? '';
     document.getElementById('pmTitle').value   = c?.title ?? '';
-    document.getElementById('pmSubject').value = c?.subject ?? '';
+    document.getElementById('pmSubject').value = c ? (c.subject ?? '') : DEFAULT_SUBJECT;
     setBodyHtml(c?.html_body ?? '<h2>{{회사명}} 담당자님, 안녕하세요</h2><p>워크그룹 평목입니다. </p>');
     document.getElementById('pmWhen').value    = '';
     document.getElementById('pmEditorMsg').textContent = '';
