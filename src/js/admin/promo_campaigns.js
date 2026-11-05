@@ -115,6 +115,11 @@ function renderTemplateSelect(selectId) {
 function onTplSelect() {
     const has = tplId() > 0;
     ['pmTplLoad', 'pmTplUpdate', 'pmTplDelete'].forEach(id => document.getElementById(id).disabled = !has);
+    // 선택한 템플릿에 PDF가 있으면 파일명을 바로 보여준다
+    const t = templates.find(x => x.id == tplId());
+    document.getElementById('pmTplInfo').innerHTML = !t ? '' : (t.attachment_name
+        ? `<i class="bi bi-file-earmark-pdf"></i> <strong>${esc(t.attachment_name)}</strong> <span style="color:var(--text-muted);">(${(t.attachment_size / 1048576).toFixed(1)}MB)</span>`
+        : '<span class="adm-null">첨부 PDF 없음</span>');
 }
 
 async function loadTemplate() {
@@ -127,13 +132,14 @@ async function loadTemplate() {
     // 템플릿에 PDF가 있으면 이 캠페인의 첨부로 연결한다 (같은 파일을 가리키므로 다시 올릴 필요 없음).
     // 캠페인이 저장돼 있어야 하므로 필요하면 먼저 임시저장한다. 템플릿에 PDF가 없으면 지금 첨부는 그대로 둔다.
     if (t.attachment_name) {
+        showPdf(t.attachment_name, t.attachment_size);
         const id = await saveDraft(true);
         if (!id) return;
         const { ok, data } = await _post({ action: 'apply_template', campaign_id: id, template_id: t.id });
         if (ok) showPdf(data.attachment_name, data.attachment_size);
         else { msg(data.error || '템플릿 PDF 적용 실패', false); return; }
     }
-    msg(`"${t.name}" 템플릿을 불러왔습니다.${t.attachment_name ? ' (PDF 포함)' : ''}`, true);
+    msg(`"${t.name}" 템플릿을 불러왔습니다.${t.attachment_name ? ` 첨부: ${t.attachment_name}` : ' (첨부 PDF 없음)'}`, true);
 }
 
 async function saveTemplate(asNew) {

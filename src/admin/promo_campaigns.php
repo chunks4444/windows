@@ -71,6 +71,7 @@ require_admin_role('s');
                 <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;">
                     <select id="pmTplSelect" onchange="onTplSelect()" style="height:34px;min-width:220px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg);color:var(--text);padding:0 8px;font-size:13px;"></select>
                     <button type="button" class="adm-btn-cancel" id="pmTplLoad" onclick="loadTemplate()">불러오기</button>
+                    <span id="pmTplInfo" style="font-size:12px;"></span>
                     <button type="button" class="adm-btn-cancel" id="pmTplUpdate" onclick="saveTemplate(false)">선택한 템플릿에 덮어쓰기</button>
                     <button type="button" class="adm-btn-cancel" onclick="saveTemplate(true)">새 템플릿으로 저장</button>
                     <button type="button" class="adm-withdraw-btn" id="pmTplDelete" onclick="deleteTemplate()">템플릿 삭제</button>
