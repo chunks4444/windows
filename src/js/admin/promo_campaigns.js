@@ -119,7 +119,7 @@ function onTplSelect() {
     const t = templates.find(x => x.id == tplId());
     document.getElementById('pmTplInfo').innerHTML = !t ? '' : (t.attachment_name
         ? `<i class="bi bi-file-earmark-pdf"></i> <strong>${esc(t.attachment_name)}</strong> <span style="color:var(--text-muted);">(${(t.attachment_size / 1048576).toFixed(1)}MB)</span>`
-        : '<span class="adm-null">첨부 PDF 없음</span>');
+        : '<span class="adm-null">이 템플릿에는 저장된 PDF 없음 (지금 첨부한 파일은 그대로 유지됩니다)</span>');
 }
 
 async function loadTemplate() {
@@ -139,7 +139,7 @@ async function loadTemplate() {
         if (ok) showPdf(data.attachment_name, data.attachment_size);
         else { msg(data.error || '템플릿 PDF 적용 실패', false); return; }
     }
-    msg(`"${t.name}" 템플릿을 불러왔습니다.${t.attachment_name ? ` 첨부: ${t.attachment_name}` : ' (첨부 PDF 없음)'}`, true);
+    msg(`"${t.name}" 템플릿을 불러왔습니다.${t.attachment_name ? ` 첨부: ${t.attachment_name}` : (document.getElementById('pmPdfRemove').style.display === 'none' ? ' (첨부 PDF 없음)' : ' 템플릿에 PDF는 없어 지금 첨부한 파일을 그대로 둡니다. 템플릿에도 저장하려면 "선택한 템플릿에 덮어쓰기"를 누르세요.')}`, true);
 }
 
 async function saveTemplate(asNew) {
