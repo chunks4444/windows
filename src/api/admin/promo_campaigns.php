@@ -230,6 +230,8 @@ if ($action === 'save') {
 if ($action === 'preview' || $action === 'test') {
     $html    = (string)($body['html_body'] ?? '');
     $camp    = ['html_body' => $html, 'subject' => (string)($body['subject'] ?? '')];
+    // 저장된 캠페인이면 첨부 PDF 다운로드 링크({{첨부파일링크}})가 실제 파일을 가리키게 한다
+    if ((int)($body['id'] ?? 0) > 0) $camp['attachment_path'] = load_campaign($pdo, (int)$body['id'])['attachment_path'];
     // 테스트는 DB에 등록된 회사를 골라 그 회사명으로 치환해 볼 수 있다. 수신거부 링크는 id 0(무효)로 두어
     // 테스트 메일의 링크를 눌러도 실제 회사가 수신거부 처리되지 않게 한다.
     $testName = '(회사명)';

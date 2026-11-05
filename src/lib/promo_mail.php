@@ -142,14 +142,28 @@ function promo_attachments(array $c): ?array {
     return [['name' => $c['attachment_name'] ?: 'portfolio.pdf', 'content' => $bin, 'type' => 'application/pdf']];
 }
 
+// 본문의 {{첨부파일링크}}가 바뀔 주소 — 캠페인에 올린 PDF를 바로 내려받는 공개 주소.
+// 첨부 PDF가 없으면 버튼이 깨지지 않도록 온라인 포트폴리오 페이지로 보낸다. (HTML 속성 안에 들어가므로 & 는 &amp;)
+function promo_attachment_link(array $c): string {
+    $path = (string)($c['attachment_path'] ?? '');
+    if ($path !== '' && preg_match('/^[0-9a-f]{32}\.pdf$/', basename($path))) {
+        return SITE_URL . '/src/api/promo/download.php?f=' . basename($path);
+    }
+    return SITE_URL . '/portfolio?utm_source=b2b_mail&amp;utm_medium=email&amp;utm_campaign=partnership';
+}
+
 // 수신자 한 명에게 보낼 최종 HTML. 회사명 자리표시 치환 + 발신자 정보·수신거부 푸터 자동 부착.
 // 본문이 <html>…</html> 완성 문서면 그 문서를 그대로 쓰고 푸터만 </body> 앞에 넣는다 (한 번 더 감싸면 문서가 중첩된다).
 function promo_render(array $campaign, array $company, string $worksHtml): string {
     $unsub = promo_unsub_url((int)$company['id']);
     $body  = preg_replace('#<script\b.*?</script>#is', '', (string)$campaign['html_body']);
     $body  = promo_replace_name($body, htmlspecialchars($company['name'], ENT_QUOTES, 'UTF-8'));
-    $body  = strtr($body, ['{{수신거부링크}}' => $unsub]);
-    $footer = '<div style="max-width:600px;margin:0 auto;padding:16px 20px 24px;font-family:\'Apple SD Gothic Neo\',\'Malgun Gothic\',sans-serif;">'
+    $body  = strtr($body, [
+        '{{수신거부링크}}' => $unsub,
+        '{{첨부파일링크}}' => promo_attachment_link($campaign),
+        '{{첨부링크}}'     => promo_attachment_link($campaign),
+    ]);
+    $footer ='<div style="max-width:600px;margin:0 auto;padding:16px 20px 24px;font-family:\'Apple SD Gothic Neo\',\'Malgun Gothic\',sans-serif;">'
         . '<div style="margin-top:16px;padding-top:16px;border-top:1px solid #eee;font-size:11px;color:#999;line-height:1.6;">'
         . '이 메일은 광고성 정보입니다. 발신: ' . SITE_NAME . ' · ' . htmlspecialchars(mail_address('sales'), ENT_QUOTES, 'UTF-8') . '<br>'
         . '더 이상 받고 싶지 않으시면 <a href="' . $unsub . '" style="color:#999;">수신거부</a>를 눌러 주세요.'
