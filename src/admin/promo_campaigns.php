@@ -79,7 +79,7 @@ require_admin_role('s');
                 <textarea id="pmHtml"></textarea>
             </div>
             <div class="adm-mfield">
-                <label>포트폴리오 PDF 첨부 — 모든 수신자에게 이 파일이 첨부되어 갑니다 (PDF, 10MB 이하)</label>
+                <label>포트폴리오 PDF 첨부 — 8MB 이하는 메일에 첨부되고, 그보다 크면 첨부 없이 본문의 PDF 다운로드 링크로만 전달됩니다 (PDF, 30MB 이하)</label>
                 <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;">
                     <input type="file" id="pmPdfFile" accept="application/pdf,.pdf" style="display:none;" onchange="uploadPdf(this)">
                     <button type="button" class="adm-btn-cancel" onclick="document.getElementById('pmPdfFile').click()"><i class="bi bi-paperclip"></i> PDF 선택</button>

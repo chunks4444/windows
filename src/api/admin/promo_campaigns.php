@@ -89,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     exit;
 }
 
-const PROMO_PDF_MAX = 10 * 1024 * 1024; // 메일 첨부는 10MB 이하 — 크면 수신 서버에서 거부·스팸 처리되기 쉽다
+const PROMO_PDF_MAX = 30 * 1024 * 1024; // 업로드 한도. 메일에 붙이는 건 PROMO_ATTACH_MAX(8MB) 이하만, 큰 파일은 다운로드 링크로만 간다
 
 function delete_pdf_file(string $path): void {
     $root = realpath(__DIR__ . '/../../../uploads/promo');
@@ -111,7 +111,7 @@ if (($_POST['action'] ?? '') === 'upload_pdf') {
     if (!in_array($c['status'], ['draft', 'canceled'], true)) fail(409, '발송 중이거나 완료된 캠페인은 수정할 수 없습니다.');
     $f = $_FILES['pdf'] ?? null;
     if (!$f || $f['error'] !== UPLOAD_ERR_OK) fail(400, 'PDF 업로드에 실패했습니다.');
-    if ($f['size'] > PROMO_PDF_MAX) fail(400, 'PDF는 10MB 이하여야 합니다.');
+    if ($f['size'] > PROMO_PDF_MAX) fail(400, 'PDF는 30MB 이하여야 합니다.');
     $head = (string)@file_get_contents($f['tmp_name'], false, null, 0, 5);
     if ($head !== '%PDF-') fail(400, 'PDF 파일만 올릴 수 있습니다.');
 
@@ -211,7 +211,7 @@ if ($action === 'save') {
     $html    = (string)($body['html_body'] ?? '');
     $inds    = clean_list((array)($body['industries'] ?? []), PROMO_INDUSTRIES);
     if ($title === '')   fail(400, '관리용 이름을 입력하세요.');
-    if ($subject === '') fail(400, '메일 제목을 입력하세요.');
+    if ($subject === '' && empty($body['draft'])) fail(400, '메일 제목을 입력하세요.');
 
     if ($id) {
         $c = load_campaign($pdo, $id);

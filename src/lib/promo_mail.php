@@ -132,11 +132,14 @@ function promo_subject_for(string $subject, string $companyName): string {
 }
 
 // 캠페인에 붙은 PDF를 메일 첨부 형식으로 읽는다. 첨부가 없으면 [], 있는데 파일이 없으면 null(발송하면 안 됨).
+// 파일이 PROMO_ATTACH_MAX보다 크면 메일에는 붙이지 않는다(받는 서버가 반송·스팸 처리) — 본문의 {{첨부파일링크}} 다운로드 링크로만 전달.
+const PROMO_ATTACH_MAX = 8 * 1024 * 1024;
 function promo_attachments(array $c): ?array {
     if (($c['attachment_path'] ?? '') === '') return [];
     $file = realpath(__DIR__ . '/../..' . $c['attachment_path']);
     $root = realpath(__DIR__ . '/../../uploads/promo');
     if (!$file || !$root || !str_starts_with($file, $root . DIRECTORY_SEPARATOR)) return null;
+    if (filesize($file) > PROMO_ATTACH_MAX) return [];
     $bin = @file_get_contents($file);
     if ($bin === false || $bin === '') return null;
     return [['name' => $c['attachment_name'] ?: 'portfolio.pdf', 'content' => $bin, 'type' => 'application/pdf']];

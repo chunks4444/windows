@@ -168,7 +168,7 @@ async function deleteTemplate() {
 function showPdf(name, size) {
     const has = !!name;
     document.getElementById('pmPdfInfo').innerHTML = has
-        ? `<i class="bi bi-file-earmark-pdf"></i> ${esc(name)} <span style="color:var(--text-muted);">(${(size / 1048576).toFixed(1)}MB)</span>`
+        ? `<i class="bi bi-file-earmark-pdf"></i> <strong>${esc(name)}</strong> <span style="color:var(--text-muted);">(${(size / 1048576).toFixed(1)}MB · ${size > 8 * 1048576 ? '메일에는 첨부 안 함, 다운로드 링크로만 전달' : '메일에 첨부 + 다운로드 링크'})</span>`
         : '<span class="adm-null">첨부 없음</span>';
     document.getElementById('pmPdfRemove').style.display = has ? '' : 'none';
 }
@@ -177,17 +177,18 @@ async function uploadPdf(input) {
     const file = input.files[0];
     input.value = '';
     if (!file) return;
-    if (file.size > 10 * 1048576) { msg('PDF는 10MB 이하여야 합니다.', false); return; }
+    if (file.size > 30 * 1048576) { msg('PDF는 30MB 이하여야 합니다.', false); return; }
     // 캠페인이 저장돼 있어야 파일을 붙일 수 있으므로 먼저 임시저장한다
     const id = await saveDraft(true);
     if (!id) return;
     msg('PDF 올리는 중…', true);
+    document.getElementById('pmPdfInfo').textContent = '올리는 중: ' + file.name + ' (' + (file.size / 1048576).toFixed(1) + 'MB)';
     const fd = new FormData();
     fd.append('action', 'upload_pdf'); fd.append('id', id); fd.append('pdf', file);
     const res  = await fetch(API, { method: 'POST', headers: { Authorization: 'Bearer ' + token() }, body: fd });
     const data = await res.json().catch(() => ({}));
     if (res.ok && data.ok) { showPdf(data.attachment_name, data.attachment_size); msg('PDF를 첨부했습니다.', true); loadAll(); }
-    else msg(data.error || 'PDF 업로드 실패', false);
+    else { showPdf('', 0); msg(data.error || 'PDF 업로드 실패', false); }
 }
 
 async function removePdf() {
@@ -216,7 +217,12 @@ function msg(text, ok) {
 }
 
 async function saveDraft(silent) {
-    const { ok, data } = await _post({ action: 'save', ...formData() });
+    // 자동 임시저장(PDF 올릴 때)은 이름·제목이 비어 있어도 막지 않는다. 발송·예약은 일반 저장을 거치므로 그때는 그대로 검사한다.
+    if (silent) {
+        const t = document.getElementById('pmTitle');
+        if (!t.value.trim()) t.value = '새 홍보메일 ' + new Date().toISOString().slice(0, 10);
+    }
+    const { ok, data } = await _post({ action: 'save', ...formData(), draft: !!silent });
     if (!ok) { msg(data.error || '저장 실패', false); return 0; }
     document.getElementById('pmId').value = data.id;
     if (!silent) msg('저장됨', true);
