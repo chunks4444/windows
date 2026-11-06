@@ -1058,6 +1058,7 @@ CREATE TABLE IF NOT EXISTS promo_campaigns (
     subject      VARCHAR(200) NOT NULL DEFAULT '' COMMENT '제목 ((광고) 접두사는 발송 때 자동)',
     html_body    MEDIUMTEXT   NULL COMMENT '홍보문구 HTML. {{회사명}} {{수신거부링크}} 치환',
     industries   VARCHAR(100) NOT NULL DEFAULT '' COMMENT '대상 업종(쉼표 구분), 빈 값=전체',
+    company_ids  TEXT         NULL COMMENT '직접 고른 대상 회사 id(쉼표). 비면 업종 기준',
     work_ids     VARCHAR(255) NOT NULL DEFAULT '' COMMENT '(미사용) 예전 포트폴리오 카드 방식. 지금은 PDF 첨부를 쓴다',
     attachment_path VARCHAR(255) NOT NULL DEFAULT '' COMMENT '첨부 PDF 저장 경로(/uploads/promo/...)',
     attachment_name VARCHAR(200) NOT NULL DEFAULT '' COMMENT '받는 사람에게 보일 PDF 파일명',

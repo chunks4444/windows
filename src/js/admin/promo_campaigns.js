@@ -7,7 +7,9 @@ async function _post(body) {
 }
 
 const STATUS_LABEL = { draft: '임시저장', scheduled: '예약됨', sending: '발송 중', done: '완료', canceled: '취소됨' };
-let campaigns = [], templates = [], industries = [], counts = {}, pollTimer = null;
+let campaigns = [], templates = [], industries = [], counts = {}, pollTimer = null, logCampaignId = 0;
+let coAll = [];            // 선택 가능한 회사(수신거부 제외) — 발송 횟수·마지막 발송 포함
+let coSel = new Set();     // 직접 고른 대상 회사 id
 
 function fmt(dt) { return dt ? dt.replace('T', ' ').slice(0, 16) : '—'; }
 
@@ -15,6 +17,7 @@ async function loadAll() {
     const res  = await fetch(API, { headers: _h() });
     const data = await res.json();
     if (!res.ok) { alert(data.error || '불러오기 실패'); return; }
+    coAll = data.companies || [];
     campaigns = data.campaigns; templates = data.templates || []; fillTestCompanies(data.companies || []); industries = data.industries; counts = data.counts;
     document.getElementById('pmLimitInfo').textContent = `${data.sent_24h} / ${data.daily_limit}`;
     renderList();
@@ -23,7 +26,10 @@ async function loadAll() {
     if (campaigns.some(c => c.status === 'sending' || c.status === 'scheduled')) pollTimer = setTimeout(loadAll, 15000);
 }
 
-function indLabel(c) { return c.industries ? c.industries.split(',').join(' · ') : '전체 업종'; }
+function indLabel(c) {
+    if (c.company_ids) return `직접 선택 ${c.company_ids.split(',').filter(Boolean).length}곳`;
+    return c.industries ? c.industries.split(',').join(' · ') : '전체 업종';
+}
 
 function renderList() {
     document.getElementById('pmBody').innerHTML = campaigns.length ? campaigns.map(c => {
@@ -80,6 +86,7 @@ function setBodyHtml(html) { jodit.value = html; }
 const DEFAULT_SUBJECT = '[제작 협력] {{회사명}} — 창호·파티션 제작 파트너 제안';
 
 async function openEditor(id) {
+    autoDraftId = 0;
     let c = null;
     if (id) {
         const res = await fetch(`${API}?id=${id}`, { headers: _h() });
@@ -96,6 +103,13 @@ async function openEditor(id) {
     document.getElementById('pmIndustries').innerHTML = industries.map(i =>
         `<label class="pm-chk"><input type="checkbox" value="${esc(i)}" ${picked.includes(i) ? 'checked' : ''}> ${esc(i)} <span style="color:var(--text-muted);">(${counts[i] ?? 0})</span></label>`
     ).join('') + `<span style="font-size:12px;color:var(--text-muted);">수신거부 제외 · 전체 ${counts[''] ?? 0}곳</span>`;
+    // 직접 고른 대상 회사
+    coSel = new Set((c?.company_ids || '').split(',').filter(Boolean).map(Number));
+    document.getElementById('pmCoInd').innerHTML = '<option value="">전체 업종</option>' + industries.map(i => `<option value="${esc(i)}">${esc(i)}</option>`).join('');
+    document.getElementById('pmCoSearch').value = '';
+    document.getElementById('pmCoPicker').style.display = 'none';
+    document.getElementById('pmCoToggle').textContent = '회사 선택 열기';
+    renderCoPicker();
     showPdf(c?.attachment_name, c?.attachment_size);
     renderTemplateSelect(0);
     document.getElementById('pmEditorOverlay').classList.add('open');
@@ -207,7 +221,18 @@ async function removePdf() {
     if (ok) { showPdf('', 0); loadAll(); } else msg(data.error || '제거 실패', false);
 }
 
-function closeEditor() { document.getElementById('pmEditorOverlay').classList.remove('open'); }
+// 편집창을 여는 동안 자동으로 만들어진 초안(템플릿 불러오기·PDF 올리기 때의 자동 저장)의 id.
+// 사용자가 '임시저장'이나 발송을 하지 않고 닫으면 이 초안은 지운다 — 안 그러면 열 때마다 똑같은 초안이 목록에 쌓인다.
+let autoDraftId = 0;
+
+async function closeEditor() {
+    document.getElementById('pmEditorOverlay').classList.remove('open');
+    if (autoDraftId) {
+        const id = autoDraftId; autoDraftId = 0;
+        await _post({ action: 'delete', id });
+        loadAll();
+    }
+}
 
 function formData() {
     return {
@@ -216,7 +241,48 @@ function formData() {
         subject:    document.getElementById('pmSubject').value,
         html_body:  getBodyHtml(),
         industries: [...document.querySelectorAll('#pmIndustries input:checked')].map(i => i.value),
+        company_ids: [...coSel],
     };
+}
+
+// ── 대상 회사 직접 선택 ──────────────────────────────────
+function toggleCoPicker() {
+    const box = document.getElementById('pmCoPicker');
+    const open = box.style.display === 'none';
+    box.style.display = open ? '' : 'none';
+    document.getElementById('pmCoToggle').textContent = open ? '회사 선택 닫기' : '회사 선택 열기';
+}
+
+function coVisible() {
+    const q = document.getElementById('pmCoSearch').value.trim().toLowerCase();
+    const ind = document.getElementById('pmCoInd').value;
+    return coAll.filter(c => (!ind || c.industry === ind) && (!q || (c.name || '').toLowerCase().includes(q)));
+}
+
+function renderCoPicker() {
+    const rows = coVisible();
+    document.getElementById('pmCoList').innerHTML = rows.length ? rows.map(c => `
+        <label style="display:flex;align-items:center;gap:8px;padding:4px 2px;border-bottom:1px solid rgba(var(--text-rgb),.06);cursor:pointer;">
+            <input type="checkbox" ${coSel.has(+c.id) ? 'checked' : ''} onchange="coToggle(${+c.id}, this.checked)">
+            <span style="flex:1;">${esc(c.name)} <span style="color:var(--text-muted);">· ${esc(c.industry || '')}</span></span>
+            <span style="color:var(--text-muted);font-size:12px;">${+c.sent_count ? `발송 ${+c.sent_count}회 · 마지막 ${esc(fmt(c.last_sent_at))}` : '미발송'}</span>
+        </label>`).join('')
+        : '<span class="adm-null">조건에 맞는 회사가 없습니다.</span>';
+    updateCoSummary();
+}
+
+function coToggle(id, on) { on ? coSel.add(id) : coSel.delete(id); updateCoSummary(); }
+
+function coPick(mode) {
+    if (mode === 'none') coSel.clear();
+    else coVisible().forEach(c => { if (mode === 'all' || !+c.sent_count) coSel.add(+c.id); });
+    renderCoPicker();
+}
+
+function updateCoSummary() {
+    document.getElementById('pmCoSummary').innerHTML = coSel.size
+        ? `<strong>${coSel.size}곳</strong> 선택됨 — 이 회사들에만 발송 (업종 선택은 무시)`
+        : '<span style="color:var(--text-muted);">선택 없음 — 위 업종 기준으로 발송</span>';
 }
 
 
@@ -231,8 +297,12 @@ async function saveDraft(silent) {
         const t = document.getElementById('pmTitle');
         if (!t.value.trim()) t.value = '새 홍보메일 ' + new Date().toISOString().slice(0, 10);
     }
+    const wasNew = !(parseInt(document.getElementById('pmId').value) || 0);
     const { ok, data } = await _post({ action: 'save', ...formData(), draft: !!silent });
     if (!ok) { msg(data.error || '저장 실패', false); return 0; }
+    // 자동 저장으로 새로 생긴 초안이면 기억해 두고, 사용자가 직접 저장하면 그때부터는 지우지 않는다
+    if (silent && wasNew) autoDraftId = data.id;
+    if (!silent) autoDraftId = 0;
     document.getElementById('pmId').value = data.id;
     if (!silent) msg('저장됨', true);
     loadAll();
@@ -249,13 +319,13 @@ async function sendTest() {
 
 async function startSend(kind) {
     const f = formData();
-    const label = f.industries.length ? f.industries.join('·') : '전체 업종';
+    const label = coSel.size ? '직접 고른' : (f.industries.length ? f.industries.join('·') : '전체 업종');
     let when = '';
     if (kind === 'schedule') {
         when = document.getElementById('pmWhen').value;
         if (!when) { msg('예약 시각을 선택하세요.', false); return; }
     }
-    const target = f.industries.length ? f.industries.reduce((n, i) => n + (counts[i] ?? 0), 0) : (counts[''] ?? 0);
+    const target = coSel.size ? coSel.size : f.industries.length ? f.industries.reduce((n, i) => n + (counts[i] ?? 0), 0) : (counts[''] ?? 0);
     const q = kind === 'send_now'
         ? `${label} ${target}곳에 지금 발송을 시작합니다. (2분에 한 통씩, 약 ${target * 2}분 소요)\n계속할까요?`
         : `${label} ${target}곳에 ${when.replace('T', ' ')}부터 발송합니다. (2분에 한 통씩)\n계속할까요?`;
@@ -264,6 +334,7 @@ async function startSend(kind) {
     if (!id) return;
     const { ok, data } = await _post({ action: kind, id, scheduled_at: when });
     if (!ok) { msg(data.error || '발송 시작 실패', false); return; }
+    autoDraftId = 0;   // 발송·예약한 캠페인은 지우지 않는다
     closeEditor();
     loadAll();
 }
@@ -294,15 +365,57 @@ async function openLog(id) {
     document.getElementById('pmLogSummary').innerHTML =
         `<span class="pm-status ${data.campaign.status}">${STATUS_LABEL[data.campaign.status]}</span> &nbsp; 총 ${logs.length}곳 · 발송 ${n('sent')} · 실패 ${n('failed')} · 대기 ${n('pending') + n('sending')}`;
     const L = { sent: '발송', failed: '실패', pending: '대기', sending: '발송 중' };
+    logCampaignId = id;
+    // 다시 보낼 문구: 캠페인에 저장된 문구 그대로, 또는 템플릿의 최신 제목·본문·PDF로 교체
+    document.getElementById('pmLogTpl').innerHTML = `<option value="">이 캠페인에 저장된 문구 그대로 (예전 내용)</option>` +
+        templates.map(t => `<option value="${t.id}">템플릿 "${esc(t.name)}"의 최신 내용으로 교체 (${esc(fmt(t.updated_at))} 저장)${t.attachment_name ? ' 📎' : ''}</option>`).join('');
+    document.getElementById('pmLogAll').checked = false;
+    document.getElementById('pmLogMsg').textContent = '';
     document.getElementById('pmLogBody').innerHTML = logs.length ? logs.map(l => `
-        <tr><td>${esc(l.name)}</td><td>${esc(l.email)}</td>
+        <tr><td>${(l.status === 'sent' || l.status === 'failed') ? `<input type="checkbox" class="pm-logchk" value="${l.id}" data-status="${l.status}">` : ''}</td>
+        <td>${esc(l.name)}</td><td>${esc(l.email)}</td>
         <td><span class="${l.status === 'sent' ? 'adm-active-badge' : l.status === 'failed' ? 'adm-withdrawn-badge' : 'pm-status'}">${L[l.status] || l.status}</span></td>
         <td>${esc(fmt(l.sent_at))}</td><td>${esc(l.error)}</td></tr>`).join('')
-        : `<tr><td colspan="5" style="text-align:center;padding:24px 0;"><span class="adm-null">아직 발송 이력이 없습니다. 발송을 시작하면 대상 회사가 여기에 나타납니다.</span></td></tr>`;
+        : `<tr><td colspan="6" style="text-align:center;padding:24px 0;"><span class="adm-null">아직 발송 이력이 없습니다. 발송을 시작하면 대상 회사가 여기에 나타납니다.</span></td></tr>`;
     document.getElementById('pmLogOverlay').classList.add('open');
 }
 
 function closeLog() { document.getElementById('pmLogOverlay').classList.remove('open'); }
+
+function toggleLogAll(box) { document.querySelectorAll('.pm-logchk').forEach(c => c.checked = box.checked); }
+
+// 이미 보낸·실패한 회사를 다시 보내기: 선택한 행(또는 실패 전부)을 '대기'로 되돌리면 발송 프로그램이 2분 간격으로 다시 보낸다
+async function requeueLogs(mode) {
+    const m = document.getElementById('pmLogMsg');
+    const boxes = [...document.querySelectorAll('.pm-logchk:checked')];
+    const body = { action: 'requeue', id: logCampaignId };
+    let q;
+    if (mode === 'failed') {
+        const n = document.querySelectorAll('.pm-logchk[data-status="failed"]').length;
+        if (!n) { m.style.color = '#a02020'; m.textContent = '실패한 회사가 없습니다.'; return; }
+        body.scope = 'failed';
+        q = `실패한 ${n}곳을 다시 보냅니다. (2분에 한 통씩)\n계속할까요?`;
+    } else {
+        if (!boxes.length) { m.style.color = '#a02020'; m.textContent = '다시 보낼 회사를 선택하세요.'; return; }
+        body.log_ids = boxes.map(b => parseInt(b.value));
+        const sent = boxes.filter(b => b.dataset.status === 'sent').length;
+        q = `${boxes.length}곳을 다시 보냅니다. (2분에 한 통씩)` + (sent ? `\n\n이미 발송된 ${sent}곳이 포함돼 있습니다. 같은 메일이 한 번 더 갑니다.` : '') + '\n계속할까요?';
+    }
+    const tplSel = document.getElementById('pmLogTpl');
+    if (tplSel.value) {
+        body.template_id = parseInt(tplSel.value);
+        q += `\n\n※ 이 캠페인의 제목·본문이 ${tplSel.options[tplSel.selectedIndex].text.replace(/ \(.*$/, '')}으로 바뀝니다.`;
+    } else {
+        q += '\n\n※ 이 캠페인에 저장된 예전 문구 그대로 나갑니다. 고친 문구로 보내려면 "다시 보낼 문구"에서 템플릿을 고르세요.';
+    }
+    if (!confirm(q)) return;
+    const { ok, data } = await _post(body);
+    m.style.color = ok ? '#1c6b3a' : '#a02020';
+    if (!ok) { m.textContent = data.error || '재발송 실패'; return; }
+    m.textContent = `${data.requeued}곳을 대기로 되돌렸습니다. 곧 발송이 시작됩니다.`;
+    loadAll();
+    setTimeout(() => openLog(logCampaignId), 800);
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     initEditor();

@@ -65,6 +65,23 @@ require_admin_role('s');
             <div class="adm-mfield"><label>메일 제목 — 발송 시 앞에 (광고)가 자동으로 붙고, {{회사명}}은 받는 회사 이름으로 바뀝니다</label><input type="text" id="pmSubject" maxlength="200" placeholder="[제작 협력] {{회사명}} — 창호·파티션 제작 파트너 제안"></div>
             <div class="adm-mfield"><label>발송 대상 업종 (선택 없으면 전체)</label><div id="pmIndustries"></div></div>
             <div class="adm-mfield">
+                <label>대상 회사 직접 선택 — 한 곳이라도 고르면 업종 선택은 무시하고, 고른 회사에만 보냅니다</label>
+                <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;">
+                    <button type="button" class="adm-btn-cancel" id="pmCoToggle" onclick="toggleCoPicker()">회사 선택 열기</button>
+                    <span id="pmCoSummary" style="font-size:13px;"></span>
+                </div>
+                <div id="pmCoPicker" style="display:none;margin-top:8px;padding:10px;border:1px solid var(--border);border-radius:var(--r-sm);">
+                    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:8px;">
+                        <input type="text" id="pmCoSearch" placeholder="회사명 검색" oninput="renderCoPicker()" style="height:34px;width:180px;border:1px solid var(--border);border-radius:var(--r-sm);padding:0 10px;font-size:13px;">
+                        <select id="pmCoInd" onchange="renderCoPicker()" style="height:34px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg);color:var(--text);padding:0 8px;font-size:13px;"></select>
+                        <button type="button" class="adm-btn-cancel" onclick="coPick('all')">보이는 회사 모두 선택</button>
+                        <button type="button" class="adm-btn-cancel" onclick="coPick('unsent')">보이는 회사 중 미발송만 선택</button>
+                        <button type="button" class="adm-btn-cancel" onclick="coPick('none')">선택 모두 해제</button>
+                    </div>
+                    <div id="pmCoList" style="max-height:240px;overflow-y:auto;font-size:13px;"></div>
+                </div>
+            </div>
+            <div class="adm-mfield">
                 <label>홍보문구 — <code>{{회사명}}</code>이 받는 회사 이름으로 바뀝니다. 수신거부 링크는 맨 아래 자동 삽입 (<code>{{수신거부링크}}</code>로 위치 지정도 가능)</label>
             <div style="padding:10px 12px;margin:6px 0 10px;background:rgba(var(--text-rgb),.04);border-radius:var(--r-sm);">
                 <label>문구 템플릿 — 제목·본문·첨부 PDF를 저장해 두고 불러와서 계속 고쳐 쓸 수 있습니다</label>
@@ -114,9 +131,18 @@ require_admin_role('s');
         </div>
         <div class="adm-modal-body">
             <div id="pmLogSummary" style="font-size:13px;margin-bottom:10px;"></div>
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:6px;">
+                <label for="pmLogTpl" style="font-size:12px;font-weight:600;">다시 보낼 문구</label>
+                <select id="pmLogTpl" style="height:34px;max-width:360px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg);color:var(--text);padding:0 8px;font-size:13px;"></select>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:10px;">
+                <button type="button" class="adm-btn-cancel" onclick="requeueLogs('selected')">선택한 회사 다시 보내기</button>
+                <button type="button" class="adm-btn-cancel" onclick="requeueLogs('failed')">실패한 회사 모두 다시 보내기</button>
+                <span id="pmLogMsg" style="font-size:12px;"></span>
+            </div>
             <div class="adm-table-wrap" style="max-height:420px;overflow-y:auto;">
                 <table>
-                    <thead><tr><th>회사</th><th>이메일</th><th>결과</th><th>시각</th><th>비고</th></tr></thead>
+                    <thead><tr><th style="width:34px;"><input type="checkbox" id="pmLogAll" onchange="toggleLogAll(this)" title="전체 선택"></th><th>회사</th><th>이메일</th><th>결과</th><th>시각</th><th>비고</th></tr></thead>
                     <tbody id="pmLogBody"></tbody>
                 </table>
             </div>

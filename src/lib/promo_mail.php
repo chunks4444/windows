@@ -83,6 +83,10 @@ function promo_ensure_tables(PDO $pdo): void {
             ADD COLUMN attachment_name VARCHAR(200) NOT NULL DEFAULT '' COMMENT '받는 사람에게 보일 PDF 파일명' AFTER attachment_path,
             ADD COLUMN attachment_size INT UNSIGNED NOT NULL DEFAULT 0 AFTER attachment_name");
     }
+    // 2026-11-06 대상 회사 직접 선택 — 비어 있으면 업종 기준, 값이 있으면 그 회사들만
+    if (!$pdo->query("SHOW COLUMNS FROM promo_campaigns LIKE 'company_ids'")->fetch()) {
+        $pdo->exec("ALTER TABLE promo_campaigns ADD COLUMN company_ids TEXT NULL COMMENT '직접 고른 대상 회사 id(쉼표). 비면 업종 기준' AFTER industries");
+    }
     $pdo->exec(
         "CREATE TABLE IF NOT EXISTS promo_logs (
             id          INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -191,6 +195,11 @@ function promo_sent_last_24h(PDO $pdo): int {
     return (int)$pdo->query("SELECT COUNT(*) FROM promo_logs WHERE status='sent' AND sent_at >= NOW() - INTERVAL 24 HOUR")->fetchColumn();
 }
 
+// "12,15,20" → [12,15,20] (중복·잘못된 값 제거)
+function promo_id_list(string $csv): array {
+    return array_values(array_unique(array_filter(array_map('intval', explode(',', $csv)), fn($v) => $v > 0)));
+}
+
 // 캠페인 시작: 대상 회사를 이력(pending)으로 확정한다. 이미 확정된 캠페인은 건드리지 않는다.
 function promo_snapshot_recipients(PDO $pdo, array $c): void {
     $exists = $pdo->prepare('SELECT COUNT(*) FROM promo_logs WHERE campaign_id = ?');
@@ -198,9 +207,12 @@ function promo_snapshot_recipients(PDO $pdo, array $c): void {
     if ((int)$exists->fetchColumn() > 0) return;
 
     $inds = array_values(array_intersect(PROMO_INDUSTRIES, array_filter(array_map('trim', explode(',', $c['industries'])))));
+    $ids  = promo_id_list((string)($c['company_ids'] ?? ''));
     $sql  = 'SELECT id, name, email FROM promo_companies WHERE opt_out = 0';
     $args = [];
-    if ($inds) { $sql .= ' AND industry IN (' . implode(',', array_fill(0, count($inds), '?')) . ')'; $args = $inds; }
+    // 회사를 직접 골랐으면 그 회사들만(업종은 무시), 아니면 업종 기준
+    if ($ids) { $sql .= ' AND id IN (' . implode(',', array_fill(0, count($ids), '?')) . ')'; $args = $ids; }
+    elseif ($inds) { $sql .= ' AND industry IN (' . implode(',', array_fill(0, count($inds), '?')) . ')'; $args = $inds; }
     $stmt = $pdo->prepare($sql);
     $stmt->execute($args);
     $ins = $pdo->prepare('INSERT INTO promo_logs (campaign_id, company_id, name, email) VALUES (?,?,?,?)');
