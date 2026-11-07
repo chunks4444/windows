@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/i18n.php';
+require_once __DIR__ . '/og_image.php';
 
 function css_url(string $path): string {
     $abs = $_SERVER['DOCUMENT_ROOT'] . $path;

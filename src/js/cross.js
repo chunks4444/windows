@@ -409,6 +409,7 @@ async function draw() {
         document.getElementById('spPungpan').innerText    = s.pungpan;
         document.getElementById('spEye').innerText        = s.eye;
         document.getElementById('spFrameHTop').innerText  = s.frameHTop;
+        window.updateFrameHHint?.(geo);
         document.getElementById('spTotalDoorW').innerText = s.totalDoorW;
 
         const overlapCard = document.getElementById('spOverlapCard');

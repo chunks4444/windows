@@ -444,6 +444,7 @@ async function draw() {
         document.getElementById('spGrooveWH').innerText   = s.grooveWH;
         document.getElementById('spPungpan').innerText    = s.pungpan;
         document.getElementById('spFrameHTop').innerText  = s.frameHTop;
+        window.updateFrameHHint?.(geo);
         document.getElementById('spTotalDoorW').innerText = s.totalDoorW;
 
         const overlapCard = document.getElementById('spOverlapCard');
