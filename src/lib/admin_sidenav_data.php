@@ -21,6 +21,7 @@ return [
     ]],
     ['title' => '주문 관리', 'items' => [
         ['orders.php',           'bi-receipt',         '주문 관리'],
+        ['quotes.php',           'bi-file-earmark-text', '견적서'],
     ]],
     ['title' => '설정값 관리', 'items' => [
         ['cost_table.php',       'bi-calculator',      '원가 테이블'],

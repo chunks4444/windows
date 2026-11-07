@@ -9,6 +9,7 @@ require_once __DIR__ . '/../../lib/jwt.php';
 require_once __DIR__ . '/../../lib/order_status.php';
 require_once __DIR__ . '/../../lib/engine_settings.php';
 require_once __DIR__ . '/../../lib/order_estimate.php';
+require_once __DIR__ . '/../../lib/quote.php';
 
 // 목재 사용량(재 수) — 관리자 전용. 엔진 응답(고객에게도 내려감)에는 재 수를 싣지 않으므로,
 // 주문 시점 견적의 목재비(price_breakdown.door/muntol)를 현재 원가표의 그 목재 단가×가중치로 나눠 되짚는다.
@@ -190,6 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' || ($_SERVER['REQUEST_METHOD'] === 'POS
             'history' => $history,
             'spec'    => order_spec_summary($order['engine'], $order['spec_json']),
             'wood'    => order_wood_usage($order['spec_json'], $order['price_breakdown']),
+            'quotes'  => quote_list_for_order($id),
         ]);
         exit;
     }
