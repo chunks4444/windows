@@ -21,6 +21,13 @@ return [
     '"%s" 보드가 만들어졌습니다.' => 'Created the "%s" board.',
 
     '열기'                        => 'Open',
+    // src/js/engine-common.js — 상하 울거미 실제 두께 안내
+    '실제 상하 각 %smm'           => 'Actual top & bottom: %smm each',
+    '실제 위 %smm · 아래 %smm'    => 'Actual top %smm · bottom %smm',
+    '세로 칸을 맞추고 남는 높이를 상하 울거미가 나눠 가집니다 (입력 %smm). 입력창에서 엔터를 누르면 실제 값으로 바뀝니다.' => 'Leftover height after fitting the rows is absorbed by the top/bottom frame (input %smm). Press Enter in the box to set it to the actual value.',
+    '%smm → %smm (남는 높이 반영)' => '%smm → %smm (leftover height applied)',
+    '도면은 그대로이고, 입력값이 실제 울거미 두께와 같아졌습니다.' => 'The drawing is unchanged; the input now matches the actual frame width.',
+
 
     // src/js/order-status-labels.js (admin/orders.js와 공유 — admin은 /en/ 경로가 없어 항상 원문)
     '견적검토'   => 'Quote review',

@@ -515,6 +515,7 @@ async function draw() {
             .forEach(id => { const el = document.getElementById(id); if (el) el.style.display = mondrianLayout ? 'none' : ''; });
         document.getElementById('spPungpan').innerText    = s.pungpan;
         document.getElementById('spFrameHTop').innerText  = mondrianLayout ? Math.round(geo.frameH) : s.frameHTop;
+        window.updateFrameHHint?.(mondrianLayout ? null : geo);
         document.getElementById('spTotalDoorW').innerText = s.totalDoorW;
 
         const overlapCard = document.getElementById('spOverlapCard');

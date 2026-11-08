@@ -172,3 +172,8 @@ RewriteRule ^dev_router\.php$ - [F,L]
 <FilesMatch "\.(sql|sql\.gz|bak)$">
     Require all denied
 </FilesMatch>
+# 서버에서 직접 고칠 때 남긴 백업(foo.php.bak_202611042127 같은 날짜 붙은 형식)·편집기 임시파일·PHP 설정(.user.ini)도 차단.
+# .php.bak_* 는 PHP로 실행되지 않고 소스가 글자 그대로 내려받아지던 상태였음 (2026-11-08 발견)
+<FilesMatch "(\.bak_[0-9]+|\.orig|\.swp|~)$|^\.user\.ini$">
+    Require all denied
+</FilesMatch>

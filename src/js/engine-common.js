@@ -2758,3 +2758,72 @@ function drawSvgInserts() {
         }
     });
 })();
+
+// 상하 울거미 실제 두께 안내 + 엔터로 맞추기.
+// 입력창(상하 울거미 나비)은 80이어도, 세로 칸을 딱 맞추고 남는 높이를 상하 울거미가 나눠 가져서 도면의 실제 두께는
+// 더 클 수 있다(칸 수 자동일 때). 입력값과 실제 값이 다르면 "상하 울거미 나비" 라벨 옆에 빨간 배지로 실제 값을 알리고,
+// 입력창에서 엔터를 누르면 입력값을 실제 값(내림)으로 바꾼다 — 남는 높이가 이미 울거미에 들어가 있으므로 도면은 그대로다.
+// 올림하면 칸 영역보다 작아져 칸이 한 줄 줄 수 있어 반드시 내림. 엔터 없이 입력·슬라이더만 움직일 땐 값을 건드리지 않는다.
+// 각 엔진 js의 draw()가 지오메트리를 받은 뒤 window.updateFrameHHint(geo)를 부른다 (geo가 없으면 숨김).
+(function () {
+    function badge() {
+        const num = document.getElementById("numFrameH");
+        if (!num) return null;
+        let el = document.getElementById("frameHHint");
+        if (!el) {
+            const ctrl = num.closest(".ctrl");
+            const host = (ctrl && ctrl.querySelector(".ctrl-header")) || (ctrl || num.parentNode);
+            el = document.createElement("span");
+            el.id = "frameHHint";
+            el.style.cssText = "display:none;margin-left:8px;padding:1px 8px;border-radius:999px;font-size:11px;font-weight:400;white-space:nowrap;cursor:help;";
+            host.appendChild(el);
+        }
+        return el;
+    }
+
+    window.updateFrameHHint = function (g) {
+        const num = document.getElementById("numFrameH");
+        const el = badge();
+        if (!num || !el) return;
+        if (Date.now() < (el._hold || 0)) return; // 엔터로 맞춘 직후 안내를 잠깐 유지
+        const input = parseFloat(num.value);
+        const top = g ? Math.round(g.frameHTop) : NaN;
+        const bot = g ? Math.round(g.frameHBottom) : NaN;
+        if (!g || isNaN(input) || isNaN(top) || isNaN(bot) || (Math.abs(top - input) < 1 && Math.abs(bot - input) < 1)) {
+            el.style.display = "none";
+            return;
+        }
+        el.style.background = "#fbe9e4"; el.style.color = "#8a3a22";
+        el.textContent = top === bot ? _t("실제 상하 각 %smm", top) : _t("실제 위 %smm · 아래 %smm", top, bot);
+        el.title = _t("세로 칸을 맞추고 남는 높이를 상하 울거미가 나눠 가집니다 (입력 %smm). 입력창에서 엔터를 누르면 실제 값으로 바뀝니다.", input);
+        el.style.display = "";
+    };
+
+    document.addEventListener("keydown", async function (e) {
+        const num = e.target;
+        if (!num || num.id !== "numFrameH" || e.key !== "Enter" || e.isComposing) return;
+        e.preventDefault();
+        if (typeof mondrianLayout !== "undefined" && mondrianLayout) return;   // 몬드리안 레이아웃은 상하 울거미 계산이 다르다
+        const before = parseFloat(num.value);
+        if (isNaN(before) || typeof draw !== "function") return;
+        await draw();                                       // 방금 입력한 값으로 최신 지오메트리를 받는다
+        const g = typeof geo !== "undefined" ? geo : null;
+        if (!g) return;
+        const actual = Math.floor(Math.min(g.frameHTop, g.frameHBottom));
+        const max = parseFloat(num.max) || 150;
+        if (!(actual > before) || actual > max) return;     // 이미 같거나 범위를 넘으면 그대로 둔다
+        num.value = actual;
+        const rng = document.getElementById("txtFrameH");
+        if (rng) rng.value = actual;
+        const el = badge();
+        if (el) {
+            el._hold = Date.now() + 5000;
+            el.style.background = "#e3f1e6"; el.style.color = "#2f6b3a";
+            el.textContent = _t("%smm → %smm (남는 높이 반영)", before, actual);
+            el.title = _t("도면은 그대로이고, 입력값이 실제 울거미 두께와 같아졌습니다.");
+            el.style.display = "";
+            setTimeout(function () { el._hold = 0; window.updateFrameHHint(typeof geo !== "undefined" ? geo : null); }, 5000);
+        }
+        num.dispatchEvent(new Event("input", { bubbles: true }));   // 엔진 js가 슬라이더 동기화·다시 그리기를 한다
+    });
+})();

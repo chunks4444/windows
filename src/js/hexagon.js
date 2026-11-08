@@ -489,6 +489,7 @@ async function draw() {
         document.getElementById('spGrooveGapV').innerText = s.grooveGapV;
         document.getElementById('spPungpan').innerText    = s.pungpan;
         document.getElementById('spFrameHTop').innerText  = s.frameHTop;
+        window.updateFrameHHint?.(geo);
 
         const overlapCard = document.getElementById('spOverlapCard');
         if (overlapCard) {

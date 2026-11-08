@@ -1065,3 +1065,71 @@ ON DUPLICATE KEY UPDATE english = VALUES(english);
 -- 조회수(view_count)·정렬·별표 토글도 같은 행을 UPDATE하므로 글을 볼 때마다 수정일이 바뀌어 버린다.
 -- 대신 src/api/admin/blog.php 저장 시 제목·요약·본문 등(한·영) 내용이 실제로 달라졌을 때만 NOW()로 갱신.
 -- ALTER TABLE blog_posts ADD COLUMN updated_at DATETIME NULL DEFAULT NULL COMMENT '본문 마지막 수정 시각 (관리자 저장 시 내용이 실제로 바뀐 경우만 갱신, 조회수 증가·정렬·별표로는 안 바뀜). 사이트맵 lastmod용, NULL이면 created_at 사용' AFTER created_at;
+
+-- 홍보메일 발송 대상 회사 (어드민 > 홍보메일 발신 관리). api/admin/promo_companies.php가 없으면 자동 생성
+CREATE TABLE IF NOT EXISTS promo_companies (
+    id         INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    name       VARCHAR(100) NOT NULL,
+    email      VARCHAR(190) NOT NULL,
+    phone      VARCHAR(30)  NOT NULL DEFAULT '',
+    address    VARCHAR(255) NOT NULL DEFAULT '',
+    website    VARCHAR(255) NOT NULL DEFAULT '' COMMENT '홈페이지 주소',
+    industry   VARCHAR(20)  NOT NULL DEFAULT '' COMMENT '인테리어/건축사무소/건설사',
+    opt_out    TINYINT(1)   NOT NULL DEFAULT 0 COMMENT '수신거부(발송 제외)',
+    created_at DATETIME     NOT NULL DEFAULT NOW(),
+    updated_at DATETIME     NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_pc_email (email),
+    KEY idx_pc_industry (industry)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='홍보메일 발송 대상 회사';
+
+-- 홍보메일 캠페인/발송 이력 (어드민 > 홍보메일 발송). lib/promo_mail.php의 promo_ensure_tables()가 없으면 자동 생성
+CREATE TABLE IF NOT EXISTS promo_campaigns (
+    id           INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    title        VARCHAR(150) NOT NULL DEFAULT '' COMMENT '관리용 이름',
+    subject      VARCHAR(200) NOT NULL DEFAULT '' COMMENT '제목 ((광고) 접두사는 발송 때 자동)',
+    html_body    MEDIUMTEXT   NULL COMMENT '홍보문구 HTML. {{회사명}} {{수신거부링크}} 치환',
+    industries   VARCHAR(100) NOT NULL DEFAULT '' COMMENT '대상 업종(쉼표 구분), 빈 값=전체',
+    company_ids  TEXT         NULL COMMENT '직접 고른 대상 회사 id(쉼표). 비면 업종 기준',
+    work_ids     VARCHAR(255) NOT NULL DEFAULT '' COMMENT '(미사용) 예전 포트폴리오 카드 방식. 지금은 PDF 첨부를 쓴다',
+    attachment_path VARCHAR(255) NOT NULL DEFAULT '' COMMENT '첨부 PDF 저장 경로(/uploads/promo/...)',
+    attachment_name VARCHAR(200) NOT NULL DEFAULT '' COMMENT '받는 사람에게 보일 PDF 파일명',
+    attachment_size INT UNSIGNED NOT NULL DEFAULT 0,
+    status       VARCHAR(12)  NOT NULL DEFAULT 'draft' COMMENT 'draft/scheduled/sending/done/canceled',
+    scheduled_at DATETIME     NULL,
+    started_at   DATETIME     NULL,
+    finished_at  DATETIME     NULL,
+    created_at   DATETIME     NOT NULL DEFAULT NOW(),
+    updated_at   DATETIME     NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+    PRIMARY KEY (id),
+    KEY idx_pcamp_status (status, scheduled_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='홍보메일 캠페인';
+
+CREATE TABLE IF NOT EXISTS promo_logs (
+    id          INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    campaign_id INT UNSIGNED NOT NULL,
+    company_id  INT UNSIGNED NULL,
+    name        VARCHAR(100) NOT NULL DEFAULT '',
+    email       VARCHAR(190) NOT NULL,
+    status      VARCHAR(10)  NOT NULL DEFAULT 'pending' COMMENT 'pending/sending/sent/failed',
+    error       VARCHAR(255) NOT NULL DEFAULT '',
+    sent_at     DATETIME     NULL,
+    PRIMARY KEY (id),
+    KEY idx_plog_campaign (campaign_id, status),
+    KEY idx_plog_sent (sent_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='홍보메일 발송 이력(수신자별)';
+
+-- 홍보메일 문구 템플릿(제목+본문 HTML+첨부 PDF). 첨부 PDF는 캠페인과 같은 파일을 공유한다
+CREATE TABLE IF NOT EXISTS promo_templates (
+    id         INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    name       VARCHAR(100) NOT NULL COMMENT '템플릿 이름(관리용)',
+    subject    VARCHAR(200) NOT NULL DEFAULT '',
+    html_body  MEDIUMTEXT   NULL,
+    attachment_path VARCHAR(255) NOT NULL DEFAULT '' COMMENT '첨부 PDF(캠페인과 같은 파일을 공유)',
+    attachment_name VARCHAR(200) NOT NULL DEFAULT '',
+    attachment_size INT UNSIGNED NOT NULL DEFAULT 0,
+    created_at DATETIME     NOT NULL DEFAULT NOW(),
+    updated_at DATETIME     NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_ptpl_name (name)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='홍보메일 문구 템플릿(제목+본문 HTML+첨부 PDF), 캠페인에서 불러와 재사용';

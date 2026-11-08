@@ -473,6 +473,7 @@ async function draw() {
         document.getElementById('spPungpan').innerText    = s.pungpan;
         document.getElementById('spEye').innerText        = s.eye;
         document.getElementById('spFrameHTop').innerText  = s.frameHTop;
+        window.updateFrameHHint?.(geo);
         document.getElementById('spTotalDoorW').innerText = s.totalDoorW;
         document.getElementById('spHalfLapW').innerText   = s.halfLapW;
         document.getElementById('spGrooveW').innerText    = s.grooveW;

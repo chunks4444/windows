@@ -27,7 +27,7 @@ if (!empty($_GET['drawing_id'])) {
             $shareMeta = [
                 'title'       => ($row['title'] ?: '평목 도면') . ' - 워크그룹 평목',
                 'description' => '워크그룹 평목에서 설계한 문살 도면을 확인해보세요.',
-                'image'       => (strpos((string)$row['thumbnail'], '/uploads/') === 0) ? SITE_URL . $row['thumbnail'] : SITE_DEFAULT_IMAGE,
+                'image'       => drawing_og_image_url($row['thumbnail']),
             ];
         }
     }

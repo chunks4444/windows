@@ -128,13 +128,31 @@ function _build_mime_part(string $html, array $attachments): array {
     return ["Content-Type: multipart/mixed; boundary=\"{$boundary}\"", $body];
 }
 
-function _smtp_send(string $authUser, string $authPass, string $from, string $to, string $subject, string $mimeHeaders, string $body, string $extra_headers = '', string $bcc = ''): bool {
+// 템플릿 파일 없이 완성된 HTML을 그대로 보낸다 (홍보메일용). 제목 앞에 [사이트명]을 붙이지 않는다 — "(광고)"가 맨 앞이어야 해서.
+function send_html_mail(string $to, string $subject, string $html, string $extra_headers = '', array $attachments = []): bool {
+    $cfg  = mail_config();
+    $from = $cfg['mail_sales'];
+    [$mimeHeaders, $body] = _build_mime_part($html, $attachments);
+    if (!$cfg['mail_smtp_pass']) return _mail_fallback($to, $subject, $mimeHeaders, $body, $from, $extra_headers, '', true);
+    return _smtp_send($cfg['mail_smtp_user'], $cfg['mail_smtp_pass'], $from, $to, $subject, $mimeHeaders, $body, $extra_headers, '', true);
+}
+
+function _smtp_send(string $authUser, string $authPass, string $from, string $to, string $subject, string $mimeHeaders, string $body, string $extra_headers = '', string $bcc = '', bool $rawSubject = false): bool {
     $sock = @stream_socket_client('tcp://' . SMTP_HOST . ':' . SMTP_PORT, $errno, $errstr, 10);
     if (!$sock) return false;
     stream_set_timeout($sock, 10);
 
     $read = function() use ($sock) { return fgets($sock, 512); };
-    $send = function(string $cmd) use ($sock) { fwrite($sock, $cmd . "\r\n"); };
+    // TLS 소켓은 fwrite가 일부만 쓰고 돌아올 수 있다 — PDF 첨부로 메일이 커지면 끝까지 반복해서 쓴다
+    $send = function(string $cmd) use ($sock) {
+        $data = $cmd . "\r\n"; $len = strlen($data); $off = 0;
+        while ($off < $len) {
+            $n = @fwrite($sock, substr($data, $off, 65536));
+            if ($n === false || $n === 0) return false;
+            $off += $n;
+        }
+        return true;
+    };
 
     $read(); // 220 greeting
 
@@ -171,7 +189,7 @@ function _smtp_send(string $authUser, string $authPass, string $from, string $to
     $send('DATA');
     $read();
 
-    $subj = _mime_header('[' . SITE_NAME . '] ' . $subject);
+    $subj = _mime_header($rawSubject ? $subject : '[' . SITE_NAME . '] ' . $subject);
     $msg  = "From: " . _mime_header(SITE_NAME) . " <{$from}>\r\n"
           . "To: {$to}\r\n"
           . "Subject: {$subj}\r\n"
@@ -180,12 +198,17 @@ function _smtp_send(string $authUser, string $authPass, string $from, string $to
     if ($extra_headers) $msg .= $extra_headers . "\r\n";
     $msg .= "\r\n" . $body;
 
-    $send($msg . "\r\n.");
-    $resp = $read();
+    // 본문 전송 뒤 Gmail이 큰 메일(PDF 첨부 등)을 받아 처리하는 동안은 10초를 넘길 수 있다.
+    // 응답을 못 읽었다고 실패로 처리하면 메일은 이미 나갔는데 이력만 '실패'가 되므로 대기 시간을 늘린다.
+    stream_set_timeout($sock, 120);
+    $wrote = $send($msg . "\r\n.");
+    $resp = $wrote ? $read() : false;
+    $ok = $resp !== false && substr(trim($resp), 0, 3) === '250';
+    if (!$ok) error_log('smtp send failed to ' . $to . ': ' . ($wrote ? var_export(trim((string)$resp), true) : 'write failed') . ' (message ' . strlen($msg) . ' bytes)');
     $send('QUIT');
     fclose($sock);
 
-    return substr(trim($resp), 0, 3) === '250';
+    return $ok;
 }
 
 // 한글 등 비ASCII 헤더(제목·보내는 사람 이름) 인코딩 — RFC 2047은 인코딩 덩어리 하나를 75자 이하로 제한한다.
@@ -202,8 +225,8 @@ function _mime_header(string $text): string {
     return implode("\r\n ", array_map(fn($c) => '=?UTF-8?B?' . base64_encode($c) . '?=', $chunks));
 }
 
-function _mail_fallback(string $to, string $subject, string $mimeHeaders, string $body, string $from, string $extra_headers = '', string $bcc = ''): bool {
-    $subj_enc = _mime_header('[' . SITE_NAME . '] ' . $subject);
+function _mail_fallback(string $to, string $subject, string $mimeHeaders, string $body, string $from, string $extra_headers = '', string $bcc = '', bool $rawSubject = false): bool {
+    $subj_enc = _mime_header($rawSubject ? $subject : '[' . SITE_NAME . '] ' . $subject);
     $parts    = [
         'From: ' . _mime_header(SITE_NAME) . ' <' . $from . '>',
         'MIME-Version: 1.0',

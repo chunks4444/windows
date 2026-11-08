@@ -36,11 +36,14 @@ $h = fn($v) => htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8');
     .qv-bar a, .qv-bar button { color: #fff; background: transparent; border: 1px solid rgba(255,255,255,.4); border-radius: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer; text-decoration: none; }
     .qv-bar button.primary { background: #fff; color: #23262A; border-color: #fff; font-weight: 600; }
     .qv-bar .sp { flex: 1; }
+    .qv-send, .qv-warn, .qv-page { box-sizing: border-box; }
     .qv-send { max-width: 760px; margin: 16px auto 0; padding: 12px 14px; background: #fff; border: 1px solid #C9C6BF; border-radius: 6px; font-size: 13px; display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
     .qv-send .st { flex: 1; min-width: 200px; }
     .qv-send .st b { color: #23262A; }
     .qv-send button { height: 34px; padding: 0 16px; border-radius: 6px; border: none; background: #23262A; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; }
     .qv-send button:disabled { opacity: .5; cursor: default; }
+    .qv-send a.qv-re { display: inline-flex; align-items: center; height: 34px; box-sizing: border-box; padding: 0 16px; border-radius: 6px; border: 1px solid #23262A; background: #fff; color: #23262A; font-size: 13px; font-weight: 600; text-decoration: none; }
+    .qv-send a.qv-re:hover { background: #F1EFEA; }
     .qv-send .intro { width: 100%; display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 600; }
     .qv-send .intro small { font-weight: 400; color: #6B6A66; }
     .qv-send .intro textarea { width: 100%; box-sizing: border-box; border: 1px solid #C9C6BF; border-radius: 6px; padding: 8px; font: inherit; font-size: 13px; font-weight: 400; line-height: 1.6; resize: vertical; }
@@ -79,7 +82,7 @@ $h = fn($v) => htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8');
         <b>아직 고객에게 보내지 않았습니다.</b> 아래 내용을 검토한 뒤 발신하세요. 받는 주소: <?= $sendTo !== '' ? $h($sendTo) : '<span style="color:#8A2A2A">(수신자 이메일 없음 — 이메일을 넣어 재발행하세요)</span>' ?>
         <?php endif; ?>
     </div>
-    <a href="/src/admin/quotes.php?<?= $quote['order_id'] ? 'order_id=' . (int) $quote['order_id'] : 'base_no=' . rawurlencode($quote['base_no']) ?>" style="font-size:13px;color:#23262A;">고칠 곳이 있으면 재발행</a>
+    <a href="/src/admin/quotes.php?<?= $quote['order_id'] ? 'order_id=' . (int) $quote['order_id'] : 'base_no=' . rawurlencode($quote['base_no']) ?>" class="qv-re" title="고칠 곳이 있으면 견적서를 수정해 새 차수로 재발행합니다">재발행</a>
     <button id="qvSendBtn" onclick="sendQuote()" <?= $sendTo === '' ? 'disabled' : '' ?>><?= $quote['emailed_at'] ? '다시 발신' : '고객에게 발신' ?></button>
     <label class="intro">
         <span>메일 인사말 <small>— 메일 맨 위, 견적서 위에 들어가는 문구. 견본이니 고쳐서 보내세요 (비우면 견본 그대로)</small></span>

@@ -396,12 +396,16 @@ async function copyShareLinkFromDashboard() {
 function shareToKakaoFromDashboard() {
     if (!window.Kakao?.isInitialized?.()) { copyShareLinkFromDashboard(); return; }
     const thumbImg = _shareCtx.card?.querySelector('.db-thumb img');
+    let shareImg = _shareCtx.imageUrl || thumbImg?.src || (location.origin + '/src/assets/logo.png');
+    // 도면 썸네일은 정사각형이라 카카오 카드(가로형)에서 가운데만 잘린다 — 도면 전체가 보이는 가로형 이미지로 바꿔 보낸다
+    const og = _shareCtx.kind !== 'render' && /\/uploads\/drawing_thumbs\/(\d+_[0-9a-f]{8})(?:\.png)?(?:\?.*)?$/.exec(shareImg);
+    if (og) shareImg = location.origin + '/src/api/drawings/og_image.php?t=' + og[1];
     Kakao.Share.sendDefault({
         objectType: 'feed',
         content: {
             title: _shareCtx.title || _t('평목 도면'),
             description: _shareCtx.kind === 'render' ? _t('워크그룹 평목에서 렌더링한 창호 이미지를 확인해보세요.') : _t('워크그룹 평목에서 설계한 문살 도면을 확인해보세요.'),
-            imageUrl: _shareCtx.imageUrl || thumbImg?.src || (location.origin + '/src/assets/logo.png'),
+            imageUrl: shareImg,
             link: { mobileWebUrl: _shareUrl(), webUrl: _shareUrl() },
         },
     });
