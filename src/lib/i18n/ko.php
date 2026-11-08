@@ -365,6 +365,11 @@ return [
 
     // 블로그 (src/blog/)
     'blog_total_episodes'     => '전체 %d화',
+    'blog_search_ph'          => '제목·본문 검색',
+    'blog_search_btn'         => '검색',
+    'blog_search_result'      => '‘%s’ 검색 결과 %d건',
+    'blog_search_clear'       => '전체 글 보기',
+    'blog_search_none'        => '검색어와 맞는 글이 없습니다.',
     'blog_no_posts'           => '아직 등록된 글이 없습니다.',
     'blog_no_series'          => '아직 등록된 시리즈가 없습니다.',
     'blog_status_ongoing'     => '연재중',

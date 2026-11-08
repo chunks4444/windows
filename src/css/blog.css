@@ -227,3 +227,24 @@ body { background: var(--bg); }
     .bg-hero-inner { padding: 0 1rem; }
     .bg-list-section { padding: 1.4rem 1rem 3rem; }
 }
+
+/* ── 검색 ───────────────────────────────────────────────── */
+.bg-search {
+    display: flex; align-items: center; gap: .5rem;
+    margin: 0 0 1rem; padding: 0 .4rem 0 .9rem;
+    border: 1px solid var(--border); border-radius: var(--r);
+    background: var(--bg);
+}
+.bg-search .bi-search { color: var(--text-muted); font-size: var(--fs-14); }
+.bg-search input {
+    flex: 1; min-width: 0; border: 0; outline: 0; background: transparent;
+    padding: .65rem 0; font-size: var(--fs-14); color: var(--text);
+}
+.bg-search button {
+    border: 0; border-radius: var(--r); padding: .4rem .9rem;
+    background: var(--text); color: var(--bg); font-size: var(--fs-13); font-weight: 600;
+}
+.bg-search:focus-within { border-color: var(--text); }
+.bg-search-info { font-size: var(--fs-13); color: var(--text-muted); margin: 0 0 .8rem; }
+.bg-search-info a { margin-left: .5rem; color: var(--text); text-decoration: underline; }
+.bg-main .bg-empty { padding: 3rem 1rem; }

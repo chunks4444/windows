@@ -365,6 +365,11 @@ return [
 
     // Blog (src/blog/)
     'blog_total_episodes'     => '%d episodes',
+    'blog_search_ph'          => 'Search titles and posts',
+    'blog_search_btn'         => 'Search',
+    'blog_search_result'      => '%2$d result(s) for “%1$s”',
+    'blog_search_clear'       => 'Show all posts',
+    'blog_search_none'        => 'No posts match your search.',
     'blog_no_posts'           => 'No posts yet.',
     'blog_no_series'          => 'No series yet.',
     'blog_status_ongoing'     => 'Ongoing',
