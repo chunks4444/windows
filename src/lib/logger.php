@@ -69,6 +69,17 @@ function pm_record_pageview(string $page, string $ip, string $ua, string $userId
     }
 }
 
+// 방문 기록(로그 파일·접속 통계·JS 비콘)에서 뺄 방문인지.
+//  - 관리자(s 슈퍼 · m 관리자) 계정으로 로그인한 방문 — 운영자가 자기 사이트를 보는 것은 방문자 통계가 아니다.
+//  - '이 브라우저 제외' 쿠키(pm_nolog=1)가 있는 브라우저 — 로그아웃 상태나 다른 기기에서 보는 운영자용 (접속 통계 화면에서 켠다).
+// 관리자가 회원으로 대리 로그인한 세션(imp)은 권한 판단에서 뺀다: 이 경우 JWT의 role은 그 회원의 것이고,
+// 대리 로그인은 감사용으로 로그 파일에 [IMPERSONATED]로 남기는 기존 동작을 그대로 둔다.
+function pm_is_excluded(?array $payload): bool {
+    if (($_COOKIE['pm_nolog'] ?? '') === '1') return true;
+    if (!$payload || isset($payload['imp'])) return false;
+    return in_array($payload['role'] ?? '', ['s', 'm'], true);
+}
+
 function pm_cleanup_old_logs(string $logDir, int $days = 365): void {
     $cutoff = time() - $days * 86400;
     foreach (glob($logDir . DIRECTORY_SEPARATOR . 'access_*.log') ?: [] as $file) {
@@ -130,12 +141,16 @@ $pmMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 // 로그인 사용자 ID (JWT — 헤더·쿠키·세션 순으로 시도)
 $pmUserId = '-';
 $pmIsImpersonating = false;
+$pmPayload = null;
 try {
     require_once __DIR__ . '/jwt.php';
     $pmPayload = jwt_from_request();
     if ($pmPayload && isset($pmPayload['sub'])) $pmUserId = (string) $pmPayload['sub'];
     if ($pmPayload && isset($pmPayload['imp'])) $pmIsImpersonating = true;
 } catch (Throwable $e) {}
+
+// 운영자 본인 방문은 로그 파일에도 접속 통계에도 남기지 않는다
+if (pm_is_excluded($pmPayload)) return;
 
 $pmLine = sprintf(
     "[%s] [S] IP:%-16s Country:%-4s OS:%-14s Browser:%-22s Lang:%-10s HTTPS:%s Ref:%-30s User:%-5s Page:%s%s\n",

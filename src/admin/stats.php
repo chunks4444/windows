@@ -36,6 +36,18 @@ require_admin_role('s');
         </div>
     </div>
 
+    <!-- 운영자 방문 제외 -->
+    <div style="display:flex;flex-wrap:wrap;gap:8px 24px;align-items:center;margin:-8px 0 16px;font-size:12px;color:var(--text-3);">
+        <label style="display:flex;gap:6px;align-items:center;cursor:pointer;">
+            <input type="checkbox" id="chkExAdmin" checked onchange="loadStats(currentMonths)">
+            관리자 방문 제외 <span>(관리자·슈퍼 계정으로 로그인한 방문 — 기록은 지우지 않고 집계에서만 뺍니다)</span>
+        </label>
+        <label style="display:flex;gap:6px;align-items:center;cursor:pointer;">
+            <input type="checkbox" id="chkNoLog" onchange="toggleNoLog(this.checked)">
+            이 브라우저는 앞으로 방문 기록에서 제외 <span>(로그아웃 상태에서 보는 내 방문까지. 관리자로 로그인한 방문은 이 설정과 상관없이 이미 기록되지 않습니다)</span>
+        </label>
+    </div>
+
     <!-- 요약 카드 -->
     <div class="st-cards">
         <div class="st-card">
@@ -98,7 +110,7 @@ require_admin_role('s');
         </div>
         <div class="st-panel-body" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px;">
             <div>
-                <div style="font-size:12px;font-weight:700;margin-bottom:6px;">사람이 들어온 경로 <span style="font-weight:400;color:var(--text-3);">(Referer 기준, 사이트 내 이동 포함)</span></div>
+                <div style="font-size:12px;font-weight:700;margin-bottom:6px;">유입 경로 <span style="font-weight:400;color:var(--text-3);">(Referer 기준, 사이트 내 이동 포함. "분류 전"은 봇이 섞여 있을 수 있어 JS 확인 UV를 같이 보세요)</span></div>
                 <table>
                     <thead><tr><th>경로</th><th>PV</th><th>UV</th><th>JS 확인 UV</th></tr></thead>
                     <tbody id="sourcesTbody"></tbody>

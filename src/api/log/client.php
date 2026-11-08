@@ -10,6 +10,11 @@ if (!$raw) { http_response_code(204); exit; }
 $d = json_decode($raw, true);
 if (!is_array($d)) { http_response_code(204); exit; }
 
+// 운영자 본인 방문(관리자 로그인 또는 '이 브라우저 제외' 쿠키)은 비콘도 기록하지 않는다
+$jp = null;
+try { require_once __DIR__ . '/../../lib/jwt.php'; $jp = jwt_from_request(); } catch (Throwable $e) {}
+if (pm_is_excluded($jp)) { http_response_code(204); exit; }
+
 $ip   = pm_get_ip();
 $time = date('Y-m-d H:i:s');
 

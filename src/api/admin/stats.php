@@ -20,7 +20,11 @@ if (!$me || $me['role'] !== 's') {
     http_response_code(403); echo json_encode(['error' => '슈퍼 권한이 필요합니다.']); exit;
 }
 
-$months = max(1, min(6, (int)((json_decode(file_get_contents('php://input'),true)['months'] ?? 6))));
+$in     = json_decode(file_get_contents('php://input'), true) ?: [];
+$months = max(1, min(6, (int)($in['months'] ?? 6)));
+// 관리자(s·m) 계정으로 로그인한 방문은 방문자 통계가 아니라서 기본으로 집계에서 뺀다 (화면의 '관리자 방문 제외' 체크). 기록은 지우지 않는다.
+$exAdmin = !array_key_exists('exclude_admin', $in) || !empty($in['exclude_admin']);
+$adm = $exAdmin ? " AND (user_id IS NULL OR user_id NOT IN (SELECT id FROM users WHERE role IN ('s','m')))" : '';
 
 // 1. 일별 PV / UV
 $stmt = $pdo->prepare("
@@ -28,7 +32,7 @@ $stmt = $pdo->prepare("
            COUNT(*)                  AS pv,
            COUNT(DISTINCT ip_hash)   AS uv
     FROM page_views
-    WHERE visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH)
+    WHERE visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH) $adm
     GROUP BY DATE(visited_at)
     ORDER BY date
 ");
@@ -42,7 +46,7 @@ $stmt = $pdo->prepare("
            COUNT(pv.user_id)       AS member_pv,
            SUM(pv.is_mobile)       AS mobile_pv
     FROM page_views pv
-    WHERE visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH)
+    WHERE visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH) $adm
 ");
 $stmt->execute([$months]);
 $summary = $stmt->fetch();
@@ -56,7 +60,7 @@ $classified = false;
 $types = $bots = $sources = [];
 $classSince = null;
 try {
-    $from = 'FROM page_views WHERE visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH)';
+    $from = "FROM page_views WHERE visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH) $adm";
 
     // 일별: 종류별 PV와 사람 UV, JS 실행 확인 UV
     $stmt = $pdo->prepare("
@@ -95,9 +99,12 @@ try {
     $stmt->execute([$months]);
     $bots = $stmt->fetchAll();
 
-    // 사람의 유입 경로 (구글·네이버·다음·직접 …)
-    $stmt = $pdo->prepare("SELECT ref_source AS source, COUNT(*) AS pv, COUNT(DISTINCT ip_hash) AS uv, COUNT(DISTINCT CASE WHEN js_ok = 1 THEN ip_hash END) AS js_uv
-                           $from AND visitor_type = 'human' AND ref_source IS NOT NULL
+    // 유입 경로 (구글·네이버·다음·직접 …). 분류 후에는 사람으로 판정된 방문만, 분류 전 방문은 봇이 섞여 있어도
+    // (로그에서 채운 Referer가 있으면) 같이 센다 — 그래서 사람 확실도는 "JS 확인 UV"로 따로 보여준다.
+    $stmt = $pdo->prepare("SELECT ref_source AS source, COUNT(*) AS pv, COUNT(DISTINCT ip_hash) AS uv,
+                                  COUNT(DISTINCT CASE WHEN js_ok = 1 THEN ip_hash END) AS js_uv,
+                                  SUM(visitor_type IS NULL) AS prior_pv
+                           $from AND ref_source IS NOT NULL AND (visitor_type = 'human' OR visitor_type IS NULL)
                            GROUP BY ref_source ORDER BY pv DESC");
     $stmt->execute([$months]);
     $sources = $stmt->fetchAll();
@@ -109,6 +116,7 @@ try {
 }
 
 echo json_encode([
+    'excludeAdmin' => $exAdmin,
     'daily'       => $daily,
     'summary'     => $summary,
     'sharedCount' => $sharedCount,
