@@ -95,6 +95,12 @@ require_admin_role('s');
                 </div>
             </div>
                 <textarea id="pmHtml"></textarea>
+                <div id="pmRawWrap" style="display:none;">
+                    <div style="font-size:12px;color:#8a3a22;background:#fbe9e4;padding:8px 12px;border-radius:var(--r-sm);margin-bottom:8px;">
+                        전체 HTML 문서(&lt;html&gt;·&lt;head&gt; 포함)라서 코드로 직접 편집합니다. 일반 편집기는 &lt;head&gt;와 모바일 스타일을 지워 메일이 깨지기 때문에 쓰지 않습니다.
+                    </div>
+                    <textarea id="pmHtmlRaw" spellcheck="false" style="width:100%;min-height:460px;font-family:Consolas,monospace;font-size:12px;line-height:1.5;padding:10px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg);color:var(--text);white-space:pre;overflow:auto;"></textarea>
+                </div>
             </div>
             <div class="adm-mfield">
                 <label>포트폴리오 PDF 첨부 — 8MB 이하는 메일에 첨부되고, 그보다 크면 첨부 없이 본문의 PDF 다운로드 링크로만 전달됩니다 (PDF, 30MB 이하)</label>

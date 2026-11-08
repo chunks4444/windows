@@ -25,6 +25,11 @@ function fail(int $code, string $msg): never {
     exit;
 }
 
+// 전체 HTML 문서(<!DOCTYPE>·<html>)로 짠 홍보문구인지. 이런 본문을 에디터(Jodit)의 '일반 편집' 모드로 저장하면 <head>·<style>(모바일 반응형)이
+// 지워진 채 저장돼 메일이 깨진다 — 이미 전체 문서인 본문을 문서 구조 없이 덮어쓰려는 저장은 막는다 (2026-11-09).
+function is_full_html_doc(string $h): bool { return (bool)preg_match('/<!DOCTYPE|<html\b/i', $h); }
+const FULL_DOC_MSG = '이 홍보문구는 전체 HTML 문서(<html>·<head> 포함)로 만들어져 있어, 문서 구조가 빠진 내용으로는 저장할 수 없습니다. 일반 편집기를 쓰면 모바일 스타일이 지워집니다. 코드 입력칸에서 수정하거나, 새 템플릿으로 저장하세요.';
+
 function load_campaign(PDO $pdo, int $id): array {
     $stmt = $pdo->prepare('SELECT * FROM promo_campaigns WHERE id = ?');
     $stmt->execute([$id]);
@@ -162,10 +167,12 @@ if ($action === 'save_template') {
     $att = $campId ? load_campaign($pdo, $campId) : null;
     $oldPath = '';
     if ($id) {
-        $cur = $pdo->prepare('SELECT attachment_path FROM promo_templates WHERE id = ?');
+        $cur = $pdo->prepare('SELECT attachment_path, html_body FROM promo_templates WHERE id = ?');
         $cur->execute([$id]);
-        $oldPath = $cur->fetchColumn();
-        if ($oldPath === false) fail(404, '템플릿을 찾을 수 없습니다.');
+        $curRow = $cur->fetch();
+        if (!$curRow) fail(404, '템플릿을 찾을 수 없습니다.');
+        $oldPath = $curRow['attachment_path'];
+        if (is_full_html_doc((string)$curRow['html_body']) && !is_full_html_doc($html)) fail(409, FULL_DOC_MSG);
         $pdo->prepare('UPDATE promo_templates SET name=?, subject=?, html_body=? WHERE id=?')->execute([$name, $subject, $html, $id]);
     } else {
         $pdo->prepare('INSERT INTO promo_templates (name, subject, html_body) VALUES (?,?,?)')->execute([$name, $subject, $html]);
@@ -234,6 +241,7 @@ if ($action === 'save') {
     if ($id) {
         $c = load_campaign($pdo, $id);
         if (!in_array($c['status'], ['draft', 'canceled'], true)) fail(409, '발송 중이거나 완료된 캠페인은 수정할 수 없습니다. 예약은 취소 후 수정하세요.');
+        if (is_full_html_doc((string)$c['html_body']) && !is_full_html_doc($html)) fail(409, FULL_DOC_MSG);
         $pdo->prepare("UPDATE promo_campaigns SET title=?, subject=?, html_body=?, industries=?, company_ids=?, status='draft', scheduled_at=NULL WHERE id=?")
             ->execute([$title, $subject, $html, $inds, $companyIds, $id]);
     } else {

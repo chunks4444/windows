@@ -74,12 +74,32 @@ function initEditor() {
     });
 }
 
+// 전체 HTML 문서(<!DOCTYPE>·<html> 포함)는 일반 편집기(Jodit)에 넣지 않고 코드 입력칸으로 연다.
+// Jodit는 값을 넣는 순간 <head>·<style>(모바일 반응형)을 지워 버려서, 한 번 저장하면 메일이 깨진다 (2026-11-09).
+let rawMode = false;
+function isFullDoc(html) { return /<!DOCTYPE|<html\b/i.test(html || ''); }
+
+function setRawMode(on) {
+    rawMode = on;
+    document.getElementById('pmRawWrap').style.display = on ? '' : 'none';
+    jodit.container.style.display = on ? 'none' : '';
+}
+
 function getBodyHtml() {
+    if (rawMode) return document.getElementById('pmHtmlRaw').value;
     jodit.synchronizeValues(); // 소스 보기 중이어도 최신 내용을 반영
     return jodit.value;
 }
 
-function setBodyHtml(html) { jodit.value = html; }
+function setBodyHtml(html) {
+    if (isFullDoc(html)) {
+        setRawMode(true);
+        document.getElementById('pmHtmlRaw').value = html;   // 그대로 — 어떤 정리도 거치지 않는다
+    } else {
+        setRawMode(false);
+        jodit.value = html;
+    }
+}
 
 // ── 편집기 ───────────────────────────────────────────────
 // 새 홍보메일을 열 때 제목 칸에 미리 들어가는 기본 제목 ({{회사명}}은 발송 시 받는 회사 이름으로 바뀜)
