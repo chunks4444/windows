@@ -4,6 +4,7 @@
 return [
     ['title' => '통계', 'items' => [
         ['stats.php',            'bi-bar-chart-line',  '접속 통계'],
+        ['user_funnel.php',      'bi-funnel',          '가입자 활동'],
     ]],
     ['title' => '블로그', 'items' => [
         ['blog.php',             'bi-journal-text',    '블로그 글 관리'],

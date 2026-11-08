@@ -111,6 +111,9 @@ $stmt->execute([
 ]);
 $orderId = (int) $pdo->lastInsertId();
 
+require_once __DIR__ . '/../../lib/milestones.php';
+ms_mark((int) $userId, 'first_order_at');
+
 // 견적요청이 접수된 도면은 status='pending_review'인 동안 자동으로 편집/삭제 불가 (Drawing::lockedAtExpr 참고)
 
 // 관리자(슈퍼/관리자 권한) 계정의 이메일로 발송 — 고정 주소 대신 실제 등록된 관리자에게 전달

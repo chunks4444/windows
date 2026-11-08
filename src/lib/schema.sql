@@ -1137,3 +1137,18 @@ CREATE TABLE IF NOT EXISTS promo_templates (
     PRIMARY KEY (id),
     UNIQUE KEY uq_ptpl_name (name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='홍보메일 문구 템플릿(제목+본문 HTML+첨부 PDF), 캠페인에서 불러와 재사용';
+
+-- 회원별 활동 단계 — 어드민 '가입자 활동' (2026-11-09, ops/migrations/2026-11-09_user_milestones.sql과 같은 내용)
+CREATE TABLE IF NOT EXISTS user_milestones (
+    user_id          INT UNSIGNED NOT NULL COMMENT '회원 ID (users.id)',
+    first_studio_at  DATETIME NULL COMMENT '처음 스튜디오(설계 엔진 페이지)를 연 시각',
+    first_drawing_at DATETIME NULL COMMENT '처음 도면을 저장한 시각',
+    first_export_at  DATETIME NULL COMMENT '처음 PNG/PDF로 내보낸 시각',
+    first_render_at  DATETIME NULL COMMENT '처음 AI 렌더링을 한 시각',
+    first_order_at   DATETIME NULL COMMENT '처음 견적요청(주문)을 한 시각',
+    last_seen_at     DATETIME NULL COMMENT '마지막 방문 시각 (10분 단위로 갱신)',
+    updated_at       DATETIME NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+    PRIMARY KEY (user_id),
+    KEY idx_um_last_seen (last_seen_at),
+    CONSTRAINT fk_um_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='회원별 활동 단계(처음 한 시각) — 어드민 가입자 활동 화면';
