@@ -38,6 +38,26 @@ require_admin_role('s');
     </p>
     <p id="ufNoTable" style="display:none;font-size:13px;color:#a02020;">아직 기록 표가 만들어지지 않았습니다. (ops/migrations/2026-11-09_user_milestones.sql 적용 필요)</p>
 
+    <!-- 현재 접속 (관리자 포함) -->
+    <div class="st-panel">
+        <div class="st-panel-head" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span class="st-panel-title">현재 접속 <span id="ufOnlineCount" style="font-weight:400;color:var(--text-3);"></span></span>
+            <span style="font-size:11px;color:var(--text-3);">최근 10분 안에 페이지를 연 회원 · 관리자 포함 · 1분마다 새로 불러옵니다</span>
+        </div>
+        <div class="st-panel-body" id="ufOnline" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+    </div>
+
+    <!-- 접속 회원 -->
+    <div class="st-panel">
+        <div class="st-panel-head"><span class="st-panel-title">접속 회원 — 로그인한 상태로 사이트를 방문한 회원 (관리자 제외)</span></div>
+        <div class="st-panel-body">
+            <div class="st-cards" id="ufActiveCards" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px;"></div>
+            <div style="font-size:12px;color:var(--text-3);margin-bottom:6px;">최근 30일 일별 접속 회원 수</div>
+            <div id="ufDaily" style="display:flex;align-items:flex-end;gap:3px;height:84px;"></div>
+            <div id="ufDailyAxis" style="display:flex;gap:3px;font-size:10px;color:var(--text-3);margin-top:4px;"></div>
+        </div>
+    </div>
+
     <!-- 전체 단계 -->
     <div class="st-cards" id="ufCards" style="grid-template-columns:repeat(6,1fr);"></div>
 
@@ -57,6 +77,11 @@ require_admin_role('s');
         <div class="st-panel-head" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
             <span class="st-panel-title">회원별 (최근 가입 300명)</span>
             <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                <select id="ufSort" onchange="renderMembers()" style="height:30px;padding:0 8px;font-size:12px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg);color:var(--text);">
+                    <option value="created">가입 최신순</option>
+                    <option value="seen">최근 접속순</option>
+                    <option value="days">30일 접속일수 많은 순</option>
+                </select>
                 <label style="display:flex;gap:6px;align-items:center;font-size:12px;cursor:pointer;">
                     <input type="checkbox" id="ufNoDrawing" onchange="renderMembers()"> 도면을 아직 안 만든 회원만
                 </label>
@@ -66,7 +91,7 @@ require_admin_role('s');
         </div>
         <div class="st-panel-body" style="padding:0;">
             <table>
-                <thead><tr><th>가입일</th><th>회원</th><th>스튜디오</th><th>도면 저장</th><th>내보내기</th><th>렌더링</th><th>견적요청</th><th>마지막 방문</th></tr></thead>
+                <thead><tr><th>가입일</th><th>회원</th><th>스튜디오</th><th>도면 저장</th><th>내보내기</th><th>렌더링</th><th>견적요청</th><th>마지막 접속</th><th>30일 접속</th></tr></thead>
                 <tbody id="ufMembers"></tbody>
             </table>
         </div>

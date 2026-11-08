@@ -20,14 +20,14 @@ function ms_mark(int $userId, string $step): void {
     }
 }
 
-// 방문만 기록 — 쓰기가 잦지 않도록 마지막 방문이 10분 넘게 지났을 때만 갱신
+// 방문만 기록 — 쓰기가 잦지 않도록 마지막 방문이 2분 넘게 지났을 때만 갱신 (어드민 '현재 접속'이 최근 10분 기준)
 function ms_seen(int $userId): void {
     if ($userId <= 0) return;
     try {
         require_once __DIR__ . '/db.php';
         db()->prepare(
             "INSERT INTO user_milestones (user_id, last_seen_at) VALUES (?, NOW())
-             ON DUPLICATE KEY UPDATE last_seen_at = IF(last_seen_at IS NULL OR last_seen_at < NOW() - INTERVAL 10 MINUTE, NOW(), last_seen_at)"
+             ON DUPLICATE KEY UPDATE last_seen_at = IF(last_seen_at IS NULL OR last_seen_at < NOW() - INTERVAL 2 MINUTE, NOW(), last_seen_at)"
         )->execute([$userId]);
     } catch (Throwable $e) {
     }

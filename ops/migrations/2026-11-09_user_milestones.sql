@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS user_milestones (
     first_export_at  DATETIME NULL COMMENT '처음 PNG/PDF로 내보낸 시각',
     first_render_at  DATETIME NULL COMMENT '처음 AI 렌더링을 한 시각',
     first_order_at   DATETIME NULL COMMENT '처음 견적요청(주문)을 한 시각',
-    last_seen_at     DATETIME NULL COMMENT '마지막 방문 시각 (10분 단위로 갱신)',
+    last_seen_at     DATETIME NULL COMMENT '마지막 접속 시각 (2분 단위로 갱신, 관리자 포함)',
     updated_at       DATETIME NOT NULL DEFAULT NOW() ON UPDATE NOW(),
     PRIMARY KEY (user_id),
     KEY idx_um_last_seen (last_seen_at),

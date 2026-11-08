@@ -63,7 +63,7 @@ function pm_record_pageview(string $page, string $ip, string $ua, string $userId
         // 로그인한 회원이면 활동 단계 기록: 스튜디오(엔진) 페이지를 처음 열었는지, 마지막 방문 시각
         if ($uid && $vType === VISITOR_HUMAN) {
             require_once __DIR__ . '/milestones.php';
-            if (ms_is_studio_page($page)) ms_mark($uid, 'first_studio_at'); else ms_seen($uid);
+            if (ms_is_studio_page($page)) ms_mark($uid, 'first_studio_at');
         }
 
         // 1% 확률로 1년 초과분 자동 삭제
@@ -154,6 +154,13 @@ try {
     if ($pmPayload && isset($pmPayload['sub'])) $pmUserId = (string) $pmPayload['sub'];
     if ($pmPayload && isset($pmPayload['imp'])) $pmIsImpersonating = true;
 } catch (Throwable $e) {}
+
+// 로그인한 회원(관리자 포함)의 '마지막 접속' 갱신 — 어드민 '가입자 활동'의 현재 접속 표시용. 방문 통계와는 별개이고
+// 대리 로그인 세션은 제외한다. 2분에 한 번만 쓴다(ms_seen).
+if ($pmPayload && empty($pmPayload['imp']) && ctype_digit((string)($pmPayload['sub'] ?? ''))) {
+    require_once __DIR__ . '/milestones.php';
+    ms_seen((int)$pmPayload['sub']);
+}
 
 // 운영자 본인 방문은 로그 파일에도 접속 통계에도 남기지 않는다
 if (pm_is_excluded($pmPayload)) return;

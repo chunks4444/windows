@@ -24,6 +24,13 @@ catch (Throwable $e) { echo json_encode(['no_table' => true]); exit; }
 
 $months = max(1, min(12, (int)($_GET['months'] ?? 6)));
 
+// 현재 접속 — 최근 10분 안에 페이지를 연 회원. 관리자(s·m)도 포함한다 (마지막 접속은 lib/logger.php가 관리자도 갱신).
+$online = $pdo->query("SELECT u.id, u.email, u.name, u.role, m.last_seen_at, TIMESTAMPDIFF(MINUTE, m.last_seen_at, NOW()) AS minutes_ago
+                        FROM user_milestones m JOIN users u ON u.id = m.user_id
+                        WHERE m.last_seen_at >= DATE_SUB(NOW(), INTERVAL 10 MINUTE) AND u.withdrawn_at IS NULL
+                        ORDER BY m.last_seen_at DESC")->fetchAll();
+if (!empty($_GET['online_only'])) { echo json_encode(['online' => $online], JSON_UNESCAPED_UNICODE); exit; }
+
 $steps = "COUNT(*) AS signups,
           SUM(m.first_studio_at  IS NOT NULL) AS studio,
           SUM(m.first_drawing_at IS NOT NULL) AS drawing,
@@ -41,16 +48,35 @@ $cohorts = $pdo->prepare("SELECT DATE_FORMAT(u.created_at, '%Y-%m') AS ym, $step
                           GROUP BY ym ORDER BY ym DESC");
 $cohorts->execute([$months - 1]);
 
-// 회원 목록 (최근 가입 순)
+// 접속 회원 — 로그인한 상태의 방문(page_views.user_id)을 기준으로 오늘·7일·30일에 접속한 회원 수.
+// 관리자 계정은 방문 기록 자체를 남기지 않지만(lib/logger.php), 옛 기록이 섞여 있을 수 있어 권한으로도 거른다.
+$active = $pdo->query("SELECT COUNT(DISTINCT CASE WHEN pv.visited_at >= CURDATE() THEN pv.user_id END) AS today,
+                              COUNT(DISTINCT CASE WHEN pv.visited_at >= DATE_SUB(NOW(), INTERVAL 7 DAY) THEN pv.user_id END) AS d7,
+                              COUNT(DISTINCT pv.user_id) AS d30
+                       FROM page_views pv JOIN users u ON u.id = pv.user_id
+                       WHERE u.role IN ('u','a') AND pv.visited_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)")->fetch();
+
+// 최근 30일 일별 접속 회원 수
+$daily = $pdo->query("SELECT DATE(pv.visited_at) AS d, COUNT(DISTINCT pv.user_id) AS n
+                      FROM page_views pv JOIN users u ON u.id = pv.user_id
+                      WHERE u.role IN ('u','a') AND pv.visited_at >= DATE_SUB(CURDATE(), INTERVAL 29 DAY)
+                      GROUP BY d ORDER BY d")->fetchAll(PDO::FETCH_KEY_PAIR);
+
+// 회원 목록 (화면에서 가입 순 / 최근 접속 순으로 정렬). 30일 접속 일수·페이지뷰는 방문 기록에서 센다.
 $members = $pdo->query("SELECT u.id, u.email, u.name, u.role, u.created_at, u.withdrawn_at,
-                               m.first_studio_at, m.first_drawing_at, m.first_export_at, m.first_render_at, m.first_order_at, m.last_seen_at
+                               m.first_studio_at, m.first_drawing_at, m.first_export_at, m.first_render_at, m.first_order_at, m.last_seen_at,
+                               (SELECT COUNT(DISTINCT DATE(v.visited_at)) FROM page_views v WHERE v.user_id = u.id AND v.visited_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)) AS days_30d,
+                               (SELECT COUNT(*) FROM page_views v WHERE v.user_id = u.id AND v.visited_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)) AS pv_30d
                         $base ORDER BY u.created_at DESC LIMIT 300")->fetchAll();
 
 // 데이터가 시작된 시점 — 스튜디오 열람은 page_views(1년치)가 근거라 그 이전 가입자는 알 수 없다
 $pvSince = $pdo->query('SELECT MIN(visited_at) FROM page_views')->fetchColumn();
 
 echo json_encode([
+    'online'  => $online,
     'total'   => $total,
+    'active'  => $active,
+    'daily'   => $daily,
     'cohorts' => $cohorts->fetchAll(),
     'members' => $members,
     'pvSince' => $pvSince,
