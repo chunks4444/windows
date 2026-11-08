@@ -31,4 +31,18 @@ $line = sprintf(
 );
 
 pm_write_log($line);
+
+// 이 비콘은 브라우저가 자바스크립트를 실제로 실행했을 때만 온다 — 같은 방문자(IP+UA)의 가장 최근 방문 기록에
+// "JS 실행 확인" 표시를 한다. UA를 흉내 낸 크롤러는 보통 JS를 실행하지 않으므로 사람 수를 더 정확히 가늠하는 기준이 된다.
+try {
+    require_once __DIR__ . '/../../lib/db.php';
+    $ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
+    if ($ua !== '' && $ip !== '-') {
+        db()->prepare(
+            'UPDATE page_views SET js_ok = 1 WHERE ip_hash = ? AND ua_hash = ? AND js_ok = 0 AND visited_at >= DATE_SUB(NOW(), INTERVAL 10 MINUTE) ORDER BY id DESC LIMIT 1'
+        )->execute([substr(md5($ip), 0, 8), substr(md5($ua), 0, 8)]);
+    }
+} catch (Throwable $e) {
+    // 분류 칸이 없거나 DB 오류여도 비콘 응답은 그대로
+}
 http_response_code(204);

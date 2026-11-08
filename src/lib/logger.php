@@ -34,9 +34,10 @@ function pm_get_ip(): string {
     return '-';
 }
 
-function pm_record_pageview(string $page, string $ip, string $ua, string $userId): void {
+function pm_record_pageview(string $page, string $ip, string $ua, string $userId, string $refHost = '-'): void {
     try {
         require_once __DIR__ . '/db.php';
+        require_once __DIR__ . '/visitor_class.php';
         $pdo        = db();
         $ipHash     = substr(md5($ip), 0, 8);
         $uaHash     = $ua !== '' ? substr(md5($ua), 0, 8) : null;
@@ -44,9 +45,20 @@ function pm_record_pageview(string $page, string $ip, string $ua, string $userId
         $uid        = ($userId !== '-' && ctype_digit($userId)) ? (int)$userId : null;
         $statusCode = http_response_code() ?: 200;
 
-        $pdo->prepare(
-            'INSERT INTO page_views (page, user_id, ip_hash, ip, ua_hash, is_mobile, status_code) VALUES (?, ?, ?, ?, ?, ?, ?)'
-        )->execute([$page, $uid, $ipHash, $ip, $uaHash, $isMobile, $statusCode]);
+        // 사람/봇 분류와 유입 경로 (사람일 때만 유입 경로를 남긴다 — 봇의 Referer는 의미가 없다)
+        [$vType, $botName] = pm_classify_ua($ua);
+        $refSource = $vType === VISITOR_HUMAN ? pm_ref_source($refHost) : null;
+
+        try {
+            $pdo->prepare(
+                'INSERT INTO page_views (page, user_id, ip_hash, ip, ua_hash, is_mobile, status_code, visitor_type, bot_name, ref_source) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
+            )->execute([$page, $uid, $ipHash, $ip, $uaHash, $isMobile, $statusCode, $vType, $botName, $refSource]);
+        } catch (Throwable $e) {
+            // 분류 칸이 아직 없는 DB(마이그레이션 전)여도 방문 기록은 빠뜨리지 않는다
+            $pdo->prepare(
+                'INSERT INTO page_views (page, user_id, ip_hash, ip, ua_hash, is_mobile, status_code) VALUES (?, ?, ?, ?, ?, ?, ?)'
+            )->execute([$page, $uid, $ipHash, $ip, $uaHash, $isMobile, $statusCode]);
+        }
 
         // 1% 확률로 1년 초과분 자동 삭제
         if (mt_rand(0, 99) === 0) {
@@ -134,5 +146,5 @@ $pmLine = sprintf(
 pm_write_log($pmLine);
 // 관리자가 대리 로그인 중인 세션은 회원 본인의 접속 통계(page_views)에 반영하지 않는다.
 if (!$pmIsImpersonating) {
-    pm_record_pageview($pmPage, $pmIp, $pmUa, $pmUserId);
+    pm_record_pageview($pmPage, $pmIp, $pmUa, $pmUserId, $pmRef);
 }

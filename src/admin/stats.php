@@ -63,7 +63,23 @@ require_admin_role('s');
             <div class="st-card-value" id="sumShared">—</div>
             <div class="st-card-sub">현재 시점</div>
         </div>
+        <div class="st-card" id="cardHuman" style="display:none;">
+            <div class="st-card-label">사람 PV</div>
+            <div class="st-card-value" id="sumHuman">—</div>
+            <div class="st-card-sub" id="sumHumanSub"></div>
+        </div>
+        <div class="st-card" id="cardBot" style="display:none;">
+            <div class="st-card-label">봇 PV</div>
+            <div class="st-card-value" id="sumBot">—</div>
+            <div class="st-card-sub" id="sumBotSub"></div>
+        </div>
+        <div class="st-card" id="cardJs" style="display:none;">
+            <div class="st-card-label">JS 실행 확인 UV</div>
+            <div class="st-card-value" id="sumJs">—</div>
+            <div class="st-card-sub">실제 브라우저로 확인된 방문자</div>
+        </div>
     </div>
+    <p id="classNote" style="display:none;font-size:12px;color:var(--text-3);margin:-14px 0 20px;"></p>
 
     <!-- 일별 차트 -->
     <div class="st-panel">
@@ -72,6 +88,29 @@ require_admin_role('s');
         </div>
         <div class="st-panel-body">
             <div class="st-chart-wrap"><canvas id="dailyChart"></canvas></div>
+        </div>
+    </div>
+
+    <!-- 방문 구분: 유입 경로(구글·네이버 …) / 봇 종류(검색엔진 봇 …) -->
+    <div class="st-panel" id="panelClass" style="display:none;">
+        <div class="st-panel-head">
+            <span class="st-panel-title">방문 구분 — 유입 경로와 봇 종류</span>
+        </div>
+        <div class="st-panel-body" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px;">
+            <div>
+                <div style="font-size:12px;font-weight:700;margin-bottom:6px;">사람이 들어온 경로 <span style="font-weight:400;color:var(--text-3);">(Referer 기준, 사이트 내 이동 포함)</span></div>
+                <table>
+                    <thead><tr><th>경로</th><th>PV</th><th>UV</th><th>JS 확인 UV</th></tr></thead>
+                    <tbody id="sourcesTbody"></tbody>
+                </table>
+            </div>
+            <div>
+                <div style="font-size:12px;font-weight:700;margin-bottom:6px;">봇 종류 <span style="font-weight:400;color:var(--text-3);">(검색엔진 · AI · 링크 미리보기 · 기타)</span></div>
+                <table>
+                    <thead><tr><th>구분</th><th>이름</th><th>PV</th><th>IP</th><th>마지막</th></tr></thead>
+                    <tbody id="botsTbody"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
