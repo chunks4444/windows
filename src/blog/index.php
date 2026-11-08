@@ -1,5 +1,11 @@
 <?php
 header('Content-Type: text/html; charset=UTF-8');
+// 예전 목록 내 검색 주소(/blog/?q=)는 검색 결과 페이지로 영구 이동
+if (isset($_GET['q']) && $_GET['q'] !== '') {
+    require_once __DIR__ . '/../lib/i18n.php';
+    header('Location: ' . lang_href('/blog/search') . '?q=' . rawurlencode((string)$_GET['q']), true, 301);
+    exit;
+}
 require_once __DIR__ . '/../lib/db.php';
 require_once __DIR__ . '/../lib/i18n.php';
 try {
@@ -202,6 +208,8 @@ try {
             </div>
             <?php endif; ?>
 
+            <?php $bgSearchId = 'bgSearchTop'; include __DIR__ . '/../components/blog_search_form.php'; ?>
+
             <ol class="bg-ranked-list" start="<?= $offset + 1 ?>">
                 <?php foreach ($pagePosts as $p): ?>
                 <li class="bg-ranked-item">
@@ -240,6 +248,9 @@ try {
 
         <!-- ── 사이드바: 시리즈 카드 ── -->
         <aside class="bg-sidebar">
+            <div class="bg-side-search">
+                <?php $bgSearchId = 'bgSearchSide'; include __DIR__ . '/../components/blog_search_form.php'; ?>
+            </div>
             <?php foreach ($seriesCards as $sc): ?>
             <div class="bg-side-card">
                 <h3 class="bg-side-card-title">

@@ -719,6 +719,38 @@ CREATE TABLE IF NOT EXISTS orders (
     CONSTRAINT fk_orders_user     FOREIGN KEY (user_id)    REFERENCES users (id)    ON DELETE CASCADE,
     CONSTRAINT fk_orders_drawing FOREIGN KEY (drawing_id) REFERENCES drawings (id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='제작 주문';
+
+-- 2026-11-04 견적서 발행 모듈 — 관리자가 어드민 '견적서' 메뉴(src/admin/quotes.php)에서 발행하는 견적서.
+-- 견적요청(주문)에서 작성하거나, 견적요청 없이 직접 작성(order_id NULL)할 수 있다.
+-- 고객은 웹에서 볼 수 없고(관리자 전용 화면 src/quote/view.php), 관리자가 검토 후 '발신'하면 견적서 전문을 메일 본문 + PDF 첨부로 받는다.
+-- 재발행하면 같은 base_no(견적 묶음 번호)로 revision을 올려 새 행이 쌓이고 이전 차수는 보관된다.
+-- 주문 견적서를 발행하면 orders.final_price = 이 견적의 공급가액(부가세 제외).
+-- src/lib/quote.php quote_ensure_table()이 자동으로 만들고, 예전 구조(주문 전용)면 ALTER로 맞춘다(아래 정의와 같아야 함).
+CREATE TABLE IF NOT EXISTS quotes (
+    id              INT UNSIGNED  NOT NULL AUTO_INCREMENT COMMENT '견적서 고유 ID',
+    order_id        INT UNSIGNED  NULL COMMENT '어느 주문의 견적서인지 (orders.id) — 견적요청 없이 직접 작성한 견적서는 NULL',
+    base_no         VARCHAR(40)   NOT NULL COMMENT '견적 묶음 번호 — 주문 견적서는 주문코드(SQ-1024), 직접 작성은 PM-yymmdd-NN. 차수는 이 번호별로 센다',
+    revision        SMALLINT UNSIGNED NOT NULL DEFAULT 1 COMMENT '차수 — 같은 묶음에 재발행할 때마다 1씩 올라감, 이전 차수는 보관',
+    quote_no        VARCHAR(40)   NOT NULL COMMENT '견적번호 = base_no + -Q차수 (예: SQ-1024-Q2, PM-261104-01-Q1)',
+    title           VARCHAR(100)  NULL COMMENT '건명 (예: 거실 중문) — 견적서 본문·메일 제목에 표시, 주문 견적서는 기본값이 도면명',
+    issued_at       DATETIME      NOT NULL COMMENT '발행일시',
+    issued_by       INT UNSIGNED  NULL COMMENT '발행한 관리자 user_id',
+    valid_until     DATE          NULL COMMENT '견적 유효기한',
+    lead_time       VARCHAR(100)  NULL COMMENT '납기 안내 문구 (예: 주문 확정 후 약 21일)',
+    items_json      TEXT          NOT NULL COMMENT '품목 행 [{name, spec, qty, unit_price, amount}] — 관리자가 발행 때 확정한 값',
+    supply_amount   BIGINT        NOT NULL COMMENT '공급가액 (원, 부가세 제외)',
+    vat_amount      BIGINT        NOT NULL COMMENT '세액 (원, 공급가액의 10% 절사)',
+    total_amount    BIGINT        NOT NULL COMMENT '합계금액 (원, 공급가액+세액)',
+    note            TEXT          NULL COMMENT '비고 (고객에게 보이는 문구 — 결제조건·별도 항목 등)',
+    customer_json   TEXT          NOT NULL COMMENT '수신자(고객) 정보 스냅샷 — 이름·회사·사업자번호·주소 등, 발행 뒤 회원정보가 바뀌어도 그대로',
+    supplier_json   TEXT          NOT NULL COMMENT '공급자(평목) 정보 스냅샷 — 상호·사업자번호·대표자·주소 등',
+    emailed_to      VARCHAR(255)  NULL COMMENT '견적서 메일을 보낸 주소 (안 보냈으면 NULL)',
+    emailed_at      DATETIME      NULL COMMENT '마지막 메일 발송 시각',
+    PRIMARY KEY (id),
+    UNIQUE KEY uk_quotes_base_rev (base_no, revision),
+    KEY idx_quotes_order (order_id),
+    CONSTRAINT fk_quotes_order FOREIGN KEY (order_id) REFERENCES orders (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='발행된 견적서 (견적 묶음별 차수 보관)';
 -- ============================================================
 
 -- 원가/가격 산출 기준 데이터. src/lib/engine_settings.php의 compute_price_estimate()가 참조.
