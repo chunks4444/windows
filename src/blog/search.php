@@ -34,7 +34,7 @@ $totalPages = max(1, (int)ceil($total / $perPage));
 
 // 한국어 조사(은/는, 과/와) — 마지막 글자 받침 여부로 고른다. 한글이 아니면 '은(는)'처럼 둘 다 표기
 function bs_josa(string $word, string $withBatchim, string $without): string {
-    $last = mb_substr($word, -1);
+    $last = mb_substr(rtrim($word, "'\"’”"), -1); // 따옴표로 감싼 말이면 따옴표 앞 글자로 판단
     $code = mb_ord($last);
     if ($code < 0xAC00 || $code > 0xD7A3) return $word . $withBatchim . '(' . $without . ')';
     return $word . ((($code - 0xAC00) % 28) ? $withBatchim : $without);
