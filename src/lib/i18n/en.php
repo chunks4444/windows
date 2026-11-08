@@ -365,11 +365,17 @@ return [
 
     // Blog (src/blog/)
     'blog_total_episodes'     => '%d episodes',
+    'blog_search_title'       => 'Search the blog',
     'blog_search_ph'          => 'Search titles and posts',
     'blog_search_btn'         => 'Search',
+    'blog_search_hint'        => 'Enter at least two characters. Alternate spellings of the same term are searched together.',
+    'blog_search_short'       => 'Please enter at least two characters.',
     'blog_search_result'      => '%2$d result(s) for “%1$s”',
+    'blog_search_alias'       => '%1$s was also searched as %2$s',
     'blog_search_clear'       => 'Show all posts',
-    'blog_search_none'        => 'No posts match your search.',
+    'blog_search_none'        => 'We have nothing on that yet. Let us know and we will write it up.',
+    'blog_search_mail_subject'=> 'Looking for on the blog: %s',
+    'blog_search_error'       => 'Something went wrong while searching. Please try again shortly.',
     'blog_no_posts'           => 'No posts yet.',
     'blog_no_series'          => 'No series yet.',
     'blog_status_ongoing'     => 'Ongoing',

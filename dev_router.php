@@ -43,6 +43,7 @@ if (isset($sectionHomes[$normalized])) return $serve($sectionHomes[$normalized])
 if (isset($sectionHomes[rtrim($route, '/')])) return $serve($sectionHomes[rtrim($route, '/')]);
 
 // 상세 페이지 / 하위 페이지
+if (preg_match('#^/blog/search/?$#', $route))          return $serve('src/blog/search.php');
 if (preg_match('#^/blog/([^/]+)/?$#', $route, $m))      return $serve('src/blog/detail.php', ['slug' => urldecode($m[1])]);
 if (preg_match('#^/portfolio/detail/?$#', $route))       return $serve('src/portfolio/detail.php');
 if (preg_match('#^/portfolio/([^/]+)/?$#', $route, $m))  return $serve('src/portfolio/detail.php', ['slug' => urldecode($m[1])]);

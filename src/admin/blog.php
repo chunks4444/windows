@@ -104,6 +104,7 @@ foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
     <div class="db-header">
         <h1 class="db-title"><i class="bi bi-journal-text me-2"></i>블로그 관리</h1>
         <div style="display:flex;align-items:center;gap:8px;">
+            <a href="/src/admin/blog_search.php" style="height:32px;display:inline-flex;align-items:center;gap:4px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg);color:var(--text);padding:0 10px;font-size:13px;text-decoration:none;white-space:nowrap;"><i class="bi bi-search"></i>검색 관리</a>
             <select id="blogSeriesFilter" onchange="render()" style="height:32px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg);color:var(--text);padding:0 8px;font-size:13px;">
                 <option value="">전체 시리즈</option>
                 <option value="0">독립 글(시리즈 없음)</option>

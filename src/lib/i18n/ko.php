@@ -365,11 +365,17 @@ return [
 
     // 블로그 (src/blog/)
     'blog_total_episodes'     => '전체 %d화',
+    'blog_search_title'       => '블로그 검색',
     'blog_search_ph'          => '제목·본문 검색',
     'blog_search_btn'         => '검색',
+    'blog_search_hint'        => '두 글자 이상 입력해 주세요. 소슬·솟을처럼 표기가 다른 말도 함께 찾습니다.',
+    'blog_search_short'       => '두 글자 이상 입력해 주세요.',
     'blog_search_result'      => '‘%s’ 검색 결과 %d건',
+    'blog_search_alias'       => '%s %s 함께 찾았습니다',
     'blog_search_clear'       => '전체 글 보기',
-    'blog_search_none'        => '검색어와 맞는 글이 없습니다.',
+    'blog_search_none'        => '찾는 말이 없습니다. 알려 주시면 정리해 보겠습니다.',
+    'blog_search_mail_subject'=> '블로그에서 찾는 말: %s',
+    'blog_search_error'       => '검색 중 문제가 생겼습니다. 잠시 뒤 다시 시도해 주세요.',
     'blog_no_posts'           => '아직 등록된 글이 없습니다.',
     'blog_no_series'          => '아직 등록된 시리즈가 없습니다.',
     'blog_status_ongoing'     => '연재중',

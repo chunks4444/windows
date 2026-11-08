@@ -110,6 +110,9 @@ RewriteRule ^company/?$     src/company/index.php    [L]
 RewriteRule ^privacy/?$     src/legal/privacy.php    [L]
 RewriteRule ^terms/?$       src/legal/terms.php      [L]
 
+# 블로그 검색 결과 — 아래 /blog/{slug} 규칙보다 먼저 걸어야 'search'가 글 주소로 오인되지 않는다
+RewriteRule ^blog/search/?$ src/blog/search.php [L,QSA]
+
 # 블로그/포트폴리오 글 상세 시맨틱 URL: /blog/{slug}, /portfolio/{slug} → detail.php?slug={slug}
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

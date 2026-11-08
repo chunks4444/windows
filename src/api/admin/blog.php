@@ -9,6 +9,7 @@ require_once __DIR__ . '/../../lib/db.php';
 require_once __DIR__ . '/../../lib/jwt.php';
 require_once __DIR__ . '/../../lib/slug.php';
 require_once __DIR__ . '/../../lib/image_resize.php';
+require_once __DIR__ . '/../../lib/blog_search.php';
 
 $payload = jwt_from_request();
 if (!$payload || ($payload['role'] ?? '') !== 's') {
@@ -136,6 +137,9 @@ if ($action === 'save') {
                 $title_en, $summary_en, $cta_text_en, $source_text_en, $content_en, $question_en]);
         $id = (int)$pdo->lastInsertId();
     }
+    // 검색용 순수 텍스트 본문(body_text·body_text_en) 갱신 — 블로그 검색(/blog/search)이 이 컬럼을 본다.
+    // 컬럼이 아직 없을 때(마이그레이션 전)도 글 저장 자체는 성공해야 하므로 실패는 무시
+    try { blog_refresh_body_text($pdo, $id); } catch (Throwable $e) {}
     $stmt = $pdo->prepare('SELECT * FROM blog_posts WHERE id=?');
     $stmt->execute([$id]);
     echo json_encode(['ok' => true, 'post' => $stmt->fetch()]);

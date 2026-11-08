@@ -1,5 +1,11 @@
 <?php
 header('Content-Type: text/html; charset=UTF-8');
+// 예전 목록 내 검색 주소(/blog/?q=)는 검색 결과 페이지로 영구 이동
+if (isset($_GET['q']) && $_GET['q'] !== '') {
+    require_once __DIR__ . '/../lib/i18n.php';
+    header('Location: ' . lang_href('/blog/search') . '?q=' . rawurlencode((string)$_GET['q']), true, 301);
+    exit;
+}
 require_once __DIR__ . '/../lib/db.php';
 require_once __DIR__ . '/../lib/i18n.php';
 try {
@@ -52,28 +58,12 @@ try {
 
     $totalCount = (int) $pdo->query("SELECT COUNT(*) FROM blog_posts WHERE is_active = 1")->fetchColumn();
 
-    // 검색(?q=) — 제목·본문(한글·영문 모두)에서 LIKE 부분일치. 본문은 HTML이라 태그 이름에도 걸릴 수 있음(글 수가 적어 감수).
-    // %·_ 는 사용자가 입력해도 글자 그대로 찾도록 이스케이프.
-    $q = trim(mb_substr((string)($_GET['q'] ?? ''), 0, 100));
-    $searchSql = '';
-    $searchParams = [];
-    if ($q !== '') {
-        $like = '%' . addcslashes($q, '%_\\') . '%';
-        $searchSql = " AND (p.title LIKE :q1 OR p.content LIKE :q2 OR p.title_en LIKE :q3 OR p.content_en LIKE :q4)";
-        $searchParams = [':q1' => $like, ':q2' => $like, ':q3' => $like, ':q4' => $like];
-        $cnt = $pdo->prepare("SELECT COUNT(*) FROM blog_posts p WHERE p.is_active = 1" . $searchSql);
-        $cnt->execute($searchParams);
-        $listCount = (int) $cnt->fetchColumn();
-    } else {
-        $listCount = $totalCount;
-    }
-
     // 블로그 전체 조회수 총합 일별 스냅샷은 MySQL EVENT(ev_blog_view_daily_snapshot)가
     // 매일 자정 정각에 기록한다 (schema.sql 참고) — 방문 트래픽에 따라 스냅샷 시각이
     // 들쭉날쭉해지는 걸 막기 위해 요청 트리거 방식에서 배치 방식으로 전환함.
 
     $perPage    = 10;
-    $totalPages = max(1, (int) ceil($listCount / $perPage));
+    $totalPages = max(1, (int) ceil($totalCount / $perPage));
     $page       = max(1, min($totalPages, (int)($_GET['page'] ?? 1)));
     $offset     = ($page - 1) * $perPage;
 
@@ -82,13 +72,12 @@ try {
                p.series_order, s.name AS series_name, s.name_en AS series_name_en
         FROM blog_posts p
         LEFT JOIN blog_series s ON s.id = p.series_id
-        WHERE p.is_active = 1" . $searchSql . "
+        WHERE p.is_active = 1
         ORDER BY p.created_at DESC, p.id DESC  -- 목록은 항상 최신 글부터(관리자 수동 순서는 상단 피처 캐로셀에만 씀)
         LIMIT :lim OFFSET :off
     ");
     $stmt->bindValue(':lim', $perPage, PDO::PARAM_INT);
     $stmt->bindValue(':off', $offset, PDO::PARAM_INT);
-    foreach ($searchParams as $k => $v) $stmt->bindValue($k, $v);
     $stmt->execute();
     $pagePosts = $stmt->fetchAll();
 
@@ -142,8 +131,6 @@ try {
     }
 } catch (Throwable $e) {
     $totalCount   = 0;
-    $listCount    = 0;
-    $q            = '';
     $totalPages   = 1;
     $page         = 1;
     $pagePosts    = [];
@@ -158,8 +145,6 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php
     require_once __DIR__ . '/../lib/meta.php';
-    // 검색 결과 페이지는 색인 제외(검색어마다 다른 URL이 중복 콘텐츠로 잡히는 것 방지)
-    if ($q !== '') echo '<meta name="robots" content="noindex, follow">' . "\n";
     meta_tags($page > 1 ? ['canonical' => SITE_URL . lang_href('/blog/?page=' . $page), 'hreflang' => '/blog/?page=' . $page] : null);
     ?>
     <?php define('BOOTSTRAP_LOADED', true); ?>
@@ -190,7 +175,7 @@ try {
         <!-- ── 메인: 피처 캐로셀 + 순위 목록 + 페이지네이션 ── -->
         <main class="bg-main">
 
-            <?php if ($featurePosts && $q === ''): ?>
+            <?php if ($featurePosts): ?>
             <div id="blogFeature" class="carousel slide bg-feature" data-bs-ride="carousel" data-bs-interval="5000">
                 <div class="carousel-indicators">
                     <?php foreach ($featurePosts as $i => $fp): ?>
@@ -223,20 +208,7 @@ try {
             </div>
             <?php endif; ?>
 
-            <form class="bg-search" method="get" action="<?= lang_href('/blog/') ?>" role="search">
-                <i class="bi bi-search" aria-hidden="true"></i>
-                <input type="search" name="q" value="<?= htmlspecialchars($q) ?>" placeholder="<?= htmlspecialchars(t('blog_search_ph')) ?>" aria-label="<?= htmlspecialchars(t('blog_search_ph')) ?>" maxlength="100">
-                <button type="submit"><?= htmlspecialchars(t('blog_search_btn')) ?></button>
-            </form>
-            <?php if ($q !== ''): ?>
-            <p class="bg-search-info">
-                <?= htmlspecialchars(sprintf(t('blog_search_result'), $q, $listCount)) ?>
-                <a href="<?= lang_href('/blog/') ?>"><?= htmlspecialchars(t('blog_search_clear')) ?></a>
-            </p>
-            <?php endif; ?>
-            <?php if ($q !== '' && $listCount === 0): ?>
-            <div class="bg-empty"><?= htmlspecialchars(t('blog_search_none')) ?></div>
-            <?php endif; ?>
+            <?php $bgSearchId = 'bgSearchTop'; include __DIR__ . '/../components/blog_search_form.php'; ?>
 
             <ol class="bg-ranked-list" start="<?= $offset + 1 ?>">
                 <?php foreach ($pagePosts as $p): ?>
@@ -261,21 +233,24 @@ try {
                 <?php endforeach; ?>
             </ol>
 
-            <?php if ($totalPages > 1): $qs = $q !== '' ? 'q=' . rawurlencode($q) . '&amp;' : ''; ?>
+            <?php if ($totalPages > 1): ?>
             <nav class="bg-pagination" aria-label="<?= htmlspecialchars(t('blog_page')) ?>">
                 <a class="bg-page-arrow <?= $page <= 1 ? 'disabled' : '' ?>"
-                   href="?<?= $qs ?>page=<?= max(1, $page - 1) ?>" aria-label="<?= htmlspecialchars(t('blog_prev_page')) ?>"><i class="bi bi-chevron-left"></i></a>
+                   href="?page=<?= max(1, $page - 1) ?>" aria-label="<?= htmlspecialchars(t('blog_prev_page')) ?>"><i class="bi bi-chevron-left"></i></a>
                 <?php for ($pn = 1; $pn <= $totalPages; $pn++): ?>
-                <a class="bg-page-num <?= $pn === $page ? 'active' : '' ?>" href="?<?= $qs ?>page=<?= $pn ?>"><?= $pn ?></a>
+                <a class="bg-page-num <?= $pn === $page ? 'active' : '' ?>" href="?page=<?= $pn ?>"><?= $pn ?></a>
                 <?php endfor; ?>
                 <a class="bg-page-arrow <?= $page >= $totalPages ? 'disabled' : '' ?>"
-                   href="?<?= $qs ?>page=<?= min($totalPages, $page + 1) ?>" aria-label="<?= htmlspecialchars(t('blog_next_page')) ?>"><i class="bi bi-chevron-right"></i></a>
+                   href="?page=<?= min($totalPages, $page + 1) ?>" aria-label="<?= htmlspecialchars(t('blog_next_page')) ?>"><i class="bi bi-chevron-right"></i></a>
             </nav>
             <?php endif; ?>
         </main>
 
         <!-- ── 사이드바: 시리즈 카드 ── -->
         <aside class="bg-sidebar">
+            <div class="bg-side-search">
+                <?php $bgSearchId = 'bgSearchSide'; include __DIR__ . '/../components/blog_search_form.php'; ?>
+            </div>
             <?php foreach ($seriesCards as $sc): ?>
             <div class="bg-side-card">
                 <h3 class="bg-side-card-title">
