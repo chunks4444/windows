@@ -23,6 +23,9 @@ async function init() {
     if (!user || user.role !== 's') { location.href = '/'; return; }
     document.getElementById('statsPage').style.display = '';
     document.getElementById('chkNoLog').checked = hasNoLogCookie();
+    let savedTab = 'overview';
+    try { savedTab = sessionStorage.getItem('statsTab') || 'overview'; } catch (e) {}
+    if (document.querySelector('#stMainTabs [data-tab="' + savedTab + '"]')) switchStatsTab(savedTab);
     await Promise.all([loadStats(6), loadExportLogs(), loadAllowlist()]);
 }
 
@@ -102,9 +105,13 @@ async function loadAnonVisits(page) {
     document.getElementById('anonNextBtn').disabled = anonPage >= pagesCount;
 }
 
+// 화면 위의 탭 줄: 접속 통계 / 방문 구분 / 인기 페이지 / 회원접속 / 비로그인 방문 / 내보내기 기록 / 화이트리스트
+const STATS_LIST_TABS = ['topPages', 'topUsers', 'anonVisits', 'exportLogs', 'allowlist'];   // 한 상자(#stOldPanel) 안에 들어 있는 탭들
 function switchStatsTab(tab) {
     document.querySelectorAll('.st-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
     document.querySelectorAll('.st-tab-panel').forEach(p => p.style.display = (p.id === 'tab-' + tab) ? '' : 'none');
+    document.getElementById('stOldPanel').style.display = STATS_LIST_TABS.includes(tab) ? '' : 'none';
+    try { sessionStorage.setItem('statsTab', tab); } catch (e) {}   // 새로고침해도 보던 탭 유지
 }
 
 function renderSummary(s) {
@@ -164,7 +171,7 @@ function renderClassification(data) {
     const on = !!data.classified;
     const hasSources = (data.sources || []).length > 0;
     ['cardHuman', 'cardBot', 'cardJs'].forEach(id => document.getElementById(id).style.display = on ? '' : 'none');
-    document.getElementById('panelClass').style.display = (on || hasSources) ? '' : 'none';
+    document.getElementById('panelClass').style.display = '';
     const note = document.getElementById('classNote');
     note.style.display = on ? '' : 'none';
     const n = v => (+v || 0).toLocaleString();

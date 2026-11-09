@@ -38,6 +38,15 @@ require_admin_role('s');
     </p>
     <p id="ufNoTable" style="display:none;font-size:13px;color:#a02020;">아직 기록 표가 만들어지지 않았습니다. (ops/migrations/2026-11-09_user_milestones.sql 적용 필요)</p>
 
+    <!-- 탭: 가입 단계 / 접속 회원 / 회원별 목록 -->
+    <div id="ufTabs" style="display:flex;gap:4px;flex-wrap:wrap;margin:0 0 20px;">
+        <button class="st-tab-btn active" data-tab="steps" onclick="ufSwitchTab('steps')">가입 단계</button>
+        <button class="st-tab-btn" data-tab="active" onclick="ufSwitchTab('active')">접속 회원</button>
+        <button class="st-tab-btn" data-tab="members" onclick="ufSwitchTab('members')">회원별 목록</button>
+    </div>
+
+    <!-- 접속 회원 탭: 현재 접속 + 접속 회원 수·추이 -->
+    <div class="st-tab-panel" id="tab-active" style="display:none;">
     <!-- 현재 접속 (관리자 포함) -->
     <div class="st-panel">
         <div class="st-panel-head" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
@@ -57,7 +66,10 @@ require_admin_role('s');
             <div id="ufDailyAxis" style="display:flex;gap:3px;font-size:10px;color:var(--text-3);margin-top:4px;"></div>
         </div>
     </div>
+    </div><!-- /tab-active -->
 
+    <!-- 가입 단계 탭: 전체 단계 + 가입 월별 -->
+    <div class="st-tab-panel" id="tab-steps">
     <!-- 전체 단계 -->
     <div class="st-cards" id="ufCards" style="grid-template-columns:repeat(6,1fr);"></div>
 
@@ -72,7 +84,10 @@ require_admin_role('s');
         </div>
     </div>
 
-    <!-- 회원별 -->
+    </div><!-- /tab-steps -->
+
+    <!-- 회원별 목록 탭 -->
+    <div class="st-tab-panel" id="tab-members" style="display:none;">
     <div class="st-panel">
         <div class="st-panel-head" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
             <span class="st-panel-title">회원별 (최근 가입 300명)</span>
@@ -96,6 +111,7 @@ require_admin_role('s');
             </table>
         </div>
     </div>
+    </div><!-- /tab-members -->
 </div>
 
 <script src="/src/js/admin/user_funnel.js?v=<?= md5_file(__DIR__ . '/../js/admin/user_funnel.js') ?>"></script>

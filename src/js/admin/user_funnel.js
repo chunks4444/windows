@@ -4,6 +4,13 @@ let ufMonths = 6;
 let ufMembers = [];
 let ufOnlineTimer = null;
 
+// 탭: 가입 단계 / 접속 회원 / 회원별 목록 — 새로고침해도 보던 탭을 유지한다
+function ufSwitchTab(tab) {
+    document.querySelectorAll('#ufTabs .st-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    document.querySelectorAll('.st-tab-panel').forEach(p => p.style.display = (p.id === 'tab-' + tab) ? '' : 'none');
+    try { sessionStorage.setItem('ufTab', tab); } catch (e) {}
+}
+
 function ufPct(n, d) { return d > 0 ? Math.round(n / d * 100) : 0; }
 function ufDay(dt) { return dt ? String(dt).slice(0, 10) : ''; }
 function ufN(v) { return (+v || 0).toLocaleString(); }
@@ -12,6 +19,9 @@ async function ufInit() {
     const user = authGetUser();
     if (!user || user.role !== 's') { location.href = '/'; return; }
     document.getElementById('ufPage').style.display = '';
+    let savedTab = 'steps';
+    try { savedTab = sessionStorage.getItem('ufTab') || 'steps'; } catch (e) {}
+    if (document.querySelector('#ufTabs [data-tab="' + savedTab + '"]')) ufSwitchTab(savedTab);
     document.querySelectorAll('.st-month-btn').forEach(b => b.addEventListener('click', () => { ufMonths = +b.dataset.m; ufLoad(); }));
     await ufLoad();
     clearInterval(ufOnlineTimer);
