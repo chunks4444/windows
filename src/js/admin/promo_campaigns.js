@@ -329,6 +329,48 @@ async function saveDraft(silent) {
     return data.id;
 }
 
+// ── 메일 미리보기 ─────────────────────────────────────────
+// 서버의 promo_render가 만든 최종 HTML(회사명 치환·수신거부 푸터 포함)을 격리 프레임(iframe srcdoc)에 그대로 보여준다.
+// 프레임 폭을 600px(PC) / 375px(모바일)로 바꾸면 메일 안의 모바일용 CSS(@media max-width:600px)가 실제로 적용된다.
+const PM_NAME_TOKENS = ['{{회사명}}', '{{수신처}}', '{회사명}', '{수신처}'];
+
+function setPreviewWidth(px) {
+    document.getElementById('pmPvFrame').style.width = px + 'px';
+    document.getElementById('pmPvPc').style.fontWeight = px === 600 ? '700' : '400';
+    document.getElementById('pmPvMo').style.fontWeight = px === 375 ? '700' : '400';
+}
+
+async function openPreview() {
+    const f = formData();
+    if (!(f.html_body || '').trim()) { msg('미리볼 본문이 비어 있습니다.', false); return; }
+    const sel = document.getElementById('pmTestCo');
+    const coId = parseInt(sel.value) || 0;
+    const coName = coId ? sel.options[sel.selectedIndex].text : '(회사명)';
+    msg('미리보기 만드는 중…', true);
+    const { ok, data } = await _post({ action: 'preview', id: f.id, subject: f.subject, html_body: f.html_body, company_id: coId });
+    if (!ok) { msg(data.error || '미리보기를 만들지 못했습니다.', false); return; }
+    msg('', true);
+
+    // 링크를 눌러도 프레임이 이동하지 않도록 새 창으로 열게 한다
+    let html = String(data.html || '');
+    html = /<head[^>]*>/i.test(html) ? html.replace(/<head([^>]*)>/i, '<head$1><base target="_blank">') : '<base target="_blank">' + html;
+    document.getElementById('pmPvFrame').srcdoc = html;
+
+    // 받는 사람이 보는 제목 (앞에 (광고)가 붙고 회사명이 들어간다)
+    let subject = f.subject || '';
+    PM_NAME_TOKENS.forEach(t => { subject = subject.split(t).join(coName); });
+    if (!subject.trim().startsWith('(광고)')) subject = '(광고) ' + subject.trim();
+    document.getElementById('pmPvSubject').textContent = '제목: ' + subject;
+    document.getElementById('pmPvSub').textContent = '— ' + coName;
+    setPreviewWidth(600);
+    document.getElementById('pmPreviewOverlay').classList.add('open');
+}
+
+function closePreview() {
+    document.getElementById('pmPreviewOverlay').classList.remove('open');
+    document.getElementById('pmPvFrame').srcdoc = '';   // 큰 본문(이미지 포함)을 메모리에서 비운다
+}
+
 async function sendTest() {
     const f = formData();
     msg('테스트 메일 보내는 중…', true);
