@@ -153,6 +153,10 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
 /* 선택칸은 탭 상관없이 모두 연회색 칸(문설정 여닫이·짝수도 마감·렌더링과 같게) */
 .rail-pane .cs-trigger { background: #F4F5F7; border-radius: 8px; height: 36px; }
 .rail-pane .cs-trigger:hover { background: #E9EBEF; }
+/* 문 설정 '초기화' — 여닫이·짝수 선택칸 오른쪽, 같은 높이·색의 작은 버튼 */
+.rail-pane .door-reset-btn { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 4px; height: 36px; padding: 0 10px; border: 0; border-radius: 8px; background: #F4F5F7; color: var(--text-1, #23262A); font-size: 12px; white-space: nowrap; cursor: pointer; }
+.rail-pane .door-reset-btn:hover { background: #E9EBEF; }
+.rail-pane .door-reset-btn i { font-size: 13px; }
 .rail-pane #ratioCtrl .cs-trigger { justify-content: center; gap: 10px; padding: 0 8px; }   /* 가로살 상·중·하 값을 머리글 아래 가운데로 */
 
 .pane-search {

@@ -153,6 +153,7 @@ return [
     '취소'                    => 'Cancel',
     '닫기'                    => 'Close',
     '초기화'                  => 'Reset',
+    '도면 설정값 초기화'      => 'Reset drawing settings',
     '먼저 저장해주세요'       => 'Please save first',
     '로그인하고 내 도면함에 복사' => 'Sign in and copy to My Drawings',
 

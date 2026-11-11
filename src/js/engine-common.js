@@ -1147,6 +1147,11 @@
     function persistCommonDefault(key, value) {
         try { localStorage.setItem('pmok_common_' + key, value); } catch {}
     }
+    // 문 설정 '초기화' 때 — 엔진을 옮겨 다녀도 이어지던 '마지막에 쓴 값'까지 지워야 다른 엔진에서도 기본값으로 시작한다
+    function clearCommonDefaults() {
+        [...Object.values(COMMON_DEFAULT_IDS), ...Object.values(COMMON_DEFAULT_CHECKBOX_IDS)]
+            .forEach(key => { try { localStorage.removeItem('pmok_common_' + key); } catch {} });
+    }
     function readCommonDefault(key) {
         try { return localStorage.getItem('pmok_common_' + key); } catch { return null; }
     }

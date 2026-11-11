@@ -315,6 +315,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                                 <option value="8" <?= $cfg['doorCount'] === '8' ? 'selected' : '' ?>><?= te('8짝') ?></option>
                             </select>
                         </div>
+                        <button type="button" id="btnResetSettings" class="door-reset-btn" title="<?= te('도면 설정값 초기화') ?>"><i class="bi bi-arrow-counterclockwise"></i><span><?= te('초기화') ?></span></button>
                     </div>
 
                     <hr class="sb-divider">

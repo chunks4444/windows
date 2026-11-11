@@ -3035,6 +3035,18 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
     }
 
     document.getElementById('btnNewDrawing').addEventListener('click', startNewDrawing);
+
+    // 문 설정 '초기화' — 도면 이름·저장된 버전·화면 위치는 그대로 두고, 설정값만 엔진 기본값(defaultParams)으로 되돌린다
+    document.getElementById('btnResetSettings')?.addEventListener('click', () => {
+        if (!defaultParams) return;
+        if (isDrawingLocked) { pmAlert(_t('이 도면은 견적요청 중이라 편집할 수 없습니다.'), { type: 'danger' }); return; }
+        pmConfirm(_t('도면 설정값을 기본값으로 초기화하시겠습니까?'), () => {
+            const p = JSON.parse(JSON.stringify(defaultParams));
+            p.name = document.getElementById('drawingName').value;
+            clearCommonDefaults();
+            applyParams(p);
+        }, { sub: _t('문 크기·살·칸 수와 선 편집·색칠·마감이 모두 처음 값으로 돌아갑니다. 저장된 버전은 그대로 남습니다.'), confirmText: _t('초기화') });
+    });
     document.getElementById('dmBtn').addEventListener('click', openDrawingManager);
     document.getElementById('dmNewBtn').addEventListener('click', startNewDrawing);
     document.getElementById('dmCloseBtn').addEventListener('click', closeDrawingManager);
