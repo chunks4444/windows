@@ -40,4 +40,7 @@ function render_save(int $userId, string $engine, string $pngBytes): void {
 
     $stmt = db()->prepare('INSERT INTO renders (user_id, engine, filepath) VALUES (?, ?, ?)');
     $stmt->execute([$userId, $engine, '/uploads/renders/' . $userId . '/' . $fname]);
+
+    require_once __DIR__ . '/milestones.php';
+    ms_mark((int)$userId, 'first_render_at');
 }

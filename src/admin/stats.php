@@ -36,6 +36,30 @@ require_admin_role('s');
         </div>
     </div>
 
+    <!-- 운영자 방문 제외 -->
+    <div style="display:flex;flex-wrap:wrap;gap:8px 24px;align-items:center;margin:-8px 0 16px;font-size:12px;color:var(--text-3);">
+        <label style="display:flex;gap:6px;align-items:center;cursor:pointer;">
+            <input type="checkbox" id="chkExAdmin" checked onchange="loadStats(currentMonths)">
+            관리자 방문 제외 <span>(관리자·슈퍼 계정으로 로그인한 방문 — 기록은 지우지 않고 집계에서만 뺍니다)</span>
+        </label>
+        <label style="display:flex;gap:6px;align-items:center;cursor:pointer;">
+            <input type="checkbox" id="chkNoLog" onchange="toggleNoLog(this.checked)">
+            이 브라우저는 앞으로 방문 기록에서 제외 <span>(로그아웃 상태에서 보는 내 방문까지. 관리자로 로그인한 방문은 이 설정과 상관없이 이미 기록되지 않습니다)</span>
+        </label>
+    </div>
+
+    <!-- 탭: 접속 통계 / 방문 구분 / 인기 페이지 / 회원접속 / 비로그인 방문 / 내보내기 기록 / 화이트리스트 -->
+    <div id="stMainTabs" style="display:flex;gap:4px;flex-wrap:wrap;margin:0 0 20px;">
+        <button class="st-tab-btn active" data-tab="overview" onclick="switchStatsTab('overview')">접속 통계</button>
+        <button class="st-tab-btn" data-tab="class" onclick="switchStatsTab('class')">방문 구분 — 유입 경로와 봇 종류</button>
+        <button class="st-tab-btn" data-tab="topPages" onclick="switchStatsTab('topPages')">인기 페이지</button>
+        <button class="st-tab-btn" data-tab="topUsers" onclick="switchStatsTab('topUsers')">회원접속</button>
+        <button class="st-tab-btn" data-tab="anonVisits" onclick="switchStatsTab('anonVisits')">비로그인 방문</button>
+        <button class="st-tab-btn" data-tab="exportLogs" onclick="switchStatsTab('exportLogs')">내보내기 기록 (최근 100건)</button>
+        <button class="st-tab-btn" data-tab="allowlist" onclick="switchStatsTab('allowlist')">화이트리스트</button>
+    </div>
+
+    <div class="st-tab-panel" id="tab-overview">
     <!-- 요약 카드 -->
     <div class="st-cards">
         <div class="st-card">
@@ -63,7 +87,23 @@ require_admin_role('s');
             <div class="st-card-value" id="sumShared">—</div>
             <div class="st-card-sub">현재 시점</div>
         </div>
+        <div class="st-card" id="cardHuman" style="display:none;">
+            <div class="st-card-label">사람 PV</div>
+            <div class="st-card-value" id="sumHuman">—</div>
+            <div class="st-card-sub" id="sumHumanSub"></div>
+        </div>
+        <div class="st-card" id="cardBot" style="display:none;">
+            <div class="st-card-label">봇 PV</div>
+            <div class="st-card-value" id="sumBot">—</div>
+            <div class="st-card-sub" id="sumBotSub"></div>
+        </div>
+        <div class="st-card" id="cardJs" style="display:none;">
+            <div class="st-card-label">JS 실행 확인 UV</div>
+            <div class="st-card-value" id="sumJs">—</div>
+            <div class="st-card-sub">실제 브라우저로 확인된 방문자</div>
+        </div>
     </div>
+    <p id="classNote" style="display:none;font-size:12px;color:var(--text-3);margin:-14px 0 20px;"></p>
 
     <!-- 일별 차트 -->
     <div class="st-panel">
@@ -74,16 +114,36 @@ require_admin_role('s');
             <div class="st-chart-wrap"><canvas id="dailyChart"></canvas></div>
         </div>
     </div>
+    </div><!-- /tab-overview -->
 
-    <div class="st-panel">
-        <div class="st-panel-head" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
-            <div style="display:flex;gap:4px;flex-wrap:wrap;">
-                <button class="st-tab-btn active" data-tab="topPages" onclick="switchStatsTab('topPages')">인기 페이지</button>
-                <button class="st-tab-btn" data-tab="topUsers" onclick="switchStatsTab('topUsers')">회원접속</button>
-                <button class="st-tab-btn" data-tab="anonVisits" onclick="switchStatsTab('anonVisits')">비로그인 방문</button>
-                <button class="st-tab-btn" data-tab="exportLogs" onclick="switchStatsTab('exportLogs')">내보내기 기록 (최근 100건)</button>
-                <button class="st-tab-btn" data-tab="allowlist" onclick="switchStatsTab('allowlist')">화이트리스트</button>
+    <!-- 방문 구분: 유입 경로(구글·네이버 …) / 봇 종류(검색엔진 봇 …) -->
+    <div class="st-tab-panel" id="tab-class" style="display:none;">
+    <div class="st-panel" id="panelClass">
+        <div class="st-panel-head">
+            <span class="st-panel-title">방문 구분 — 유입 경로와 봇 종류</span>
+        </div>
+        <div class="st-panel-body" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px;">
+            <div>
+                <div style="font-size:12px;font-weight:700;margin-bottom:6px;">유입 경로 <span style="font-weight:400;color:var(--text-3);">(Referer 기준, 사이트 내 이동 포함. "분류 전"은 봇이 섞여 있을 수 있어 JS 확인 UV를 같이 보세요)</span></div>
+                <table>
+                    <thead><tr><th>경로</th><th>PV</th><th>UV</th><th>JS 확인 UV</th></tr></thead>
+                    <tbody id="sourcesTbody"></tbody>
+                </table>
             </div>
+            <div>
+                <div style="font-size:12px;font-weight:700;margin-bottom:6px;">봇 종류 <span style="font-weight:400;color:var(--text-3);">(검색엔진 · AI · 링크 미리보기 · 기타)</span></div>
+                <table>
+                    <thead><tr><th>구분</th><th>이름</th><th>PV</th><th>IP</th><th>마지막</th></tr></thead>
+                    <tbody id="botsTbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    </div><!-- /tab-class -->
+
+    <!-- 인기 페이지·회원접속·비로그인 방문·내보내기 기록·화이트리스트 (위 탭 줄에서 고른 것만 보인다) -->
+    <div class="st-panel" id="stOldPanel" style="display:none;">
+        <div class="st-panel-head" style="display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:8px;">
             <div id="exportSummaryBadges" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
         </div>
 

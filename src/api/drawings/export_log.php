@@ -30,4 +30,7 @@ $pdo = db();
 $pdo->prepare('INSERT INTO drawing_export_logs (user_id, drawing_id, engine, format, drawing_name, version) VALUES (?,?,?,?,?,?)')
     ->execute([(int)$payload['sub'], $drawingId, $engine, $format, $drawingName, $version]);
 
+require_once __DIR__ . '/../../lib/milestones.php';
+ms_mark((int)$payload['sub'], 'first_export_at');
+
 echo json_encode(['ok' => true]);

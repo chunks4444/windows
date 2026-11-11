@@ -5,10 +5,27 @@ let anonPage = 1;
 let topPagesPage = 1;
 let topUsersPage = 1;
 
+// '이 브라우저는 방문 기록에서 제외' — pm_nolog 쿠키. 서버(lib/logger.php pm_is_excluded)가 이 쿠키를 보면 로그 파일·접속 통계·JS 비콘 모두 건너뛴다.
+// 사이트가 pyeongmok.com과 studio.pyeongmok.com 두 주소로 열리므로 상위 도메인에 심어 둘 다 적용한다.
+function hasNoLogCookie() { return /(?:^|;\s*)pm_nolog=1(?:;|$)/.test(document.cookie); }
+function toggleNoLog(on) {
+    const dom = /(^|\.)pyeongmok\.com$/.test(location.hostname) ? '; domain=.pyeongmok.com' : '';
+    const secure = location.protocol === 'https:' ? '; Secure' : '';
+    document.cookie = `pm_nolog=${on ? '1' : ''}; max-age=${on ? 31536000 : 0}; path=/${dom}; SameSite=Lax${secure}`;
+    // 실제로 저장됐는지 다시 읽어 체크 상태를 맞춘다 (브라우저가 쿠키를 막은 경우를 드러낸다)
+    const saved = hasNoLogCookie();
+    document.getElementById('chkNoLog').checked = saved;
+    if (on && !saved) alert('이 브라우저가 쿠키 저장을 막고 있어 설정하지 못했습니다.');
+}
+
 async function init() {
     const user = authGetUser();
     if (!user || user.role !== 's') { location.href = '/'; return; }
     document.getElementById('statsPage').style.display = '';
+    document.getElementById('chkNoLog').checked = hasNoLogCookie();
+    let savedTab = 'overview';
+    try { savedTab = sessionStorage.getItem('statsTab') || 'overview'; } catch (e) {}
+    if (document.querySelector('#stMainTabs [data-tab="' + savedTab + '"]')) switchStatsTab(savedTab);
     await Promise.all([loadStats(6), loadExportLogs(), loadAllowlist()]);
 }
 
@@ -21,14 +38,15 @@ async function loadStats(months) {
     const res  = await fetch('/src/api/admin/stats.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token() },
-        body: JSON.stringify({ months }),
+        body: JSON.stringify({ months, exclude_admin: document.getElementById('chkExAdmin')?.checked !== false }),
     });
     const data = await res.json();
     if (!res.ok) return;
 
     renderSummary(data.summary);
     document.getElementById('sumShared').textContent = (+data.sharedCount || 0).toLocaleString();
-    renderDailyChart(data.daily);
+    renderDailyChart(data.daily, !!data.classified);
+    renderClassification(data);
     loadTopPages(1);
     loadTopUsers(1);
     loadAnonVisits(1);
@@ -87,9 +105,13 @@ async function loadAnonVisits(page) {
     document.getElementById('anonNextBtn').disabled = anonPage >= pagesCount;
 }
 
+// 화면 위의 탭 줄: 접속 통계 / 방문 구분 / 인기 페이지 / 회원접속 / 비로그인 방문 / 내보내기 기록 / 화이트리스트
+const STATS_LIST_TABS = ['topPages', 'topUsers', 'anonVisits', 'exportLogs', 'allowlist'];   // 한 상자(#stOldPanel) 안에 들어 있는 탭들
 function switchStatsTab(tab) {
     document.querySelectorAll('.st-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
     document.querySelectorAll('.st-tab-panel').forEach(p => p.style.display = (p.id === 'tab-' + tab) ? '' : 'none');
+    document.getElementById('stOldPanel').style.display = STATS_LIST_TABS.includes(tab) ? '' : 'none';
+    try { sessionStorage.setItem('statsTab', tab); } catch (e) {}   // 새로고침해도 보던 탭 유지
 }
 
 function renderSummary(s) {
@@ -101,30 +123,86 @@ function renderSummary(s) {
     document.querySelector('#sumMobile + .st-card-sub').textContent = `전체의 ${mobilePct}%`;
 }
 
-function renderDailyChart(daily) {
+function renderDailyChart(daily, classified) {
     const labels = daily.map(r => r.date.slice(5)); // MM-DD
-    const pvData = daily.map(r => +r.pv);
     const uvData = daily.map(r => +r.uv);
+
+    // 분류가 시작된 뒤에는 PV를 사람/봇/분류 전으로 쌓아서 보여준다. 분류 이전 방문은 사람/봇을 알 수 없다.
+    const datasets = classified ? [
+        { label: '사람 PV',  data: daily.map(r => +r.human_pv || 0), backgroundColor: 'rgba(58,140,130,0.8)',  borderRadius: 2, stack: 'pv', order: 2 },
+        { label: '봇 PV',    data: daily.map(r => +r.bot_pv   || 0), backgroundColor: 'rgba(150,150,150,0.7)', borderRadius: 2, stack: 'pv', order: 2 },
+        { label: '분류 전 PV', data: daily.map(r => +r.unk_pv || 0), backgroundColor: 'rgba(58,140,130,0.25)', borderRadius: 2, stack: 'pv', order: 2 },
+        { label: 'UV(전체)', data: uvData, type: 'line', borderColor: '#F59E0B', backgroundColor: 'transparent', pointRadius: 2, tension: 0.3, order: 1 },
+        { label: 'JS 실행 확인 UV', data: daily.map(r => +r.js_uv || 0), type: 'line', borderColor: '#2f6b3a', backgroundColor: 'transparent', pointRadius: 2, tension: 0.3, order: 1 },
+    ] : [
+        { label: 'PV', data: daily.map(r => +r.pv), backgroundColor: 'rgba(58,140,130,0.7)', borderRadius: 3, order: 2 },
+        { label: 'UV', data: uvData, type: 'line', borderColor: '#F59E0B', backgroundColor: 'transparent', pointRadius: 2, tension: 0.3, order: 1 },
+    ];
 
     if (chart) chart.destroy();
     chart = new Chart(document.getElementById('dailyChart'), {
         type: 'bar',
-        data: {
-            labels,
-            datasets: [
-                { label: 'PV', data: pvData, backgroundColor: 'rgba(58,140,130,0.7)', borderRadius: 3, order: 2 },
-                { label: 'UV', data: uvData, type: 'line', borderColor: '#F59E0B', backgroundColor: 'transparent', pointRadius: 2, tension: 0.3, order: 1 },
-            ]
-        },
+        data: { labels, datasets },
         options: {
             responsive: true, maintainAspectRatio: false,
             plugins: { legend: { labels: { font: { family: 'Pretendard', size: 11 } } } },
             scales: {
-                x: { ticks: { font: { size: 10 }, maxTicksLimit: 20 }, grid: { display: false } },
-                y: { ticks: { font: { size: 10 } }, beginAtZero: true },
+                x: { stacked: classified, ticks: { font: { size: 10 }, maxTicksLimit: 20 }, grid: { display: false } },
+                y: { stacked: classified, ticks: { font: { size: 10 } }, beginAtZero: true },
             }
         }
     });
+}
+
+function renderSources(sources, n) {
+    document.getElementById('sourcesTbody').innerHTML = sources.map(s => `
+        <tr><td>${esc(SOURCE_LABEL[s.source] || s.source)}</td>
+            <td class="st-num">${n(s.pv)}${+s.prior_pv ? `<span style="color:var(--text-3);font-size:10px;font-weight:400;"> (분류 전 ${n(s.prior_pv)})</span>` : ''}</td>
+            <td style="color:var(--text-3);">${n(s.uv)}</td>
+            <td style="color:var(--text-3);">${n(s.js_uv)}</td></tr>`).join('')
+        || '<tr><td colspan="4" style="padding:16px;text-align:center;color:var(--text-3);">데이터 없음</td></tr>';
+}
+
+// ── 사람/봇 구분, 유입 경로, 봇 종류 ─────────────────────────────────
+const VISITOR_TYPE_LABEL = { human: '사람', search_bot: '검색엔진 봇', ai_bot: 'AI 봇', preview_bot: '링크 미리보기', other_bot: '기타 봇' };
+const SOURCE_LABEL = { google: '구글', naver: '네이버', daum: '다음', bing: '빙', other_search: '기타 검색', sns: 'SNS·커뮤니티', internal: '사이트 내 이동', direct: '직접 접속', other: '기타 사이트' };
+
+function renderClassification(data) {
+    const on = !!data.classified;
+    const hasSources = (data.sources || []).length > 0;
+    ['cardHuman', 'cardBot', 'cardJs'].forEach(id => document.getElementById(id).style.display = on ? '' : 'none');
+    document.getElementById('panelClass').style.display = '';
+    const note = document.getElementById('classNote');
+    note.style.display = on ? '' : 'none';
+    const n = v => (+v || 0).toLocaleString();
+
+    // 유입 경로 표는 분류가 시작되지 않았어도(과거 로그에서 채운 값만 있어도) 보여준다
+    renderSources(data.sources || [], n);
+    if (!on) { document.getElementById('botsTbody').innerHTML = '<tr><td colspan="5" style="padding:16px;text-align:center;color:var(--text-3);">아직 잡힌 봇이 없습니다.</td></tr>'; return; }
+
+    const types = {}; (data.types || []).forEach(t => types[t.type] = t);
+    const human = types.human || { pv: 0, uv: 0, js_uv: 0 };
+    const botTypes = ['search_bot', 'ai_bot', 'preview_bot', 'other_bot'];
+    const botPv = botTypes.reduce((a, k) => a + (+(types[k]?.pv) || 0), 0);
+    const unk = +(types.unknown?.pv) || 0;
+
+    document.getElementById('sumHuman').textContent = n(human.pv);
+    document.getElementById('sumHumanSub').textContent = `UV ${n(human.uv)} · 위장 크롤러 포함 가능`;
+    document.getElementById('sumBot').textContent = n(botPv);
+    document.getElementById('sumBotSub').textContent = botTypes.filter(k => types[k]).map(k => `${VISITOR_TYPE_LABEL[k]} ${n(types[k].pv)}`).join(' · ') || '—';
+    document.getElementById('sumJs').textContent = n(human.js_uv);
+
+    const since = (data.classSince || '').slice(0, 10);
+    note.textContent = `사람/봇 분류는 ${since} 이후 방문부터 적용됩니다.` + (unk ? ` 그 이전 ${n(unk)}건은 "분류 전"으로 남습니다.` : '')
+        + ' User-Agent를 밝히는 봇만 구분되며, 사람처럼 위장한 크롤러는 "JS 실행 확인 UV"(브라우저에서 스크립트가 실제로 실행된 방문자)로 걸러서 보세요.';
+
+    document.getElementById('botsTbody').innerHTML = (data.bots || []).map(b => `
+        <tr><td style="white-space:nowrap;">${esc(VISITOR_TYPE_LABEL[b.type] || b.type)}</td>
+            <td>${esc(b.name)}</td>
+            <td class="st-num">${n(b.pv)}</td>
+            <td style="color:var(--text-3);">${n(b.uv)}</td>
+            <td style="color:var(--text-3);font-size:11px;white-space:nowrap;">${b.last_at ? esc(b.last_at.slice(5, 16)) : '—'}</td></tr>`).join('')
+        || '<tr><td colspan="5" style="padding:16px;text-align:center;color:var(--text-3);">아직 잡힌 봇이 없습니다.</td></tr>';
 }
 
 function renderTopPages(pages) {

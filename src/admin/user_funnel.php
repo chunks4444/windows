@@ -1,0 +1,119 @@
+<?php
+header('Content-Type: text/html; charset=UTF-8');
+require_once __DIR__ . '/../lib/admin_guard.php';
+require_admin_role('s');
+?>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?php define('BOOTSTRAP_LOADED', true); ?>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <?php require_once __DIR__ . '/../lib/meta.php'; ?>
+    <?php meta_tags(); ?>
+<?php css_tag('/src/css/dashboard.css'); ?>
+    <?php css_tag('/src/css/stats.css'); ?>
+    <?php $authRequireRole = 's'; include __DIR__ . '/../components/auth_guard.php'; ?>
+
+    <?php css_tag('/src/css/admin.css'); ?>
+</head>
+<body>
+<?php include __DIR__ . '/../components/nav.php'; ?>
+<?php include __DIR__ . '/../components/admin_sidenav.php'; ?>
+
+<div class="db-page" id="ufPage" style="display:none;">
+    <div class="adm-breadcrumb"><a href="/src/admin/">어드민</a><span class="adm-breadcrumb-sep">/</span>가입자 활동</div>
+    <div class="db-header">
+        <h1 class="db-title"><i class="bi bi-funnel me-2"></i>가입자 활동</h1>
+        <div class="st-month-btns">
+            <button class="st-month-btn" data-m="3">3개월</button>
+            <button class="st-month-btn active" data-m="6">6개월</button>
+            <button class="st-month-btn" data-m="12">12개월</button>
+        </div>
+    </div>
+    <p style="font-size:12px;color:var(--text-3);margin:0 0 16px;">
+        가입한 회원이 스튜디오를 열고, 도면을 저장하고, 견적요청까지 얼마나 가는지 보여줍니다. 관리자 계정은 빼고, 각 단계는 "처음 한 시각"만 기록합니다.
+        <span id="ufNote"></span>
+    </p>
+    <p id="ufNoTable" style="display:none;font-size:13px;color:#a02020;">아직 기록 표가 만들어지지 않았습니다. (ops/migrations/2026-11-09_user_milestones.sql 적용 필요)</p>
+
+    <!-- 탭: 가입 단계 / 접속 회원 / 회원별 목록 -->
+    <div id="ufTabs" style="display:flex;gap:4px;flex-wrap:wrap;margin:0 0 20px;">
+        <button class="st-tab-btn active" data-tab="steps" onclick="ufSwitchTab('steps')">가입 단계</button>
+        <button class="st-tab-btn" data-tab="active" onclick="ufSwitchTab('active')">접속 회원</button>
+        <button class="st-tab-btn" data-tab="members" onclick="ufSwitchTab('members')">회원별 목록</button>
+    </div>
+
+    <!-- 접속 회원 탭: 현재 접속 + 접속 회원 수·추이 -->
+    <div class="st-tab-panel" id="tab-active" style="display:none;">
+    <!-- 현재 접속 (관리자 포함) -->
+    <div class="st-panel">
+        <div class="st-panel-head" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span class="st-panel-title">현재 접속 <span id="ufOnlineCount" style="font-weight:400;color:var(--text-3);"></span></span>
+            <span style="font-size:11px;color:var(--text-3);">최근 10분 안에 페이지를 연 회원 · 관리자 포함 · 1분마다 새로 불러옵니다</span>
+        </div>
+        <div class="st-panel-body" id="ufOnline" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+    </div>
+
+    <!-- 접속 회원 -->
+    <div class="st-panel">
+        <div class="st-panel-head"><span class="st-panel-title">접속 회원 — 로그인한 상태로 사이트를 방문한 회원 (관리자 제외)</span></div>
+        <div class="st-panel-body">
+            <div class="st-cards" id="ufActiveCards" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px;"></div>
+            <div style="font-size:12px;color:var(--text-3);margin-bottom:6px;">최근 30일 일별 접속 회원 수</div>
+            <div id="ufDaily" style="display:flex;align-items:flex-end;gap:3px;height:84px;"></div>
+            <div id="ufDailyAxis" style="display:flex;gap:3px;font-size:10px;color:var(--text-3);margin-top:4px;"></div>
+        </div>
+    </div>
+    </div><!-- /tab-active -->
+
+    <!-- 가입 단계 탭: 전체 단계 + 가입 월별 -->
+    <div class="st-tab-panel" id="tab-steps">
+    <!-- 전체 단계 -->
+    <div class="st-cards" id="ufCards" style="grid-template-columns:repeat(6,1fr);"></div>
+
+    <!-- 월별 -->
+    <div class="st-panel">
+        <div class="st-panel-head"><span class="st-panel-title">가입 월별 — 그 달에 가입한 회원이 이후 어디까지 갔는지</span></div>
+        <div class="st-panel-body">
+            <table>
+                <thead><tr><th>가입 월</th><th>가입</th><th>스튜디오 열기</th><th>도면 저장</th><th>내보내기</th><th>AI 렌더링</th><th>견적요청</th></tr></thead>
+                <tbody id="ufCohorts"></tbody>
+            </table>
+        </div>
+    </div>
+
+    </div><!-- /tab-steps -->
+
+    <!-- 회원별 목록 탭 -->
+    <div class="st-tab-panel" id="tab-members" style="display:none;">
+    <div class="st-panel">
+        <div class="st-panel-head" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span class="st-panel-title">회원별 (최근 가입 300명)</span>
+            <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                <select id="ufSort" onchange="renderMembers()" style="height:30px;padding:0 8px;font-size:12px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg);color:var(--text);">
+                    <option value="created">가입 최신순</option>
+                    <option value="seen">최근 접속순</option>
+                    <option value="days">30일 접속일수 많은 순</option>
+                </select>
+                <label style="display:flex;gap:6px;align-items:center;font-size:12px;cursor:pointer;">
+                    <input type="checkbox" id="ufNoDrawing" onchange="renderMembers()"> 도면을 아직 안 만든 회원만
+                </label>
+                <input type="text" id="ufSearch" placeholder="이메일·이름 검색" oninput="renderMembers()"
+                    style="height:30px;width:180px;padding:0 10px;font-size:12px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg);color:var(--text);">
+            </div>
+        </div>
+        <div class="st-panel-body" style="padding:0;">
+            <table>
+                <thead><tr><th>가입일</th><th>회원</th><th>스튜디오</th><th>도면 저장</th><th>내보내기</th><th>렌더링</th><th>견적요청</th><th>마지막 접속</th><th>30일 접속</th></tr></thead>
+                <tbody id="ufMembers"></tbody>
+            </table>
+        </div>
+    </div>
+    </div><!-- /tab-members -->
+</div>
+
+<script src="/src/js/admin/user_funnel.js?v=<?= md5_file(__DIR__ . '/../js/admin/user_funnel.js') ?>"></script>
+</body>
+</html>

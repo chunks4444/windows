@@ -95,6 +95,12 @@ require_admin_role('s');
                 </div>
             </div>
                 <textarea id="pmHtml"></textarea>
+                <div id="pmRawWrap" style="display:none;">
+                    <div style="font-size:12px;color:#8a3a22;background:#fbe9e4;padding:8px 12px;border-radius:var(--r-sm);margin-bottom:8px;">
+                        전체 HTML 문서(&lt;html&gt;·&lt;head&gt; 포함)라서 코드로 직접 편집합니다. 일반 편집기는 &lt;head&gt;와 모바일 스타일을 지워 메일이 깨지기 때문에 쓰지 않습니다.
+                    </div>
+                    <textarea id="pmHtmlRaw" spellcheck="false" style="width:100%;min-height:460px;font-family:Consolas,monospace;font-size:12px;line-height:1.5;padding:10px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg);color:var(--text);white-space:pre;overflow:auto;"></textarea>
+                </div>
             </div>
             <div class="adm-mfield">
                 <label>포트폴리오 PDF 첨부 — 8MB 이하는 메일에 첨부되고, 그보다 크면 첨부 없이 본문의 PDF 다운로드 링크로만 전달됩니다 (PDF, 30MB 이하)</label>
@@ -110,6 +116,7 @@ require_admin_role('s');
             <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-right:auto;">
                 <input type="email" id="pmTestTo" placeholder="테스트 받을 이메일" style="height:34px;width:220px;border:1px solid var(--border);border-radius:var(--r-sm);padding:0 10px;font-size:13px;">
                 <select id="pmTestCo" title="이 회사 이름으로 치환해서 테스트" style="height:34px;max-width:200px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--bg);color:var(--text);padding:0 8px;font-size:13px;"><option value="">회사명 샘플</option></select>
+                <button class="adm-btn-cancel" onclick="openPreview()" title="지금 편집 중인 내용을 받는 사람이 보는 모양 그대로 미리 봅니다 (메일은 보내지 않습니다)"><i class="bi bi-eye"></i> 미리보기</button>
                 <button class="adm-btn-cancel" onclick="sendTest()">테스트 발송</button>
                 <span id="pmEditorMsg" style="font-size:12px;"></span>
             </div>
@@ -118,6 +125,31 @@ require_admin_role('s');
             <input type="datetime-local" id="pmWhen" style="height:34px;border:1px solid var(--border);border-radius:var(--r-sm);padding:0 8px;font-size:13px;">
             <button class="adm-btn-cancel" onclick="startSend('schedule')">예약 발송</button>
             <button class="adm-btn-save" onclick="startSend('send_now')">즉시 발송</button>
+        </div>
+    </div>
+</div>
+
+<!-- 메일 미리보기 모달: 편집 모달 위에 겹쳐 열린다 (스크립트는 실행하지 않는 격리 프레임) -->
+<div class="adm-modal-overlay" id="pmPreviewOverlay" onclick="if(event.target===this) closePreview()">
+    <div class="adm-modal" style="max-width:860px;width:96vw;">
+        <div class="adm-modal-head">
+            <h3>메일 미리보기 <span id="pmPvSub" style="font-size:12px;font-weight:400;color:var(--text-muted);"></span></h3>
+            <button class="adm-modal-close" onclick="closePreview()">&#x2715;</button>
+        </div>
+        <div class="adm-modal-body" style="background:#e4e4e4;">
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:10px;">
+                <button type="button" class="adm-btn-cancel" id="pmPvPc" onclick="setPreviewWidth(600)">PC (600px)</button>
+                <button type="button" class="adm-btn-cancel" id="pmPvMo" onclick="setPreviewWidth(375)">모바일 (375px)</button>
+                <span id="pmPvSubject" style="font-size:12px;color:#333;"></span>
+            </div>
+            <div style="display:flex;justify-content:center;overflow:auto;">
+                <iframe id="pmPvFrame" title="메일 미리보기" sandbox="allow-popups allow-popups-to-escape-sandbox"
+                        style="border:0;background:#fff;width:600px;max-width:100%;height:72vh;box-shadow:0 2px 14px rgba(0,0,0,.18);"></iframe>
+            </div>
+            <div style="font-size:11px;color:#555;margin-top:8px;">
+                받는 회사 이름은 아래 편집창의 "회사명 샘플" 선택에 따라 바뀝니다. 링크는 새 창으로 열리고, 수신거부 링크는 미리보기에서 눌러도 실제로 처리되지 않습니다.
+                모바일 폭은 폰 화면 폭에서의 모양을 흉내 낸 것이라 메일앱마다 조금씩 다를 수 있습니다.
+            </div>
         </div>
     </div>
 </div>

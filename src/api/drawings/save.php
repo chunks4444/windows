@@ -51,4 +51,8 @@ $pdo = db();
 $pdo->prepare('UPDATE wallpapers SET drawing_id = ? WHERE user_id = ? AND engine = ? AND drawing_id IS NULL')
     ->execute([$drawingId, (int)$payload['sub'], strtolower($type)]);
 
+// 회원별 활동 단계 기록(첫 도면 저장) — 실패해도 저장 응답에 영향 없음
+require_once __DIR__ . '/../../lib/milestones.php';
+ms_mark((int) $payload['sub'], 'first_drawing_at');
+
 echo json_encode(['ok' => true, 'drawing_id' => $drawingId]);
