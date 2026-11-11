@@ -52,6 +52,7 @@ require_admin_role('s');
     <div id="stMainTabs" style="display:flex;gap:4px;flex-wrap:wrap;margin:0 0 20px;">
         <button class="st-tab-btn active" data-tab="overview" onclick="switchStatsTab('overview')">접속 통계</button>
         <button class="st-tab-btn" data-tab="class" onclick="switchStatsTab('class')">방문 구분 — 유입 경로와 봇 종류</button>
+        <button class="st-tab-btn" data-tab="humans" onclick="switchStatsTab('humans')">사람 방문자</button>
         <button class="st-tab-btn" data-tab="topPages" onclick="switchStatsTab('topPages')">인기 페이지</button>
         <button class="st-tab-btn" data-tab="topUsers" onclick="switchStatsTab('topUsers')">회원접속</button>
         <button class="st-tab-btn" data-tab="anonVisits" onclick="switchStatsTab('anonVisits')">비로그인 방문</button>
@@ -140,6 +141,22 @@ require_admin_role('s');
         </div>
     </div>
     </div><!-- /tab-class -->
+
+    <!-- 사람 방문자: 사람으로 분류되고 브라우저에서 스크립트 실행이 확인된 방문자(IP)별 유입 경로·본 페이지 -->
+    <div class="st-tab-panel" id="tab-humans" style="display:none;">
+    <div class="st-panel">
+        <div class="st-panel-head">
+            <span class="st-panel-title">사람 방문자 — 어디서 들어와 무엇을 봤나</span>
+        </div>
+        <div class="st-panel-body">
+            <p style="font-size:12px;color:var(--text-3);margin:0 0 10px;">사람으로 분류되고 브라우저에서 스크립트가 실제로 실행된 방문자만 보여줍니다 (최근 순 150명, 위 기간 기준). 스크립트 확인 신호를 못 보내고 나간 사람은 빠질 수 있어 실제보다 적게 나옵니다. IP를 누르면 그 IP의 방문 기록이 열립니다.</p>
+            <table>
+                <thead><tr><th>마지막 방문</th><th>IP (국가)</th><th>기기</th><th>유입 경로</th><th>처음 본 페이지</th><th>열람</th></tr></thead>
+                <tbody id="humansTbody"></tbody>
+            </table>
+        </div>
+    </div>
+    </div><!-- /tab-humans -->
 
     <!-- 인기 페이지·회원접속·비로그인 방문·내보내기 기록·화이트리스트 (위 탭 줄에서 고른 것만 보인다) -->
     <div class="st-panel" id="stOldPanel" style="display:none;">
