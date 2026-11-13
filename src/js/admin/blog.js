@@ -363,7 +363,11 @@ function fileToResizedDataUrl(file, maxDim) {
                 }
                 const canvas = document.createElement('canvas');
                 canvas.width = w; canvas.height = h;
-                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                const ctx = canvas.getContext('2d');
+                // JPEG는 투명을 지원하지 않아, 투명한 PNG를 그대로 변환하면 투명 부분이 검정으로 저장된다 → 먼저 흰색 바탕을 깐다
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, w, h);
+                ctx.drawImage(img, 0, 0, w, h);
                 resolve({ dataUrl: canvas.toDataURL('image/jpeg', 0.92), originalWidth: img.width });
             };
             img.src = e.target.result;
