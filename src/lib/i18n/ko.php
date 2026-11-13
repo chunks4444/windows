@@ -406,6 +406,7 @@ return [
     'bd_cta_category_btn'     => '%s 컬렉션 보기',
     'bd_cta_default'          => '워크그룹 평목의 다양한 패턴 디자인 보러가기',
     'bd_go_collection'        => '컬렉션 보러가기',
+    'bd_related_title'        => '함께 읽으면 좋은 글',
     'bd_pager_prev'           => '이전 편',
     'bd_pager_next'           => '다음 편',
     'bd_pager_all'            => '전체 목록 보기',

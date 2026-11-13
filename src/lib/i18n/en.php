@@ -406,6 +406,7 @@ return [
     'bd_cta_category_btn'     => 'View %s in the Collection',
     'bd_cta_default'          => 'Browse the pattern designs at Workgroup Pyeongmok',
     'bd_go_collection'        => 'Go to the Collection',
+    'bd_related_title'        => 'Related reading',
     'bd_pager_prev'           => 'Previous post',
     'bd_pager_next'           => 'Next post',
     'bd_pager_all'            => 'View all posts',
