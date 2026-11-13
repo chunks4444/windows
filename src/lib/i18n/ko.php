@@ -170,6 +170,7 @@ return [
     'company_contact_title'    => '함께 만들어가요.',
     'company_contact_body'     => '작은 문의도 괜찮습니다.<br>설계·제작·설치 상담부터 협업 및 프로젝트 제안까지 모두 환영합니다.<br>편하게 연락해 주세요. 살펴보고 빠르게 답을 드리겠습니다.',
     'company_contact_email_btn'=> '이메일 문의하기',
+    'company_portfolio_pdf_btn'=> '포트폴리오 다운로드',
     'company_address_value'  => '경기도 양평군 양서면 도곡리 107-2',
     'company_contact_address'  => '주소',
     'company_contact_phone'    => '전화',

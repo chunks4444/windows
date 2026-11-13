@@ -413,6 +413,10 @@ body {
     transition: opacity .15s;
 }
 .ab-contact-btn:hover { opacity: .85; }
+/* 이메일 문의 + 포트폴리오 PDF 버튼을 나란히 (좁은 화면에서는 줄바꿈) */
+.ab-contact-btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+.ab-contact-btns .ab-contact-btn { margin-top: 0; text-decoration: none; }
+.ab-contact-btn-sub { font-weight: 400; font-size: var(--fs-12); opacity: .7; }
 .ab-contact-btn--outline {
     background: transparent;
     color: var(--text);

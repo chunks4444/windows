@@ -17,6 +17,12 @@ try {
     $stmt->execute([$path, $path]);
     $found = $stmt->fetchColumn();
     if ($found) $name = $found;
+    // 관리자 '포트폴리오 PDF' 페이지에서 올린 파일은 홍보 캠페인·템플릿에 안 걸려 있을 수 있어, 거기 기록된 파일명을 쓴다
+    if (!$found) {
+        $cfg = db()->query("SELECT value FROM site_config WHERE key_name = 'portfolio_pdf'")->fetchColumn();
+        $cj = $cfg ? json_decode((string)$cfg, true) : null;
+        if ($cj && ($cj['path'] ?? '') === $path && !empty($cj['name'])) $name = $cj['name'];
+    }
 } catch (Throwable $e) {}
 
 $ascii = preg_replace('/[^A-Za-z0-9._-]+/', '_', $name);

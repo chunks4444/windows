@@ -170,6 +170,7 @@ return [
     'company_contact_title'    => "Let's build it together.",
     'company_contact_body'     => "Even a small question is welcome.<br>From design, production, and installation consultations to collaboration and project proposals — all welcome.<br>Feel free to reach out. We'll look into it and get back to you soon.",
     'company_contact_email_btn'=> 'Email Us',
+    'company_portfolio_pdf_btn'=> 'Download Portfolio',
     'company_address_value'  => '76, Yangseodogok-gil, Yangseo-myeon, Yangpyeong-gun, Gyeonggi-do, Republic of Korea',
     'company_contact_address'  => 'Address',
     'company_contact_phone'    => 'Phone',

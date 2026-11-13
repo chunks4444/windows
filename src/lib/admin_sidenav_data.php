@@ -12,6 +12,7 @@ return [
     ]],
     ['title' => '콘텐츠 관리', 'items' => [
         ['works.php',            'bi-images',          '포트폴리오 관리'],
+        ['portfolio_pdf.php',    'bi-file-earmark-pdf', '포트폴리오 PDF'],
         ['svg_motifs.php',       'bi-flower1',         '문양(SVG) 라이브러리'],
         ['faq.php',              'bi-question-circle', 'FAQ 관리'],
         ['notice.php',           'bi-megaphone',       '공지 배너'],
