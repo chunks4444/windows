@@ -38,8 +38,8 @@ require_admin_role('s');
             <div class="oauth-callback">회사 소개 페이지의 "포트폴리오 다운로드" 버튼이 이 파일을 내려받게 합니다.</div>
             <div id="pfCurrent" style="font-size:14px;line-height:1.8;">불러오는 중…</div>
             <div id="pfCurrentBtns" style="display:none;margin-top:12px;gap:8px;flex-wrap:wrap;">
-                <a id="pfOpen" class="oauth-save" href="#" target="_blank" rel="noopener" style="text-decoration:none;display:inline-block;">다운로드 화면 열기</a>
-                <button type="button" class="oauth-save" id="pfCopy" style="background:transparent;color:var(--text);border:1px solid var(--border);">공개 링크 복사</button>
+                <a id="pfOpen" class="oauth-save pf-btn" href="#" target="_blank" rel="noopener">다운로드 화면 열기</a>
+                <button type="button" class="oauth-save pf-btn pf-btn--ghost" id="pfCopy">공개 링크 복사</button>
             </div>
         </div>
 

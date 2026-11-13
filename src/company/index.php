@@ -64,6 +64,12 @@ function sc_desc(array $cardsByKey, string $key, string $fallbackKey): string {
             <p class="ab-hero-label"><?= htmlspecialchars(t('company_hero_label')) ?></p>
             <h1 class="ab-hero-title"><?= t('company_hero_title') ?></h1>
             <p class="ab-hero-desc"><?= t('company_hero_desc') ?></p>
+            <?php if ($portfolioPdf): ?>
+            <a class="ab-hero-dl" href="<?= htmlspecialchars($portfolioPdf['url']) ?>" target="_blank" rel="noopener">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+                <?= htmlspecialchars(t('company_portfolio_pdf_btn')) ?> <span class="ab-contact-btn-sub">PDF · <?= (int)$portfolioPdf['mb'] ?>MB</span>
+            </a>
+            <?php endif; ?>
         </div>
     </div>
 </section>
