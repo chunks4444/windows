@@ -1,4 +1,17 @@
 RewriteEngine On
+
+# http → https 영구 이동 (2026-11-14). 지금까지 http://pyeongmok.com 이 이동 없이 그대로 열렸다 → 로그인 토큰이 암호화 없이 오갈 수 있었음.
+# Let's Encrypt 인증서 갱신(HTTP-01)이 쓰는 /.well-known/acme-challenge/ 는 이동에서 제외. SSL을 앞단이 대신 처리하는 경우를 대비해 X-Forwarded-Proto 도 본다.
+RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP:X-Forwarded-Proto} !https [NC]
+RewriteCond %{REQUEST_URI} !/[.]well-known/acme-challenge/ [NC]
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+# HSTS: 브라우저가 이 도메인은 앞으로 항상 https로만 접속하게 한다. 처음에는 1주일(604800초)로 시작 — 문제가 없으면 늘린다.
+# (includeSubDomains는 쓰지 않는다: studio.·krucc. 등 다른 하위 주소에 영향이 가지 않게)
+<IfModule mod_headers.c>
+    Header always set Strict-Transport-Security "max-age=604800" "expr=%{HTTPS} == 'on'"
+</IfModule>
 RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
 # 스크립트·명령줄 도구의 기본 User-Agent는 사이트 전체에서 403 (2026-10-13).
@@ -178,5 +191,11 @@ RewriteRule ^dev_router\.php$ - [F,L]
 # 서버에서 직접 고칠 때 남긴 백업(foo.php.bak_202611042127 같은 날짜 붙은 형식)·편집기 임시파일·PHP 설정(.user.ini)도 차단.
 # .php.bak_* 는 PHP로 실행되지 않고 소스가 글자 그대로 내려받아지던 상태였음 (2026-11-08 발견)
 <FilesMatch "(\.bak_[0-9]+|\.orig|\.swp|~)$|^\.user\.ini$">
+    Require all denied
+</FilesMatch>
+
+# 비밀번호·API 키가 들어 있는 설정 파일은 주소로 열 이유가 없음 (2026-11-14). 지금은 PHP가 실행만 되고 빈 화면이 나오지만,
+# PHP 처리가 깨지면 소스가 그대로 내려받아질 수 있다. src/lib/config.local.php, src/engine/config.local.php 모두 해당.
+<FilesMatch "^config\.local(\.example)?\.php$">
     Require all denied
 </FilesMatch>
