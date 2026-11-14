@@ -39,3 +39,30 @@ function portfolio_pdf_current(PDO $pdo): ?array {
     }
     return null;
 }
+
+/**
+ * PDF 1페이지(표지) 미리보기 JPG — 회사 소개의 포트폴리오 모달에 보여준다.
+ * uploads/promo/<같은 32자리>.cover.jpg 로 한 번 만들어 두고 다시 쓴다 (없으면 이때 Ghostscript로 생성, 약 0.6초).
+ * 서버에 gs가 없거나(로컬 Mac 등) 변환에 실패하면 null → 모달은 그림 없이 뜬다.
+ * 반환: 웹 경로 '/uploads/promo/<hash>.cover.jpg?v=<수정시각>'
+ */
+function portfolio_pdf_cover(string $pdfFileName): ?string {
+    if (!preg_match('/^([0-9a-f]{32})\.pdf$/', $pdfFileName, $m)) return null;
+    $dir   = __DIR__ . '/../../uploads/promo';
+    $pdf   = $dir . '/' . $pdfFileName;
+    $cover = $dir . '/' . $m[1] . '.cover.jpg';
+    if (!is_file($cover)) {
+        if (!is_file($pdf) || !is_writable($dir)) return null;
+        $gs = is_executable('/usr/bin/gs') ? '/usr/bin/gs' : null;
+        if (!$gs) return null;
+        $tmp = $cover . '.' . getmypid() . '.tmp';
+        $cmd = escapeshellarg($gs) . ' -q -dNOPAUSE -dBATCH -dSAFER -sDEVICE=jpeg -dJPEGQ=85 -r110'
+             . ' -dFirstPage=1 -dLastPage=1 -dTextAlphaBits=4 -dGraphicsAlphaBits=4'
+             . ' -sOutputFile=' . escapeshellarg($tmp) . ' ' . escapeshellarg($pdf) . ' 2>/dev/null';
+        exec($cmd, $out, $rc);
+        if ($rc !== 0 || !is_file($tmp) || filesize($tmp) < 1000) { @unlink($tmp); return null; }
+        @chmod($tmp, 0644);
+        if (!@rename($tmp, $cover)) { @unlink($tmp); return null; }
+    }
+    return '/uploads/promo/' . $m[1] . '.cover.jpg?v=' . (int)filemtime($cover);
+}

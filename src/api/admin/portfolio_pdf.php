@@ -37,7 +37,10 @@ function portfolio_release(PDO $pdo, string $path, string $keepPath): void {
     if ((int)$n->fetchColumn() > 0) return;
     $root = realpath(__DIR__ . '/../../../uploads/promo');
     $file = realpath(__DIR__ . '/../../..' . $path);
-    if ($root && $file && str_starts_with($file, $root . DIRECTORY_SEPARATOR)) @unlink($file);
+    if ($root && $file && str_starts_with($file, $root . DIRECTORY_SEPARATOR)) {
+        @unlink($file);
+        @unlink(preg_replace('/\.pdf$/', '.cover.jpg', $file));   // 회사 소개 모달용 표지 미리보기도 함께 지운다
+    }
 }
 
 function current_payload(PDO $pdo): array {
@@ -73,6 +76,8 @@ chmod($dir . '/' . $stored, 0644);   // 업로드 임시 파일은 0600 — 웹�
 $name = preg_replace('/[\x00-\x1F\x7F\\\\\/:*?"<>|]/u', '', basename((string)$f['name']));
 $name = mb_substr(preg_replace('/\.pdf$/i', '', $name), 0, 100) . '.pdf';
 $newPath = '/uploads/promo/' . $stored;
+
+portfolio_pdf_cover($stored);   // 표지 미리보기를 미리 만들어 둔다 (첫 방문자가 기다리지 않게)
 
 $oldCfg = portfolio_pdf_current($pdo);   // 교체 전에 쓰던 파일
 $oldCfgPath = $oldCfg ? $oldCfg['path'] : '';

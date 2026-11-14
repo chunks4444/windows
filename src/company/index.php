@@ -21,7 +21,7 @@ require_once __DIR__ . '/../lib/portfolio_pdf.php';
 $portfolioPdf = null;
 try {
     $ppCur = portfolio_pdf_current(db());
-    if ($ppCur) $portfolioPdf = ['url' => $ppCur['url'], 'name' => $ppCur['name'], 'mb' => max(1, (int)round($ppCur['size'] / 1048576))];
+    if ($ppCur) $portfolioPdf = ['url' => $ppCur['url'], 'name' => $ppCur['name'], 'cover' => portfolio_pdf_cover($ppCur['file']), 'mb' => max(1, (int)round($ppCur['size'] / 1048576))];
 } catch (Throwable $e) {
     $portfolioPdf = null;
 }
@@ -360,10 +360,14 @@ function sc_desc(array $cardsByKey, string $key, string $fallbackKey): string {
 <!-- 포트폴리오 PDF 모달 — 버튼을 누르면 새 탭(안내 페이지) 대신 이 창이 뜨고, 'PDF 다운로드'를 누르면 바로 받아진다.
      메일 속 링크는 메일 앱 간이 브라우저 때문에 여전히 download.php 안내 페이지를 쓴다. -->
 <div class="modal fade" id="portfolioPdfModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" style="max-width:400px;">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:520px;">
         <div class="modal-content ab-pdf-modal">
             <button type="button" class="btn-close ab-pdf-close" data-bs-dismiss="modal" style="font-size:11px;"></button>
+            <?php if (!empty($portfolioPdf['cover'])): ?>
+            <img class="ab-pdf-cover" src="<?= htmlspecialchars($portfolioPdf['cover']) ?>" alt="<?= htmlspecialchars(t('company_portfolio_pdf_title')) ?>" loading="lazy">
+            <?php else: ?>
             <div class="ab-pdf-brand">WORKGROUP PYEONGMOK</div>
+            <?php endif; ?>
             <h5 class="ab-pdf-title"><?= htmlspecialchars(t('company_portfolio_pdf_title')) ?></h5>
             <p class="ab-pdf-file"><?= htmlspecialchars($portfolioPdf['name']) ?> · <?= (int)$portfolioPdf['mb'] ?>MB</p>
             <a class="ab-pdf-btn" href="<?= htmlspecialchars($portfolioPdf['url']) ?>&amp;dl=1" download data-bs-dismiss="modal"><?= htmlspecialchars(t('company_portfolio_pdf_dl')) ?></a>
