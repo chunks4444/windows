@@ -370,11 +370,26 @@ function sc_desc(array $cardsByKey, string $key, string $fallbackKey): string {
             <?php endif; ?>
             <h5 class="ab-pdf-title"><?= htmlspecialchars(t('company_portfolio_pdf_title')) ?></h5>
             <p class="ab-pdf-file"><?= htmlspecialchars($portfolioPdf['name']) ?> · <?= (int)$portfolioPdf['mb'] ?>MB</p>
-            <a class="ab-pdf-btn" href="<?= htmlspecialchars($portfolioPdf['url']) ?>&amp;dl=1" download data-bs-dismiss="modal"><?= htmlspecialchars(t('company_portfolio_pdf_dl')) ?></a>
+            <a class="ab-pdf-btn" id="abPdfDl" href="<?= htmlspecialchars($portfolioPdf['url']) ?>&amp;dl=1" download><?= htmlspecialchars(t('company_portfolio_pdf_dl')) ?></a>
             <a class="ab-pdf-sub" href="<?= htmlspecialchars($portfolioPdf['url']) ?>&amp;view=1" target="_blank" rel="noopener"><?= htmlspecialchars(t('company_portfolio_pdf_view')) ?></a>
         </div>
     </div>
 </div>
+<script>
+// 다운로드 링크에 data-bs-dismiss="modal"을 달면 부트스트랩이 링크의 기본 동작(= 다운로드)을 취소(preventDefault)해서
+// 모달만 닫히고 파일이 받아지지 않는다. 그래서 속성은 쓰지 않고, 클릭한 뒤 잠깐 있다가 모달을 닫는다.
+(function () {
+    var dl = document.getElementById('abPdfDl');
+    var modalEl = document.getElementById('portfolioPdfModal');
+    if (!dl || !modalEl) return;
+    dl.addEventListener('click', function () {
+        setTimeout(function () {
+            var m = window.bootstrap && window.bootstrap.Modal.getInstance(modalEl);
+            if (m) m.hide();
+        }, 500);
+    });
+})();
+</script>
 <?php endif; ?>
 </body>
 </html>
