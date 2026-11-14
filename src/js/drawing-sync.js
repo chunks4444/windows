@@ -19,6 +19,7 @@ window.DrawingSync = (function () {
             const data = await res.json().catch(() => ({}));
             if (res.status === 401) return { ok: false, reason: 'auth' };
             if (!res.ok)           return { ok: false, reason: data.error || 'server_error' };
+            _applyShareMeta(data);   // 저장으로 썸네일이 바뀌므로 카카오 공유 카드용 og 메타도 새 도면 이미지로
             return { ok: true, drawingId: data.drawing_id ?? null };
         } catch {
             return { ok: false, reason: 'network' };
@@ -68,6 +69,21 @@ window.DrawingSync = (function () {
         } catch { return false; }
     }
 
+    // 공유를 켠 직후 화면의 og 메타(제목·설명·이미지)를 이 도면의 값으로 바꾼다.
+    // 아직 공유 전이던 도면을 편집기로 열면 서버가 엔진 기본 메타(정자살 페이지 이미지 등)를 심어 두는데,
+    // 각 엔진의 카카오 공유(shareToKakao)가 이 메타를 읽어 카드 이미지·제목으로 쓰기 때문에 도면 대신 엔진 이미지가 나갔다.
+    function _applyShareMeta(d) {
+        const set = (prop, val) => {
+            if (!val) return;
+            let m = document.querySelector('meta[property="' + prop + '"]');
+            if (!m) { m = document.createElement('meta'); m.setAttribute('property', prop); document.head.appendChild(m); }
+            m.setAttribute('content', val);
+        };
+        set('og:title', d.title);
+        set('og:description', d.description);
+        set('og:image', d.og_image);
+    }
+
     async function setShared(id, shared) {
         if (!_token() || !id) return { ok: false };
         try {
@@ -78,6 +94,7 @@ window.DrawingSync = (function () {
             });
             const data = await res.json().catch(() => ({}));
             if (!res.ok) return { ok: false, reason: data.error || 'server_error' };
+            if (data.is_shared) _applyShareMeta(data);
             return { ok: true, is_shared: data.is_shared, share_url: data.share_url };
         } catch {
             return { ok: false, reason: 'network' };

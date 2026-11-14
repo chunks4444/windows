@@ -20,7 +20,7 @@ if (!$drawingId) { http_response_code(422); echo json_encode(['error' => 'id 필
 $pdo  = db();
 $uid  = (int)$payload['sub'];
 
-$stmt = $pdo->prepare('SELECT type, user_id FROM drawings WHERE id = ?');
+$stmt = $pdo->prepare('SELECT type, user_id, title, thumbnail FROM drawings WHERE id = ?');
 $stmt->execute([$drawingId]);
 $row = $stmt->fetch();
 
@@ -31,4 +31,15 @@ $pdo->prepare('UPDATE drawings SET is_shared = ? WHERE id = ?')->execute([$share
 
 $shareUrl = SITE_URL . '/src/engine/' . $row['type'] . '/' . $row['type'] . '.php?drawing_id=' . $drawingId;
 
-echo json_encode(['ok' => true, 'is_shared' => (bool)$shared, 'share_url' => $shareUrl]);
+// 공유를 켠 직후 편집기 화면이 카카오 공유 카드를 만들 때 쓸 미리보기 정보.
+// 아직 공유 전이던 도면을 편집기로 열면 화면의 og 메타가 엔진 기본값(정자살 페이지 이미지·제목)이라, 이 값으로 화면 메타를 갱신한다.
+// (공유 페이지가 직접 내보내는 메타와 같은 값: src/engine/*/*.php 의 $shareMeta)
+require_once __DIR__ . '/../../lib/og_image.php';
+echo json_encode([
+    'ok'          => true,
+    'is_shared'   => (bool)$shared,
+    'share_url'   => $shareUrl,
+    'title'       => ($row['title'] ?: '평목 도면') . ' - 워크그룹 평목',
+    'description' => '워크그룹 평목에서 설계한 문살 도면을 확인해보세요.',
+    'og_image'    => !empty($row['thumbnail']) ? drawing_og_image_url($row['thumbnail']) : '',
+], JSON_UNESCAPED_UNICODE);

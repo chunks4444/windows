@@ -55,4 +55,16 @@ $pdo->prepare('UPDATE wallpapers SET drawing_id = ? WHERE user_id = ? AND engine
 require_once __DIR__ . '/../../lib/milestones.php';
 ms_mark((int) $payload['sub'], 'first_drawing_at');
 
-echo json_encode(['ok' => true, 'drawing_id' => $drawingId]);
+// 저장하면 썸네일 파일이 새 이름으로 바뀌고 옛 파일은 지워진다 — 편집기 화면의 og 메타(카카오 공유 카드가 읽음)가
+// 옛 썸네일을 가리키지 않도록, 방금 저장된 도면의 제목·미리보기 이미지를 함께 돌려준다 (drawing-sync.js가 화면 메타를 갱신)
+require_once __DIR__ . '/../../lib/meta.php';
+$mst = $pdo->prepare('SELECT title, thumbnail FROM drawings WHERE id = ?');
+$mst->execute([$drawingId]);
+$mrow = $mst->fetch() ?: [];
+echo json_encode([
+    'ok'          => true,
+    'drawing_id'  => $drawingId,
+    'title'       => ($mrow['title'] ?? '') !== '' ? $mrow['title'] . ' - 워크그룹 평목' : '',
+    'description' => '워크그룹 평목에서 설계한 문살 도면을 확인해보세요.',
+    'og_image'    => !empty($mrow['thumbnail']) ? drawing_og_image_url($mrow['thumbnail']) : '',
+], JSON_UNESCAPED_UNICODE);
