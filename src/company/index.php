@@ -15,6 +15,17 @@ try {
 $cardsByKey = [];
 foreach ($studioCards as $sc) $cardsByKey[$sc['engine_key']] = $sc;
 
+// 포트폴리오 PDF 다운로드 링크: 관리자 '포트폴리오 PDF' 페이지에서 올린 현재 파일 (올린 적이 없으면 홍보메일 템플릿의 첨부 PDF).
+// 파일이 없으면 버튼을 숨긴다.
+require_once __DIR__ . '/../lib/portfolio_pdf.php';
+$portfolioPdf = null;
+try {
+    $ppCur = portfolio_pdf_current(db());
+    if ($ppCur) $portfolioPdf = ['url' => $ppCur['url'], 'mb' => max(1, (int)round($ppCur['size'] / 1048576))];
+} catch (Throwable $e) {
+    $portfolioPdf = null;
+}
+
 // studio_cards.title/description은 자유서술형 긴 글이라 용어집(term())으로 못 다루고,
 // title_en/description_en 컬럼을 따로 관리한다(어드민 미입력 시 한글로 폴백).
 function sc_title(array $cardsByKey, string $key, string $fallback): string {
@@ -53,6 +64,12 @@ function sc_desc(array $cardsByKey, string $key, string $fallbackKey): string {
             <p class="ab-hero-label"><?= htmlspecialchars(t('company_hero_label')) ?></p>
             <h1 class="ab-hero-title"><?= t('company_hero_title') ?></h1>
             <p class="ab-hero-desc"><?= t('company_hero_desc') ?></p>
+            <?php if ($portfolioPdf): ?>
+            <a class="ab-hero-dl" href="<?= htmlspecialchars($portfolioPdf['url']) ?>" target="_blank" rel="noopener">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+                <?= htmlspecialchars(t('company_portfolio_pdf_btn')) ?> <span class="ab-contact-btn-sub">PDF · <?= (int)$portfolioPdf['mb'] ?>MB</span>
+            </a>
+            <?php endif; ?>
         </div>
     </div>
 </section>
@@ -279,10 +296,18 @@ function sc_desc(array $cardsByKey, string $key, string $fallbackKey): string {
         <p class="ab-section-label"><?= htmlspecialchars(t('home_contact_label')) ?></p>
         <h2 class="ab-section-title"><?= htmlspecialchars(t('company_contact_title')) ?></h2>
         <p class="ab-section-body"><?= t('company_contact_body') ?></p>
-        <button class="ab-contact-btn" data-bs-toggle="modal" data-bs-target="#contactModal">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-            <?= htmlspecialchars(t('company_contact_email_btn')) ?>
-        </button>
+        <div class="ab-contact-btns">
+            <button class="ab-contact-btn" data-bs-toggle="modal" data-bs-target="#contactModal">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                <?= htmlspecialchars(t('company_contact_email_btn')) ?>
+            </button>
+            <?php if ($portfolioPdf): ?>
+            <a class="ab-contact-btn ab-contact-btn--outline" href="<?= htmlspecialchars($portfolioPdf['url']) ?>" target="_blank" rel="noopener">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+                <?= htmlspecialchars(t('company_portfolio_pdf_btn')) ?> <span class="ab-contact-btn-sub">PDF · <?= (int)$portfolioPdf['mb'] ?>MB</span>
+            </a>
+            <?php endif; ?>
+        </div>
 
         <div class="ab-contact-cols">
             <div class="ab-contact-info">

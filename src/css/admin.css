@@ -234,6 +234,10 @@ tr.drag-over td { background:var(--accent-tint); }
 .oauth-save { height: 36px; padding: 0 18px; background: var(--accent); color: var(--bg); border: none; border-radius: 8px; font-size: var(--fs-14); font-weight: 600; cursor: pointer; transition: background .15s; }
 .oauth-save:hover { background: var(--accent-hover); }
 .oauth-save:disabled { background: var(--border); cursor: not-allowed; }
+/* <a>를 .oauth-save 버튼처럼 쓸 때(포트폴리오 PDF 페이지): <button>과 같은 글꼴로 글자를 가로·세로 가운데에 둔다 */
+.oauth-save.pf-btn { display: inline-flex; align-items: center; justify-content: center; line-height: 1; font-family: inherit; text-decoration: none; }
+.oauth-save.pf-btn--ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+.oauth-save.pf-btn--ghost:hover { background: var(--accent-tint); border-color: var(--accent); color: var(--accent); }
 .oauth-status { font-size: var(--fs-13); margin-left: 10px; }
 .oauth-status.ok  { color: var(--accent); }
 .oauth-status.err { color: var(--danger); }

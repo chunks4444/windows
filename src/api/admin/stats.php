@@ -57,7 +57,7 @@ $sharedCount = (int) $pdo->query('SELECT COUNT(*) FROM drawings WHERE is_shared 
 // 6. 사람/봇 구분, 검색엔진·유입 경로 — page_views의 분류 칸(visitor_type 등)이 있을 때만.
 // 분류는 칸을 추가한 뒤의 방문부터 붙으므로 그 이전 방문은 visitor_type이 NULL('분류 전')이다.
 $classified = false;
-$types = $bots = $sources = [];
+$types = $bots = $sources = $humans = [];
 $classSince = null;
 try {
     $from = "FROM page_views WHERE visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH) $adm";
@@ -109,6 +109,17 @@ try {
     $stmt->execute([$months]);
     $sources = $stmt->fetchAll();
 
+    // 사람 추정 방문자: 사람으로 분류되고 브라우저에서 스크립트 실행(js_ok)까지 확인된 IP. 최근 순 150명.
+    // 유입 경로·본 페이지는 그 IP의 방문 중 시간순으로 첫 값 (GROUP_CONCAT 기본 길이 제한 안에서 첫 값은 항상 온전하다).
+    $stmt = $pdo->prepare("SELECT ip, MAX(visited_at) AS last_at, COUNT(*) AS pv, MAX(is_mobile) AS mobile, MAX(user_id) AS user_id,
+                                  SUBSTRING_INDEX(GROUP_CONCAT(ref_source ORDER BY visited_at SEPARATOR '\t'), '\t', 1) AS ref_source,
+                                  SUBSTRING_INDEX(GROUP_CONCAT(page ORDER BY visited_at SEPARATOR '\t'), '\t', 1) AS first_page
+                           $from AND visitor_type = 'human' AND ip IS NOT NULL
+                           GROUP BY ip HAVING SUM(js_ok = 1) > 0
+                           ORDER BY last_at DESC LIMIT 150");
+    $stmt->execute([$months]);
+    $humans = $stmt->fetchAll();
+
     $classSince = $pdo->query("SELECT MIN(visited_at) FROM page_views WHERE visitor_type IS NOT NULL")->fetchColumn() ?: null;
     $classified = $classSince !== null;
 } catch (Throwable $e) {
@@ -125,4 +136,5 @@ echo json_encode([
     'types'       => $types,
     'bots'        => $bots,
     'sources'     => $sources,
+    'humans'      => $humans,
 ]);

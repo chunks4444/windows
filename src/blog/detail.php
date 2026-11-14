@@ -109,6 +109,32 @@ try {
 // 수 있는 soft-404가 된다 — 실제 404 상태코드로 응답해야 한다.
 if (!$post) { http_response_code(404); include __DIR__ . '/../../404.php'; exit; }
 
+// 함께 읽으면 좋은 글 3개 — 글 끝에서 목록으로 나가지 않고 다른 글로 이어지게 한다.
+// 점수: 같은 시리즈 +3, 같은 연결 엔진 +2, 같은 문양 분류 +2. 동점이면 많이 읽힌 글(조회수) 순.
+// 현재 글과, 아래 이전·다음 글 이동줄에 이미 나오는 글(이전/다음/다음 시리즈 1편)은 뺀다.
+// 실패해도 글 본문은 그대로 보여야 하므로 따로 try로 감싼다.
+$relatedPosts = [];
+try {
+    $rxExclude = [(int)$post['id']];
+    foreach ([$prev, $next, $nextSeries] as $rxP) { if ($rxP) $rxExclude[] = (int)$rxP['id']; }
+    $rxEngine = $post['related_engine'] ?: $post['related_drawing_engine'];
+    $rxIn = implode(',', array_fill(0, count($rxExclude), '?'));
+    $rxStmt = $pdo->prepare("SELECT p.id, p.title, p.title_en, p.slug, p.thumbnail_url,
+            (CASE WHEN p.series_id = ? THEN 3 ELSE 0 END
+           + CASE WHEN COALESCE(NULLIF(p.related_engine, ''), d.type) = ? THEN 2 ELSE 0 END
+           + CASE WHEN pc.id = ? THEN 2 ELSE 0 END) AS score
+        FROM blog_posts p
+        LEFT JOIN library_patterns lp ON lp.drawing_id = p.related_drawing_id AND lp.is_active = 1
+        LEFT JOIN pattern_categories pc ON pc.id = lp.pattern_category
+        LEFT JOIN drawings d ON d.id = p.related_drawing_id
+        WHERE p.is_active = 1 AND p.slug IS NOT NULL AND p.slug <> '' AND p.id NOT IN ($rxIn)
+        ORDER BY score DESC, p.view_count DESC, p.id DESC LIMIT 3");
+    $rxStmt->execute(array_merge([$post['series_id'], $rxEngine, $post['related_category_id']], $rxExclude));
+    $relatedPosts = $rxStmt->fetchAll();
+} catch (Throwable $e) {
+    $relatedPosts = [];
+}
+
 require_once __DIR__ . '/../lib/engine_icons.php';
 $engineLabels = [];
 foreach (ENGINE_LABELS as $engineKey => $engineLabel) {
@@ -275,6 +301,9 @@ $metaKeywords = trim($metaKeywords . ', ' . t('meta_brand_keywords'), ', ');
         <header class="bd-header">
             <a href="<?= lang_href('/blog/') ?>" class="bd-back"><i class="bi bi-arrow-left"></i> <?= htmlspecialchars(t('bd_back')) ?></a>
             <h1 class="bd-title"><?= htmlspecialchars(db_field($post, 'title')) ?></h1>
+            <?php if ($seriesInfo && db_field($seriesInfo, 'name') !== ''): ?>
+            <p class="bd-series-kicker"><?= htmlspecialchars(db_field($seriesInfo, 'name')) ?></p>
+            <?php endif; ?>
         </header>
 
         <?php if (!empty($post['thumbnail_url'])): ?>
@@ -401,6 +430,22 @@ $metaKeywords = trim($metaKeywords . ', ' . t('meta_brand_keywords'), ', ');
         <?php endif; ?>
 
     </article>
+
+    <?php if ($relatedPosts): ?>
+    <section class="bd-related" aria-labelledby="bdRelatedTitle">
+        <h2 class="bd-related-title" id="bdRelatedTitle"><?= htmlspecialchars(t('bd_related_title')) ?></h2>
+        <div class="bd-related-grid">
+            <?php foreach ($relatedPosts as $rp): ?>
+            <a class="bd-related-card" href="<?= lang_href('/blog/' . rawurlencode($rp['slug'])) ?>">
+                <?php if (!empty($rp['thumbnail_url'])): ?>
+                <span class="bd-related-thumb"><img src="<?= htmlspecialchars($rp['thumbnail_url']) ?>" alt="" loading="lazy"></span>
+                <?php endif; ?>
+                <span class="bd-related-name"><?= htmlspecialchars(db_field($rp, 'title')) ?></span>
+            </a>
+            <?php endforeach; ?>
+        </div>
+    </section>
+    <?php endif; ?>
 
     <nav class="bd-pager">
         <div class="bd-pager-grid">

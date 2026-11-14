@@ -40,9 +40,10 @@ return [
         ['ai_tuning.php',        'bi-stars',           'AI 튜닝'],
         ['ai_stats.php',         'bi-bar-chart-line',  'AI 사용 통계'],
     ]],
-    ['title' => '홍보 메일', 'items' => [
+    ['title' => '홍보', 'items' => [
         ['promo_companies.php',  'bi-building',        '발송 대상 회사'],
         ['promo_campaigns.php',  'bi-envelope-paper',  '홍보메일 발송'],
+        ['portfolio_pdf.php',    'bi-file-earmark-pdf', '포트폴리오 PDF'],
     ]],
     ['title' => '회원 관리', 'items' => [
         ['users.php',            'bi-shield-lock',     '회원 목록/권한'],

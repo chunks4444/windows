@@ -31,6 +31,12 @@ body { background: var(--bg); }
 }
 .bd-header { margin-bottom: 1.5rem; }
 .bd-title { margin-bottom: 0; }
+/* 제목 아래 시리즈명 */
+.bd-series-kicker {
+    margin: .6rem 0 0;
+    font-size: var(--fs-12); font-weight: 500; letter-spacing: .04em; line-height: 1.4;
+    color: var(--text-muted);
+}
 
 /* 저자·날짜(좌) + 공유 버튼(우) */
 .bd-meta {
@@ -368,6 +374,22 @@ html[lang="en"] .bd-body {
     transition: color .18s;
 }
 .bd-pager-link:hover .bd-pager-title { color: var(--accent); }
+
+/* ── 함께 읽으면 좋은 글 ──────────────────────────────────── */
+.bd-related { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border, var(--border)); }
+.bd-related-title { font-size: var(--fs-14); font-weight: 600; letter-spacing: .06em; margin: 0 0 1rem; color: var(--text); }
+.bd-related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.bd-related-card { display: flex; flex-direction: column; gap: .6rem; text-decoration: none; color: var(--text); }
+.bd-related-thumb { display: block; aspect-ratio: 16 / 10; overflow: hidden; border-radius: var(--r-sm); background: #F4F5F6; }
+.bd-related-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .35s ease; }
+.bd-related-card:hover .bd-related-thumb img { transform: scale(1.04); }
+.bd-related-name { font-size: var(--fs-14); font-weight: 600; line-height: 1.5; transition: color .18s; }
+.bd-related-card:hover .bd-related-name { color: var(--accent); }
+@media (max-width: 600px) {
+    .bd-related-grid { grid-template-columns: 1fr; gap: 1.25rem; }
+    .bd-related-card { flex-direction: row; align-items: center; gap: .9rem; }
+    .bd-related-thumb { width: 38%; flex: 0 0 38%; }
+}
 
 @media (max-width: 600px) {
     .bd-page { padding: 1.75rem 1rem 3rem; }

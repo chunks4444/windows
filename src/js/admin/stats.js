@@ -47,6 +47,7 @@ async function loadStats(months) {
     document.getElementById('sumShared').textContent = (+data.sharedCount || 0).toLocaleString();
     renderDailyChart(data.daily, !!data.classified);
     renderClassification(data);
+    renderHumans(data.humans || []);
     loadTopPages(1);
     loadTopUsers(1);
     loadAnonVisits(1);
@@ -203,6 +204,25 @@ function renderClassification(data) {
             <td style="color:var(--text-3);">${n(b.uv)}</td>
             <td style="color:var(--text-3);font-size:11px;white-space:nowrap;">${b.last_at ? esc(b.last_at.slice(5, 16)) : '—'}</td></tr>`).join('')
         || '<tr><td colspan="5" style="padding:16px;text-align:center;color:var(--text-3);">아직 잡힌 봇이 없습니다.</td></tr>';
+}
+
+function renderHumans(humans) {
+    const tb = document.getElementById('humansTbody');
+    if (!tb) return;
+    tb.innerHTML = humans.map(h => {
+        const ip = esc(h.ip);
+        let page = h.first_page || '';
+        try { page = decodeURIComponent(page); } catch (e) {}
+        return `<tr>
+            <td style="font-size:11px;color:var(--text-3);white-space:nowrap;">${esc((h.last_at || '').slice(5, 16))}</td>
+            <td style="font-size:12px;font-family:monospace;cursor:pointer;text-decoration:underline;" onclick="openIpVisits('${ip}')">${ip}<span class="ip-geo" data-ip="${ip}" style="color:var(--text-3);font-size:10px;margin-left:4px;"></span>${h.user_id ? ' <span style="color:var(--teal);font-size:10px;">회원</span>' : ''}</td>
+            <td style="white-space:nowrap;">${+h.mobile ? '모바일' : 'PC'}</td>
+            <td style="white-space:nowrap;">${esc(SOURCE_LABEL[h.ref_source] || h.ref_source || '—')}</td>
+            <td style="font-size:12px;word-break:break-all;">${esc(page)}</td>
+            <td class="st-num">${(+h.pv).toLocaleString()}</td>
+        </tr>`;
+    }).join('') || '<tr><td colspan="6" style="padding:20px;text-align:center;color:var(--text-3);">아직 확인된 사람 방문자가 없습니다.</td></tr>';
+    fillIpGeo(tb);
 }
 
 function renderTopPages(pages) {
