@@ -325,7 +325,10 @@ let _shareCtx = null; // { kind: 'drawing'|'render', id, type, title, isShared, 
 function _shareUrl() {
     if (_shareCtx.kind === 'render') return _shareCtx.url;
     const cfg = TYPE_CONFIG[_shareCtx.type] || {};
-    return location.origin + _lh(cfg.editorUrl || '') + '?drawing_id=' + _shareCtx.id;
+    // 끝의 v= 는 도면 버전(카드 썸네일 이름): 도면이 바뀌면 주소도 달라져 카카오·페이스북이 옛 미리보기를 재사용하지 않는다
+    const thumbSrc = _shareCtx.card?.querySelector('.db-thumb img')?.src || '';
+    const ver = /\/uploads\/drawing_thumbs\/(\d+_[0-9a-f]{8})/.exec(thumbSrc);
+    return location.origin + _lh(cfg.editorUrl || '') + '?drawing_id=' + _shareCtx.id + (ver ? '&v=' + ver[1] : '');
 }
 
 function _updateShareModalUI() {

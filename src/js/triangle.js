@@ -2257,7 +2257,7 @@ async function draw() {
     }
 
     function shareUrl() {
-        return location.origin + location.pathname + '?drawing_id=' + drawingId;
+        return location.origin + location.pathname + '?drawing_id=' + drawingId + (window.DrawingSync?.shareVersion?.() || '');
     }
 
     function updateShareButtonUI() {

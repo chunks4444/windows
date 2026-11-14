@@ -82,6 +82,14 @@ function meta_tags(?array $override = null): void {
     // 한글 경로 문자열을 직접 넘긴다(예: 블로그 목록 2쪽 이상).
     $hreflang = $override['hreflang'] ?? preg_replace('#^/en(?=/|$)#', '', $path);
     if ($hreflang !== false) hreflang_tags($hreflang ?: '/');
+    // 도면 공유 페이지(?drawing_id=)만 og:url을 도면 주소로 내보낸다. canonical은 엔진 페이지로 두므로(검색 중복 방지)
+    // og:url이 없으면 카카오·페이스북이 canonical(= ?drawing_id 없는 엔진 주소)을 기준으로 미리보기를 저장해,
+    // 도면이 달라지거나 바뀌어도 처음 저장된 엔진 이미지(井 아이콘 등)가 재사용될 수 있다.
+    if (!empty($override['image']) && ($rxDid = (int)($_GET['drawing_id'] ?? 0)) > 0) {
+        $rxUrl = SITE_URL . $path . '?drawing_id=' . $rxDid;
+        if (preg_match('/^[0-9A-Za-z_\-]{1,40}$/', (string)($_GET['v'] ?? ''))) $rxUrl .= '&v=' . $_GET['v'];   // 도면 버전(공유 링크에 붙는 값)
+        echo '<meta property="og:url"         content="' . htmlspecialchars($rxUrl, ENT_QUOTES) . '">' . "\n    ";
+    }
     echo '<meta property="og:title"       content="' . htmlspecialchars($title, ENT_QUOTES) . '">' . "\n    ";
     echo '<meta property="og:description" content="' . htmlspecialchars($desc, ENT_QUOTES) . '">' . "\n    ";
     echo '<meta property="og:image"       content="' . htmlspecialchars($image, ENT_QUOTES) . '">' . "\n    ";

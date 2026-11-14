@@ -29,7 +29,9 @@ if ((int)$row['user_id'] !== $uid) { http_response_code(403); echo json_encode([
 
 $pdo->prepare('UPDATE drawings SET is_shared = ? WHERE id = ?')->execute([$shared, $drawingId]);
 
-$shareUrl = SITE_URL . '/src/engine/' . $row['type'] . '/' . $row['type'] . '.php?drawing_id=' . $drawingId;
+// 끝의 v= 는 도면 버전(썸네일 이름) — 도면이 바뀌면 주소도 달라져 카카오·페이스북이 옛 미리보기를 재사용하지 않는다
+$shareVer = preg_match('#/(\d+_[0-9a-f]{8})#', (string)$row['thumbnail'], $vm) ? '&v=' . $vm[1] : '';
+$shareUrl = SITE_URL . '/src/engine/' . $row['type'] . '/' . $row['type'] . '.php?drawing_id=' . $drawingId . $shareVer;
 
 // 공유를 켠 직후 편집기 화면이 카카오 공유 카드를 만들 때 쓸 미리보기 정보.
 // 아직 공유 전이던 도면을 편집기로 열면 화면의 og 메타가 엔진 기본값(정자살 페이지 이미지·제목)이라, 이 값으로 화면 메타를 갱신한다.

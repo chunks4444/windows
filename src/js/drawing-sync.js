@@ -84,6 +84,14 @@ window.DrawingSync = (function () {
         set('og:image', d.og_image);
     }
 
+    // 공유 링크 끝에 붙일 도면 버전('&v=<썸네일 이름>'). 화면 og:image 주소에 들어 있는 썸네일 이름을 쓴다.
+    // 도면을 다시 저장하면 썸네일이 새 이름이 되어 링크 주소도 달라지므로, 카카오·페이스북이 옛 미리보기를 재사용하지 않는다.
+    function shareVersion() {
+        const m = document.querySelector('meta[property="og:image"]');
+        const t = /[?&]t=(\d+_[0-9a-f]{8})/.exec(m && m.content || '');
+        return t ? '&v=' + t[1] : '';
+    }
+
     async function setShared(id, shared) {
         if (!_token() || !id) return { ok: false };
         try {
@@ -110,7 +118,7 @@ window.DrawingSync = (function () {
         }).catch(() => {});
     }
 
-    return { save, load, list, rename, delete: del, setShared, logExport };
+    return { save, load, list, rename, delete: del, setShared, shareVersion, logExport };
 })();
 
 // ── 저장 완료 토스트 ──────────────────────────────
