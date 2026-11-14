@@ -21,7 +21,7 @@ require_once __DIR__ . '/../lib/portfolio_pdf.php';
 $portfolioPdf = null;
 try {
     $ppCur = portfolio_pdf_current(db());
-    if ($ppCur) $portfolioPdf = ['url' => $ppCur['url'], 'mb' => max(1, (int)round($ppCur['size'] / 1048576))];
+    if ($ppCur) $portfolioPdf = ['url' => $ppCur['url'], 'name' => $ppCur['name'], 'mb' => max(1, (int)round($ppCur['size'] / 1048576))];
 } catch (Throwable $e) {
     $portfolioPdf = null;
 }
@@ -65,7 +65,7 @@ function sc_desc(array $cardsByKey, string $key, string $fallbackKey): string {
             <h1 class="ab-hero-title"><?= t('company_hero_title') ?></h1>
             <p class="ab-hero-desc"><?= t('company_hero_desc') ?></p>
             <?php if ($portfolioPdf): ?>
-            <a class="ab-hero-dl" href="<?= htmlspecialchars($portfolioPdf['url']) ?>" target="_blank" rel="noopener">
+            <a class="ab-hero-dl" href="<?= htmlspecialchars($portfolioPdf['url']) ?>" data-bs-toggle="modal" data-bs-target="#portfolioPdfModal">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
                 <?= htmlspecialchars(t('company_portfolio_pdf_btn')) ?> <span class="ab-contact-btn-sub">PDF · <?= (int)$portfolioPdf['mb'] ?>MB</span>
             </a>
@@ -302,7 +302,7 @@ function sc_desc(array $cardsByKey, string $key, string $fallbackKey): string {
                 <?= htmlspecialchars(t('company_contact_email_btn')) ?>
             </button>
             <?php if ($portfolioPdf): ?>
-            <a class="ab-contact-btn ab-contact-btn--outline" href="<?= htmlspecialchars($portfolioPdf['url']) ?>" target="_blank" rel="noopener">
+            <a class="ab-contact-btn ab-contact-btn--outline" href="<?= htmlspecialchars($portfolioPdf['url']) ?>" data-bs-toggle="modal" data-bs-target="#portfolioPdfModal">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
                 <?= htmlspecialchars(t('company_portfolio_pdf_btn')) ?> <span class="ab-contact-btn-sub">PDF · <?= (int)$portfolioPdf['mb'] ?>MB</span>
             </a>
@@ -356,5 +356,21 @@ function sc_desc(array $cardsByKey, string $key, string $fallbackKey): string {
 <?php include __DIR__ . '/../components/footer.php'; ?>
 
 <?php include __DIR__ . '/../components/contact_modal.php'; ?>
+<?php if ($portfolioPdf): ?>
+<!-- 포트폴리오 PDF 모달 — 버튼을 누르면 새 탭(안내 페이지) 대신 이 창이 뜨고, 'PDF 다운로드'를 누르면 바로 받아진다.
+     메일 속 링크는 메일 앱 간이 브라우저 때문에 여전히 download.php 안내 페이지를 쓴다. -->
+<div class="modal fade" id="portfolioPdfModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:400px;">
+        <div class="modal-content ab-pdf-modal">
+            <button type="button" class="btn-close ab-pdf-close" data-bs-dismiss="modal" style="font-size:11px;"></button>
+            <div class="ab-pdf-brand">WORKGROUP PYEONGMOK</div>
+            <h5 class="ab-pdf-title"><?= htmlspecialchars(t('company_portfolio_pdf_title')) ?></h5>
+            <p class="ab-pdf-file"><?= htmlspecialchars($portfolioPdf['name']) ?> · <?= (int)$portfolioPdf['mb'] ?>MB</p>
+            <a class="ab-pdf-btn" href="<?= htmlspecialchars($portfolioPdf['url']) ?>&amp;dl=1" download data-bs-dismiss="modal"><?= htmlspecialchars(t('company_portfolio_pdf_dl')) ?></a>
+            <a class="ab-pdf-sub" href="<?= htmlspecialchars($portfolioPdf['url']) ?>&amp;view=1" target="_blank" rel="noopener"><?= htmlspecialchars(t('company_portfolio_pdf_view')) ?></a>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
 </body>
 </html>

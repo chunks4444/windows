@@ -538,3 +538,13 @@ body {
 @media (max-width: 640px) {
     .ab-gallery { grid-template-columns: 1fr; }
 }
+
+/* 포트폴리오 PDF 모달 (download.php 안내 화면과 같은 모양) */
+.ab-pdf-modal { position: relative; padding: 40px 28px 28px; text-align: center; border-radius: 0; border: none; }
+.ab-pdf-close { position: absolute; top: 16px; right: 16px; }
+.ab-pdf-brand { font-size: 12px; letter-spacing: 1px; font-weight: 800; color: #111; }
+.ab-pdf-title { margin: 18px 0 6px; font-size: 22px; font-weight: 700; color: #111; }
+.ab-pdf-file { margin: 0 0 24px; font-size: 13px; color: #666; word-break: break-all; }
+.ab-pdf-btn { display: block; padding: 16px 20px; background: #000; color: #fff !important; font-size: 16px; font-weight: 700; text-decoration: none; }
+.ab-pdf-btn:hover { background: #333; }
+.ab-pdf-sub { display: inline-block; margin-top: 16px; font-size: 13px; color: #111; }
