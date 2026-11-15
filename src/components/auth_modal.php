@@ -374,8 +374,34 @@ function authUpdateNav(skipStaleCheck) {
         user = null;
     }
 
+    // 페이지 이동 없이 로그인한 경우(편집기 저장·공유 등 pmokRequireAuth 콜백) 이 페이지는
+    // 로그인 "전"에 렌더링돼 사용자 메뉴가 DOM에 없다. 로그인 버튼만 숨기면 상단에 아무것도
+    // 안 남으므로, 그 자리를 마이페이지(도면관리) 아이콘 링크로 바꿔 둔다. 다음 페이지부터는
+    // 서버가 정식 사용자 메뉴를 그린다.
+    if (user && loginBtn && !userMenu) {
+        loginBtn.innerHTML = '';
+        const a = document.createElement('a');
+        a.className = 'nav-link';
+        a.href = AUTH_T.dashboardUrl;
+        a.title = user.email || '';
+        a.setAttribute('aria-label', user.email || 'My page');
+        a.innerHTML = '<i class="bi bi-person-circle"></i>';
+        loginBtn.appendChild(a);
+        loginBtn.id = 'navUserMenu';
+        loginBtn.style.display = '';
+    }
+    const drawerLogin = document.getElementById('drawerLoginBtn');
+    if (user && drawerLogin && !document.getElementById('drawerUserMenu')) {
+        drawerLogin.removeAttribute('data-bs-toggle');
+        drawerLogin.removeAttribute('data-bs-target');
+        drawerLogin.href = AUTH_T.dashboardUrl;
+        drawerLogin.innerHTML = '<i class="bi bi-person-circle pm-dw-acc-icon"></i><span></span>';
+        drawerLogin.lastChild.textContent = user.email || '';
+        drawerLogin.id = 'drawerUserMenu';
+    }
+
     if (user) {
-        if (loginBtn) loginBtn.style.display = 'none';
+        if (loginBtn && loginBtn.id === 'navLoginBtn') loginBtn.style.display = 'none';
         if (userMenu) {
             userMenu.style.display = '';
             if (userEmail) userEmail.textContent = user.email;
