@@ -26,4 +26,8 @@ if (!$user) {
     exit;
 }
 
-echo json_encode(['user' => $user]);
+// 쿠키로 로그인돼 있는데 브라우저 저장소(localStorage)가 비어 있는 경우(http→https 이동, www 유무 등
+// 출처가 바뀐 경우) 화면 쪽 로그인 정보를 다시 채울 수 있도록, 쿠키로 들어온 요청이면 그 토큰도 돌려준다.
+$out = ['user' => $user];
+if (!empty($_COOKIE['pmok_auth']) && jwt_decode($_COOKIE['pmok_auth'])) $out['token'] = $_COOKIE['pmok_auth'];
+echo json_encode($out);

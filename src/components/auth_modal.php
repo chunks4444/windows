@@ -353,6 +353,24 @@ function authGetToken() {
     return localStorage.getItem(AUTH_TOKEN_KEY);
 }
 
+let _authRestoring = false;
+function authRestoreFromCookie() {
+    if (_authRestoring) return;
+    _authRestoring = true;
+    fetch('/src/api/auth/me.php', { headers: AUTH_HEADERS, credentials: 'same-origin' })
+        .then(r => r.ok ? r.json() : null)
+        .then(d => {
+            if (!d || !d.user || !d.token) return;
+            // authSaveSession은 '최근 로그인' 시각까지 갱신하므로 쓰지 않고 저장소만 채운다
+            localStorage.setItem(AUTH_TOKEN_KEY, d.token);
+            localStorage.setItem(AUTH_USER_KEY, JSON.stringify({ id: d.user.id, email: d.user.email, role: d.user.role }));
+            authUpdateNav(true);
+            window.dispatchEvent(new CustomEvent('pmokAuthChanged'));
+        })
+        .catch(() => {})
+        .finally(() => { _authRestoring = false; });
+}
+
 function authUpdateNav(skipStaleCheck) {
     // 로그인/어드민 메뉴 존재 여부 자체는 서버사이드(nav.php)에서 JWT로 이미 결정되어 렌더링됨.
     // 여기서는 이미 그려진 요소의 텍스트/보드 목록만 채우고, 페이지 이동 없이 로그인/로그아웃되는
@@ -372,6 +390,14 @@ function authUpdateNav(skipStaleCheck) {
         localStorage.removeItem(AUTH_TOKEN_KEY);
         localStorage.removeItem(AUTH_USER_KEY);
         user = null;
+    }
+
+    // 반대 경우: 서버는 쿠키로 로그인 상태라 사용자 메뉴를 그렸는데 브라우저 저장소가 비어 있음
+    // (http→https 이동 등으로 출처가 바뀌면 localStorage가 따로 잡힘). 예전엔 이때 메뉴를 숨겨서
+    // 마이페이지 아이콘이 보였다가 바로 사라졌다. 서버 판단을 믿고 메뉴는 그대로 두고, 저장소를 다시 채운다.
+    if (!user && userMenu && !loginBtn) {
+        authRestoreFromCookie();
+        return;
     }
 
     // 페이지 이동 없이 로그인한 경우(편집기 저장·공유 등 pmokRequireAuth 콜백) 이 페이지는
