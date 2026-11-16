@@ -66,9 +66,19 @@ function pm_record_pageview(string $page, string $ip, string $ua, string $userId
             if (ms_is_studio_page($page)) ms_mark($uid, 'first_studio_at');
         }
 
-        // 1% 확률로 1년 초과분 자동 삭제
+        // 1% 확률로 오래된 방문 기록 정리 (2026-11-16 보관 기간 정함)
+        //  - 방문 기록 자체: 1년 — 작년 같은 달과 비교하려고 남겨 둔다
+        //  - 봇 방문(검색·AI·미리보기·기타 봇): 3개월 — 기록 대부분이 봇이고 최근 동향만 보면 된다
+        //    (분류 전 방문 visitor_type IS NULL은 사람이 섞여 있어 봇으로 치지 않고 1년 규칙만 따른다)
+        //  - 사람 방문의 IP: 6개월 뒤 칸만 비운다 — 관리자 팝업도 최대 6개월만 보여 주고, 개인정보를 덜 쥐고 있으려고.
+        //    UV 계산용 ip_hash(IP를 알아볼 수 없는 앞 8자)는 남으므로 방문자 수 통계는 그대로다.
+        // 한 번에 5000건씩만 — 처음 켤 때 밀린 분량이 많아도 방문 요청 하나가 오래 붙잡히지 않게 여러 번에 나눠 지운다.
         if (mt_rand(0, 99) === 0) {
-            $pdo->exec("DELETE FROM page_views WHERE visited_at < DATE_SUB(NOW(), INTERVAL 1 YEAR)");
+            $pdo->exec("DELETE FROM page_views WHERE visited_at < DATE_SUB(NOW(), INTERVAL 1 YEAR) LIMIT 5000");
+            $pdo->exec("DELETE FROM page_views WHERE visited_at < DATE_SUB(NOW(), INTERVAL 3 MONTH)
+                          AND visitor_type IS NOT NULL AND visitor_type <> 'human' LIMIT 5000");
+            $pdo->exec("UPDATE page_views SET ip = NULL WHERE visited_at < DATE_SUB(NOW(), INTERVAL 6 MONTH)
+                          AND ip IS NOT NULL LIMIT 5000");
         }
     } catch (Throwable $e) {
         // 통계 기록 실패는 무시
