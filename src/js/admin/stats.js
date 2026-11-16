@@ -206,13 +206,21 @@ function renderClassification(data) {
         || '<tr><td colspan="5" style="padding:16px;text-align:center;color:var(--text-3);">아직 잡힌 봇이 없습니다.</td></tr>';
 }
 
+// 방문 기록의 페이지 경로를 새 창 링크로. 사이트 안 경로('/'로 시작, '//' 제외)만 링크로 만들고 나머지는 글자로만 보여 준다.
+// 화면엔 한글이 보이게 풀어서(decode) 쓰고, 주소는 기록된 그대로 쓴다. 링크를 눌러도 줄 클릭(팝업 열기)은 일어나지 않게 막는다.
+function pageLink(raw, style = '') {
+    raw = raw || '';
+    let label = raw;
+    try { label = decodeURIComponent(raw); } catch (e) {}
+    if (!raw.startsWith('/') || raw.startsWith('//')) return `<span style="${style}">${esc(label)}</span>`;
+    return `<a href="${esc(raw)}" target="_blank" rel="noopener" onclick="event.stopPropagation()" title="새 창에서 열기" style="color:inherit;${style}">${esc(label)}</a>`;
+}
+
 function renderHumans(humans) {
     const tb = document.getElementById('humansTbody');
     if (!tb) return;
     tb.innerHTML = humans.map(h => {
         const ip = esc(h.ip);
-        let page = h.first_page || '';
-        try { page = decodeURIComponent(page); } catch (e) {}
         // 행 전체 클릭 → 그 사람이 본 페이지 팝업. 회원이면 회원 기록 전체(로그인 상태 포함), 아니면 그 IP의 사람 방문만
         const open = h.user_id ? `openUserVisits(${+h.user_id}, '')` : `openIpVisits('${ip}', true)`;
         return `<tr style="cursor:pointer;" onclick="${open}" title="본 페이지 전체 보기">
@@ -220,7 +228,7 @@ function renderHumans(humans) {
             <td style="font-size:12px;font-family:monospace;text-decoration:underline;">${ip}<span class="ip-geo" data-ip="${ip}" style="color:var(--text-3);font-size:10px;margin-left:4px;"></span>${h.user_id ? ' <span style="color:var(--teal);font-size:10px;">회원</span>' : ''}</td>
             <td style="white-space:nowrap;">${+h.mobile ? '모바일' : 'PC'}</td>
             <td style="white-space:nowrap;">${esc(SOURCE_LABEL[h.ref_source] || h.ref_source || '—')}</td>
-            <td style="font-size:12px;word-break:break-all;">${esc(page)}</td>
+            <td style="font-size:12px;word-break:break-all;">${pageLink(h.first_page)}</td>
             <td class="st-num">${(+h.pv).toLocaleString()}</td>
         </tr>`;
     }).join('') || '<tr><td colspan="6" style="padding:20px;text-align:center;color:var(--text-3);">아직 확인된 사람 방문자가 없습니다.</td></tr>';
@@ -419,7 +427,7 @@ function renderUserVisits(visits) {
                     <span style="color:var(--text-3);white-space:nowrap;">${v.visited_at.slice(11, 19)}</span>
                     <span style="font-family:monospace;white-space:nowrap;">${esc(v.ip)}<span class="ip-geo" data-ip="${esc(v.ip)}" style="color:var(--text-3);font-size:10px;margin-left:4px;"></span></span>
                     <span style="color:var(--text-3);">${v.is_mobile ? 'Mobile' : 'PC'}</span>
-                    <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(v.page)}</span>
+                    ${pageLink(v.page, 'overflow:hidden;text-overflow:ellipsis;white-space:nowrap;')}
                 </div>
             `).join('')}
         </div>
