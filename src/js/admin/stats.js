@@ -213,9 +213,11 @@ function renderHumans(humans) {
         const ip = esc(h.ip);
         let page = h.first_page || '';
         try { page = decodeURIComponent(page); } catch (e) {}
-        return `<tr>
+        // 행 전체 클릭 → 그 사람이 본 페이지 팝업. 회원이면 회원 기록 전체(로그인 상태 포함), 아니면 그 IP의 사람 방문만
+        const open = h.user_id ? `openUserVisits(${+h.user_id}, '')` : `openIpVisits('${ip}', true)`;
+        return `<tr style="cursor:pointer;" onclick="${open}" title="본 페이지 전체 보기">
             <td style="font-size:11px;color:var(--text-3);white-space:nowrap;">${esc((h.last_at || '').slice(5, 16))}</td>
-            <td style="font-size:12px;font-family:monospace;cursor:pointer;text-decoration:underline;" onclick="openIpVisits('${ip}')">${ip}<span class="ip-geo" data-ip="${ip}" style="color:var(--text-3);font-size:10px;margin-left:4px;"></span>${h.user_id ? ' <span style="color:var(--teal);font-size:10px;">회원</span>' : ''}</td>
+            <td style="font-size:12px;font-family:monospace;text-decoration:underline;">${ip}<span class="ip-geo" data-ip="${ip}" style="color:var(--text-3);font-size:10px;margin-left:4px;"></span>${h.user_id ? ' <span style="color:var(--teal);font-size:10px;">회원</span>' : ''}</td>
             <td style="white-space:nowrap;">${+h.mobile ? '모바일' : 'PC'}</td>
             <td style="white-space:nowrap;">${esc(SOURCE_LABEL[h.ref_source] || h.ref_source || '—')}</td>
             <td style="font-size:12px;word-break:break-all;">${esc(page)}</td>
@@ -361,12 +363,12 @@ async function removeAllowedIp(ip) {
     loadAllowlist();
 }
 
-async function openIpVisits(ip) {
+async function openIpVisits(ip, humanOnly = false) {
     document.getElementById('userVisitsTitle').textContent = ip + ' (비로그인)';
     document.getElementById('userVisitsBody').innerHTML = '<p style="color:var(--text-3);">불러오는 중…</p>';
     document.getElementById('userVisitsOverlay').style.display = 'flex';
 
-    const res = await fetch(`/src/api/admin/ip_visits.php?ip=${encodeURIComponent(ip)}&months=${currentMonths}`, {
+    const res = await fetch(`/src/api/admin/ip_visits.php?ip=${encodeURIComponent(ip)}&months=${currentMonths}${humanOnly ? '&human=1' : ''}`, {
         headers: { 'Authorization': 'Bearer ' + token() },
     });
     const data = await res.json();
@@ -378,7 +380,7 @@ async function openIpVisits(ip) {
 }
 
 async function openUserVisits(userId, email) {
-    document.getElementById('userVisitsTitle').textContent = email;
+    document.getElementById('userVisitsTitle').textContent = email || '회원';
     document.getElementById('userVisitsBody').innerHTML = '<p style="color:var(--text-3);">불러오는 중…</p>';
     document.getElementById('userVisitsOverlay').style.display = 'flex';
 
@@ -390,6 +392,7 @@ async function openUserVisits(userId, email) {
         document.getElementById('userVisitsBody').innerHTML = '<p style="color:var(--text-3);">불러오기 실패</p>';
         return;
     }
+    if (!email && data.email) document.getElementById('userVisitsTitle').textContent = data.email;
     renderUserVisits(data.visits || []);
 }
 

@@ -149,7 +149,7 @@ require_admin_role('s');
             <span class="st-panel-title">사람 방문자 — 어디서 들어와 무엇을 봤나</span>
         </div>
         <div class="st-panel-body">
-            <p style="font-size:12px;color:var(--text-3);margin:0 0 10px;">사람으로 분류되고 브라우저에서 스크립트가 실제로 실행된 방문자만 보여줍니다 (최근 순 150명, 위 기간 기준). 스크립트 확인 신호를 못 보내고 나간 사람은 빠질 수 있어 실제보다 적게 나옵니다. IP를 누르면 그 IP의 방문 기록이 열립니다.</p>
+            <p style="font-size:12px;color:var(--text-3);margin:0 0 10px;">사람으로 분류되고 브라우저에서 스크립트가 실제로 실행된 방문자만 보여줍니다 (최근 순 150명, 위 기간 기준). 스크립트 확인 신호를 못 보내고 나간 사람은 빠질 수 있어 실제보다 적게 나옵니다. 줄을 누르면 그 사람이 본 페이지 전체가 팝업으로 열립니다 (회원이면 로그인 상태로 본 페이지까지).</p>
             <table>
                 <thead><tr><th>마지막 방문</th><th>IP (국가)</th><th>기기</th><th>유입 경로</th><th>처음 본 페이지</th><th>열람</th></tr></thead>
                 <tbody id="humansTbody"></tbody>

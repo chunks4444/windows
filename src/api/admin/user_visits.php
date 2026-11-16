@@ -35,4 +35,9 @@ $stmt = $pdo->prepare('
 $stmt->execute([$userId, $months]);
 $visits = $stmt->fetchAll();
 
-echo json_encode(['visits' => $visits]);
+// 팝업 제목용 이메일 (「사람 방문자」 탭은 user_id만 알고 있어서 여기서 같이 내려준다)
+$stmt = $pdo->prepare('SELECT email FROM users WHERE id = ?');
+$stmt->execute([$userId]);
+$email = $stmt->fetchColumn() ?: null;
+
+echo json_encode(['visits' => $visits, 'email' => $email]);
