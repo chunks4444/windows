@@ -198,7 +198,29 @@ if (!$isAdminViewer && !$isBotViewer && !$isUaRotationBot) {
     } catch (Throwable $e) {}
 }
 
-if (!$isAdminViewer && !$isBotViewer && !$isUaRotationBot && !$isUaFingerprintBot && empty($_COOKIE[$viewCookie])) {
+// 브라우저 흉내 스크립트 탐지 (2026-11-16): 2026-11-14 밤 한 IP가 "Windows Chrome 130" UA로 1시간 동안 블로그 글 221번을
+// 열어 조회수가 하루 ~100 → 546으로 튀었다. 쿠키를 안 받는 스크립트라 24시간 쿠키 중복 방지가 매번 통과됐고,
+// UA도 하나라 위 두 탐지에도 안 걸렸다. 그 요청들의 공통점 두 가지로 거른다.
+//  1) Accept-Language 헤더가 없음 — 실제 브라우저(앱 내 브라우저 포함)는 항상 보낸다
+//  2) 같은 IP가 최근 10분 동안 서로 다른 블로그 글을 15개 넘게 열었음 — 사람이 읽는 속도가 아니다
+$isScriptViewer = false;
+if (!$isAdminViewer && !$isBotViewer && !$isUaRotationBot && !$isUaFingerprintBot) {
+    if (trim($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '') === '') {
+        $isScriptViewer = true;
+    } elseif (isset($viewerIpHash)) {
+        try {
+            $burst = $pdo->prepare(
+                "SELECT COUNT(DISTINCT page) FROM page_views
+                 WHERE ip_hash = ? AND page LIKE '/blog/_%'
+                   AND visited_at > DATE_SUB(NOW(), INTERVAL 10 MINUTE)"
+            );
+            $burst->execute([$viewerIpHash]);
+            $isScriptViewer = (int)$burst->fetchColumn() > 15;
+        } catch (Throwable $e) {}
+    }
+}
+
+if (!$isAdminViewer && !$isBotViewer && !$isUaRotationBot && !$isUaFingerprintBot && !$isScriptViewer && empty($_COOKIE[$viewCookie])) {
     try {
         $pdo->prepare('UPDATE blog_posts SET view_count = view_count + 1 WHERE id=?')->execute([$post['id']]);
     } catch (Throwable $e) {}
