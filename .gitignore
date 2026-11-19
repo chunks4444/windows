@@ -17,3 +17,7 @@ ops/backup_db_local/*.log
 .user.ini
 # 서버에서 직접 고칠 때 남긴 백업
 *.bak_*
+
+# 코딩 도구(작업 환경) 설정·안내 파일 — 저장소·웹에 올리지 않는다
+.claude/
+CLAUDE.md

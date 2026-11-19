@@ -229,7 +229,7 @@ function renderHumans(humans) {
             <td style="white-space:nowrap;">${+h.mobile ? '모바일' : 'PC'}</td>
             <td style="white-space:nowrap;">${esc(SOURCE_LABEL[h.ref_source] || h.ref_source || '—')}</td>
             <td style="font-size:12px;word-break:break-all;">${pageLink(h.first_page)}</td>
-            <td class="st-num">${(+h.pv).toLocaleString()}</td>
+            <td class="st-num" style="white-space:nowrap;" title="${esc((h.last_at || '').slice(5, 10))}(마지막 방문일)에 본 페이지 ${(+h.pv_last_day || 0)}장 / 선택한 기간 전체 ${(+h.pv)}장">${(+h.pv_last_day || 0).toLocaleString()}<span style="color:var(--text-3);font-size:11px;font-weight:400;"> / 누적 ${(+h.pv).toLocaleString()}</span></td>
         </tr>`;
     }).join('') || '<tr><td colspan="6" style="padding:20px;text-align:center;color:var(--text-3);">아직 확인된 사람 방문자가 없습니다.</td></tr>';
     fillIpGeo(tb);

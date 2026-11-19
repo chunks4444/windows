@@ -111,13 +111,20 @@ try {
 
     // 사람 추정 방문자: 사람으로 분류되고 브라우저에서 스크립트 실행(js_ok)까지 확인된 IP. 최근 순 150명.
     // 유입 경로·본 페이지는 그 IP의 방문 중 시간순으로 첫 값 (GROUP_CONCAT 기본 길이 제한 안에서 첫 값은 항상 온전하다).
-    $stmt = $pdo->prepare("SELECT ip, MAX(visited_at) AS last_at, COUNT(*) AS pv, MAX(is_mobile) AS mobile, MAX(user_id) AS user_id,
-                                  SUBSTRING_INDEX(GROUP_CONCAT(ref_source ORDER BY visited_at SEPARATOR '\t'), '\t', 1) AS ref_source,
-                                  SUBSTRING_INDEX(GROUP_CONCAT(page ORDER BY visited_at SEPARATOR '\t'), '\t', 1) AS first_page
-                           $from AND visitor_type = 'human' AND ip IS NOT NULL
-                           GROUP BY ip HAVING SUM(js_ok = 1) > 0
-                           ORDER BY last_at DESC LIMIT 150");
-    $stmt->execute([$months]);
+    // pv = 선택한 기간 전체 열람(누적), pv_last_day = 그 IP의 '마지막 방문일' 하루 동안의 열람 (화면: "7 / 누적 26")
+    $stmt = $pdo->prepare("SELECT t.*,
+                                  (SELECT COUNT(*) FROM page_views v
+                                   WHERE v.ip_hash = t.ip_hash AND v.ip = t.ip AND v.visitor_type = 'human'
+                                     AND v.visited_at >= DATE(t.last_at) AND v.visited_at < DATE(t.last_at) + INTERVAL 1 DAY
+                                     AND v.visited_at >= DATE_SUB(NOW(), INTERVAL ? MONTH) $adm) AS pv_last_day
+                           FROM (SELECT ip, MAX(ip_hash) AS ip_hash, MAX(visited_at) AS last_at, COUNT(*) AS pv, MAX(is_mobile) AS mobile, MAX(user_id) AS user_id,
+                                        SUBSTRING_INDEX(GROUP_CONCAT(ref_source ORDER BY visited_at SEPARATOR '\t'), '\t', 1) AS ref_source,
+                                        SUBSTRING_INDEX(GROUP_CONCAT(page ORDER BY visited_at SEPARATOR '\t'), '\t', 1) AS first_page
+                                 $from AND visitor_type = 'human' AND ip IS NOT NULL
+                                 GROUP BY ip HAVING SUM(js_ok = 1) > 0
+                                 ORDER BY last_at DESC LIMIT 150) t
+                           ORDER BY t.last_at DESC");
+    $stmt->execute([$months, $months]);
     $humans = $stmt->fetchAll();
 
     $classSince = $pdo->query("SELECT MIN(visited_at) FROM page_views WHERE visitor_type IS NOT NULL")->fetchColumn() ?: null;
