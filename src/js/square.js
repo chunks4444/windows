@@ -344,6 +344,9 @@ async function fetchGeometry() {
         finish:    document.getElementById('txtFinish')?.value ?? '',
         muntolOn:  document.getElementById('chkMuntol')?.checked === false ? '0' : '1',
     });
+    if (deletedSegs.size) body.set('deletedSegs', JSON.stringify([...deletedSegs].sort()));
+    const _addXi = addedLines.filter(l => l.xi1 !== undefined).map(l => ({ xi1: l.xi1, yi1: l.yi1, xi2: l.xi2, yi2: l.yi2 }));
+    if (_addXi.length) body.set('addedLines', JSON.stringify(_addXi));
     // ⚠️ 건드리지 말 것: 줌/팬/스케일은 이 캐시 덕분에 서버 호출이 없음.
     // 캐시를 빼거나 채우는 코드를 빠뜨리면 매 프레임 geometry.php 호출로 회귀함 (운영서버 줌/드래그 무거움 버그 원인이었음).
     const sig = body.toString();
@@ -465,9 +468,13 @@ async function draw() {
             ppGroup.style.display = 'none';
         }
 
-        document.getElementById('spHSlatLen').textContent = `${p.slatW}×${geo.slatT}×${p.hSlatLen}mm`;
+        const _pcTxt = (arr, maxLen) => {
+            if (!p.slatPieces?.edited || !arr || arr.length < 2) return `${p.slatW}×${geo.slatT}×${maxLen}mm`;
+            return arr.map(x => `${p.slatW}×${geo.slatT}×${x.len}mm ×${x.cnt}`).join(' / ');
+        };
+        document.getElementById('spHSlatLen').textContent = _pcTxt(p.slatPieces?.h, p.hSlatLen);
         document.getElementById('spHSlatCnt').textContent = p.hSlatCnt;
-        document.getElementById('spVSlatLen').textContent = `${p.slatW}×${geo.slatT}×${p.vSlatLen}mm`;
+        document.getElementById('spVSlatLen').textContent = _pcTxt(p.slatPieces?.v, p.vSlatLen);
         document.getElementById('spVSlatCnt').textContent = p.vSlatCnt;
         document.getElementById('spMtVLen').textContent   = `${p.mtFace}×${p.mtW}×${p.mtVLen}mm`;
         document.getElementById('spMtHLen').textContent   = `${p.mtFace}×${p.mtW}×${p.mtHLen}mm`;
@@ -902,14 +909,16 @@ async function draw() {
                         const segMidY   = (segStartY + segEndY) / 2;
                         const vsCx = toCanvasX(cx), vsCy = toCanvasY(segMidY);
                         const vsKey = `${d}:vs:${i}:${j}`;
-                        lastSegMap.set(vsKey, { cx: vsCx, cy: toCanvasY(segStartY), ex: vsCx, ey: toCanvasY(segEndY), mx: vsCx, my: vsCy, normAngle: Math.PI / 2, lineKey: makeLineKey(vsCx, vsCy, Math.PI / 2) });
+                        const vExt = (j > 0 && deletedSegs.has(`${d}:vs:${i}:${j - 1}`)) ? geo.slatH : 0;
+                        lastSegMap.set(vsKey, { cx: vsCx, cy: toCanvasY(segStartY), ex: vsCx, ey: toCanvasY(segEndY), mx: vsCx, my: vsCy, normAngle: Math.PI / 2, lineKey: makeLineKey(vsCx, vsCy, Math.PI / 2),
+                            dcx: vsCx, dcy: toCanvasY(segStartY - vExt), dex: vsCx, dey: toCanvasY(segEndY) });
                         if (deletedSegs.has(vsKey)) continue;
 
                         if (buildKonvaPattern) {
-                            kv.addPatternSlatRect(d, toCanvasX(left), toCanvasY(segStartY), geo.slatV * baseScale, stepH * baseScale, Color_Slat_Fill, vsKey, lastSegMap.get(vsKey).lineKey);
+                            kv.addPatternSlatRect(d, toCanvasX(left), toCanvasY(segStartY - vExt), geo.slatV * baseScale, (stepH + vExt) * baseScale, Color_Slat_Fill, vsKey, lastSegMap.get(vsKey).lineKey);
                         } else {
                             ctx.fillStyle = Color_Slat_Fill;
-                            ctx.fillRect(toCanvasX(left), toCanvasY(segStartY), geo.slatV * baseScale, stepH * baseScale);
+                            ctx.fillRect(toCanvasX(left), toCanvasY(segStartY - vExt), geo.slatV * baseScale, (stepH + vExt) * baseScale);
                             drawCenterLine(toCanvasX(cx), toCanvasY(segStartY), toCanvasX(cx), toCanvasY(segEndY));
                         }
                     }
@@ -942,14 +951,18 @@ async function draw() {
                         const segMidX   = (segStartX + segEndX) / 2;
                         const hsCy = toCanvasY(ry);
                         const hsKey = `${d}:hs:${j}:${i}`;
-                        lastSegMap.set(hsKey, { cx: toCanvasX(segStartX), cy: hsCy, ex: toCanvasX(segEndX), ey: hsCy, mx: toCanvasX(segMidX), my: hsCy, normAngle: 0, lineKey: makeLineKey(toCanvasX(segMidX), hsCy, 0) });
+                        const hExt0 = (i > 0 && deletedSegs.has(`${d}:hs:${j}:${i - 1}`)) ? geo.slatV / 2 : 0;
+                        const hExt1 = (i < geo.cols - 1 && deletedSegs.has(`${d}:hs:${j}:${i + 1}`)) ? geo.slatV / 2 : 0;
+                        const dsx = segStartX - hExt0, dex = segEndX + hExt1;
+                        lastSegMap.set(hsKey, { cx: toCanvasX(segStartX), cy: hsCy, ex: toCanvasX(segEndX), ey: hsCy, mx: toCanvasX(segMidX), my: hsCy, normAngle: 0, lineKey: makeLineKey(toCanvasX(segMidX), hsCy, 0),
+                            dcx: toCanvasX(dsx), dcy: hsCy, dex: toCanvasX(dex), dey: hsCy });
                         if (deletedSegs.has(hsKey)) continue;
 
                         if (buildKonvaPattern) {
-                            kv.addPatternSlatRect(d, toCanvasX(segStartX), toCanvasY(top), (segEndX - segStartX) * baseScale, geo.slatH * baseScale, Color_Slat_Fill, hsKey, lastSegMap.get(hsKey).lineKey);
+                            kv.addPatternSlatRect(d, toCanvasX(dsx), toCanvasY(top), (dex - dsx) * baseScale, geo.slatH * baseScale, Color_Slat_Fill, hsKey, lastSegMap.get(hsKey).lineKey);
                         } else {
                             ctx.fillStyle = Color_Slat_Fill;
-                            ctx.fillRect(toCanvasX(segStartX), toCanvasY(top), (segEndX - segStartX) * baseScale, geo.slatH * baseScale);
+                            ctx.fillRect(toCanvasX(dsx), toCanvasY(top), (dex - dsx) * baseScale, geo.slatH * baseScale);
                             drawCenterLine(toCanvasX(segStartX), toCanvasY(ry), toCanvasX(segEndX), toCanvasY(ry));
                         }
                     }
@@ -963,92 +976,6 @@ async function draw() {
 
     if (buildKonvaPattern) kv.endPatternClipGroup();
 
-    // ── 편집 반영 부재 목록 최종 업데이트 ──────
-    if (p) {
-        const tenonLen = 2 * geo.slatT;
-        const pxToMm   = geo.innerW / lastIW;
-
-        // 내경 범위 밖 세그먼트 제외
-        const lineGroups = new Map();
-        const EPS = lastCellSize;
-        for (const [segKey, seg] of lastSegMap) {
-            if (segKey.startsWith('added:')) continue;
-            if (seg.mx < lastILeft - EPS || seg.mx > lastILeft + lastIW + EPS) continue;
-            if (seg.my < lastITop  - EPS || seg.my > lastITop  + lastIH + EPS) continue;
-            if (!lineGroups.has(seg.lineKey)) lineGroups.set(seg.lineKey, []);
-            lineGroups.get(seg.lineKey).push({ segKey, mx: seg.mx, my: seg.my, normAngle: seg.normAngle });
-        }
-
-        let adjHSlatCnt = parseInt(p.hSlatCnt) || 0;
-        let adjVSlatCnt = parseInt(p.vSlatCnt) || 0;
-        const extraPieces = [];
-
-        for (const [, segs] of lineGroups) {
-            const normAngle  = segs[0].normAngle;
-            const isHSlat    = normAngle < 0.05;
-            const isVSlat    = Math.abs(normAngle - Math.PI / 2) < 0.05;
-            const ldx = Math.cos(normAngle), ldy = Math.sin(normAngle);
-
-            const vSegs = segs.map(s => ({
-                segKey:    s.segKey,
-                isDeleted: deletedSegs.has(s.segKey),
-                pos:       s.mx * ldx + s.my * ldy,
-            })).sort((a, b) => a.pos - b.pos);
-
-            if (!vSegs.some(vs => vs.isDeleted)) continue;
-
-            const runLen = (i0, i1) => {
-                let minP = Infinity, maxP = -Infinity, minN = null, maxN = null;
-                for (let i = i0; i <= i1; i++) {
-                    const sg = lastSegMap.get(vSegs[i].segKey);
-                    if (!sg) continue;
-                    for (const [nx, ny] of [[sg.cx, sg.cy], [sg.ex, sg.ey]]) {
-                        const proj = nx * ldx + ny * ldy;
-                        if (proj < minP) { minP = proj; minN = [nx, ny]; }
-                        if (proj > maxP) { maxP = proj; maxN = [nx, ny]; }
-                    }
-                }
-                if (!minN || !maxN) return 0;
-                return Math.round(Math.hypot(maxN[0] - minN[0], maxN[1] - minN[1]) * pxToMm + tenonLen);
-            };
-
-            const fullLen = runLen(0, vSegs.length - 1);
-            if (isHSlat) {
-                adjHSlatCnt = Math.max(0, adjHSlatCnt - 1);
-            } else if (isVSlat) {
-                adjVSlatCnt = Math.max(0, adjVSlatCnt - 1);
-            }
-
-            let runStart = -1;
-            for (let i = 0; i <= vSegs.length; i++) {
-                if (i < vSegs.length && !vSegs[i].isDeleted) {
-                    if (runStart < 0) runStart = i;
-                } else if (runStart >= 0) {
-                    extraPieces.push({ len: runLen(runStart, i - 1), isHSlat, isVSlat });
-                    runStart = -1;
-                }
-            }
-        }
-
-        extraPieces.forEach(({ len, isHSlat, isVSlat }) => {
-            if (isHSlat) {
-                adjHSlatCnt++;
-            } else if (isVSlat) {
-                adjVSlatCnt++;
-            }
-        });
-
-        addedLines.forEach(ln => {
-            const isHorizontal = ln.xi1 !== undefined ? ln.yi1 === ln.yi2 : Math.abs(ln.ny2 - ln.ny1) < 0.001;
-            if (isHorizontal) adjHSlatCnt++;
-            else adjVSlatCnt++;
-        });
-
-        const hCntEl = document.getElementById('spHSlatCnt');
-        if (hCntEl) hCntEl.textContent = Math.max(0, adjHSlatCnt) + _t('개');
-        const vCntEl = document.getElementById('spVSlatCnt');
-        if (vCntEl) vCntEl.textContent = Math.max(0, adjVSlatCnt) + _t('개');
-    }
 
     // ====== 추가 선 그리기 (모든 문짝에 동일하게 복제) ======
     if (addedLines.length > 0) {

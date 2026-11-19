@@ -156,6 +156,87 @@ $ppPanelH = $pungpanVisible ? ($effectivePungpanH - $frameH) : 0;
 $hSlatCnt = max(0, $rows - 1);
 $vSlatCnt = max(0, $cols - 1);
 
+// ── 편집(지운 살 조각·추가선) 반영 ──────────────────────────────────────────
+// 화면 편집기는 살을 칸 단위 조각(세로 `d:vs:i:j`, 가로 `d:hs:j:i`)으로 쪼개 두고, 지운 조각 키(deletedSegs)와
+// 격자 노드 인덱스로 이은 추가선(addedLines)을 보낸다. 조각 모델이 결정적이라 서버가 같은 규칙으로
+// 연속 구간(run)을 다시 묶어 실제 부재 개수·길이를 계산한다(브라우저 값은 믿지 않고 범위만 검증).
+// 길이 규칙: 지운 조각과 맞닿은 끝은 교차 정사각형(살 두께)까지 마무리, 울거미에 닿은 끝에만 촉(tenonDepth)을 더한다.
+$_delRaw = ((string)($_POST['deletedSegs'] ?? '') !== '' && strlen((string)$_POST['deletedSegs']) <= 20000) ? json_decode((string)$_POST['deletedSegs'], true) : [];
+$_addRaw = ((string)($_POST['addedLines']  ?? '') !== '' && strlen((string)$_POST['addedLines'])  <= 20000) ? json_decode((string)$_POST['addedLines'],  true) : [];
+$_delSet = [];   // [door][kind] => ["a:b" => true]
+if (is_array($_delRaw)) {
+    foreach ($_delRaw as $k) {
+        if (!is_string($k) || !preg_match('/^(\d+):(vs|hs):(\d+):(\d+)$/', $k, $m)) continue;
+        $dd = (int)$m[1]; $a = (int)$m[3]; $b = (int)$m[4];
+        if ($dd >= $doorCount) continue;
+        if ($m[2] === 'vs' && ($a < 1 || $a >= $cols || $b >= $rows)) continue;
+        if ($m[2] === 'hs' && ($a < 1 || $a >= $rows || $b >= $cols)) continue;
+        $_delSet[$dd][$m[2]]["$a:$b"] = true;
+    }
+}
+$_nodeX = [0.0]; for ($q = 1; $q < $cols; $q++) $_nodeX[] = $q * $stepW - $slatT / 2; $_nodeX[] = $innerW;
+$_nodeY = [0.0]; for ($q = 1; $q < $rows; $q++) $_nodeY[] = $q * $stepH - $slatT / 2; $_nodeY[] = $innerH;
+$_addLines = [];
+if (is_array($_addRaw)) {
+    foreach (array_slice($_addRaw, 0, 200) as $ln) {
+        if (!is_array($ln) || !isset($ln['xi1'], $ln['yi1'], $ln['xi2'], $ln['yi2'])) continue;
+        [$x1, $y1, $x2, $y2] = [(int)$ln['xi1'], (int)$ln['yi1'], (int)$ln['xi2'], (int)$ln['yi2']];
+        if ($x1 < 0 || $x2 < 0 || $x1 > $cols || $x2 > $cols || $y1 < 0 || $y2 < 0 || $y1 > $rows || $y2 > $rows) continue;
+        if ($x1 === $x2 && $y1 === $y2) continue;
+        $len = hypot($_nodeX[$x2] - $_nodeX[$x1], $_nodeY[$y2] - $_nodeY[$y1]);
+        $onFrame = fn($xi, $yi) => ($xi === 0 || $xi === $cols || $yi === 0 || $yi === $rows) ? $tenonDepth : 0;
+        $_addLines[] = ['len' => $len + $onFrame($x1, $y1) + $onFrame($x2, $y2), 'horiz' => $y1 === $y2];
+    }
+}
+$_hLens = []; $_vLens = []; $_lostJoints = 0;
+for ($dd = 0; $dd < $doorCount; $dd++) {
+    $dv = $_delSet[$dd]['vs'] ?? []; $dh = $_delSet[$dd]['hs'] ?? [];
+    for ($i = 1; $i < $cols; $i++) {
+        $j0 = null;
+        for ($j = 0; $j <= $rows; $j++) {
+            $alive = $j < $rows && !isset($dv["$i:$j"]);
+            if ($alive && $j0 === null) $j0 = $j;
+            if (!$alive && $j0 !== null) {
+                $j1 = $j - 1;
+                $y0 = $j0 === 0 ? 0 : $j0 * $stepH - $slatT;
+                $y1 = $j1 === $rows - 1 ? $innerH : ($j1 + 1) * $stepH;
+                $_vLens[] = (int)round($y1 - $y0 + $tenonDepth * (($j0 === 0 ? 1 : 0) + ($j1 === $rows - 1 ? 1 : 0)));
+                $j0 = null;
+            }
+        }
+    }
+    for ($j = 1; $j < $rows; $j++) {
+        $i0 = null;
+        for ($i = 0; $i <= $cols; $i++) {
+            $alive = $i < $cols && !isset($dh["$j:$i"]);
+            if ($alive && $i0 === null) $i0 = $i;
+            if (!$alive && $i0 !== null) {
+                $i1 = $i - 1;
+                $x0 = $i0 === 0 ? 0 : $i0 * $stepW - $slatT;
+                $x1 = $i1 === $cols - 1 ? $innerW : ($i1 + 1) * $stepW;
+                $_hLens[] = (int)round($x1 - $x0 + $tenonDepth * (($i0 === 0 ? 1 : 0) + ($i1 === $cols - 1 ? 1 : 0)));
+                $i0 = null;
+            }
+        }
+    }
+    // 짜임(교차) 손실: 세로살·가로살이 둘 다 그 교점을 지나야 짜임이 선다
+    for ($i = 1; $i < $cols; $i++) for ($j = 1; $j < $rows; $j++) {
+        $vPass = !isset($dv["$i:" . ($j - 1)]) || !isset($dv["$i:$j"]);
+        $hPass = !isset($dh["$j:" . ($i - 1)]) || !isset($dh["$j:$i"]);
+        if (!$vPass || !$hPass) $_lostJoints++;
+    }
+}
+foreach ($_addLines as $al) {
+    for ($dd = 0; $dd < $doorCount; $dd++) { if ($al['horiz']) $_hLens[] = (int)round($al['len']); else $_vLens[] = (int)round($al['len']); }
+}
+$_edited   = !empty($_delSet) || !empty($_addLines);
+$hSlatCntAll = count($_hLens);
+$vSlatCntAll = count($_vLens);
+$_hSumLen = array_sum($_hLens);
+$_vSumLen = array_sum($_vLens);
+$_jointsAdj = max(0, $cols * $rows - (int)round($_lostJoints / max(1, $doorCount)) + 2 * count($_addLines));
+$_groupLens = function (array $a): array { $g = array_count_values($a); krsort($g); $o = []; foreach ($g as $l => $c) $o[] = ['len' => (int)$l, 'cnt' => (int)round($c)]; return $o; };
+
 // 목재 재수 계산 (1재 = 30.3×30.3×3636mm³, 부재별 실제 단면 사용)
 $_es  = get_engine_settings('square');
 $_JAE = 30.3 * 30.3 * 3636;
@@ -167,8 +248,8 @@ $_wMt = (int)$_es['muntolW'];
 
 $_volDoor   = round($outerH + 2*$slatT) * (2*$doorCount)                * $frameW * $_wU
             + round($outerW + 2*$slatT) * (($pungpanOn?3:2)*$doorCount) * $frameHTop * $_wU
-            + round($innerW + 2*$tenonDepth) * ($hSlatCnt*$doorCount)   * $slatT  * $_wS
-            + round($innerH + 2*$tenonDepth) * ($vSlatCnt*$doorCount)   * $slatT  * $_wS
+            + $_hSumLen * $slatT * $_wS
+            + $_vSumLen * $slatT * $_wS
             + ($pungpanVisible ? (int)round($innerW) * (int)round($ppPanelH) * $_pT : 0);
 $_volMuntol = $frameOpeningH * 2 * $_tMt * $_wMt
             + $frameOpeningW * 2 * $_tMt * $_wMt;
@@ -183,10 +264,10 @@ $_ulVA = 2 * ($frameW + $_wU) * round($outerH + 2*$slatT) * 2;
 $_ulHA = 2 * ($frameHTop + $_wU) * round($outerW + 2*$slatT) * ($pungpanOn ? 3 : 2);
 $_ppV  = $pungpanVisible ? (int)round($innerW) * (int)round($ppPanelH) * $_pT : 0;
 $_ppA  = $pungpanVisible ? 2 * (int)round($innerW) * (int)round($ppPanelH) : 0;
-$_slH  = round($innerW + 2*$tenonDepth) * $hSlatCnt * $slatT * $_wS;
-$_slV  = round($innerH + 2*$tenonDepth) * $vSlatCnt * $slatT * $_wS;
-$_slHA = 2 * ($_wS + $slatT) * round($innerW + 2*$tenonDepth) * $hSlatCnt;
-$_slVA = 2 * ($_wS + $slatT) * round($innerH + 2*$tenonDepth) * $vSlatCnt;
+$_slH  = $_hSumLen / $doorCount * $slatT * $_wS;
+$_slV  = $_vSumLen / $doorCount * $slatT * $_wS;
+$_slHA = 2 * ($_wS + $slatT) * $_hSumLen / $doorCount;
+$_slVA = 2 * ($_wS + $slatT) * $_vSumLen / $doorCount;
 $_mtV  = $frameOpeningH * 2 * $_tMt * $_wMt;
 $_mtH  = $frameOpeningW * 2 * $_tMt * $_wMt;
 $_mtVA = 2 * ($_wMt + $_tMt) * $frameOpeningH * 2;
@@ -220,10 +301,11 @@ $parts = [
     'pungpanCnt'     => $doorCount . '개',
     'ppHLen'         => (string)round($innerW + 2 * $slatT),
     'ppVLen'         => (string)round($ppPanelH + 2 * $slatT),
-    'hSlatLen'       => (string)round($innerW + 2 * $tenonDepth),
-    'hSlatCnt'       => ($hSlatCnt * $doorCount) . '개',
-    'vSlatLen'       => (string)round($innerH + 2 * $tenonDepth),
-    'vSlatCnt'       => ($vSlatCnt * $doorCount) . '개',
+    'hSlatLen'       => (string)($_hLens ? max($_hLens) : round($innerW + 2 * $tenonDepth)),
+    'hSlatCnt'       => $hSlatCntAll . '개',
+    'vSlatLen'       => (string)($_vLens ? max($_vLens) : round($innerH + 2 * $tenonDepth)),
+    'vSlatCnt'       => $vSlatCntAll . '개',
+    'slatPieces'     => ['edited' => $_edited, 'h' => $_groupLens($_hLens), 'v' => $_groupLens($_vLens), 'perDoor' => $doorCount],
     'frT'            => $_wU,
     'slatW'          => $_wS,
     'pungpanT'       => $_pT,
@@ -236,7 +318,7 @@ $parts = [
     'woodJae'        => round($_woodJae, 2),
     'woodJae_door'   => round($_volDoor / $_JAE, 2),
     'woodJae_muntol' => round($_volMuntol / $_JAE, 2),
-    'joints'         => $cols * $rows,
+    'joints'         => $_jointsAdj,
     'physical'       => $perms['physical'] ? $physical : null,
 ];
 

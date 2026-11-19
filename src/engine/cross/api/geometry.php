@@ -174,6 +174,41 @@ foreach ($lenMap as $len => $cnt) {
     $diagList[] = ['len' => $len, 'cnt' => $cnt * $doorCount];
 }
 
+// ── 편집(지운 살 조각·추가선) 반영 — lib/slat_edit.php 설명 참고 ──────────────────────
+require_once __DIR__ . '/../../../lib/slat_edit.php';
+[$_delRaw, $_addRaw] = slat_edit_read_post();
+$_delSet = slat_edit_index_deleted($_delRaw, $doorCount);
+$_edited = false;
+if ($_delSet || $_addRaw) {
+    // 지운 반쪽이 있는 줄은 원래 한 줄(칸수 k → 길이 k×대각+2t)을 빼고, 남은 연속 구간(반쪽 m개 → m×대각/2+2t)을 새 부재로 넣는다
+    $_dp = slat_edit_diag_pieces($_delSet, $doorCount, $rows, $cols, (float)$stepW, (float)$stepH, (float)$slatT, false);
+    $_dm = [];
+    foreach ($diagList as $dl) $_dm[$dl['len']] = $dl['cnt'];
+    foreach ($_dp['remove'] as $kc => $n) {
+        $ln = (int)round($kc * $cellDiag + 2 * $slatT);
+        if (isset($_dm[$ln])) $_dm[$ln] = max(0, $_dm[$ln] - $n);
+    }
+    $_cx = []; for ($q = 0; $q <= $cols; $q++) $_cx[] = $q * $stepW - $slatT / 2;
+    $_cy = []; for ($q = 0; $q <= $rows; $q++) $_cy[] = $q * $stepH - $slatT / 2;
+    $_ccx = []; for ($q = 0; $q < $cols; $q++) $_ccx[] = ($_cx[$q] + $_cx[$q + 1]) / 2;
+    $_ccy = []; for ($q = 0; $q < $rows; $q++) $_ccy[] = ($_cy[$q] + $_cy[$q + 1]) / 2;
+    $_addLines = slat_edit_added_lengths($_addRaw, function ($xi, $yi, $t) use ($_cx, $_cy, $_ccx, $_ccy) {
+        $xs = $t === 'center' ? $_ccx : $_cx; $ys = $t === 'center' ? $_ccy : $_cy;
+        return isset($xs[$xi], $ys[$yi]) ? [$xs[$xi], $ys[$yi]] : null;
+    }, (float)$slatT, hypot($outerW, $outerH) * 1.1);
+    $_adds = $_dp['add'];
+    foreach ($_addLines as $al) for ($dd = 0; $dd < $doorCount; $dd++) $_adds[] = $al['len'];
+    foreach ($_adds as $l) $_dm[$l] = ($_dm[$l] ?? 0) + 1;
+    $_dm = array_filter($_dm, fn($c) => $c > 0);
+    krsort($_dm);
+    $diagList = [];
+    foreach ($_dm as $l => $c) $diagList[] = ['len' => (int)$l, 'cnt' => (int)$c];
+    // 아래 체적·표면적은 문짝 1짝 기준 $lenMap을 쓰므로 편집 결과로 다시 만든다(문짝별 평균)
+    $lenMap = [];
+    foreach ($diagList as $dl) $lenMap[$dl['len']] = $dl['cnt'] / max(1, $doorCount);
+    $_edited = true;
+}
+
 // 목재 재수 계산 (1재 = 30.3×30.3×3636mm³, 부재별 실제 단면 사용)
 $_es  = get_engine_settings('cross');
 $_JAE = 30.3 * 30.3 * 3636;
@@ -239,6 +274,7 @@ $parts = [
     'vSlatLen'       => '',
     'vSlatCnt'       => '',
     'diagList'       => $diagList,
+    'slatPieces'     => ['edited' => $_edited],
     'frT'            => $_wU,
     'slatW'          => $_wS,
     'pungpanT'       => $_pT,

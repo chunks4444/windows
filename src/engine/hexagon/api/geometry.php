@@ -262,6 +262,12 @@ $diagList = array_map(function($item) use ($doorCount) {
     return ['len' => $item['len'], 'cnt' => $item['cnt'] * $doorCount];
 }, $merged);
 
+// 편집(지운 살·추가선)이 있으면 브라우저가 집계한 직선살 개수·사선살 길이별 개수(editPieces)를 범위 검증 후 그대로 쓴다 — lib/slat_edit.php 참고
+require_once __DIR__ . '/../../../lib/slat_edit.php';
+$_ep = slat_edit_client_pieces(hypot($outerW, $outerH) + 4 * $slatT);
+$_straightCnt = max(0, $cols - 1) * $doorCount;
+if ($_ep) { $diagList = $_ep['diag']; $_straightCnt = $_ep['straight']; }
+
 // 목재 재수 계산 (1재 = 30.3×30.3×3636mm³, 부재별 실제 단면 사용)
 $_es  = get_engine_settings('hexagon');
 $_JAE = 30.3 * 30.3 * 3636;
@@ -273,7 +279,7 @@ $_wMt = (int)$_es['muntolW'];
 
 $_volDoor   = round($outerH + 2*$slatT) * (2*$doorCount)                    * $frameW * $_wU
             + round($outerW + 2*$slatT) * (($pungpanOn?3:2)*$doorCount)     * $frameHTop * $_wU
-            + round($innerH + 2*$tenonDepth) * (max(0,$cols-1)*$doorCount)  * $slatT  * $_wS
+            + round($innerH + 2*$tenonDepth) * $_straightCnt * $slatT  * $_wS
             + array_sum(array_map(fn($d) => (float)$d['len'] * $d['cnt'] * $slatT * $_wS, $diagList))
             + ($pungpanVisible ? (int)round($innerW) * (int)round($ppPanelH) * $_pT : 0);
 $_volMuntol = $frameOpeningH * 2 * $_tMt * $_wMt
@@ -290,7 +296,7 @@ $_ulVA = 2 * ($frameW + $_wU) * round($outerH + 2*$slatT) * 2;
 $_ulHA = 2 * ($frameHTop + $_wU) * round($outerW + 2*$slatT) * ($pungpanOn ? 3 : 2);
 $_ppV  = $pungpanVisible ? (int)round($innerW) * (int)round($ppPanelH) * $_pT : 0;
 $_ppA  = $pungpanVisible ? 2 * (int)round($innerW) * (int)round($ppPanelH) : 0;
-$_vSCntDoor = max(0, $cols - 1);
+$_vSCntDoor = $_straightCnt / max(1, $doorCount);
 $_vSLenMm   = round($innerH + 2*$tenonDepth);
 $_slVDoor   = $_vSLenMm * $_vSCntDoor * $slatT * $_wS;
 $_slVADoor  = 2 * ($_wS + $slatT) * $_vSLenMm * $_vSCntDoor;
@@ -331,7 +337,8 @@ $parts = [
     'ppVLen'         => (string)round($ppPanelH + 2 * $slatT),
     'dirTitle'       => '세로부재',
     'hSlatLen'       => (string)round($innerH + 2 * $tenonDepth),
-    'hSlatCnt'       => (max(0, $cols - 1) * $doorCount) . '개',
+    'hSlatCnt'       => $_straightCnt . '개',
+    'slatPieces'     => ['edited' => (bool)$_ep],
     'diagList'       => $diagList,
     'frT'            => $_wU,
     'slatW'          => $_wS,

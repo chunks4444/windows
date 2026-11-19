@@ -262,6 +262,15 @@ $parts['diagList'] = array_map(function($item) use ($doorCount) {
     return ['len' => $item['len'], 'cnt' => $item['cnt'] * 2 * $doorCount];
 }, $merged);
 
+// 편집(지운 살·추가선)이 있으면 브라우저가 집계한 직선살 개수·사선살 길이별 개수(editPieces)를 범위 검증 후 그대로 쓴다 — lib/slat_edit.php 참고
+require_once __DIR__ . '/../../../lib/slat_edit.php';
+$_ep = slat_edit_client_pieces(hypot($outerW, $outerH) + 4 * $slatT);
+if ($_ep) {
+    $parts['diagList']   = $_ep['diag'];
+    $parts['hSlatCnt']   = $_ep['straight'] . '개';
+    $parts['slatPieces'] = ['edited' => true];
+}
+
 // 목재 재수 계산 (1재 = 30.3×30.3×3636mm³, 부재별 실제 단면 사용)
 $_es  = get_engine_settings('triangle');
 $_JAE = 30.3 * 30.3 * 3636;
@@ -273,6 +282,7 @@ $_wMt = (int)$_es['muntolW'];
 
 $_hSLen   = $rotateOn ? round($innerH + 2*$tenonDepth) : round($innerW + 2*$tenonDepth);
 $_hSCnt_n = $rotateOn ? max(0, $cols-1) * $doorCount : max(0, $rows-1) * $doorCount;
+if ($_ep) $_hSCnt_n = $_ep['straight'];
 
 $_volDoor   = round($outerH + 2*$slatT) * (2*$doorCount)                * $frameW * $_wU
             + round($outerW + 2*$slatT) * (($pungpanOn?3:2)*$doorCount) * $frameHTop * $_wU

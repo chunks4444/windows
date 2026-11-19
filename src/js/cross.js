@@ -344,6 +344,9 @@ async function fetchGeometry() {
         finish:    document.getElementById('txtFinish')?.value ?? '',
         muntolOn:  document.getElementById('chkMuntol')?.checked === false ? '0' : '1',
     });
+    if (deletedSegs.size) body.set('deletedSegs', JSON.stringify([...deletedSegs].sort()));
+    const _addXi = addedLines.filter(l => l.xi1 !== undefined).map(l => ({ xi1: l.xi1, yi1: l.yi1, xi2: l.xi2, yi2: l.yi2, ntype1: l.ntype1, ntype2: l.ntype2 }));
+    if (_addXi.length) body.set('addedLines', JSON.stringify(_addXi));
     // ⚠️ 건드리지 말 것: 줌/팬/스케일은 이 캐시 덕분에 서버 호출이 없음.
     // 캐시를 빼거나 채우는 코드를 빠뜨리면 매 프레임 geometry.php 호출로 회귀함 (운영서버 줌/드래그 무거움 버그 원인이었음).
     const sig = body.toString();
@@ -989,124 +992,6 @@ async function draw() {
 
     if (buildKonvaPattern) kv.endPatternClipGroup();
 
-    // ── 편집 반영 부재 목록 최종 업데이트 ──────
-    if (p) {
-        const tenonLen = 2 * geo.slatT;
-        const pxToMm   = geo.innerW / lastIW;
-
-        // 내경 범위 밖 세그먼트 제외
-        const lineGroups = new Map();
-        const EPS = lastCellSize;
-        for (const [segKey, seg] of lastSegMap) {
-            if (segKey.startsWith('added:')) continue;
-            if (seg.mx < lastILeft - EPS || seg.mx > lastILeft + lastIW + EPS) continue;
-            if (seg.my < lastITop  - EPS || seg.my > lastITop  + lastIH + EPS) continue;
-            if (!lineGroups.has(seg.lineKey)) lineGroups.set(seg.lineKey, []);
-            lineGroups.get(seg.lineKey).push({ segKey, mx: seg.mx, my: seg.my, normAngle: seg.normAngle });
-        }
-
-        let adjHSlatCnt = parseInt(p.hSlatCnt) || 0;
-        let adjVSlatCnt = parseInt(p.vSlatCnt) || 0;
-        let adjDiag     = (p.diagList || []).map(item => ({ ...item }));
-        const extraPieces = [];
-
-        for (const [, segs] of lineGroups) {
-            const normAngle  = segs[0].normAngle;
-            const isHSlat    = normAngle < 0.05;
-            const isVSlat    = Math.abs(normAngle - Math.PI / 2) < 0.05;
-            const ldx = Math.cos(normAngle), ldy = Math.sin(normAngle);
-
-            const vSegs = segs.map(s => ({
-                segKey:    s.segKey,
-                isDeleted: deletedSegs.has(s.segKey),
-                pos:       s.mx * ldx + s.my * ldy,
-            })).sort((a, b) => a.pos - b.pos);
-
-            if (!vSegs.some(vs => vs.isDeleted)) continue;
-
-            const runLen = (i0, i1) => {
-                let minP = Infinity, maxP = -Infinity, minN = null, maxN = null;
-                for (let i = i0; i <= i1; i++) {
-                    const sg = lastSegMap.get(vSegs[i].segKey);
-                    if (!sg) continue;
-                    for (const [nx, ny] of [[sg.cx, sg.cy], [sg.ex, sg.ey]]) {
-                        const proj = nx * ldx + ny * ldy;
-                        if (proj < minP) { minP = proj; minN = [nx, ny]; }
-                        if (proj > maxP) { maxP = proj; maxN = [nx, ny]; }
-                    }
-                }
-                if (!minN || !maxN) return 0;
-                return Math.round(Math.hypot(maxN[0] - minN[0], maxN[1] - minN[1]) * pxToMm + tenonLen);
-            };
-
-            const fullLen = runLen(0, vSegs.length - 1);
-            if (isHSlat) {
-                adjHSlatCnt = Math.max(0, adjHSlatCnt - 1);
-            } else if (isVSlat) {
-                adjVSlatCnt = Math.max(0, adjVSlatCnt - 1);
-            } else {
-                const m = adjDiag.find(it => it.cnt > 0 && Math.abs(it.len - fullLen) <= tenonLen + 1);
-                if (m) m.cnt = Math.max(0, m.cnt - 1);
-            }
-
-            let runStart = -1;
-            for (let i = 0; i <= vSegs.length; i++) {
-                if (i < vSegs.length && !vSegs[i].isDeleted) {
-                    if (runStart < 0) runStart = i;
-                } else if (runStart >= 0) {
-                    extraPieces.push({ len: runLen(runStart, i - 1), isHSlat, isVSlat });
-                    runStart = -1;
-                }
-            }
-        }
-
-        extraPieces.forEach(({ len, isHSlat, isVSlat }) => {
-            if (isHSlat) {
-                adjHSlatCnt++;
-            } else if (isVSlat) {
-                adjVSlatCnt++;
-            } else {
-                const m = adjDiag.find(it => Math.abs(it.len - len) <= tenonLen + 1);
-                if (m) m.cnt++;
-                else adjDiag.push({ len, cnt: 1 });
-            }
-        });
-
-        addedLines.forEach(ln => {
-            let dx, dy;
-            if (ln.xi1 !== undefined) {
-                const xs1 = ln.ntype1 === 'center' ? lastCenterXs : lastCornerXs;
-                const ys1 = ln.ntype1 === 'center' ? lastCenterYs : lastCornerYs;
-                const xs2 = ln.ntype2 === 'center' ? lastCenterXs : lastCornerXs;
-                const ys2 = ln.ntype2 === 'center' ? lastCenterYs : lastCornerYs;
-                dx = xs2[ln.xi2] - xs1[ln.xi1];
-                dy = ys2[ln.yi2] - ys1[ln.yi1];
-            } else {
-                dx = (ln.nx2 - ln.nx1) * geo.innerW;
-                dy = (ln.ny2 - ln.ny1) * geo.innerH;
-            }
-            const realLen = Math.round(Math.hypot(dx, dy) + tenonLen);
-            const m = adjDiag.find(it => Math.abs(it.len - realLen) <= tenonLen);
-            if (m) m.cnt++;
-            else adjDiag.push({ len: realLen, cnt: 1 });
-        });
-
-        const hCntEl = document.getElementById('spHSlatCnt');
-        if (hCntEl) hCntEl.textContent = Math.max(0, adjHSlatCnt) + _t('개');
-        const vCntEl = document.getElementById('spVSlatCnt');
-        if (vCntEl) vCntEl.textContent = Math.max(0, adjVSlatCnt) + _t('개');
-
-        adjDiag = adjDiag.filter(item => item.cnt > 0);
-        adjDiag.sort((a, b) => b.len - a.len);
-        diagListEl.innerHTML = '';
-        adjDiag.forEach(({ len, cnt }) => {
-            const el = document.createElement('div');
-            el.className = 'slat-row';
-            el.innerHTML = `<span class="slat-len">${p.slatW}×${geo.slatT}×${len}mm</span><span class="slat-cnt">${cnt}${_t('개')}</span>`;
-            diagListEl.appendChild(el);
-        });
-
-    }
 
     // ====== 추가 선 그리기 (모든 문짝에 동일하게 복제) ======
     if (addedLines.length > 0) {

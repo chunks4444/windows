@@ -1120,14 +1120,16 @@ async function draw() {
                         const segMidY   = (segStartY + segEndY) / 2;
                         const vsCx = toCanvasX(cx), vsCy = toCanvasY(segMidY);
                         const vsKey = `${d}:vs:${i}:${j}`;
-                        lastSegMap.set(vsKey, { cx: vsCx, cy: toCanvasY(segStartY), ex: vsCx, ey: toCanvasY(segEndY), mx: vsCx, my: vsCy, normAngle: Math.PI / 2, lineKey: makeLineKey(vsCx, vsCy, Math.PI / 2) });
+                        const vExt = (j > 0 && deletedSegs.has(`${d}:vs:${i}:${j - 1}`)) ? geo.slatH : 0;
+                        lastSegMap.set(vsKey, { cx: vsCx, cy: toCanvasY(segStartY), ex: vsCx, ey: toCanvasY(segEndY), mx: vsCx, my: vsCy, normAngle: Math.PI / 2, lineKey: makeLineKey(vsCx, vsCy, Math.PI / 2),
+                            dcx: vsCx, dcy: toCanvasY(segStartY - vExt), dex: vsCx, dey: toCanvasY(segEndY) });
                         if (deletedSegs.has(vsKey)) continue;
 
                         if (buildKonvaPattern) {
-                            kv.addPatternSlatRect(d, toCanvasX(left), toCanvasY(segStartY), geo.slatV * baseScale, stepH * baseScale, Color_Slat_Fill, vsKey, lastSegMap.get(vsKey).lineKey);
+                            kv.addPatternSlatRect(d, toCanvasX(left), toCanvasY(segStartY - vExt), geo.slatV * baseScale, (stepH + vExt) * baseScale, Color_Slat_Fill, vsKey, lastSegMap.get(vsKey).lineKey);
                         } else {
                             ctx.fillStyle = Color_Slat_Fill;
-                            ctx.fillRect(toCanvasX(left), toCanvasY(segStartY), geo.slatV * baseScale, stepH * baseScale);
+                            ctx.fillRect(toCanvasX(left), toCanvasY(segStartY - vExt), geo.slatV * baseScale, (stepH + vExt) * baseScale);
                             drawCenterLine(toCanvasX(cx), toCanvasY(segStartY), toCanvasX(cx), toCanvasY(segEndY));
                         }
                     }
@@ -1160,14 +1162,18 @@ async function draw() {
                         const segMidX   = (segStartX + segEndX) / 2;
                         const hsCy = toCanvasY(ry);
                         const hsKey = `${d}:hs:${j}:${i}`;
-                        lastSegMap.set(hsKey, { cx: toCanvasX(segStartX), cy: hsCy, ex: toCanvasX(segEndX), ey: hsCy, mx: toCanvasX(segMidX), my: hsCy, normAngle: 0, lineKey: makeLineKey(toCanvasX(segMidX), hsCy, 0) });
+                        const hExt0 = (i > 0 && deletedSegs.has(`${d}:hs:${j}:${i - 1}`)) ? geo.slatV / 2 : 0;
+                        const hExt1 = (i < geo.cols - 1 && deletedSegs.has(`${d}:hs:${j}:${i + 1}`)) ? geo.slatV / 2 : 0;
+                        const dsx = segStartX - hExt0, dex = segEndX + hExt1;
+                        lastSegMap.set(hsKey, { cx: toCanvasX(segStartX), cy: hsCy, ex: toCanvasX(segEndX), ey: hsCy, mx: toCanvasX(segMidX), my: hsCy, normAngle: 0, lineKey: makeLineKey(toCanvasX(segMidX), hsCy, 0),
+                            dcx: toCanvasX(dsx), dcy: hsCy, dex: toCanvasX(dex), dey: hsCy });
                         if (deletedSegs.has(hsKey)) continue;
 
                         if (buildKonvaPattern) {
-                            kv.addPatternSlatRect(d, toCanvasX(segStartX), toCanvasY(top), (segEndX - segStartX) * baseScale, geo.slatH * baseScale, Color_Slat_Fill, hsKey, lastSegMap.get(hsKey).lineKey);
+                            kv.addPatternSlatRect(d, toCanvasX(dsx), toCanvasY(top), (dex - dsx) * baseScale, geo.slatH * baseScale, Color_Slat_Fill, hsKey, lastSegMap.get(hsKey).lineKey);
                         } else {
                             ctx.fillStyle = Color_Slat_Fill;
-                            ctx.fillRect(toCanvasX(segStartX), toCanvasY(top), (segEndX - segStartX) * baseScale, geo.slatH * baseScale);
+                            ctx.fillRect(toCanvasX(dsx), toCanvasY(top), (dex - dsx) * baseScale, geo.slatH * baseScale);
                             drawCenterLine(toCanvasX(segStartX), toCanvasY(ry), toCanvasX(segEndX), toCanvasY(ry));
                         }
                     }

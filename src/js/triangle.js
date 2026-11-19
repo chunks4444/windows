@@ -414,6 +414,8 @@ async function fetchGeometry() {
         finish:    document.getElementById('txtFinish')?.value ?? '',
         muntolOn:  document.getElementById('chkMuntol')?.checked === false ? '0' : '1',
     });
+    _lastBaseSig = body.toString();
+    if (_editPieces && _editPiecesKey === editStateKey() + '#' + _lastBaseSig) body.set('editPieces', JSON.stringify(_editPieces));
     // ⚠️ 건드리지 말 것: 줌/팬/스케일은 이 캐시 덕분에 서버 호출이 없음.
     // 캐시를 빼거나 채우는 코드를 빠뜨리면 매 프레임 geometry.php 호출로 회귀함 (운영서버 줌/드래그 무거움 버그 원인이었음).
     const sig = body.toString();
@@ -439,6 +441,8 @@ async function fetchGeometry() {
 
 let _panRaf = null;
 let _geoCache = null;
+let _editPieces = null, _editPiecesKey = '', _lastBaseSig = '';
+function editStateKey() { return [...deletedSegs].sort().join(',') + '|' + JSON.stringify(addedLines); }
 function drawPan() {
     if (_panRaf) return;
     _panRaf = requestAnimationFrame(() => { _panRaf = null; draw(); });
@@ -1046,7 +1050,7 @@ async function draw() {
     if (buildKonvaPattern) kv.endPatternClipGroup();
 
     // ── 편집 반영 부재 목록 최종 업데이트 ──────
-    if (p) {
+    if (p && !p.slatPieces?.edited) {
         const tenonLen = 2 * geo.slatT;
         const pxToMm  = geo.innerW / lastIW;
 
@@ -1162,6 +1166,14 @@ async function draw() {
             else adjDiag.push({ len: realLen, cnt: 1 });
         });
         adjDiag.sort((a, b) => b.len - a.len);
+        if (deletedSegs.size > 0 || addedLines.length > 0) {
+            const _k = editStateKey() + '#' + _lastBaseSig;
+            if (_editPiecesKey !== _k) {
+                _editPieces = { straight: Math.max(0, adjStraightCnt), diag: adjDiag.filter(x => x.cnt > 0).map(({ len, cnt }) => ({ len, cnt })) };
+                _editPiecesKey = _k;
+                drawPan();
+            }
+        }
 
         diagListEl.innerHTML = '';
         adjDiag.forEach(({ len, cnt }) => {
@@ -2487,6 +2499,7 @@ async function draw() {
             doorCornerPositions: doorCornerPositions ? { ...doorCornerPositions } : null,
             placementNaturalSize: placementNaturalSize ? { ...placementNaturalSize } : null,
             deletedSegs: [...deletedSegs],
+            editPieces: (_editPieces && _editPiecesKey === editStateKey() + '#' + _lastBaseSig) ? _editPieces : null,
             addedLines,
             svgInserts: [],
             konvaShapes: kv.getKonvaParams(),

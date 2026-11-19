@@ -1334,10 +1334,10 @@
         const lineGroups = new Map();
         for (const [segKey, seg] of lastSegMap) {
             if (deletedSegs.has(segKey)) continue;
-            const x1 = (seg.cx - lastOLeft) / lastBaseScale;
-            const y1 = (seg.cy - lastOTop) / lastBaseScale;
-            const x2 = (seg.ex - lastOLeft) / lastBaseScale;
-            const y2 = (seg.ey - lastOTop) / lastBaseScale;
+            const x1 = ((seg.dcx ?? seg.cx) - lastOLeft) / lastBaseScale;
+            const y1 = ((seg.dcy ?? seg.cy) - lastOTop) / lastBaseScale;
+            const x2 = ((seg.dex ?? seg.ex) - lastOLeft) / lastBaseScale;
+            const y2 = ((seg.dey ?? seg.ey) - lastOTop) / lastBaseScale;
             if (Math.hypot(x2 - x1, y2 - y1) < 1e-6) continue;
             // lineKey가 없는(예: 자유 추가선) 조각은 다른 조각과 절대 합치지 않도록 segKey를 그룹키로 쓴다.
             // 자유 추가선은 seg.normAngle이 항상 0으로 저장돼 있어(실제 각도와 무관 — 캔버스에서는

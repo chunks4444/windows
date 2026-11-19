@@ -192,6 +192,25 @@ $ppPanelH = $pungpanVisible ? ($effectivePungpanH - $frameH) : 0;
 
 $vSlatCnt = max(0, $cols - 1);
 
+// ── 편집(지운 살 조각·추가선) 반영 — lib/slat_edit.php 설명 참고 ──────────────────────
+require_once __DIR__ . '/../../../lib/slat_edit.php';
+[$_delRaw, $_addRaw] = slat_edit_read_post();
+$_delSet = slat_edit_index_deleted($_delRaw, $doorCount);
+$_pc = slat_edit_hv_pieces($_delSet, $doorCount, $cols, array_map(fn($b) => [(float)$b['y0'], (float)$b['y1']], $vSegBounds),
+    array_keys($hBarYs), 0, (float)$stepW, (float)$slatT, (float)$tenonDepth, (float)$innerW, (float)$innerH);
+$_hLens = $_pc['h']; $_vLens = $_pc['v']; $_lostJoints = $_pc['lost'];
+// 클래식 노드: 가로 = [0, 세로살 중심…, innerW], 세로 = [0, 가로살 y…, innerH]
+$_nodeX = [0.0]; for ($q = 1; $q < $cols; $q++) $_nodeX[] = $q * $stepW - $slatT / 2; $_nodeX[] = (float)$innerW;
+$_nodeY = array_merge([0.0], array_map('floatval', $hBarYs), [(float)$innerH]);
+$_addLines = slat_edit_added_lengths($_addRaw, function ($xi, $yi) use ($_nodeX, $_nodeY) {
+    return isset($_nodeX[$xi], $_nodeY[$yi]) ? [$_nodeX[$xi], $_nodeY[$yi]] : null;
+}, (float)$tenonDepth, hypot($innerW, $innerH) * 1.1);
+foreach ($_addLines as $al) { for ($dd = 0; $dd < $doorCount; $dd++) { if ($al['horiz']) $_hLens[] = $al['len']; else $_vLens[] = $al['len']; } }
+$_edited = !empty($_delSet) || !empty($_addLines);
+$hSlatCntAll = count($_hLens); $vSlatCntAll = count($_vLens);
+$_hSumLen = array_sum($_hLens); $_vSumLen = array_sum($_vLens);
+$_jointsAdj = max(0, $cols * $rowsInt - (int)round($_lostJoints / max(1, $doorCount)) + 2 * count($_addLines));
+
 // 목재 재수 계산 (1재 = 30.3×30.3×3636mm³, 부재별 실제 단면 사용)
 $_es  = get_engine_settings('classic');
 $_JAE = 30.3 * 30.3 * 3636;
@@ -203,8 +222,8 @@ $_wMt = (int)$_es['muntolW'];
 
 $_volDoor   = round($outerH + 2*$slatT) * (2*$doorCount)                * $frameW * $_wU
             + round($outerW + 2*$slatT) * (($pungpanOn?3:2)*$doorCount) * $frameH * $_wU
-            + round($innerW + 2*$tenonDepth) * ($hSlatCnt*$doorCount)   * $slatT  * $_wS
-            + round($innerH + 2*$tenonDepth) * ($vSlatCnt*$doorCount)   * $slatT  * $_wS
+            + $_hSumLen * $slatT * $_wS
+            + $_vSumLen * $slatT * $_wS
             + ($pungpanVisible ? (int)round($innerW) * (int)round($ppPanelH) * $_pT : 0);
 $_volMuntol = $frameOpeningH * 2 * $_tMt * $_wMt
             + $frameOpeningW * 2 * $_tMt * $_wMt;
@@ -219,10 +238,10 @@ $_ulVA = 2 * ($frameW + $_wU) * round($outerH + 2*$slatT) * 2;
 $_ulHA = 2 * ($frameH + $_wU) * round($outerW + 2*$slatT) * ($pungpanOn ? 3 : 2);
 $_ppV  = $pungpanVisible ? (int)round($innerW) * (int)round($ppPanelH) * $_pT : 0;
 $_ppA  = $pungpanVisible ? 2 * (int)round($innerW) * (int)round($ppPanelH) : 0;
-$_slH  = round($innerW + 2*$tenonDepth) * $hSlatCnt * $slatT * $_wS;
-$_slV  = round($innerH + 2*$tenonDepth) * $vSlatCnt * $slatT * $_wS;
-$_slHA = 2 * ($_wS + $slatT) * round($innerW + 2*$tenonDepth) * $hSlatCnt;
-$_slVA = 2 * ($_wS + $slatT) * round($innerH + 2*$tenonDepth) * $vSlatCnt;
+$_slH  = $_hSumLen / $doorCount * $slatT * $_wS;
+$_slV  = $_vSumLen / $doorCount * $slatT * $_wS;
+$_slHA = 2 * ($_wS + $slatT) * $_hSumLen / $doorCount;
+$_slVA = 2 * ($_wS + $slatT) * $_vSumLen / $doorCount;
 $_mtV  = $frameOpeningH * 2 * $_tMt * $_wMt;
 $_mtH  = $frameOpeningW * 2 * $_tMt * $_wMt;
 $_mtVA = 2 * ($_wMt + $_tMt) * $frameOpeningH * 2;
@@ -256,10 +275,11 @@ $parts = [
     'pungpanCnt'     => $doorCount . '개',
     'ppHLen'         => (string)round($innerW + 2 * $slatT),
     'ppVLen'         => (string)round($ppPanelH + 2 * $slatT),
-    'hSlatLen'       => (string)round($innerW + 2 * $tenonDepth),
-    'hSlatCnt'       => ($hSlatCnt * $doorCount) . '개',
-    'vSlatLen'       => (string)round($innerH + 2 * $tenonDepth),
-    'vSlatCnt'       => ($vSlatCnt * $doorCount) . '개',
+    'hSlatLen'       => (string)($_hLens ? max($_hLens) : round($innerW + 2 * $tenonDepth)),
+    'hSlatCnt'       => $hSlatCntAll . '개',
+    'vSlatLen'       => (string)($_vLens ? max($_vLens) : round($innerH + 2 * $tenonDepth)),
+    'vSlatCnt'       => $vSlatCntAll . '개',
+    'slatPieces'     => ['edited' => $_edited, 'h' => slat_edit_group_lens($_hLens), 'v' => slat_edit_group_lens($_vLens), 'perDoor' => $doorCount],
     'frT'            => $_wU,
     'slatW'          => $_wS,
     'pungpanT'       => $_pT,
@@ -272,7 +292,7 @@ $parts = [
     'woodJae'        => round($_woodJae, 2),
     'woodJae_door'   => round($_volDoor / $_JAE, 2),
     'woodJae_muntol' => round($_volMuntol / $_JAE, 2),
-    'joints'         => $cols * $rowsInt,
+    'joints'         => $_jointsAdj,
     'physical'       => $perms['physical'] ? $physical : null,
 ];
 

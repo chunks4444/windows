@@ -167,6 +167,46 @@ for ($k = $diagN; $k >= 1; $k--) {
     $diagList[] = ['len' => $diagLen, 'cnt' => $diagCnt * $doorCount];
 }
 
+
+// ── 편집(지운 살 조각·추가선) 반영 — lib/slat_edit.php 설명 참고 ──────────────────────
+require_once __DIR__ . '/../../../lib/slat_edit.php';
+[$_delRaw, $_addRaw] = slat_edit_read_post();
+$_delSet = slat_edit_index_deleted($_delRaw, $doorCount);
+$_vb = [];
+for ($q = 0; $q < $rows; $q++) $_vb[] = [$q * $stepH, min((float)$innerH, ($q + 1) * $stepH)];
+$_pc = slat_edit_hv_pieces($_delSet, $doorCount, $cols, $_vb, $rows > 1 ? range(1, $rows - 1) : [], 1,
+    (float)$stepW, (float)$slatT, (float)$tenonDepth, (float)$innerW, (float)$innerH);
+$_hLens = $_pc['h']; $_vLens = $_pc['v']; $_lostJoints = $_pc['lost'];
+// 사선살: 지운 반쪽이 있는 줄은 원래 한 줄을 빼고 남은 구간들을 새 부재로 넣는다. 추가선도 사선 목록에 넣는다(화면 규칙과 동일).
+$_dp = slat_edit_diag_pieces($_delSet, $doorCount, $rows, $cols, (float)$stepW, (float)$stepH, (float)$slatT);
+foreach ($_dp['remove'] as $kc => $n) {
+    $idx = $diagN - $kc;
+    if (isset($diagList[$idx])) $diagList[$idx]['cnt'] = max(0, $diagList[$idx]['cnt'] - $n);
+}
+$_cx = []; for ($q = 0; $q <= $cols; $q++) $_cx[] = $q * $stepW - $slatT / 2;
+$_cy = []; for ($q = 0; $q <= $rows; $q++) $_cy[] = $q * $stepH - $slatT / 2;
+$_ccx = []; for ($q = 0; $q < $cols; $q++) $_ccx[] = ($_cx[$q] + $_cx[$q + 1]) / 2;
+$_ccy = []; for ($q = 0; $q < $rows; $q++) $_ccy[] = ($_cy[$q] + $_cy[$q + 1]) / 2;
+$_addLines = slat_edit_added_lengths($_addRaw, function ($xi, $yi, $t) use ($_cx, $_cy, $_ccx, $_ccy) {
+    $xs = $t === 'center' ? $_ccx : $_cx; $ys = $t === 'center' ? $_ccy : $_cy;
+    return isset($xs[$xi], $ys[$yi]) ? [$xs[$xi], $ys[$yi]] : null;
+}, (float)$slatT, hypot($outerW, $outerH) * 1.1);
+$_diagAdds = $_dp['add'];
+foreach ($_addLines as $al) for ($dd = 0; $dd < $doorCount; $dd++) $_diagAdds[] = $al['len'];
+foreach (slat_edit_group_lens($_diagAdds) as $g) {
+    $ls = number_format($g['len'], 1);
+    $hit = false;
+    foreach ($diagList as &$dl) { if ($dl['len'] === $ls) { $dl['cnt'] += $g['cnt']; $hit = true; break; } }
+    unset($dl);
+    if (!$hit) $diagList[] = ['len' => $ls, 'cnt' => $g['cnt']];
+}
+$diagList = array_values(array_filter($diagList, fn($x) => $x['cnt'] > 0));
+usort($diagList, fn($a, $b) => (float)$b['len'] <=> (float)$a['len']);
+$_edited = !empty($_delSet) || !empty($_addLines);
+$hSlatCntAll = count($_hLens); $vSlatCntAll = count($_vLens);
+$_hSumLen = array_sum($_hLens); $_vSumLen = array_sum($_vLens);
+$_jointsAdj = max(0, $cols * $rows - (int)round($_lostJoints / max(1, $doorCount)));
+
 // 목재 재수 계산 (1재 = 30.3×30.3×3636mm³, 부재별 실제 단면 사용)
 $_es  = get_engine_settings('diamond');
 $_JAE = 30.3 * 30.3 * 3636;
@@ -178,8 +218,8 @@ $_wMt = (int)$_es['muntolW'];
 
 $_volDoor   = round($outerH + 2*$slatT) * (2*$doorCount)                * $frameW * $_wU
             + round($outerW + 2*$slatT) * (($pungpanOn?3:2)*$doorCount) * $frameHTop * $_wU
-            + round($innerW + 2*$tenonDepth) * ($hSlatCnt*$doorCount)   * $slatT  * $_wS
-            + round($innerH + 2*$tenonDepth) * ($vSlatCnt*$doorCount)   * $slatT  * $_wS
+            + $_hSumLen * $slatT * $_wS
+            + $_vSumLen * $slatT * $_wS
             + array_sum(array_map(fn($d) => (float)$d['len'] * $d['cnt'] * $slatT * $_wS, $diagList))
             + ($pungpanVisible ? (int)round($innerW) * (int)round($ppPanelH) * $_pT : 0);
 $_volMuntol = $frameOpeningH * 2 * $_tMt * $_wMt
@@ -196,10 +236,10 @@ $_ulVA = 2 * ($frameW + $_wU) * round($outerH + 2*$slatT) * 2;
 $_ulHA = 2 * ($frameHTop + $_wU) * round($outerW + 2*$slatT) * ($pungpanOn ? 3 : 2);
 $_ppV  = $pungpanVisible ? (int)round($innerW) * (int)round($ppPanelH) * $_pT : 0;
 $_ppA  = $pungpanVisible ? 2 * (int)round($innerW) * (int)round($ppPanelH) : 0;
-$_slH  = round($innerW + 2*$tenonDepth) * $hSlatCnt * $slatT * $_wS;
-$_slV  = round($innerH + 2*$tenonDepth) * $vSlatCnt * $slatT * $_wS;
-$_slHA = 2 * ($_wS + $slatT) * round($innerW + 2*$tenonDepth) * $hSlatCnt;
-$_slVA = 2 * ($_wS + $slatT) * round($innerH + 2*$tenonDepth) * $vSlatCnt;
+$_slH  = $_hSumLen / $doorCount * $slatT * $_wS;
+$_slV  = $_vSumLen / $doorCount * $slatT * $_wS;
+$_slHA = 2 * ($_wS + $slatT) * $_hSumLen / $doorCount;
+$_slVA = 2 * ($_wS + $slatT) * $_vSumLen / $doorCount;
 $_diagVolDoor = 0; $_diagLenDoor = 0;
 foreach ($diagList as $d) { $cntDoor = $d['cnt'] / $doorCount; $_diagVolDoor += $d['len'] * $cntDoor * $slatT * $_wS; $_diagLenDoor += $d['len'] * $cntDoor; }
 $_diagAreaDoor = 2 * ($_wS + $slatT) * $_diagLenDoor;
@@ -235,10 +275,11 @@ $parts = [
     'pungpanCnt'     => $doorCount . '개',
     'ppHLen'         => (string)round($innerW + 2 * $slatT),
     'ppVLen'         => (string)round($ppPanelH + 2 * $slatT),
-    'hSlatLen'       => (string)round($innerW + 2 * $tenonDepth),
-    'hSlatCnt'       => ($hSlatCnt * $doorCount) . '개',
-    'vSlatLen'       => (string)round($innerH + 2 * $tenonDepth),
-    'vSlatCnt'       => ($vSlatCnt * $doorCount) . '개',
+    'hSlatLen'       => (string)($_hLens ? max($_hLens) : round($innerW + 2 * $tenonDepth)),
+    'hSlatCnt'       => $hSlatCntAll . '개',
+    'vSlatLen'       => (string)($_vLens ? max($_vLens) : round($innerH + 2 * $tenonDepth)),
+    'vSlatCnt'       => $vSlatCntAll . '개',
+    'slatPieces'     => ['edited' => $_edited, 'h' => slat_edit_group_lens($_hLens), 'v' => slat_edit_group_lens($_vLens), 'perDoor' => $doorCount],
     'diagList'       => $diagList,
     'frT'            => $_wU,
     'slatW'          => $_wS,
@@ -252,7 +293,7 @@ $parts = [
     'woodJae'        => round($_woodJae, 2),
     'woodJae_door'   => round($_volDoor / $_JAE, 2),
     'woodJae_muntol' => round($_volMuntol / $_JAE, 2),
-    'joints'         => $cols * $rows,
+    'joints'         => $_jointsAdj,
     'physical'       => $perms['physical'] ? $physical : null,
 ];
 

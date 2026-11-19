@@ -38,6 +38,32 @@ function order_compute_estimate(string $engine, ?string $specJson, string $sourc
         'muntolOn'      => ($p['showMuntol'] ?? true) === false ? '0' : '1',
     ];
     $post = array_map(fn($v) => is_scalar($v) ? (string) $v : '', $post);
+    // 몬드리안: 저장된 레이아웃(mondrianLayout.lines, 비율 좌표)과 편집으로 브라우저 mondrianCostParams()와 같은 살 집계를 만든다
+    if ($engine === 'mondrian' && is_array($p['mondrianLayout']['lines'] ?? null)) {
+        $del = array_flip(array_filter((array)($p['deletedSegs'] ?? []), 'is_string'));
+        $hC = $vC = 0; $hL = $vL = 0.0;
+        foreach ($p['mondrianLayout']['lines'] as $idx => $ln) {
+            if (!is_array($ln) || isset($del["0:mo:$idx"])) continue;
+            $len = (float)($ln['to'] ?? 0) - (float)($ln['from'] ?? 0);
+            if (($ln['axis'] ?? '') === 'h') { $hC++; $hL += $len; } else { $vC++; $vL += $len; }
+        }
+        foreach ((array)($p['addedLines'] ?? []) as $ln) {
+            if (!is_array($ln) || isset($ln['xi1']) || !isset($ln['nx1'], $ln['nx2'], $ln['ny1'], $ln['ny2'])) continue;
+            $dx = abs((float)$ln['nx2'] - (float)$ln['nx1']); $dy = abs((float)$ln['ny2'] - (float)$ln['ny1']);
+            if ($dy < 0.001) { $hC++; $hL += $dx; } else { $vC++; $vL += $dy; }
+        }
+        $post['moHCnt'] = (string)$hC; $post['moVCnt'] = (string)$vC;
+        $post['moHLen'] = number_format($hL, 4, '.', ''); $post['moVLen'] = number_format($vL, 4, '.', '');
+    }
+    // 삼각·육각: 저장된 편집 집계(editPieces: 직선살 개수 + 사선살 길이별 개수)를 그대로 넘긴다 — geometry.php가 범위를 검증한다
+    if (in_array($engine, ['triangle', 'hexagon'], true) && !empty($p['editPieces']) && is_array($p['editPieces'])) {
+        $post['editPieces'] = json_encode($p['editPieces']);
+    }
+    // 정자살·클래식·다이아몬드·십자: 편집(지운 살 조각·추가선)을 원가에 반영 — 배열은 위 scalar 필터에서 빠지므로 JSON 문자열로 따로 넘긴다
+    if (in_array($engine, ['square', 'classic', 'diamond', 'cross'], true)) {
+        if (!empty($p['deletedSegs']) && is_array($p['deletedSegs'])) $post['deletedSegs'] = json_encode(array_values($p['deletedSegs']));
+        if (!empty($p['addedLines'])  && is_array($p['addedLines']))  $post['addedLines']  = json_encode(array_values($p['addedLines']));
+    }
 
     $savedPost = $_POST;
     $savedDisplay = ini_get('display_errors');
@@ -65,6 +91,7 @@ function order_compute_estimate(string $engine, ?string $specJson, string $sourc
     $b['leadTimeDays'] = $geo['price']['leadTimeDays'] ?? null;
     $b['computedAt']   = date('Y-m-d H:i:s');
     $b['source']       = $source;
-    if ($engine === 'mondrian') $b['approx'] = true;
+    // 몬드리안도 저장된 레이아웃으로 살 집계를 다시 만들 수 있으면 근사값이 아니다(구버전 spec은 레이아웃이 없어 기본 격자 근사)
+    if ($engine === 'mondrian' && empty($post['moHCnt'])) $b['approx'] = true;
     return ['breakdown' => $b];
 }
