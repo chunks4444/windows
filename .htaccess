@@ -32,10 +32,11 @@ RewriteRule ^en/(.*)$ $1
 # 민감 파일/디렉토리 웹 접근 차단 — git pull로 직접 배포하는 구조라 .git 폴더가 웹루트에
 # 그대로 있는데 이걸 막는 규칙이 없어서 히스토리 전체(과거 커밋된 시크릿 포함)가 공개돼 있었음
 # (2026-08-08 최초 발견, 같은 날 실수로 되돌려져 재노출됨(d19ffb7) — 2026-08-10 재적용).
-# logs/(에러로그), CLAUDE.md(내부 아키텍처 문서)도 같이 차단.
+# logs/(에러로그), 루트의 내부 문서(*.md)·작업 도구 설정 폴더(.claude)도 같이 차단.
 RewriteRule (^|/)\.git(/|$) - [F,L]
 RewriteRule ^logs(/|$) - [F,L]
-RewriteRule ^CLAUDE\.md$ - [F,L]
+RewriteRule ^[^/]+\.md$ - [F,L]
+RewriteRule ^\.claude(/|$) - [F,L]
 
 # 예전 워드프레스(Avada+우커머스) 시절 URL이 아직 검색에 남아있음(예: /product/느티나무-도마/).
 # robots.txt로 이 경로들을 막아뒀던 게 오히려 문제였음 — 구글이 재크롤링을 못 하니 410/404를
