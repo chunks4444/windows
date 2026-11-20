@@ -31,12 +31,55 @@ function pfRender(data) {
     btns.style.display = 'flex';
 }
 
+
+function pfWho(r) {
+    if (r.user_id) {
+        const nm = r.name ? pfEsc(r.name) : '(이름 없음)';
+        return nm + (r.email ? ' <span style="color:var(--text-muted);">' + pfEsc(r.email) + '</span>' : '');
+    }
+    if (r.ip) return pfEsc(r.ip);
+    return '<span style="color:var(--text-muted);">IP 삭제됨 · ' + pfEsc(r.ip_hash || '-') + '</span>';
+}
+
+function pfKind(r) {
+    return r.user_id ? '회원' : '비회원';
+}
+
+function pfDlRender(d) {
+    const sum = document.getElementById('pfDlSummary');
+    const body = document.getElementById('pfDlPeople');
+    const recent = document.getElementById('pfDlRecent');
+    if (!d) { sum.textContent = ''; body.innerHTML = ''; recent.innerHTML = ''; return; }
+    const t = d.totals;
+    sum.innerHTML =
+        '내려받기 <strong>' + t.dl + '</strong>회 · 바로 보기 <strong>' + t.view + '</strong>회 · 안내 화면 <strong>' + t.landing + '</strong>회<br>' +
+        '<span style="color:var(--text-muted);font-size:13px;">사람 ' + t.people + '명 (회원 ' + t.members + ' · 비회원 ' + t.guests + ')</span>';
+    if (!d.people.length) {
+        body.innerHTML = '<tr><td colspan="8" style="color:var(--text-muted);">아직 기록이 없습니다.</td></tr>';
+    } else {
+        body.innerHTML = d.people.map(r =>
+            '<tr><td>' + pfWho(r) + '</td><td>' + pfKind(r) + '</td>' +
+            '<td class="text-end">' + r.dl + '</td><td class="text-end">' + r.view_cnt + '</td><td class="text-end">' + r.landing + '</td>' +
+            '<td>' + (r.from_company > 0 ? '회사 소개' : '링크') + (r.bot_hits > 0 ? ' <span style="color:var(--text-muted);">· 봇 ' + r.bot_hits + '</span>' : '') + '</td>' +
+            '<td>' + pfEsc((r.first_at || '').slice(0, 16)) + '</td><td>' + pfEsc((r.last_at || '').slice(0, 16)) + '</td></tr>'
+        ).join('');
+    }
+    const modeLabel = { dl: '내려받기', view: '바로 보기', landing: '안내 화면' };
+    recent.innerHTML = d.recent.length ? d.recent.map(r =>
+        '<tr><td>' + pfEsc((r.created_at || '').slice(0, 16)) + '</td><td>' + pfWho(r) + '</td><td>' + (modeLabel[r.mode] || pfEsc(r.mode)) +
+        (r.visitor_type && r.visitor_type !== 'human' ? ' <span style="color:var(--text-muted);">· 봇</span>' : '') + '</td>' +
+        '<td>' + (r.source === 'company' ? '회사 소개' : '링크') + '</td></tr>'
+    ).join('') : '<tr><td colspan="4" style="color:var(--text-muted);">아직 기록이 없습니다.</td></tr>';
+}
+
 async function pfLoad() {
     try {
-        const res = await fetch(PF_API, { headers: { Authorization: 'Bearer ' + PF_TOKEN() } });
+        const all = document.getElementById('pfDlAll')?.checked;
+        const res = await fetch(PF_API + (all ? '?all=1' : ''), { headers: { Authorization: 'Bearer ' + PF_TOKEN() } });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || '불러오기 실패');
         pfRender(data);
+        pfDlRender(data.downloads);
     } catch (e) {
         document.getElementById('pfCurrent').textContent = '불러오지 못했습니다: ' + (e.message || e);
     }
@@ -76,6 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     authUpdateNav();
 
     document.getElementById('pfUpload').addEventListener('click', pfUpload);
+    document.getElementById('pfDlAll').addEventListener('change', pfLoad);
     document.getElementById('pfCopy').addEventListener('click', async e => {
         const url = e.currentTarget.dataset.url || '';
         try { await navigator.clipboard.writeText(url); pfStatus('링크를 복사했습니다.', true); }

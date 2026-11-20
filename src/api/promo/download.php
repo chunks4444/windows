@@ -2,8 +2,12 @@
 // 홍보메일 첨부 PDF 다운로드 — 메일 속 "포트폴리오 다운로드" 버튼이 가리키는 공개 주소.
 // 저장 파일명(32자리 무작위 16진수 + .pdf)을 아는 사람만 받을 수 있고, 그 외 경로는 열지 않는다.
 require_once __DIR__ . '/../../lib/db.php';
+require_once __DIR__ . '/../../lib/portfolio_dl_log.php';
 
 $f = (string)($_GET['f'] ?? '');
+// 회사 소개 페이지의 모달 버튼은 &src=company 를 붙여 부른다 — 기록에서 '회사 소개'와 그 밖(홍보메일 등)을 가르는 표시
+$src = ($_GET['src'] ?? '') === 'company' ? 'company' : 'link';
+$srcQ = $src === 'company' ? '&src=company' : '';
 if (!preg_match('/^[0-9a-f]{32}\.pdf$/', $f)) { http_response_code(404); exit; }
 
 $file = __DIR__ . '/../../../uploads/promo/' . $f;
@@ -28,6 +32,7 @@ try {
 $ascii = preg_replace('/[^A-Za-z0-9._-]+/', '_', $name);
 if ($ascii === '' || $ascii === '.pdf') $ascii = 'portfolio.pdf';
 
+
 // ── 세 가지 응답 ──────────────────────────────────────────────────────────────
 //   ?f=…            안내 화면: 다운로드가 자동으로 시작되고, 안 되면 큰 버튼을 누른다 (메일 속 링크는 이 주소)
 //   ?f=…&dl=1       파일로 내려받기 (attachment)
@@ -35,10 +40,11 @@ if ($ascii === '' || $ascii === '.pdf') $ascii = 'portfolio.pdf';
 // 메일 링크가 곧바로 attachment를 돌려주면, 크롬 등은 화면 없이 조용히 받아 새 탭이 빈 화면으로 남고, 메일 앱 안의 간이
 // 브라우저는 아무 반응이 없다 (2026-11-09 "다운로드 안됨·빈 화면" 신고). 그래서 먼저 눈에 보이는 안내 화면을 보여준다.
 if (empty($_GET['dl']) && empty($_GET['view'])) {
+    portfolio_dl_record('landing', $src, $f);
     $h = fn($s) => htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8');
     $base = '?f=' . rawurlencode($f);
-    $dlUrl = $base . '&dl=1';
-    $viewUrl = $base . '&view=1';
+    $dlUrl = $base . '&dl=1' . $srcQ;
+    $viewUrl = $base . '&view=1' . $srcQ;
     $mb = number_format(filesize($file) / 1048576, 1);
     header('Content-Type: text/html; charset=UTF-8');
     header('Cache-Control: no-store');
@@ -86,6 +92,7 @@ if (empty($_GET['dl']) && empty($_GET['view'])) {
 }
 
 $disposition = !empty($_GET['dl']) ? 'attachment' : 'inline';
+portfolio_dl_record($disposition === 'attachment' ? 'dl' : 'view', $src, $f);
 header('Content-Type: application/pdf');
 header('Content-Disposition: ' . $disposition . '; filename="' . $ascii . '"; filename*=UTF-8\'\'' . rawurlencode($name));
 header('Content-Length: ' . filesize($file));

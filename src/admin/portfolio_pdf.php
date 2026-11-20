@@ -62,6 +62,36 @@ require_admin_role('s');
         </div>
 
     </div>
+
+    <div style="max-width:880px;margin:32px auto 0;">
+        <div class="oauth-card">
+            <div class="oauth-card-header">
+                <div class="oauth-card-logo" style="background:var(--accent);color:var(--bg);font-size:14px;">↓</div>
+                <span class="oauth-card-title">다운로드 기록</span>
+            </div>
+            <div class="oauth-callback">누가·언제·몇 번 열람하거나 내려받았는지 기록합니다. 회원은 이름·이메일, 비회원은 IP로 구분하고, 비회원 IP는 1년 뒤 지워집니다. 회사 소개의 버튼과 홍보메일 링크 모두 같은 기록에 쌓입니다.</div>
+            <label style="display:flex;gap:8px;align-items:center;font-size:13px;margin:0 0 12px;cursor:pointer;">
+                <input type="checkbox" id="pfDlAll">
+                <span>봇·관리자 계정의 열람도 포함 <span style="color:var(--text-muted);font-size:12px;">(메일 앱·메신저가 링크를 미리 열어 보는 기록이 섞여 있어 기본은 뺍니다)</span></span>
+            </label>
+            <div id="pfDlSummary" style="font-size:14px;line-height:1.8;margin-bottom:10px;">불러오는 중…</div>
+            <div style="overflow-x:auto;">
+                <table class="table table-sm" style="font-size:13px;min-width:640px;">
+                    <thead><tr><th>누구</th><th>구분</th><th class="text-end">내려받기</th><th class="text-end">바로 보기</th><th class="text-end">안내 화면</th><th>경로</th><th>처음</th><th>마지막</th></tr></thead>
+                    <tbody id="pfDlPeople"></tbody>
+                </table>
+            </div>
+            <details style="margin-top:12px;">
+                <summary style="cursor:pointer;font-size:13px;">최근 기록 (최대 60건)</summary>
+                <div style="overflow-x:auto;margin-top:8px;">
+                    <table class="table table-sm" style="font-size:13px;min-width:560px;">
+                        <thead><tr><th>시각</th><th>누구</th><th>동작</th><th>경로</th></tr></thead>
+                        <tbody id="pfDlRecent"></tbody>
+                    </table>
+                </div>
+            </details>
+        </div>
+    </div>
 </div>
 
 <script src="/src/js/admin/portfolio_pdf.js?v=<?= md5_file(__DIR__ . '/../js/admin/portfolio_pdf.js') ?>"></script>

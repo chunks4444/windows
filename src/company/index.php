@@ -370,8 +370,8 @@ function sc_desc(array $cardsByKey, string $key, string $fallbackKey): string {
             <?php endif; ?>
             <h5 class="ab-pdf-title"><?= htmlspecialchars(t('company_portfolio_pdf_title')) ?></h5>
             <p class="ab-pdf-file"><?= htmlspecialchars($portfolioPdf['name']) ?> · <?= (int)$portfolioPdf['mb'] ?>MB</p>
-            <a class="ab-pdf-btn" id="abPdfDl" href="<?= htmlspecialchars($portfolioPdf['url']) ?>&amp;dl=1" download><?= htmlspecialchars(t('company_portfolio_pdf_dl')) ?></a>
-            <a class="ab-pdf-sub" href="<?= htmlspecialchars($portfolioPdf['url']) ?>&amp;view=1" target="_blank" rel="noopener"><?= htmlspecialchars(t('company_portfolio_pdf_view')) ?></a>
+            <a class="ab-pdf-btn" id="abPdfDl" href="<?= htmlspecialchars($portfolioPdf['url']) ?>&amp;dl=1&amp;src=company" download><?= htmlspecialchars(t('company_portfolio_pdf_dl')) ?></a>
+            <a class="ab-pdf-sub" href="<?= htmlspecialchars($portfolioPdf['url']) ?>&amp;view=1&amp;src=company" target="_blank" rel="noopener"><?= htmlspecialchars(t('company_portfolio_pdf_view')) ?></a>
         </div>
     </div>
 </div>

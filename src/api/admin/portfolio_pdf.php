@@ -10,6 +10,7 @@ require_once __DIR__ . '/../../lib/db.php';
 require_once __DIR__ . '/../../lib/jwt.php';
 require_once __DIR__ . '/../../lib/promo_mail.php';
 require_once __DIR__ . '/../../lib/portfolio_pdf.php';
+require_once __DIR__ . '/../../lib/portfolio_dl_log.php';
 
 $payload = jwt_from_request();
 if (!$payload || ($payload['role'] ?? '') !== 's') {
@@ -54,7 +55,8 @@ function current_payload(PDO $pdo): array {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    echo json_encode(['ok' => true] + current_payload($pdo), JSON_UNESCAPED_UNICODE);
+    // 다운로드 기록 집계 — ?all=1 이면 봇·관리자 계정의 열람도 포함
+    echo json_encode(['ok' => true] + current_payload($pdo) + ['downloads' => portfolio_dl_report($pdo, !empty($_GET['all']))], JSON_UNESCAPED_UNICODE);
     exit;
 }
 
