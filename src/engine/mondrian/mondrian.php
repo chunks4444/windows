@@ -321,6 +321,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                         </div>
                         <button type="button" id="btnResetSettings" class="door-reset-btn" title="<?= te('도면 설정값 초기화') ?>"><i class="bi bi-arrow-counterclockwise"></i><span><?= te('초기화') ?></span></button>
                     </div>
+                    <?php include __DIR__ . "/../../components/engine-switch.php"; ?>
 
                     <hr class="sb-divider">
 

@@ -2204,7 +2204,6 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
         cloneDoorPatternToNewDoors(lastDrawnDoorCount, parseInt(txtDoorCount.value));
         draw();
     });
-    bindCommonDefaultPersist();
     document.getElementById('chkRotate').addEventListener('change', e => {
         rotateOn = e.target.checked;
         draw();
@@ -2683,6 +2682,11 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
             isShared = false;
             updateShareButtonUI();
             applyParams(data.versions[0].params);
+            const _oldDoors = parseInt(txtDoorCount.value) || 1;
+            if (restoreStashedDoorSettings()) {
+                updateDoorCountOptions();
+                cloneDoorPatternToNewDoors(_oldDoors, parseInt(txtDoorCount.value) || 1);
+            }
             document.getElementById('drawingName').value    = '';
             document.getElementById('verLabel').textContent = '—';
             localStorage.removeItem(CURRENT_TITLE_KEY);
@@ -3056,7 +3060,6 @@ document.getElementById('chkMuntol')?.addEventListener('change', e => { showMunt
         pmConfirm(_t('도면 설정값을 기본값으로 초기화하시겠습니까?'), () => {
             const p = JSON.parse(JSON.stringify(defaultParams));
             p.name = document.getElementById('drawingName').value;
-            clearCommonDefaults();
             applyParams(p);
         }, { sub: _t('문 크기·살·칸 수와 선 편집·색칠·마감이 모두 처음 값으로 돌아갑니다. 저장된 버전은 그대로 남습니다.'), confirmText: _t('초기화') });
     });

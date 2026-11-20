@@ -153,8 +153,8 @@
                     card.innerHTML = (p.image_path ? `<img src="${esc(p.image_path)}" alt="" loading="lazy">` : '<div class="thumb-ph"><i class="bi bi-image"></i></div>')
                         + `<span class="thumb-name">${esc(name)}</span>`;
                     card.addEventListener('click', () => {
-                        const url = lh(p.editor_url) + '?drawing_id=' + encodeURIComponent(p.drawing_id);
-                        pmConfirm(_t('이 컬렉션 도면을 여시겠습니까?'), () => { location.href = url; },
+                        const url = lh(p.editor_url) + '?drawing_id=' + encodeURIComponent(p.drawing_id) + '&keep=door';
+                        pmConfirm(_t('이 컬렉션 도면을 여시겠습니까?'), () => { stashDoorSettings(); location.href = url; },
                             { sub: _t('저장하지 않은 작업은 사라집니다.'), type: 'primary', confirmText: _t('열기') });
                     });
                     grid.appendChild(card);
@@ -279,8 +279,8 @@
                 items.forEach(p => {
                     if (!p.drawing_id || !p.engine) return;
                     g.appendChild(boardCard(p.image_path, p.display_name || p.name_ko || '', '', () => {
-                        const url = lh('/src/engine/' + p.engine + '/' + p.engine + '.php') + '?drawing_id=' + encodeURIComponent(p.drawing_id);
-                        pmConfirm(_t('이 컬렉션 도면을 여시겠습니까?'), () => { location.href = url; },
+                        const url = lh('/src/engine/' + p.engine + '/' + p.engine + '.php') + '?drawing_id=' + encodeURIComponent(p.drawing_id) + '&keep=door';
+                        pmConfirm(_t('이 컬렉션 도면을 여시겠습니까?'), () => { stashDoorSettings(); location.href = url; },
                             { sub: _t('저장하지 않은 작업은 사라집니다.'), type: 'primary', confirmText: _t('열기') });
                     }));
                 });
@@ -984,4 +984,22 @@
         bar.classList.add('cv-dock');
         bar.append(tools, zoom);
     });
+})();
+
+
+(function () {
+    function bindEngineSwitch() {
+        const sel = document.getElementById('selEngineSwitch');
+        if (!sel) return;
+        const current = sel.value;
+        sel.addEventListener('change', () => {
+            const target = sel.value;
+            if (target === current) return;
+            sel.value = current;
+            pmConfirm(_t('이 살 모양으로 바꾸시겠습니까?'), () => { stashDoorSettings(); location.href = target + '?keep=door'; },
+                { sub: _t('저장하지 않은 작업은 사라집니다. 문 설정은 그대로 가져갑니다.'), type: 'primary', confirmText: _t('바꾸기') });
+        });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bindEngineSwitch);
+    else bindEngineSwitch();
 })();

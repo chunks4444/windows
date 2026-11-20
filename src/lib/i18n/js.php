@@ -227,6 +227,9 @@ return [
     // src/js/engine-common.js — 툴 레일 패널
     '이 컬렉션 도면을 여시겠습니까?'                 => 'Open this collection drawing?',
     '저장하지 않은 작업은 사라집니다.'               => 'Any unsaved work will be lost.',
+    '이 살 모양으로 바꾸시겠습니까?'                 => 'Switch to this slat pattern?',
+    '저장하지 않은 작업은 사라집니다. 문 설정은 그대로 가져갑니다.' => 'Any unsaved work will be lost. Your door settings carry over.',
+    '바꾸기'                                         => 'Switch',
     '로그인하면 저장한 도면을 여기서 볼 수 있습니다.' => 'Log in to see your saved drawings here.',
     '로그인'                                         => 'Log in',
     'SVG 다운로드'                                   => 'Download SVG',

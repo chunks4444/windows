@@ -1139,56 +1139,42 @@
         animatePanelResize();
     }
 
-    // 문틀 가로/세로, 울거미 두께, 살두께, 칸수, 문짝종류·짝수, 풍판 — 7개 엔진에 전부 같은 의미로 있는 값들이라
-    // 엔진을 바꿔도(= 새 페이지 로드) 마지막으로 쓰던 값을 그대로 이어서 보여준다.
-    // 저장된 도면을 불러오거나 "새 도면"으로 초기화할 때는 적용하지 않는다 — 처음 들어왔을 때만.
-    const COMMON_DEFAULT_IDS = { txtW: 'W', txtH: 'H', txtFrame: 'frame', txtFrameH: 'frameH', txtSlat: 'slat', txtCols: 'cols', txtPungpan: 'pungpan', txtDoorType: 'doorType', txtDoorCount: 'doorCount' };
-    const COMMON_DEFAULT_CHECKBOX_IDS = { chkPungpan: 'pungpanOn' }; // 체크박스는 .value가 아니라 .checked라 따로 처리
-    function persistCommonDefault(key, value) {
-        try { localStorage.setItem('pmok_common_' + key, value); } catch {}
-    }
-    // 문 설정 '초기화' 때 — 엔진을 옮겨 다녀도 이어지던 '마지막에 쓴 값'까지 지워야 다른 엔진에서도 기본값으로 시작한다
-    function clearCommonDefaults() {
-        [...Object.values(COMMON_DEFAULT_IDS), ...Object.values(COMMON_DEFAULT_CHECKBOX_IDS)]
-            .forEach(key => { try { localStorage.removeItem('pmok_common_' + key); } catch {} });
-    }
-    function readCommonDefault(key) {
-        try { return localStorage.getItem('pmok_common_' + key); } catch { return null; }
-    }
-    function bindCommonDefaultPersist() {
-        Object.entries(COMMON_DEFAULT_IDS).forEach(([id, key]) => {
-            const el    = document.getElementById(id);
-            const numEl = document.getElementById('num' + key.charAt(0).toUpperCase() + key.slice(1));
-            // 가로·세로 같은 값은 슬라이더를 끌기보다 숫자칸에 직접 입력하는 경우가 많아,
-            // 슬라이더(el)뿐 아니라 숫자칸(numEl)에서도 바뀔 때 같이 기억해야 한다.
-            const persist = () => persistCommonDefault(key, (el || numEl)?.value);
-            el?.addEventListener('input', persist);
-            el?.addEventListener('change', persist);
-            numEl?.addEventListener('input', persist);
-            numEl?.addEventListener('change', persist);
-            numEl?.addEventListener('blur', persist);
-        });
-        Object.entries(COMMON_DEFAULT_CHECKBOX_IDS).forEach(([id, key]) => {
+    const KEEP_DOOR_KEY = 'pmok_keep_door';
+    const KEEP_DOOR_FIELDS = { txtW: 'numW', txtH: 'numH', txtFrame: 'numFrame', txtFrameH: 'numFrameH', txtPungpan: 'numPungpan', txtDoorType: null, txtDoorCount: null };
+    function stashDoorSettings() {
+        const o = {};
+        Object.keys(KEEP_DOOR_FIELDS).forEach(id => {
             const el = document.getElementById(id);
-            el?.addEventListener('change', () => persistCommonDefault(key, el.checked ? '1' : '0'));
+            if (el) o[id] = el.value;
         });
+        const pp = document.getElementById('chkPungpan');
+        if (pp) o.chkPungpan = pp.checked ? '1' : '0';
+        try { sessionStorage.setItem(KEEP_DOOR_KEY, JSON.stringify(o)); } catch {}
+    }
+    function restoreStashedDoorSettings() {
+        if (new URLSearchParams(location.search).get('keep') !== 'door') return false;
+        let o = null;
+        try {
+            o = JSON.parse(sessionStorage.getItem(KEEP_DOOR_KEY) || 'null');
+            sessionStorage.removeItem(KEEP_DOOR_KEY);
+        } catch { return false; }
+        if (!o) return false;
+        Object.entries(KEEP_DOOR_FIELDS).forEach(([id, numId]) => {
+            if (o[id] === undefined) return;
+            const el = document.getElementById(id);
+            if (el) el.value = o[id];
+            const numEl = numId ? document.getElementById(numId) : null;
+            if (numEl) numEl.value = o[id];
+        });
+        const pp = document.getElementById('chkPungpan');
+        if (pp && o.chkPungpan !== undefined) {
+            pp.checked = o.chkPungpan === '1';
+            pp.dispatchEvent(new Event('change'));
+        }
+        return true;
     }
     function applyCommonDefaults() {
-        Object.entries(COMMON_DEFAULT_IDS).forEach(([id, key]) => {
-            const el = document.getElementById(id);
-            const saved = readCommonDefault(key);
-            if (!el || saved === null) return;
-            el.value = saved;
-            const numEl = document.getElementById('num' + key.charAt(0).toUpperCase() + key.slice(1));
-            if (numEl) numEl.value = saved;
-        });
-        Object.entries(COMMON_DEFAULT_CHECKBOX_IDS).forEach(([id, key]) => {
-            const el = document.getElementById(id);
-            const saved = readCommonDefault(key);
-            if (!el || saved === null) return;
-            el.checked = saved === '1';
-            el.dispatchEvent(new Event('change'));
-        });
+        restoreStashedDoorSettings();
     }
 
     function updateDoorCountOptions() {
