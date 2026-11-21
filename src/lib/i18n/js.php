@@ -226,6 +226,7 @@ return [
 
     // src/js/engine-common.js — 툴 레일 패널
     '이 컬렉션 도면을 여시겠습니까?'                 => 'Open this collection drawing?',
+    '이 도면을 여시겠습니까?'                         => 'Open this drawing?',
     '저장하지 않은 작업은 사라집니다.'               => 'Any unsaved work will be lost.',
     '이 살 모양으로 바꾸시겠습니까?'                 => 'Switch to this slat pattern?',
     '저장하지 않은 작업은 사라집니다. 문 설정은 그대로 가져갑니다.' => 'Any unsaved work will be lost. Your door settings carry over.',

@@ -142,7 +142,7 @@ class Drawing {
     }
 
     // 유저의 전체 도면 목록 (타입 무관, 대시보드용) - 썸네일 미포함, 별도 thumbnails()로 lazy 로딩
-    static function list_all(int $userId, int $page = 1, int $limit = 20, string $q = ''): array {
+    static function list_all(int $userId, int $page = 1, int $limit = 20, string $q = '', string $type = ''): array {
         $pdo    = db();
         $offset = ($page - 1) * $limit;
         $lockedAtExpr = self::lockedAtExpr('d');
@@ -152,6 +152,10 @@ class Drawing {
         if ($q !== '') {
             $qWhere = ' AND d.title LIKE ?';
             $params[] = '%' . $q . '%';
+        }
+        if ($type !== '') {
+            $qWhere .= ' AND d.type = ?';
+            $params[] = $type;
         }
         $stmt   = $pdo->prepare(
             "SELECT d.id, d.type, d.title, d.pattern_category, d.is_shared,

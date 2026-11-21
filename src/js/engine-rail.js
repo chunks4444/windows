@@ -329,58 +329,102 @@
             if (dateEl) dateEl.textContent = vs[cur] ? fmtDate(vs[cur].savedAt) : _t('저장된 버전이 없습니다');
         }
 
-        async function refreshList() {
+        const mineFilter = document.getElementById('mineEngineFilter');
+        const mineMore = document.createElement('button');
+        mineMore.type = 'button';
+        mineMore.className = 'hbtn pane-more';
+        mineMore.textContent = _t('더 보기');
+        mineMore.hidden = true;
+        grid.after(mineMore);
+        let minePage = 1;
+        const engineLabel = t => mineFilter?.querySelector(`option[value="${t}"]`)?.textContent || t;
+        const engineHref = t => mineFilter?.querySelector(`option[value="${t}"]`)?.dataset.href || '';
+
+        function openOtherEngine(d) {
+            const href = engineHref(d.type);
+            if (!href) return;
+            pmConfirm(_t('이 도면을 여시겠습니까?'), () => {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = href;
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'drawing';
+                input.value = d.title;
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit();
+            }, { sub: _t('저장하지 않은 작업은 사라집니다.'), type: 'primary', confirmText: _t('열기') });
+        }
+
+        async function refreshList(append) {
+            const more = append === true;
             if (!token()) {
                 grid.innerHTML = emptyMsg(_t('로그인하면 저장한 도면을 여기서 볼 수 있습니다.'), _t('로그인'));
                 grid.querySelector('.pane-login-btn')?.addEventListener('click', () => pmokRequireAuth(refreshList));
+                mineMore.hidden = true;
                 return;
             }
-            if (!grid.children.length) grid.innerHTML = emptyMsg(_t('불러오는 중…'));
-            const drawings = await window.DrawingSync.list(_engineName());
-            if (!drawings.length) { grid.innerHTML = emptyMsg(_t('저장된 도면이 없습니다')); return; }
+            if (!more) {
+                minePage = 1;
+                if (!grid.children.length) grid.innerHTML = emptyMsg(_t('불러오는 중…'));
+            }
+            const type = mineFilter?.value || '';
+            let data = null;
+            try {
+                const res = await fetch('/src/api/drawings/dashboard.php?page=' + minePage + (type ? '&type=' + encodeURIComponent(type) : ''), { headers: authHeaders() });
+                data = await res.json();
+            } catch {}
+            const drawings = data?.drawings || [];
+            if (!more) grid.innerHTML = '';
+            if (!drawings.length && !more) {
+                grid.innerHTML = emptyMsg(_t('저장된 도면이 없습니다'));
+                mineMore.hidden = true;
+                return;
+            }
             const curTitle = (document.getElementById('drawingName')?.value || '').trim();
-            grid.innerHTML = '';
             const cards = {};
             drawings.forEach(d => {
-                // 카드 안에 삭제 버튼(<button>)이 들어가므로 카드 자체는 div — 버튼 안에 버튼은 넣을 수 없다
+                const mine = d.type === _engineName();
                 const card = document.createElement('div');
-                card.className = 'thumb-card' + (d.title === curTitle ? ' active' : '');
+                card.className = 'thumb-card' + (mine && d.title === curTitle ? ' active' : '');
                 card.title = d.title;
                 card.tabIndex = 0;
                 card.setAttribute('role', 'button');
                 card.innerHTML = '<div class="thumb-ph"><i class="bi bi-image"></i></div>'
                     + `<span class="thumb-name">${d.locked_at ? '<i class="bi bi-lock-fill"></i> ' : ''}${esc(d.title)}</span>`
+                    + `<span class="thumb-eng">${esc(engineLabel(d.type))}</span>`
                     + `<span class="thumb-date">${esc(fmtDate(new Date(d.updated_at).getTime()))}</span>`
-                    + `<div class="tile-acts"><button type="button" class="tile-act thumb-ren" title="${esc(_t('이름 변경'))}"><i class="bi bi-pencil"></i></button>`
-                    + `<button type="button" class="tile-act tile-act-del thumb-del" title="${esc(_t('삭제'))}"><i class="bi bi-trash3"></i></button></div>`;
+                    + (mine ? `<div class="tile-acts"><button type="button" class="tile-act thumb-ren" title="${esc(_t('이름 변경'))}"><i class="bi bi-pencil"></i></button>`
+                    + `<button type="button" class="tile-act tile-act-del thumb-del" title="${esc(_t('삭제'))}"><i class="bi bi-trash3"></i></button></div>` : '');
                 card.addEventListener('click', async e => {
+                    if (!mine) { openOtherEngine(d); return; }
                     if (e.target.closest('.tile-acts')) return;
                     if (d.title === (document.getElementById('drawingName')?.value || '').trim()) return;
                     await openDrawingByTitle(d.title);
-                    // 목록 전체를 다시 불러와 그리면(refreshList) 깜빡여서, 활성 표시만 옮긴다
                     grid.querySelectorAll('.thumb-card.active').forEach(c => c.classList.remove('active'));
                     card.classList.add('active');
                 });
-                // 이름 변경 — 엔진 JS의 이름 변경 창(showRenameModal)을 그대로 연다. 견적요청 중인 도면은 삭제와 같이 막는다
-                card.querySelector('.thumb-ren').addEventListener('click', e => {
-                    e.stopPropagation();
-                    if (d.locked_at) { pmAlert(_t('이 도면은 견적요청 중이라 이름을 바꿀 수 없습니다.'), { type: 'danger' }); return; }
-                    window.pmokShowRename?.(d.title);
-                });
-                // 삭제 — 도면 목록 모달(refreshDrawingList)의 삭제와 같은 규칙: 견적요청 중이면 불가, 지금 연 도면이면 새 도면으로
-                card.querySelector('.thumb-del').addEventListener('click', e => {
-                    e.stopPropagation();
-                    if (d.locked_at) { pmAlert(_t('이 도면은 견적요청 중이라 삭제할 수 없습니다.'), { type: 'danger' }); return; }
-                    pmConfirm(_t('"%s" 도면을 삭제하시겠습니까?', d.title), async () => {
-                        await window.DrawingSync.delete(_engineName(), d.title);
-                        if (d.title === (document.getElementById('drawingName')?.value || '').trim()) click('btnNewDrawing');
-                        refreshList();
-                    }, { sub: _t('모든 버전이 함께 삭제됩니다.') });
-                });
+                if (mine) {
+                    card.querySelector('.thumb-ren').addEventListener('click', e => {
+                        e.stopPropagation();
+                        if (d.locked_at) { pmAlert(_t('이 도면은 견적요청 중이라 이름을 바꿀 수 없습니다.'), { type: 'danger' }); return; }
+                        window.pmokShowRename?.(d.title);
+                    });
+                    card.querySelector('.thumb-del').addEventListener('click', e => {
+                        e.stopPropagation();
+                        if (d.locked_at) { pmAlert(_t('이 도면은 견적요청 중이라 삭제할 수 없습니다.'), { type: 'danger' }); return; }
+                        pmConfirm(_t('"%s" 도면을 삭제하시겠습니까?', d.title), async () => {
+                            await window.DrawingSync.delete(_engineName(), d.title);
+                            if (d.title === (document.getElementById('drawingName')?.value || '').trim()) click('btnNewDrawing');
+                            refreshList();
+                        }, { sub: _t('모든 버전이 함께 삭제됩니다.') });
+                    });
+                }
                 cards[d.id] = card;
                 grid.appendChild(card);
             });
-            // 썸네일은 목록 API에 없어서 따로 한 번에 받아온다 (대시보드와 같은 방식)
+            mineMore.hidden = !data?.has_more;
             try {
                 const res = await fetch('/src/api/drawings/thumbnails.php', {
                     method: 'POST', headers: authHeaders(), body: JSON.stringify({ ids: drawings.map(d => d.id) }),
@@ -392,6 +436,9 @@
                 });
             } catch {}
         }
+
+        mineFilter?.addEventListener('change', () => refreshList());
+        mineMore.addEventListener('click', () => { minePage++; refreshList(true); });
 
         loaders.file = () => { renderVerDate(); refreshList(); };
         document.addEventListener('pmok:drawing-renamed', refreshList);

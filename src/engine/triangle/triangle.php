@@ -290,6 +290,7 @@ if ($_pmokIsSharedView && $_pmokAdminView) {
                         </button>
                 </div>
                 <div class="pane-subtitle"><?= te('내 도면') ?></div>
+                <?php include __DIR__ . "/../../components/drawing-filter.php"; ?>
                 <div class="thumb-grid" id="mineGrid"></div>
             </section>
             <section class="rail-pane" data-pane="door">

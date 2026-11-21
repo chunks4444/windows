@@ -14,6 +14,7 @@ return [
     // ── 문 설정 ─────────────────────────────────────
     '문 설정'                 => 'Door settings',
     '살 바꾸기'               => 'Change slat pattern',
+    '전체'                    => 'All',
     '여닫이'                  => 'Hinged',
     '미서기'                  => 'Sliding',
     '1짝'                     => '1 panel',

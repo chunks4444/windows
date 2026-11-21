@@ -596,3 +596,5 @@ body.pm-generator.pm-light .pm-nav-prompt-btn { background: #1F2328; color: #FFF
     .cv-dims { display: none; }
 }
 .rail-pane .engine-switch { margin-top: 10px; }
+.rail-pane #mineEngineFilter { margin-bottom: 8px; }
+.thumb-card .thumb-eng { font-size: 10px; color: #6B7280; margin-top: -3px; }
