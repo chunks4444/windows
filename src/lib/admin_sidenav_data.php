@@ -45,9 +45,6 @@ return [
         ['promo_campaigns.php',  'bi-envelope-paper',  '홍보메일 발송'],
         ['portfolio_pdf.php',    'bi-file-earmark-pdf', '포트폴리오 PDF'],
     ]],
-    ['title' => '다다호텔', 'items' => [
-        ['dada_bookings.php',    'bi-building',        '예약 데이터'],
-    ]],
     ['title' => '회원 관리', 'items' => [
         ['users.php',            'bi-shield-lock',     '회원 목록/권한'],
     ]],

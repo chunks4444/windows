@@ -56,7 +56,6 @@ try {
         'sub'   => $user['id'],
         'email' => $user['email'],
         'role'  => $user['role'],
-        'via'   => 'pw',
         'iat'   => time(),
         'exp'   => time() + JWT_EXPIRE,
     ]);
