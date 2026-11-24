@@ -154,14 +154,23 @@ body {
 .ab-phil-more {
     display: inline-block;
     margin-top: 32px;
-    padding-bottom: 2px;
-    font-size: var(--fs-16);
     color: var(--text);
     text-decoration: none;
+}
+.ab-phil-more-sub {
+    display: block;
+    margin-bottom: 6px;
+    font-size: var(--fs-12);
+    opacity: 0.7;
+}
+.ab-phil-more-main {
+    display: inline-block;
+    padding-bottom: 2px;
+    font-size: var(--fs-16);
     border-bottom: 1px solid var(--accent);
 }
-.ab-phil-more::after { content: ' →'; }
-.ab-phil-more:hover { color: var(--accent); }
+.ab-phil-more-main::after { content: ' →'; }
+.ab-phil-more:hover .ab-phil-more-main { color: var(--accent); }
 .ab-phil-num {
     display: block;
     font-size: var(--fs-28);
