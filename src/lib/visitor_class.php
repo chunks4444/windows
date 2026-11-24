@@ -64,6 +64,43 @@ const VISITOR_OTHER_BOTS = [
 // 위 목록에 없지만 스스로 봇이라고 밝히는 UA
 const VISITOR_GENERIC_BOT = '/bot\b|bot\/|crawl|spider|scrape|fetcher|monitor|checker/i';
 
+// 사람 브라우저 UA를 쓰지만 사람이 쓸 수 없는 클라우드·데이터센터 IP 대역 — [CIDR, 표시 이름].
+// APNIC 등록 정보로 확인한 것만 둔다. 통신사·ISP가 섞여 있는 대역(예: 38.x 전체, 남미 대역)은 사람을 봇으로 잘못 분류하므로 넣지 않는다.
+const VISITOR_DATACENTER_RANGES = [
+    ['43.128.0.0/11', '텐센트 클라우드'],   // 43.128.0.0–43.159.255.255 (ACEVILLE PTE LTD · TENCENT-CN)
+];
+
+function pm_ip_in_cidr(string $ip, string $cidr): bool {
+    [$net, $len] = array_pad(explode('/', $cidr, 2), 2, null);
+    $a = @inet_pton($ip);
+    $b = @inet_pton($net);
+    if ($a === false || $b === false || strlen($a) !== strlen($b)) return false;
+    $bits = $len === null ? strlen($a) * 8 : (int)$len;
+    $full = intdiv($bits, 8);
+    if ($full > 0 && substr($a, 0, $full) !== substr($b, 0, $full)) return false;
+    $rem = $bits % 8;
+    if ($rem > 0) {
+        $mask = (0xFF << (8 - $rem)) & 0xFF;
+        if ((ord($a[$full]) & $mask) !== (ord($b[$full]) & $mask)) return false;
+    }
+    return true;
+}
+
+// IP가 알려진 클라우드 대역이면 그 이름, 아니면 null
+function pm_classify_ip(string $ip): ?string {
+    foreach (VISITOR_DATACENTER_RANGES as [$cidr, $name]) {
+        if (pm_ip_in_cidr($ip, $cidr)) return $name;
+    }
+    return null;
+}
+
+// UA와 IP를 함께 본다. UA가 사람 브라우저여도 클라우드 대역이면 기타 봇으로 친다.
+function pm_classify_visit(string $ua, string $ip): array {
+    [$type, $name] = pm_classify_ua($ua);
+    if ($type === VISITOR_HUMAN && ($dc = pm_classify_ip($ip)) !== null) return [VISITOR_OTHER, '클라우드 IP (' . $dc . ')'];
+    return [$type, $name];
+}
+
 // UA → [종류, 봇 이름|null]
 function pm_classify_ua(string $ua): array {
     $ua = trim($ua);

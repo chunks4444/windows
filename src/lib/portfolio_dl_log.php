@@ -39,7 +39,7 @@ function portfolio_dl_record(string $mode, string $source, string $file): void {
         $ip  = portfolio_dl_ip();
         $p   = jwt_from_request();
         $uid = ($p && isset($p['sub']) && ctype_digit((string)$p['sub'])) ? (int)$p['sub'] : null;
-        [$vType] = pm_classify_ua($ua);
+        [$vType] = pm_classify_visit($ua, $ip);
         $row = [
             $mode, $source === 'company' ? 'company' : 'link', $uid,
             $ip === '-' ? null : $ip, $ip === '-' ? null : substr(md5($ip), 0, 8), $vType,
