@@ -85,6 +85,7 @@ function sc_desc(array $cardsByKey, string $key, string $fallbackKey): string {
                     <p><?= t('company_phil_p1') ?></p>
                     <p><?= t('company_phil_p2') ?></p>
                     <p><?= t('company_phil_p3') ?></p>
+                    <a class="ab-phil-more" href="<?= lang_href('/blog/' . rawurlencode('평목이란')) ?>"><?= htmlspecialchars(t('company_phil_more')) ?></a>
                 </div>
             </div>
             <div class="ab-phil-right">

@@ -151,6 +151,17 @@ body {
     word-break: keep-all;
 }
 .ab-phil-text p:last-child { margin-bottom: 0; }
+.ab-phil-more {
+    display: inline-block;
+    margin-top: 32px;
+    padding-bottom: 2px;
+    font-size: var(--fs-16);
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: 1px solid var(--accent);
+}
+.ab-phil-more::after { content: ' →'; }
+.ab-phil-more:hover { color: var(--accent); }
 .ab-phil-num {
     display: block;
     font-size: var(--fs-28);
