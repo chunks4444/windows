@@ -15,8 +15,9 @@
 .nt-crumb span { margin: 0 .25rem; color: var(--text-muted); }
 .nt-head { padding-bottom: 1.25rem; border-bottom: 1px solid var(--text); margin-bottom: 1.75rem; }
 .nt-h1 { margin: 0 0 .6rem; font-size: clamp(var(--fs-22), 3vw, var(--fs-28)); font-weight: 700; line-height: 1.4; letter-spacing: -.01em; color: var(--text); word-break: keep-all; overflow-wrap: anywhere; }
-.nt-body { font-size: var(--fs-16); line-height: 1.9; color: var(--text); word-break: keep-all; overflow-wrap: anywhere; }
-.nt-body p { margin: 0 0 1.1rem; }
+.nt-body { font-size: var(--fs-16); line-height: 1.8; color: var(--text); word-break: keep-all; overflow-wrap: anywhere; }
+.nt-body p { margin: 0 0 .8rem; text-wrap: pretty; }
+.nt-body p.nt-gap { margin: 0; height: .8rem; }
 .nt-body h2 { margin: 2rem 0 .8rem; font-size: var(--fs-22); font-weight: 700; }
 .nt-body h3 { margin: 1.6rem 0 .6rem; font-size: var(--fs-18); font-weight: 700; }
 .nt-body ul, .nt-body ol { margin: 0 0 1.1rem; padding-left: 1.4rem; }

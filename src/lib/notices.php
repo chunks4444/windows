@@ -122,9 +122,17 @@ function notice_sanitize_html(string $html): string {
 
     $out = '';
     foreach ($root->childNodes as $c) $out .= $doc->saveHTML($c);
-    $out = trim($out);
+    $out = notice_collapse_blank(trim($out));
     $plain = trim(preg_replace('/\s+/u', ' ', html_entity_decode(strip_tags($out), ENT_QUOTES, 'UTF-8')));
     return $plain === '' ? '' : $out;
+}
+
+function notice_collapse_blank(string $html): string {
+    $html = preg_replace('#<p>(?:\s|&nbsp;|\x{00A0}|<br\s*/?>)*</p>#u', '<p><br></p>', $html);
+    $html = preg_replace('#(?:<p><br></p>\s*){2,}#u', '<p><br></p>', $html);
+    $html = preg_replace('#^(?:\s*<p><br></p>)+#u', '', $html);
+    $html = preg_replace('#(?:<p><br></p>\s*)+$#u', '', $html);
+    return trim($html);
 }
 
 function notice_excerpt(string $html, int $len = 110): string {
@@ -147,7 +155,8 @@ function notice_article_html(array $n, bool $modal = false): string {
     if (!empty($n['is_pinned'])) $out .= '<span class="nt-pin">' . htmlspecialchars(t('notice_pinned')) . '</span>';
     $out .= htmlspecialchars(db_field($n, 'title')) . '</' . $tag . '>';
     $out .= '<time class="nt-date" datetime="' . date('Y-m-d', $ts) . '">' . date('Y.m.d', $ts) . '</time></header>';
-    $out .= '<div class="nt-body">' . db_field($n, 'body') . '</div>';
+    $bodyHtml = str_replace('<p><br></p>', '<p class="nt-gap" aria-hidden="true"></p>', notice_collapse_blank(db_field($n, 'body')));
+    $out .= '<div class="nt-body">' . $bodyHtml . '</div>';
     if ($ctaText !== '' && $ctaUrl === '#contact') {
         $subject = mb_substr(($label !== '' ? '[' . $label . '] ' : '') . db_field($n, 'title'), 0, 100);
         $out .= '<p class="nt-cta-wrap"><a class="nt-cta" href="' . htmlspecialchars(lang_href('/company/#contact')) . '" data-nt-contact data-subject="' . htmlspecialchars($subject) . '">' . htmlspecialchars($ctaText) . ' <i class="bi bi-arrow-right"></i></a></p>';
