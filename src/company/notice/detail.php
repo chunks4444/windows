@@ -70,6 +70,8 @@ $hasEn = trim((string)($notice['title_en'] ?? '')) !== '' && trim((string)($noti
         <p class="nt-back"><a href="<?= lang_href('/company/notice/') ?>"><i class="bi bi-list"></i> <?= htmlspecialchars(t('notice_list')) ?></a></p>
     </article>
 </div>
+<?php include __DIR__ . '/../../components/contact_modal.php'; ?>
+<script src="/src/js/notice.js?v=<?= md5_file(__DIR__ . '/../../js/notice.js') ?>"></script>
 <?php include __DIR__ . '/../../components/footer.php'; ?>
 </body>
 </html>

@@ -1,4 +1,18 @@
 (function () {
+  var closePopup = function () {};
+
+  document.addEventListener('click', function (e) {
+    var cta = e.target.closest('[data-nt-contact]');
+    if (!cta) return;
+    var formEl = document.getElementById('contactModal');
+    if (!formEl || !window.bootstrap) return;
+    e.preventDefault();
+    closePopup();
+    var subject = document.getElementById('ctSubject');
+    if (subject && !subject.value) subject.value = cta.getAttribute('data-subject') || '';
+    window.bootstrap.Modal.getOrCreateInstance(formEl).show();
+  });
+
   var modal = document.getElementById('ntModal');
   if (!modal) return;
   var card = modal.querySelector('.nt-modal-card');
@@ -33,6 +47,8 @@
     }
     if (lastFocus && lastFocus.focus) lastFocus.focus();
   }
+
+  closePopup = close;
 
   document.addEventListener('click', function (e) {
     var link = e.target.closest('[data-nt-open]');

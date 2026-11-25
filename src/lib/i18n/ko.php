@@ -398,6 +398,7 @@ return [
     'notice_prev'             => '이전 글',
     'notice_next'             => '다음 글',
     'notice_page'             => '공지 페이지',
+    'notice_mail_label'       => '메일 주소',
     'blog_edit_post'          => '이 글 편집',
 
     // 블로그 상세 (src/blog/detail.php)

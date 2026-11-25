@@ -398,6 +398,7 @@ return [
     'notice_prev'             => 'Previous',
     'notice_next'             => 'Next',
     'notice_page'             => 'Notice pages',
+    'notice_mail_label'       => 'Email',
     'blog_edit_post'          => 'Edit this post',
 
     // Blog detail (src/blog/detail.php)

@@ -95,6 +95,7 @@ try {
         <div class="nt-modal-content" id="ntModalContent"></div>
     </div>
 </div>
+<?php include __DIR__ . '/../../components/contact_modal.php'; ?>
 <script src="/src/js/notice.js?v=<?= md5_file(__DIR__ . '/../../js/notice.js') ?>"></script>
 <?php include __DIR__ . '/../../components/footer.php'; ?>
 </body>

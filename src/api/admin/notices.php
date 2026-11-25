@@ -68,9 +68,9 @@ if ($action === 'save') {
         exit;
     }
     if ($ctaText !== '' || $ctaUrl !== '') {
-        $safeUrl = notice_safe_href($ctaUrl);
+        $safeUrl = notice_safe_href($ctaUrl, true);
         if ($ctaText === '' || $safeUrl === null || mb_strlen($safeUrl) > 300) {
-            echo json_encode(['error' => '버튼은 문구와 주소를 함께 입력하세요. 주소는 https://, mailto:, tel: 또는 / 로 시작해야 합니다.']);
+            echo json_encode(['error' => '버튼은 문구와 주소를 함께 입력하세요. 주소는 #contact(문의 메일폼 열기), https://, mailto:, tel: 또는 / 로 시작해야 합니다.']);
             exit;
         }
         $ctaUrl = $safeUrl;

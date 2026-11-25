@@ -98,7 +98,7 @@ require_admin_role('s');
                     <input id="ntCtaText" type="text" maxlength="60" placeholder="버튼 문구 예: 이메일로 인사 보내기" style="flex:1;min-width:200px;">
                     <input id="ntCtaTextEn" type="text" maxlength="60" placeholder="버튼 문구 (영문)" style="flex:1;min-width:160px;">
                 </div>
-                <input id="ntCtaUrl" type="text" maxlength="300" placeholder="버튼 주소 예: mailto:hello@example.com 또는 https://... 또는 /company/" style="margin-top:6px;">
+                <input id="ntCtaUrl" type="text" maxlength="300" placeholder="버튼 주소 예: #contact (문의 메일폼 열기) 또는 https://... 또는 /company/" style="margin-top:6px;">
             </div>
             <div class="adm-mfield nt-row">
                 <label>게시일 <input id="ntPublished" type="datetime-local" style="margin-left:6px;"></label>

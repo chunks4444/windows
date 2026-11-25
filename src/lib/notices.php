@@ -43,9 +43,12 @@ function notice_ensure_table(PDO $pdo): void {
 const NOTICE_ALLOWED_TAGS  = ['p', 'br', 'strong', 'b', 'em', 'i', 'u', 's', 'a', 'ul', 'ol', 'li', 'h2', 'h3', 'blockquote'];
 const NOTICE_DROPPED_TAGS  = ['script', 'style', 'iframe', 'object', 'embed', 'form', 'input', 'button', 'textarea', 'select', 'svg', 'math', 'link', 'meta', 'base', 'noscript', 'template'];
 
-function notice_safe_href(string $href): ?string {
+const NOTICE_CONTACT_EMAIL = 'pyeongmok@gmail.com';
+
+function notice_safe_href(string $href, bool $allowForm = false): ?string {
     $href = trim($href);
     if ($href === '') return null;
+    if ($allowForm && $href === '#contact') return $href;
     if (preg_match('#^(https?://|mailto:|tel:)#i', $href)) return $href;
     if ($href[0] === '/' && (!isset($href[1]) || $href[1] !== '/')) return $href;
     return null;
@@ -132,7 +135,7 @@ function notice_excerpt(string $html, int $len = 110): string {
 function notice_article_html(array $n, bool $modal = false): string {
     $label = db_field($n, 'label');
     $ctaText = db_field($n, 'cta_text');
-    $ctaUrl = notice_safe_href((string)($n['cta_url'] ?? '')) ?? '';
+    $ctaUrl = notice_safe_href((string)($n['cta_url'] ?? ''), true) ?? '';
     if ($ctaUrl !== '' && $ctaUrl[0] === '/') $ctaUrl = lang_href($ctaUrl);
     $tag = $modal ? 'h2' : 'h1';
     $idAttr = $modal ? ' id="ntModalTitle"' : '';
@@ -145,7 +148,11 @@ function notice_article_html(array $n, bool $modal = false): string {
     $out .= htmlspecialchars(db_field($n, 'title')) . '</' . $tag . '>';
     $out .= '<time class="nt-date" datetime="' . date('Y-m-d', $ts) . '">' . date('Y.m.d', $ts) . '</time></header>';
     $out .= '<div class="nt-body">' . db_field($n, 'body') . '</div>';
-    if ($ctaText !== '' && $ctaUrl !== '') {
+    if ($ctaText !== '' && $ctaUrl === '#contact') {
+        $subject = mb_substr(($label !== '' ? '[' . $label . '] ' : '') . db_field($n, 'title'), 0, 100);
+        $out .= '<p class="nt-cta-wrap"><a class="nt-cta" href="' . htmlspecialchars(lang_href('/company/#contact')) . '" data-nt-contact data-subject="' . htmlspecialchars($subject) . '">' . htmlspecialchars($ctaText) . ' <i class="bi bi-arrow-right"></i></a></p>';
+        $out .= '<p class="nt-cta-mail"><span>' . htmlspecialchars(t('notice_mail_label')) . '</span>' . htmlspecialchars(NOTICE_CONTACT_EMAIL) . '</p>';
+    } elseif ($ctaText !== '' && $ctaUrl !== '') {
         $ext = preg_match('#^https?://#i', $ctaUrl) ? ' target="_blank" rel="noopener noreferrer"' : '';
         $out .= '<p class="nt-cta-wrap"><a class="nt-cta" href="' . htmlspecialchars($ctaUrl) . '"' . $ext . '>' . htmlspecialchars($ctaText) . ' <i class="bi bi-arrow-right"></i></a></p>';
     }
