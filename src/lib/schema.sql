@@ -1152,3 +1152,24 @@ CREATE TABLE IF NOT EXISTS user_milestones (
     KEY idx_um_last_seen (last_seen_at),
     CONSTRAINT fk_um_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='회원별 활동 단계(처음 한 시각) — 어드민 가입자 활동 화면';
+
+-- 공지 글 (공개 페이지 /notice/). 게시일이 미래이면 그 시각까지 숨김(예약), is_pinned는 목록 맨 위 고정. 코드(lib/notices.php)가 처음 쓸 때 만들기도 한다.
+CREATE TABLE IF NOT EXISTS notices (
+    id           INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    title        VARCHAR(200) NOT NULL,
+    title_en     VARCHAR(200) NULL,
+    label        VARCHAR(30)  NULL,
+    label_en     VARCHAR(30)  NULL,
+    body         MEDIUMTEXT   NOT NULL,
+    body_en      MEDIUMTEXT   NULL,
+    cta_text     VARCHAR(60)  NULL,
+    cta_text_en  VARCHAR(60)  NULL,
+    cta_url      VARCHAR(300) NULL,
+    is_pinned    TINYINT(1)   NOT NULL DEFAULT 0,
+    is_active    TINYINT(1)   NOT NULL DEFAULT 1,
+    published_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY idx_notice_list (is_active, is_pinned, published_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

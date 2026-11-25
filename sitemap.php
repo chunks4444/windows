@@ -14,6 +14,7 @@ $staticUrls = [
     ['loc' => '/collection/',                        'priority' => '0.8', 'meta_path' => '/src/collection/index.php'],
     ['loc' => '/blog/',                              'priority' => '0.8', 'meta_path' => '/src/blog/index.php'],
     ['loc' => '/guide/',                             'priority' => '0.6', 'meta_path' => '/src/guide/index.php'],
+    ['loc' => '/company/notice/',                    'priority' => '0.5', 'meta_path' => '/src/company/notice/index.php'],
     // 설계 엔진 페이지는 robots.txt로 모든 크롤러 차단(2026-10-13) — 차단된 URL을 사이트맵에 두면
     // Search Console에서 '제출된 URL이 robots.txt에 의해 차단됨' 경고가 나므로 여기서도 뺌
 ];
@@ -80,6 +81,15 @@ try {
             'lastmod' => date('Y-m-d', strtotime($p['created_at'])),
             'priority'=> '0.5',
         ];
+    }
+
+    // 공개 중인 공지 글. 영문 제목·본문이 둘 다 있는 글만 /en/ 주소도 올린다
+    $notices = $pdo->query("SELECT id, updated_at, (title_en IS NOT NULL AND title_en != '' AND body_en IS NOT NULL AND body_en != '') AS has_en FROM notices WHERE is_active=1 AND published_at <= NOW()")->fetchAll();
+    foreach ($notices as $n) {
+        $urls[] = ['loc' => '/company/notice/' . (int)$n['id'], 'lastmod' => date('Y-m-d', strtotime($n['updated_at'])), 'priority' => '0.4'];
+        if ($n['has_en']) {
+            $urls[] = ['loc' => '/en/company/notice/' . (int)$n['id'], 'lastmod' => date('Y-m-d', strtotime($n['updated_at'])), 'priority' => '0.3'];
+        }
     }
 } catch (Throwable $e) {
     // DB 연결 실패 시 이미 채워둔 정적 URL(lastmod 없이)만 출력

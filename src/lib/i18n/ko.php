@@ -389,6 +389,15 @@ return [
     'blog_prev_page'          => '이전 페이지',
     'blog_next_page'          => '다음 페이지',
     'blog_page'               => '페이지',
+    'notice_title'            => '공지사항',
+    'notice_sub'              => '평목의 소식과 안내를 전합니다.',
+    'notice_meta_desc'        => '워크그룹 평목의 공지사항과 소식입니다.',
+    'notice_empty'            => '등록된 공지가 없습니다.',
+    'notice_pinned'           => '고정',
+    'notice_list'             => '목록으로',
+    'notice_prev'             => '이전 글',
+    'notice_next'             => '다음 글',
+    'notice_page'             => '공지 페이지',
     'blog_edit_post'          => '이 글 편집',
 
     // 블로그 상세 (src/blog/detail.php)

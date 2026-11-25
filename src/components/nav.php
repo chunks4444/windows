@@ -221,6 +221,7 @@ $navStudioIcons = [
                     <li><a class="dropdown-item" href="<?= lang_href('/company/') ?>"><i class="bi bi-info-circle me-2"></i><?= htmlspecialchars(t('nav_company_intro')) ?></a></li>
                     <li><a class="dropdown-item" href="<?= lang_href('/company/#studio') ?>"><i class="bi bi-pencil-square me-2"></i><?= htmlspecialchars(t('nav_company_studio')) ?></a></li>
                     <li><a class="dropdown-item" href="<?= lang_href('/company/#contact') ?>"><i class="bi bi-envelope me-2"></i><?= htmlspecialchars(t('nav_company_contact')) ?></a></li>
+                    <li><a class="dropdown-item" href="<?= lang_href('/company/notice/') ?>"><i class="bi bi-megaphone me-2"></i><?= htmlspecialchars(t('notice_title')) ?></a></li>
                 </ul>
             </li>
             <li class="nav-item">
@@ -321,6 +322,7 @@ $navStudioIcons = [
                 <a class="pm-dw-link" href="<?= lang_href('/company/') ?>"><i class="bi bi-info-circle"></i><span><?= htmlspecialchars(t('nav_company_intro')) ?></span></a>
                 <a class="pm-dw-link" href="<?= lang_href('/company/#studio') ?>"><i class="bi bi-pencil-square"></i><span><?= htmlspecialchars(t('nav_company_studio')) ?></span></a>
                 <a class="pm-dw-link" href="<?= lang_href('/company/#contact') ?>"><i class="bi bi-envelope"></i><span><?= htmlspecialchars(t('nav_company_contact')) ?></span></a>
+                <a class="pm-dw-link" href="<?= lang_href('/company/notice/') ?>"><i class="bi bi-megaphone"></i><span><?= htmlspecialchars(t('notice_title')) ?></span></a>
             </div>
         </div>
 

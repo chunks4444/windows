@@ -389,6 +389,15 @@ return [
     'blog_prev_page'          => 'Previous page',
     'blog_next_page'          => 'Next page',
     'blog_page'               => 'Page',
+    'notice_title'            => 'Notices',
+    'notice_sub'              => 'News and announcements from Pyeongmok.',
+    'notice_meta_desc'        => 'Notices and news from Workgroup Pyeongmok.',
+    'notice_empty'            => 'No notices yet.',
+    'notice_pinned'           => 'Pinned',
+    'notice_list'             => 'Back to list',
+    'notice_prev'             => 'Previous',
+    'notice_next'             => 'Next',
+    'notice_page'             => 'Notice pages',
     'blog_edit_post'          => 'Edit this post',
 
     // Blog detail (src/blog/detail.php)

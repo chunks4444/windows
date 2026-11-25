@@ -124,6 +124,13 @@ RewriteRule ^company/?$     src/company/index.php    [L]
 RewriteRule ^privacy/?$     src/legal/privacy.php    [L]
 RewriteRule ^terms/?$       src/legal/terms.php      [L]
 
+# 공지사항은 회사 소개 하위: /company/notice/ (목록, 본문은 팝업) · /company/notice/{번호} (개별 글)
+# 예전에 잠깐 쓰던 /notice/ 주소는 새 주소로 영구 이동
+RewriteRule ^company/notice$ /company/notice/ [R=301,L]
+RewriteRule ^company/notice/$ src/company/notice/index.php [L]
+RewriteRule ^notice/?$ /company/notice/ [R=301,L]
+RewriteRule ^notice/([0-9]+)/?$ /company/notice/$1 [R=301,L]
+
 # 블로그 검색 결과 — 아래 /blog/{slug} 규칙보다 먼저 걸어야 'search'가 글 주소로 오인되지 않는다
 RewriteRule ^blog/search/?$ src/blog/search.php [L,QSA]
 
@@ -131,6 +138,10 @@ RewriteRule ^blog/search/?$ src/blog/search.php [L,QSA]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^blog/([^/]+)/?$ src/blog/detail.php?slug=$1 [L,QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^company/notice/([0-9]+)/?$ src/company/notice/detail.php?id=$1 [L,QSA]
 
 # /portfolio/detail?id=... (위 /src/work/ 301의 착지점) 은 슬러그가 아니라 id 기반 조회이므로
 # 아래 일반 슬러그 규칙보다 먼저 걸어서 slug="detail"로 오인되지 않게 한다.
