@@ -22,6 +22,7 @@ if ($_noticeText):
 <style id="pmNoticeStyle">
 body { padding-top: 108px !important; }
 .pm-navbar { top: 40px !important; }
+.adm-sidenav { padding-top: 124px !important; }
 </style>
 <div id="pmTopbarNotice" style="background:<?= $_bgColor ?>;color:var(--bg);position:fixed;top:0;left:0;right:0;z-index:1031;height:40px;display:flex;align-items:center;justify-content:center;padding:0 48px;font-family:inherit;">
     <div style="flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;">
